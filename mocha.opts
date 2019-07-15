@@ -1,0 +1,4 @@
+--require ts-node/register
+--compilerOptions '{"target":"es6"}'
+--ui tdd
+./src/test/**/*.ts

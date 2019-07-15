@@ -3,6 +3,9 @@
     "version": "0.0.1",
     "description": "Language server for Minecraft: Java Edition mcfunction files.",
     "main": "src",
+    "dependencies": {
+        "vscode-languageserver": "^5.2.1"
+    },
     "devDependencies": {
         "@semantic-release/changelog": "^3.0.4",
         "@semantic-release/git": "^7.0.16",
