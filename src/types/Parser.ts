@@ -8,13 +8,13 @@ export default interface Parser {
      * Parse the input string.
      * @param input The input string.
      */
-    parse(input: string): ParseResult
+    parse(input: string): ParserResult
 }
 
 /**
  * Represent a parsed result.
  */
-export interface ParseResult {
+export interface ParserResult {
     /**
      * Parsed data. Can be a string, Selector, NBT, etc.
      */
@@ -22,5 +22,5 @@ export interface ParseResult {
     /**
      * All errors occurred while the process of parsing.
      */
-    errors: ParsingError[]
+    errors?: ParsingError[]
 }

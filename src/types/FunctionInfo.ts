@@ -4,7 +4,7 @@ import LocalCache from './LocalCache'
 /**
  * Represent a parsed function.
  */
-export default interface Function {
+export default interface FunctionInfo {
     /**
      * All parsed lines in the function.
      */
