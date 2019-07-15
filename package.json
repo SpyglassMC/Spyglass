@@ -1,7 +1,7 @@
 {
-    "name": "mcfunction-language-server",
+    "name": "datapack-language-server",
     "version": "0.0.1",
-    "description": "Language server for Minecraft: Java Edition mcfunction files.",
+    "description": "Language server for Minecraft: Java Edition datapacks.",
     "main": "src",
     "dependencies": {
         "vscode-languageserver": "^5.2.1"
@@ -30,12 +30,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/SPGoding/mcfunction-language-server.git"
+        "url": "https://github.com/SPGoding/datapack-language-server.git"
     },
-    "homepage": "https://github.com/SPGoding/mcfunction-language-server",
+    "homepage": "https://github.com/SPGoding/datapack-language-server",
     "author": "SPGoding",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/SPGoding/mcfunction-language-server/issues"
+        "url": "https://github.com/SPGoding/datapack-language-server/issues"
     }
 }

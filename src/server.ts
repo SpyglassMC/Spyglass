@@ -21,6 +21,10 @@ connection.onInitialize(_params => {
             hoverProvider: true,
             referencesProvider: true,
             renameProvider: true,
+            foldingRangeProvider: true,
+            documentOnTypeFormattingProvider: {
+                firstTriggerCharacter: '\n'
+            },
             documentLinkProvider: {
                 resolveProvider: true
             },
