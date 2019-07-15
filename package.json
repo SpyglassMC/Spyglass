@@ -1,14 +1,22 @@
 {
-    "name": "${reponame}",
+    "name": "mcfunction-language-server",
     "version": "0.0.1",
-    "description": "${brief_introduction}",
+    "description": "Language server for mcfunction files.",
     "main": "src",
     "devDependencies": {
         "@semantic-release/changelog": "^3.0.4",
         "@semantic-release/git": "^7.0.16",
+        "@types/mocha": "^5.2.7",
+        "@types/power-assert": "^1.5.0",
+        "espower-typescript": "^9.0.0",
         "gitmoji-cli": "^1.9.2",
+        "mocha": "^6.0.0",
+        "power-assert": "^1.5.0",
         "semantic-release": "^15.13.16",
-        "semantic-release-gitmoji": "^1.3.0"
+        "semantic-release-gitmoji": "^1.3.0",
+        "ts-node": "^8.0.0",
+        "tslint": "^5.17.0",
+        "typescript": "^3.0.0"
     },
     "scripts": {
         "commit": "gitmoji -c",
@@ -17,12 +25,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/SPGoding/${reponame}.git"
+        "url": "https://github.com/SPGoding/mcfunction-language-server.git"
     },
-    "homepage": "https://github.com/SPGoding/${reponame}",
+    "homepage": "https://github.com/SPGoding/mcfunction-language-server",
     "author": "SPGoding",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/SPGoding/${reponame}/issues"
+        "url": "https://github.com/SPGoding/mcfunction-language-server/issues"
     }
 }
