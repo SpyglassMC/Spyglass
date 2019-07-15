@@ -19,9 +19,11 @@
         "typescript": "^3.0.0"
     },
     "scripts": {
+        "build": "tsc",
         "commit": "gitmoji -c",
         "release": "semantic-release",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "mocha --require espower-typescript/guess \"./src/test/**/*.ts\"",
+        "watch": "tsc -w"
     },
     "repository": {
         "type": "git",
