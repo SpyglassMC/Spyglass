@@ -1,7 +1,7 @@
 {
     "name": "mcfunction-language-server",
     "version": "0.0.1",
-    "description": "Language server for mcfunction files.",
+    "description": "Language server for Minecraft: Java Edition mcfunction files.",
     "main": "src",
     "devDependencies": {
         "@semantic-release/changelog": "^3.0.4",
