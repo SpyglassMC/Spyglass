@@ -24,6 +24,7 @@
     "scripts": {
         "build": "tsc",
         "commit": "gitmoji -c",
+        "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
         "release": "semantic-release",
         "test": "mocha --require espower-typescript/guess \"./src/test/**/*.ts\"",
         "watch": "tsc -w"
