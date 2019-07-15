@@ -2,23 +2,25 @@ import ParsingError from './ParsingError'
 
 /**
  * Represent an argument parser.
+ * @template T Type of the parsed data. Can be string, Selector, NBT, etc.
  */
-export default interface Parser {
+export default interface Parser<T> {
     /**
      * Parse the input string.
      * @param input The input string.
      */
-    parse(input: string): ParserResult
+    parse(input: string): ParserResult<T>
 }
 
 /**
  * Represent a parsed result.
+ * @template T Type of the parsed data. Can be a string, Selector, NBT, etc.
  */
-export interface ParserResult {
+export interface ParserResult<T> {
     /**
-     * Parsed data. Can be a string, Selector, NBT, etc.
+     * Parsed data.
      */
-    data?: any
+    data?: T
     /**
      * All errors occurred while the process of parsing.
      */

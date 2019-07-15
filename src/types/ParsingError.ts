@@ -34,7 +34,7 @@ export default class ParsingError {
     getDiagnostic: () => Diagnostic = () => ({
         range: this.range,
         severity: this.severity,
-        source: 'dhp',
+        source: 'datapack',
         message: this.message
     })
 }

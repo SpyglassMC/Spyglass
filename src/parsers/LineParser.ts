@@ -1,7 +1,7 @@
 import Parser from '../types/Parser'
 import Line from '../types/Line'
 
-export default class LineParser implements Parser {
+export default class LineParser implements Parser<Line> {
     parse(line: string) {
         const ans: ParserResult = {
             data: {

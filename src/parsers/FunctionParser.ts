@@ -5,7 +5,7 @@ import LineParser from './LineParser'
 /**
  * Parse input string as a function.
  */
-export default class FunctionParser implements Parser {
+export default class FunctionParser implements Parser<FunctionInfo> {
     parse(input: string) {
         const funcInfo: FunctionInfo = {
             lines: []
