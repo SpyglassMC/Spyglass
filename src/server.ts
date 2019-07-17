@@ -11,7 +11,7 @@ connection.onInitialize(_params => {
         capabilities: {
             completionProvider: {
                 triggerCharacters: [
-                    ' ', ',', '{', '[', '=', ':', '@', '\n'
+                    ' ', ',', '{', '[', '=', ':', '@', '\n', '#'
                 ],
                 resolveProvider: true
             },

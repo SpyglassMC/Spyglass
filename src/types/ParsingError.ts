@@ -8,33 +8,30 @@ export default class ParsingError {
         /**
          * Range of the error.
          */
-        public readonly range: Range,
+        public readonly range: { start: number, end: number },
         /**
          * Human-readable error message.
          */
         public readonly message: string,
         /**
-         * Completions which may resolve this error.
-         */
-        public readonly completions?: CompletionItem[],
-        /**
-         * `warning`: The command can be executed.
-         * `error`: The command has syntax error.
-         */
-        public readonly severity: DiagnosticSeverity = 1,
-        /**
          * Whether the error doesn't affect the process of parsing.
          */
-        public readonly tolerable: boolean = true
+        public readonly tolerable: boolean = true,
+        /**
+         * The severity of the error.
+         */
+        public readonly severity: DiagnosticSeverity = DiagnosticSeverity.Error
     ) { }
 
     /**
      * Get diagnostic of the parsing error.
      */
-    getDiagnostic: () => Diagnostic = () => ({
-        range: this.range,
-        severity: this.severity,
-        source: 'datapack',
-        message: this.message
-    })
+    getDiagnostic(line: number) {
+        return {
+            range: { start: { line, character: this.range.start }, end: { line, character: this.range.end } },
+            severity: this.severity,
+            source: 'datapack',
+            message: this.message
+        }
+    }
 }

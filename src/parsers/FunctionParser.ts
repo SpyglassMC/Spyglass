@@ -6,17 +6,13 @@ import LineParser from './LineParser'
  * Parse input string as a function.
  */
 export default class FunctionParser implements Parser<FunctionInfo> {
-    parse(input: string) {
+    parse(input: string): ParserResult {
         const funcInfo: FunctionInfo = {
             lines: []
         }
-        const ans: ParserResult = {
-            data: funcInfo
-        }
 
-        const lines = input.split('\n')
         let isReadingDoc: boolean = true
-        for (const line of lines) {
+        for (const line of input.split('\n')) {
             const { data: parsedLine } = new LineParser().parse(line)
             funcInfo.lines.push(parsedLine)
             //#region Load documentation
@@ -41,7 +37,9 @@ export default class FunctionParser implements Parser<FunctionInfo> {
             //#endregion
         }
 
-        return ans
+        return {
+            data: funcInfo
+        }
     }
 }
 

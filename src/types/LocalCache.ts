@@ -23,7 +23,7 @@ export default interface LocalCache {
      */
     def: {
         objectives?: Definition[],
-        fakeNames?: Definition[],
+        fakePlayers?: Definition[],
         tags?: Definition[]
     }
 }
@@ -33,18 +33,12 @@ export default interface LocalCache {
  */
 export interface Definition {
     /**
-     * Value of the definition.
-     * e.g. `value` of `#define tag debug` is `debug`.
+     * ID of the definition.
+     * e.g. `id` of `#define tag debug` is `debug`.
      */
-    value?: string,
+    id?: string,
     /**
-     * Documentation of the definition.
-     * Documents should be written before the definition and starts with `##`.
-     * e.g.
-     * ```
-     * ## Detects the use of shift.
-     * scoreboard objectives add shift minecraft.custom:minecraft.sneak_time
-     * ```
+     * Description of the definition.
      */
-    doc?: string
+    description?: string
 }
