@@ -1,9 +1,10 @@
 import ArgumentParser from './parsers/ArgumentParser'
+import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands/
  */
-export default <CommandTree>{
+export const tree: CommandTree = {
     line: [
         {
             redirect: 'command'
@@ -13,14 +14,23 @@ export default <CommandTree>{
         }
     ],
     command: [
-        
+
     ],
     comment: [
-        {
-            parser: new LiteralArgumentParser
+        { // #define (fakePlayer|tag) <id> [description]
+            name: '#define',
+            parser: new LiteralArgumentParser(['#define']),
+            description: 'Define an entity tag or a fake player. Will be used for completions.',
+            children: {
+                arg: {
+                    name: ''
+                }
+            }
         }
     ]
 }
+
+export default tree
 
 /**
  * Represent a command tree.
