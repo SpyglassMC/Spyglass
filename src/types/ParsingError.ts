@@ -15,6 +15,7 @@ export default class ParsingError {
         public readonly message: string,
         /**
          * Whether the error doesn't affect the process of parsing.
+         * Default to `true`
          */
         public readonly tolerable: boolean = true,
         /**

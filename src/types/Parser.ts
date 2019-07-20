@@ -22,7 +22,15 @@ export interface ParserResult<T> {
     /**
      * Parsed data.
      */
-    data?: T
+    data: T
+}
+
+/**
+ * Represent a result parsed by argument parser.
+ * @template T Type of the parsed data. Can be a string, Selector, NBT, etc.
+ */
+export interface ArgumentParserResult<T> extends ParserResult<T> {
+    data: T,
     /**
      * All errors occurred while the process of parsing.
      * Exist in the result of argument parsers.
@@ -36,15 +44,4 @@ export interface ParserResult<T> {
      * Completions. Exist in the result of argument parsers.
      */
     completions?: CompletionItem[]
-}
-
-/**
- * Represent a result parsed by argument parser.
- * @template T Type of the parsed data. Can be a string, Selector, NBT, etc.
- */
-export interface ArgumentParserResult<T> extends ParserResult<T> {
-    data?: T,
-    errors: ParsingError[],
-    cache: LocalCache,
-    completions: []
 }

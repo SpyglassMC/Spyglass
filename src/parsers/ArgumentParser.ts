@@ -4,15 +4,19 @@ import Parser, { ArgumentParserResult } from '../types/Parser'
  * Base class of argument parsers.
  */
 export default abstract class ArgumentParser<T> implements Parser<T> {
-    abstract parse(input: string): ArgumentParserResult<T>
+    abstract parse(input: string, startIndex?: number): ArgumentParserResult<T>
 
     /**
-     * Get type of this argument.
-     * 
-     * Will be combine with the argument name defined in `CommandNodeTree` and optional status to form hints.
+     * @example
+     * return '(foo|bar)'
+     */
+    abstract toString(...args: any): string
+
+    /**
+     * Get examples of this argument.
      * 
      * @example
-     * 'string' => '<msg: string>'
+     * return ['true', 'false']
      */
-    abstract getType(): string
+    abstract getExamples(): string[]
 }

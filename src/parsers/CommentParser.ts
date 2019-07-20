@@ -31,7 +31,7 @@ export default class CommentParser implements ArgumentParser<string> {
         return ans
     }
 
-    getType() {
+    toString() {
         return (
             '( #define (fakePlayer|tag) <id> [description] | '+
             '#region [title] | '+
