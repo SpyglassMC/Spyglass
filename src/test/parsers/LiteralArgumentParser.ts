@@ -1,36 +1,36 @@
 import * as assert from 'power-assert'
-import LiteralParser from '../../parsers/LiteralParser'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver';
-import ParsingError from '../../types/ParsingError';
+import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
+import { CompletionItemKind } from 'vscode-languageserver'
+import ParsingError from '../../types/ParsingError'
 
 describe('LiteralParser Tests', () => {
     describe('toString() Tests', () => {
         it('Should return correctly for single literal', () => {
-            const parser = new LiteralParser(['foo'])
+            const parser = new LiteralArgumentParser(['foo'])
             const actual = parser.toString()
             assert.strictEqual(actual, 'foo')
         })
         it('Should return correctly for multi literals', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.toString()
             assert.strictEqual(actual, '(bar|foo)')
         })
     })
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['bar', 'foo'])
         })
     })
     describe('parse() Tests', () => {
         it('Should return data', () => {
-            const parser = new LiteralParser(['expected'])
+            const parser = new LiteralArgumentParser(['expected'])
             const actual = parser.parse('actual', 0)
             assert.deepStrictEqual(actual.data, 'actual')
         })
         it('Should return completions for empty input', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.parse('', 0)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -46,7 +46,7 @@ describe('LiteralParser Tests', () => {
             )
         })
         it('Should treat empty string as partial matching', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.parse('', 0)
             assert.deepStrictEqual(
                 actual.errors,
@@ -54,7 +54,7 @@ describe('LiteralParser Tests', () => {
             )
         })
         it('Should return errors when partial matching', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.parse('F', 0)
             assert.deepStrictEqual(
                 actual.errors,
@@ -62,7 +62,7 @@ describe('LiteralParser Tests', () => {
             )
         })
         it('Should return errors when nothing matches', () => {
-            const parser = new LiteralParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.parse('spg!', 0)
             assert.deepStrictEqual(
                 actual.errors,

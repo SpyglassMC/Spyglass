@@ -1,10 +1,10 @@
 import ArgumentParser from './ArgumentParser'
 import { ArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver';
-import ParsingError from '../types/ParsingError';
-import { arrayToMessage } from '../utils/utils';
+import { CompletionItemKind } from 'vscode-languageserver'
+import ParsingError from '../types/ParsingError'
+import { arrayToMessage } from '../utils/utils'
 
-export default class LiteralParser implements ArgumentParser<string> {
+export default class LiteralArgumentParser implements ArgumentParser<string> {
     private readonly literals: string[]
 
     constructor(literals: string[]) {
