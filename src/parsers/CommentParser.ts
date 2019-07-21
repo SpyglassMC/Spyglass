@@ -1,9 +1,10 @@
 import ArgumentParser from './ArgumentParser'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class CommentParser implements ArgumentParser<string> {
-    parse(input: string) {
+    parse(reader: StringReader) {
         const ans: ArgumentParserResult<string> = {
             errors: [],
             completions: [],

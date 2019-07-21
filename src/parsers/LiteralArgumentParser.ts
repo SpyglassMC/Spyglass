@@ -1,7 +1,8 @@
 import ArgumentParser from './ArgumentParser'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind } from 'vscode-languageserver'
-import ParsingError from '../types/ParsingError'
 import { arrayToMessage } from '../utils/utils'
 
 export default class LiteralArgumentParser implements ArgumentParser<string> {
@@ -9,40 +10,41 @@ export default class LiteralArgumentParser implements ArgumentParser<string> {
 
     constructor(literals: string[]) {
         if (literals.length === 0) {
-            throw "Expected 'literals.length' to be more than 0."
+            throw "expected 'literals.length' to be more than 0"
         }
         this.literals = literals.sort()
     }
 
-    parse(input: string, startIndex: number): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: input
-        }
+    parse(reader: StringReader): ArgumentParserResult<string> {
+        const ans: ArgumentParserResult<string> = { data: '' }
         //#region Get completions.
-        if (input === '') {
+        if (!reader.canRead()) {
             ans.completions = this.literals.map(v => ({ label: v, kind: CompletionItemKind.Text }))
         }
         //#endregion
+        const start = reader.cursor
+        const string = reader.readUntilOrEnd(' ')
+        ans.data = string
         //#region Get errors.
         let isFullMatch = false
         let isPartialMatch = false
         for (const literal of this.literals) {
-            if (literal === input) {
+            if (literal === string) {
                 isFullMatch = true
-            } else if (literal.toLowerCase().startsWith(input.toLowerCase())) {
+            } else if (literal.toLowerCase().startsWith(string.toLowerCase())) {
                 isPartialMatch = true
             }
         }
         if (!isFullMatch) {
             if (isPartialMatch) {
                 ans.errors = [new ParsingError(
-                    { start: startIndex, end: startIndex + input.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got '${input}'`
+                    { start: start, end: start + string.length },
+                    `expected one of ${arrayToMessage(this.literals)} but got '${string}'`
                 )]
             } else {
                 ans.errors = [new ParsingError(
-                    { start: startIndex, end: startIndex + input.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got '${input}'`,
+                    { start: start, end: start + string.length },
+                    `expected one of ${arrayToMessage(this.literals)} but got '${string}'`,
                     false
                 )]
             }

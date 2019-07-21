@@ -1,7 +1,8 @@
 import * as assert from 'power-assert'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
-import { CompletionItemKind } from 'vscode-languageserver'
 import ParsingError from '../../types/ParsingError'
+import StringReader from '../../utils/StringReader'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('LiteralParser Tests', () => {
     describe('toString() Tests', () => {
@@ -26,12 +27,12 @@ describe('LiteralParser Tests', () => {
     describe('parse() Tests', () => {
         it('Should return data', () => {
             const parser = new LiteralArgumentParser(['expected'])
-            const actual = parser.parse('actual', 0)
+            const actual = parser.parse(new StringReader('actual'))
             assert.deepStrictEqual(actual.data, 'actual')
         })
         it('Should return completions for empty input', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse('', 0)
+            const actual = parser.parse(new StringReader(''))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
@@ -45,28 +46,33 @@ describe('LiteralParser Tests', () => {
                 ]
             )
         })
+        it('Should not return completions for input beginning with space', () => {
+            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const actual = parser.parse(new StringReader(' idk'))
+            assert.deepStrictEqual(actual.completions, undefined)
+        })
         it('Should treat empty string as partial matching', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse('', 0)
+            const actual = parser.parse(new StringReader(''))
             assert.deepStrictEqual(
                 actual.errors,
-                [new ParsingError({ start: 0, end: 0 }, "expected one of 'bar' and 'foo' but got ''")]
+                [new ParsingError({ start: 0, end: 0 }, "expected one of `bar` and `foo` but got ''")]
             )
         })
         it('Should return errors when partial matching', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse('F', 0)
+            const actual = parser.parse(new StringReader('F'))
             assert.deepStrictEqual(
                 actual.errors,
-                [new ParsingError({ start: 0, end: 1 }, "expected one of 'bar' and 'foo' but got 'F'")]
+                [new ParsingError({ start: 0, end: 1 }, "expected one of `bar` and `foo` but got 'F'")]
             )
         })
         it('Should return errors when nothing matches', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse('spg!', 0)
+            const actual = parser.parse(new StringReader('spg '))
             assert.deepStrictEqual(
                 actual.errors,
-                [new ParsingError({ start: 0, end: 4 }, "expected one of 'bar' and 'foo' but got 'spg!'", false)]
+                [new ParsingError({ start: 0, end: 3 }, "expected one of `bar` and `foo` but got 'spg'", false)]
             )
         })
     })

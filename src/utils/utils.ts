@@ -4,7 +4,7 @@
  * @returns Formatted message.
  */
 export function formatMessage(msg: string) {
-    return `${msg[0].toUpperCase()}${msg.slice(1)}.`.replace(/"/g, "'")
+    return `${msg[0].toUpperCase()}${msg.slice(1)}.`.replace(/['"]/g, '`')
 }
 
 /**
@@ -13,19 +13,19 @@ export function formatMessage(msg: string) {
  * @returns Human-readable message.
  * @example
  * arrayToMessage([]) // "nothing"
- * arrayToMessage(['foo']) // "'foo'"
- * arrayToMessage(['bar', 'foo']) // "'bar' and 'foo'"
- * arrayToMessage(['bar', 'baz', 'foo']) // "'bar', 'baz' and 'foo'"
+ * arrayToMessage(['foo']) // "`foo`"
+ * arrayToMessage(['bar', 'foo']) // "`bar` and `foo`"
+ * arrayToMessage(['bar', 'baz', 'foo']) // "`bar`, `baz` and `foo`"
  */
 export function arrayToMessage(arr: string[]) {
     switch (arr.length) {
         case 0:
             return 'nothing'
         case 1:
-            return `'${arr[0]}'`
+            return `\`${arr[0]}\``
         case 2:
-            return `'${arr[0]}' and '${arr[1]}'`
+            return `\`${arr[0]}\` and \`${arr[1]}\``
         default:
-            return `'${arr.slice(0, -1).join("', '")}' and '${arr.slice(-1)[0]}'`
+            return `\`${arr.slice(0, -1).join('`, `')}\` and \`${arr.slice(-1)[0]}\``
     }
 }

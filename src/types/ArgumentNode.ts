@@ -4,9 +4,9 @@
  */
 export default interface ArgumentNode<T = string> {
     /**
-     * The `constructor.name` of the parser which can parse this argument.
+     * The `name` of this argument.
      */
-    parser: string
+    name: string
     /**
      * Parsed data of the node.
      */

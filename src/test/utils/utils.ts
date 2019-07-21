@@ -8,10 +8,10 @@ describe('utils.ts Tests', () => {
             const actual = formatMessage(message)
             assert.strictEqual(actual, 'Expected something.')
         })
-        it('Should replace double quotes with single quotes', () => {
+        it("Should replace quotes with '`'", () => {
             const message = 'expected "something"'
             const actual = formatMessage(message)
-            assert.strictEqual(actual, "Expected 'something'.")
+            assert.strictEqual(actual, 'Expected `something`.')
         })
     })
     describe('arrayToMessage() Tests', () => {
@@ -23,17 +23,17 @@ describe('utils.ts Tests', () => {
         it('Should return message for one-element array', () => {
             const arr = ['foo']
             const actual = arrayToMessage(arr)
-            assert.strictEqual(actual, "'foo'")
+            assert.strictEqual(actual, '`foo`')
         })
         it('Should return message for two-element array', () => {
             const arr = ['bar', 'foo']
             const actual = arrayToMessage(arr)
-            assert.strictEqual(actual, "'bar' and 'foo'")
+            assert.strictEqual(actual, '`bar` and `foo`')
         })
         it('Should return message for multi-element array', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
-            assert.strictEqual(actual, "'bar', 'baz' and 'foo'")
+            assert.strictEqual(actual, '`bar`, `baz` and `foo`')
         })
     })
 })

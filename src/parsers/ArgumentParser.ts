@@ -1,10 +1,16 @@
 import Parser, { ArgumentParserResult } from '../types/Parser'
+import StringReader from '../utils/StringReader'
 
 /**
  * Base class of argument parsers.
  */
 export default abstract class ArgumentParser<T> implements Parser<T> {
-    abstract parse(input: string, startIndex?: number): ArgumentParserResult<T>
+    /**
+     * Parse.
+     * @param reader Input reader.
+     * @param data All parsed data of nodes before this argument.
+     */
+    abstract parse(reader: StringReader, data?: any[]): ArgumentParserResult<T>
 
     /**
      * @example

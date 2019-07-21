@@ -22,8 +22,12 @@ export const tree: CommandTree = {
             parser: new LiteralArgumentParser(['#define']),
             description: 'Define an entity tag or a fake player. Will be used for completions.',
             children: {
-                arg: {
-                    name: ''
+                name: 'type',
+                parser: new LiteralArgumentParser(['fakePlayer', 'tag']),
+                description: 'Type of the definition',
+                children: {
+                    name: 'id',
+                    parser: new FakePlayer
                 }
             }
         }
