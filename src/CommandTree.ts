@@ -1,5 +1,6 @@
 import ArgumentParser from './parsers/ArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
+import StringArgumentParser from './parsers/StringArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands/
@@ -27,7 +28,7 @@ export const tree: CommandTree = {
                 description: 'Type of the definition',
                 children: {
                     name: 'id',
-                    parser: new FakePlayer
+                    parser: new StringArgumentParser('QuotablePhrase')
                 }
             }
         }

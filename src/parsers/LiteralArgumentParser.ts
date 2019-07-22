@@ -10,7 +10,7 @@ export default class LiteralArgumentParser implements ArgumentParser<string> {
 
     constructor(literals: string[]) {
         if (literals.length === 0) {
-            throw "expected 'literals.length' to be more than 0"
+            throw new Error("expected 'literals.length' to be more than 0")
         }
         this.literals = literals.sort()
     }
