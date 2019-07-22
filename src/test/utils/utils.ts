@@ -1,4 +1,5 @@
 import * as assert from 'power-assert'
+import { describe, it } from 'mocha'
 import { formatMessage, arrayToMessage } from '../../utils/utils'
 
 describe('utils.ts Tests', () => {
@@ -7,11 +8,6 @@ describe('utils.ts Tests', () => {
             const message = 'expected something'
             const actual = formatMessage(message)
             assert.strictEqual(actual, 'Expected something.')
-        })
-        it("Should replace quotes with '`'", () => {
-            const message = 'expected "something"'
-            const actual = formatMessage(message)
-            assert.strictEqual(actual, 'Expected `something`.')
         })
     })
     describe('arrayToMessage() Tests', () => {

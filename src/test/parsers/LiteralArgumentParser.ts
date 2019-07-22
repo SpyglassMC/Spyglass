@@ -3,6 +3,7 @@ import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { describe, it } from 'mocha'
 
 describe('LiteralParser Tests', () => {
     describe('toString() Tests', () => {

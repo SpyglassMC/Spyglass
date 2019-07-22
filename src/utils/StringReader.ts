@@ -47,15 +47,19 @@ export default class StringReader {
         if (str) {
             const num = Number(str)
             if (isNaN(num)) {
-                const end = this.cursor + 1
+                const end = this.cursor
                 this.cursor = start
-                throw new ParsingError({ start, end }, `expected a number but got '${str}'`, false)
+                throw new ParsingError({ start, end }, `expected a number but got \`${str}\``)
             }
             return num
         } else {
             const end = this.cursor + 1
-            this.cursor = start
-            throw new ParsingError({ start, end }, 'expected a number but got nothing')
+            const value = this.peek()
+            if (value) {
+                throw new ParsingError({ start, end }, `expected a number but got \`${this.peek()}\` at beginning`, false)
+            } else {
+                throw new ParsingError({ start, end }, 'expected a number but got nothing')
+            }
         }
     }
 
@@ -67,12 +71,12 @@ export default class StringReader {
         const num = this.readNumber()
         if (parseInt(num.toString()) !== num) {
             // num is not int
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected an integer but got ${num}`)
         }
         if (num < -2147483648 || num > 2147483647) {
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${num}`)
         }
@@ -87,12 +91,12 @@ export default class StringReader {
         const num = this.readNumber()
         if (parseInt(num.toString()) !== num) {
             // num is not int
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a long but got ${num}`)
         }
         if (num < -9223372036854775808 || num > 9223372036854775807) {
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a long between -9223372036854775808..9223372036854775807 but got ${num}`)
         }
@@ -106,7 +110,7 @@ export default class StringReader {
         const start = this.cursor
         const num = this.readNumber()
         if (num < -3.40282347E+38 || num > 3.40282347E+38) {
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a float between -3.40282347E+38..3.40282347E+38 but got ${num}`)
         }
@@ -120,7 +124,7 @@ export default class StringReader {
         const start = this.cursor
         const num = this.readNumber()
         if (num < -1.79769313486231570E+308 || num > 1.79769313486231570E+308) {
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a double between -1.79769313486231570E+308..1.79769313486231570E+308 but got ${num}`)
         }
@@ -147,9 +151,9 @@ export default class StringReader {
             this.skip()
             return this.readUntilQuote(<'"' | "'">quote)
         } else {
-            const start = this.cursor + 1
-            const end = this.cursor + 2
-            throw new ParsingError({ start, end }, `expected a quote (\`'\` or \`"\`) but got '${quote}'`, false)
+            const start = this.cursor
+            const end = this.cursor + 1
+            throw new ParsingError({ start, end }, `expected a quote (\`'\` or \`"\`) but got \`${quote}\``, false)
         }
     }
 
@@ -169,9 +173,9 @@ export default class StringReader {
                     ans += c
                     escaped = false
                 } else {
-                    const errStart = this.cursor
+                    const errStart = this.cursor - 1
                     this.cursor = start
-                    throw new ParsingError({ start: errStart, end: errStart + 1 }, `unexpected escape character '${c}'`)
+                    throw new ParsingError({ start: errStart, end: errStart + 1 }, `unexpected escape character \`${c}\``)
                 }
             } else {
                 if (c === escapeChar) {
@@ -230,10 +234,10 @@ export default class StringReader {
         } else if (string === 'false') {
             return false
         } else {
-            const end = this.cursor + 1
+            const end = this.cursor
             this.cursor = start
             const toleratable = 'true'.startsWith(string.toLowerCase()) || 'false'.startsWith(string.toLowerCase())
-            throw new ParsingError({ start, end }, `expected a boolean but got '${string}'`, toleratable)
+            throw new ParsingError({ start, end }, `expected a boolean but got \`${string}\``, toleratable)
         }
     }
 
@@ -244,9 +248,9 @@ export default class StringReader {
         const start = this.cursor + 1
         const end = this.cursor + 2
         if (!this.canRead()) {
-            throw new ParsingError({ start, end }, `expected '${c}' but got nothing`)
+            throw new ParsingError({ start, end }, `expected \`${c}\` but got nothing`)
         } else if (this.peek() !== c) {
-            throw new ParsingError({ start, end }, `expected '${c}' but got '${this.peek()}'`, false)
+            throw new ParsingError({ start, end }, `expected \`${c}\` but got \`${this.peek()}\``, false)
         }
     }
 

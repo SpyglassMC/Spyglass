@@ -1,4 +1,3 @@
---require ts-node/register
---compilerOptions '{"target":"es6"}'
---ui tdd
-./src/test/**/*.ts
+--require espower-typescript/guess
+--watch --watch-extensions ts
+src/test/**/*.ts
