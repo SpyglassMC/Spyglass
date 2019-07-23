@@ -6,11 +6,13 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
 
 export default class LiteralArgumentParser implements ArgumentParser<string> {
+    readonly identity = 'literal'
+
     private readonly literals: string[]
 
     constructor(literals: string[]) {
         if (literals.length === 0) {
-            throw new Error("expected 'literals.length' to be more than 0")
+            throw new Error('expected `literals.length` to be more than 0')
         }
         this.literals = literals.sort()
     }
@@ -37,14 +39,21 @@ export default class LiteralArgumentParser implements ArgumentParser<string> {
         }
         if (!isFullMatch) {
             if (isPartialMatch) {
-                ans.errors = [new ParsingError(
-                    { start: start, end: start + string.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got '${string}'`
-                )]
+                if (string.length > 0) {
+                    ans.errors = [new ParsingError(
+                        { start: start, end: start + string.length },
+                        `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``
+                    )]
+                } else {
+                    ans.errors = [new ParsingError(
+                        { start: start, end: start + 1 },
+                        `expected one of ${arrayToMessage(this.literals)} but got nothing`
+                    )]
+                }
             } else {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + string.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got '${string}'`,
+                    `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``,
                     false
                 )]
             }

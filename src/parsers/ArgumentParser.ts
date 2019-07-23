@@ -6,6 +6,11 @@ import StringReader from '../utils/StringReader'
  */
 export default abstract class ArgumentParser<T> implements Parser<T> {
     /**
+     * Identity of the parser.
+     */
+    abstract readonly identity: string
+
+    /**
      * Parse.
      * @param reader Input reader.
      * @param parsed All parsed data of nodes before this argument.
@@ -13,10 +18,13 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
     abstract parse(reader: StringReader, parsed?: any[]): ArgumentParserResult<T>
 
     /**
-     * @example
-     * return '(foo|bar)'
+     * Default implements to return something like `<id: string>`
      */
-    abstract toString(...args: any): string
+    toString(name?: string, optional?: boolean): string {
+        const prefix = optional ? '[' : '<'
+        const suffix = optional ? ']' : '>'
+        return `${prefix}${name}: ${this.identity}${suffix}`
+    }
 
     /**
      * Get examples of this argument.

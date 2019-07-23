@@ -18,17 +18,35 @@ export const tree: CommandTree = {
 
     ],
     comment: [
-        { // #define (fakePlayer|tag) <id> [description]
+        { // #define (fakePlayer|tag|objective) <id> [description]
             name: '#define',
             parser: new LiteralArgumentParser(['#define']),
             description: 'Define an entity tag or a fake player. Will be used for completions.',
             children: {
                 name: 'type',
-                parser: new LiteralArgumentParser(['fakePlayer', 'tag']),
+                parser: new LiteralArgumentParser(['fakePlayer', 'tag', 'objective']),
                 description: 'Type of the definition',
                 children: {
                     name: 'id',
-                    parser: new StringArgumentParser('QuotablePhrase')
+                    parser: new class $ implements ArgumentParser<string> {
+                        parse(reader: import("./utils/StringReader").default, parsed?: any[] | undefined): import("./types/Parser").ArgumentParserResult<string> {
+                            throw new Error("Method not implemented.");
+                        }
+                        toString(...args: any): string {
+                            throw new Error("Method not implemented.");
+                        }
+                        getExamples(): string[] {
+                            throw new Error("Method not implemented.");
+                        }
+                    }(),
+                    description: 'ID',
+                    executable: true,
+                    children: {
+                        name: 'description',
+                        parser: new class { }(),
+                        description: 'Description of the definition',
+                        executable: true
+                    }
                 }
             }
         }

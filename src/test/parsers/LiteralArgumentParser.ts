@@ -6,6 +6,16 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 
 describe('LiteralParser Tests', () => {
+    describe('constructor() Tests', () => {
+        it('Should throw error if the literals is empty', () => {
+            try {
+                new LiteralArgumentParser([])
+            } catch (e) {
+                const er = <Error>e
+                assert(er.message.match(/expected `literals\.length` to be more than 0/))
+            }
+        })
+    })
     describe('toString() Tests', () => {
         it('Should return correctly for single literal', () => {
             const parser = new LiteralArgumentParser(['foo'])
@@ -26,10 +36,15 @@ describe('LiteralParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        it('Should return data', () => {
+        it('Should return data if matching', () => {
+            const parser = new LiteralArgumentParser(['expected'])
+            const actual = parser.parse(new StringReader('expected'))
+            assert(actual.data === 'expected')
+        })
+        it('Should return data even if not matching', () => {
             const parser = new LiteralArgumentParser(['expected'])
             const actual = parser.parse(new StringReader('actual'))
-            assert.deepStrictEqual(actual.data, 'actual')
+            assert(actual.data === 'actual')
         })
         it('Should return completions for empty input', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
@@ -50,31 +65,34 @@ describe('LiteralParser Tests', () => {
         it('Should not return completions for input beginning with space', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
             const actual = parser.parse(new StringReader(' idk'))
-            assert.deepStrictEqual(actual.completions, undefined)
+            assert(actual.completions === undefined)
         })
         it('Should treat empty string as partial matching', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse(new StringReader(''))
-            assert.deepStrictEqual(
-                actual.errors,
-                [new ParsingError({ start: 0, end: 0 }, "expected one of `bar` and `foo` but got ''")]
-            )
+            const { errors } = parser.parse(new StringReader(''))
+            const pe = (<ParsingError[]>errors)[0]
+            assert(pe.range.start === 0)
+            assert(pe.range.end === 1)
+            assert(pe.message.match(/expected one of `bar` and `foo` but got nothing/))
+            assert(pe.tolerable === true)
         })
         it('Should return errors when partial matching', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse(new StringReader('F'))
-            assert.deepStrictEqual(
-                actual.errors,
-                [new ParsingError({ start: 0, end: 1 }, "expected one of `bar` and `foo` but got 'F'")]
-            )
+            const { errors } = parser.parse(new StringReader('F'))
+            const pe = (<ParsingError[]>errors)[0]
+            assert(pe.range.start === 0)
+            assert(pe.range.end === 1)
+            assert(pe.message.match(/expected one of `bar` and `foo` but got `F`/))
+            assert(pe.tolerable === true)
         })
-        it('Should return errors when nothing matches', () => {
+        it('Should return untolerable error when nothing matches', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.parse(new StringReader('spg '))
-            assert.deepStrictEqual(
-                actual.errors,
-                [new ParsingError({ start: 0, end: 3 }, "expected one of `bar` and `foo` but got 'spg'", false)]
-            )
+            const { errors } = parser.parse(new StringReader('spg'))
+            const pe = (<ParsingError[]>errors)[0]
+            assert(pe.range.start === 0)
+            assert(pe.range.end === 3)
+            assert(pe.message.match(/expected one of `bar` and `foo` but got `spg`/))
+            assert(pe.tolerable === false)
         })
     })
 })

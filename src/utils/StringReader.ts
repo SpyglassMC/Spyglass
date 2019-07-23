@@ -90,44 +90,21 @@ export default class StringReader {
         const start = this.cursor
         const num = this.readNumber()
         if (parseInt(num.toString()) !== num) {
-            // num is not int
+            // num is float
             const end = this.cursor
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a long but got ${num}`)
         }
-        if (num < -9223372036854775808 || num > 9223372036854775807) {
-            const end = this.cursor
-            this.cursor = start
-            throw new ParsingError({ start, end }, `expected a long between -9223372036854775808..9223372036854775807 but got ${num}`)
-        }
         return num
     }
 
-    /**
-     * @throws 
-     */
     readFloat() {
-        const start = this.cursor
         const num = this.readNumber()
-        if (num < -3.40282347E+38 || num > 3.40282347E+38) {
-            const end = this.cursor
-            this.cursor = start
-            throw new ParsingError({ start, end }, `expected a float between -3.40282347E+38..3.40282347E+38 but got ${num}`)
-        }
         return num
     }
 
-    /**
-     * @throws 
-     */
     readDouble() {
-        const start = this.cursor
         const num = this.readNumber()
-        if (num < -1.79769313486231570E+308 || num > 1.79769313486231570E+308) {
-            const end = this.cursor
-            this.cursor = start
-            throw new ParsingError({ start, end }, `expected a double between -1.79769313486231570E+308..1.79769313486231570E+308 but got ${num}`)
-        }
         return num
     }
 
@@ -245,8 +222,8 @@ export default class StringReader {
      * @throws
      */
     expect(c: string) {
-        const start = this.cursor + 1
-        const end = this.cursor + 2
+        const start = this.cursor
+        const end = this.cursor + 1
         if (!this.canRead()) {
             throw new ParsingError({ start, end }, `expected \`${c}\` but got nothing`)
         } else if (this.peek() !== c) {

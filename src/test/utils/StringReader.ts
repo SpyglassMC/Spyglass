@@ -3,7 +3,7 @@ import StringReader from '../../utils/StringReader'
 import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 
-describe.only('StringReader Tests', () => {
+describe('StringReader Tests', () => {
     describe('passedString Tests', () => {
         it('Should return correctly when cursor is 0', () => {
             const reader = new StringReader('foo')
@@ -48,6 +48,14 @@ describe.only('StringReader Tests', () => {
             const reader = new StringReader('foo')
             const actual = reader.read()
             assert(actual === 'f')
+        })
+    })
+    describe('skipWhiteSpace() Tests', () => {
+        it('Should skip white spaces', () => {
+            const reader = new StringReader('f \n\r \n o')
+            reader.cursor = 1
+            reader.skipWhiteSpace()
+            assert(reader.cursor === 7)
         })
     })
     describe('readInt() Tests', () => {
@@ -119,6 +127,54 @@ describe.only('StringReader Tests', () => {
             }
         })
     })
+    describe('readLong() Tests', () => {
+        it('Should return correctly', () => {
+            const reader = new StringReader('2333foo')
+            const actualResult = reader.readLong()
+            const actualCursor = reader.cursor
+            assert(actualResult === 2333)
+            assert(actualCursor === 4)
+        })
+        it('Should throw error for float numbers', () => {
+            const reader = new StringReader('1.2')
+            try {
+                reader.readLong()
+            } catch (e) {
+                const { range, message, tolerable } = <ParsingError>e
+                assert(message.match(/expected a long but got 1\.2/))
+                assert(range.start === 0)
+                assert(range.end === 3)
+                assert(tolerable === true)
+            }
+        })
+    })
+    describe('readFloat() Tests', () => {
+        it('Should return correctly', () => {
+            const reader = new StringReader('12.3foo')
+            const actualResult = reader.readFloat()
+            const actualCursor = reader.cursor
+            assert(actualResult === 12.3)
+            assert(actualCursor === 4)
+        })
+    })
+    describe('readDouble() Tests', () => {
+        it('Should return correctly', () => {
+            const reader = new StringReader('12.3foo')
+            const actualResult = reader.readDouble()
+            const actualCursor = reader.cursor
+            assert(actualResult === 12.3)
+            assert(actualCursor === 4)
+        })
+    })
+    describe('readUnquotedString() Tests', () => {
+        it('Should return correctly', () => {
+            const reader = new StringReader('hahaha$')
+            const actualResult = reader.readUnquotedString()
+            const actualCursor = reader.cursor
+            assert(actualResult === 'hahaha')
+            assert(actualCursor === 6)
+        })
+    })
     describe('readQuotedString() Tests', () => {
         it('Should return empty string when cannot read', () => {
             const reader = new StringReader('')
@@ -172,12 +228,57 @@ describe.only('StringReader Tests', () => {
             }
         })
     })
+    describe('readUntilOrEnd() Tests', () => {
+        it('Should read until specific character', () => {
+            const reader = new StringReader('foo bar')
+            const actualResult = reader.readUntilOrEnd(' ')
+            const actualCursor = reader.cursor
+            assert(actualResult === 'foo')
+            assert(actualCursor === 4)
+        })
+        it('Should read until end', () => {
+            const reader = new StringReader('foobar')
+            const actualResult = reader.readUntilOrEnd(' ')
+            const actualCursor = reader.cursor
+            assert(actualResult === 'foobar')
+            assert(actualCursor === 6)
+        })
+    })
+    describe('readString() Tests', () => {
+        it('Should return empty string if cannot read', () => {
+            const reader = new StringReader('')
+            const actualResult = reader.readString()
+            const actualCursor = reader.cursor
+            assert(actualResult === '')
+            assert(actualCursor === 0)
+        })
+        it('Should read quoted string', () => {
+            const reader = new StringReader('"foobar"')
+            const actualResult = reader.readString()
+            const actualCursor = reader.cursor
+            assert(actualResult === 'foobar')
+            assert(actualCursor === 8)
+        })
+        it('Should read unquoted string', () => {
+            const reader = new StringReader('foobar')
+            const actualResult = reader.readString()
+            const actualCursor = reader.cursor
+            assert(actualResult === 'foobar')
+            assert(actualCursor === 6)
+        })
+    })
     describe('readBoolean() Tests', () => {
-        it('Should return correctly', () => {
-            // FIXME: When Mojang fixes that quoted string can be parsed as boolean.
+        it('Should return true correctly', () => {
+            // FIXME: When Mojang fixes that quoted string in commands can be parsed as boolean.
             const reader = new StringReader('"true"')
             const actual = reader.readBoolean()
             assert(actual === true)
+        })
+        it('Should return false correctly', () => {
+            // FIXME: When Mojang fixes that quoted string in commands can be parsed as boolean.
+            const reader = new StringReader('"false"')
+            const actual = reader.readBoolean()
+            assert(actual === false)
         })
         it('Should throw tolerable error', () => {
             const reader = new StringReader('Tru')
@@ -204,6 +305,37 @@ describe.only('StringReader Tests', () => {
             }
         })
     })
+    describe('expect() Tests', () => {
+        it('Should not throw when string match the expectation', () => {
+            const reader = new StringReader('foo')
+            reader.expect('f')
+        })
+        it('Should throw tolerable error when cannot read', () => {
+            const reader = new StringReader('f')
+            reader.read()
+            try {
+                reader.expect('f')
+            } catch (e) {
+                const { range, message, tolerable } = <ParsingError>e
+                assert(message.match(/expected `f` but got nothing/))
+                assert(range.start === 1)
+                assert(range.end === 2)
+                assert(tolerable === true)
+            }
+        })
+        it('Should throw untolerable error when not matching', () => {
+            const reader = new StringReader('foo')
+            try {
+                reader.expect('b')
+            } catch (e) {
+                const { range, message, tolerable } = <ParsingError>e
+                assert(message.match(/expected `b` but got `f`/))
+                assert(range.start === 0)
+                assert(range.end === 1)
+                assert(tolerable === false)
+            }
+        })
+    })
     describe('readRemaining() Tests', () => {
         it('Should return correctly', () => {
             const reader = new StringReader('fooo')
@@ -212,6 +344,46 @@ describe.only('StringReader Tests', () => {
             const actualCursor = reader.cursor
             assert(actualResult === 'ooo')
             assert(actualCursor === 4)
+        })
+    })
+    describe('canInNumber() Tests', () => {
+        it('Should return true', () => {
+            const actual = StringReader.canInNumber('0')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = StringReader.canInNumber('a')
+            assert(actual === false)
+        })
+    })
+    describe('isWhiteSpace() Tests', () => {
+        it('Should return true', () => {
+            const actual = StringReader.isWhiteSpace(' ')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = StringReader.isWhiteSpace('a')
+            assert(actual === false)
+        })
+    })
+    describe('canInUnquotedString() Tests', () => {
+        it('Should return true', () => {
+            const actual = StringReader.canInUnquotedString('a')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = StringReader.canInUnquotedString(' ')
+            assert(actual === false)
+        })
+    })
+    describe('isQuote() Tests', () => {
+        it('Should return true', () => {
+            const actual = StringReader.isQuote('"')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = StringReader.isQuote('a')
+            assert(actual === false)
         })
     })
 })

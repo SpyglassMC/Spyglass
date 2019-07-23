@@ -3,14 +3,15 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 
-export default class StringArgumentParser implements ArgumentParser<string> {
-    constructor(private readonly type: StringArgumentParserType) { }
+export default class StringArgumentParser extends ArgumentParser<string> {
+    readonly identity = 'string'
 
-    parse(reader: StringReader, parsed?: any[] | undefined): ArgumentParserResult<string> {
+    constructor(private readonly type: StringArgumentParserType = 'SingleWord') { super() }
+
+    parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: ''
         }
-        const test: unknown = ''
         try {
             switch (this.type) {
                 case 'GreedyPhrase':
@@ -25,18 +26,18 @@ export default class StringArgumentParser implements ArgumentParser<string> {
                     break
             }
         } catch (e) {
-            const err = <ParsingError>e
-            ans.errors = [err]
+            const pe = <ParsingError>e
+            ans.errors = [pe]
         }
         return ans
     }
 
-    toString(name: string, executable: boolean): string {
-        throw new Error('Method not implemented.')
-    }
-
     getExamples(): string[] {
-        throw new Error('Method not implemented.')
+        const ans: string[] = []
+        if (this.type === 'SingleWord') ans.push('foo')
+        if (this.type === 'QuotablePhrase') ans.push('foo', '"bar"', `'are you "crazy"'`)
+        if (this.type === 'GreedyPhrase') ans.push('^Whatever you like!$')
+        return ans
     }
 }
 

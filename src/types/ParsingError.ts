@@ -1,5 +1,5 @@
-import { CompletionItem, Range, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
-import { formatMessage } from '../utils/utils';
+import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
+import { formatMessage } from '../utils/utils'
 
 /**
  * Represent an error occured while parsing.
@@ -28,16 +28,12 @@ export default class ParsingError {
     /**
      * Get diagnostic of the parsing error.
      */
-    getDiagnostic(line: number) {
+    getDiagnostic(line: number): Diagnostic {
         return {
             range: { start: { line, character: this.range.start }, end: { line, character: this.range.end } },
             severity: this.severity,
             source: 'datapack',
-            message: this.message
+            message: formatMessage(this.message)
         }
-    }
-
-    toString() {
-        return `[${this.range.start}, ${this.range.end}) ${formatMessage(this.message)}`
     }
 }
