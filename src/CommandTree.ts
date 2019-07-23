@@ -1,6 +1,7 @@
 import ArgumentParser from './parsers/ArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
-import StringArgumentParser from './parsers/StringArgumentParser'
+import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
+import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands/
@@ -18,7 +19,7 @@ export const tree: CommandTree = {
 
     ],
     comment: [
-        { // #define (fakePlayer|tag|objective) <id> [description]
+        { // #define (fakePlayer|tag|objective) <id: string> [description: string]
             name: '#define',
             parser: new LiteralArgumentParser(['#define']),
             description: 'Define an entity tag or a fake player. Will be used for completions.',
@@ -28,22 +29,12 @@ export const tree: CommandTree = {
                 description: 'Type of the definition',
                 children: {
                     name: 'id',
-                    parser: new class $ implements ArgumentParser<string> {
-                        parse(reader: import("./utils/StringReader").default, parsed?: any[] | undefined): import("./types/Parser").ArgumentParserResult<string> {
-                            throw new Error("Method not implemented.");
-                        }
-                        toString(...args: any): string {
-                            throw new Error("Method not implemented.");
-                        }
-                        getExamples(): string[] {
-                            throw new Error("Method not implemented.");
-                        }
-                    }(),
+                    parser: new DefinitionIDArgumentParser(),
                     description: 'ID',
                     executable: true,
                     children: {
                         name: 'description',
-                        parser: new class { }(),
+                        parser: new DefinitionDescriptionArgumentParser(),
                         description: 'Description of the definition',
                         executable: true
                     }

@@ -22,8 +22,8 @@ export default interface LocalCache {
      * All defined definitions.
      */
     def: {
-        objectives?: Definition[],
         fakePlayers?: Definition[],
+        objectives?: Definition[],
         tags?: Definition[]
     }
 }
@@ -41,4 +41,8 @@ export interface Definition {
      * Description of the definition.
      */
     description?: string
+}
+
+export function isDefinitionType(value: any): value is 'fakePlayer' | 'objective' | 'tag' {
+    return value === 'fakePlayer' || value === 'objective' || value === 'tag'
 }

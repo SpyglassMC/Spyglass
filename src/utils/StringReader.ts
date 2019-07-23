@@ -174,14 +174,14 @@ export default class StringReader {
      */
     readUntilOrEnd(terminator: string) {
         let ans = ''
-        while (this.canRead()) {
+        do {
             const c = this.read()
             if (terminator === c) {
                 return ans
             } else {
                 ans += c
             }
-        }
+        } while (this.canRead())
         return ans
     }
 
