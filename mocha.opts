@@ -1,3 +1,0 @@
---require espower-typescript/guess
---watch --watch-extensions ts
-src/test/**/*.ts
