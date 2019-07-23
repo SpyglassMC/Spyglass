@@ -7,41 +7,43 @@ import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescription
  * Command tree of Minecraft Java Edition 1.14.4 commands/
  */
 export const tree: CommandTree = {
-    line: [
-        {
+    line: {
+        command: {
             redirect: 'command'
         },
-        {
+        comment: {
             redirect: 'comment'
         }
-    ],
-    command: [
+    },
+    command: {
 
-    ],
-    comment: [
-        { // #define (fakePlayer|tag|objective) <id: string> [description: string]
-            name: '#define',
+    },
+    comment: { // #define (fakePlayer|tag|objective) <id: string> [description: string]
+        '#define': {
             parser: new LiteralArgumentParser(['#define']),
             description: 'Define an entity tag or a fake player. Will be used for completions.',
             children: {
-                name: 'type',
-                parser: new LiteralArgumentParser(['fakePlayer', 'tag', 'objective']),
-                description: 'Type of the definition',
-                children: {
-                    name: 'id',
-                    parser: new DefinitionIDArgumentParser(),
-                    description: 'ID',
-                    executable: true,
+                type: {
+                    parser: new LiteralArgumentParser(['fakePlayer', 'tag', 'objective']),
+                    description: 'Type of the definition',
                     children: {
-                        name: 'description',
-                        parser: new DefinitionDescriptionArgumentParser(),
-                        description: 'Description of the definition',
-                        executable: true
+                        id: {
+                            parser: new DefinitionIDArgumentParser(),
+                            description: 'ID',
+                            executable: true,
+                            children: {
+                                description: {
+                                    parser: new DefinitionDescriptionArgumentParser(),
+                                    description: 'Description of the definition',
+                                    executable: true
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    ]
+    }
 }
 
 export default tree
@@ -49,22 +51,18 @@ export default tree
 /**
  * Represent a command tree.
  */
-interface CommandTree {
-    [id: string]: CommandTreeNode<any> | CommandTreeNode<any>[]
+export interface CommandTree {
+    [path: string]: CommandTreeNodeChildren
 }
 
 /**
- * Represent a node in the command tree.
+ * Represent a node in a command tree.
  */
-interface CommandTreeNode<T> {
+export interface CommandTreeNode<T> {
     /**
      * The argument parser to parse this argument.
      */
     parser?: ArgumentParser<T>,
-    /**
-     * The name of this argument.
-     */
-    name?: string,
     /**
      * The description of the current argument.
      */
@@ -76,9 +74,16 @@ interface CommandTreeNode<T> {
     /**
      * Children of this tree node.
      */
-    children?: CommandTreeNode<any> | CommandTreeNode<any>[],
+    children?: CommandTreeNodeChildren,
     /**
      * Redirect the parsing process to specific node.
      */
     redirect?: string
+}
+
+/**
+ * Represent `children` in a node.
+ */
+export interface CommandTreeNodeChildren {
+    [name: string]: CommandTreeNode<any>
 }

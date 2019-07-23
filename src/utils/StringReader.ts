@@ -1,9 +1,17 @@
 import ParsingError from '../types/ParsingError'
 
 export default class StringReader {
+    public readonly string: string
     public cursor = 0
 
-    constructor(public readonly string: string) { }
+    constructor(base: string | StringReader) {
+        if (typeof base === 'string') {
+            this.string = base
+        } else {
+            this.cursor = base.cursor
+            this.string = base.string
+        }
+    }
 
     get passedString() {
         return this.string.slice(0, this.cursor)

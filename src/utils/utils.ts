@@ -29,3 +29,17 @@ export function arrayToMessage(arr: string[]) {
             return `\`${arr.slice(0, -1).join('`, `')}\` and \`${arr.slice(-1)[0]}\``
     }
 }
+
+/**
+ * Get specific value of the object according to the path.
+ * @param obj Object.
+ * @param path Path.
+ */
+export function resolvePathOfObject(obj: any, path: string) {
+    const parts = path.split(/\./g)
+    let ans = obj
+    for (const part of parts) {
+        ans = ans[part]
+    }
+    return ans
+}

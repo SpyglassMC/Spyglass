@@ -4,6 +4,18 @@ import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 
 describe('StringReader Tests', () => {
+    describe('constructor() Tests', () => {
+        it('Should return a StringReader based on a string', () => {
+            const reader = new StringReader('foo')
+            assert(reader.cursor === 0)
+            assert(reader.string === 'foo')
+        })
+        it('Should return a StringReader based on another StringReader', () => {
+            const reader = new StringReader(new StringReader('foo'))
+            assert(reader.cursor === 0)
+            assert(reader.string === 'foo')
+        })
+    })
     describe('passedString Tests', () => {
         it('Should return correctly when cursor is 0', () => {
             const reader = new StringReader('foo')

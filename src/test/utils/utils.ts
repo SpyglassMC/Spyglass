@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage } from '../../utils/utils'
+import { formatMessage, arrayToMessage, resolvePathOfObject } from '../../utils/utils'
 
 describe('utils.ts Tests', () => {
     describe('formatMessage() Tests', () => {
@@ -30,6 +30,26 @@ describe('utils.ts Tests', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
             assert(actual, '`bar` === `baz` and `foo`')
+        })
+    })
+    describe('resolvePathOfObject() Tests', () => {
+        it('Should resolve string key of object', () => {
+            const path = 'foo'
+            const obj = { foo: 'foo' }
+            const actual = resolvePathOfObject(obj, path)
+            assert(actual === 'foo')
+        })
+        it('Should resolve number key of array', () => {
+            const path = '1'
+            const obj = ['foo', 'bar']
+            const actual = resolvePathOfObject(obj, path)
+            assert(actual === 'bar')
+        })
+        it('Should resolve recursive keys', () => {
+            const path = 'foo.1.bar.0'
+            const obj = { foo: ['baz', { bar: ['qux'] }] }
+            const actual = resolvePathOfObject(obj, path)
+            assert(actual === 'qux')
         })
     })
 })
