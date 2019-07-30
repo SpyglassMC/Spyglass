@@ -16,31 +16,31 @@ export default interface LocalCache {
         itemTags?: string[],
         objectives?: string[],
         fakeNames?: string[],
-        tags?: string[]
+        tags?: string[],
+        [type: string]: string[] | undefined
     },
     /**
      * All defined definitions.
      */
     def: {
-        fakePlayers?: Definition[],
-        objectives?: Definition[],
-        tags?: Definition[]
+        fakePlayers?: Definition,
+        objectives?: Definition,
+        tags?: Definition,
+        [type: string]: Definition | undefined
     }
 }
 
 /**
- * 
+ * Definition.
  */
 export interface Definition {
     /**
-     * ID of the definition.
-     * e.g. `id` of `#define tag debug` is `debug`.
-     */
-    id?: string,
-    /**
      * Description of the definition.
+     * @example
+     * `#define tag debug` => { debug: undefined }
+     * `#define tag debug hh` => { debug: 'hh' }
      */
-    description?: string
+    [id: string]: string | undefined
 }
 
 export function isDefinitionType(value: any): value is 'fakePlayer' | 'objective' | 'tag' {

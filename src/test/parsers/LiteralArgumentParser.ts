@@ -4,12 +4,14 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
+import { fail } from 'power-assert'
 
 describe('LiteralParser Tests', () => {
     describe('constructor() Tests', () => {
         it('Should throw error if the literals is empty', () => {
             try {
                 new LiteralArgumentParser([])
+                fail()
             } catch (e) {
                 const er = <Error>e
                 assert(er.message.match(/expected `literals\.length` to be more than 0/))

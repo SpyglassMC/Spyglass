@@ -2,6 +2,7 @@ import * as assert from 'power-assert'
 import StringReader from '../../utils/StringReader'
 import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
+import { fail } from 'power-assert'
 
 describe('StringReader Tests', () => {
     describe('constructor() Tests', () => {
@@ -82,6 +83,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('')
             try {
                 reader.readInt()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a number but got nothing/))
@@ -94,6 +96,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('2.3.3')
             try {
                 reader.readInt()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a number but got `2.3.3`/))
@@ -106,6 +109,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('foo')
             try {
                 reader.readInt()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a number but got `f` at beginning/))
@@ -118,6 +122,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('1.2')
             try {
                 reader.readInt()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected an integer but got 1\.2/))
@@ -130,6 +135,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('9147483647')
             try {
                 reader.readInt()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected an integer between .* but got 9147483647/))
@@ -151,6 +157,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('1.2')
             try {
                 reader.readLong()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a long but got 1\.2/))
@@ -207,6 +214,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('foo')
             try {
                 reader.readQuotedString()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a quote.*but got `f`/))
@@ -219,6 +227,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('"haha')
             try {
                 reader.readQuotedString()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected ending quote `"` but got nothing/))
@@ -231,6 +240,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader(`"haha\\'`)
             try {
                 reader.readQuotedString()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/unexpected escape character `'`/))
@@ -296,6 +306,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('Tru')
             try {
                 reader.readBoolean()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a boolean but got `Tru`/))
@@ -308,6 +319,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('Tuesday')
             try {
                 reader.readBoolean()
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected a boolean but got `Tuesday`/))
@@ -327,6 +339,7 @@ describe('StringReader Tests', () => {
             reader.read()
             try {
                 reader.expect('f')
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected `f` but got nothing/))
@@ -339,6 +352,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('foo')
             try {
                 reader.expect('b')
+                fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
                 assert(message.match(/expected `b` but got `f`/))

@@ -16,7 +16,7 @@ export const tree: CommandTree = {
         }
     },
     command: {
-
+        
     },
     comment: { // #define (fakePlayer|tag|objective) <id: string> [description: string]
         '#define': {
