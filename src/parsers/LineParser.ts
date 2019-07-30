@@ -2,8 +2,7 @@ import Line from '../types/Line'
 import Parser from '../types/Parser'
 import StringReader from '../utils/StringReader'
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from '../CommandTree'
-import LocalCache from '../types/LocalCache';
-import { Definition } from 'vscode-languageserver';
+import LocalCache from '../types/LocalCache'
 
 export default class LineParser implements Parser<Line> {
     constructor(private readonly tree: CommandTree) { }
@@ -31,7 +30,7 @@ export default class LineParser implements Parser<Line> {
                     nodes: [...parsed.nodes, data]
                 }
                 if (parsed.cache || cache) {
-                    ans.cache = combineLocalCache(parsed.cache, cache)
+                    // ans.cache = combineLocalCache(parsed.cache, cache)
                 }
                 if (parsed.completions && parsed.completions.length > 0) {
                     ans.completions = completions

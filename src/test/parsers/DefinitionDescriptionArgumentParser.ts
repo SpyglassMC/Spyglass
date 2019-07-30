@@ -40,8 +40,9 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
         it('Should return cache correctly', () => {
             const parser = new DefinitionDescriptionArgumentParser()
             const reader = new StringReader('foo')
+            // FIXME
             const { id, description } =
-                ((parser.parse(reader, ['#define', 'tag', 'debugger']).cache as LocalCache).def.tags as Definition[])[0]
+                ((parser.parse(reader, ['#define', 'tag', 'debugger']).cache as LocalCache).def.tags as Definition)
             assert(id === 'debugger')
             assert(description === 'foo')
         })
