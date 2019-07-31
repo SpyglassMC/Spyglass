@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescriptionArgumentParser'
-import LocalCache, { Definition } from '../../types/LocalCache'
+import LocalCache, { DescriptionsOfIDs } from '../../types/LocalCache'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
@@ -42,7 +42,7 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
             const reader = new StringReader('foo')
             // FIXME
             const { id, description } =
-                ((parser.parse(reader, ['#define', 'tag', 'debugger']).cache as LocalCache).def.tags as Definition)
+                ((parser.parse(reader, ['#define', 'tag', 'debugger']).cache as LocalCache).def.tags as DescriptionsOfIDs)
             assert(id === 'debugger')
             assert(description === 'foo')
         })

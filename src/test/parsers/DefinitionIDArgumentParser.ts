@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
-import LocalCache, { Definition } from '../../types/LocalCache'
+import LocalCache, { DescriptionsOfIDs } from '../../types/LocalCache'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
@@ -41,7 +41,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const parser = new DefinitionIDArgumentParser()
             const reader = new StringReader('foo ')
             // FIXME
-            const actual = ((parser.parse(reader, ['#define', 'tag']).cache as LocalCache).def.tags as Definition)
+            const actual = ((parser.parse(reader, ['#define', 'tag']).cache as LocalCache).def.tags as DescriptionsOfIDs)
             assert(actual.id === 'foo')
         })
         it('Should not return cache for wrong definition types', () => {

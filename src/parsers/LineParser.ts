@@ -47,23 +47,6 @@ export default class LineParser implements Parser<Line> {
     }
 }
 
-export function combineLocalCache(base: LocalCache, override: LocalCache) {
-    const ans: LocalCache = { def: {}, ref: {} }
-    if (override.def) {
-        for (const type in override.def) {
-            if (override.def.hasOwnProperty(type)) {
-                const overrideDefinition = override.def[type]
-                const baseDefinition = base.def[type]
-                if (baseDefinition) {
-                    for (const id in baseDefinition) {
-                        
-                    }
-                }
-            }
-        }
-    }
-}
-
 type ParserResult = {
     data: Line
 }
