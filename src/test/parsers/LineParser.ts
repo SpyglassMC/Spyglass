@@ -53,5 +53,8 @@ describe.only('LineParser Tests', () => {
                 assert(message === 'Got neither `redirect` nor `parser` in node.')
             }
         })
+        it('Should combine cache', () => {
+            const node: CommandTreeNode<string> = { parser: new TestArgumentParser() }
+        })
     })
 })

@@ -25,7 +25,6 @@ export default class LineParser implements Parser<Line> {
         } else if (node.parser) {
             const { cache, completions, data, errors } = node.parser.parse(reader, parsed.nodes)
             // const untolerableErrors = errors ? errors.filter(v => !v.tolerable) : []
-            // if (untolerableErrors.length === 0) {
             const ans: Line = {
                 nodes: [...parsed.nodes, data]
             }
@@ -47,14 +46,10 @@ export default class LineParser implements Parser<Line> {
             } else if (!(parsed.errors && parsed.errors.length !== 0) && (errors && errors.length !== 0)) {
                 ans.errors = [...errors]
             }
-            // } else {
-            //     // Untolerable
-            //     // Never mind!
-            // }
+            return ans
         } else {
             throw new Error('Got neither `redirect` nor `parser` in node.')
         }
-        throw 'Unimplemented'
     }
 
     parseChildren(reader: StringReader, node: CommandTreeNodeChildren, parsed: Line = { nodes: [] }): Line {
