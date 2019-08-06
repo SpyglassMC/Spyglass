@@ -40,7 +40,7 @@ class TestArgumentParser implements ArgumentParser<string> {
     getExamples = () => []
 }
 
-describe('LineParser Tests', () => {
+describe.only('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
         it('Should throw error when specify neither redirect nor parser in node', () => {
             const node: CommandTreeNode<string> = {}

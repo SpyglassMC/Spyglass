@@ -2,7 +2,7 @@ import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
 import LocalCache, { isDefinitionType, isDefinitionKey, isReferenceKey, combineLocalCache } from '../../types/LocalCache'
 
-describe.only('LocalCache Tests', () => {
+describe('LocalCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
         it('Should return true', () => {
             const value = 'fakePlayer'
