@@ -9,7 +9,7 @@ export default class DefinitionDescriptionArgumentParser implements ArgumentPars
 
     parse(reader: StringReader, parsed: unknown[]): ArgumentParserResult<string> {
         const type = parsed[parsed.length - 2]
-        const id = parsed[parsed.length - 1]
+        const id = parsed[parsed.length - 1] as string
         const description = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: description
@@ -18,7 +18,10 @@ export default class DefinitionDescriptionArgumentParser implements ArgumentPars
             if (isDefinitionType(type)) {
                 if (id) {
                     const def: any = {}
-                    def[`${type}s`] = [{ id, description }]
+                    if (!def[`${type}s`]) {
+                        def[`${type}s`] = {}
+                    }
+                    def[`${type}s`][id] = description
                     ans.cache = { def, ref: {} }
                 }
             }

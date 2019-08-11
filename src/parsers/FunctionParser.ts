@@ -16,7 +16,7 @@ export default class FunctionParser implements Parser<FunctionInfo> {
             const { data: parsedLine } = new LineParser().parse(line)
             funcInfo.lines.push(parsedLine)
             //#region Load documentation
-            if (parsedLine.nodes[0].name !== 'CommentParser') {
+            if (parsedLine.args[0].name !== 'CommentParser') {
                 isReadingDoc = false
             }
             if (isReadingDoc) {

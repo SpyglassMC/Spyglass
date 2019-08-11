@@ -40,11 +40,8 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
         it('Should return cache correctly', () => {
             const parser = new DefinitionDescriptionArgumentParser()
             const reader = new StringReader('foo')
-            // FIXME
-            const { id, description } =
-                ((parser.parse(reader, ['#define', 'tag', 'debugger']).cache as LocalCache).def.tags as DescriptionsOfIDs)
-            assert(id === 'debugger')
-            assert(description === 'foo')
+            const { debug } = ((parser.parse(reader, ['#define', 'tag', 'debug']).cache as LocalCache).def.tags as DescriptionsOfIDs)
+            assert(debug === 'foo')
         })
         it('Should not return cache for empty id', () => {
             const parser = new DefinitionDescriptionArgumentParser()

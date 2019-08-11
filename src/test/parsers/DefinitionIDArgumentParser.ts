@@ -40,9 +40,8 @@ describe('DefinitionIDArgumentParser Tests', () => {
         it('Should return cache correctly', () => {
             const parser = new DefinitionIDArgumentParser()
             const reader = new StringReader('foo ')
-            // FIXME
             const actual = ((parser.parse(reader, ['#define', 'tag']).cache as LocalCache).def.tags as DescriptionsOfIDs)
-            assert(actual.id === 'foo')
+            assert.deepStrictEqual(actual, { foo: undefined })
         })
         it('Should not return cache for wrong definition types', () => {
             const parser = new DefinitionIDArgumentParser()

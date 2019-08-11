@@ -33,14 +33,8 @@ export default interface LocalCache {
  * @param base Base cache.
  * @param override Overriding cache.
  */
-export function combineLocalCache(base?: LocalCache, override?: LocalCache) {
+export function combineLocalCache(base: LocalCache = { def: {}, ref: {} }, override: LocalCache = { def: {}, ref: {} }) {
     const ans: LocalCache = { def: {}, ref: {} }
-    if (!base) {
-        base = { def: {}, ref: {} }
-    }
-    if (!override) {
-        override = { def: {}, ref: {} }
-    }
     // Combine definitions.
     if (base.def) {
         for (const type in base.def) {
@@ -68,12 +62,7 @@ export function combineLocalCache(base?: LocalCache, override?: LocalCache) {
             if (base.ref.hasOwnProperty(type) && isReferenceKey(type)) {
                 const references = base.ref[type]
                 if (references) {
-                    const origin = ans.ref[type]
-                    if (origin) {
-                        ans.ref[type] = [...origin, ...references]
-                    } else {
-                        ans.ref[type] = [...references]
-                    }
+                    ans.ref[type] = [...references]
                 }
             }
         }

@@ -13,9 +13,9 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
     /**
      * Parse.
      * @param reader Input reader.
-     * @param parsed All parsed data of nodes before this argument.
+     * @param parsedArgs All parsed data of args before this argument.
      */
-    abstract parse(reader: StringReader, parsed?: any[]): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, parsedArgs?: unknown[]): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`

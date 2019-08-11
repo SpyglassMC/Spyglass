@@ -1,12 +1,12 @@
 import * as assert from 'power-assert'
 import { ArgumentParserResult } from '../../types/Parser'
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from '../../CommandTree'
+import { CommandTreeNode, CommandTree } from '../../CommandTree'
 import { describe, it } from 'mocha'
 import ArgumentParser from '../../parsers/ArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import LineParser from '../../parsers/LineParser'
-import { fail } from 'assert';
+import { fail } from 'assert'
 
 /**
  * Argument parser for testing.
@@ -21,6 +21,8 @@ class TestArgumentParser implements ArgumentParser<string> {
      * Input `cache` to attain a `LocalCache` containing `id`.
      * 
      * Input `CACHE` to attain a `LocalCache` containing both `id` and `description`.
+     * 
+     * Input `completion` to attain a completion.
      */
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
@@ -33,28 +35,49 @@ class TestArgumentParser implements ArgumentParser<string> {
         } else if (data === 'cache') {
             ans.cache = { ref: {}, def: { fakePlayers: { foo: undefined } } }
         } else if (data === 'CACHE') {
-            ans.cache = { ref: {}, def: { fakePlayers: { foo: '_foo_' } } }
+            ans.cache = { ref: {}, def: { fakePlayers: { foo: '*foo*' } } }
+        } else if (data === 'completion') {
+            ans.completions = [{ label: 'completion' }]
         }
         return ans
     }
     getExamples = () => []
 }
 
-describe.only('LineParser Tests', () => {
+describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
         it('Should throw error when specify neither redirect nor parser in node', () => {
-            const node: CommandTreeNode<string> = {}
+            const input = 'foo'
             const parser = new LineParser({})
+            const node: CommandTreeNode<string> = {}
             try {
-                parser.parseSingle(new StringReader('foo'), node)
+                parser.parseSingle(new StringReader(input), 'node', node)
                 fail()
             } catch (e) {
                 const { message } = e
                 assert(message === 'Got neither `redirect` nor `parser` in node.')
             }
         })
-        it('Should combine cache', () => {
+        it('Should parse when parser specified', () => {
+            const input = 'foo'
+            const parser = new LineParser({})
             const node: CommandTreeNode<string> = { parser: new TestArgumentParser() }
+            const { args } = parser.parseSingle(new StringReader(input), 'node', node)
+            assert.deepStrictEqual(args, [{ data: 'foo', name: 'node' }])
+        })
+        it('Should parse redirect', () => {
+            const input = 'foo'
+            const tree: CommandTree = {
+                redirect: {
+                    test: {
+                        parser: new TestArgumentParser()
+                    }
+                }
+            }
+            const parser = new LineParser(tree)
+            const node: CommandTreeNode<string> = { redirect: 'redirect', description: 'description' }
+            const { args } = parser.parseSingle(new StringReader(input), 'node', node)
+            assert.deepStrictEqual(args, [{ data: 'foo', name: 'test' }])
         })
     })
 })
