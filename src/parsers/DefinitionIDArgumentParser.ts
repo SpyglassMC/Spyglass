@@ -16,9 +16,7 @@ export default class DefinitionIDArgumentParser implements ArgumentParser<string
         if (id) {
             if (isDefinitionType(type)) {
                 const def: any = {}
-                if (!def[`${type}s`]) {
-                    def[`${type}s`] = {}
-                }
+                def[`${type}s`] = {}
                 def[`${type}s`][id] = undefined
                 ans.cache = { def, ref: {} }
             }

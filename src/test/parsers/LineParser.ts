@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { ArgumentParserResult } from '../../types/Parser'
-import { CommandTreeNode, CommandTree } from '../../CommandTree'
+import { CommandTreeNode, CommandTree, CommandTreeNodeChildren } from '../../CommandTree'
 import { describe, it } from 'mocha'
 import ArgumentParser from '../../parsers/ArgumentParser'
 import ParsingError from '../../types/ParsingError'
@@ -65,7 +65,7 @@ describe('LineParser Tests', () => {
             const { args } = parser.parseSingle(new StringReader(input), 'node', node)
             assert.deepStrictEqual(args, [{ data: 'foo', name: 'node' }])
         })
-        it('Should parse redirect', () => {
+        it('Should handle redirect to children', () => {
             const input = 'foo'
             const tree: CommandTree = {
                 redirect: {
@@ -76,8 +76,38 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(tree)
             const node: CommandTreeNode<string> = { redirect: 'redirect', description: 'description' }
-            const { args } = parser.parseSingle(new StringReader(input), 'node', node)
-            assert.deepStrictEqual(args, [{ data: 'foo', name: 'test' }])
+            const { args } = parser.parseSingle(new StringReader(input), 'node', node, { args: [{ data: 'parsed', name: 'parsed' }] })
+            assert.deepStrictEqual(args, [{ data: 'parsed', name: 'parsed' }, { data: 'foo', name: 'test' }])
         })
+        it('Should handle redirect to single', () => {
+            const input = 'foo'
+            const tree: CommandTree = {
+                redirect: {
+                    test: {
+                        parser: new TestArgumentParser()
+                    }
+                }
+            }
+            const parser = new LineParser(tree)
+            const node: CommandTreeNode<string> = { redirect: 'redirect.test', description: 'description' }
+            const { args } = parser.parseSingle(new StringReader(input), 'node', node, { args: [{ data: 'parsed', name: 'parsed' }] })
+            assert.deepStrictEqual(args, [{ data: 'parsed', name: 'parsed' }, { data: 'foo', name: 'test' }])
+        })
+    })
+    describe('parseChildren() Tests', () => {
+        it('Should throw error when the children is empty', () => {
+            const tree: CommandTree = {}
+            const reader = new StringReader('foo')
+            const parser = new LineParser(tree)
+            const children: CommandTreeNodeChildren = {}
+            try {
+                parser.parseChildren(reader, children)
+                fail()
+            } catch (e) {
+                const { message } = e
+                assert(message === 'Unexpected error. Maybe there is an empty children in CommandTree?')
+            }
+        })
+
     })
 })

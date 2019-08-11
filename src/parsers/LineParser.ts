@@ -46,6 +46,7 @@ export default class LineParser implements Parser<Line> {
         let i = -1
         for (const key in children) {
             i += 1
+            /* istanbul ignore else  */
             if (children.hasOwnProperty(key)) {
                 const node = children[key]
                 const newReader = new StringReader(reader)

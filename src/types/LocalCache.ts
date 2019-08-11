@@ -36,49 +36,37 @@ export default interface LocalCache {
 export function combineLocalCache(base: LocalCache = { def: {}, ref: {} }, override: LocalCache = { def: {}, ref: {} }) {
     const ans: LocalCache = { def: {}, ref: {} }
     // Combine definitions.
-    if (base.def) {
-        for (const type in base.def) {
-            if (base.def.hasOwnProperty(type) && isDefinitionKey(type)) {
-                const doi = base.def[type]
-                if (doi) {
-                    ans.def[type] = { ...ans.def[type], ...doi }
-                }
-            }
+    for (const type in base.def) {
+        /* istanbul ignore else */
+        if (base.def.hasOwnProperty(type) && isDefinitionKey(type)) {
+            const doi = base.def[type] as DescriptionsOfIDs
+            ans.def[type] = { ...ans.def[type], ...doi }
         }
     }
-    if (override.def) {
-        for (const type in override.def) {
-            if (override.def.hasOwnProperty(type) && isDefinitionKey(type)) {
-                const doi = override.def[type]
-                if (doi) {
-                    ans.def[type] = { ...ans.def[type], ...doi }
-                }
-            }
+    for (const type in override.def) {
+        /* istanbul ignore else */
+        if (override.def.hasOwnProperty(type) && isDefinitionKey(type)) {
+            const doi = override.def[type] as DescriptionsOfIDs
+            ans.def[type] = { ...ans.def[type], ...doi }
         }
     }
     // Combine references.
-    if (base.ref) {
-        for (const type in base.ref) {
-            if (base.ref.hasOwnProperty(type) && isReferenceKey(type)) {
-                const references = base.ref[type]
-                if (references) {
-                    ans.ref[type] = [...references]
-                }
-            }
+    for (const type in base.ref) {
+        /* istanbul ignore else */
+        if (base.ref.hasOwnProperty(type) && isReferenceKey(type)) {
+            const references = base.ref[type] as string[]
+            ans.ref[type] = [...references]
         }
     }
-    if (override.ref) {
-        for (const type in override.ref) {
-            if (override.ref.hasOwnProperty(type) && isReferenceKey(type)) {
-                const references = override.ref[type]
-                if (references) {
-                    const origin = ans.ref[type]
-                    if (origin) {
-                        ans.ref[type] = [...origin, ...references]
-                    } else {
-                        ans.ref[type] = [...references]
-                    }
-                }
+    for (const type in override.ref) {
+        /* istanbul ignore else */
+        if (override.ref.hasOwnProperty(type) && isReferenceKey(type)) {
+            const references = override.ref[type] as string[]
+            const origin = ans.ref[type]
+            if (origin) {
+                ans.ref[type] = [...origin, ...references]
+            } else {
+                ans.ref[type] = [...references]
             }
         }
     }

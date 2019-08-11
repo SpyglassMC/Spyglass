@@ -18,9 +18,7 @@ export default class DefinitionDescriptionArgumentParser implements ArgumentPars
             if (isDefinitionType(type)) {
                 if (id) {
                     const def: any = {}
-                    if (!def[`${type}s`]) {
-                        def[`${type}s`] = {}
-                    }
+                    def[`${type}s`] = {}
                     def[`${type}s`][id] = description
                     ans.cache = { def, ref: {} }
                 }

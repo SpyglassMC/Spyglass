@@ -42,6 +42,7 @@ export function combineLine(base: Line, override: Line) {
     }
     // Errors.
     if ((base.errors && base.errors.length !== 0) || (override.errors && override.errors.length !== 0)) {
+        /* istanbul ignore next */
         ans.errors = [...base.errors ? base.errors : [], ...override.errors ? override.errors : []]
     }
     return ans

@@ -50,8 +50,8 @@ describe('Line Tests', () => {
         })
         it('Should return new errors', () => {
             const newError = new ParsingError({ start: 0, end: 3 }, 'new')
-            const base = { args: [], errors: [newError] }
-            const override = { args: [], errors: [] }
+            const base = { args: [], errors: [] }
+            const override = { args: [], errors: [newError] }
             const actual = combineLine(base, override)
             assert.deepStrictEqual(actual, { args: [], errors: [newError] })
         })

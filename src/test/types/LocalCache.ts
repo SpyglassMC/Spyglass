@@ -40,6 +40,20 @@ describe('LocalCache Tests', () => {
         })
     })
     describe('combineLocalCache() Tests', () => {
+        it('Should combine when base is undefiend', () => {
+            const override: LocalCache = { def: {}, ref: { advancements: ['spgoding:test_advancement'] } }
+            const actual = combineLocalCache(undefined, override)
+            assert.deepStrictEqual(actual.ref.advancements, ['spgoding:test_advancement'])
+        })
+        it('Should combine when override is undefiend', () => {
+            const base: LocalCache = { def: {}, ref: { advancements: ['spgoding:test_advancement'] } }
+            const actual = combineLocalCache(base, undefined)
+            assert.deepStrictEqual(actual.ref.advancements, ['spgoding:test_advancement'])
+        })
+        it('Should combine when both arguments are undefiend', () => {
+            const actual = combineLocalCache(undefined, undefined)
+            assert.deepStrictEqual(actual, { def: {}, ref: {} })
+        })
         it('Should load reference of base cache', () => {
             const base: LocalCache = { def: {}, ref: { advancements: ['spgoding:test_advancement'] } }
             const override: LocalCache = { def: {}, ref: {} }
