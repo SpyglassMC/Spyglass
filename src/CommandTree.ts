@@ -16,7 +16,7 @@ export const tree: CommandTree = {
         }
     },
     command: {
-        
+
     },
     comment: { // #define (fakePlayer|tag|objective) <id: string> [description: string]
         '#define': {
@@ -60,11 +60,16 @@ export interface CommandTree {
  */
 export interface CommandTreeNode<T> {
     /**
-     * The argument parser to parse this argument.
+     * Argument parser to parse this argument.
      */
     parser?: ArgumentParser<T>,
     /**
-     * The description of the current argument.
+     * Permission level required to perform this node.
+     * @default 2
+     */
+    permission?: 0 | 1 | 2 | 3 | 4,
+    /**
+     * Description of the current argument.
      */
     description?: string,
     /**

@@ -27,23 +27,25 @@ export default interface Line {
 
 export function combineLine(base: Line, override: Line) {
     // Args.
-    const ans: Line = {
-        args: [...base.args, ...override.args]
+    if (override.args.length !== 0) {
+        base.args = [...base.args, ...override.args]
     }
     // Cache.
     if (base.cache || override.cache) {
-        ans.cache = combineLocalCache(base.cache, override.cache)
+        base.cache = combineLocalCache(base.cache, override.cache)
     }
     // Completions.
     if (override.completions && override.completions.length !== 0) {
-        ans.completions = override.completions
+        base.completions = override.completions
     } else if (base.completions && base.completions.length !== 0) {
-        ans.completions = base.completions
+        base.completions = base.completions
     }
     // Errors.
     if ((base.errors && base.errors.length !== 0) || (override.errors && override.errors.length !== 0)) {
         /* istanbul ignore next */
-        ans.errors = [...base.errors ? base.errors : [], ...override.errors ? override.errors : []]
+        base.errors = [...base.errors ? base.errors : [], ...override.errors ? override.errors : []]
+    } else {
+        delete base.errors
     }
-    return ans
+    return base
 }

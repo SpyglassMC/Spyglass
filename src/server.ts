@@ -3,8 +3,11 @@ import {
     ProposedFeatures,
     TextDocumentSyncKind
 } from 'vscode-languageserver'
+import { VanillaConfig } from './types/Config'
 
 const connection = createConnection(ProposedFeatures.all)
+
+export let globalConfig = VanillaConfig
 
 connection.onInitialize(_params => {
     return {
