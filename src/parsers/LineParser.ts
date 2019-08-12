@@ -46,7 +46,6 @@ export default class LineParser implements Parser<Line> {
         let i = -1
         for (const key in children) {
             i += 1
-            /* istanbul ignore else  */
             if (children.hasOwnProperty(key)) {
                 const node = children[key]
                 const newReader = new StringReader(reader)
@@ -55,7 +54,8 @@ export default class LineParser implements Parser<Line> {
                     const untolerableErrors = result.errors.filter(v => !v.tolerable)
                     if (untolerableErrors.length > 0) {
                         // Has untolerable error(s).
-                        if (i !== Object.keys(children).length) {
+                        if (i !== Object.keys(children).length - 1) {
+                            // Still has other children.
                             continue
                         }
                         // Downgrade errors.
