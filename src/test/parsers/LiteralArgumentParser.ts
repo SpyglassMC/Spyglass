@@ -6,7 +6,7 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 
-describe('LiteralParser Tests', () => {
+describe('LiteralArgumentParser Tests', () => {
     describe('constructor() Tests', () => {
         it('Should throw error if the literals is empty', () => {
             try {
@@ -18,15 +18,15 @@ describe('LiteralParser Tests', () => {
             }
         })
     })
-    describe('toString() Tests', () => {
+    describe('toHint() Tests', () => {
         it('Should return correctly for single literal', () => {
             const parser = new LiteralArgumentParser(['foo'])
-            const actual = parser.toString()
+            const actual = parser.toHint()
             assert.strictEqual(actual, 'foo')
         })
         it('Should return correctly for multi literals', () => {
             const parser = new LiteralArgumentParser(['foo', 'bar'])
-            const actual = parser.toString()
+            const actual = parser.toHint()
             assert.strictEqual(actual, '(bar|foo)')
         })
     })

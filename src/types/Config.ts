@@ -7,17 +7,24 @@ export default interface Config {
          * `op-permission-level` defined in `server.properties`.
          * @default 2
          */
-        permissionLevel: 0 | 1 | 2 | 3 | 4
+        permissionLevel: 0 | 1 | 2 | 3 | 4,
+        /**
+         * Game version.
+         * @default 'JE1.14.4'
+         */
+        version: 'JE1.14.4'
     },
     /**
      * Lint rules.
      */
     lint: {
         /**
+         * Quotes used in NBT strings and phrase strings.  
          * `always single`: Always use single quotes.  
-         * `always double`: Always use double quotes.
-         * `prefer single`: Always use single quotes, unless there are single quotes in the string.
-         * `prefer double`: Always use double quotes, unless there are double quotes in the string.
+         * `always double`: Always use double quotes.  
+         * `prefer single`: Always use single quotes, unless there are single quotes in the string.  
+         * `prefer double`: Always use double quotes, unless there are double quotes in the string.  
+         * @default 'prefer double'
          */
         quoteType: LintValue<'always single' | 'always double' | 'prefer single' | 'perfer double'>
     }
@@ -28,7 +35,8 @@ export default interface Config {
  */
 export const VanillaConfig: Config = {
     env: {
-        permissionLevel: 2
+        permissionLevel: 2,
+        version: 'JE1.14.4'
     },
     lint: {
         quoteType: [true, 'perfer double']

@@ -5,12 +5,13 @@ import { ArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
 
-export default class LiteralArgumentParser implements ArgumentParser<string> {
+export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
 
     private readonly literals: string[]
 
     constructor(literals: string[]) {
+        super()
         if (literals.length === 0) {
             throw new Error('expected `literals.length` to be more than 0')
         }
@@ -63,7 +64,7 @@ export default class LiteralArgumentParser implements ArgumentParser<string> {
         return ans
     }
 
-    toString(): string {
+    toHint(): string {
         if (this.literals.length === 1) {
             return this.literals[0]
         } else {

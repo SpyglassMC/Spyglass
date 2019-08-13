@@ -82,6 +82,10 @@ export interface CommandTreeNode<T> {
     children?: CommandTreeNodeChildren,
     /**
      * Redirect the parsing process to specific node.
+     * @example
+     * 'commands'
+     * 'commands.execute'
+     * 'commands.teleport'
      */
     redirect?: string
 }

@@ -33,11 +33,13 @@ export default class StringArgumentParser extends ArgumentParser<string> {
     }
 
     getExamples(): string[] {
-        const ans: string[] = []
-        if (this.type === 'SingleWord') ans.push('foo')
-        if (this.type === 'QuotablePhrase') ans.push('foo', '"bar"', `'are you "crazy"'`)
-        if (this.type === 'GreedyPhrase') ans.push('^Whatever you like!$')
-        return ans
+        if (this.type === 'SingleWord') {
+            return ['word', 'word_with_underscores']
+        } else if (this.type === 'QuotablePhrase') {
+            return ['word', 'quoted phrase', '""']
+        } else {
+            return ['word', 'words with spaces', '"and symbols"']
+        }
     }
 }
 

@@ -19,10 +19,10 @@ describe('StringArgumentParser Tests', () => {
             assert(data === 'foo')
         })
         it('Should parse greedy phrase', () => {
-            const reader = new StringReader('"#$啊这是什么 What is this?')
+            const reader = new StringReader('"#$What is this?')
             const parser = new StringArgumentParser('GreedyPhrase')
             const { data } = parser.parse(reader)
-            assert(data === '"#$啊这是什么 What is this?')
+            assert(data === '"#$What is this?')
         })
         it('Should throw error', () => {
             const reader = new StringReader('"haha')
@@ -33,33 +33,33 @@ describe('StringArgumentParser Tests', () => {
             assert(message.match(/expected ending quote/))
         })
     })
-    describe('toString() Tests', () => {
+    describe('toHint() Tests', () => {
         it('Should return correctly for non-optional node', () => {
             const parser = new StringArgumentParser()
-            const actual = parser.toString('id', false)
+            const actual = parser.toHint('id', false)
             assert(actual === '<id: string>')
         })
         it('Should return correctly for optional node', () => {
             const parser = new StringArgumentParser()
-            const actual = parser.toString('id', true)
+            const actual = parser.toHint('id', true)
             assert(actual === '[id: string]')
         })
     })
     describe('getExamples() Tests', () => {
         it('Should return for single word', () => {
-            const parser = new StringArgumentParser('SingleWord')
+            const parser = new StringArgumentParser()
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['foo'])
+            assert.deepStrictEqual(actual, ['word', 'word_with_underscores'])
         })
         it('Should return for quotable phrase', () => {
             const parser = new StringArgumentParser('QuotablePhrase')
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['foo', '"bar"', `'are you "crazy"'`])
+            assert.deepStrictEqual(actual, ['word', 'quoted phrase', '""'])
         })
         it('Should return for single word', () => {
             const parser = new StringArgumentParser('GreedyPhrase')
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['^Whatever you like!$'])
+            assert.deepStrictEqual(actual, ['word', 'words with spaces', '"and symbols"'])
         })
     })
 })

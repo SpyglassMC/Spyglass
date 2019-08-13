@@ -4,7 +4,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { isDefinitionType } from '../types/LocalCache'
 
-export default class DefinitionIDArgumentParser implements ArgumentParser<string> {
+export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
     identity = 'string'
 
     parse(reader: StringReader, parsed: unknown[]): ArgumentParserResult<string> {

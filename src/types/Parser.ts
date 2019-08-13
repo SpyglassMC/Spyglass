@@ -2,6 +2,7 @@ import ParsingError from './ParsingError'
 import LocalCache from './LocalCache'
 import { CompletionItem } from 'vscode-languageserver'
 import StringReader from '../utils/StringReader'
+import Config from './Config';
 
 /**
  * Represent an argument parser.
@@ -12,7 +13,7 @@ export default interface Parser<T> {
      * Parse.
      * @param reader Input reader.
      */
-    parse(reader: StringReader): ParserResult<T>
+    parse(reader: StringReader, ...params: any[]): ParserResult<T>
 }
 
 /**
