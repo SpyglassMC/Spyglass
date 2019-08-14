@@ -96,3 +96,24 @@ export interface CommandTreeNode<T> {
 export interface CommandTreeNodeChildren {
     [name: string]: CommandTreeNode<any>
 }
+
+/**
+ * Get the `children` of specific `CommandTreeNode`.
+ */
+export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren {
+    let children: CommandTreeNodeChildren
+    if (node.children) {
+        children = node.children
+    } else if (node.redirect) {
+        if (node.redirect.indexOf('.') === -1) {
+            children = tree[node.redirect]
+        } else {
+            const seg = node.redirect.split('.')
+            const childNode = tree[seg[0]][seg[1]]
+            children = getChildren(tree, childNode)
+        }
+    } else {
+        throw new Error('Unexpected error. Got neither `redirect` nor `parser` in node.')
+    }
+    return children
+}

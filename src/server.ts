@@ -13,23 +13,24 @@ connection.onInitialize(_params => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: [
-                    ' ', ',', '{', '[', '=', ':', '@', '\n', '#'
-                ],
-                resolveProvider: true
+                triggerCharacters: [' ', ',', '{', '[', '=', ':', '@', '\n', '#']
             },
             definitionProvider: true,
-            documentHighlightProvider: true,
             documentFormattingProvider: true,
-            hoverProvider: true,
-            referencesProvider: true,
-            renameProvider: true,
-            foldingRangeProvider: true,
+            documentLinkProvider: {
+                resolveProvider: true
+            },
             documentOnTypeFormattingProvider: {
                 firstTriggerCharacter: '\n'
             },
-            documentLinkProvider: {
-                resolveProvider: true
+            foldingRangeProvider: true,
+            hoverProvider: true,
+            referencesProvider: true,
+            renameProvider: {
+                prepareProvider: true
+            },
+            signatureHelpProvider: {
+                triggerCharacters: [' ', '\n']
             },
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
@@ -40,5 +41,5 @@ connection.onInitialize(_params => {
 })
 
 connection.onDidOpenTextDocument(params => {
-    
+
 })

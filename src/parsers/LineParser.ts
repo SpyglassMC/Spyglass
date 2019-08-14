@@ -1,7 +1,7 @@
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
 import Parser from '../types/Parser'
 import StringReader from '../utils/StringReader'
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from '../CommandTree'
+import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 
@@ -117,9 +117,9 @@ export default class LineParser implements Parser<Line> {
     /**
      * @throws When path not exist.
      */
-    private getPartOfHintsAndNode(path: string[]): { hints: string[], node: CommandTreeNode<any> } {
+    getPartOfHintsAndNode(path: string[]): { hints: string[], node: CommandTreeNode<any> } {
         const hints: string[] = []
-        let children = this.tree.lines
+        let children = this.tree.line
         for (let i = 0; i < path.length; i++) {
             const ele = path[i]
             const node = children[ele]
@@ -127,29 +127,8 @@ export default class LineParser implements Parser<Line> {
                 if (node.parser) {
                     hints.push(node.parser.toHint(ele, false))
                 }
-                if (i !== path.length - 1) {
-                    if (node.children) {
-                        children = node.children
-                    } else if (node.redirect) {
-                        const getChildren = (redirect: string): CommandTreeNodeChildren => {
-                            if (redirect.indexOf('.') === -1) {
-                                return this.tree[redirect]
-                            } else {
-                                const seg = redirect.split('.')
-                                const node = this.tree[seg[0]][seg[1]]
-                                if (node.children) {
-                                    return node.children
-                                } else if (node.redirect) {
-                                    return getChildren(node.redirect)
-                                } else {
-                                    throw new Error(`There are neither \`children\` nor \`redirect\` in path \`${redirect}\`.`)
-                                }
-                            }
-                        }
-                        children = getChildren(node.redirect)
-                    } else {
-                        throw new Error(`There are neither \`children\` nor \`redirect\` in path \`${path.slice(0, i + 1).join('.')}\`.`)
-                    }
+                if (i < path.length - 1) {
+                    children = getChildren(this.tree, node)
                 } else {
                     // Meet the last element of path.
                     return { hints, node }

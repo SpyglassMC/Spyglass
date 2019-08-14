@@ -354,6 +354,51 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.args, ['parsed', 'foo'])
         })
     })
+    describe('getPartOfHintsAndNode() Tests', () => {
+        const tree: CommandTree = {
+            line: { command: { redirect: 'commands' } },
+            commands: {
+                execute: {
+                    parser: new TestArgumentParser(),
+                    executable: true,
+                    children: {
+                        run: {
+                            parser: new TestArgumentParser(),
+                            children: {
+                                command: {
+                                    redirect: 'commands'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        it('Should throw error when the path is empty', () => {
+            const parser = new LineParser(tree)
+            try {
+                parser.getPartOfHintsAndNode([])
+                fail()
+            } catch (e) {
+                assert(e.message === 'Unreachable error. Maybe the path is empty?')
+            }
+        })
+        it("Should throw error when the path doesn't exist", () => {
+            const parser = new LineParser(tree)
+            try {
+                parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'wtf', 'wtf2'])
+                fail()
+            } catch (e) {
+                assert(e.message === "`wtf` doesn't exist in path `command.execute.run`.")
+            }
+        })
+        it('Should return the part of hints and node', () => {
+            const parser = new LineParser(tree)
+            const { hints, node } = parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'command'])
+            assert.deepStrictEqual(hints, ['<execute: test>', '<run: test>'])
+            assert.deepStrictEqual(node, { redirect: 'commands' })
+        })
+    })
     describe('parse() Test', () => {
         it('Should parse a line', () => {
             const tree: CommandTree = {
