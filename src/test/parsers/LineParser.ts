@@ -36,9 +36,9 @@ class TestArgumentParser extends ArgumentParser<string> {
         } else if (this.type === 'ERROR') {
             ans.errors = [new ParsingError({ start: start, end: start + data.length }, 'expected `ERROR` and did get `ERROR`', false)]
         } else if (this.type === 'cache') {
-            ans.cache = { ref: {}, def: { entitys: { foo: undefined } } }
+            ans.cache = { ref: {}, def: { entities: { foo: undefined } } }
         } else if (this.type === 'CACHE') {
-            ans.cache = { ref: {}, def: { entitys: { foo: '*foo*' } } }
+            ans.cache = { ref: {}, def: { entities: { foo: '*foo*' } } }
         } else if (this.type === 'completion') {
             ans.completions = [{ label: 'completion' }]
         }

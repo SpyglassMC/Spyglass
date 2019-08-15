@@ -55,6 +55,6 @@ export default interface GlobalCache {
     entityTypeTags: string[],
     itemTags?: string[],
     objectives?: string[],
-    entitys?: string[],
+    entities?: string[],
     tags?: string[]
 }

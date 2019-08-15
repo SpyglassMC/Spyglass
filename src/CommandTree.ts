@@ -2,6 +2,7 @@ import ArgumentParser from './parsers/ArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
+import EntityArgumentParser from './parsers/EntityParser'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands.
@@ -24,7 +25,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('grant', 'revoke'),
                     children: {
                         targets: {
-                            parser: new EntitySelectorParser('multiple', 'players'),
+                            parser: new EntityArgumentParser(true, true),
                             children: {
                                 everything: {
                                     parser: new LiteralArgumentParser('everything'),
@@ -34,11 +35,11 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementParser(),
+                                            parser: new AdvancementArgumentParser(),
                                             executable: true,
                                             children: {
                                                 criterion: {
-                                                    parser: new AdvancementCriterionParser(),
+                                                    parser: new AdvancementCriterionArgumentParser(),
                                                     executable: true
                                                 }
                                             }
@@ -46,15 +47,42 @@ export const tree: CommandTree = {
                                     }
                                 },
                                 from_through_until: {
-                                    parser: new LiteralArgumentParser('from','through','until'),
+                                    parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementParser(),
+                                            parser: new AdvancementArgumentParser(),
                                             executable: true
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        execute: {
+            parser: new LiteralArgumentParser('execute'),
+            description: 'TODO',
+            children: {
+                as: {
+                    parser: new LiteralArgumentParser('as'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser(),
+                            children: {
+                                subcommand: {
+                                    redirect: 'command.execute'
+                                }
+                            }
+                        }
+                    }
+                },
+                run: {
+                    parser: new LiteralArgumentParser('run'),
+                    children: {
+                        command: {
+                            redirect: 'command'
                         }
                     }
                 }

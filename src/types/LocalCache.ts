@@ -16,14 +16,14 @@ export default interface LocalCache {
         functions?: string[],
         itemTags?: string[],
         objectives?: string[],
-        entitys?: string[],
+        entities?: string[],
         tags?: string[]
     },
     /**
      * All defined definitions.
      */
     def: {
-        entitys?: DescriptionsOfIDs,
+        entities?: DescriptionsOfIDs,
         objectives?: DescriptionsOfIDs,
         tags?: DescriptionsOfIDs
     }
@@ -91,13 +91,13 @@ export function isDefinitionType(value: any): value is 'entity' | 'objective' | 
     return value === 'entity' || value === 'objective' || value === 'tag'
 }
 
-export function isDefinitionKey(value: any): value is 'entitys' | 'objectives' | 'tags' {
-    return value === 'entitys' || value === 'objectives' || value === 'tags'
+export function isDefinitionKey(value: any): value is 'entities' | 'objectives' | 'tags' {
+    return value === 'entities' || value === 'objectives' || value === 'tags'
 }
 
 export function isReferenceKey(value: any): value is 'advancements' |
     'lootTables' | 'recipes' | 'blockTags' | 'fluidTags' | 'functionTags' |
-    'entityTypeTags' | 'itemTags' | 'objectives' | 'entitys' | 'tags' | 'functions' {
+    'entityTypeTags' | 'itemTags' | 'objectives' | 'entities' | 'tags' | 'functions' {
     return (
         value === 'advancements' ||
         value === 'lootTables' ||
@@ -108,7 +108,7 @@ export function isReferenceKey(value: any): value is 'advancements' |
         value === 'entityTypeTags' ||
         value === 'itemTags' ||
         value === 'objectives' ||
-        value === 'entitys' ||
+        value === 'entities' ||
         value === 'tags' ||
         value === 'functions'
     )

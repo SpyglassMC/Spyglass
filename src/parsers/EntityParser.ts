@@ -5,7 +5,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
 
-export default class EntitySelectorArgumentParser extends ArgumentParser<string> {
+export default class EntityArgumentParser extends ArgumentParser<string> {
     readonly identity = 'entity'
 
     constructor(private readonly multiple = true, private readonly onlyPlayers = false) {
@@ -15,6 +15,7 @@ export default class EntitySelectorArgumentParser extends ArgumentParser<string>
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = { data: '' }
 
+        
 
         return ans
     }
