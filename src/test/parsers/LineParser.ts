@@ -371,7 +371,8 @@ describe('LineParser Tests', () => {
                             }
                         }
                     }
-                }
+                },
+                nochildren: {}
             }
         }
         it('Should throw error when the path is empty', () => {
@@ -392,11 +393,69 @@ describe('LineParser Tests', () => {
                 assert(e.message === "`wtf` doesn't exist in path `command.execute.run`.")
             }
         })
+        it('Should throw error when there are no children in specific path', () => {
+            const parser = new LineParser(tree)
+            try {
+                parser.getPartOfHintsAndNode(['command', 'nochildren', 'wtf'])
+                fail()
+            } catch (e) {
+                assert(e.message === 'There are no children in path `command.nochildren`.')
+            }
+        })
         it('Should return the part of hints and node', () => {
             const parser = new LineParser(tree)
-            const { hints, node } = parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'command'])
-            assert.deepStrictEqual(hints, ['<execute: test>', '<run: test>'])
+            const { partOfHints, node } = parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'command'])
+            assert.deepStrictEqual(partOfHints, ['<execute: test>', '<run: test>'])
             assert.deepStrictEqual(node, { redirect: 'commands' })
+        })
+    })
+    describe('getHintAndDescription() Tests', () => {
+        const tree: CommandTree = {
+            line: { command: { redirect: 'commands' } },
+            commands: {
+                execute: {
+                    parser: new TestArgumentParser(),
+                    executable: true,
+                    children: {
+                        run: {
+                            parser: new TestArgumentParser(),
+                            children: {
+                                command: {
+                                    redirect: 'commands'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        it('Should contain description', () => {
+            const parser = new LineParser(tree)
+            const node = { description: 'foo' }
+            const partOfHints: string[] = []
+            const { description } = parser.getHintAndDescription({ node, partOfHints })
+            assert.deepStrictEqual(description, { kind: 'markdown', value: 'foo' })
+        })
+        it('Should append last hint if parser exists', () => {
+            const parser = new LineParser(tree)
+            const node = { children: { foo: { parser: new TestArgumentParser() } } }
+            const partOfHints = ['execute', '(if|unless)']
+            const { hint } = parser.getHintAndDescription({ node, partOfHints })
+            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless) **<foo: test>**' })
+        })
+        it('Should append optional last hint if parser exists and the node is executable', () => {
+            const parser = new LineParser(tree)
+            const node = { children: { foo: { parser: new TestArgumentParser() } }, executable: true }
+            const partOfHints = ['execute', '(if|unless)']
+            const { hint } = parser.getHintAndDescription({ node, partOfHints })
+            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless) **[foo: test]**' })
+        })
+        it('Should not append last hint if parser does not exist', () => {
+            const parser = new LineParser(tree)
+            const node = { children: { foo: {} } }
+            const partOfHints: string[] = ['execute', '(if|unless)']
+            const { hint } = parser.getHintAndDescription({ node, partOfHints })
+            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless)' })
         })
     })
     describe('parse() Test', () => {

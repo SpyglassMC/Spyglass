@@ -4,6 +4,7 @@ import StringReader from '../utils/StringReader'
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
+import { MarkupContent } from 'vscode-languageserver'
 
 export default class LineParser implements Parser<Line> {
     constructor(
@@ -117,7 +118,7 @@ export default class LineParser implements Parser<Line> {
     /**
      * @throws When path not exist.
      */
-    getPartOfHintsAndNode(path: string[]): { hints: string[], node: CommandTreeNode<any> } {
+    getPartOfHintsAndNode(path: string[]): PartOfHintsAndNode {
         const hints: string[] = []
         let children = this.tree.line
         for (let i = 0; i < path.length; i++) {
@@ -128,10 +129,14 @@ export default class LineParser implements Parser<Line> {
                     hints.push(node.parser.toHint(ele, false))
                 }
                 if (i < path.length - 1) {
-                    children = getChildren(this.tree, node)
+                    const result = getChildren(this.tree, node)
+                    if (!result) {
+                        throw new Error(`There are no children in path \`${path.slice(0, -1).join('.')}\`.`)
+                    }
+                    children = result
                 } else {
                     // Meet the last element of path.
-                    return { hints, node }
+                    return { partOfHints: hints, node }
                 }
             } else {
                 throw new Error(`\`${ele}\` doesn't exist in path \`${path.slice(0, i).join('.')}\`.`)
@@ -139,7 +144,30 @@ export default class LineParser implements Parser<Line> {
         }
         throw new Error('Unreachable error. Maybe the path is empty?')
     }
+
+    getHintAndDescription({ node, partOfHints }: PartOfHintsAndNode) {
+        const ans: HintAndDescription = { hint: { kind: 'markdown', value: partOfHints.join(' ') }, description: { kind: 'markdown', value: '' } }
+        if (node.description) {
+            ans.description.value = node.description
+        }
+        const children = getChildren(this.tree, node)
+        for (const key in children) {
+            /* istanbul ignore next */
+            if (children.hasOwnProperty(key)) {
+                const childNode = children[key]
+                if (childNode.parser) {
+                    const lastHint = childNode.parser.toHint(key, !!node.executable)
+                    ans.hint.value += ` **${lastHint}**`
+                }
+            }
+        }
+        return ans
+    }
 }
+
+type PartOfHintsAndNode = { partOfHints: string[], node: CommandTreeNode<any> }
+
+type HintAndDescription = { hint: MarkupContent, description: MarkupContent }
 
 type ParserResult = {
     data: Line

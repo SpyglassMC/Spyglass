@@ -19,14 +19,10 @@ describe('CommandTree Tests', () => {
             const actual = getChildren(tree, node)
             assert.deepStrictEqual(actual, { execute: { executable: true } })
         })
-        it('Should throw error when gets neither `redirect` nor `parser`', () => {
+        it('Should return undefined', () => {
             const node: CommandTreeNode<any> = {}
-            try {
-                getChildren(tree, node)
-                fail()
-            } catch (e) {
-                assert(e.message === 'Unexpected error. Got neither `redirect` nor `parser` in node.')
-            }
+            const actual =  getChildren(tree, node)
+            assert(actual === undefined)
         })
     })
 })

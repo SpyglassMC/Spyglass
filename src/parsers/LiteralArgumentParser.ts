@@ -10,7 +10,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
 
     private readonly literals: string[]
 
-    constructor(literals: string[]) {
+    constructor(...literals: string[]) {
         super()
         if (literals.length === 0) {
             throw new Error('expected `literals.length` to be more than 0')

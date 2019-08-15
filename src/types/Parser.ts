@@ -2,7 +2,6 @@ import ParsingError from './ParsingError'
 import LocalCache from './LocalCache'
 import { CompletionItem } from 'vscode-languageserver'
 import StringReader from '../utils/StringReader'
-import Config from './Config';
 
 /**
  * Represent an argument parser.

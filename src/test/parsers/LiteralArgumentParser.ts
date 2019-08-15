@@ -10,7 +10,7 @@ describe('LiteralArgumentParser Tests', () => {
     describe('constructor() Tests', () => {
         it('Should throw error if the literals is empty', () => {
             try {
-                new LiteralArgumentParser([])
+                new LiteralArgumentParser()
                 fail()
             } catch (e) {
                 const er = <Error>e
@@ -20,36 +20,36 @@ describe('LiteralArgumentParser Tests', () => {
     })
     describe('toHint() Tests', () => {
         it('Should return correctly for single literal', () => {
-            const parser = new LiteralArgumentParser(['foo'])
+            const parser = new LiteralArgumentParser('foo')
             const actual = parser.toHint()
             assert.strictEqual(actual, 'foo')
         })
         it('Should return correctly for multi literals', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.toHint()
             assert.strictEqual(actual, '(bar|foo)')
         })
     })
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['bar', 'foo'])
         })
     })
     describe('parse() Tests', () => {
         it('Should return data if matching', () => {
-            const parser = new LiteralArgumentParser(['expected'])
+            const parser = new LiteralArgumentParser('expected')
             const actual = parser.parse(new StringReader('expected'))
             assert(actual.data === 'expected')
         })
         it('Should return data even if not matching', () => {
-            const parser = new LiteralArgumentParser(['expected'])
+            const parser = new LiteralArgumentParser('expected')
             const actual = parser.parse(new StringReader('actual'))
             assert(actual.data === 'actual')
         })
         it('Should return completions for empty input', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.parse(new StringReader(''))
             assert.deepStrictEqual(actual.completions,
                 [
@@ -65,12 +65,12 @@ describe('LiteralArgumentParser Tests', () => {
             )
         })
         it('Should not return completions for input beginning with space', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.parse(new StringReader(' idk'))
             assert(actual.completions === undefined)
         })
         it('Should treat empty string as partial matching', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader(''))
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
@@ -79,7 +79,7 @@ describe('LiteralArgumentParser Tests', () => {
             assert(pe.tolerable === true)
         })
         it('Should return errors when partial matching', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader('F'))
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
@@ -88,7 +88,7 @@ describe('LiteralArgumentParser Tests', () => {
             assert(pe.tolerable === true)
         })
         it('Should return untolerable error when nothing matches', () => {
-            const parser = new LiteralArgumentParser(['foo', 'bar'])
+            const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader('spg'))
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
