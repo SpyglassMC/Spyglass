@@ -71,20 +71,20 @@ describe('Line Tests', () => {
         })
     })
     describe('combineSaturatedLine() Tests', () => {
-        it('Should combine args, path, cache and errors', () => {
+        it('Should combine args, path, cache, completions and errors', () => {
             const base = {
                 args: ['execute'],
                 cache: { def: { entities: { a: undefined } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
                 path: ['a'],
-                completions: []
+                completions: [{ label: 'a' }]
             }
             const override = {
                 args: ['if'],
                 cache: { def: { entities: { a: 'foo' } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
                 path: ['b'],
-                completions: []
+                completions: [{ label: 'b' }]
             }
             combineSaturatedLine(base, override)
             assert.deepStrictEqual(base.args, ['execute', 'if'])
@@ -97,30 +97,7 @@ describe('Line Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'old'),
                 new ParsingError({ start: 0, end: 3 }, 'new')
             ])
-        })
-        it('Should keep old completions', () => {
-            const base = {
-                args: [], cache: { def: {}, ref: {} }, errors: [], path: [],
-                completions: [{ label: 'old' }]
-            }
-            const override = {
-                args: [], cache: { def: {}, ref: {} }, errors: [], path: [],
-                completions: []
-            }
-            combineSaturatedLine(base, override)
-            assert.deepStrictEqual(base.completions, [{ label: 'old' }])
-        })
-        it('Should override completions', () => {
-            const base = {
-                args: [], cache: { def: {}, ref: {} }, errors: [], path: [],
-                completions: [{ label: 'old' }]
-            }
-            const override = {
-                args: [], cache: { def: {}, ref: {} }, errors: [], path: [],
-                completions: [{ label: 'override' }]
-            }
-            combineSaturatedLine(base, override)
-            assert.deepStrictEqual(base.completions, [{ label: 'override' }])
+            assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
         })
     })
     describe('saturatedLineToLine() Tests', () => {

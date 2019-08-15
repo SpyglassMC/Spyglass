@@ -51,10 +51,11 @@ export function combineLine(base: Line, override: Line): Line {
         base.cache = combineLocalCache(base.cache, override.cache)
     }
     // Completions.
-    if (override.completions && override.completions.length !== 0) {
-        base.completions = override.completions
-    } else if (base.completions && base.completions.length !== 0) {
-        base.completions = base.completions
+    if ((base.completions && base.completions.length !== 0) || (override.completions && override.completions.length !== 0)) {
+        /* istanbul ignore next */
+        base.completions = [...base.completions ? base.completions : [], ...override.completions ? override.completions : []]
+    } else {
+        delete base.completions
     }
     // Errors.
     if ((base.errors && base.errors.length !== 0) || (override.errors && override.errors.length !== 0)) {
@@ -78,11 +79,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     // Cache.
     base.cache = combineLocalCache(base.cache, override.cache)
     // Completions.
-    if (override.completions.length !== 0) {
-        base.completions = override.completions
-    } else {
-        base.completions = base.completions
-    }
+    base.completions = [...override.completions, ...base.completions]
     // Errors.
     base.errors = [...base.errors, ...override.errors]
     return base

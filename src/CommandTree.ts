@@ -60,33 +60,6 @@ export const tree: CommandTree = {
                     }
                 }
             }
-        },
-        execute: {
-            parser: new LiteralArgumentParser('execute'),
-            description: 'TODO',
-            children: {
-                as: {
-                    parser: new LiteralArgumentParser('as'),
-                    children: {
-                        entity: {
-                            parser: new EntityArgumentParser(),
-                            children: {
-                                subcommand: {
-                                    redirect: 'command.execute'
-                                }
-                            }
-                        }
-                    }
-                },
-                run: {
-                    parser: new LiteralArgumentParser('run'),
-                    children: {
-                        command: {
-                            redirect: 'command'
-                        }
-                    }
-                }
-            }
         }
     },
     comment: { // #define (entity|tag|objective) <id: string> [description: string]

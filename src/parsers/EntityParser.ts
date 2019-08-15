@@ -8,9 +8,10 @@ import { arrayToMessage } from '../utils/utils'
 export default class EntityArgumentParser extends ArgumentParser<string> {
     readonly identity = 'entity'
 
-    constructor(private readonly multiple = true, private readonly onlyPlayers = false) {
-        super()
-    }
+    constructor(
+        private readonly multiple = true,
+        private readonly onlyPlayers = false
+    ) { super() }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = { data: '' }
