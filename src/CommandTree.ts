@@ -3,6 +3,8 @@ import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import EntityArgumentParser from './parsers/EntityParser'
+import { ENAMETOOLONG } from 'constants';
+import { combineTracerFeatures } from 'vscode-languageserver';
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands.
@@ -52,6 +54,251 @@ export const tree: CommandTree = {
                                         advancement: {
                                             parser: new AdvancementArgumentParser(),
                                             executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        ban: {
+            parser: new LiteralArgumentParser('ban'),
+            permission: 3,
+            description: 'Adds players to blacklist.',
+            children: {
+                name: {
+                    parser: new EntityArgumentParser(true, true),
+                    executable: true,
+                    children: {
+                        reason: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
+        ban_ip: {
+            parser: new LiteralArgumentParser('ban-ip'),
+            permission: 3,
+            description: 'Adds IP addresses to blacklist.',
+            children: {
+                address: {
+                    parser: new IPArgumentParser(),
+                    executable: true,
+                    children: {
+                        reason: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                },
+                name: {
+                    parser: new EntityArgumentParser(true, true),
+                    executable: true,
+                    children: {
+                        reason: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
+        banlist: {
+            parser: new LiteralArgumentParser('banlist'),
+            permission: 3,
+            description: 'Displays the blacklist on this server.',
+            children: {
+                ips_players: {
+                    parser: new LiteralArgumentParser('ips', 'players'),
+                    executable: true
+                }
+            }
+        },
+        bossbar: {
+            parser: new LiteralArgumentParser('bossbar'),
+            description: 'Adds, removes or modifies boss bars.',
+            children: {
+                add: {
+                    parser: new LiteralArgumentParser('add'),
+                    children: {
+                        id: {
+                            parser: new BossbarArgumentParser(),
+                            children: {
+                                name: {
+                                    parser: new TextComponentArgumentParser('name'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                get: {
+                    parser: new LiteralArgumentParser('get'),
+                    children: {
+                        id: {
+                            parser: new BossbarArgumentParser(),
+                            children: {
+                                max_players_value_visible: {
+                                    parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                list: {
+                    parser: new LiteralArgumentParser('list'),
+                    executable: true
+                },
+                remove: {
+                    parser: new LiteralArgumentParser('remove'),
+                    children: {
+                        id: {
+                            parser: new BossbarArgumentParser(),
+                            executable: true
+                        }
+                    }
+                },
+                set: {
+                    parser: new LiteralArgumentParser('set'),
+                    children: {
+                        id: {
+                            parser: new BossbarArgumentParser(),
+                            children: {
+                                color: {
+                                    parser: new LiteralArgumentParser('color'),
+                                    children: {
+                                        colors: {
+                                            parser: new LiteralArgumentParser('bule', 'green', 'pink', 'purple', 'red', 'white', 'yellow'),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                max: {
+                                    parser: new LiteralArgumentParser('max'),
+                                    children: {
+                                        max: {
+                                            parser: new NumberArgumentParser('integer', 1),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                name: {
+                                    parser: new LiteralArgumentParser('name'),
+                                    children: {
+                                        name: {
+                                            parser: new TextComponentArgumentParser('name'),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                players: {
+                                    parser: new LiteralArgumentParser('players'),
+                                    children: {
+                                        targets: {
+                                            parser: new EntityArgumentParser(true, true),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                style: {
+                                    parser: new LiteralArgumentParser('style'),
+                                    children: {
+                                        styles: {
+                                            parser: new LiteralArgumentParser('progress', 'notched_6', 'notched_10', 'notched_12', 'notched_20'),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                value: {
+                                    parser: new LiteralArgumentParser('value'),
+                                    children: {
+                                        value: {
+                                            parser: new NumberArgumentParser('integer', 0),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                visible: {
+                                    parser: new LiteralArgumentParser('visible'),
+                                    children: {
+                                        visible: {
+                                            parser: new BooleanArgumentParser(),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        clear: {
+            parser: new LiteralArgumentParser('clear'),
+            description: '',
+            executable: true,
+            children: {
+                targets: {
+                    parser: new EntityArgumentParser(true, true),
+                    executable: true,
+                    children: {
+                        item: {
+                            parser: new ItemArgumentParser(),
+                            executable: true,
+                            children: {
+                                maxCount: {
+                                    parser: new NumberArgumentParser('integer', 0),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        clone: {
+            parser: new LiteralArgumentParser('clone'),
+            description: '',
+            children: {
+                begin: {
+                    parser: new VectorArgumentParser(3),
+                    children: {
+                        end: {
+                            parser: new VectorArgumentParser(3),
+                            children: {
+                                destination: {
+                                    parser: new VectorArgumentParser(3),
+                                    executable: true,
+                                    children: {
+                                        filtered: {
+                                            parser: new LiteralArgumentParser('filtered'),
+                                            children: {
+                                                block: {
+                                                    parser: new BlockArgumentParser(),
+                                                    executable: true,
+                                                    children: {
+                                                        cloneMode: {
+                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        otherMaskMode: {
+                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                            executable: true,
+                                            children: {
+                                                cloneMode: {
+                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                    executable: true
+                                                }
+                                            }
                                         }
                                     }
                                 }
