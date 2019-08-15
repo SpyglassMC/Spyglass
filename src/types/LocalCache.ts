@@ -13,16 +13,17 @@ export default interface LocalCache {
         fluidTags?: string[],
         functionTags?: string[],
         entityTypeTags?: string[],
+        functions?: string[],
         itemTags?: string[],
         objectives?: string[],
-        fakeNames?: string[],
+        entitys?: string[],
         tags?: string[]
     },
     /**
      * All defined definitions.
      */
     def: {
-        fakePlayers?: DescriptionsOfIDs,
+        entitys?: DescriptionsOfIDs,
         objectives?: DescriptionsOfIDs,
         tags?: DescriptionsOfIDs
     }
@@ -86,15 +87,17 @@ export interface DescriptionsOfIDs {
     [id: string]: string | undefined
 }
 
-export function isDefinitionType(value: any): value is 'fakePlayer' | 'objective' | 'tag' {
-    return value === 'fakePlayer' || value === 'objective' || value === 'tag'
+export function isDefinitionType(value: any): value is 'entity' | 'objective' | 'tag' {
+    return value === 'entity' || value === 'objective' || value === 'tag'
 }
 
-export function isDefinitionKey(value: any): value is 'fakePlayers' | 'objectives' | 'tags' {
-    return value === 'fakePlayers' || value === 'objectives' || value === 'tags'
+export function isDefinitionKey(value: any): value is 'entitys' | 'objectives' | 'tags' {
+    return value === 'entitys' || value === 'objectives' || value === 'tags'
 }
 
-export function isReferenceKey(value: any): value is 'advancements' | 'lootTables' | 'recipes' | 'blockTags' | 'fluidTags' | 'functionTags' | 'entityTypeTags' | 'itemTags' | 'objectives' | 'fakeNames' | 'tags' {
+export function isReferenceKey(value: any): value is 'advancements' |
+    'lootTables' | 'recipes' | 'blockTags' | 'fluidTags' | 'functionTags' |
+    'entityTypeTags' | 'itemTags' | 'objectives' | 'entitys' | 'tags' | 'functions' {
     return (
         value === 'advancements' ||
         value === 'lootTables' ||
@@ -105,7 +108,8 @@ export function isReferenceKey(value: any): value is 'advancements' | 'lootTable
         value === 'entityTypeTags' ||
         value === 'itemTags' ||
         value === 'objectives' ||
-        value === 'fakeNames' ||
-        value === 'tags'
+        value === 'entitys' ||
+        value === 'tags' ||
+        value === 'functions'
     )
 }

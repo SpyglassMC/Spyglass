@@ -19,9 +19,9 @@ describe('Line Tests', () => {
         })
         it('Should combine cache', () => {
             const base = { args: [], cache: { ref: {}, def: {} }, path: [] }
-            const override = { args: [], cache: { ref: {}, def: { fakePlayers: { foo: undefined } } }, path: [] }
+            const override = { args: [], cache: { ref: {}, def: { entitys: { foo: undefined } } }, path: [] }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], cache: { ref: {}, def: { fakePlayers: { foo: undefined } } }, path: [] })
+            assert.deepStrictEqual(base, { args: [], cache: { ref: {}, def: { entitys: { foo: undefined } } }, path: [] })
         })
         it('Should return parsed completions', () => {
             const base = { args: [], completions: [{ label: 'foo' }], path: [] }
@@ -74,14 +74,14 @@ describe('Line Tests', () => {
         it('Should combine args, path, cache and errors', () => {
             const base = {
                 args: ['execute'],
-                cache: { def: { fakePlayers: { a: undefined } }, ref: {} },
+                cache: { def: { entitys: { a: undefined } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
                 path: ['a'],
                 completions: []
             }
             const override = {
                 args: ['if'],
-                cache: { def: { fakePlayers: { a: 'foo' } }, ref: {} },
+                cache: { def: { entitys: { a: 'foo' } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
                 path: ['b'],
                 completions: []
@@ -90,7 +90,7 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base.args, ['execute', 'if'])
             assert.deepStrictEqual(base.path, ['a', 'b'])
             assert.deepStrictEqual(base.cache, {
-                def: { fakePlayers: { a: 'foo' } },
+                def: { entitys: { a: 'foo' } },
                 ref: {}
             })
             assert.deepStrictEqual(base.errors, [
@@ -134,14 +134,14 @@ describe('Line Tests', () => {
         it('Should not remove non-empty cache, errors or completions', () => {
             const line = {
                 args: [], path: [],
-                cache: { def: { fakePlayers: { a: undefined } }, ref: {} },
+                cache: { def: { entitys: { a: undefined } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
                 completions: [{ label: 'completion' }]
             }
             saturatedLineToLine(line)
             assert.deepStrictEqual(line, {
                 args: [], path: [],
-                cache: { def: { fakePlayers: { a: undefined } }, ref: {} },
+                cache: { def: { entitys: { a: undefined } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
                 completions: [{ label: 'completion' }]
             })

@@ -1,6 +1,7 @@
 import Parser, { ArgumentParserResult } from '../types/Parser'
 import StringReader from '../utils/StringReader'
 import Config from '../types/Config'
+import GlobalCache from '../types/GlobalCache'
 
 /**
  * Base class of argument parsers.
@@ -16,7 +17,7 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * @param reader Input reader.
      * @param parsedArgs All parsed data of args before this argument.
      */
-    abstract parse(reader: StringReader, parsedArgs?: unknown[], config?: Config): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, parsedArgs?: unknown[], config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`

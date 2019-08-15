@@ -5,7 +5,7 @@ import LocalCache, { isDefinitionType, isDefinitionKey, isReferenceKey, combineL
 describe('LocalCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
         it('Should return true', () => {
-            const value = 'fakePlayer'
+            const value = 'entity'
             const actual = isDefinitionType(value)
             assert(actual === true)
         })
@@ -17,7 +17,7 @@ describe('LocalCache Tests', () => {
     })
     describe('isDefinitionKey() Tests', () => {
         it('Should return true', () => {
-            const value = 'fakePlayers'
+            const value = 'entitys'
             const actual = isDefinitionKey(value)
             assert(actual === true)
         })
@@ -73,22 +73,22 @@ describe('LocalCache Tests', () => {
             assert.deepStrictEqual(actual.ref.advancements, ['spgoding:a', 'spgoding:b'])
         })
         it('Should load definition of base cache', () => {
-            const base: LocalCache = { def: { fakePlayers: { $test: undefined } }, ref: {} }
+            const base: LocalCache = { def: { entitys: { $test: undefined } }, ref: {} }
             const override: LocalCache = { def: {}, ref: {} }
             const actual = combineLocalCache(base, override)
-            assert.deepStrictEqual(actual.def.fakePlayers, { $test: undefined })
+            assert.deepStrictEqual(actual.def.entitys, { $test: undefined })
         })
         it('Should load definition of overriding cache', () => {
             const base: LocalCache = { def: {}, ref: {} }
-            const override: LocalCache = { def: { fakePlayers: { $test: 'Test fake player.' } }, ref: {} }
+            const override: LocalCache = { def: { entitys: { $test: 'Test fake player.' } }, ref: {} }
             const actual = combineLocalCache(base, override)
-            assert.deepStrictEqual(actual.def.fakePlayers, { $test: 'Test fake player.' })
+            assert.deepStrictEqual(actual.def.entitys, { $test: 'Test fake player.' })
         })
         it('Should override definition', () => {
-            const base: LocalCache = { def: { fakePlayers: { $test: 'overriable' } }, ref: {} }
-            const override: LocalCache = { def: { fakePlayers: { $test: 'overrides' } }, ref: {} }
+            const base: LocalCache = { def: { entitys: { $test: 'overriable' } }, ref: {} }
+            const override: LocalCache = { def: { entitys: { $test: 'overrides' } }, ref: {} }
             const actual = combineLocalCache(base, override)
-            assert.deepStrictEqual(actual.def.fakePlayers, { $test: 'overrides' })
+            assert.deepStrictEqual(actual.def.entitys, { $test: 'overrides' })
         })
     })
 })

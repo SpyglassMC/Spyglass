@@ -4,7 +4,7 @@ import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 
 /**
- * Command tree of Minecraft Java Edition 1.14.4 commands/
+ * Command tree of Minecraft Java Edition 1.14.4 commands.
  */
 export const tree: CommandTree = {
     line: {
@@ -16,15 +16,58 @@ export const tree: CommandTree = {
         }
     },
     command: {
-
+        advancement: {
+            parser: new LiteralArgumentParser('advancement'),
+            description: 'Grant or revoke advancements from players.',
+            children: {
+                grant_revoke: {
+                    parser: new LiteralArgumentParser('grant', 'revoke'),
+                    children: {
+                        targets: {
+                            parser: new EntitySelectorParser('multiple', 'players'),
+                            children: {
+                                everything: {
+                                    parser: new LiteralArgumentParser('everything'),
+                                    executable: true
+                                },
+                                only: {
+                                    parser: new LiteralArgumentParser('only'),
+                                    children: {
+                                        advancement: {
+                                            parser: new AdvancementParser(),
+                                            executable: true,
+                                            children: {
+                                                criterion: {
+                                                    parser: new AdvancementCriterionParser(),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                from_through_until: {
+                                    parser: new LiteralArgumentParser('from','through','until'),
+                                    children: {
+                                        advancement: {
+                                            parser: new AdvancementParser(),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
-    comment: { // #define (fakePlayer|tag|objective) <id: string> [description: string]
+    comment: { // #define (entity|tag|objective) <id: string> [description: string]
         '#define': {
-            parser: new LiteralArgumentParser(['#define']),
-            description: 'Define an entity tag or a fake player. Will be used for completions.',
+            parser: new LiteralArgumentParser('#define'),
+            description: 'Define an entity tag, a scoreboard objective or a fake player. Will be used for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser(['fakePlayer', 'tag', 'objective']),
+                    parser: new LiteralArgumentParser('entity', 'tag', 'objective'),
                     description: 'Type of the definition',
                     children: {
                         id: {
@@ -100,8 +143,8 @@ export interface CommandTreeNodeChildren {
 /**
  * Get the `children` of specific `CommandTreeNode`.
  */
-export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren {
-    let children: CommandTreeNodeChildren
+export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
+    let children: CommandTreeNodeChildren | undefined
     if (node.children) {
         children = node.children
     } else if (node.redirect) {
@@ -113,7 +156,7 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
             children = getChildren(tree, childNode)
         }
     } else {
-        throw new Error('Unexpected error. Got neither `redirect` nor `parser` in node.')
+        return undefined
     }
     return children
 }
