@@ -11,10 +11,10 @@ import { SaturatedLine } from './types/Line'
 export const tree: CommandTree = {
     line: {
         command: {
-            template: 'command'
+            redirect: 'command'
         },
         comment: {
-            template: 'comment'
+            redirect: 'comment'
         }
     },
     command: {
@@ -126,11 +126,18 @@ export interface CommandTreeNode<T> {
      */
     children?: CommandTreeNodeChildren,
     /**
-     * Copy the content of the template to the current node while parsing.
+     * Redirect the parsing process to specific node.  
+     * @example
+     * 'commands'
+     * 'commands.execute'
+     * 'commands.teleport'
+     */
+    redirect?: string
+    /**
+     * Copy the content of the current node to the specific node and redirect to there.
      * @example
      * 'boolean'
      * 'nbt_holder'
-     * 'command.execute'
      */
     template?: string,
     /**
@@ -153,15 +160,27 @@ export interface CommandTreeNodeChildren {
  */
 export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
     let children: CommandTreeNodeChildren | undefined
-    if (node.children) {
+    if (node && node.children) {
         children = node.children
-    } else if (node.template) {
-        if (node.template.indexOf('.') === -1) {
-            children = tree[node.template]
+    } else if (node && node.redirect) {
+        if (node.redirect.indexOf('.') === -1) {
+            children = tree[node.redirect]
         } else {
-            const seg = node.template.split('.')
+            const seg = node.redirect.split('.')
             const childNode = tree[seg[0]][seg[1]]
             children = getChildren(tree, childNode)
+        }
+    } else if (node && node.template) {
+        if (node.template.indexOf('.') === -1) {
+            children = fillChildrenTemplate(node, tree[node.template])
+        } else {
+            const seg = node.template.split('.')
+            const result = getChildren(tree, tree[seg[0]][seg[1]])
+            if (result) {
+                children = fillChildrenTemplate(node, result)
+            } else {
+                return undefined
+            }
         }
     } else {
         return undefined
@@ -170,30 +189,34 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
 }
 
 /**
- * This is a pure function.
+ * This is a pure function.  
+ * @param currentNode Node which contains `template`.
+ * @param singleTemplate Node whose path is the `template` defined in `currentNode`.
  */
-export function fillTemplateToSingle(template: CommandTreeNode<any>, single: CommandTreeNode<any>): CommandTreeNode<any> {
-    if (single.children) {
-        const ans = { ...single }
-        ans.children = fillTemplateToChildren(template, ans.children as CommandTreeNodeChildren)
+export function fillSingleTemplate(currentNode: CommandTreeNode<any>, singleTemplate: CommandTreeNode<any>): CommandTreeNode<any> {
+    if (singleTemplate.children) {
+        const ans = { ...singleTemplate }
+        ans.children = fillChildrenTemplate(currentNode, ans.children as CommandTreeNodeChildren)
         return ans
     } else {
-        const ans = { ...single, ...template }
+        const ans = { ...singleTemplate, ...currentNode }
         delete ans.template
         return ans
     }
 }
 
 /**
- * This is a pure function.
+ * This is a pure function.  
+ * @param currentNode Node which contains `template`.
+ * @param childrenTemplate NodeChildren whose path is the `template` defined in `currentNode`.
  */
-export function fillTemplateToChildren(template: CommandTreeNode<any>, children: CommandTreeNodeChildren): CommandTreeNodeChildren {
+export function fillChildrenTemplate(currentNode: CommandTreeNode<any>, childrenTemplate: CommandTreeNodeChildren): CommandTreeNodeChildren {
     const ans: CommandTreeNodeChildren = {}
-    for (const key in children) {
+    for (const key in childrenTemplate) {
         /* istanbul ignore next */
-        if (children.hasOwnProperty(key)) {
-            const node = children[key]
-            ans[key] = fillTemplateToSingle(template, node)
+        if (childrenTemplate.hasOwnProperty(key)) {
+            const node = childrenTemplate[key]
+            ans[key] = fillSingleTemplate(currentNode, node)
         }
     }
     return ans

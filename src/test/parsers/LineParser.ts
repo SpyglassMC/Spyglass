@@ -49,7 +49,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
 
 describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
-        it('Should throw error when neither `parser` nor `template` were specified in node', () => {
+        it('Should throw error when Got none of `parser`, `redirect` and `template` were specified in node', () => {
             const input = 'foo'
             const parser = new LineParser({})
             const node: CommandTreeNode<string> = {}
@@ -59,7 +59,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'Unexpected error. Got neither `parser` nor `template` in node.')
+                assert(message === 'Unexpected error. Got none of `parser`, `redirect` and `template` in node.')
             }
         })
         it('Should parse when parser specified', () => {
@@ -70,10 +70,10 @@ describe('LineParser Tests', () => {
             parser.parseSingle(new StringReader(input), 'node', node, line)
             assert.deepStrictEqual(line.args, ['foo'])
         })
-        it('Should handle template to children', () => {
+        it('Should handle redirect to children', () => {
             const input = 'foo'
             const tree: CommandTree = {
-                template: {
+                redirect: {
                     test: {
                         parser: new TestArgumentParser(),
                         executable: true
@@ -81,15 +81,15 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(tree)
-            const node: CommandTreeNode<string> = { template: 'template' }
+            const node: CommandTreeNode<string> = { redirect: 'redirect' }
             const line = { args: ['parsed'], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'node', node, line)
             assert.deepStrictEqual(line.args, ['parsed', 'foo'])
         })
-        it('Should handle template to single', () => {
+        it('Should handle redirect to single', () => {
             const input = 'foo'
             const tree: CommandTree = {
-                template: {
+                redirect: {
                     test: {
                         parser: new TestArgumentParser(),
                         executable: true
@@ -97,7 +97,37 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(tree)
-            const node: CommandTreeNode<string> = { template: 'template.test' }
+            const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
+            const line = { args: ['parsed'], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
+            parser.parseSingle(new StringReader(input), 'node', node, line)
+            assert.deepStrictEqual(line.args, ['parsed', 'foo'])
+        })
+        it('Should handle children template', () => {
+            const input = 'foo'
+            const tree: CommandTree = {
+                template: {
+                    test: {
+                        parser: new TestArgumentParser()
+                    }
+                }
+            }
+            const parser = new LineParser(tree)
+            const node: CommandTreeNode<string> = { template: 'template', executable: true }
+            const line = { args: ['parsed'], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
+            parser.parseSingle(new StringReader(input), 'node', node, line)
+            assert.deepStrictEqual(line.args, ['parsed', 'foo'])
+        })
+        it('Should handle single template', () => {
+            const input = 'foo'
+            const tree: CommandTree = {
+                template: {
+                    test: {
+                        parser: new TestArgumentParser()
+                    }
+                }
+            }
+            const parser = new LineParser(tree)
+            const node: CommandTreeNode<string> = { template: 'template.test', executable: true  }
             const line = { args: ['parsed'], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'node', node, line)
             assert.deepStrictEqual(line.args, ['parsed', 'foo'])
@@ -379,7 +409,7 @@ describe('LineParser Tests', () => {
     })
     describe('getPartOfHintsAndNode() Tests', () => {
         const tree: CommandTree = {
-            line: { command: { template: 'commands' } },
+            line: { command: { redirect: 'commands' } },
             commands: {
                 execute: {
                     parser: new TestArgumentParser(),
@@ -389,7 +419,7 @@ describe('LineParser Tests', () => {
                             parser: new TestArgumentParser(),
                             children: {
                                 command: {
-                                    template: 'commands'
+                                    redirect: 'commands'
                                 }
                             }
                         }
@@ -429,12 +459,12 @@ describe('LineParser Tests', () => {
             const parser = new LineParser(tree)
             const { partOfHints, node } = parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'command'])
             assert.deepStrictEqual(partOfHints, ['<execute: test>', '<run: test>'])
-            assert.deepStrictEqual(node, { template: 'commands' })
+            assert.deepStrictEqual(node, { redirect: 'commands' })
         })
     })
     describe('getHintAndDescription() Tests', () => {
         const tree: CommandTree = {
-            line: { command: { template: 'commands' } },
+            line: { command: { redirect: 'commands' } },
             commands: {
                 execute: {
                     parser: new TestArgumentParser(),
@@ -444,7 +474,7 @@ describe('LineParser Tests', () => {
                             parser: new TestArgumentParser(),
                             children: {
                                 command: {
-                                    template: 'commands'
+                                    redirect: 'commands'
                                 }
                             }
                         }
@@ -486,7 +516,7 @@ describe('LineParser Tests', () => {
             const tree: CommandTree = {
                 line: {
                     command: {
-                        template: 'commands'
+                        redirect: 'commands'
                     }
                 },
                 commands: {

@@ -14,14 +14,14 @@ export default class EntityArgumentParser extends ArgumentParser<string> {
     ) { super() }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = { data: '' }
+        // const ans: ArgumentParserResult<string> = { data: '' }
 
-        
-
-        return ans
+        // return ans
+        throw ''
     }
 
     getExamples(): string[] {
-        return ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498']
+        // return ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498']
+        throw ''
     }
 }
