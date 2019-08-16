@@ -3,6 +3,7 @@ import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import EntityArgumentParser from './parsers/EntityParser'
+import { SaturatedLine } from './types/Line'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands.
@@ -10,10 +11,10 @@ import EntityArgumentParser from './parsers/EntityParser'
 export const tree: CommandTree = {
     line: {
         command: {
-            redirect: 'command'
+            template: 'command'
         },
         comment: {
-            redirect: 'comment'
+            template: 'comment'
         }
     },
     command: {
@@ -35,11 +36,11 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementArgumentParser(),
+                                            // parser: new AdvancementArgumentParser(),
                                             executable: true,
                                             children: {
                                                 criterion: {
-                                                    parser: new AdvancementCriterionArgumentParser(),
+                                                    // parser: new AdvancementCriterionArgumentParser(),
                                                     executable: true
                                                 }
                                             }
@@ -50,7 +51,7 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementArgumentParser(),
+                                            // parser: new AdvancementArgumentParser(),
                                             executable: true
                                         }
                                     }
@@ -125,13 +126,19 @@ export interface CommandTreeNode<T> {
      */
     children?: CommandTreeNodeChildren,
     /**
-     * Redirect the parsing process to specific node.
+     * Copy the content of the template to the current node while parsing.
      * @example
-     * 'commands'
-     * 'commands.execute'
-     * 'commands.teleport'
+     * 'boolean'
+     * 'nbt_holder'
+     * 'command.execute'
      */
-    redirect?: string
+    template?: string,
+    /**
+     * Optional function which will be called when the parser finished parsing.  
+     * Can be used to validate the parsed arguments.
+     * @param parsedLine Parsed line.
+     */
+    run?(parsedLine: SaturatedLine): void
 }
 
 /**
@@ -148,11 +155,11 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
     let children: CommandTreeNodeChildren | undefined
     if (node.children) {
         children = node.children
-    } else if (node.redirect) {
-        if (node.redirect.indexOf('.') === -1) {
-            children = tree[node.redirect]
+    } else if (node.template) {
+        if (node.template.indexOf('.') === -1) {
+            children = tree[node.template]
         } else {
-            const seg = node.redirect.split('.')
+            const seg = node.template.split('.')
             const childNode = tree[seg[0]][seg[1]]
             children = getChildren(tree, childNode)
         }
@@ -160,4 +167,34 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
         return undefined
     }
     return children
+}
+
+/**
+ * This is a pure function.
+ */
+export function fillTemplateToSingle(template: CommandTreeNode<any>, single: CommandTreeNode<any>): CommandTreeNode<any> {
+    if (single.children) {
+        const ans = { ...single }
+        ans.children = fillTemplateToChildren(template, ans.children as CommandTreeNodeChildren)
+        return ans
+    } else {
+        const ans = { ...single, ...template }
+        delete ans.template
+        return ans
+    }
+}
+
+/**
+ * This is a pure function.
+ */
+export function fillTemplateToChildren(template: CommandTreeNode<any>, children: CommandTreeNodeChildren): CommandTreeNodeChildren {
+    const ans: CommandTreeNodeChildren = {}
+    for (const key in children) {
+        /* istanbul ignore next */
+        if (children.hasOwnProperty(key)) {
+            const node = children[key]
+            ans[key] = fillTemplateToSingle(template, node)
+        }
+    }
+    return ans
 }

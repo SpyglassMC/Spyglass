@@ -79,7 +79,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     // Cache.
     base.cache = combineLocalCache(base.cache, override.cache)
     // Completions.
-    base.completions = [...override.completions, ...base.completions]
+    base.completions = [...base.completions, ...override.completions]
     // Errors.
     base.errors = [...base.errors, ...override.errors]
     return base

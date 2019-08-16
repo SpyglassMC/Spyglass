@@ -35,12 +35,6 @@ describe('Line Tests', () => {
             combineLine(base, override)
             assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], path: [] })
         })
-        it('Should return new completions and ignore parsed ones', () => {
-            const base = { args: [], completions: [{ label: 'ignored' }], path: [] }
-            const override = { args: [], completions: [{ label: 'foo' }], path: [] }
-            combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], path: [] })
-        })
         it('Should not return empty error array', () => {
             const base = { args: [], errors: [], path: [] }
             const override = { args: [], errors: [], path: [] }

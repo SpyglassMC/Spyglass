@@ -1,9 +1,20 @@
 import Range from './Range'
 
+/**
+ * Represent an entity selector.
+ */
 export default interface EntitySelector {
-    playerName?: string,
-    uuid?: string,
-    varaible?: 'p' | 'a' | 'r' | 's' | 'e',
+    /**
+     * Used for player names or entity UUIDs.
+     */
+    plain?: string,
+    /**
+     * Variable of this entity selector.
+     */
+    variable?: 'p' | 'a' | 'r' | 's' | 'e',
+    /**
+     * Arguments of this entity selector.
+     */
     arguments?: {
         sort?: 'nearest' | 'arbitary' | 'random' | 'furthest'
         x?: number,
@@ -28,6 +39,6 @@ export default interface EntitySelector {
         advancement?: {
             [id: string]: boolean
         },
-        nbt?: Nbt
+        nbt?: NbtCompoundTag
     }
 }
