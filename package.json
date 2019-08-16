@@ -4,6 +4,7 @@
     "description": "Language server for Minecraft: Java Edition datapacks.",
     "main": "src",
     "dependencies": {
+        "constants": "0.0.2",
         "vscode-languageserver": "^5.2.1"
     },
     "directories": {
