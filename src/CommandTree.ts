@@ -2,9 +2,8 @@ import ArgumentParser from './parsers/ArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
-import EntityArgumentParser from './parsers/EntityParser'
-import { ENAMETOOLONG } from 'constants';
-import { combineTracerFeatures } from 'vscode-languageserver';
+import EntitySelectorArgumentParser from './parsers/EntitySelectorArgumentParser'
+import { SaturatedLine } from './types/Line'
 
 /**
  * Command tree of Minecraft Java Edition 1.14.4 commands.
@@ -12,13 +11,13 @@ import { combineTracerFeatures } from 'vscode-languageserver';
 export const tree: CommandTree = {
     line: {
         command: {
-            redirect: 'command'
+            template: 'commands'
         },
         comment: {
-            redirect: 'comment'
+            template: 'comments'
         }
     },
-    command: {
+    commands: {
         advancement: {
             parser: new LiteralArgumentParser('advancement'),
             description: 'Grant or revoke advancements from players.',
@@ -27,7 +26,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('grant', 'revoke'),
                     children: {
                         targets: {
-                            parser: new EntityArgumentParser(true, true),
+                            parser: new EntitySelectorArgumentParser(true, true),
                             children: {
                                 everything: {
                                     parser: new LiteralArgumentParser('everything'),
@@ -37,11 +36,11 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementArgumentParser(),
+                                            // parser: new AdvancementArgumentParser(),
                                             executable: true,
                                             children: {
                                                 criterion: {
-                                                    parser: new AdvancementCriterionArgumentParser(),
+                                                    // parser: new AdvancementCriterionArgumentParser(),
                                                     executable: true
                                                 }
                                             }
@@ -52,7 +51,7 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new AdvancementArgumentParser(),
+                                            // parser: new AdvancementArgumentParser(),
                                             executable: true
                                         }
                                     }
@@ -69,7 +68,7 @@ export const tree: CommandTree = {
             description: 'Adds players to blacklist.',
             children: {
                 name: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntitySelectorArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -96,7 +95,7 @@ export const tree: CommandTree = {
                     }
                 },
                 name: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntitySelectorArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -129,7 +128,7 @@ export const tree: CommandTree = {
                             parser: new BossbarArgumentParser(),
                             children: {
                                 name: {
-                                    parser: new TextComponentArgumentParser('name'),
+                                    parser: new TextComponentArgumentParser(),
                                     executable: true
                                 }
                             }
@@ -200,7 +199,7 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('players'),
                                     children: {
                                         targets: {
-                                            parser: new EntityArgumentParser(true, true),
+                                            parser: new EntitySelectorArgumentParser(true, true),
                                             executable: true
                                         }
                                     }
@@ -227,7 +226,7 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('visible'),
                                     children: {
                                         visible: {
-                                            parser: new BooleanArgumentParser(),
+                                            template: 'templates.boolean',
                                             executable: true
                                         }
                                     }
@@ -244,7 +243,7 @@ export const tree: CommandTree = {
             executable: true,
             children: {
                 targets: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntitySelectorArgumentParser(true, true),
                     executable: true,
                     children: {
                         item: {
@@ -316,10 +315,10 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('as'),
                     children: {
                         entity: {
-                            parser: new EntityArgumentParser(),
+                            parser: new EntitySelectorArgumentParser(),
                             children: {
                                 subcommand: {
-                                    redirect: 'command.execute'
+                                    template: 'commands.execute'
                                 }
                             }
                         }
@@ -329,14 +328,14 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('run'),
                     children: {
                         command: {
-                            redirect: 'command'
+                            template: 'commands'
                         }
                     }
                 }
             }
         }
     },
-    comment: { // #define (entity|tag|objective) <id: string> [description: string]
+    comments: { // #define (entity|tag|objective) <id: string> [description: string]
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             description: 'Define an entity tag, a scoreboard objective or a fake player. Will be used for completions.',
@@ -360,6 +359,11 @@ export const tree: CommandTree = {
                     }
                 }
             }
+        }
+    },
+    templates: {
+        boolean: {
+            parser: new LiteralArgumentParser('false', 'true')
         }
     }
 }
@@ -399,13 +403,19 @@ export interface CommandTreeNode<T> {
      */
     children?: CommandTreeNodeChildren,
     /**
-     * Redirect the parsing process to specific node.
+     * Copy the content of the template to the current node while parsing.
      * @example
-     * 'commands'
-     * 'commands.execute'
-     * 'commands.teleport'
+     * 'boolean'
+     * 'nbt_holder'
+     * 'command.execute'
      */
-    redirect?: string
+    template?: string,
+    /**
+     * Optional function which will be called when the parser finished parsing.  
+     * Can be used to validate the parsed arguments.
+     * @param parsedLine Parsed line.
+     */
+    run?(parsedLine: SaturatedLine): void
 }
 
 /**
@@ -422,11 +432,11 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
     let children: CommandTreeNodeChildren | undefined
     if (node.children) {
         children = node.children
-    } else if (node.redirect) {
-        if (node.redirect.indexOf('.') === -1) {
-            children = tree[node.redirect]
+    } else if (node.template) {
+        if (node.template.indexOf('.') === -1) {
+            children = tree[node.template]
         } else {
-            const seg = node.redirect.split('.')
+            const seg = node.template.split('.')
             const childNode = tree[seg[0]][seg[1]]
             children = getChildren(tree, childNode)
         }
@@ -434,4 +444,34 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
         return undefined
     }
     return children
+}
+
+/**
+ * This is a pure function.
+ */
+export function fillTemplateToSingle(template: CommandTreeNode<any>, single: CommandTreeNode<any>): CommandTreeNode<any> {
+    if (single.children) {
+        const ans = { ...single }
+        ans.children = fillTemplateToChildren(template, ans.children as CommandTreeNodeChildren)
+        return ans
+    } else {
+        const ans = { ...single, ...template }
+        delete ans.template
+        return ans
+    }
+}
+
+/**
+ * This is a pure function.
+ */
+export function fillTemplateToChildren(template: CommandTreeNode<any>, children: CommandTreeNodeChildren): CommandTreeNodeChildren {
+    const ans: CommandTreeNodeChildren = {}
+    for (const key in children) {
+        /* istanbul ignore next */
+        if (children.hasOwnProperty(key)) {
+            const node = children[key]
+            ans[key] = fillTemplateToSingle(template, node)
+        }
+    }
+    return ans
 }

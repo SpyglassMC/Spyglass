@@ -1,7 +1,7 @@
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
 import Parser from '../types/Parser'
 import StringReader from '../utils/StringReader'
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren } from '../CommandTree'
+import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillTemplateToChildren, fillTemplateToSingle } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 import { MarkupContent } from 'vscode-languageserver'
@@ -21,16 +21,16 @@ export default class LineParser implements Parser<Line> {
 
     parseSingle(reader: StringReader, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine) {
         parsedLine.path.push(key)
-        if (node.redirect) {
-            if (node.redirect.indexOf('.') === -1) {
-                // Redirect to children.
-                const redirect = this.tree[node.redirect]
-                this.parseChildren(reader, redirect, parsedLine)
+        if (node.template) {
+            if (node.template.indexOf('.') === -1) {
+                // Use `children` as the template.
+                const template = fillTemplateToChildren(node, this.tree[node.template])
+                this.parseChildren(reader, template, parsedLine)
             } else {
-                // Redirect to single.
-                const seg = node.redirect.split(/\./g)
-                const redirect = this.tree[seg[0]][seg[1]]
-                this.parseSingle(reader, seg[1], redirect, parsedLine)
+                // Use `single` as the template.
+                const seg = node.template.split('.')
+                const template = fillTemplateToSingle(node, this.tree[seg[0]][seg[1]])
+                this.parseSingle(reader, seg[1], template, parsedLine)
             }
         } else if (node.parser) {
             const start = reader.cursor
@@ -82,7 +82,10 @@ export default class LineParser implements Parser<Line> {
                 )
             }
         } else {
-            throw new Error('Unexpected error. Got neither `redirect` nor `parser` in node.')
+            throw new Error('Unexpected error. Got neither `parser` nor `template` in node.')
+        }
+        if (node.run) {
+            node.run(parsedLine)
         }
     }
 

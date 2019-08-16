@@ -25,7 +25,8 @@ export default interface LocalCache {
     def: {
         entities?: DescriptionsOfIDs,
         objectives?: DescriptionsOfIDs,
-        tags?: DescriptionsOfIDs
+        tags?: DescriptionsOfIDs,
+        bossbars?: DescriptionsOfIDs
     }
 }
 
@@ -87,12 +88,22 @@ export interface DescriptionsOfIDs {
     [id: string]: string | undefined
 }
 
-export function isDefinitionType(value: any): value is 'entity' | 'objective' | 'tag' {
-    return value === 'entity' || value === 'objective' || value === 'tag'
+export function isDefinitionType(value: any): value is 'entity' | 'objective' | 'tag' | 'bossbar' {
+    return (
+        value === 'entity' ||
+        value === 'objective' ||
+        value === 'tag' ||
+        value === 'bossbar'
+    )
 }
 
-export function isDefinitionKey(value: any): value is 'entities' | 'objectives' | 'tags' {
-    return value === 'entities' || value === 'objectives' || value === 'tags'
+export function isDefinitionKey(value: any): value is 'entities' | 'objectives' | 'tags' | 'bossbars' {
+    return (
+        value === 'entities' ||
+        value === 'objectives' ||
+        value === 'tags' ||
+        value === 'bossbars'
+    )
 }
 
 export function isReferenceKey(value: any): value is 'advancements' |
