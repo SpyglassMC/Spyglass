@@ -1,13 +1,13 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { CommandTree, CommandTreeNode, getChildren, fillTemplateToSingle } from '../CommandTree'
+import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate } from '../CommandTree'
 import { fail } from 'assert'
 import { TestArgumentParser } from './parsers/LineParser'
 
 describe('CommandTree Tests', () => {
     describe('getChildren() Tests', () => {
         const tree: CommandTree = {
-            line: { command: { template: 'commands' } },
+            line: { command: { redirect: 'commands' } },
             commands: { execute: { executable: true } }
         }
         it('Should return node.children if it exists', () => {
@@ -15,18 +15,33 @@ describe('CommandTree Tests', () => {
             const actual = getChildren(tree, node)
             assert.deepStrictEqual(actual, { foo: {} })
         })
-        it('Should handle template', () => {
+        it('Should handle redirect', () => {
+            const node: CommandTreeNode<any> = { redirect: 'line.command' }
+            const actual = getChildren(tree, node)
+            assert.deepStrictEqual(actual, { execute: { executable: true } })
+        })
+        it('Should handle single template', () => {
             const node: CommandTreeNode<any> = { template: 'line.command' }
             const actual = getChildren(tree, node)
             assert.deepStrictEqual(actual, { execute: { executable: true } })
         })
-        it('Should return undefined', () => {
+        it('Should handle children template', () => {
+            const node: CommandTreeNode<any> = { template: 'line', description: 'test' }
+            const actual = getChildren(tree, node)
+            assert.deepStrictEqual(actual, { command: { redirect: 'commands', description: 'test' } })
+        })
+        it('Should return undefined when the template does not exist', () => {
+            const node: CommandTreeNode<any> = { template: 'line.wtf' }
+            const actual = getChildren(tree, node)
+            assert(actual === undefined)
+        })
+        it('Should return undefined when none of `children`, `redirect` and `template` was found.', () => {
             const node: CommandTreeNode<any> = {}
             const actual = getChildren(tree, node)
             assert(actual === undefined)
         })
     })
-    describe('fillTemplateToSingle() Tests', () => {
+    describe('fillSingleTemplate() Tests', () => {
         it('Should fill children', () => {
             const template: CommandTreeNode<any> = {
                 template: '',
@@ -39,7 +54,7 @@ describe('CommandTree Tests', () => {
             const single: CommandTreeNode<any> = {
                 description: 'test'
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 description: 'test',
                 children: {
@@ -57,7 +72,7 @@ describe('CommandTree Tests', () => {
             const single: CommandTreeNode<any> = {
                 description: 'test'
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 description: 'haha'
             })
@@ -70,7 +85,7 @@ describe('CommandTree Tests', () => {
             const single: CommandTreeNode<any> = {
                 description: 'test'
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 executable: true,
                 description: 'test'
@@ -85,7 +100,7 @@ describe('CommandTree Tests', () => {
             const single: CommandTreeNode<any> = {
                 description: 'test'
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 parser, description: 'test'
             })
@@ -98,7 +113,7 @@ describe('CommandTree Tests', () => {
             const single: CommandTreeNode<any> = {
                 description: 'test'
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 description: 'test',
                 permission: 4
@@ -121,7 +136,7 @@ describe('CommandTree Tests', () => {
                     }
                 }
             }
-            const actual = fillTemplateToSingle(template, single)
+            const actual = fillSingleTemplate(template, single)
             assert.deepStrictEqual(actual, {
                 description: 'test',
                 children: {
