@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage, resolvePathOfObject } from '../../utils/utils'
+import { formatMessage, arrayToMessage, resolvePathOfObject, escapeString } from '../../utils/utils'
 
 describe('utils.ts Tests', () => {
     describe('formatMessage() Tests', () => {
@@ -50,6 +50,13 @@ describe('utils.ts Tests', () => {
             const obj = { foo: ['baz', { bar: ['qux'] }] }
             const actual = resolvePathOfObject(obj, path)
             assert(actual === 'qux')
+        })
+    })
+    describe('escapeString() Tests', () => {
+        it('Should escape string.',()=>{
+            const str = `{Text1:'{\\"text\\":\\"\\"}'}`
+            const actual = escapeString(str)
+            assert(actual === `{Text1:'{\\\\\\"text\\\\\\":\\\\\\"\\\\\\"}'}`)
         })
     })
 })

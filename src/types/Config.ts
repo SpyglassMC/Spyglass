@@ -26,7 +26,7 @@ export default interface Config {
          * `prefer double`: Always use double quotes, unless there are double quotes in the string.  
          * @default 'prefer double'
          */
-        quoteType: LintValue<'always single' | 'always double' | 'prefer single' | 'perfer double'>
+        quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double'
     }
 }
 
@@ -39,16 +39,6 @@ export const VanillaConfig: Config = {
         version: 'JE1.14.4'
     },
     lint: {
-        quoteType: [true, 'perfer double']
-    }
-}
-
-type LintValue<T> = boolean | [boolean, T]
-
-export function shouldLint<T>(value: LintValue<T>) {
-    if (typeof value === 'boolean') {
-        return value
-    } else {
-        return value[0]
+        quoteType: 'prefer double'
     }
 }

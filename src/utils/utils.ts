@@ -43,3 +43,20 @@ export function resolvePathOfObject(obj: any, path: string) {
     }
     return ans
 }
+
+/**
+ * Escape characters in a string with `\`.
+ * @param str A string.
+ * @param quote A string indicating which type of quote should be escaped.
+ */
+export function escapeString(str: string, quote: '"' | "'" = '"') {
+    let ans = ''
+    for (const char of str) {
+        if (char === '\\' || char === quote) {
+            ans += `\\${char}`
+        } else {
+            ans += char
+        }
+    }
+    return ans
+}
