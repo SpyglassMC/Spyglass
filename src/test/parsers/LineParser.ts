@@ -25,22 +25,25 @@ export class TestArgumentParser extends ArgumentParser<string> {
      * 
      * Input `completion` to attain a completion.
      */
-    constructor(private readonly type: 'error' | 'ERROR' | 'cache' | 'CACHE' | 'completion' | 'normal' = 'normal') { super() }
+    constructor(private readonly type: 'error' | 'ERROR' | 'cache' | 'CACHE' | 'completion' | 'only_one_char' | 'normal' = 'normal') { super() }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
         const data = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = { data }
         if (this.type === 'error') {
-            ans.errors = [new ParsingError({ start: start, end: start + data.length }, 'expected `error` and did get `error`')]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected `error` and did get `error`')]
         } else if (this.type === 'ERROR') {
-            ans.errors = [new ParsingError({ start: start, end: start + data.length }, 'expected `ERROR` and did get `ERROR`', false)]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected `ERROR` and did get `ERROR`', false)]
         } else if (this.type === 'cache') {
             ans.cache = { ref: {}, def: { entities: { foo: undefined } } }
         } else if (this.type === 'CACHE') {
             ans.cache = { ref: {}, def: { entities: { foo: '*foo*' } } }
         } else if (this.type === 'completion') {
             ans.completions = [{ label: 'completion' }]
+        } else if (this.type === 'only_one_char') {
+            ans.data = ans.data.slice(0, 1)
+            reader.cursor = start + 1
         }
         return ans
     }
@@ -127,7 +130,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(tree)
-            const node: CommandTreeNode<string> = { template: 'template.test', executable: true  }
+            const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
             const line = { args: ['parsed'], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'node', node, line)
             assert.deepStrictEqual(line.args, ['parsed', 'foo'])
@@ -145,7 +148,7 @@ describe('LineParser Tests', () => {
             const line = { args: [], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, ['foo'])
-            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 4 }, 'Expected more arguments but got nothing.')])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'Expected more arguments but got nothing.')])
         })
         it('Should parse children when there are trailing data', () => {
             const input = 'foo bar'
@@ -168,6 +171,27 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.args,
                 ['foo', 'bar']
             )
+        })
+        it('Should return errors when arguments are not seperated by space', () => {
+            const input = 'foo'
+            const tree: CommandTree = {
+                commands: {
+                    test: {
+                        parser: new TestArgumentParser('only_one_char'),
+                        children: {
+                            child: {
+                                parser: new TestArgumentParser(),
+                                executable: true
+                            }
+                        }
+                    }
+                }
+            }
+            const parser = new LineParser(tree)
+            const line = { args: [], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
+            parser.parseSingle(new StringReader(input), 'test', tree.commands.test, line)
+            assert.deepStrictEqual(line.args, ['f'])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'Expected a space to seperate two arguments.')])
         })
         it('Should downgrade untolerable errors of children', () => {
             const input = 'foo bar'
@@ -209,7 +233,7 @@ describe('LineParser Tests', () => {
                 ['foo']
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 4, end: 7 }, 'Expected nothing but got \`bar\`.')]
+                [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got \` bar\`.')]
             )
         })
         it('Should return completions for empty argument', () => {

@@ -48,14 +48,15 @@ export default class LineParser implements Parser<Line> {
             const { cache, completions, data, errors } = node.parser.parse(reader, parsedLine.args, this.config)
             combineSaturatedLine(parsedLine, { args: [data], cache, completions, errors, path: [] })
             // Handle trailing data or absent data.
-            if (!reader.canRead()) {
+            if (!reader.canRead(2)) {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.cursor + 1 }, 'Expected more arguments but got nothing.')
+                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, 'Expected more arguments but got nothing.')
                     )
                 }
-                if (reader.string[reader.string.length - 1] === ' ') {
+                if (reader.peek() === ' ') {
+                    reader.skip()
                     // The input line is end with a space.
                     /* istanbul ignore else */
                     if (node.children) {
@@ -76,9 +77,16 @@ export default class LineParser implements Parser<Line> {
                         new ParsingError({ start: reader.cursor, end: reader.string.length }, `Expected nothing but got \`${reader.remainingString}\`.`)
                     )
                 } else {
-                    this.parseChildren(reader, node.children, parsedLine)
-                    // Downgrade errors.
-                    parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
+                    if (reader.peek() === ' ') {
+                        reader.skip()
+                        this.parseChildren(reader, node.children, parsedLine)
+                        // Downgrade errors.
+                        parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
+                    } else {
+                        parsedLine.errors.push(
+                            new ParsingError({ start: reader.cursor, end: reader.string.length }, 'Expected a space to seperate two arguments.')
+                        )
+                    }
                 }
             }
             // Handle permission level.

@@ -1,3 +1,5 @@
+import Config from '../types/Config'
+
 /**
  * Format input message.
  * @param msg Message.
@@ -31,20 +33,6 @@ export function arrayToMessage(arr: string[]) {
 }
 
 /**
- * Get specific value of the object according to the path.
- * @param obj Object.
- * @param path Path.
- */
-export function resolvePathOfObject(obj: any, path: string) {
-    const parts = path.split(/\./g)
-    let ans = obj
-    for (const part of parts) {
-        ans = ans[part]
-    }
-    return ans
-}
-
-/**
  * Escape characters in a string with `\`.
  * @param str A string.
  * @param quote A string indicating which type of quote should be escaped.
@@ -59,4 +47,8 @@ export function escapeString(str: string, quote: '"' | "'" = '"') {
         }
     }
     return ans
+}
+
+export function quoteString(str: string, config: Config) {
+
 }

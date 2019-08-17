@@ -26,9 +26,9 @@ export default class ParsingError {
     ) { }
 
     /**
-     * Get diagnostic of the parsing error.
+     * Get the diagnostic form of the parsing error.
      */
-    getDiagnostic(line: number): Diagnostic {
+    toDiagnostic(line: number): Diagnostic {
         return {
             range: { start: { line, character: this.range.start }, end: { line, character: this.range.end } },
             severity: this.severity,

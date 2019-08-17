@@ -37,9 +37,12 @@ export default class StringReader {
         return this.string.charAt(this.cursor++)
     }
 
-    skipWhiteSpace() {
-        while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
+    skipWhiteSpace(max?: number) {
+        let count = 0
+        while (this.canRead() && StringReader.isWhiteSpace(this.peek()) &&
+            (max === undefined || count < max)) {
             this.skip()
+            count++
         }
     }
 
@@ -182,14 +185,15 @@ export default class StringReader {
      */
     readUntilOrEnd(terminator: string) {
         let ans = ''
-        do {
-            const c = this.read()
+        while (this.canRead()) {
+            const c = this.peek()
             if (terminator === c) {
                 return ans
             } else {
                 ans += c
             }
-        } while (this.canRead())
+            this.skip()
+        }
         return ans
     }
 

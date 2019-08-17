@@ -23,10 +23,10 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
         })
         it('Should return data even if it is empty', () => {
             const parser = new DefinitionDescriptionArgumentParser()
-            const reader = new StringReader(' ')
+            const reader = new StringReader('')
             const { data } = parser.parse(reader, ['#define', 'tag', 'debugger'])
             assert(data === '')
-            assert(reader.cursor === 1)
+            assert(reader.cursor === 0)
         })
         it('Should return errors for empty description', () => {
             const parser = new DefinitionDescriptionArgumentParser()

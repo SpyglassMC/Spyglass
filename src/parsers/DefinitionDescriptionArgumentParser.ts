@@ -25,7 +25,7 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
             }
         } else {
             ans.errors = [
-                new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, 'expected a string but got nothing')
+                new ParsingError({ start: reader.cursor, end: reader.cursor + 1 }, 'expected a string but got nothing')
             ]
         }
         return ans

@@ -26,7 +26,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const reader = new StringReader(' ')
             const { data } = parser.parse(reader, ['#define', 'tag'])
             assert(data === '')
-            assert(reader.cursor === 1)
+            assert(reader.cursor === 0)
         })
         it('Should return errors for empty id', () => {
             const parser = new DefinitionIDArgumentParser()

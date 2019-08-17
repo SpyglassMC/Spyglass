@@ -26,7 +26,56 @@ export default interface Config {
          * `prefer double`: Always use double quotes, unless there are double quotes in the string.  
          * @default 'prefer double'
          */
-        quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double'
+        quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double',
+        /**
+         * When the strings in entity selectors should be quoted.  
+         * `true`: Always.  
+         * `false`: Only when there are special characters in the string.  
+         * @default false
+         */
+        quoteEntitySelectorStrings: boolean,
+        /**
+         * When the strings in NBTs should be quoted.  
+         * `true`: Always.  
+         * `false`: Only when there are special characters in the string.  
+         * @default true
+         */
+        quoteNbtStrings: boolean,
+        /**
+         * The suffix used for TAG_Byte in SNBT.  
+         * @default 'b'
+         */
+        snbtByteSuffix: 'b' | 'B',
+        /**
+         * Whether `0b` and `1b` should be represents by `false` and `true` in SNBT.  
+         * @default false
+         */
+        snbtUseBooleans: boolean,
+        /**
+         * The suffix used for TAG_Short in SNBT.  
+         * @default 's'
+         */
+        snbtShortSuffix: 's' | 'S',
+        /**
+         * The suffix used for TAG_Long in SNBT.  
+         * @default 'L'
+         */
+        snbtLongSuffix: 'l' | 'L',
+        /**
+         * The suffix used for TAG_Float in SNBT.  
+         * @default 'f'
+         */
+        snbtFloatSuffix: 'f' | 'F',
+        /**
+         * The suffix used for TAG_Double in SNBT.  
+         * @default 'd'
+         */
+        snbtDoubleSuffix: 'd' | 'D',
+        /**
+         * Whether to omit the suffix of double numbers when possible in SNBT.  
+         * @default false
+         */
+        snbtOmitDoubleSuffix: boolean
     }
 }
 
@@ -39,6 +88,15 @@ export const VanillaConfig: Config = {
         version: 'JE1.14.4'
     },
     lint: {
-        quoteType: 'prefer double'
+        quoteType: 'prefer double',
+        quoteEntitySelectorStrings: false,
+        quoteNbtStrings: true,
+        snbtByteSuffix: 'b',
+        snbtUseBooleans: false,
+        snbtShortSuffix: 's',
+        snbtLongSuffix: 'L',
+        snbtFloatSuffix: 'f',
+        snbtDoubleSuffix: 'd',
+        snbtOmitDoubleSuffix: false
     }
 }

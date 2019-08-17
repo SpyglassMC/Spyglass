@@ -69,14 +69,14 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(' idk'))
             assert(actual.completions === undefined)
         })
-        it('Should treat empty string as partial matching', () => {
+        it('Should return untolerable error when input is empty', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader(''))
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
             assert(pe.message.match(/expected one of `bar` and `foo` but got nothing/))
-            assert(pe.tolerable === true)
+            assert(pe.tolerable === false)
         })
         it('Should return errors when partial matching', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')

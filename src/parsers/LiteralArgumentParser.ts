@@ -48,7 +48,8 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
                 } else {
                     ans.errors = [new ParsingError(
                         { start: start, end: start + 1 },
-                        `expected one of ${arrayToMessage(this.literals)} but got nothing`
+                        `expected one of ${arrayToMessage(this.literals)} but got nothing`,
+                        false
                     )]
                 }
             } else {

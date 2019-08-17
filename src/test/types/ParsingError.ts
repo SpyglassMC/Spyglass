@@ -4,10 +4,10 @@ import { DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 
 describe('ParsingError Tests', () => {
-    describe('getDiagnostic() Tests', () => {
+    describe('toDiagnostic() Tests', () => {
         it('Should return diagnostic', () => {
             const pe = new ParsingError({ start: 0, end: 5 }, 'expected a number but got nothing')
-            const actual = pe.getDiagnostic(1)
+            const actual = pe.toDiagnostic(1)
             assert(actual.range.start.line === 1)
             assert(actual.range.start.character === 0)
             assert(actual.range.end.line === 1)

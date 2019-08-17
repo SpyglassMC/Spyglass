@@ -70,6 +70,12 @@ describe('StringReader Tests', () => {
             reader.skipWhiteSpace()
             assert(reader.cursor === 7)
         })
+        it('Should limit skip count', () => {
+            const reader = new StringReader('f \n\r \n o')
+            reader.cursor = 1
+            reader.skipWhiteSpace(3)
+            assert(reader.cursor === 4)
+        })
     })
     describe('readInt() Tests', () => {
         it('Should return correctly', () => {
@@ -256,7 +262,7 @@ describe('StringReader Tests', () => {
             const actualResult = reader.readUntilOrEnd(' ')
             const actualCursor = reader.cursor
             assert(actualResult === 'foo')
-            assert(actualCursor === 4)
+            assert(actualCursor === 3)
         })
         it('Should read until end', () => {
             const reader = new StringReader('foobar')
