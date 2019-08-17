@@ -11,6 +11,95 @@ Language server for Minecraft: Java Edition datapacks.
 
 ## _Todo_
 
+### Lint Rules
+
+There are lots of lint rules which can help format your commands.
+
+#### quoteType: `'always single' | 'always double' | 'prefer single' | 'prefer double'`
+
+Quotes used in NBT strings and phrase strings.  
+`'always single'`: Always use single quotes.  
+`'always double'`: Always use double quotes.  
+`'prefer single'`: Always use single quotes, unless there are single quotes in the string.  
+`'prefer double'`: Always use double quotes, unless there are double quotes in the string.  
+@default `'prefer double'`  
+
+#### quoteEntitySelectorStrings: `boolean`
+
+When the strings in entity selectors should be quoted.  
+`true`: Always.  
+`false`: Only when there are special characters in the string.  
+@default `false`
+
+#### quoteSnbtStringKeys: `boolean`
+
+When the string keys in SNBT should be quoted.  
+`true`: Always.  
+`false`: Only when there are special characters in the string.  
+@default `false`
+
+#### quoteNbtStringValues: `boolean`
+
+When the string values in SNBT should be quoted.  
+`true`: Always.  
+`false`: Only when there are special characters in the string.  
+@default `true`
+
+#### snbtAppendEndingComma: `boolean`
+
+Whether to append an ending comma after the last element in a compound/list/array in SNBT or not.  
+@default `false`
+
+#### snbtAppendSpaceAfterColon: `boolean`
+
+Whether to append spaces after colons in SNBT or not.  
+@default `true`
+
+#### snbtAppendSpaceAfterComma: `boolean`
+
+Whether to append spaces after commas in SNBT or not.  
+@default `true`
+
+#### snbtAppendSpaceAfterSemicolon: `boolean`
+
+Whether to append spaces after semicolons in SNBT or not.  
+@default `true`
+
+#### snbtByteSuffix: `'b' | 'B'`
+
+The suffix used for TAG_Byte in SNBT.  
+@default `'b'`
+
+#### snbtUseBooleans: `boolean`
+
+Whether `0b` and `1b` should be represents by `false` and `true` in SNBT or not.  
+@default `false`
+
+#### snbtShortSuffix: `'s' | 'S'`
+
+The suffix used for TAG_Short in SNBT.  
+@default `'s'`
+
+#### snbtLongSuffix: `'l' | 'L'`
+
+The suffix used for TAG_Long in SNBT.  
+@default `'L'`
+
+#### snbtFloatSuffix: `'f' | 'F'`
+
+The suffix used for TAG_Float in SNBT.  
+@default `'f'`
+
+#### snbtDoubleSuffix: `'d' | 'D'`
+
+The suffix used for TAG_Double in SNBT.  
+@default `'d'`
+
+#### snbtOmitDoubleSuffix: `boolean`
+
+Whether to omit the suffix of double numbers when possible in SNBT or not.  
+@default `false`
+
 ## Contributing
 
 Contributions are welcome!

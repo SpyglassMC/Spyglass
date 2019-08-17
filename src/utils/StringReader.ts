@@ -121,7 +121,7 @@ export default class StringReader {
 
     readUnquotedString() {
         let ans = ''
-        while (this.canRead(), StringReader.canInUnquotedString(this.peek())) {
+        while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             ans += this.read()
         }
         return ans
@@ -265,8 +265,12 @@ export default class StringReader {
         return c === ' ' || c === '\t' || c === '\r' || c === '\n' || c === '\r\n'
     }
 
-    static canInUnquotedString(c: string) {
-        return /^[0-9a-zA-Z\_\-\.\+]$/.test(c)
+    /**
+     * Whether the string can be used in unquoted string or not.
+     * @param string A string.
+     */
+    static canInUnquotedString(string: string) {
+        return /^[0-9a-zA-Z\_\-\.\+]+$/.test(string)
     }
 
     static isQuote(c: string) {

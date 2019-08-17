@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage, escapeString } from '../../utils/utils'
+import { formatMessage, arrayToMessage, escapeString, quoteString } from '../../utils/utils'
 
 describe('utils.ts Tests', () => {
     describe('formatMessage() Tests', () => {
@@ -33,17 +33,68 @@ describe('utils.ts Tests', () => {
         })
     })
     describe('escapeString() Tests', () => {
-        it('Should escape string.',()=>{
+        it('Should escape string.', () => {
             const str = `{Text1:'{\\"text\\":\\"\\"}'}`
             const actual = escapeString(str)
             assert(actual === `{Text1:'{\\\\\\"text\\\\\\":\\\\\\"\\\\\\"}'}`)
         })
     })
     describe('quoteString() Tests', () => {
-        it('Should quote string.',()=>{
-            const str = `{Text1:'{\\"text\\":\\"\\"}'}`
-            const actual = escapeString(str)
-            assert(actual === `{Text1:'{\\\\\\"text\\\\\\":\\\\\\"\\\\\\"}'}`)
+        it('Should always use single quotes.', () => {
+            const inner = 'foo'
+            const quoteType = 'always single'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === "'foo'")
+        })
+        it('Should always use double quotes.', () => {
+            const inner = 'foo'
+            const quoteType = 'always double'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === '"foo"')
+        })
+        it('Should use single quotes when prefers single quotes.', () => {
+            const inner = 'foo'
+            const quoteType = 'prefer single'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === "'foo'")
+        })
+        it('Should use double quotes when prefers single quotes.', () => {
+            const inner = "'foo'"
+            const quoteType = 'prefer single'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === `"'foo'"`)
+        })
+        it('Should use double quotes when prefers double quotes.', () => {
+            const inner = 'foo'
+            const quoteType = 'prefer double'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === '"foo"')
+        })
+        it('Should use single quotes when prefers double quotes.', () => {
+            const inner = '"foo"'
+            const quoteType = 'prefer double'
+            const force = true
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === `'"foo"'`)
+        })
+        it('Should not quote when not necessary.', () => {
+            const inner = 'foo'
+            const quoteType = 'prefer double'
+            const force = false
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === 'foo')
+        })
+        it('Should quote when necessary.', () => {
+            const inner = '!@#$%'
+            const quoteType = 'prefer double'
+            const force = false
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === '"!@#$%"')
         })
     })
 })

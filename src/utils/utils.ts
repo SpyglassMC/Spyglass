@@ -1,4 +1,5 @@
 import Config from '../types/Config'
+import StringReader from './StringReader'
 
 /**
  * Format input message.
@@ -49,6 +50,43 @@ export function escapeString(str: string, quote: '"' | "'" = '"') {
     return ans
 }
 
-export function quoteString(str: string, config: Config) {
-
+/**
+ * Quote a string.
+ * @param inner The inner string.
+ * @param quoteType Which quote to use.
+ * @param force Whether to quote regardless.
+ */
+export function quoteString(inner: string, quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double', force: boolean) {
+    const shouldQuote = force || !StringReader.canInUnquotedString(inner)
+    if (shouldQuote) {
+        let quote: "'" | '"'
+        switch (quoteType) {
+            case 'always double':
+                quote = '"'
+                break
+            case 'always single':
+                quote = "'"
+                break
+            case 'prefer single':
+                const containSingle = inner.indexOf("'") !== -1
+                if (containSingle) {
+                    quote = '"'
+                } else {
+                    quote = "'"
+                }
+                break
+            case 'prefer double':
+            default:
+                const containDouble = inner.indexOf('"') !== -1
+                if (containDouble) {
+                    quote = "'"
+                } else {
+                    quote = '"'
+                }
+                break
+        }
+        return `${quote}${escapeString(inner, quote)}${quote}`
+    } else {
+        return inner
+    }
 }

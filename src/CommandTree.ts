@@ -19,10 +19,10 @@ import { SaturatedLine } from './types/Line'
 export const tree: CommandTree = {
     line: {
         command: {
-            redirect: 'command'
+            redirect: 'commands'
         },
         comment: {
-            redirect: 'comment'
+            redirect: 'comments'
         }
     },
     commands: {
