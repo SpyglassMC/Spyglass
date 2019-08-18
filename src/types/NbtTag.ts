@@ -1,34 +1,53 @@
 import { LintConfig } from './Config'
 import { quoteString } from '../utils/utils'
 
+export abstract class NbtTag {
+    abstract toString(lint: LintConfig): string
+
+    protected static getArrayPrefix(type: 'B' | 'I' | 'L', lint: LintConfig) {
+        return `[${type}${NbtTag.getSemicolon(lint)}`
+    }
+
+    protected static getSuffix(endingBrace: ']' | '}', lint: LintConfig) {
+        return `${lint.snbtAppendEndingComma ? NbtTag.getComma(lint) : ''}${endingBrace}`
+    }
+
+    private static getSemicolon(lint: LintConfig) {
+        return `;${lint.snbtAppendSpaceAfterSemicolon ? ' ' : ''}`
+    }
+
+    protected static getComma(lint: LintConfig) {
+        return `,${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
+    }
+
+    protected static getColon(lint: LintConfig) {
+        return `:${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
+    }
+
+    protected static numberToString(num: number, lint: LintConfig) {
+        const stringValue = num.toString()
+        if (lint.snbtKeepDecimalPlace && stringValue.indexOf('.') === -1) {
+            return `${stringValue}.0`
+        } else {
+            return stringValue
+        }
+    }
+}
+
 export default NbtTag
 
-function getArrayPrefix(type: 'B' | 'I' | 'L', lint: LintConfig) {
-    return `[${type}${getSemicolon(lint)}`
-}
+export class NbtCompoundTag extends NbtTag {
+    private readonly value: { [key: string]: NbtTag }
 
-function getSuffix(endingBrace: ']' | '}', lint: LintConfig) {
-    return `${lint.snbtAppendEndingComma ? getComma(lint) : ''}]`
-}
+    constructor() { super() }
 
-function getSemicolon(lint: LintConfig) {
-    return `;${lint.snbtAppendSpaceAfterSemicolon ? ' ' : ''}`
-}
+    set(key: string, value: NbtTag) {
+        this.value[key] = value
+    }
 
-function getComma(lint: LintConfig) {
-    return `,${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
-}
-
-function getColon(lint: LintConfig) {
-    return `:${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
-}
-
-export interface NbtTag {
-    toString(lint: LintConfig): string
-}
-
-export class NbtCompoundTag implements NbtTag {
-    constructor(readonly value: { [key: string]: NbtTag }) { }
+    get(key: string) {
+        return this.value[key]
+    }
 
     toString(lint: LintConfig) {
         const prefix = '['
@@ -36,120 +55,119 @@ export class NbtCompoundTag implements NbtTag {
         for (const key in this.value) {
             if (this.value.hasOwnProperty(key)) {
                 const element = this.value[key]
-                
+
                 // TODO
             }
         }
-        const suffix = getSuffix(']', lint)
+        const suffix = NbtTag.getSuffix(']', lint)
         return `${prefix}${body}${suffix}`
     }
 }
 
-export class NbtListTag<T extends NbtTag> implements NbtTag {
-    constructor(readonly value: T[]) { }
+export class NbtListTag<T extends NbtTag> extends NbtTag {
+    constructor(private readonly value: T[]) { super() }
+
+
 
     toString(lint: LintConfig) {
         const prefix = '['
-        const body = this.value.map(v => v.toString(lint)).join(getComma(lint))
-        const suffix = getSuffix(']', lint)
+        const body = this.value.map(v => v.toString(lint)).join(NbtTag.getComma(lint))
+        const suffix = NbtTag.getSuffix(']', lint)
         return `${prefix}${body}${suffix}`
     }
 }
 
-export class NbtByteArrayTag implements NbtTag {
-    constructor(readonly value: NbtByteTag[]) { }
+export class NbtByteArrayTag extends NbtTag {
+    constructor(private readonly value: NbtByteTag[]) { super() }
 
     toString(lint: LintConfig) {
-        const prefix = getArrayPrefix('B', lint)
-        const body = this.value.map(v => v.toString(lint)).join(getComma(lint))
-        const suffix = getSuffix(']', lint)
+        const prefix = NbtTag.getArrayPrefix('B', lint)
+        const body = this.value.map(v => v.toString(lint)).join(NbtTag.getComma(lint))
+        const suffix = NbtTag.getSuffix(']', lint)
         return `${prefix}${body}${suffix}`
     }
 }
 
-export class NbtIntArrayTag implements NbtTag {
-    constructor(readonly value: NbtIntTag[]) { }
+export class NbtIntArrayTag extends NbtTag {
+    constructor(private readonly value: NbtIntTag[]) { super() }
 
     toString(lint: LintConfig) {
-        const prefix = getArrayPrefix('I', lint)
-        const body = this.value.map(v => v.toString(lint)).join(getComma(lint))
-        const suffix = getSuffix(']', lint)
+        const prefix = NbtTag.getArrayPrefix('I', lint)
+        const body = this.value.map(v => v.toString(lint)).join(NbtTag.getComma(lint))
+        const suffix = NbtTag.getSuffix(']', lint)
         return `${prefix}${body}${suffix}`
     }
 }
 
-export class NbtLongArrayTag implements NbtTag {
-    constructor(readonly value: NbtLongTag[]) { }
+export class NbtLongArrayTag extends NbtTag {
+    constructor(private readonly value: NbtLongTag[]) { super() }
 
     toString(lint: LintConfig) {
-        const prefix = getArrayPrefix('L', lint)
-        const body = this.value.map(v => v.toString(lint)).join(getComma(lint))
-        const suffix = getSuffix(']', lint)
+        const prefix = NbtTag.getArrayPrefix('L', lint)
+        const body = this.value.map(v => v.toString(lint)).join(NbtTag.getComma(lint))
+        const suffix = NbtTag.getSuffix(']', lint)
         return `${prefix}${body}${suffix}`
     }
 }
 
-export class NbtStringTag implements NbtTag {
-    constructor(readonly value: string) { }
+export class NbtStringTag extends NbtTag {
+    constructor(private readonly value: string) { super() }
 
     toString(lint: LintConfig) {
         return quoteString(this.value, lint.quoteType, lint.quoteSnbtStringValues)
     }
 }
 
-export class NbtByteTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtByteTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(lint: LintConfig) {
         return `${this.value}${lint.snbtByteSuffix}`
     }
 }
 
-export class NbtShortTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtShortTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(lint: LintConfig) {
         return `${this.value}${lint.snbtShortSuffix}`
     }
 }
 
-export class NbtIntTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtIntTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(_: LintConfig) {
         return this.value.toString()
     }
 }
 
-export class NbtLongTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtLongTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(lint: LintConfig) {
         return `${this.value}${lint.snbtLongSuffix}`
     }
 }
 
-export class NbtFloatTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtFloatTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(lint: LintConfig) {
-        return `${this.value}${lint.snbtFloatSuffix}`
+        const value = NbtTag.numberToString(this.value, lint)
+        return `${value}${lint.snbtFloatSuffix}`
     }
 }
 
-export class NbtDoubleTag implements NbtTag {
-    constructor(readonly value: number) { }
+export class NbtDoubleTag extends NbtTag {
+    constructor(private readonly value: number) { super() }
 
     toString(lint: LintConfig) {
-        if (lint.snbtOmitDoubleSuffix) {
-            const stringValue = this.value.toString()
-            if (stringValue.indexOf('.') === -1) {
-                return `${stringValue}.0`
-            } else {
-                return stringValue
-            }
+        const value = NbtTag.numberToString(this.value, lint)
+        if (lint.snbtOmitDoubleSuffix && value.indexOf('.') !== -1) {
+            return value
         } else {
-            return `${this.value}${lint.snbtDoubleSuffix}`
+            return `${value}${lint.snbtDoubleSuffix}`
         }
     }
 }

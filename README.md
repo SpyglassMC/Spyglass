@@ -100,6 +100,11 @@ The suffix used for TAG_Double in SNBT.
 Whether to omit the suffix of double numbers when possible in SNBT or not.  
 @default `false`
 
+#### snbtKeepDecimalPlace: `boolean`
+
+Whether to keep at least one decimal place in SNBT or not.  
+@default `false`
+
 ## Contributing
 
 Contributions are welcome!

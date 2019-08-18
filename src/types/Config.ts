@@ -3,7 +3,7 @@ export type EnvConfig = {
      * `op-permission-level` defined in `server.properties`.  
      * @default 2
      */
-    permissionLevel: 0 | 1 | 2 | 3 | 4
+    permissionLevel: 0 | 1 | 2 | 3 | 4,
     /**
      * Game version.  
      * @default 'JE1.14.4'
@@ -20,83 +20,88 @@ export type LintConfig = {
      * `prefer double`: Always use double quotes, unless there are double quotes in the string.  
      * @default 'prefer double'
      */
-    quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double'
+    quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double',
     /**
      * When the strings in entity selectors should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default false
      */
-    quoteEntitySelectorStrings: boolean
+    quoteEntitySelectorStrings: boolean,
     /**
      * When the string keys in SNBT should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default false
      */
-    quoteSnbtStringKeys: boolean
+    quoteSnbtStringKeys: boolean,
     /**
      * When the string values in SNBT should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default true
      */
-    quoteSnbtStringValues: boolean
+    quoteSnbtStringValues: boolean,
     /**
      * Whether to append an ending comma after the last element in a compound/list/array in SNBT or not.  
      * @default false
      */
-    snbtAppendEndingComma: boolean
+    snbtAppendEndingComma: boolean,
     /**
      * Whether to append spaces after colons in SNBT or not.  
      * @default true
      */
-    snbtAppendSpaceAfterColon: boolean
+    snbtAppendSpaceAfterColon: boolean,
     /**
      * Whether to append spaces after commas in SNBT or not.  
      * @default true
      */
-    snbtAppendSpaceAfterComma: boolean
+    snbtAppendSpaceAfterComma: boolean,
     /**
      * Whether to append spaces after semicolons in SNBT or not.  
      * @default true
      */
-    snbtAppendSpaceAfterSemicolon: boolean
+    snbtAppendSpaceAfterSemicolon: boolean,
     /**
      * The suffix used for TAG_Byte in SNBT.  
      * @default 'b'
      */
-    snbtByteSuffix: 'b' | 'B'
+    snbtByteSuffix: 'b' | 'B',
     /**
      * Whether `0b` and `1b` should be represents by `false` and `true` in SNBT or not.  
      * @default false
      */
-    snbtUseBooleans: boolean
+    snbtUseBooleans: boolean,
     /**
      * The suffix used for TAG_Short in SNBT.  
      * @default 's'
      */
-    snbtShortSuffix: 's' | 'S'
+    snbtShortSuffix: 's' | 'S',
     /**
      * The suffix used for TAG_Long in SNBT.  
      * @default 'L'
      */
-    snbtLongSuffix: 'l' | 'L'
+    snbtLongSuffix: 'l' | 'L',
     /**
      * The suffix used for TAG_Float in SNBT.  
      * @default 'f'
      */
-    snbtFloatSuffix: 'f' | 'F'
+    snbtFloatSuffix: 'f' | 'F',
     /**
      * The suffix used for TAG_Double in SNBT.  
      * @default 'd'
      */
-    snbtDoubleSuffix: 'd' | 'D'
+    snbtDoubleSuffix: 'd' | 'D',
     /**
      * Whether to omit the suffix of double numbers when possible in SNBT or not.  
      * @default false
      */
-    snbtOmitDoubleSuffix: boolean
+    snbtOmitDoubleSuffix: boolean,
+    /**
+     * Whether to keep at least one decimal place in SNBT or not.  
+     * @default true
+     */
+    snbtKeepDecimalPlace: boolean
 }
 
 export default interface Config {
@@ -133,6 +138,24 @@ export const VanillaConfig: Config = {
         snbtLongSuffix: 'L',
         snbtFloatSuffix: 'f',
         snbtDoubleSuffix: 'd',
-        snbtOmitDoubleSuffix: false
+        snbtOmitDoubleSuffix: false,
+        snbtKeepDecimalPlace: true
     }
+}
+
+export function constructConfig(custom: { [key: string]: any }) {
+    if (!custom.env) {
+        custom.env = {}
+    }
+    if (!custom.lint) {
+        custom.lint = {}
+    }
+    return {
+        env: {
+            ...VanillaConfig.env, ...custom.env
+        },
+        lint: {
+            ...VanillaConfig.lint, ...custom.lint
+        }
+    } as Config
 }
