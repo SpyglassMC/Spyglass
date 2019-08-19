@@ -100,6 +100,11 @@ Whether to omit the suffix of double numbers when possible in SNBT or not.
 Whether to keep at least one decimal place in SNBT or not.  
 @default `false`
 
+#### snbtSortKeys: `boolean`
+
+Whether to sort the keys of a compound tag in SNBT or not.  
+@default `false`
+
 ## Contributing
 
 Contributions are welcome!

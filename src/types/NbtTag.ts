@@ -38,8 +38,7 @@ export class NbtCompoundTag extends NbtTag {
     constructor() { super() }
 
     toString(lint: LintConfig) {
-        const body = Object
-            .keys(this.value)
+        const body = (lint.snbtSortKeys ? Object.keys(this.value).sort() : Object.keys(this.value))
             .map(v => `${v}${NbtTag.getColon(lint)}${this.value[v].toString(lint)}`)
             .join(NbtTag.getComma(lint))
         return `{${body}}`

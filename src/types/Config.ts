@@ -96,7 +96,12 @@ export type LintConfig = {
      * Whether to keep at least one decimal place in SNBT or not.  
      * @default true
      */
-    snbtKeepDecimalPlace: boolean
+    snbtKeepDecimalPlace: boolean,
+    /**
+     * Whether to sort the keys of a compound tag in SNBT or not.  
+     * @default false
+     */
+    snbtSortKeys: boolean
 }
 
 export default interface Config {
@@ -133,7 +138,8 @@ export const VanillaConfig: Config = {
         snbtFloatSuffix: 'f',
         snbtDoubleSuffix: 'd',
         snbtOmitDoubleSuffix: false,
-        snbtKeepDecimalPlace: true
+        snbtKeepDecimalPlace: true,
+        snbtSortKeys: false
     }
 }
 

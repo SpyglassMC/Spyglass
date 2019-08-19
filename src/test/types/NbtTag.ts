@@ -10,7 +10,8 @@ describe('NbtCompoundTag Tests', () => {
             const lint = constructConfig({
                 lint: {
                     snbtAppendSpaceAfterComma: true,
-                    snbtAppendSpaceAfterColon: true
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false
                 }
             }).lint
             const actual = tag.toString(lint)
@@ -23,6 +24,7 @@ describe('NbtCompoundTag Tests', () => {
                 lint: {
                     snbtAppendSpaceAfterComma: false,
                     snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false,
                     snbtByteSuffix: 'b'
                 }
             }).lint
@@ -34,6 +36,7 @@ describe('NbtCompoundTag Tests', () => {
                 lint: {
                     snbtAppendSpaceAfterComma: true,
                     snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false,
                     quoteType: 'prefer double',
                     quoteSnbtStringValues: true,
                     snbtByteSuffix: 'b'
@@ -45,6 +48,30 @@ describe('NbtCompoundTag Tests', () => {
             tag1.value.Count = new NbtByteTag(1)
             const actual1 = tag1.toString(lint)
             assert(actual1 === '{id: "minecraft:stone", Count: 1b}')
+
+            const tag2 = new NbtCompoundTag()
+            tag2.value.Count = new NbtByteTag(1)
+            tag2.value.id = new NbtStringTag('minecraft:stone')
+            const actual2 = tag2.toString(lint)
+            assert(actual2 === '{Count: 1b, id: "minecraft:stone"}')
+        })
+        it('Should sort keys when specified', () => {
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: true,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringValues: true,
+                    snbtByteSuffix: 'b'
+                }
+            }).lint
+
+            const tag1 = new NbtCompoundTag()
+            tag1.value.id = new NbtStringTag('minecraft:stone')
+            tag1.value.Count = new NbtByteTag(1)
+            const actual1 = tag1.toString(lint)
+            assert(actual1 === '{Count: 1b, id: "minecraft:stone"}')
 
             const tag2 = new NbtCompoundTag()
             tag2.value.Count = new NbtByteTag(1)
