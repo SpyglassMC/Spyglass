@@ -45,11 +45,6 @@ When the string values in SNBT should be quoted.
 `false`: Only when there are special characters in the string.  
 @default `true`
 
-#### snbtAppendEndingComma: `boolean`
-
-Whether to append an ending comma after the last element in a compound/list/array in SNBT or not.  
-@default `false`
-
 #### snbtAppendSpaceAfterColon: `boolean`
 
 Whether to append spaces after colons in SNBT or not.  

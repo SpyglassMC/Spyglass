@@ -43,11 +43,6 @@ export type LintConfig = {
      */
     quoteSnbtStringValues: boolean,
     /**
-     * Whether to append an ending comma after the last element in a compound/list/array in SNBT or not.  
-     * @default false
-     */
-    snbtAppendEndingComma: boolean,
-    /**
      * Whether to append spaces after colons in SNBT or not.  
      * @default true
      */
@@ -128,7 +123,6 @@ export const VanillaConfig: Config = {
         quoteEntitySelectorStrings: false,
         quoteSnbtStringKeys: false,
         quoteSnbtStringValues: true,
-        snbtAppendEndingComma: false,
         snbtAppendSpaceAfterColon: true,
         snbtAppendSpaceAfterComma: true,
         snbtAppendSpaceAfterSemicolon: true,

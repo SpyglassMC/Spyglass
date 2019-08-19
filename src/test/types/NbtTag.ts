@@ -1,13 +1,161 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { NbtCompoundTag, NbtStringTag, NbtByteTag, NbtShortTag, NbtLongTag, NbtFloatTag, NbtDoubleTag, NbtIntTag } from '../../types/NbtTag'
+import { NbtCompoundTag, NbtStringTag, NbtByteTag, NbtShortTag, NbtLongTag, NbtFloatTag, NbtDoubleTag, NbtIntTag, NbtLongArrayTag, NbtIntArrayTag, NbtByteArrayTag, NbtListTag } from '../../types/NbtTag'
 import { constructConfig } from '../../types/Config'
 
 describe('NbtCompoundTag Tests', () => {
-    describe('get() & set() Tests', () => {
-        it('Should return correctly', () => {
+    describe('toString() Tests', () => {
+        it('Should return correctly for empty compound', () => {
             const tag = new NbtCompoundTag()
-            // tag.set()
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '{}')
+        })
+        it('Should return correctly for one-element compound', () => {
+            const tag = new NbtCompoundTag()
+            tag.value.Count = new NbtByteTag(1)
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: false,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtByteSuffix: 'b'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '{Count:1b}')
+        })
+        it('Should return correctly for multi-element compound', () => {
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringValues: true,
+                    snbtByteSuffix: 'b'
+                }
+            }).lint
+
+            const tag1 = new NbtCompoundTag()
+            tag1.value.id = new NbtStringTag('minecraft:stone')
+            tag1.value.Count = new NbtByteTag(1)
+            const actual1 = tag1.toString(lint)
+            assert(actual1 === '{id: "minecraft:stone", Count: 1b}')
+
+            const tag2 = new NbtCompoundTag()
+            tag2.value.Count = new NbtByteTag(1)
+            tag2.value.id = new NbtStringTag('minecraft:stone')
+            const actual2 = tag2.toString(lint)
+            assert(actual2 === '{Count: 1b, id: "minecraft:stone"}')
+        })
+    })
+})
+describe('NbtListTag Tests', () => {
+    describe('toString() Tests', () => {
+        it('Should return correctly for multi-element array', () => {
+            const tag = new NbtListTag([new NbtStringTag('{"text":"test"}')])
+            tag.push(new NbtStringTag('{"text":"test2"}'))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringValues: true
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === `['{"text":"test"}', '{"text":"test2"}']`)
+        })
+    })
+})
+describe('NbtByteArrayTag Tests', () => {
+    describe('toString() Tests', () => {
+        it('Should return correctly for multi-element array', () => {
+            const tag = new NbtByteArrayTag([])
+            tag.push(new NbtByteTag(1), new NbtByteTag(2))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterSemicolon: true,
+                    snbtByteSuffix: 'b'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[B; 1b, 2b]')
+        })
+    })
+})
+describe('NbtIntArrayTag Tests', () => {
+    describe('toString() Tests', () => {
+        it('Should return correctly for multi-element array', () => {
+            const tag = new NbtIntArrayTag([])
+            tag.push(new NbtIntTag(1), new NbtIntTag(2))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterSemicolon: true
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[I; 1, 2]')
+        })
+    })
+})
+describe('NbtLongArrayTag Tests', () => {
+    describe('toString() Tests', () => {
+        it('Should return correctly for empty array', () => {
+            const tag = new NbtLongArrayTag([])
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterSemicolon: true,
+                    snbtLongSuffix: 'L'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[L;]')
+        })
+        it('Should return correctly for one-element array', () => {
+            const tag = new NbtLongArrayTag([])
+            tag.push(new NbtLongTag(1))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterSemicolon: true,
+                    snbtLongSuffix: 'L'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[L; 1L]')
+        })
+        it('Should return correctly for multi-element array', () => {
+            const tag = new NbtLongArrayTag([])
+            tag.push(new NbtLongTag(1), new NbtLongTag(2))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterSemicolon: true,
+                    snbtLongSuffix: 'L'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[L; 1L, 2L]')
+        })
+        it('Should not append spaces if specified', () => {
+            const tag = new NbtLongArrayTag([])
+            tag.push(new NbtLongTag(1), new NbtLongTag(2))
+            const lint = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: false,
+                    snbtAppendSpaceAfterSemicolon: false,
+                    snbtLongSuffix: 'L'
+                }
+            }).lint
+            const actual = tag.toString(lint)
+            assert(actual === '[L;1L,2L]')
         })
     })
 })
