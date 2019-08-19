@@ -390,16 +390,16 @@ export interface CommandTree {
  */
 export interface CommandTreeNode<T> {
     /**
-     * Argument parser to parse this argument.
+     * An argument parser to parse this argument, or a function which constructs an argument parser.
      */
-    parser?: ArgumentParser<T>,
+    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLine) => ArgumentParser<T>),
     /**
-     * Permission level required to perform this node.
+     * The permission level required to perform this node.
      * @default 2
      */
     permission?: 0 | 1 | 2 | 3 | 4,
     /**
-     * Description of the current argument.
+     * A human-readable description of the current argument.
      */
     description?: string,
     /**
@@ -407,7 +407,7 @@ export interface CommandTreeNode<T> {
      */
     executable?: boolean,
     /**
-     * Children of this tree node.
+     * The children of this tree node.
      */
     children?: CommandTreeNodeChildren,
     /**
@@ -426,7 +426,7 @@ export interface CommandTreeNode<T> {
      */
     template?: string,
     /**
-     * Optional function which will be called when the parser finished parsing.  
+     * An optional function which will be called when the parser finished parsing.  
      * Can be used to validate the parsed arguments.
      * @param parsedLine Parsed line.
      */

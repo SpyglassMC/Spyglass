@@ -105,6 +105,21 @@ Whether to keep at least one decimal place in SNBT or not.
 Whether to sort the keys of a compound tag in SNBT or not.  
 @default `false`
 
+#### nameOfScoreboardTags: `NamingConventionConfig`
+
+The naming convension for scoreboard tags.  
+@default `'whatever'`
+
+#### nameOfScoreboardObjectives: `NamingConventionConfig`
+
+The naming convension for scoreboard objectives.  
+@default `'whatever'`
+
+#### nameOfSnbtCompoundTagKeys: `NamingConventionConfig`
+
+The naming convension for compound tag keys in SNBT.  
+@default `['UpperCamelCase', 'lowerCamelCase']`
+
 ## Contributing
 
 Contributions are welcome!

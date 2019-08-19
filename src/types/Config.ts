@@ -1,3 +1,5 @@
+import NamingConventionConfig from './NamingConventionConfig'
+
 export type EnvConfig = {
     /**
      * `op-permission-level` defined in `server.properties`.  
@@ -101,7 +103,22 @@ export type LintConfig = {
      * Whether to sort the keys of a compound tag in SNBT or not.  
      * @default false
      */
-    snbtSortKeys: boolean
+    snbtSortKeys: boolean,
+    /**
+     * The naming convension for scoreboard tags.  
+     * @default 'whatever'
+     */
+    nameOfScoreboardTags: NamingConventionConfig,
+    /**
+     * The naming convension for scoreboard objectives.  
+     * @default 'whatever'
+     */
+    nameOfScoreboardObjectives: NamingConventionConfig,
+    /**
+     * The naming convension for compound tag keys in SNBT.  
+     * @default ['UpperCamelCase', 'lowerCamelCase']
+     */
+    nameOfSnbtCompoundTagKeys: NamingConventionConfig
 }
 
 export default interface Config {
@@ -139,7 +156,10 @@ export const VanillaConfig: Config = {
         snbtDoubleSuffix: 'd',
         snbtOmitDoubleSuffix: false,
         snbtKeepDecimalPlace: true,
-        snbtSortKeys: false
+        snbtSortKeys: false,
+        nameOfScoreboardTags: 'whatever',
+        nameOfScoreboardObjectives: 'whatever',
+        nameOfSnbtCompoundTagKeys: ['UpperCamelCase', 'lowerCamelCase']
     }
 }
 

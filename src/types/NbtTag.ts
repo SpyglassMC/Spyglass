@@ -1,6 +1,10 @@
 import { LintConfig } from './Config'
 import { quoteString } from '../utils/utils'
 
+export type NbtTagName =
+    'Compound' | 'List' | 'ByteArray' | 'IntArray' | 'LongArray' |
+    'Byte' | 'Short' | 'Int' | 'Long' | 'String' | 'Float' | 'Double'
+
 export abstract class NbtTag {
     abstract toString(lint: LintConfig): string
 
