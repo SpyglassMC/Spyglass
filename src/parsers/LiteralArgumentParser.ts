@@ -26,7 +26,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         }
         //#endregion
         const start = reader.cursor
-        const string = reader.readUntilOrEnd(' ')
+        const string = reader.readUnquotedString()
         ans.data = string
         //#region Get errors.
         let isFullMatch = false

@@ -54,9 +54,9 @@ describe('StringArgumentParser Tests', () => {
         it('Should return for quotable phrase', () => {
             const parser = new StringArgumentParser('QuotablePhrase')
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['word', 'quoted phrase', '""'])
+            assert.deepStrictEqual(actual, ['word', '"quoted phrase"', '""'])
         })
-        it('Should return for single word', () => {
+        it('Should return for greedy phrase', () => {
             const parser = new StringArgumentParser('GreedyPhrase')
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['word', 'words with spaces', '"and symbols"'])

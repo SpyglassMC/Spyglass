@@ -1,16 +1,27 @@
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
-import Parser from '../types/Parser'
+import Parser, { ArgumentParserResult } from '../types/Parser'
 import StringReader from '../utils/StringReader'
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 import { MarkupContent } from 'vscode-languageserver'
+import ArgumentParser from './ArgumentParser'
 
 export default class LineParser implements Parser<Line> {
     constructor(
         private readonly tree: CommandTree,
         private readonly config: Config = VanillaConfig
     ) { }
+
+    private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLine) => ArgumentParser<any>), parsedLine: SaturatedLine) {
+        let ans: ArgumentParser<any>
+        if (parserInNode instanceof Function) {
+            ans = parserInNode(parsedLine)
+        } else {
+            ans = parserInNode
+        }
+        return ans
+    }
 
     parse(reader: StringReader): ParserResult {
         const line: SaturatedLine = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
@@ -45,8 +56,9 @@ export default class LineParser implements Parser<Line> {
             }
         } else if (node.parser) {
             const start = reader.cursor
-            const { cache, completions, data, errors } = node.parser.parse(reader, parsedLine.args, this.config)
-            combineSaturatedLine(parsedLine, { args: [data], cache, completions, errors, path: [] })
+            const parser = LineParser.getParser(node.parser, parsedLine)
+            const { cache, completions, data, errors } = parser.parse(reader, parsedLine.args, this.config)
+            combineSaturatedLine(parsedLine, { args: [{ data, parser: parser.identity }], cache, completions, errors, path: [] })
             // Handle trailing data or absent data.
             if (!reader.canRead(2)) {
                 // The input line is all parsed.
@@ -148,7 +160,8 @@ export default class LineParser implements Parser<Line> {
             const node = children[ele]
             if (node) {
                 if (node.parser) {
-                    hints.push(node.parser.toHint(ele, false))
+                    const parser = LineParser.getParser(node.parser, { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] })
+                    hints.push(parser.toHint(ele, false))
                 }
                 if (i < path.length - 1) {
                     const result = getChildren(this.tree, node)
@@ -178,7 +191,8 @@ export default class LineParser implements Parser<Line> {
             if (children.hasOwnProperty(key)) {
                 const childNode = children[key]
                 if (childNode.parser) {
-                    const lastHint = childNode.parser.toHint(key, !!node.executable)
+                    const parser = LineParser.getParser(childNode.parser, { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] })
+                    const lastHint = parser.toHint(key, !!node.executable)
                     ans.hint.value += ` **${lastHint}**`
                 }
             }

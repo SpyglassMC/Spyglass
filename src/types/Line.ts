@@ -1,6 +1,7 @@
 import LocalCache, { combineLocalCache } from './LocalCache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
+import ArgumentNode from './ArgumentNode'
 
 /**
  * Represent a parsed line in a function.
@@ -9,7 +10,7 @@ export default interface Line {
     /**
      * All parsed arguments of the line.
      */
-    args: any[]
+    args: ArgumentNode<any>[]
     /**
      * Path of the command tree.
      */

@@ -6,10 +6,10 @@ import ParsingError from '../../types/ParsingError'
 describe('Line Tests', () => {
     describe('combineLine() Tests', () => {
         it('Should combine args', () => {
-            const base = { args: ['execute'], path: [] }
-            const override = { args: ['if'], path: [] }
+            const base = { args: [{ data: 'execute', parser: 'test' }], path: [] }
+            const override = { args: [{ data: 'if', parser: 'test' }], path: [] }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: ['execute', 'if'], path: [] })
+            assert.deepStrictEqual(base, { args: [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }], path: [] })
         })
         it('Should combine path', () => {
             const base = { args: [], path: ['a'] }
@@ -67,21 +67,21 @@ describe('Line Tests', () => {
     describe('combineSaturatedLine() Tests', () => {
         it('Should combine args, path, cache, completions and errors', () => {
             const base = {
-                args: ['execute'],
+                args: [{ data: 'execute', parser: 'test' }],
                 cache: { def: { entities: { a: undefined } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
                 path: ['a'],
                 completions: [{ label: 'a' }]
             }
             const override = {
-                args: ['if'],
+                args: [{ data: 'if', parser: 'test' }],
                 cache: { def: { entities: { a: 'foo' } }, ref: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
                 path: ['b'],
                 completions: [{ label: 'b' }]
             }
             combineSaturatedLine(base, override)
-            assert.deepStrictEqual(base.args, ['execute', 'if'])
+            assert.deepStrictEqual(base.args, [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }])
             assert.deepStrictEqual(base.path, ['a', 'b'])
             assert.deepStrictEqual(base.cache, {
                 def: { entities: { a: 'foo' } },
