@@ -64,7 +64,7 @@ export default class LineParser implements Parser<Line> {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, 'Expected more arguments but got nothing.')
+                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, 'expected more arguments but got nothing')
                     )
                 }
                 if (reader.peek() === ' ') {
@@ -86,7 +86,7 @@ export default class LineParser implements Parser<Line> {
                 // There are trailing data.
                 if (!node.children) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.string.length }, `Expected nothing but got \`${reader.remainingString}\`.`)
+                        new ParsingError({ start: reader.cursor, end: reader.string.length }, `expected nothing but got \`${reader.remainingString}\``)
                     )
                 } else {
                     if (reader.peek() === ' ') {
@@ -96,7 +96,7 @@ export default class LineParser implements Parser<Line> {
                         parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                     } else {
                         parsedLine.errors.push(
-                            new ParsingError({ start: reader.cursor, end: reader.string.length }, 'Expected a space to seperate two arguments.')
+                            new ParsingError({ start: reader.cursor, end: reader.string.length }, 'expected a space to seperate two arguments')
                         )
                     }
                 }
@@ -108,7 +108,7 @@ export default class LineParser implements Parser<Line> {
                 parsedLine.errors.push(
                     new ParsingError(
                         { start, end: reader.cursor },
-                        `Permission level ${level} is required, which is higher than ${levelMax} defined in config.`
+                        `permission level ${level} is required, which is higher than ${levelMax} defined in config`
                     )
                 )
             }

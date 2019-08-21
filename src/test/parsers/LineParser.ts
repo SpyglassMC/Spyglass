@@ -148,7 +148,7 @@ describe('LineParser Tests', () => {
             const line = { args: [], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
-            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'Expected more arguments but got nothing.')])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'expected more arguments but got nothing')])
         })
         it('Should parse children when there are trailing data', () => {
             const input = 'foo bar'
@@ -191,7 +191,7 @@ describe('LineParser Tests', () => {
             const line = { args: [], path: [], cache: { def: {}, ref: {} }, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'f', parser: 'test' }])
-            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'Expected a space to seperate two arguments.')])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'expected a space to seperate two arguments')])
         })
         it('Should downgrade untolerable errors of children', () => {
             const input = 'foo bar'
@@ -233,7 +233,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got \` bar\`.')]
+                [new ParsingError({ start: 3, end: 7 }, 'expected nothing but got \` bar\`')]
             )
         })
         it('Should return completions for empty argument', () => {
@@ -282,7 +282,7 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.errors,
                 [new ParsingError(
                     { start: 0, end: 3 },
-                    'Permission level 3 is required, which is higher than 2 defined in config.'
+                    'permission level 3 is required, which is higher than 2 defined in config'
                 )]
             )
         })

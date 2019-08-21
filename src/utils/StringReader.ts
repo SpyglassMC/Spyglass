@@ -128,7 +128,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws If not an legal quoted string.
+     * @throws {{ParsingError}} If not an legal quoted string.
      */
     readQuotedString() {
         if (!this.canRead()) {
@@ -146,7 +146,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
      */
     private readUntilQuote(terminator: '"' | "'") {
@@ -198,7 +198,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      */
     readString() {
         if (!this.canRead()) {
@@ -213,7 +213,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      */
     readBoolean() {
         const start = this.cursor
@@ -231,7 +231,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      */
     expect(c: string) {
         const start = this.cursor
@@ -252,7 +252,7 @@ export default class StringReader {
     static canInNumber(c: string) {
         // '+' is illegal in number because Mojang wrote so...
         // https://github.com/Mojang/brigadier/blob/master/src/main/java/com/mojang/brigadier/StringReader.java#L88
-        // But it IS legal in NBT numbers, so I wrote a `NbtStringReader` and overrided this function.
+        // But it IS legal in NBT numbers, because Mojang used `readUnquotedString` to parse primitive tags in NBT parser.
         return (
             c === '0' || c === '1' || c === '2' || c === '3' ||
             c === '4' || c === '5' || c === '6' || c === '7' ||
