@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
-import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDoubleTag, NbtFloatTag, NbtIntTag, NbtLongTag, NbtShortTag } from '../types/NbtTag'
+import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDoubleTag, NbtFloatTag, NbtIntTag, NbtLongTag, NbtShortTag, NbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtArrayTag } from '../types/NbtTag'
 import { CompletionItemKind } from 'vscode-languageserver'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
@@ -67,24 +67,161 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         throw ''
     }
 
-    private parseCompound(reader: StringReader): NbtCompoundTag {
-        throw ''
+    private parseTag(reader: StringReader): ArgumentParserResult<NbtTag> {
+        switch (reader.peek()) {
+            case '{':
+                return this.parseCompoundTag(reader)
+            case '[':
+                return this.parseListOrArray(reader)
+            default:
+                return this.parsePrimitiveTag(reader)
+        }
+    }
+
+    private parseCompoundTag(reader: StringReader): ArgumentParserResult<NbtCompoundTag> {
+        const ans: ArgumentParserResult<NbtCompoundTag> = {
+            data: new NbtCompoundTag()
+        }
+        ans.errors = []
+        try {
+            reader
+                .expect('{')
+                .skip()
+                .skipWhiteSpace()
+            if (reader.peek() === '}') {
+                reader.skip()
+            } else {
+                while (reader.canRead() && reader.peek() !== '}') {
+                    const start = reader.cursor
+                    const key = reader.readString()
+                    reader
+                        .skipWhiteSpace()
+                        .expect(':')
+                        .skip()
+                        .skipWhiteSpace()
+                    const value = this.parseTag(reader)
+                    reader.skipWhiteSpace()
+                    if (reader.peek() === ',') {
+                        reader
+                            .skip()
+                            .skipWhiteSpace()
+                    }
+                    ans.data.value[key] = value
+                    if (ans.data.value[key] !== undefined) {
+                        ans.errors.push(
+                            new ParsingError({ start, end: start + key.length + 1 }, `duplicate compound key \`${key}\``)
+                        )
+                    }
+                }
+                reader
+                    .expect('}')
+                    .skip()
+            }
+        } catch (p) {
+            ans.errors.push(p)
+        } finally {
+            return ans
+        }
+    }
+
+    private parseListOrArray(reader: StringReader): ArgumentParserResult<NbtTag> {
+        const ans: ArgumentParserResult<NbtTag> = {
+            data: new NbtListTag<NbtTag>([])
+        }
+        ans.errors = []
+        try {
+            reader.expect('[')
+            if (reader.canRead(3) && /^[BIL]$/.test(reader.peek(1)) && reader.peek(2) === ';') {
+                // Parse as an array.
+                const result = this.parseArray(reader)
+            } else {
+                // Parse as a list.
+                const result = this.parseList(reader)
+            }
+        } catch (p) {
+            ans.errors.push(p)
+        } finally {
+            return ans
+        }
     }
 
     /**
      * @throws {ParsingError}
      */
-    private parsePrimitive(reader: StringReader): NbtTag {
+    private parseArray(reader: StringReader): ArgumentParserResult<NbtArrayTag<NbtTag>> {
+        const ans: ArgumentParserResult<NbtArrayTag<NbtTag>> = {
+            data: new NbtByteArrayTag([])
+        }
+        ans.errors = []
+        try {
+            reader
+                .expect('[')
+                .skip()
+            const start = reader.cursor
+            const type = reader.read()
+            switch (type) {
+                case 'B':
+                    ans.data = new NbtByteArrayTag([])
+                    break
+                case 'I':
+                    ans.data = new NbtIntArrayTag([])
+                    break
+                case 'L':
+                    ans.data = new NbtLongArrayTag([])
+                    break
+                default:
+                    throw new ParsingError({ start, end: start + 1 }, `invalid array type \`${type}\`. should be one of \`B\`, \`I\` and \`L\``)
+            }
+            reader
+                .expect(';')
+                .skip()
+                .skipWhiteSpace()
+            while (reader.canRead() && reader.peek() !== ']') {
+                const value = this.parsePrimitiveTag(reader)
+                reader.skipWhiteSpace()
+                if (reader.peek() === ',') {
+                    reader
+                        .skip()
+                        .skipWhiteSpace()
+                }
+                ans.data.push(value.data) // FIXME
+            }
+            reader
+                .expect(']')
+                .skip()
+        } catch (p) {
+            ans.errors.push(p)
+        }
+        return ans
+    }
+
+    private parseList(reader: StringReader): ArgumentParserResult<NbtListTag<NbtTag>> {
+        throw ''
+    }
+
+    private parsePrimitiveTag(reader: StringReader): ArgumentParserResult<NbtTag> {
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
-            const value = reader.readQuotedString()
-            return new NbtStringTag(value)
+            try {
+                const value = reader.readQuotedString()
+                return {
+                    data: new NbtStringTag(value)
+                }
+            } catch (p) {
+                return {
+                    data: new NbtStringTag(''),
+                    errors: [p as ParsingError],
+                }
+            }
         } else {
             // Parse as an unquoted string or number.
             const start = reader.cursor
             const value = reader.readUnquotedString()
             if (value.length === 0) {
-                throw new ParsingError({ start, end: start + 1 }, 'expected a primitive tag but got nothing')
+                return {
+                    data: new NbtStringTag(''),
+                    errors: [new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing')]
+                }
             } else {
                 try {
                     // Try parsing as a number.
@@ -92,14 +229,25 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         if (NbtTagArgumentParser.Patterns.hasOwnProperty(type)) {
                             const [pattern, func] = NbtTagArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
-                                return func(value)
+                                try {
+                                    return {
+                                        data: func(value)
+                                    }
+                                } catch (s) {
+                                    return {
+                                        data: new NbtStringTag(''),
+                                        errors: [new ParsingError({ start, end: start + value.length + 1 }, s)]
+                                    }
+                                }
                             }
                         }
                     }
                     throw 'failed to match all patterns'
                 } catch (ignored) {
                     // Parse as an unquoted string.
-                    return new NbtStringTag(value)
+                    return {
+                        data: new NbtStringTag(value)
+                    }
                 }
             }
         }

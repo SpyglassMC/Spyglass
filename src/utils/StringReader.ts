@@ -25,25 +25,24 @@ export default class StringReader {
         return this.cursor + length <= this.string.length
     }
 
-    peek() {
-        return this.string[this.cursor]
+    peek(offset = 0) {
+        return this.string[this.cursor + offset]
     }
 
-    skip() {
-        this.cursor += 1
+    skip(step = 1) {
+        this.cursor += step
+        return this
     }
 
     read() {
         return this.string.charAt(this.cursor++)
     }
 
-    skipWhiteSpace(max?: number) {
-        let count = 0
-        while (this.canRead() && StringReader.isWhiteSpace(this.peek()) &&
-            (max === undefined || count < max)) {
+    skipWhiteSpace() {
+        while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
             this.skip()
-            count++
         }
+        return this
     }
 
     /**
@@ -241,6 +240,7 @@ export default class StringReader {
         } else if (this.peek() !== c) {
             throw new ParsingError({ start, end }, `expected \`${c}\` but got \`${this.peek()}\``, false)
         }
+        return this
     }
 
     readRemaining() {

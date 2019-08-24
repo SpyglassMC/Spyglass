@@ -64,7 +64,7 @@ export class NbtListTag<T extends NbtTag> extends NbtTag {
     }
 }
 
-abstract class NbtArrayTag<T extends NbtTag> extends NbtTag {
+export abstract class NbtArrayTag<T extends NbtTag> extends NbtTag {
     protected abstract readonly type: 'B' | 'I' | 'L'
 
     constructor(readonly value: T[]) { super() }

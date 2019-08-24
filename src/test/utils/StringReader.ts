@@ -56,6 +56,18 @@ describe('StringReader Tests', () => {
             assert(actual === false)
         })
     })
+    describe('peek() Tests', () => {
+        it('Should return the char at cursor', () => {
+            const reader = new StringReader('bar')
+            const actual = reader.peek()
+            assert(actual === 'b')
+        })
+        it('Should return the char after offset', () => {
+            const reader = new StringReader('bar')
+            const actual = reader.peek(1)
+            assert(actual === 'a')
+        })
+    })
     describe('read() Tests', () => {
         it('Should return the char at cursor', () => {
             const reader = new StringReader('foo')
@@ -69,12 +81,6 @@ describe('StringReader Tests', () => {
             reader.cursor = 1
             reader.skipWhiteSpace()
             assert(reader.cursor === 7)
-        })
-        it('Should limit skip count', () => {
-            const reader = new StringReader('f \n\r \n o')
-            reader.cursor = 1
-            reader.skipWhiteSpace(3)
-            assert(reader.cursor === 4)
         })
     })
     describe('readInt() Tests', () => {
