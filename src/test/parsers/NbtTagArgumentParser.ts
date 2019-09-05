@@ -7,5 +7,7 @@ import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 
 describe('NbtTagArgumentParser Tests', () => {
-
+    describe('getExamples() Tests', () => {
+        
+    })
 })

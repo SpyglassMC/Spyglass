@@ -30,7 +30,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
         const data = reader.readUntilOrEnd(' ')
-        const ans: ArgumentParserResult<string> = { data }
+        const ans: ArgumentParserResult<string> = { data, cache: { def: {}, ref: {} }, completions: [], errors: [] }
         if (this.type === 'error') {
             ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected `error` and did get `error`')]
         } else if (this.type === 'ERROR') {

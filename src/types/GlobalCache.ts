@@ -53,8 +53,8 @@ export default interface GlobalCache {
     fluidTags: string[],
     functionTags: string[],
     entityTypeTags: string[],
-    itemTags?: string[],
-    objectives?: string[],
-    entities?: string[],
-    tags?: string[]
+    itemTags: string[],
+    objectives: string[],
+    entities: string[],
+    tags: string[]
 }

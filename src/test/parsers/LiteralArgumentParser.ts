@@ -14,7 +14,7 @@ describe('LiteralArgumentParser Tests', () => {
                 fail()
             } catch (e) {
                 const er = <Error>e
-                assert(er.message.match(/expected `literals\.length` to be more than 0/))
+                assert(er.message==='Expected `literals.length` to be more than 0.')
             }
         })
     })
@@ -63,11 +63,6 @@ describe('LiteralArgumentParser Tests', () => {
                     }
                 ]
             )
-        })
-        it('Should not return completions for input beginning with space', () => {
-            const parser = new LiteralArgumentParser('foo', 'bar')
-            const actual = parser.parse(new StringReader(' idk'))
-            assert(actual.completions === undefined)
         })
         it('Should return untolerable error when input is empty', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')

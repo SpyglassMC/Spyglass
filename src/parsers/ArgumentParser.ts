@@ -16,6 +16,8 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * Parse.
      * @param reader Input reader.
      * @param parsedArgs All parsed data of args before this argument.
+     * @param config A config of the language server.
+     * @param cache A global cache of the current workspace.
      */
     abstract parse(reader: StringReader, parsedArgs?: unknown[], config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
 

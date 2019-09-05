@@ -108,17 +108,32 @@ export type LintConfig = {
      * The naming convension for scoreboard tags.  
      * @default 'whatever'
      */
-    nameOfScoreboardTags: NamingConventionConfig,
+    nameOfTags: NamingConventionConfig,
     /**
      * The naming convension for scoreboard objectives.  
      * @default 'whatever'
      */
-    nameOfScoreboardObjectives: NamingConventionConfig,
+    nameOfObjectives: NamingConventionConfig,
     /**
      * The naming convension for compound tag keys in SNBT.  
      * @default ['UpperCamelCase', 'lowerCamelCase']
      */
-    nameOfSnbtCompoundTagKeys: NamingConventionConfig
+    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
+    /**
+     * What the unspecific blocks are treated as when computing completions in SNBT.  
+     * @default 'any'
+     */
+    treatUnspecificBlocksAs: 'any' | 'none',
+    /**
+     * What the unspecific entities are treated as when computing completions in SNBT.  
+     * @default 'any'
+     */
+    treatUnspecificEntitiesAs: 'any' | 'none',
+    /**
+     * What the unspecific items are treated as when computing completions in SNBT.  
+     * @default 'any'
+     */
+    treatUnspecificItemsAs: 'any' | 'none'
 }
 
 export default interface Config {
@@ -157,9 +172,12 @@ export const VanillaConfig: Config = {
         snbtOmitDoubleSuffix: false,
         snbtKeepDecimalPlace: true,
         snbtSortKeys: false,
-        nameOfScoreboardTags: 'whatever',
-        nameOfScoreboardObjectives: 'whatever',
-        nameOfSnbtCompoundTagKeys: ['UpperCamelCase', 'lowerCamelCase']
+        nameOfTags: 'whatever',
+        nameOfObjectives: 'whatever',
+        nameOfSnbtCompoundTagKeys: ['UpperCamelCase', 'lowerCamelCase'],
+        treatUnspecificBlocksAs: 'any',
+        treatUnspecificEntitiesAs: 'any',
+        treatUnspecificItemsAs: 'any'
     }
 }
 

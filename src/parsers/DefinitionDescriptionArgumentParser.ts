@@ -12,7 +12,10 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
         const id = parsed[parsed.length - 1] as string
         const description = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
-            data: description
+            data: description,
+            errors: [],
+            cache: { def: {}, ref: {} },
+            completions: []
         }
         if (description) {
             if (isDefinitionType(type)) {

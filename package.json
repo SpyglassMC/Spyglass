@@ -5,6 +5,7 @@
     "main": "src",
     "dependencies": {
         "constants": "0.0.2",
+        "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
         "vscode-languageserver": "^5.2.1"
     },
     "directories": {

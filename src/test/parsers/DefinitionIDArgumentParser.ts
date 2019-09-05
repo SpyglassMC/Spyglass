@@ -47,7 +47,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const parser = new DefinitionIDArgumentParser()
             const reader = new StringReader('foo ')
             const { cache } = parser.parse(reader, ['#define', 'wrongType'])
-            assert(cache === undefined)
+            assert.deepStrictEqual(cache, { def: {}, ref: {} })
         })
     })
 })

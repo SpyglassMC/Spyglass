@@ -98,19 +98,19 @@ Whether to omit the suffix of double numbers when possible in SNBT or not.
 #### snbtKeepDecimalPlace: `boolean`
 
 Whether to keep at least one decimal place in SNBT or not.  
-@default `false`
+@default `true`
 
 #### snbtSortKeys: `boolean`
 
 Whether to sort the keys of a compound tag in SNBT or not.  
 @default `false`
 
-#### nameOfScoreboardTags: `NamingConventionConfig`
+#### nameOfTags: `NamingConventionConfig`
 
 The naming convension for scoreboard tags.  
 @default `'whatever'`
 
-#### nameOfScoreboardObjectives: `NamingConventionConfig`
+#### nameOfObjectives: `NamingConventionConfig`
 
 The naming convension for scoreboard objectives.  
 @default `'whatever'`
@@ -119,6 +119,21 @@ The naming convension for scoreboard objectives.
 
 The naming convension for compound tag keys in SNBT.  
 @default `['UpperCamelCase', 'lowerCamelCase']`
+
+#### treatUnspecificBlocksAs: `'any' | 'none'`
+
+What the unspecific blocks are treated as when computing completions in SNBT.  
+@default `'any'`
+
+#### treatUnspecificEntitiesAs: `'any' | 'none'`
+
+What the unspecific entities are treated as when computing completions in SNBT.  
+@default `'any'`
+
+#### treatUnspecificItemsAs: `'any' | 'none'`
+
+What the unspecific items are treated as when computing completions in SNBT.  
+@default `'any'`
 
 ## Contributing
 

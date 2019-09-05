@@ -19,7 +19,12 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = { data: '' }
+        const ans: ArgumentParserResult<string> = {
+            data: '',
+            errors: [],
+            cache: { def: {}, ref: {} },
+            completions: []
+        }
         //#region Get completions.
         if (!reader.canRead()) {
             ans.completions = this.literals.map(v => ({ label: v, kind: CompletionItemKind.Text }))

@@ -11,7 +11,10 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
         const type = parsed[parsed.length - 1]
         const id = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
-            data: id
+            data: id,
+            errors: [],
+            cache: { def: {}, ref: {} },
+            completions: []
         }
         if (id) {
             if (isDefinitionType(type)) {

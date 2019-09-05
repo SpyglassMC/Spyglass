@@ -10,7 +10,10 @@ export default class StringArgumentParser extends ArgumentParser<string> {
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
-            data: ''
+            data: '',
+            errors: [],
+            cache: { def: {}, ref: {} },
+            completions: []
         }
         try {
             switch (this.type) {

@@ -6,10 +6,13 @@ export type NbtTagName =
     'Byte' | 'Short' | 'Int' | 'Long' | 'String' | 'Float' | 'Double'
 
 export abstract class NbtTag {
+    abstract identity: NbtTagName
+
     abstract toString(lint: LintConfig): string
 
-    protected static getArrayPrefix(type: 'B' | 'I' | 'L', lint: LintConfig) {
-        return `[${type}${NbtTag.getSemicolon(lint)}`
+    protected static getArrayPrefix(type: 'ByteArray' | 'IntArray' | 'LongArray', lint: LintConfig) {
+        const prefix = type[0]
+        return `[${prefix}${NbtTag.getSemicolon(lint)}`
     }
 
     private static getSemicolon(lint: LintConfig) {
@@ -37,6 +40,7 @@ export abstract class NbtTag {
 export default NbtTag
 
 export class NbtCompoundTag extends NbtTag {
+    readonly identity = 'Compound'
     readonly value: { [key: string]: NbtTag } = {}
 
     constructor() { super() }
@@ -49,10 +53,12 @@ export class NbtCompoundTag extends NbtTag {
     }
 }
 
-export class NbtListTag<T extends NbtTag> extends NbtTag {
-    constructor(readonly value: T[]) { super() }
+export class NbtListTag extends NbtTag {
+    contentIdentity: string | undefined
+    readonly identity = 'List'
+    constructor(readonly value: NbtTag[]) { super() }
 
-    push(...items: T[]) {
+    push(...items: NbtTag[]) {
         this.value.push(...items)
     }
 
@@ -64,8 +70,8 @@ export class NbtListTag<T extends NbtTag> extends NbtTag {
     }
 }
 
-export abstract class NbtArrayTag<T extends NbtTag> extends NbtTag {
-    protected abstract readonly type: 'B' | 'I' | 'L'
+export abstract class NbtArrayTag<T extends NbtByteTag | NbtIntTag | NbtLongTag> extends NbtTag {
+    abstract readonly identity: 'ByteArray' | 'IntArray' | 'LongArray'
 
     constructor(readonly value: T[]) { super() }
 
@@ -74,7 +80,7 @@ export abstract class NbtArrayTag<T extends NbtTag> extends NbtTag {
     }
 
     toString(lint: LintConfig) {
-        const prefix = NbtTag.getArrayPrefix(this.type, lint)
+        const prefix = NbtTag.getArrayPrefix(this.identity, lint)
         const body = this.value.map(v => v.toString(lint)).join(NbtTag.getComma(lint))
         let part = `${prefix}${body}`
         if (part[part.length - 1] === ' ') {
@@ -85,18 +91,19 @@ export abstract class NbtArrayTag<T extends NbtTag> extends NbtTag {
 }
 
 export class NbtByteArrayTag extends NbtArrayTag<NbtByteTag> {
-    protected readonly type = 'B'
+    readonly identity = 'ByteArray'
 }
 
 export class NbtIntArrayTag extends NbtArrayTag<NbtIntTag> {
-    protected readonly type = 'I'
+    readonly identity = 'IntArray'
 }
 
 export class NbtLongArrayTag extends NbtArrayTag<NbtLongTag> {
-    protected readonly type = 'L'
+    readonly identity = 'LongArray'
 }
 
 export class NbtStringTag extends NbtTag {
+    readonly identity = 'String'
     constructor(readonly value: string) { super() }
 
     toString(lint: LintConfig) {
@@ -105,7 +112,7 @@ export class NbtStringTag extends NbtTag {
 }
 
 export class NbtByteTag extends NbtTag {
-    readonly type = 'Byte'
+    readonly identity = 'Byte'
 
     constructor(readonly value: number) { super() }
 
@@ -115,7 +122,7 @@ export class NbtByteTag extends NbtTag {
 }
 
 export class NbtShortTag extends NbtTag {
-    readonly type = 'Short'
+    readonly identity = 'Short'
 
     constructor(readonly value: number) { super() }
 
@@ -125,7 +132,7 @@ export class NbtShortTag extends NbtTag {
 }
 
 export class NbtIntTag extends NbtTag {
-    readonly type = 'Int'
+    readonly identity = 'Int'
 
     constructor(readonly value: number) { super() }
 
@@ -135,7 +142,7 @@ export class NbtIntTag extends NbtTag {
 }
 
 export class NbtLongTag extends NbtTag {
-    readonly type = 'Long'
+    readonly identity = 'Long'
 
     constructor(readonly value: number) { super() }
 
@@ -145,7 +152,7 @@ export class NbtLongTag extends NbtTag {
 }
 
 export class NbtFloatTag extends NbtTag {
-    readonly type = 'Float'
+    readonly identity = 'Float'
 
     constructor(readonly value: number) { super() }
 
@@ -156,7 +163,7 @@ export class NbtFloatTag extends NbtTag {
 }
 
 export class NbtDoubleTag extends NbtTag {
-    readonly type = 'Double'
+    readonly identity = 'Double'
 
     constructor(readonly value: number) { super() }
 
