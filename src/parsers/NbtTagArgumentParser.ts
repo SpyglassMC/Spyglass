@@ -1,12 +1,14 @@
+import * as nbtSchema from 'mc-nbt-paths'
 import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import * as nbtPaths from 'mc-nbt-paths'
-import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDoubleTag, NbtFloatTag, NbtIntTag, NbtLongTag, NbtShortTag, NbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtArrayTag } from '../types/NbtTag'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver'
 import Config from '../types/Config'
 import GlobalCache from '../types/GlobalCache'
+import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDoubleTag, NbtFloatTag, NbtIntTag, NbtLongTag, NbtShortTag, NbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtArrayTag } from '../types/NbtTag'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { CompletionItemKind } from 'vscode-languageserver'
+import { posix } from 'path'
+import { ValueList, NBTNode } from 'mc-nbt-paths'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -66,7 +68,22 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id = 'unspecific'): ArgumentParserResult<NbtTag> {
+    private getAnyOrNone({ lint: { treatUnspecificBlocksAs, treatUnspecificEntitiesAs, treatUnspecificItemsAs } }: Config) {
+        switch (this.category) {
+            case 'blocks':
+                return treatUnspecificBlocksAs
+            case 'entities':
+                return treatUnspecificEntitiesAs
+            case 'items':
+            default:
+                return treatUnspecificItemsAs
+        }
+    }
+
+    parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id: string | undefined = undefined): ArgumentParserResult<NbtTag> {
+        if (!id) {
+            id = this.getAnyOrNone(config)
+        }
         const nbtSchemaPath = `roots/${this.category}.json#${id}`
         throw ''
     }
@@ -358,18 +375,18 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     getExamples(): string[] {
         const ans: string[] = []
         const examplesOfNames: { [name in NbtTagName]: string[] } = {
-            Byte: ['0b'],
-            ByteArray: ['[B; 0b],'],
-            Compound: ['{', '{foo: bar'],
-            Double: ['0.0d'],
-            Float: ['0.0f'],
-            Int: ['0'],
-            IntArray: ['[I; 0],'],
-            List: ['[],', '[foo, "bar"],'],
-            Long: ['0L'],
-            LongArray: ['[L; 0L],'],
-            Short: ['0s'],
-            String: ['"foo"', 'foo', "'foo'"]
+            byte: ['0b'],
+            byte_array: ['[B; 0b],'],
+            compound: ['{}', '{foo: bar}'],
+            double: ['0.0d'],
+            float: ['0.0f'],
+            int: ['0'],
+            int_array: ['[I; 0]'],
+            list: ['[]', '[foo, "bar"]'],
+            long: ['0L'],
+            long_array: ['[L; 0L]'],
+            short: ['0s'],
+            string: ['"foo"', 'foo', "'foo'"]
         }
         for (const name of this.type) {
             const examples = examplesOfNames[name]

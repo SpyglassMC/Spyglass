@@ -8,6 +8,10 @@ import { fail } from 'power-assert'
 
 describe('NbtTagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
-        
+        it('Should return examples respectfully', () => {
+            const parser = new NbtTagArgumentParser(['byte', 'compound', 'long_array'], 'blocks')
+            const examples = parser.getExamples()
+            assert.deepStrictEqual(examples, ['0b', '{}', '{foo: bar}', '[L; 0L]'])
+        })
     })
 })
