@@ -6,27 +6,33 @@ export default class NbtSchemaWalker {
 
     /**
      * Resolve specific path.
-     * @param old The old path.
+     * @param base The base path.
      * @param rel A POSIX-like relative path.
-     * @throws {Error}
+     * @throws {Error} When specific path doesn't exist.
      */
-    resolve(old: string, rel: string) {
-        const ans = posix.join(old, rel)
+    resolve(base: string, rel: string) {
+        let ans: string
+        if (this.nbtSchema.hasOwnProperty(base) && rel) {
+            // The base path is a file.
+            ans = posix.join(posix.dirname(base), rel)
+        } else {
+            ans = posix.join(base, rel)
+        }
         if (!this.nbtSchema.hasOwnProperty(ans)) {
-            throw new Error(`Failed to join(\`${old}\`, \`${rel}\`)`)
+            throw new Error(`Path not found: join(\`${base}\`, \`${rel}\`) => \`${ans}\``)
         }
         return ans
     }
 
     /**
      * Read a specific path.
-     * @param old The old path.
+     * @param base The base path.
      * @param relWithAnchor A POSIX-like relative path with optional anchor.
-     * @throws {Error}
+     * @throws {Error} When specific path and/or anchor doesn't exist.
      */
-    read(old: string = '', relWithAnchor: string = '', node?: NBTNode): NBTNode | ValueList {
+    read(base: string = '', relWithAnchor: string = '', node?: NBTNode): NBTNode | ValueList {
         const [rel, anchor] = relWithAnchor.split('#')
-        const newPath = this.resolve(old, rel)
+        const newPath = this.resolve(base, rel)
         const file = node ? node : this.nbtSchema[newPath]
 
         if (NbtSchemaWalker.isValueList(file)) {
@@ -42,45 +48,50 @@ export default class NbtSchemaWalker {
                     for (const key in file.children) {
                         if (file.children.hasOwnProperty(key)) {
                             if (key[0] === '$') {
-                                const element = file.children[key]
-                                const valueList = this.read(newPath, key.slice(1))
-
+                                const valueList = (this.read(newPath, key.slice(1)) as ValueList)
+                                    .map(v => typeof v === 'string' ? v : v.value)
+                                if (valueList.indexOf(anchor) !== -1) {
+                                    const element = file.children[key]
+                                    return this.read(newPath, undefined, element)
+                                }
                             }
                         }
                     }
+                    throw new Error(`Unknown anchor ‘${anchor}’ in path ‘${newPath}’`)
                 }
             } else {
                 return file
             }
+        } else {
+            return file
         }
-        throw ''
     }
 
-    private static isRootNode(node: NBTNode | ValueList): node is RootNode {
+    public static isRootNode(node: NBTNode | ValueList): node is RootNode {
         return (node as RootNode).type === 'root'
     }
 
-    private static isCompoundNode(node: NBTNode | ValueList): node is CompoundNode {
+    public static isCompoundNode(node: NBTNode | ValueList): node is CompoundNode {
         return (node as CompoundNode).type === 'compound'
     }
 
-    private static isListNode(node: NBTNode | ValueList): node is ListNode {
+    public static isListNode(node: NBTNode | ValueList): node is ListNode {
         return (node as ListNode).type === 'list'
     }
 
-    private static isFunctionNode(node: NBTNode | ValueList): node is FunctionNode {
+    public static isFunctionNode(node: NBTNode | ValueList): node is FunctionNode {
         return !!(node as FunctionNode).function
     }
 
-    private static isRefNode(node: NBTNode | ValueList): node is RefNode {
+    public static isRefNode(node: NBTNode | ValueList): node is RefNode {
         return !!(node as RefNode).ref
     }
 
-    private static isValueList(node: NBTNode | ValueList): node is ValueList {
+    public static isValueList(node: NBTNode | ValueList): node is ValueList {
         return node instanceof Array
     }
 
-    private static isNoPropertyNode(node: NBTNode | ValueList): node is NoPropertyNode {
+    public static isNoPropertyNode(node: NBTNode | ValueList): node is NoPropertyNode {
         return (
             (node as NoPropertyNode).type === 'no-nbt' ||
             (node as NoPropertyNode).type === 'byte' ||
