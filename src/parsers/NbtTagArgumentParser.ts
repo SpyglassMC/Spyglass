@@ -17,7 +17,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private static parseNumber(str: string) {
         const value = Number(str)
         if (isNaN(value)) {
-            throw `expected a number but got \`${str}\``
+            throw `expected a number but got ‘${str}’`
         }
         return value
     }
@@ -134,7 +134,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     combineArgumentParserResult(ans, result)
                     if (ans.data.value[key] !== undefined) {
                         ans.errors.push(
-                            new ParsingError({ start, end: start + key.length + 1 }, `duplicate compound key \`${key}\``)
+                            new ParsingError({ start, end: start + key.length + 1 }, `duplicate compound key ‘${key}’`)
                         )
                     }
                 }
@@ -204,7 +204,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = new NbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start, end: start + 1 }, `invalid array type \`${type}\`. should be one of \`B\`, \`I\` and \`L\``)
+                    throw new ParsingError({ start, end: start + 1 }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’ and ‘L’`)
             }
             reader
                 .expect(';')
@@ -288,7 +288,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected a(n) \`${ans.data.contentIdentity}\` tag but got a(n) \`${result.data.identity}\` tag`
+                            `expected a(n) ‘${ans.data.contentIdentity}’ tag but got a(n) ‘${result.data.identity}’ tag`
                         )
                     )
                 }

@@ -13,7 +13,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
     constructor(...literals: string[]) {
         super()
         if (literals.length === 0) {
-            throw new Error('Expected `literals.length` to be more than 0.')
+            throw new Error('Expected ‘literals.length’ to be more than 0.')
         }
         this.literals = literals.sort()
     }
@@ -48,7 +48,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
                 if (string.length > 0) {
                     ans.errors = [new ParsingError(
                         { start: start, end: start + string.length },
-                        `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``
+                        `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`
                     )]
                 } else {
                     ans.errors = [new ParsingError(
@@ -60,7 +60,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             } else {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + string.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``,
+                    `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`,
                     false
                 )]
             }

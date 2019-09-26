@@ -19,7 +19,7 @@ export default class NbtSchemaWalker {
             ans = posix.join(base, rel)
         }
         if (!this.nbtSchema.hasOwnProperty(ans)) {
-            throw new Error(`Path not found: join(\`${base}\`, \`${rel}\`) => \`${ans}\``)
+            throw new Error(`Path not found: join(‘${base}’, ‘${rel}’) => ‘${ans}’`)
         }
         return ans
     }

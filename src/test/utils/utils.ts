@@ -19,17 +19,17 @@ describe('utils.ts Tests', () => {
         it('Should return message for one-element array', () => {
             const arr = ['foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '`foo`')
+            assert(actual === '‘foo’')
         })
         it('Should return message for two-element array', () => {
             const arr = ['bar', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '`bar` and `foo`')
+            assert(actual === '‘bar’ and ‘foo’')
         })
         it('Should return message for multi-element array', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual, '`bar` === `baz` and `foo`')
+            assert(actual, '‘bar’ === ‘baz’ and ‘foo’')
         })
     })
     describe('escapeString() Tests', () => {

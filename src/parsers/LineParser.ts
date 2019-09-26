@@ -86,7 +86,7 @@ export default class LineParser implements Parser<Line> {
                 // There are trailing data.
                 if (!node.children) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.string.length }, `expected nothing but got \`${reader.remainingString}\``)
+                        new ParsingError({ start: reader.cursor, end: reader.string.length }, `expected nothing but got ‘${reader.remainingString}’`)
                     )
                 } else {
                     if (reader.peek() === ' ') {
@@ -113,7 +113,7 @@ export default class LineParser implements Parser<Line> {
                 )
             }
         } else {
-            throw new Error('Unexpected error. Got none of `parser`, `redirect` and `template` in node.')
+            throw new Error('Unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node.')
         }
         if (node.run) {
             node.run(parsedLine)
@@ -166,7 +166,7 @@ export default class LineParser implements Parser<Line> {
                 if (i < path.length - 1) {
                     const result = getChildren(this.tree, node)
                     if (!result) {
-                        throw new Error(`There are no children in path \`${path.slice(0, -1).join('.')}\`.`)
+                        throw new Error(`There are no children in path ‘${path.slice(0, -1).join('.')}’.`)
                     }
                     children = result
                 } else {
@@ -174,7 +174,7 @@ export default class LineParser implements Parser<Line> {
                     return { partOfHints: hints, node }
                 }
             } else {
-                throw new Error(`\`${ele}\` doesn't exist in path \`${path.slice(0, i).join('.')}\`.`)
+                throw new Error(`‘${ele}’ doesn't exist in path ‘${path.slice(0, i).join('.')}’.`)
             }
         }
         throw new Error('Unreachable error. Maybe the path is empty?')

@@ -32,9 +32,9 @@ export class TestArgumentParser extends ArgumentParser<string> {
         const data = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = { data, cache: { def: {}, ref: {} }, completions: [], errors: [] }
         if (this.type === 'error') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected `error` and did get `error`')]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected ‘error’ and did get ‘error’')]
         } else if (this.type === 'ERROR') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected `ERROR` and did get `ERROR`', false)]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected ‘ERROR’ and did get ‘ERROR’', false)]
         } else if (this.type === 'cache') {
             ans.cache = { ref: {}, def: { entities: { foo: undefined } } }
         } else if (this.type === 'CACHE') {
@@ -52,7 +52,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
 
 describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
-        it('Should throw error when Got none of `parser`, `redirect` and `template` were specified in node', () => {
+        it('Should throw error when Got none of ‘parser’, ‘redirect’ and ‘template’ were specified in node', () => {
             const input = 'foo'
             const parser = new LineParser({})
             const node: CommandTreeNode<string> = {}
@@ -62,7 +62,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'Unexpected error. Got none of `parser`, `redirect` and `template` in node.')
+                assert(message === 'Unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node.')
             }
         })
         it('Should parse when parser specified', () => {
@@ -213,7 +213,7 @@ describe('LineParser Tests', () => {
             parser.parseSingle(new StringReader(input), 'node', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 4, end: 7 }, 'expected `ERROR` and did get `ERROR`')]
+                [new ParsingError({ start: 4, end: 7 }, 'expected ‘ERROR’ and did get ‘ERROR’')]
             )
         })
         it('Should return error when there are trailing data but no children', () => {
@@ -233,7 +233,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 3, end: 7 }, 'expected nothing but got \` bar\`')]
+                [new ParsingError({ start: 3, end: 7 }, 'expected nothing but got ‘ bar’')]
             )
         })
         it('Should return completions for empty argument', () => {
@@ -384,7 +384,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 0, end: 3 }, 'expected `error` and did get `error`')]
+                [new ParsingError({ start: 0, end: 3 }, 'expected ‘error’ and did get ‘error’')]
             )
         })
         it('Should return the last child if untolerable error occurrs', () => {
@@ -486,7 +486,7 @@ describe('LineParser Tests', () => {
                 parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'wtf', 'wtf2'])
                 fail()
             } catch (e) {
-                assert(e.message === "`wtf` doesn't exist in path `command.execute.run`.")
+                assert(e.message === "‘wtf’ doesn't exist in path ‘command.execute.run’.")
             }
         })
         it('Should throw error when there are no children in specific path', () => {
@@ -495,7 +495,7 @@ describe('LineParser Tests', () => {
                 parser.getPartOfHintsAndNode(['command', 'nochildren', 'wtf'])
                 fail()
             } catch (e) {
-                assert(e.message === 'There are no children in path `command.nochildren`.')
+                assert(e.message === 'There are no children in path ‘command.nochildren’.')
             }
         })
         it('Should return the part of hints and node', () => {
@@ -599,8 +599,8 @@ describe('LineParser Tests', () => {
                     args: [{ data: 'a', parser: 'test' }, { data: 'b', parser: 'test' }, { data: 'c', parser: 'test' }],
                     path: ['command', 'second', 'first', 'only'],
                     errors: [
-                        new ParsingError({ start: 2, end: 3 }, 'expected `error` and did get `error`'),
-                        new ParsingError({ start: 4, end: 5 }, 'expected `ERROR` and did get `ERROR`')
+                        new ParsingError({ start: 2, end: 3 }, 'expected ‘error’ and did get ‘error’'),
+                        new ParsingError({ start: 4, end: 5 }, 'expected ‘ERROR’ and did get ‘ERROR’')
                     ]
                 }
             })

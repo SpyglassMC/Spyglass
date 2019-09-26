@@ -225,7 +225,7 @@ describe('NbtSchemaWalker Tests', () => {
                 walker.resolve('parent', 'child')
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: join(`parent`, `child`) => `parent/child`')
+                assert(message === 'Path not found: join(‘parent’, ‘child’) => ‘parent/child’')
             }
         })
     })

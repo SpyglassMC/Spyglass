@@ -14,7 +14,7 @@ describe('LiteralArgumentParser Tests', () => {
                 fail()
             } catch (e) {
                 const er = <Error>e
-                assert(er.message==='Expected `literals.length` to be more than 0.')
+                assert(er.message==='Expected ‘literals.length’ to be more than 0.')
             }
         })
     })
@@ -70,7 +70,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got nothing/))
+            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got nothing/))
             assert(pe.tolerable === false)
         })
         it('Should return errors when partial matching', () => {
@@ -79,7 +79,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got `F`/))
+            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got ‘F’/))
             assert(pe.tolerable === true)
         })
         it('Should return untolerable error when nothing matches', () => {
@@ -88,7 +88,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got `spg`/))
+            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got ‘spg’/))
             assert(pe.tolerable === false)
         })
     })
