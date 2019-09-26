@@ -46,6 +46,7 @@ export default class NbtSchemaWalker {
                 } else {
                     // $ anchors.
                     for (const key in file.children) {
+                        /* istanbul ignore else */
                         if (file.children.hasOwnProperty(key)) {
                             if (key[0] === '$') {
                                 const valueList = (this.read(newPath, key.slice(1)) as ValueList)

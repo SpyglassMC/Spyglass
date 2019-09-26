@@ -178,7 +178,10 @@ describe('NbtSchemaWalker Tests', () => {
         'block/group/command_block.json': [
             'minecraft:command_block',
             'minecraft:chain_command_block',
-            'minecraft:repeating_command_block'
+            {
+                description: 'A purple command block',
+                value: 'minecraft:repeating_command_block'
+            }
         ],
         'roots/blocks.json': {
             type: 'root',
