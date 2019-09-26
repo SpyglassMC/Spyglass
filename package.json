@@ -5,7 +5,9 @@
     "main": "src",
     "dependencies": {
         "constants": "0.0.2",
-        "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git#9c2904209e5b7fcab41b243d9067de00f9ddf403",
+        "long": "^4.0.0",
+        "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
+        "minecraft-id": "^0.1.5",
         "vscode-languageserver": "^5.2.1"
     },
     "directories": {
