@@ -118,22 +118,7 @@ The naming convension for scoreboard objectives.
 #### nameOfSnbtCompoundTagKeys: `NamingConventionConfig`
 
 The naming convension for compound tag keys in SNBT.  
-@default `['UpperCamelCase', 'lowerCamelCase']`
-
-#### treatUnspecificBlocksAs: `'any' | 'none'`
-
-What the unspecific blocks are treated as when computing completions in SNBT.  
-@default `'any'`
-
-#### treatUnspecificEntitiesAs: `'any' | 'none'`
-
-What the unspecific entities are treated as when computing completions in SNBT.  
-@default `'any'`
-
-#### treatUnspecificItemsAs: `'any' | 'none'`
-
-What the unspecific items are treated as when computing completions in SNBT.  
-@default `'any'`
+@default `['PascalCase', 'camelCase']`
 
 ## Contributing
 

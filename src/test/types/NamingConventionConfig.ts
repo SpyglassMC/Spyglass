@@ -4,33 +4,33 @@ import { NamingConventionConfig, checkNamingConvention } from '../../types/Namin
 
 describe('NamingConventionConfig Tests', () => {
     describe('checkNamingConvention() Tests', () => {
-        it('Should return true for lowerCamelCase', () => {
-            const identities = ['l', 'lower', 'lowerC', 'lowerIP', 'lowerCamel', 'lowerCamelCase']
-            const config: NamingConventionConfig = 'lowerCamelCase'
+        it('Should return true for camelCase', () => {
+            const identities = ['l', 'lower', 'lowerC', 'lowerIP', 'lowerCamel', 'camelCase']
+            const config: NamingConventionConfig = 'camelCase'
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === true)
             }
         })
-        it('Should return false for lowerCamelCase', () => {
+        it('Should return false for camelCase', () => {
             const identities = ['', 'Upper']
-            const config: NamingConventionConfig = 'lowerCamelCase'
+            const config: NamingConventionConfig = 'camelCase'
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === false)
             }
         })
-        it('Should return true for UpperCamelCase', () => {
-            const identities = ['U', 'Upper', 'UpperC', 'UpperIP', 'XMLHttpRequest', 'UpperCamel', 'UpperCamelCase']
-            const config: NamingConventionConfig = 'UpperCamelCase'
+        it('Should return true for PascalCase', () => {
+            const identities = ['U', 'Upper', 'UpperC', 'UpperIP', 'XMLHttpRequest', 'UpperCamel', 'PascalCase']
+            const config: NamingConventionConfig = 'PascalCase'
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === true)
             }
         })
-        it('Should return false for UpperCamelCase', () => {
+        it('Should return false for PascalCase', () => {
             const identities = ['', 'lower']
-            const config: NamingConventionConfig = 'UpperCamelCase'
+            const config: NamingConventionConfig = 'PascalCase'
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === false)
@@ -85,7 +85,7 @@ describe('NamingConventionConfig Tests', () => {
             }
         })
         it('Should return true for whatever', () => {
-            const identities = ['l', 'U', 'lowerCamelCase', 'UpperCamelCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case']
+            const identities = ['l', 'U', 'camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case']
             const config: NamingConventionConfig = ['whatever']
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)

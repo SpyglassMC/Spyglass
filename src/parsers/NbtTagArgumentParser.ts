@@ -1,4 +1,3 @@
-import * as nbtSchema from 'mc-nbt-paths'
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import GlobalCache from '../types/GlobalCache'
@@ -6,9 +5,11 @@ import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDouble
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { posix } from 'path'
 import { ValueList, NBTNode } from 'mc-nbt-paths'
+import NbtSchemaWalker from '../utils/NbtSchemaWalker'
+import { checkNamingConvention } from '../types/NamingConventionConfig'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -22,7 +23,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return value
     }
 
-    private static readonly Patterns: { [type: string]: [RegExp, /** @throws string */(value: string) => NbtTag] } = {
+    private static readonly Patterns: { [type: string]: [RegExp, /** @throws {string} */(value: string) => NbtTag] } = {
         byte: [
             /^[-+]?(?:0|[1-9][0-9]*)b$/i,
             value => new NbtByteTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
@@ -55,7 +56,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         true: [/^true$/i, _ => new NbtByteTag(1)]
     }
 
+    private readonly walker = new NbtSchemaWalker()
+
     private readonly type: NbtTagName[]
+    
+    private config: Config
+    private cache: GlobalCache
+
+    private currentSchema: NBTNode | ValueList | undefined
 
     readonly identity = 'nbtTag'
 
@@ -68,24 +76,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private getAnyOrNone({ lint: { treatUnspecificBlocksAs, treatUnspecificEntitiesAs, treatUnspecificItemsAs } }: Config) {
-        switch (this.category) {
-            case 'blocks':
-                return treatUnspecificBlocksAs
-            case 'entities':
-                return treatUnspecificEntitiesAs
-            case 'items':
-            default:
-                return treatUnspecificItemsAs
+    parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id?: string): ArgumentParserResult<NbtTag> {
+        this.config = config
+        this.cache = cache
+        if (id) {
+            const nbtSchemaPath = `roots/${this.category}.json#${id}`
+            this.currentSchema = this.walker.read(undefined, nbtSchemaPath)
         }
-    }
-
-    parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id: string | undefined = undefined): ArgumentParserResult<NbtTag> {
-        if (!id) {
-            id = this.getAnyOrNone(config)
-        }
-        const nbtSchemaPath = `roots/${this.category}.json#${id}`
-        throw ''
+        return this.parseTag(reader)
     }
 
     private parseTag(reader: StringReader): ArgumentParserResult<NbtTag> {
@@ -118,6 +116,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 while (reader.canRead() && reader.peek() !== '}') {
                     const start = reader.cursor
                     const key = reader.readString()
+                    if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
+                        ans.errors.push(
+                            new ParsingError({start, end: start + key.length + 1}, `found invalid key ‘${key}’ which doesn't follow ${this.config.lint.nameOfSnbtCompoundTagKeys}`, true, DiagnosticSeverity.Warning)
+                        )
+                    }
                     reader
                         .skipWhiteSpace()
                         .expect(':')

@@ -1,4 +1,6 @@
 import { MarkupContent } from 'vscode-languageserver'
+import * as blockNames from 'datapack-json/src/shared/block_name.json'
+import * as itemNames from 'datapack-json/src/shared/item_name.json'
 
 /**
  * Represent a cache which is used to compute completions. 

@@ -116,24 +116,9 @@ export type LintConfig = {
     nameOfObjectives: NamingConventionConfig,
     /**
      * The naming convension for compound tag keys in SNBT.  
-     * @default ['UpperCamelCase', 'lowerCamelCase']
+     * @default ['PascalCase', 'camelCase']
      */
-    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
-    /**
-     * What the unspecific blocks are treated as when computing completions in SNBT.  
-     * @default 'any'
-     */
-    treatUnspecificBlocksAs: 'any' | 'none',
-    /**
-     * What the unspecific entities are treated as when computing completions in SNBT.  
-     * @default 'any'
-     */
-    treatUnspecificEntitiesAs: 'any' | 'none',
-    /**
-     * What the unspecific items are treated as when computing completions in SNBT.  
-     * @default 'any'
-     */
-    treatUnspecificItemsAs: 'any' | 'none'
+    nameOfSnbtCompoundTagKeys: NamingConventionConfig
 }
 
 export default interface Config {
@@ -174,10 +159,7 @@ export const VanillaConfig: Config = {
         snbtSortKeys: false,
         nameOfTags: 'whatever',
         nameOfObjectives: 'whatever',
-        nameOfSnbtCompoundTagKeys: ['UpperCamelCase', 'lowerCamelCase'],
-        treatUnspecificBlocksAs: 'any',
-        treatUnspecificEntitiesAs: 'any',
-        treatUnspecificItemsAs: 'any'
+        nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
     }
 }
 

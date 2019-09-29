@@ -30,7 +30,7 @@ describe('StringArgumentParser Tests', () => {
             const { data, errors } = parser.parse(reader)
             const message = (<ParsingError[]>errors)[0].message
             assert(data === '')
-            assert(message.match(/expected ending quote/))
+            assert(message.match(/expected an ending quote ‘"’/))
         })
     })
     describe('toHint() Tests', () => {

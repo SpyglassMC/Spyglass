@@ -140,7 +140,7 @@ export default class StringReader {
         } else {
             const start = this.cursor
             const end = this.cursor + 1
-            throw new ParsingError({ start, end }, `expected a quote (\`'\` or \`"\`) but got ‘${quote}’`, false)
+            throw new ParsingError({ start, end }, `expected a quote (‘'’ or ‘"’) but got ‘${quote}’`, false)
         }
     }
 
@@ -176,7 +176,7 @@ export default class StringReader {
         }
         const errStart = this.cursor
         this.cursor = start
-        throw new ParsingError({ start: errStart, end: errStart + 1 }, `expected ending quote ‘${terminator}’ but got nothing`)
+        throw new ParsingError({ start: errStart, end: errStart + 1 }, `expected an ending quote ‘${terminator}’ but got nothing`)
     }
 
     /**

@@ -1,56 +1,57 @@
 {
-    "name": "datapack-language-server",
-    "version": "1.0.0",
-    "description": "Language server for Minecraft: Java Edition datapacks.",
-    "main": "src",
-    "dependencies": {
-        "constants": "0.0.2",
-        "long": "^4.0.0",
-        "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
-        "minecraft-id": "^0.1.5",
-        "vscode-languageserver": "^5.2.1"
-    },
-    "directories": {
-        "test": "src/test/"
-    },
-    "devDependencies": {
-        "@istanbuljs/nyc-config-typescript": "^0.1.3",
-        "@semantic-release/changelog": "^3.0.4",
-        "@semantic-release/git": "^7.0.16",
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^12.7.4",
-        "@types/power-assert": "^1.5.0",
-        "codecov": "^3.5.0",
-        "espower-typescript": "^9.0.2",
-        "gitmoji-cli": "^1.9.4",
-        "mocha": "^6.2.0",
-        "nyc": "^14.1.1",
-        "power-assert": "^1.5.0",
-        "semantic-release": "^15.13.24",
-        "semantic-release-gitmoji": "^1.3.0",
-        "source-map-support": "^0.5.13",
-        "ts-node": "^8.3.0",
-        "tslint": "^5.19.0",
-        "typescript": "^3.6.2"
-    },
-    "scripts": {
-        "build": "tsc",
-        "codecov": "codecov -f coverage/*.json",
-        "commit": "gitmoji -c",
-        "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
-        "release": "semantic-release",
-        "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register src/test/**/*.ts",
-        "posttest": "nyc report --reporter=json",
-        "watch": "tsc -w"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/SPGoding/datapack-language-server.git"
-    },
-    "homepage": "https://github.com/SPGoding/datapack-language-server",
-    "author": "SPGoding",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/SPGoding/datapack-language-server/issues"
-    }
+  "name": "datapack-language-server",
+  "version": "1.0.0",
+  "description": "Language server for Minecraft: Java Edition datapacks.",
+  "main": "src",
+  "dependencies": {
+    "constants": "0.0.2",
+    "datapack-json": "^1.3.5",
+    "long": "^4.0.0",
+    "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
+    "minecraft-id": "^0.1.5",
+    "vscode-languageserver": "^5.2.1"
+  },
+  "directories": {
+    "test": "src/test/"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/git": "^7.0.16",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.4",
+    "@types/power-assert": "^1.5.0",
+    "codecov": "^3.5.0",
+    "espower-typescript": "^9.0.2",
+    "gitmoji-cli": "^1.9.4",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "power-assert": "^1.5.0",
+    "semantic-release": "^15.13.24",
+    "semantic-release-gitmoji": "^1.3.0",
+    "source-map-support": "^0.5.13",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "codecov": "codecov -f coverage/*.json",
+    "commit": "gitmoji -c",
+    "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
+    "release": "semantic-release",
+    "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register src/test/**/*.ts",
+    "posttest": "nyc report --reporter=json",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SPGoding/datapack-language-server.git"
+  },
+  "homepage": "https://github.com/SPGoding/datapack-language-server",
+  "author": "SPGoding",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SPGoding/datapack-language-server/issues"
+  }
 }

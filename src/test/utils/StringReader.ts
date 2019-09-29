@@ -242,7 +242,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (e) {
                 const { range, message, tolerable } = <ParsingError>e
-                assert(message.match(/expected ending quote ‘"’ but got nothing/))
+                assert(message.match(/expected an ending quote ‘"’ but got nothing/))
                 assert(range.start === 5)
                 assert(range.end === 6)
                 assert(tolerable === true)
