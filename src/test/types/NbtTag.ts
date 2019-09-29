@@ -2,6 +2,7 @@ import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
 import { NbtCompoundTag, NbtStringTag, NbtByteTag, NbtShortTag, NbtLongTag, NbtFloatTag, NbtDoubleTag, NbtIntTag, NbtLongArrayTag, NbtIntArrayTag, NbtByteArrayTag, NbtListTag } from '../../types/NbtTag'
 import { constructConfig } from '../../types/Config'
+import Long from 'long'
 
 describe('NbtCompoundTag Tests', () => {
     describe('toString() Tests', () => {
@@ -147,7 +148,7 @@ describe('NbtLongArrayTag Tests', () => {
         })
         it('Should return correctly for one-element array', () => {
             const tag = new NbtLongArrayTag([])
-            tag.push(new NbtLongTag(1))
+            tag.push(new NbtLongTag(Long.fromString('1')))
             const lint = constructConfig({
                 lint: {
                     snbtAppendSpaceAfterComma: true,
@@ -160,7 +161,7 @@ describe('NbtLongArrayTag Tests', () => {
         })
         it('Should return correctly for multi-element array', () => {
             const tag = new NbtLongArrayTag([])
-            tag.push(new NbtLongTag(1), new NbtLongTag(2))
+            tag.push(new NbtLongTag(Long.fromString('1')), new NbtLongTag(Long.fromString('2')))
             const lint = constructConfig({
                 lint: {
                     snbtAppendSpaceAfterComma: true,
@@ -173,7 +174,7 @@ describe('NbtLongArrayTag Tests', () => {
         })
         it('Should not append spaces if specified', () => {
             const tag = new NbtLongArrayTag([])
-            tag.push(new NbtLongTag(1), new NbtLongTag(2))
+            tag.push(new NbtLongTag(Long.fromString('1')), new NbtLongTag(Long.fromString('2')))
             const lint = constructConfig({
                 lint: {
                     snbtAppendSpaceAfterComma: false,
@@ -242,7 +243,7 @@ describe('NbtIntTag Tests', () => {
 describe('NbtLongTag Tests', () => {
     describe('toString() Tests', () => {
         it('Should return correctly', () => {
-            const tag = new NbtLongTag(123456789)
+            const tag = new NbtLongTag(Long.fromString('123456789'))
             const lint = constructConfig({
                 lint: {
                     snbtLongSuffix: 'L'

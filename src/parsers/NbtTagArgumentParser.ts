@@ -10,15 +10,23 @@ import { posix } from 'path'
 import { ValueList, NBTNode } from 'mc-nbt-paths'
 import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
+import Long = require('long')
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
      * @throws {string}
      */
-    private static parseNumber(str: string) {
+    private static parseNumber(str: string, range?: (number | Long)[]) {
         const value = Number(str)
-        if (isNaN(value)) {
-            throw `expected a number but got ‘${str}’`
+        // if (isNaN(value)) {
+        //     throw `expected a number but got ‘${str}’`
+        // }
+        if (range) {
+            if (range[0] instanceof Long) {
+                throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
+            } else if ((value < range[0] || value > range[1])) {
+                throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
+            }
         }
         return value
     }
@@ -26,19 +34,31 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private static readonly Patterns: { [type: string]: [RegExp, /** @throws {string} */(value: string) => NbtTag] } = {
         byte: [
             /^[-+]?(?:0|[1-9][0-9]*)b$/i,
-            value => new NbtByteTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => new NbtByteTag(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [-2 ^ 7, 2 ^ 7 - 1])
+            )
         ],
         short: [
             /^[-+]?(?:0|[1-9][0-9]*)s$/i,
-            value => new NbtShortTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => new NbtShortTag(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [-2 ^ 15, 2 ^ 15 - 1])
+            )
         ],
         int: [
             /^[-+]?(?:0|[1-9][0-9]*)$/i,
-            value => new NbtIntTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => new NbtIntTag(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [-2 ^ 31, 2 ^ 31 - 1])
+            )
         ],
         long: [
             /^[-+]?(?:0|[1-9][0-9]*)l$/i,
-            value => new NbtLongTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => new NbtLongTag(Long.fromInt(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [Long.MIN_VALUE, Long.MAX_VALUE])
+            ))
         ],
         float: [
             /^[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?f$/i,
@@ -50,7 +70,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ],
         doubleImplicit: [
             /^[-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?$/i,
-            value => new NbtDoubleTag(NbtTagArgumentParser.parseNumber(value))
+            value => new NbtDoubleTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
         ],
         false: [/^false$/i, _ => new NbtByteTag(0)],
         true: [/^true$/i, _ => new NbtByteTag(1)]
@@ -59,7 +79,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private readonly walker = new NbtSchemaWalker()
 
     private readonly type: NbtTagName[]
-    
+
     private config: Config
     private cache: GlobalCache
 
@@ -118,7 +138,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     const key = reader.readString()
                     if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
                         ans.errors.push(
-                            new ParsingError({start, end: start + key.length + 1}, `found invalid key ‘${key}’ which doesn't follow ${this.config.lint.nameOfSnbtCompoundTagKeys}`, true, DiagnosticSeverity.Warning)
+                            new ParsingError({ start, end: start + key.length + 1 }, `found invalid key ‘${key}’ which doesn't follow ${this.config.lint.nameOfSnbtCompoundTagKeys}`, true, DiagnosticSeverity.Warning)
                         )
                     }
                     reader
@@ -343,20 +363,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         if (NbtTagArgumentParser.Patterns.hasOwnProperty(type)) {
                             const [pattern, func] = NbtTagArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
-                                try {
-                                    return {
-                                        data: func(value),
-                                        errors: [],
-                                        cache: { def: {}, ref: {} },
-                                        completions: []
-                                    }
-                                } catch (s) {
-                                    return {
-                                        data: new NbtStringTag(''),
-                                        errors: [new ParsingError({ start, end: start + value.length + 1 }, s)],
-                                        cache: { def: {}, ref: {} },
-                                        completions: []
-                                    }
+                                return {
+                                    data: func(value),
+                                    errors: [],
+                                    cache: { def: {}, ref: {} },
+                                    completions: []
                                 }
                             }
                         }

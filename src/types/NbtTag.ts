@@ -1,5 +1,6 @@
 import { LintConfig } from './Config'
 import { quoteString } from '../utils/utils'
+import * as Long from 'long'
 
 export type NbtTagName =
     'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
@@ -144,10 +145,10 @@ export class NbtIntTag extends NbtTag {
 export class NbtLongTag extends NbtTag {
     readonly identity = 'long'
 
-    constructor(readonly value: number) { super() }
+    constructor(readonly value: Long) { super() }
 
     toString(lint: LintConfig) {
-        return `${this.value}${lint.snbtLongSuffix}`
+        return `${this.value.toString()}${lint.snbtLongSuffix}`
     }
 }
 
