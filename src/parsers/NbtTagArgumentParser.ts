@@ -1,7 +1,7 @@
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import GlobalCache from '../types/GlobalCache'
-import NbtTag, { NbtTagName, NbtCompoundTag, NbtStringTag, NbtByteTag, NbtDoubleTag, NbtFloatTag, NbtIntTag, NbtLongTag, NbtShortTag, NbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtArrayTag } from '../types/NbtTag'
+import { NbtTag, NbtTagName, NbtContentTagTypeSymbol, NbtTagTypeSymbol, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
@@ -10,23 +10,21 @@ import { posix } from 'path'
 import { ValueList, NBTNode } from 'mc-nbt-paths'
 import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
-import Long = require('long')
+import BigNumber from 'bignumber.js'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
      * @throws {string}
      */
-    private static parseNumber(str: string, range?: (number | Long)[]) {
-        const value = Number(str)
-        // if (isNaN(value)) {
-        //     throw `expected a number but got ‘${str}’`
-        // }
-        if (range) {
-            if (range[0] instanceof Long) {
-                throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
-            } else if ((value < range[0] || value > range[1])) {
-                throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
-            }
+    private static parseNumber<T = number>(
+        str: string,
+        range: string[],
+        getter: (str: string) => T,
+        checker: (value: T) => boolean = _ => true
+    ) {
+        const value = getter(str)
+        if (!checker(value)) {
+            throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
         }
         return value
     }
@@ -34,46 +32,68 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private static readonly Patterns: { [type: string]: [RegExp, /** @throws {string} */(value: string) => NbtTag] } = {
         byte: [
             /^[-+]?(?:0|[1-9][0-9]*)b$/i,
-            value => new NbtByteTag(NbtTagArgumentParser.parseNumber(
+            value => getNbtByteTag(NbtTagArgumentParser.parseNumber(
                 value.slice(0, -1),
-                [-2 ^ 7, 2 ^ 7 - 1])
-            )
+                ['-128', '127'],
+                Number,
+                (value: number) => -(2 ** 7) <= value && value <= 2 ** 7 - 1
+            ))
         ],
         short: [
             /^[-+]?(?:0|[1-9][0-9]*)s$/i,
-            value => new NbtShortTag(NbtTagArgumentParser.parseNumber(
+            value => getNbtShortTag(NbtTagArgumentParser.parseNumber(
                 value.slice(0, -1),
-                [-2 ^ 15, 2 ^ 15 - 1])
-            )
+                ['-32,768', '32,767'],
+                Number,
+                (value: number) => -(2 ** 15) <= value && value <= 2 ** 15 - 1
+            ))
         ],
         int: [
             /^[-+]?(?:0|[1-9][0-9]*)$/i,
-            value => new NbtIntTag(NbtTagArgumentParser.parseNumber(
-                value.slice(0, -1),
-                [-2 ^ 31, 2 ^ 31 - 1])
-            )
+            value => getNbtIntTag(NbtTagArgumentParser.parseNumber(
+                value,
+                ['-2,147,483,648', '2,147,483,647'],
+                Number,
+                (value: number) => -(2 ** 31) <= value && value <= 2 ** 31 - 1
+            ))
         ],
         long: [
             /^[-+]?(?:0|[1-9][0-9]*)l$/i,
-            value => new NbtLongTag(Long.fromInt(NbtTagArgumentParser.parseNumber(
+            value => getNbtLongTag(NbtTagArgumentParser.parseNumber<BigNumber>(
                 value.slice(0, -1),
-                [Long.MIN_VALUE, Long.MAX_VALUE])
+                ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
+                (str: string) => new BigNumber(str),
+                (value: BigNumber) =>
+                    value.isGreaterThanOrEqualTo(new BigNumber('-9223372036854775808')) &&
+                    value.isLessThanOrEqualTo(new BigNumber('9223372036854775807'))
             ))
         ],
         float: [
             /^[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?f$/i,
-            value => new NbtFloatTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => getNbtFloatTag(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [],
+                Number
+            ))
         ],
         double: [
             /^[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?d$/i,
-            value => new NbtDoubleTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => getNbtDoubleTag(NbtTagArgumentParser.parseNumber(
+                value.slice(0, -1),
+                [],
+                Number
+            ))
         ],
         doubleImplicit: [
             /^[-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?$/i,
-            value => new NbtDoubleTag(NbtTagArgumentParser.parseNumber(value.slice(0, -1)))
+            value => getNbtDoubleTag(NbtTagArgumentParser.parseNumber(
+                value,
+                [],
+                Number
+            ))
         ],
-        false: [/^false$/i, _ => new NbtByteTag(0)],
-        true: [/^true$/i, _ => new NbtByteTag(1)]
+        false: [/^false$/i, _ => getNbtByteTag(0)],
+        true: [/^true$/i, _ => getNbtByteTag(1)]
     }
 
     private readonly walker = new NbtSchemaWalker()
@@ -119,7 +139,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     private parseCompoundTag(reader: StringReader): ArgumentParserResult<NbtCompoundTag> {
         const ans: ArgumentParserResult<NbtCompoundTag> = {
-            data: new NbtCompoundTag(),
+            data: getNbtCompoundTag({}),
             errors: [],
             cache: { def: {}, ref: {} },
             completions: []
@@ -153,9 +173,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             .skip()
                             .skipWhiteSpace()
                     }
-                    ans.data.value[key] = result.data
+                    ans.data[key] = result.data
                     combineArgumentParserResult(ans, result)
-                    if (ans.data.value[key] !== undefined) {
+                    if (ans.data[key] !== undefined) {
                         ans.errors.push(
                             new ParsingError({ start, end: start + key.length + 1 }, `duplicate compound key ‘${key}’`)
                         )
@@ -174,7 +194,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     private parseListOrArray(reader: StringReader): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
-            data: new NbtListTag([]),
+            data: getNbtListTag([]),
             errors: [],
             cache: { def: {}, ref: {} },
             completions: []
@@ -182,7 +202,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ans.errors = []
         try {
             reader.expect('[')
-            let result: ArgumentParserResult<NbtArrayTag<NbtByteTag | NbtIntTag | NbtLongTag> | NbtListTag>
+            let result: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag | NbtListTag>
             if (reader.canRead(3) && /^[BIL]$/.test(reader.peek(1)) && reader.peek(2) === ';') {
                 // Parse as an array.
                 result = this.parseArray(reader)
@@ -202,9 +222,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
      * @throws {ParsingError}
      */
-    private parseArray(reader: StringReader): ArgumentParserResult<NbtArrayTag<NbtByteTag | NbtIntTag | NbtLongTag>> {
-        const ans: ArgumentParserResult<NbtArrayTag<NbtByteTag | NbtIntTag | NbtLongTag>> = {
-            data: new NbtByteArrayTag([]),
+    private parseArray(reader: StringReader): ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
+        const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
+            data: getNbtByteArrayTag([]),
             errors: [],
             cache: { def: {}, ref: {} },
             completions: []
@@ -218,13 +238,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             const type = reader.read()
             switch (type) {
                 case 'B':
-                    ans.data = new NbtByteArrayTag([])
+                    ans.data = getNbtByteArrayTag([])
                     break
                 case 'I':
-                    ans.data = new NbtIntArrayTag([])
+                    ans.data = getNbtIntArrayTag([])
                     break
                 case 'L':
-                    ans.data = new NbtLongArrayTag([])
+                    ans.data = getNbtLongArrayTag([])
                     break
                 default:
                     throw new ParsingError({ start, end: start + 1 }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’ and ‘L’`)
@@ -243,24 +263,24 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         .skip()
                         .skipWhiteSpace()
                 }
-                if (ans.data instanceof NbtByteArrayTag) {
-                    if (result.data instanceof NbtByteTag) {
+                if (isNbtByteArrayTag(ans.data)) {
+                    if (isNbtByteTag(result.data)) {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
                             new ParsingError({ start, end: reader.cursor }, 'expected a byte tag')
                         )
                     }
-                } else if (ans.data instanceof NbtIntArrayTag) {
-                    if (result.data instanceof NbtIntTag) {
+                } else if (isNbtIntArrayTag(ans.data)) {
+                    if (isNbtIntTag(result.data)) {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
                             new ParsingError({ start, end: reader.cursor }, 'expected an int tag')
                         )
                     }
-                } else if (ans.data instanceof NbtLongArrayTag) {
-                    if (result.data instanceof NbtLongTag) {
+                } else if (isNbtLongArrayTag(ans.data)) {
+                    if (isNbtLongTag(result.data)) {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
@@ -281,7 +301,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     private parseList(reader: StringReader): ArgumentParserResult<NbtListTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
-            data: new NbtListTag([]),
+            data: getNbtListTag([]),
             errors: [],
             cache: { def: {}, ref: {} },
             completions: []
@@ -303,15 +323,15 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         .skip()
                         .skipWhiteSpace()
                 }
-                if (!ans.data.contentIdentity) {
-                    ans.data.contentIdentity = result.data.identity
-                } else if (ans.data.contentIdentity === result.data.identity) {
+                if (!ans.data[NbtContentTagTypeSymbol]) {
+                    ans.data[NbtContentTagTypeSymbol] = result.data[NbtTagTypeSymbol]
+                } else if (ans.data[NbtContentTagTypeSymbol] === result.data[NbtTagTypeSymbol]) {
                     ans.data.push(result.data)
                 } else {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected a(n) ‘${ans.data.contentIdentity}’ tag but got a(n) ‘${result.data.identity}’ tag`
+                            `expected a(n) ‘${ans.data[NbtContentTagTypeSymbol]}’ tag but got a(n) ‘${result.data[NbtTagTypeSymbol]}’ tag`
                         )
                     )
                 }
@@ -332,14 +352,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             try {
                 const value = reader.readQuotedString()
                 return {
-                    data: new NbtStringTag(value),
+                    data: getNbtStringTag(value),
                     errors: [],
                     cache: { def: {}, ref: {} },
                     completions: []
                 }
             } catch (p) {
                 return {
-                    data: new NbtStringTag(''),
+                    data: getNbtStringTag(''),
                     errors: [p as ParsingError],
                     cache: { def: {}, ref: {} },
                     completions: []
@@ -351,7 +371,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             const value = reader.readUnquotedString()
             if (value.length === 0) {
                 return {
-                    data: new NbtStringTag(''),
+                    data: getNbtStringTag(''),
                     errors: [new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing')],
                     cache: { def: {}, ref: {} },
                     completions: []
@@ -373,13 +393,23 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         }
                     }
                     throw 'failed to match all patterns'
-                } catch (ignored) {
+                } catch (s) {
                     // Parse as an unquoted string.
-                    return {
-                        data: new NbtStringTag(value),
-                        errors: [],
-                        cache: { def: {}, ref: {} },
-                        completions: []
+                    if (s === 'failed to match all patterns') {
+                        // Ignore `s`.
+                        return {
+                            data: getNbtStringTag(value),
+                            errors: [],
+                            cache: { def: {}, ref: {} },
+                            completions: []
+                        }
+                    } else {
+                        return {
+                            data: getNbtStringTag(value),
+                            errors: [new ParsingError({ start, end: reader.cursor }, s, true, DiagnosticSeverity.Warning)],
+                            cache: { def: {}, ref: {} },
+                            completions: []
+                        }
                     }
                 }
             }
