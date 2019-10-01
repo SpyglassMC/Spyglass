@@ -1,12 +1,12 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { getNbtByteTag, NbtToStringSymbol, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtByteArrayTag, getNbtIntArrayTag, getNbtLongArrayTag, getNbtListTag } from '../../types/NbtTag'
+import { getNbtByteTag, NbtToStringSymbol, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtByteArrayTag, getNbtIntArrayTag, getNbtLongArrayTag, getNbtListTag, getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 import { constructConfig } from '../../types/Config'
 import BigNumber from 'bignumber.js'
 
 describe('NbtTag Tests', () => {
     describe('getNbtByteTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtByteSuffix: 'b' } })
             const tag = getNbtByteTag(123)
             const actual = tag[NbtToStringSymbol](lint)
@@ -14,7 +14,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtShortTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtShortSuffix: 's' } })
             const tag = getNbtShortTag(30000)
             const actual = tag[NbtToStringSymbol](lint)
@@ -22,7 +22,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtIntTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: {} })
             const tag = getNbtIntTag(12345678)
             const actual = tag[NbtToStringSymbol](lint)
@@ -30,7 +30,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtLongTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtLongSuffix: 'L' } })
             const tag = getNbtLongTag(new BigNumber(100000000))
             const actual = tag[NbtToStringSymbol](lint)
@@ -38,7 +38,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtFloatTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtFloatSuffix: 'f' } })
             const tag = getNbtFloatTag(12.34)
             const actual = tag[NbtToStringSymbol](lint)
@@ -52,7 +52,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtDoubleTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtDoubleSuffix: 'd' } })
             const tag = getNbtDoubleTag(12.34)
             const actual = tag[NbtToStringSymbol](lint)
@@ -69,7 +69,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtByteArrayTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({
                 lint: {
                     snbtByteSuffix: 'b',
@@ -107,7 +107,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtIntArrayTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({
                 lint: {
                     snbtAppendSpaceAfterComma: true,
@@ -120,7 +120,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtLongArrayTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({
                 lint: {
                     snbtLongSuffix: 'L',
@@ -134,7 +134,7 @@ describe('NbtTag Tests', () => {
         })
     })
     describe('getNbtListTag() Tests', () => {
-        it('Should convert to string correctly', () => {
+        it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({
                 lint: {
                     snbtLongSuffix: 'L',
@@ -144,6 +144,100 @@ describe('NbtTag Tests', () => {
             const tag = getNbtListTag([getNbtLongTag(new BigNumber(1)), getNbtLongTag(new BigNumber(2))])
             const actual = tag[NbtToStringSymbol](lint)
             assert(actual === '[1L, 2L]')
+        })
+    })
+    describe('getNbtStringTag() Tests', () => {
+        it('Should convert to a string correctly', () => {
+            const { lint } = constructConfig({
+                lint: {
+                    quoteType: 'prefer double',
+                    quoteSnbtStringValues: true
+                }
+            })
+            const tag = getNbtStringTag('foo')
+            const actual = tag[NbtToStringSymbol](lint)
+            assert(actual === '"foo"')
+        })
+    })
+    describe('getCompoundTag() Tests', () => {
+        it('Should convert to a string with spaces', () => {
+            const { lint: lintWithSpaces } = constructConfig({
+                lint: {
+                    snbtShortSuffix: 's',
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false,
+                    quoteSnbtStringKeys: false
+                }
+            })
+            const tag = getNbtCompoundTag({
+                foo: getNbtShortTag(1),
+                baz: getNbtCompoundTag({
+                    qux: getNbtShortTag(2)
+                })
+            })
+            const actualWithSpaces = tag[NbtToStringSymbol](lintWithSpaces)
+            assert(actualWithSpaces === '{foo: 1s, baz: {qux: 2s}}')
+        })
+        it('Should convert to a string without spaces', () => {
+            const { lint: lintWithoutSpaces } = constructConfig({
+                lint: {
+                    snbtShortSuffix: 's',
+                    snbtAppendSpaceAfterComma: false,
+                    snbtAppendSpaceAfterColon: false,
+                    snbtSortKeys: false,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringKeys: false
+                }
+            })
+            const tag = getNbtCompoundTag({
+                foo: getNbtShortTag(1),
+                baz: getNbtCompoundTag({
+                    qux: getNbtShortTag(2)
+                })
+            })
+            const actual = tag[NbtToStringSymbol](lintWithoutSpaces)
+            assert(actual === '{foo:1s,baz:{qux:2s}}')
+        })
+        it('Should sort keys and convert to a string', () => {
+            const { lint: lintWithoutSpaces } = constructConfig({
+                lint: {
+                    snbtShortSuffix: 's',
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: true,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringKeys: false
+                }
+            })
+            const tag = getNbtCompoundTag({
+                foo: getNbtShortTag(1),
+                baz: getNbtCompoundTag({
+                    qux: getNbtShortTag(2)
+                })
+            })
+            const actual = tag[NbtToStringSymbol](lintWithoutSpaces)
+            assert(actual === '{baz: {qux: 2s}, foo: 1s}')
+        })
+        it('Should quote keys and convert to a string', () => {
+            const { lint: lintWithoutSpaces } = constructConfig({
+                lint: {
+                    snbtShortSuffix: 's',
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false,
+                    quoteType: 'prefer double',
+                    quoteSnbtStringKeys: true
+                }
+            })
+            const tag = getNbtCompoundTag({
+                foo: getNbtShortTag(1),
+                baz: getNbtCompoundTag({
+                    qux: getNbtShortTag(2)
+                })
+            })
+            const actual = tag[NbtToStringSymbol](lintWithoutSpaces)
+            assert(actual === '{"foo": 1s, "baz": {"qux": 2s}}')
         })
     })
 })

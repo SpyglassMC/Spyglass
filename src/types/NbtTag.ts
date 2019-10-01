@@ -6,7 +6,7 @@ export const NbtTagTypeSymbol = Symbol()
 export const NbtContentTagTypeSymbol = Symbol()
 export const NbtToStringSymbol = Symbol()
 
-export type NbtTagName =
+export type NbtTagTypeName =
     'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
     'byte' | 'short' | 'int' | 'long' | 'string' | 'float' | 'double'
 
@@ -18,7 +18,7 @@ export type NbtLongTag = BigNumber & NbtTagSymbolCollection & { [NbtTagTypeSymbo
 export type NbtFloatTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'float' }
 export type NbtDoubleTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'double' }
 export type NbtStringTag = string & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'string' }
-export type NbtListTag = NbtTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'list', [NbtContentTagTypeSymbol]: NbtTagName }
+export type NbtListTag = NbtTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'list', [NbtContentTagTypeSymbol]: NbtTagTypeName }
 export type NbtByteArrayTag = NbtByteTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'byte_array' }
 export type NbtIntArrayTag = NbtIntTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'int_array' }
 export type NbtLongArrayTag = NbtLongTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'long_array' }
@@ -38,7 +38,7 @@ export const isNbtListTag = (val: any): val is NbtListTag => val[NbtTagTypeSymbo
 export const isNbtCompoundTag = (val: any): val is NbtCompoundTag => val[NbtTagTypeSymbol] === 'compound'
 
 export interface NbtTagSymbolCollection {
-    [NbtTagTypeSymbol]: NbtTagName,
+    [NbtTagTypeSymbol]: NbtTagTypeName,
     [NbtToStringSymbol](lint: LintConfig): string
 }
 
@@ -73,7 +73,7 @@ function getNbtPrimitiveArrayTag(
 }
 
 
-function getNbtNumberTag<T = number>(val: T, type: NbtTagName, suffixParam?: string): T & NbtTagSymbolCollection {
+function getNbtNumberTag<T = number>(val: T, type: NbtTagTypeName, suffixParam?: string): T & NbtTagSymbolCollection {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
         [NbtTagTypeSymbol]: type,
@@ -166,7 +166,8 @@ export function getNbtCompoundTag(val: { [key: string]: NbtTag }) {
         [NbtTagTypeSymbol]: 'compound',
         [NbtToStringSymbol]: (lint: LintConfig) => {
             const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
-                .map(v => `${v}${getColon(lint)}${val[v][NbtToStringSymbol](lint)}`)
+                .map(v => `${quoteString(v, lint.quoteType, lint.quoteSnbtStringKeys)}${
+                    getColon(lint)}${val[v][NbtToStringSymbol](lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         }

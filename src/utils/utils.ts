@@ -1,4 +1,3 @@
-import Config from '../types/Config'
 import StringReader from './StringReader'
 
 /**
@@ -13,23 +12,30 @@ export function formatMessage(msg: string) {
 /**
  * Convert an array to human-readable message.
  * @param arr Array.
+ * @param quoted Whether to quote the result.
  * @returns Human-readable message.
  * @example
  * arrayToMessage([]) // "nothing"
- * arrayToMessage(['foo']) // "`foo`"
- * arrayToMessage(['bar', 'foo']) // "`bar` and `foo`"
- * arrayToMessage(['bar', 'baz', 'foo']) // "`bar`, `baz` and `foo`"
+ * arrayToMessage('foo') // "‘foo’"
+ * arrayToMessage(['foo']) // "‘foo’"
+ * arrayToMessage(['bar', 'foo']) // "‘bar’ and ‘foo’"
+ * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’ and ‘foo’"
  */
-export function arrayToMessage(arr: string[]) {
+export function arrayToMessage(arr: string | string[], quoted = true, conjunction: 'and' | 'or' = 'and') {
+    if (typeof arr === 'string') {
+        arr = [arr]
+    }
+    const prefix = quoted ? '‘' : ''
+    const suffix = quoted ? '’' : ''
     switch (arr.length) {
         case 0:
             return 'nothing'
         case 1:
-            return `‘${arr[0]}’`
+            return `${prefix}${arr[0]}${suffix}`
         case 2:
-            return `‘${arr[0]}’ and ‘${arr[1]}’`
+            return `${prefix}${arr[0]}${suffix} ${conjunction} ${prefix}${arr[1]}${suffix}`
         default:
-            return `‘${arr.slice(0, -1).join('`, `')}’ and ‘${arr.slice(-1)[0]}’`
+            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix} ${conjunction} ${prefix}${arr.slice(-1)[0]}${suffix}`
     }
 }
 
@@ -68,8 +74,8 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
                 quote = "'"
                 break
             case 'prefer single':
-                const containSingle = inner.indexOf("'") !== -1
-                if (containSingle) {
+                const containSingleQuote = inner.indexOf("'") !== -1
+                if (containSingleQuote) {
                     quote = '"'
                 } else {
                     quote = "'"
@@ -77,8 +83,8 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
                 break
             case 'prefer double':
             default:
-                const containDouble = inner.indexOf('"') !== -1
-                if (containDouble) {
+                const containDoubleQuote = inner.indexOf('"') !== -1
+                if (containDoubleQuote) {
                     quote = "'"
                 } else {
                     quote = '"'

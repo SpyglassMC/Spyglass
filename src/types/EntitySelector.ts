@@ -1,4 +1,5 @@
 import Range from './Range'
+import { NbtCompoundTag } from './NbtTag'
 
 /**
  * Represent an entity selector.
