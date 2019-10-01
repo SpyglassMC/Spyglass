@@ -127,7 +127,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws {{ParsingError}} If not an legal quoted string.
+     * @throws {ParsingError} If not an legal quoted string.
      */
     readQuotedString() {
         if (!this.canRead()) {

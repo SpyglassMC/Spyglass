@@ -5,8 +5,8 @@ import { NbtTag, NbtTagTypeName, NbtContentTagTypeSymbol, NbtTagTypeSymbol, getN
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
-import { ValueList, NBTNode } from 'mc-nbt-paths'
+import { CompletionItemKind, DiagnosticSeverity, ErrorMessageTracker } from 'vscode-languageserver'
+import { ValueList, NBTNode as NBTSchemaNode, CompoundNode } from 'mc-nbt-paths'
 import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
@@ -103,8 +103,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private config: Config
     private cache: GlobalCache
 
-    private currentSchema: NBTNode | ValueList | undefined
-
     readonly identity = 'nbtTag'
 
     constructor(type: NbtTagTypeName | NbtTagTypeName[], private readonly category: 'blocks' | 'entities' | 'items') {
@@ -119,12 +117,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id?: string): ArgumentParserResult<NbtTag> {
         this.config = config
         this.cache = cache
+        let schema: NBTSchemaNode | undefined = undefined
         if (id) {
             const nbtSchemaPath = `roots/${this.category}.json#${id}`
-            this.currentSchema = this.walker.read(undefined, nbtSchemaPath)
+            schema = this.walker.read(undefined, nbtSchemaPath) as NBTSchemaNode
         }
         const start = reader.cursor
-        const ans = this.parseTag(reader)
+        const ans = this.parseTag(reader, schema)
         if (this.expectedTypes.indexOf(ans.data[NbtTagTypeSymbol]) === -1) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
@@ -134,25 +133,26 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parseTag(reader: StringReader): ArgumentParserResult<NbtTag> {
+    private parseTag(reader: StringReader, schema?: NBTSchemaNode | undefined): ArgumentParserResult<NbtTag> {
         switch (reader.peek()) {
             case '{':
-                return this.parseCompoundTag(reader)
+                return this.parseCompoundTag(reader, schema)
             case '[':
-                return this.parseListOrArray(reader)
+                return this.parseListOrArray(reader, schema)
             default:
-                return this.parsePrimitiveTag(reader)
+                return this.parsePrimitiveTag(reader, schema)
         }
     }
 
-    private parseCompoundTag(reader: StringReader): ArgumentParserResult<NbtCompoundTag> {
+    private parseCompoundTag(reader: StringReader, schema?: NBTSchemaNode | undefined): ArgumentParserResult<NbtCompoundTag> {
         const ans: ArgumentParserResult<NbtCompoundTag> = {
             data: getNbtCompoundTag({}),
             errors: [],
             cache: { def: {}, ref: {} },
             completions: []
         }
-        ans.errors = []
+        const shouldUseSchema = schema && NbtSchemaWalker.isCompoundNode(schema)
+        const start = reader.cursor
         try {
             reader
                 .expect('{')
@@ -175,7 +175,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     .expect(':')
                     .skip()
                     .skipWhiteSpace()
-                const result = this.parseTag(reader)
+                let schemaForValue: undefined | NBTSchemaNode
+                if (shouldUseSchema) {
+                    schema = schema as CompoundNode
+                    
+                }
+                const result = this.parseTag(reader, schemaForValue)
                 reader.skipWhiteSpace()
                 if (reader.peek() === ',') {
                     reader
@@ -198,6 +203,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             reader
                 .expect('}')
                 .skip()
+            if (schema && !shouldUseSchema) {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    `expected a(n) ${(schema as any).type} tag instead of compound`
+                ))
+            }
         } catch (p) {
             ans.errors.push(p)
         } finally {
@@ -205,7 +216,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parseListOrArray(reader: StringReader): ArgumentParserResult<NbtTag> {
+    private parseListOrArray(reader: StringReader, schema?: NBTSchemaNode | undefined): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtListTag([]),
             errors: [],
@@ -226,7 +237,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parsePrimitiveArray(reader: StringReader): ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
+    private parsePrimitiveArray(reader: StringReader, schema?: NBTSchemaNode | undefined):
+        ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
             data: getNbtByteArrayTag([]),
             errors: [],
@@ -303,7 +315,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parseList(reader: StringReader): ArgumentParserResult<NbtListTag> {
+    private parseList(reader: StringReader, schema?: NBTSchemaNode | undefined): ArgumentParserResult<NbtListTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
             data: getNbtListTag([]),
             errors: [],
@@ -349,7 +361,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveTag(reader: StringReader): ArgumentParserResult<NbtTag> {
+    private parsePrimitiveTag(reader: StringReader, schema?: NBTSchemaNode | undefined): ArgumentParserResult<NbtTag> {
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             try {

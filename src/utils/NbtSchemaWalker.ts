@@ -63,6 +63,22 @@ export default class NbtSchemaWalker {
             } else {
                 return file
             }
+        } else if (NbtSchemaWalker.isCompoundNode(file)) {
+            const ansNode: any = JSON.parse(JSON.stringify(file))
+            if (file.child_ref) {
+                for (const uri of file.child_ref) {
+                    const child = this.read(newPath, uri) as CompoundNode
+                    ansNode.additionalChildren = ansNode.additionalChildren || child.additionalChildren
+                    for (const key in child.children) {
+                        if (child.children.hasOwnProperty(key)) {
+                            const childOfChild = child.children[key]
+                            ansNode.children[key] = childOfChild
+                        }
+                    }
+                    delete ansNode.child_ref
+                }
+            }
+            return ansNode
         } else {
             return file
         }
