@@ -173,13 +173,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             .skip()
                             .skipWhiteSpace()
                     }
-                    ans.data[key] = result.data
-                    combineArgumentParserResult(ans, result)
                     if (ans.data[key] !== undefined) {
                         ans.errors.push(
                             new ParsingError({ start, end: start + key.length + 1 }, `duplicate compound key ‘${key}’`)
                         )
                     }
+                    ans.data[key] = result.data
+                    combineArgumentParserResult(ans, result)
                 }
                 reader
                     .expect('}')
