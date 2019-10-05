@@ -123,3 +123,10 @@ The naming convension for compound tag keys in SNBT.
 ## Contributing
 
 Contributions are welcome!
+
+## Sponsers
+
+- 夏白千层心
+- 爱发电用户_4vCR
+- uuu2011
+- Ganxiaozhe

@@ -9,80 +9,19 @@ describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NBTNode | ValueList } = {
         'block/banner.json': {
             type: 'compound',
-            child_ref: [
-                '../ref/block_entity.json',
-                '../ref/nameable.json'
-            ],
             children: {
                 Base: {
                     type: 'int',
                     description: 'The base color of the banner'
                 },
-                Patterns: {
-                    type: 'compound',
-                    children: {
-                        Color: {
-                            type: 'int',
-                            description: 'The color of the pattern'
-                        },
-                        Pattern: {
-                            type: 'string',
-                            description: 'The name of the pattern',
-                            suggestions: [
-                                {
-                                    value: 'bs',
-                                    description: 'Bottom Stripe (Base)'
-                                },
-                                {
-                                    value: 'bl',
-                                    description: 'Bottom Left Corner (Base dexter canton)'
-                                },
-                                {
-                                    value: 'gru',
-                                    description: 'Gradient upside-down (Base gradient)'
-                                },
-                                {
-                                    value: 'bts',
-                                    description: 'Bottom Triangle Sawtooth (Base indented)'
-                                },
-                                {
-                                    value: 'br',
-                                    description: 'Bottom Right Corner (Base sinister canton)'
-                                },
-                                {
-                                    value: 'drs',
-                                    description: 'Down Right Stripe (Bend)'
-                                },
-                                {
-                                    value: 'dls',
-                                    description: 'Down Left Stripe (Bend sinister)'
-                                },
-                                {
-                                    value: 'bo',
-                                    description: 'Border (Bordure)'
-                                },
-                                {
-                                    value: 'cbo',
-                                    description: 'Curly Border (Bordure indented)'
-                                },
-                                {
-                                    value: 'bt',
-                                    description: 'Bottom Triangle (Chevron)'
-                                },
-                                {
-                                    value: 'ts',
-                                    description: 'Top Stripe (Chief)'
-                                },
-                                {
-                                    value: 'tl',
-                                    description: 'Top Left Corner (Chief dexter canton)'
-                                },
-                                {
-                                    value: 'tts',
-                                    description: 'Top Triangle Sawtooth (Chief indented)'
-                                }
-                            ]
-                        }
+                list: {
+                    type: 'list',
+                    item: { type: 'no-nbt' }
+                },
+                refTest: {
+                    type: 'no-nbt',
+                    references: {
+                        foo: { type: 'no-nbt', description: 'references test' }
                     }
                 }
             }
@@ -90,21 +29,10 @@ describe('NbtSchemaWalker Tests', () => {
         'block/beacon.json': {
             type: 'compound',
             child_ref: [
-                '../ref/block_entity.json',
-                '../ref/lockable.json'
+                '../ref/lockable.json',
+                '../ref/test.json'
             ],
             children: {
-                Levels: {
-                    type: 'int',
-                    description: 'The number of pyramid steps this beacon is on',
-                    suggestions: [
-                        '0',
-                        '1',
-                        '2',
-                        '3',
-                        '4'
-                    ]
-                },
                 Primary: {
                     type: 'int',
                     suggestions: [
@@ -125,10 +53,6 @@ describe('NbtSchemaWalker Tests', () => {
         },
         'block/command_block.json': {
             type: 'compound',
-            child_ref: [
-                '../ref/block_entity.json',
-                '../ref/nameable.json'
-            ],
             children: {
                 auto: {
                     type: 'byte',
@@ -183,6 +107,24 @@ describe('NbtSchemaWalker Tests', () => {
                 value: 'minecraft:repeating_command_block'
             }
         ],
+        'ref/lockable.json': {
+            type: 'compound',
+            children: {
+                Lock: {
+                    type: 'string',
+                    description: 'The name of the item a player has to be holding to open this container'
+                }
+            }
+        },
+        'ref/test.json': {
+            type: 'compound',
+            additionalChildren: true,
+            children: {
+                foo: {
+                    type: 'string'
+                }
+            }
+        },
         'roots/blocks.json': {
             type: 'root',
             children: {
@@ -205,53 +147,155 @@ describe('NbtSchemaWalker Tests', () => {
     beforeEach(() => {
         walker = new NbtSchemaWalker(schemas)
     })
-    describe('resolve() Tests', () => {
-        it('Should resolve correctly', () => {
-            const actual1 = walker.resolve('block', 'banner.json')
-            const actual2 = walker.resolve('./block', './banner.json')
-            const actual3 = walker.resolve('block/banner.json', '')
-            const actual4 = walker.resolve('', 'block/banner.json')
-            const actual5 = walker.resolve('roots/blocks.json', '../block/banner.json')
-            const actual6 = walker.resolve('block/beacon.json', './banner.json')
-            assert(actual1 === 'block/banner.json')
-            assert(actual2 === 'block/banner.json')
-            assert(actual3 === 'block/banner.json')
-            assert(actual4 === 'block/banner.json')
-            assert(actual5 === 'block/banner.json')
-            assert(actual6 === 'block/banner.json')
+    describe('goFile() Tests', () => {
+        it('Should go to file correctly', () => {
+            walker
+                .goFile('roots/blocks.json')
+                .goFile('../block/banner.json')
+            const actual = walker.filePath.full
+            assert(actual === 'block/banner.json')
+        })
+        it('Should stay with empty relative path', () => {
+            walker
+                .goFile('block/banner.json')
+                .goFile('')
+            const actual = walker.filePath.full
+            assert(actual === 'block/banner.json')
         })
         it("Should throw error when the path does't exist", () => {
             try {
-                walker.resolve('parent', 'child')
+                walker.
+                    goFile('parent')
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: join(‘parent’, ‘child’) => ‘parent/child’')
+                assert(message === 'Path not found: join(‘’, ‘parent’) => ‘parent’')
             }
+        })
+    })
+    describe('goAnchor() Tests', () => {
+        it('Should go to anchor correctly', () => {
+            walker.goAnchor('minecraft:banner')
+            const actual = walker.anchorPath.full
+            assert(actual === 'minecraft:banner')
+        })
+    })
+    describe('go() Tests', () => {
+        it('Should go correctly', () => {
+            walker.go('roots/blocks.json#minecraft:banner')
+            const actualAnchorPath = walker.anchorPath.full
+            const actualFilePath = walker.filePath.full
+            assert(actualAnchorPath === 'minecraft:banner')
+            assert(actualFilePath === 'roots/blocks.json')
         })
     })
     describe('read() Tests', () => {
         it('Should return a ValueList', () => {
-            const actual = walker.read(undefined, 'block/group/command_block.json')
+            const actual = walker
+                .go('block/group/command_block.json')
+                .read()
             assert(actual === schemas['block/group/command_block.json'])
         })
         it('Should return RootNode', () => {
-            const actual = walker.read(undefined, 'roots/blocks.json')
+            const actual = walker
+                .go('roots/blocks.json')
+                .read()
             assert(actual === schemas['roots/blocks.json'])
         })
         it('Should handle regular anchors for RootNode', () => {
-            const actual = walker.read(undefined, 'roots/blocks.json#minecraft:banner')
+            const actual = walker
+                .go('roots/blocks.json#minecraft:banner')
+                .read()
             assert(actual === schemas['block/banner.json'])
         })
         it('Should handle anchors beginning with $ for RootNode', () => {
-            const actual = walker.read(undefined, 'roots/blocks.json#minecraft:repeating_command_block')
+            const actual = walker
+                .go('roots/blocks.json#minecraft:repeating_command_block')
+                .read()
             assert(actual === schemas['block/command_block.json'])
         })
-        it("Should throw error when the anchor doen't exist", () => {
+        it('Should handle child_ref in a CompoundNode', () => {
+            const actual = walker
+                .go('block/beacon.json')
+                .read()
+            assert.deepStrictEqual(
+                actual,
+                {
+                    type: 'compound',
+                    additionalChildren: true,
+                    children: {
+                        Primary: {
+                            type: 'int',
+                            suggestions: [
+                                { values: '../misc_group/effect_id.json' }
+                            ]
+                        },
+                        Secondary: {
+                            type: 'int',
+                            suggestions: [
+                                { values: '../misc_group/effect_id.json' }
+                            ]
+                        },
+                        Lock: {
+                            type: 'string',
+                            description: 'The name of the item a player has to be holding to open this container'
+                        },
+                        foo: {
+                            type: 'string'
+                        }
+                    }
+                }
+            )
+        })
+        it('Should handle [] anchor for a ListNode', () => {
+            const actual = walker
+                .go('roots/blocks.json#minecraft:banner/list/[]')
+                .read()
+            assert.deepStrictEqual(actual, { type: 'no-nbt' })
+        })
+        it('Should handle anchors to references', () => {
+            const actual = walker
+                .go('roots/blocks.json#minecraft:banner/refTest/foo')
+                .read()
+            assert.deepStrictEqual(actual, { type: 'no-nbt', description: 'references test' })
+        })
+        it("Should throw error when the anchor doen't exist for a CompoundNode", () => {
             try {
-                walker.read(undefined, 'roots/blocks.json#non-existent')
+                walker
+                    .go('roots/blocks.json#minecraft:banner/non-existent')
+                    .read()
                 fail()
             } catch ({ message }) {
-                assert(message === 'Unknown anchor ‘non-existent’ in path ‘roots/blocks.json’')
+                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/non-existent’ [‘non-existent’].')
+            }
+        })
+        it("Should throw error when the anchor doen't exist for a RootNode", () => {
+            try {
+                walker
+                    .go('roots/blocks.json#non-existent')
+                    .read()
+                fail()
+            } catch ({ message }) {
+                assert(message === 'Path not found: ‘roots/blocks.json#non-existent’ [‘non-existent’].')
+            }
+        })
+        it("Should throw error when the anchor doen't exist for a ListNode", () => {
+            try {
+                walker
+                    .go('roots/blocks.json#minecraft:banner/list/oops')
+                    .read()
+                fail()
+            } catch ({ message }) {
+                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/list/oops’ [‘oops’].')
+            }
+        })
+        it("Should throw error when the anchor doen't exist in the references", () => {
+            try {
+                walker
+                    .go('roots/blocks.json#minecraft:banner/refTest/non-existent')
+                    .read()
+                fail()
+            } catch ({ message }) {
+                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/refTest/non-existent’ [‘non-existent’].')
             }
         })
     })
