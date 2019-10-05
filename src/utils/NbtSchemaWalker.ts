@@ -1,87 +1,193 @@
 import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, FunctionNode, NodeBase, NBTNode, ValueList } from 'mc-nbt-paths'
-import { posix } from 'path'
+import { posix, ParsedPath } from 'path'
+
+export type NbtNoPropertySchemaNode = NoPropertyNode
+export type NbtCompoundSchemaNode = CompoundNode
+export type NbtRootSchemaNode = RootNode
+export type NbtListSchemaNode = ListNode
+export type NbtRefSchemaNode = RefNode
+export type NbtFunctionSchemaNode = FunctionNode
+export type NbtSchemaNode = NBTNode
 
 export default class NbtSchemaWalker {
     constructor(private readonly nbtSchema = nbtDocs) { }
 
-    /**
-     * Resolve specific path.
-     * @param base The base path.
-     * @param rel A POSIX-like relative path.
-     * @throws {Error} When specific path doesn't exist.
-     */
-    resolve(base: string, rel: string) {
-        let ans: string
-        if (this.nbtSchema.hasOwnProperty(base) && rel) {
-            // The base path is a file.
-            ans = posix.join(posix.dirname(base), rel)
-        } else {
-            ans = posix.join(base, rel)
+    readonly filePath: ParsedPath & { full: string } = {
+        root: '',
+        dir: '',
+        base: '',
+        ext: '',
+        name: '',
+        get full(): string {
+            return posix.format(this)
         }
-        if (!this.nbtSchema.hasOwnProperty(ans)) {
-            throw new Error(`Path not found: join(‘${base}’, ‘${rel}’) => ‘${ans}’`)
+    }
+    readonly anchorPath: ParsedPath & { full: string } = {
+        root: '',
+        dir: '',
+        base: '',
+        ext: '',
+        name: '',
+        get full(): string {
+            return posix.format(this)
         }
-        return ans
+    }
+
+    private cloneParsedPath(from: ParsedPath, to: ParsedPath) {
+        to.base = from.base
+        to.dir = from.dir
+        to.ext = from.ext
+        to.name = from.name
+        to.root = from.root
+    }
+
+    private goEither(type: 'filePath' | 'anchorPath', rel: string) {
+        let ans: string = this[type].full
+        if (rel) {
+            ans = posix.join(this[type].dir, rel)
+        }
+        if (type === 'filePath') {
+            if (!this.nbtSchema.hasOwnProperty(ans)) {
+                throw new Error(`Path not found: join(‘${this[type].full}’, ‘${rel}’) => ‘${ans}’`)
+            }
+            this.cloneParsedPath(posix.parse(''), this.anchorPath)
+        }
+        // Apply change.
+        this.cloneParsedPath(posix.parse(ans), this[type])
+        return this
     }
 
     /**
      * Read a specific path.
-     * @param base The base path.
-     * @param relWithAnchor A POSIX-like relative path with optional anchor.
-     * @throws {Error} When specific path and/or anchor doesn't exist.
+     * @param path A path in form of `[<file path>][#<anchor path>]`
      */
-    read(base: string = '', relWithAnchor: string = '', node?: NBTNode): NBTNode | ValueList {
-        const [rel, anchor] = relWithAnchor.split('#')
-        const newPath = this.resolve(base, rel)
-        const file = node ? node : this.nbtSchema[newPath]
+    go(path: string) {
+        const [file, anchor] = path.split('#')
+        return this
+            .goFile(file)
+            .goAnchor(anchor)
+    }
 
-        if (NbtSchemaWalker.isValueList(file)) {
-            return file
-        } else if (NbtSchemaWalker.isRefNode(file)) {
-            return this.read(newPath, file.ref)
-        } else if (NbtSchemaWalker.isRootNode(file)) {
-            if (anchor) {
-                if (file.children.hasOwnProperty(anchor)) {
-                    return this.read(newPath, undefined, file.children[anchor])
-                } else {
-                    // $ anchors.
-                    for (const key in file.children) {
-                        /* istanbul ignore else */
-                        if (file.children.hasOwnProperty(key)) {
-                            if (key[0] === '$') {
-                                const valueList = (this.read(newPath, key.slice(1)) as ValueList)
-                                    .map(v => typeof v === 'string' ? v : v.value)
-                                if (valueList.indexOf(anchor) !== -1) {
-                                    const element = file.children[key]
-                                    return this.read(newPath, undefined, element)
+    /**
+     * Read a specific file path.
+     * @param rel A POSIX-like relative file path.
+     * @throws {Error} When specific path doesn't exist.
+     */
+    goFile(rel: string) {
+        return this.goEither('filePath', rel)
+    }
+
+    /**
+     * Read a specific anchor path.
+     * @param rel A POSIX-like relative anchor path.
+     */
+    goAnchor(rel: string) {
+        return this.goEither('anchorPath', rel)
+    }
+
+    /**
+     * Get a new `NbtSchemaWalker` with the same context of the current walker.
+     */
+    clone() {
+        const ans = new NbtSchemaWalker(this.nbtSchema)
+        this.cloneParsedPath(this.anchorPath, ans.anchorPath)
+        this.cloneParsedPath(this.filePath, ans.filePath)
+        return ans
+    }
+
+    read() {
+        const file = this.nbtSchema[this.filePath.full]
+        const findNodeInChildren =
+            (node: NbtSchemaNode, path: string[]): NbtSchemaNode => {
+                // Handle the node before find child.
+                if (NbtSchemaWalker.isRefNode(node)) {
+                    return findNodeInChildren(
+                        this
+                            .clone()
+                            .go(node.ref)
+                            .read(),
+                        path
+                    )
+                } else if (NbtSchemaWalker.isCompoundNode(node)) {
+                    if (node.child_ref) {
+                        const ansNode = JSON.parse(JSON.stringify(node))
+                        delete ansNode.child_ref
+                        for (const refPath of node.child_ref) {
+                            const refNode =
+                                this
+                                    .clone()
+                                    .go(refPath)
+                                    .read() as NbtCompoundSchemaNode
+                            if (refNode.additionalChildren) {
+                                ansNode.additionalChildren = true
+                            }
+                            ansNode.children = { ...ansNode.children, ...refNode.children }
+                        }
+                        return findNodeInChildren(
+                            ansNode,
+                            path
+                        )
+                    }
+                }
+                if (path.length > 0) {
+                    const key = path[0]
+                    if (
+                        (
+                            NbtSchemaWalker.isCompoundNode(node) ||
+                            NbtSchemaWalker.isRootNode(node)
+                        ) && node.children
+                    ) {
+                        // Has 'children'.
+                        const child = node.children[key]
+                        if (child) {
+                            return findNodeInChildren(child, path.slice(1))
+                        } else if (NbtSchemaWalker.isRootNode(node)) {
+                            // $ anchors for RootNode.
+                            for (const subKey in node.children) {
+                                /* istanbul ignore else */
+                                if (node.children.hasOwnProperty(subKey)) {
+                                    if (subKey[0] === '$') {
+                                        const listPath = subKey.slice(1)
+                                        const valueList =
+                                            this
+                                                .clone()
+                                                .goFile(listPath)
+                                                .read() as unknown as ValueList
+                                        const stringList = valueList.map(v => typeof v === 'string' ? v : v.value)
+                                        if (stringList.indexOf(key) !== -1) {
+                                            const element = node.children[subKey]
+                                            return findNodeInChildren(element, path.slice(1))
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    throw new Error(`Unknown anchor ‘${anchor}’ in path ‘${newPath}’`)
-                }
-            } else {
-                return file
-            }
-        } else if (NbtSchemaWalker.isCompoundNode(file)) {
-            const ansNode: any = JSON.parse(JSON.stringify(file))
-            if (file.child_ref) {
-                for (const uri of file.child_ref) {
-                    const child = this.read(newPath, uri) as CompoundNode
-                    ansNode.additionalChildren = ansNode.additionalChildren || child.additionalChildren
-                    for (const key in child.children) {
-                        if (child.children.hasOwnProperty(key)) {
-                            const childOfChild = child.children[key]
-                            ansNode.children[key] = childOfChild
+                    } else if (NbtSchemaWalker.isListNode(node)) {
+                        // Has 'item'.
+                        if (key === '[]') {
+                            return findNodeInChildren(node.item, path.slice(1))
                         }
                     }
-                    delete ansNode.child_ref
+                    if (node.references) {
+                        // Has 'references'.
+                        const child = node.references[key]
+                        if (child) {
+                            return findNodeInChildren(child, path.slice(1))
+                        }
+                    }
+                    throw new Error(
+                        `Path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${path.join('’, ‘')}’].`
+                    )
+                } else {
+                    return node
                 }
             }
-            return ansNode
-        } else {
-            return file
-        }
+        const ans = findNodeInChildren(
+            file as NbtSchemaNode,
+            this.anchorPath.full.split(posix.sep).filter(v => !!v)
+        )
+
+        return ans
     }
 
     public static isRootNode(node: NBTNode | ValueList): node is RootNode {

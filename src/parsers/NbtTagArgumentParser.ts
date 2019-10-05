@@ -120,7 +120,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         let schema: NBTSchemaNode | undefined = undefined
         if (id) {
             const nbtSchemaPath = `roots/${this.category}.json#${id}`
-            schema = this.walker.read(undefined, nbtSchemaPath) as NBTSchemaNode
+            schema = this.walker
+                .go(nbtSchemaPath)
+                .read() as NBTSchemaNode
         }
         const start = reader.cursor
         const ans = this.parseTag(reader, schema)
@@ -178,7 +180,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 let schemaForValue: undefined | NBTSchemaNode
                 if (shouldUseSchema) {
                     schema = schema as CompoundNode
-                    
+
                 }
                 const result = this.parseTag(reader, schemaForValue)
                 reader.skipWhiteSpace()
