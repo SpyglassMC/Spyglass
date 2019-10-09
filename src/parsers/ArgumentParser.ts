@@ -15,11 +15,11 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
     /**
      * Parse.
      * @param reader Input reader.
-     * @param parsedArgs All parsed data of args before this argument.
+     * @param cursor The index where the cursor is. Used to compute completions.
      * @param config A config of the language server.
      * @param cache A global cache of the current workspace.
      */
-    abstract parse(reader: StringReader, parsedArgs?: unknown[], config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, cursor?: number, config?: Config, cache?: GlobalCache, ...params: any): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`
