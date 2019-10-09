@@ -190,6 +190,13 @@ describe('NbtSchemaWalker Tests', () => {
         })
     })
     describe('read() Tests', () => {
+        it('Should return the cache to improve performance', () => {
+            const actual1 = walker
+                .go('block/group/command_block.json')
+                .read()
+            const actual2 = walker.read()
+            assert(actual1 === actual2)
+        })
         it('Should return a ValueList', () => {
             const actual = walker
                 .go('block/group/command_block.json')
