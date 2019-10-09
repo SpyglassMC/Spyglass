@@ -33,6 +33,8 @@ export default class NbtSchemaWalker {
         }
     }
 
+    private cache: undefined | NbtSchemaNode
+
     private cloneParsedPath(from: ParsedPath, to: ParsedPath) {
         to.base = from.base
         to.dir = from.dir
@@ -44,6 +46,7 @@ export default class NbtSchemaWalker {
     private goEither(type: 'filePath' | 'anchorPath', rel: string) {
         let ans: string = this[type].full
         if (rel) {
+            this.cache = undefined
             if (type === 'filePath') {
                 ans = posix.join(this.filePath.dir, rel)
             } else {
@@ -105,6 +108,9 @@ export default class NbtSchemaWalker {
      * @throws {Error} When specific path doesn't exist.
      */
     read() {
+        if (this.cache) {
+            return this.cache
+        }
         const file = this.nbtSchema[this.filePath.full]
         const findNodeInChildren =
             (node: NbtSchemaNode, path: string[]): NbtSchemaNode => {
@@ -195,6 +201,7 @@ export default class NbtSchemaWalker {
             file as NbtSchemaNode,
             this.anchorPath.full.split(posix.sep).filter(v => !!v)
         )
+        this.cache = ans
 
         return ans
     }
