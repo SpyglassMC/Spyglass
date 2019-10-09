@@ -11,8 +11,9 @@ export function formatMessage(msg: string) {
 
 /**
  * Convert an array to human-readable message.
- * @param arr Array.
- * @param quoted Whether to quote the result.
+ * @param arr An array.
+ * @param quoted Whether or not to quote the result. Defaults to `true`
+ * @param conjunction The conjunction to use. Defaults to `and`.
  * @returns Human-readable message.
  * @example
  * arrayToMessage([]) // "nothing"

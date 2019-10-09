@@ -9,6 +9,7 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import GlobalCache from '../../types/GlobalCache'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
 import BigNumber from 'bignumber.js'
+import { NBTNode, ValueList } from 'mc-nbt-paths'
 
 describe('NbtTagArgumentParser Tests', () => {
     const globalCache: any = {
@@ -443,6 +444,194 @@ describe('NbtTagArgumentParser Tests', () => {
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
+        })
+        describe.only('Tests for Schemas', () => {
+            const schemas: { [key: string]: NBTNode | ValueList } = {
+                'block/banner.json': {
+                    type: 'compound',
+                    children: {
+                        Base: {
+                            type: 'int',
+                            description: 'The base color of the banner'
+                        },
+                        list: {
+                            type: 'list',
+                            item: { type: 'no-nbt' }
+                        },
+                        refTest: {
+                            type: 'no-nbt',
+                            references: {
+                                foo: { type: 'no-nbt', description: 'references test' }
+                            }
+                        }
+                    }
+                },
+                'block/beacon.json': {
+                    type: 'compound',
+                    child_ref: [
+                        '../ref/lockable.json',
+                        '../ref/test.json'
+                    ],
+                    children: {
+                        Primary: {
+                            type: 'int',
+                            suggestions: [
+                                {
+                                    values: '../misc_group/effect_id.json'
+                                }
+                            ]
+                        },
+                        Secondary: {
+                            type: 'int',
+                            suggestions: [
+                                {
+                                    values: '../misc_group/effect_id.json'
+                                }
+                            ]
+                        }
+                    }
+                },
+                'block/command_block.json': {
+                    type: 'compound',
+                    children: {
+                        auto: {
+                            type: 'byte',
+                            description: 'Whether the command block should be automatically powered'
+                        },
+                        Command: {
+                            type: 'string',
+                            description: 'The command to run',
+                            suggestions: [
+                                {
+                                    function: {
+                                        id: 'command'
+                                    }
+                                }
+                            ]
+                        },
+                        conditionMet: {
+                            type: 'byte',
+                            description: 'If the command block executed last time it was powered (True if not conditional)'
+                        },
+                        LastExecution: {
+                            type: 'long',
+                            description: 'Tick the chain command block last executed'
+                        },
+                        LastOutput: {
+                            type: 'string',
+                            description: 'The description of the last output'
+                        },
+                        powered: {
+                            type: 'byte',
+                            description: 'If the command block is powered by redstone'
+                        },
+                        SuccessCount: {
+                            type: 'int',
+                            description: 'The success count of the command run'
+                        },
+                        TrackOutput: {
+                            type: 'byte',
+                            description: 'Should the command block should write to LastOutput'
+                        },
+                        UpdateLastExecution: {
+                            type: 'byte',
+                            description: 'Should the command block only execute once a tick'
+                        }
+                    }
+                },
+                'block/group/command_block.json': [
+                    'minecraft:command_block',
+                    'minecraft:chain_command_block',
+                    {
+                        description: 'A purple command block',
+                        value: 'minecraft:repeating_command_block'
+                    }
+                ],
+                'ref/lockable.json': {
+                    type: 'compound',
+                    children: {
+                        Lock: {
+                            type: 'string',
+                            description: 'The name of the item a player has to be holding to open this container'
+                        }
+                    }
+                },
+                'ref/test.json': {
+                    type: 'compound',
+                    additionalChildren: true,
+                    children: {
+                        foo: {
+                            type: 'string'
+                        }
+                    }
+                },
+                'roots/blocks.json': {
+                    type: 'root',
+                    children: {
+                        none: {
+                            type: 'no-nbt'
+                        },
+                        '$../block/group/command_block.json': {
+                            ref: '../block/command_block.json'
+                        },
+                        'minecraft:banner': {
+                            ref: '../block/banner.json'
+                        },
+                        'minecraft:beacon': {
+                            ref: '../block/beacon.json'
+                        }
+                    }
+                }
+            }
+            it('Should return error when current schema is not for compound', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', schemas)
+                const reader = new StringReader('{ foo: 1b }')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, globalCache, 'minecraft:banner/list')
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        foo: getNbtByteTag(1)
+                    }
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 11 },
+                    'expected a(n) list tag instead of compound',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return error for unexpected keys in a compound tag', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', schemas)
+                const reader = new StringReader('{ foo: 1b }')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, globalCache, 'minecraft:banner')
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        foo: getNbtByteTag(1)
+                    }
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 2, end: 5 },
+                    'unexpected key ‘foo’',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should allow additional keys', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', schemas)
+                const reader = new StringReader('{ foo: 1b }')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, globalCache, 'minecraft:beacon')
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        foo: getNbtByteTag(1)
+                    }
+                ))
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
         })
     })
 })

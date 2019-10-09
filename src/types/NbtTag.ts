@@ -1,46 +1,41 @@
 import { LintConfig } from './Config'
 import { quoteString } from '../utils/utils'
 import BigNumber from 'bignumber.js'
+import Lintable, { ToLintedString } from './Lintable'
 
-export const NbtTagTypeSymbol = Symbol()
-export const NbtContentTagTypeSymbol = Symbol()
-export const NbtToStringSymbol = Symbol()
+export const NbtTagType = Symbol()
+export const NbtContentTagType = Symbol()
 
 export type NbtTagTypeName =
     'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
     'byte' | 'short' | 'int' | 'long' | 'string' | 'float' | 'double'
 
-export type NbtTag = (number | BigNumber | string | object | any[]) & NbtTagSymbolCollection
-export type NbtByteTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'byte' }
-export type NbtShortTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'short' }
-export type NbtIntTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'int' }
-export type NbtLongTag = BigNumber & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'long' }
-export type NbtFloatTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'float' }
-export type NbtDoubleTag = number & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'double' }
-export type NbtStringTag = string & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'string' }
-export type NbtListTag = NbtTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'list', [NbtContentTagTypeSymbol]: NbtTagTypeName }
-export type NbtByteArrayTag = NbtByteTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'byte_array' }
-export type NbtIntArrayTag = NbtIntTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'int_array' }
-export type NbtLongArrayTag = NbtLongTag[] & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'long_array' }
-export type NbtCompoundTag = { [key: string]: NbtTag } & NbtTagSymbolCollection & { [NbtTagTypeSymbol]: 'compound' }
+export type NbtTag = (number | BigNumber | string | object | any[]) & Lintable & { [NbtTagType]: NbtTagTypeName }
+export type NbtByteTag = number & Lintable & { [NbtTagType]: 'byte' }
+export type NbtShortTag = number & Lintable & { [NbtTagType]: 'short' }
+export type NbtIntTag = number & Lintable & { [NbtTagType]: 'int' }
+export type NbtLongTag = BigNumber & Lintable & { [NbtTagType]: 'long' }
+export type NbtFloatTag = number & Lintable & { [NbtTagType]: 'float' }
+export type NbtDoubleTag = number & Lintable & { [NbtTagType]: 'double' }
+export type NbtStringTag = string & Lintable & { [NbtTagType]: 'string' }
+export type NbtListTag = NbtTag[] & Lintable & { [NbtTagType]: 'list', [NbtContentTagType]: NbtTagTypeName }
+export type NbtByteArrayTag = NbtByteTag[] & Lintable & { [NbtTagType]: 'byte_array' }
+export type NbtIntArrayTag = NbtIntTag[] & Lintable & { [NbtTagType]: 'int_array' }
+export type NbtLongArrayTag = NbtLongTag[] & Lintable & { [NbtTagType]: 'long_array' }
+export type NbtCompoundTag = { [key: string]: NbtTag } & Lintable & { [NbtTagType]: 'compound' }
 
-export const isNbtByteTag = (val: any): val is NbtByteTag => val[NbtTagTypeSymbol] === 'byte'
-export const isNbtShortTag = (val: any): val is NbtShortTag => val[NbtTagTypeSymbol] === 'short'
-export const isNbtIntTag = (val: any): val is NbtIntTag => val[NbtTagTypeSymbol] === 'int'
-export const isNbtLongTag = (val: any): val is NbtLongTag => val[NbtTagTypeSymbol] === 'long'
-export const isNbtFloatTag = (val: any): val is NbtFloatTag => val[NbtTagTypeSymbol] === 'float'
-export const isNbtDoubleTag = (val: any): val is NbtDoubleTag => val[NbtTagTypeSymbol] === 'double'
-export const isNbtStringTag = (val: any): val is NbtStringTag => val[NbtTagTypeSymbol] === 'string'
-export const isNbtByteArrayTag = (val: any): val is NbtByteArrayTag => val[NbtTagTypeSymbol] === 'byte_array'
-export const isNbtIntArrayTag = (val: any): val is NbtIntArrayTag => val[NbtTagTypeSymbol] === 'int_array'
-export const isNbtLongArrayTag = (val: any): val is NbtLongArrayTag => val[NbtTagTypeSymbol] === 'long_array'
-export const isNbtListTag = (val: any): val is NbtListTag => val[NbtTagTypeSymbol] === 'list'
-export const isNbtCompoundTag = (val: any): val is NbtCompoundTag => val[NbtTagTypeSymbol] === 'compound'
-
-export interface NbtTagSymbolCollection {
-    [NbtTagTypeSymbol]: NbtTagTypeName,
-    [NbtToStringSymbol](lint: LintConfig): string
-}
+export const isNbtByteTag = (val: any): val is NbtByteTag => val[NbtTagType] === 'byte'
+export const isNbtShortTag = (val: any): val is NbtShortTag => val[NbtTagType] === 'short'
+export const isNbtIntTag = (val: any): val is NbtIntTag => val[NbtTagType] === 'int'
+export const isNbtLongTag = (val: any): val is NbtLongTag => val[NbtTagType] === 'long'
+export const isNbtFloatTag = (val: any): val is NbtFloatTag => val[NbtTagType] === 'float'
+export const isNbtDoubleTag = (val: any): val is NbtDoubleTag => val[NbtTagType] === 'double'
+export const isNbtStringTag = (val: any): val is NbtStringTag => val[NbtTagType] === 'string'
+export const isNbtByteArrayTag = (val: any): val is NbtByteArrayTag => val[NbtTagType] === 'byte_array'
+export const isNbtIntArrayTag = (val: any): val is NbtIntArrayTag => val[NbtTagType] === 'int_array'
+export const isNbtLongArrayTag = (val: any): val is NbtLongArrayTag => val[NbtTagType] === 'long_array'
+export const isNbtListTag = (val: any): val is NbtListTag => val[NbtTagType] === 'list'
+export const isNbtCompoundTag = (val: any): val is NbtCompoundTag => val[NbtTagType] === 'compound'
 
 function getArrayPrefix(type: 'byte_array' | 'int_array' | 'long_array', lint: LintConfig) {
     const prefix = type[0].toUpperCase()
@@ -64,20 +59,20 @@ function getNbtPrimitiveArrayTag(
 ): NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: type,
-        [NbtToStringSymbol]: (lint: LintConfig) => {
-            const body = `${getArrayPrefix(type, lint)}${val.map(v => v[NbtToStringSymbol](lint)).join(getComma(lint))}`
+        [NbtTagType]: type,
+        [ToLintedString]: (lint: LintConfig) => {
+            const body = `${getArrayPrefix(type, lint)}${val.map(v => v[ToLintedString](lint)).join(getComma(lint))}`
             return `${body[body.length - 1] !== ' ' ? body : body.slice(0, -1)}]`
         }
     }) as NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag
 }
 
 
-function getNbtNumberTag<T = number>(val: T, type: NbtTagTypeName, suffixParam?: string): T & NbtTagSymbolCollection {
+function getNbtNumberTag<T = number>(val: T, type: NbtTagTypeName, suffixParam?: string): T & Lintable & { [NbtTagType]: NbtTagTypeName } {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: type,
-        [NbtToStringSymbol]: (lint: LintConfig) => `${val}${suffixParam ? (lint as any)[suffixParam] : ''}`
+        [NbtTagType]: type,
+        [ToLintedString]: (lint: LintConfig) => `${val}${suffixParam ? (lint as any)[suffixParam] : ''}`
     })
 }
 
@@ -93,9 +88,9 @@ function getStringFromFloat(val: number, { snbtKeepDecimalPlace }: LintConfig) {
 export function getNbtListTag(val: NbtTag[]): NbtListTag {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: 'list',
-        [NbtToStringSymbol]: (lint: LintConfig) => {
-            const body = val.map(v => v[NbtToStringSymbol](lint)).join(getComma(lint))
+        [NbtTagType]: 'list',
+        [ToLintedString]: (lint: LintConfig) => {
+            const body = val.map(v => v[ToLintedString](lint)).join(getComma(lint))
             return `[${body}]`
         }
     }) as NbtListTag
@@ -132,16 +127,16 @@ export function getNbtLongTag(val: BigNumber) {
 export function getNbtFloatTag(val: number) {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: 'float',
-        [NbtToStringSymbol]: (lint: LintConfig) => `${getStringFromFloat(val, lint)}${lint.snbtFloatSuffix}`
+        [NbtTagType]: 'float',
+        [ToLintedString]: (lint: LintConfig) => `${getStringFromFloat(val, lint)}${lint.snbtFloatSuffix}`
     }) as NbtFloatTag
 }
 
 export function getNbtDoubleTag(val: number) {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: 'double',
-        [NbtToStringSymbol]: (lint: LintConfig) => {
+        [NbtTagType]: 'double',
+        [ToLintedString]: (lint: LintConfig) => {
             const strValue = getStringFromFloat(val, lint)
             if (lint.snbtOmitDoubleSuffix && strValue.indexOf('.') !== -1) {
                 return strValue
@@ -155,19 +150,19 @@ export function getNbtDoubleTag(val: number) {
 export function getNbtStringTag(val: string) {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: 'string',
-        [NbtToStringSymbol]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.quoteSnbtStringValues)
+        [NbtTagType]: 'string',
+        [ToLintedString]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.quoteSnbtStringValues)
     }) as NbtStringTag
 }
 
 export function getNbtCompoundTag(val: { [key: string]: NbtTag }) {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
-        [NbtTagTypeSymbol]: 'compound',
-        [NbtToStringSymbol]: (lint: LintConfig) => {
+        [NbtTagType]: 'compound',
+        [ToLintedString]: (lint: LintConfig) => {
             const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
                 .map(v => `${quoteString(v, lint.quoteType, lint.quoteSnbtStringKeys)}${
-                    getColon(lint)}${val[v][NbtToStringSymbol](lint)}`)
+                    getColon(lint)}${val[v][ToLintedString](lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         }

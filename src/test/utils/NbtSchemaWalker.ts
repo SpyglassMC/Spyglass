@@ -1,9 +1,8 @@
 import * as assert from 'power-assert'
 import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
-import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { NBTNode, ValueList, CompoundNode, RootNode } from 'mc-nbt-paths'
+import { NBTNode, ValueList, RootNode } from 'mc-nbt-paths'
 
 describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NBTNode | ValueList } = {
@@ -174,9 +173,11 @@ describe('NbtSchemaWalker Tests', () => {
     })
     describe('goAnchor() Tests', () => {
         it('Should go to anchor correctly', () => {
-            walker.goAnchor('minecraft:banner')
+            walker
+                .goAnchor('minecraft:banner')
+                .goAnchor('test')
             const actual = walker.anchorPath.full
-            assert(actual === 'minecraft:banner')
+            assert(actual === 'minecraft:banner/test')
         })
     })
     describe('go() Tests', () => {

@@ -10,7 +10,7 @@ export type NbtFunctionSchemaNode = FunctionNode
 export type NbtSchemaNode = NBTNode
 
 export default class NbtSchemaWalker {
-    constructor(private readonly nbtSchema = nbtDocs) { }
+    constructor(private readonly nbtSchema: typeof nbtDocs) { }
 
     readonly filePath: ParsedPath & { full: string } = {
         root: '',
@@ -44,7 +44,11 @@ export default class NbtSchemaWalker {
     private goEither(type: 'filePath' | 'anchorPath', rel: string) {
         let ans: string = this[type].full
         if (rel) {
-            ans = posix.join(this[type].dir, rel)
+            if (type === 'filePath') {
+                ans = posix.join(this.filePath.dir, rel)
+            } else {
+                ans = posix.join(this.anchorPath.full, rel)
+            }
         }
         if (type === 'filePath') {
             if (!this.nbtSchema.hasOwnProperty(ans)) {
@@ -60,6 +64,7 @@ export default class NbtSchemaWalker {
     /**
      * Read a specific path.
      * @param path A path in form of `[<file path>][#<anchor path>]`
+     * @throws {Error} When specific file path doesn't exist.
      */
     go(path: string) {
         const [file, anchor] = path.split('#')
@@ -95,11 +100,15 @@ export default class NbtSchemaWalker {
         return ans
     }
 
+    /**
+     * Read the current path.
+     * @throws {Error} When specific path doesn't exist.
+     */
     read() {
         const file = this.nbtSchema[this.filePath.full]
         const findNodeInChildren =
             (node: NbtSchemaNode, path: string[]): NbtSchemaNode => {
-                // Handle the node before find child.
+                // Handle the node before recurse children.
                 if (NbtSchemaWalker.isRefNode(node)) {
                     return findNodeInChildren(
                         this
