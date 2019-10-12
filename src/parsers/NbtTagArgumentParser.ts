@@ -1,6 +1,6 @@
 import ArgumentParser from './ArgumentParser'
-import Config from '../types/Config'
-import GlobalCache from '../types/GlobalCache'
+import Config, { VanillaConfig } from '../types/Config'
+import GlobalCache, { EmptyGlobalCache } from '../types/GlobalCache'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -103,7 +103,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     readonly identity = 'nbtTag'
 
-    constructor(type: NbtTagTypeName | NbtTagTypeName[], private readonly category: 'blocks' | 'entities' | 'items', private readonly nbtSchema = nbtDocs) {
+    constructor(
+        type: NbtTagTypeName | NbtTagTypeName[],
+        private readonly category: 'blocks' | 'entities' | 'items',
+        private readonly id: string | undefined = undefined,
+        private readonly nbtSchema = nbtDocs
+    ) {
         super()
         if (type instanceof Array) {
             this.expectedTypes = type
@@ -112,12 +117,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    parse(reader: StringReader, _parsedArgs: undefined, config: Config, cache: GlobalCache, id?: string): ArgumentParserResult<NbtTag> {
+    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache = EmptyGlobalCache): ArgumentParserResult<NbtTag> {
         this.config = config
         this.cache = cache
         let walker: NbtSchemaWalker | undefined
-        if (id) {
-            const nbtSchemaPath = `roots/${this.category}.json#${id}`
+        if (this.id) {
+            const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
             walker = new NbtSchemaWalker(this.nbtSchema)
             walker.go(nbtSchemaPath)
         }
