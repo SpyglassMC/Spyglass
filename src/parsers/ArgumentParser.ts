@@ -19,7 +19,7 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * @param config A config of the language server.
      * @param cache A global cache of the current workspace.
      */
-    abstract parse(reader: StringReader, cursor?: number, config?: Config, cache?: GlobalCache, ...params: any): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, cursor?: number, config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`

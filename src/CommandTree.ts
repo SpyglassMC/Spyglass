@@ -353,12 +353,17 @@ export const tree: CommandTree = {
                     description: 'Type of the definition',
                     children: {
                         id: {
-                            parser: new DefinitionIDArgumentParser(),
+                            parser: ({ args }) => new DefinitionIDArgumentParser(
+                                args[args.length - 1].data
+                            ),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: new DefinitionDescriptionArgumentParser(),
+                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(
+                                        args[args.length - 2].data,
+                                        args[args.length - 1].data
+                                    ),
                                     description: 'Description of the definition',
                                     executable: true
                                 }

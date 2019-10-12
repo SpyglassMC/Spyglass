@@ -60,3 +60,26 @@ export default interface GlobalCache {
     entities: string[],
     tags: string[]
 }
+
+export const EmptyGlobalCache: GlobalCache = {
+    advancements: {},
+    recipes: [],
+    lootTables: {
+        'minecraft:advancement_reward': [],
+        'minecraft:block': [],
+        'minecraft:chest': [],
+        'minecraft:empty': [],
+        'minecraft:entity': [],
+        'minecraft:fishing': [],
+        'minecraft:generic': []
+    },
+    functions: {},
+    blockTags: [],
+    fluidTags: [],
+    functionTags: [],
+    entityTypeTags: [],
+    itemTags: [],
+    objectives: [],
+    entities: [],
+    tags: []
+}

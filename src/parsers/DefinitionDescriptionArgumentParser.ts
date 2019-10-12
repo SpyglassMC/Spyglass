@@ -7,9 +7,14 @@ import { isDefinitionType } from '../types/LocalCache'
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     identity = 'string'
 
-    parse(reader: StringReader, parsed: unknown[]): ArgumentParserResult<string> {
-        const type = parsed[parsed.length - 2]
-        const id = parsed[parsed.length - 1] as string
+    constructor(
+        private readonly type: string,
+        private readonly id: string
+    ) {
+        super()
+    }
+
+    parse(reader: StringReader): ArgumentParserResult<string> {
         const description = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: description,
@@ -18,11 +23,11 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
             completions: []
         }
         if (description) {
-            if (isDefinitionType(type)) {
-                if (id) {
+            if (isDefinitionType(this.type)) {
+                if (this.id) {
                     const def: any = {}
-                    def[`${type}s`] = {}
-                    def[`${type}s`][id] = description
+                    def[`${this.type}s`] = {}
+                    def[`${this.type}s`][this.id] = description
                     ans.cache = { def, ref: {} }
                 }
             }

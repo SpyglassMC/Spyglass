@@ -6,10 +6,12 @@ import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 import { MarkupContent } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
+import GlobalCache, { EmptyGlobalCache } from '../types/GlobalCache'
 
 export default class LineParser implements Parser<Line> {
     constructor(
         private readonly tree: CommandTree,
+        private readonly cache: GlobalCache = EmptyGlobalCache,
         private readonly config: Config = VanillaConfig
     ) { }
 
@@ -23,41 +25,41 @@ export default class LineParser implements Parser<Line> {
         return ans
     }
 
-    parse(reader: StringReader): ParserResult {
+    parse(reader: StringReader, cursor: number = -1): ParserResult {
         const line: SaturatedLine = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
-        this.parseChildren(reader, this.tree.line, line)
+        this.parseChildren(reader, this.tree.line, line, cursor)
         saturatedLineToLine(line)
         return { data: line }
     }
 
-    parseSingle(reader: StringReader, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine) {
+    parseSingle(reader: StringReader, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1) {
         parsedLine.path.push(key)
         if (node.redirect) {
             if (node.redirect.indexOf('.') === -1) {
                 // Redirect to children.
                 const redirect = this.tree[node.redirect]
-                this.parseChildren(reader, redirect, parsedLine)
+                this.parseChildren(reader, redirect, parsedLine, cursor)
             } else {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
                 const redirect = this.tree[seg[0]][seg[1]]
-                this.parseSingle(reader, seg[1], redirect, parsedLine)
+                this.parseSingle(reader, seg[1], redirect, parsedLine, cursor)
             }
         } else if (node.template) {
             if (node.template.indexOf('.') === -1) {
                 // Use `children` as the template.
                 const template = fillChildrenTemplate(node, this.tree[node.template])
-                this.parseChildren(reader, template, parsedLine)
+                this.parseChildren(reader, template, parsedLine, cursor)
             } else {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
                 const template = fillSingleTemplate(node, this.tree[seg[0]][seg[1]])
-                this.parseSingle(reader, seg[1], template, parsedLine)
+                this.parseSingle(reader, seg[1], template, parsedLine, cursor)
             }
         } else if (node.parser) {
             const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine)
-            const { cache, completions, data, errors } = parser.parse(reader, parsedLine.args, this.config)
+            const { cache, completions, data, errors } = parser.parse(reader, cursor, this.config, this.cache)
             combineSaturatedLine(parsedLine, { args: [{ data, parser: parser.identity }], cache, completions, errors, path: [] })
             // Handle trailing data or absent data.
             if (!reader.canRead(2)) {
@@ -75,7 +77,7 @@ export default class LineParser implements Parser<Line> {
                         // Compute completions.
                         const newReader = new StringReader(reader)
                         const result = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
-                        this.parseChildren(newReader, node.children, result)
+                        this.parseChildren(newReader, node.children, result, cursor)
                         /* istanbul ignore else */
                         if (result.completions && result.completions.length !== 0) {
                             parsedLine.completions.push(...result.completions)
@@ -91,7 +93,7 @@ export default class LineParser implements Parser<Line> {
                 } else {
                     if (reader.peek() === ' ') {
                         reader.skip()
-                        this.parseChildren(reader, node.children, parsedLine)
+                        this.parseChildren(reader, node.children, parsedLine, cursor)
                         // Downgrade errors.
                         parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                     } else {
@@ -120,7 +122,7 @@ export default class LineParser implements Parser<Line> {
         }
     }
 
-    parseChildren(reader: StringReader, children: CommandTreeNodeChildren, parsedLine: SaturatedLine) {
+    parseChildren(reader: StringReader, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, cursor: number = -1) {
         let i = -1
         for (const key in children) {
             i += 1
@@ -129,7 +131,7 @@ export default class LineParser implements Parser<Line> {
                 const node = children[key]
                 const newReader = new StringReader(reader)
                 const oldErrors = [...parsedLine.errors]
-                this.parseSingle(newReader, key, node, parsedLine)
+                this.parseSingle(newReader, key, node, parsedLine, cursor)
                 const untolerableErrors = parsedLine.errors.filter(v => !v.tolerable)
                 if (untolerableErrors.length > 0) {
                     // Has untolerable error(s).

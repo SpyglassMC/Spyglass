@@ -114,7 +114,7 @@ export default class NbtSchemaWalker {
         const file = this.nbtSchema[this.filePath.full]
         const findNodeInChildren =
             (node: NbtSchemaNode, path: string[]): NbtSchemaNode => {
-                // Handle the node before recurse children.
+                // Handle the node before recurse its children.
                 if (NbtSchemaWalker.isRefNode(node)) {
                     return findNodeInChildren(
                         this
