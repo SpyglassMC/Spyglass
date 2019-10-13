@@ -6,8 +6,8 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind, DiagnosticSeverity, ErrorMessageTracker } from 'vscode-languageserver'
-import { ValueList, NBTNode as NBTSchemaNode, CompoundNode, nbtDocs } from 'mc-nbt-paths'
-import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
+import { ValueList, NBTNode as NBTSchemaNode, CompoundNode, nbtDocs, NoPropertyNode } from 'mc-nbt-paths'
+import NbtSchemaWalker, { NbtCompoundSchemaNode, NbtListSchemaNode, getString as getStringFromSchemaType } from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
 import { arrayToMessage } from '../utils/utils'
@@ -131,23 +131,38 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (this.expectedTypes.indexOf(ans.data[NbtTagType]) === -1) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a(n) ${arrayToMessage(this.expectedTypes, false, 'or')} tag instead of ${ans.data[NbtTagType]}`
+                `expected a(n) ${arrayToMessage(this.expectedTypes, false, 'or')} tag instead of a(n) ${ans.data[NbtTagType]} tag`
             ))
         }
         return ans
     }
 
     private parseTag(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
+        let ans
+        const start = reader.cursor
         switch (reader.peek()) {
             case '{':
-                return this.parseCompoundTag(reader, walker)
+                ans = this.parseCompoundTag(reader, walker)
+                break
             case '[':
-                return this.parseListOrArray(reader, walker)
+                ans = this.parseListOrArray(reader, walker)
+                break
             case undefined:
 
             default:
-                return this.parsePrimitiveTag(reader, walker)
+                ans = this.parsePrimitiveTag(reader, walker)
+                break
         }
+        if (walker && walker.read().type !== ans.data[NbtTagType]) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                `expected ${getStringFromSchemaType(walker.read().type)} instead of ${
+                getStringFromSchemaType(ans.data[NbtTagType])}`,
+                true,
+                DiagnosticSeverity.Warning
+            ))
+        }
+        return ans
     }
 
     private parseCompoundTag(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtCompoundTag> {
@@ -157,8 +172,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             cache: { def: {}, ref: {} },
             completions: []
         }
-        const isSchemaUsable = walker && NbtSchemaWalker.isCompoundNode(walker.read())
-        const start = reader.cursor
         try {
             reader
                 .expect('{')
@@ -182,7 +195,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     .skip()
                     .skipWhiteSpace()
                 let isSchemaForValueUsable = false
-                if (walker && isSchemaUsable) {
+                if (walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
                     try {
                         walker
                             .clone()
@@ -204,7 +217,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 }
                 const result = this.parseTag(
                     reader,
-                    isSchemaForValueUsable ? (walker as NbtSchemaWalker).clone().goAnchor(key) : undefined
+                    (walker && isSchemaForValueUsable) ? walker.clone().goAnchor(key) : undefined
                 )
                 reader.skipWhiteSpace()
                 if (reader.peek() === ',') {
@@ -228,14 +241,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             reader
                 .expect('}')
                 .skip()
-            if (walker && !isSchemaUsable) {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    `expected a(n) ${(walker.read() as any).type} tag instead of compound`,
-                    true,
-                    DiagnosticSeverity.Warning
-                ))
-            }
         } catch (p) {
             ans.errors.push(p)
         } finally {
@@ -272,12 +277,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             cache: { def: {}, ref: {} },
             completions: []
         }
-        ans.errors = []
         try {
             reader
                 .expect('[')
                 .skip()
-            const start = reader.cursor
             const type = reader.read()
             switch (type) {
                 case 'B':
@@ -290,7 +293,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = getNbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start, end: start + 1 }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’ and ‘L’`)
+                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’ and ‘L’`)
             }
             reader
                 .expect(';')
@@ -311,7 +314,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected a byte tag instead of ${result.data[NbtTagType]}`)
+                            new ParsingError({ start, end: reader.cursor }, `expected a byte tag instead of a(n) ${result.data[NbtTagType]} tag`)
                         )
                     }
                 } else if (isNbtIntArrayTag(ans.data)) {
@@ -319,7 +322,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected an int tag instead of ${result.data[NbtTagType]}`)
+                            new ParsingError({ start, end: reader.cursor }, `expected an int tag instead of a(n) ${result.data[NbtTagType]} tag`)
                         )
                     }
                 } else {
@@ -327,7 +330,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected a long tag instead of ${result.data[NbtTagType]}`)
+                            new ParsingError({ start, end: reader.cursor }, `expected a long tag instead of a(n) ${result.data[NbtTagType]} tag`)
                         )
                     }
                 }
@@ -349,7 +352,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             cache: { def: {}, ref: {} },
             completions: []
         }
-        ans.errors = []
         try {
             reader
                 .expect('[')
@@ -357,7 +359,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 .skipWhiteSpace()
             while (reader.canRead() && reader.peek() !== ']') {
                 const start = reader.cursor
-                const result = this.parseTag(reader)
+                const result = this.parseTag(
+                    reader,
+                    (walker && NbtSchemaWalker.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined
+                )
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
@@ -373,7 +378,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected a(n) ${ans.data[NbtContentTagType]} tag instead of ${result.data[NbtTagType]}`
+                            `expected a(n) ${ans.data[NbtContentTagType]} tag instead of a(n) ${result.data[NbtTagType]} tag`
                         )
                     )
                 }

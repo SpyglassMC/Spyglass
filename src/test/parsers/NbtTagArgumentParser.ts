@@ -304,7 +304,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 2 },
-                'expected a(n) string tag instead of byte'
+                'expected a(n) string tag instead of a(n) byte tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -381,7 +381,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 4, end: 6 },
-                'expected a(n) byte tag instead of short'
+                'expected a(n) byte tag instead of a(n) short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -395,7 +395,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a byte tag instead of short'
+                'expected a byte tag instead of a(n) short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -409,7 +409,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 7, end: 9 },
-                'expected an int tag instead of short'
+                'expected an int tag instead of a(n) short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -423,7 +423,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a long tag instead of short'
+                'expected a long tag instead of a(n) short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -455,6 +455,12 @@ describe('NbtTagArgumentParser Tests', () => {
                             type: 'list',
                             item: { type: 'no-nbt' }
                         },
+                        listOfInts: {
+                            type: 'list',
+                            item: {
+                                type: 'int'
+                            }
+                        },
                         refTest: {
                             type: 'no-nbt',
                             references: {
@@ -467,7 +473,7 @@ describe('NbtTagArgumentParser Tests', () => {
                     type: 'compound',
                     child_ref: [
                         '../ref/lockable.json',
-                        '../ref/test.json'
+                        '../ref/additional.json'
                     ],
                     children: {
                         Primary: {
@@ -553,14 +559,10 @@ describe('NbtTagArgumentParser Tests', () => {
                         }
                     }
                 },
-                'ref/test.json': {
+                'ref/additional.json': {
                     type: 'compound',
                     additionalChildren: true,
-                    children: {
-                        foo: {
-                            type: 'string'
-                        }
-                    }
+                    children: {}
                 },
                 'roots/blocks.json': {
                     type: 'root',
@@ -580,7 +582,7 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 }
             }
-            it('Should return error when current schema is not for compound', () => {
+            it('Should return error when current schema is not for compound tag', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/list', schemas)
                 const reader = new StringReader('{ foo: 1b }')
                 const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
@@ -591,7 +593,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 11 },
-                    'expected a(n) list tag instead of compound',
+                    'expected a list tag instead of a compound tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -616,7 +618,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, { def: {}, ref: {} })
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should allow additional keys', () => {
+            it('Should allow additional keys in a compound tag', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:beacon', schemas)
                 const reader = new StringReader('{ foo: 1b }')
                 const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
@@ -626,6 +628,106 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 ))
                 assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should validate values in a compound tag', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner', schemas)
+                const reader = new StringReader('{ Base: 1b }')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        Base: getNbtByteTag(1)
+                    }
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 8, end: 10 },
+                    'expected an int tag instead of a byte tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return error when current schema is not for list tag', () => {
+                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner', schemas)
+                const reader = new StringReader('[]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtListTag(
+                    []
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 2 },
+                    'expected a compound tag instead of a list tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should validate values in a list tag', () => {
+                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner/listOfInts', schemas)
+                const reader = new StringReader('[1b]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtListTag(
+                    [
+                        getNbtByteTag(1)
+                    ]
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 1, end: 3 },
+                    'expected an int tag instead of a byte tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return error when current schema is not for byte array tag', () => {
+                const parser = new NbtTagArgumentParser('byte_array', 'blocks', 'minecraft:banner', schemas)
+                const reader = new StringReader('[B;]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtByteArrayTag(
+                    []
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 4 },
+                    'expected a compound tag instead of a byte array tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return error when current schema is not for int array tag', () => {
+                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner', schemas)
+                const reader = new StringReader('[I;]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtIntArrayTag(
+                    []
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 4 },
+                    'expected a compound tag instead of an int array tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
+                assert.deepStrictEqual(cache, { def: {}, ref: {} })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return error when current schema is not for long array tag', () => {
+                const parser = new NbtTagArgumentParser('long_array', 'blocks', 'minecraft:banner', schemas)
+                const reader = new StringReader('[L;]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, VanillaConfig, EmptyGlobalCache)
+                assert.deepEqual(data, getNbtLongArrayTag(
+                    []
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 4 },
+                    'expected a compound tag instead of a long array tag',
+                    true,
+                    DiagnosticSeverity.Warning
+                )])
                 assert.deepStrictEqual(cache, { def: {}, ref: {} })
                 assert.deepStrictEqual(completions, [])
             })

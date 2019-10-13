@@ -326,12 +326,6 @@ describe('NbtSchemaWalker Tests', () => {
             assert(actualF === false)
             assert(actualT === true)
         })
-        it('isFunctionNode() should return correctly', () => {
-            const actualF = NbtSchemaWalker.isFunctionNode(schemas['block/banner.json'])
-            const actualT = NbtSchemaWalker.isFunctionNode({ function: { id: 'a' } })
-            assert(actualF === false)
-            assert(actualT === true)
-        })
         it('isRefNode() should return correctly', () => {
             const actualF = NbtSchemaWalker.isRefNode(schemas['block/banner.json'])
             const actualT = NbtSchemaWalker.isRefNode(

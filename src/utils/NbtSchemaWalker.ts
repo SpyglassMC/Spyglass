@@ -1,13 +1,14 @@
-import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, FunctionNode, NodeBase, NBTNode, ValueList } from 'mc-nbt-paths'
+import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NodeBase, NBTNode, ValueList } from 'mc-nbt-paths'
 import { posix, ParsedPath } from 'path'
+import { NbtTagTypeName } from '../types/NbtTag'
 
 export type NbtNoPropertySchemaNode = NoPropertyNode
 export type NbtCompoundSchemaNode = CompoundNode
 export type NbtRootSchemaNode = RootNode
 export type NbtListSchemaNode = ListNode
 export type NbtRefSchemaNode = RefNode
-export type NbtFunctionSchemaNode = FunctionNode
 export type NbtSchemaNode = NBTNode
+export type NbtSchemaNodeWithType = NbtSchemaNode & { type: 'no-nbt' | NbtTagTypeName }
 
 export default class NbtSchemaWalker {
     constructor(private readonly nbtSchema: typeof nbtDocs) { }
@@ -33,7 +34,7 @@ export default class NbtSchemaWalker {
         }
     }
 
-    private cache: undefined | NbtSchemaNode
+    private cache: undefined | NbtSchemaNodeWithType
 
     private cloneParsedPath(from: ParsedPath, to: ParsedPath) {
         to.base = from.base
@@ -107,13 +108,13 @@ export default class NbtSchemaWalker {
      * Read the current path.
      * @throws {Error} When specific path doesn't exist.
      */
-    read() {
+    read(): NbtSchemaNodeWithType {
         if (this.cache) {
             return this.cache
         }
         const file = this.nbtSchema[this.filePath.full]
         const findNodeInChildren =
-            (node: NbtSchemaNode, path: string[]): NbtSchemaNode => {
+            (node: NbtSchemaNode, path: string[]): NbtSchemaNodeWithType => {
                 // Handle the node before recurse its children.
                 if (NbtSchemaWalker.isRefNode(node)) {
                     return findNodeInChildren(
@@ -194,7 +195,7 @@ export default class NbtSchemaWalker {
                         `Path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${path.join('’, ‘')}’].`
                     )
                 } else {
-                    return node
+                    return node as NbtSchemaNodeWithType
                 }
             }
         const ans = findNodeInChildren(
@@ -216,10 +217,6 @@ export default class NbtSchemaWalker {
 
     public static isListNode(node: NBTNode | ValueList): node is ListNode {
         return (node as ListNode).type === 'list'
-    }
-
-    public static isFunctionNode(node: NBTNode | ValueList): node is FunctionNode {
-        return !!(node as FunctionNode).function
     }
 
     public static isRefNode(node: NBTNode | ValueList): node is RefNode {
@@ -245,4 +242,12 @@ export default class NbtSchemaWalker {
             (node as NoPropertyNode).type === 'long_array'
         )
     }
+}
+
+export function getString(type: 'no-nbt' | NbtTagTypeName) {
+    let article: 'a' | 'an' = 'a'
+    if (type[0] === 'i') {
+        article = 'an'
+    }
+    return `${article} ${type.replace(/_/g, ' ')} tag`
 }
