@@ -111,5 +111,12 @@ describe('utils.ts Tests', () => {
             const actual = quoteString(inner, quoteType, force)
             assert(actual === '"!@#$%"')
         })
+        it('Should quote boolean-like values regardless.', () => {
+            const inner = 'tRuE'
+            const quoteType = 'prefer double'
+            const force = false
+            const actual = quoteString(inner, quoteType, force)
+            assert(actual === '"tRuE"')
+        })
     })
 })

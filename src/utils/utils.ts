@@ -64,7 +64,10 @@ export function escapeString(str: string, quote: '"' | "'" = '"') {
  * @param force Whether to quote regardless.
  */
 export function quoteString(inner: string, quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double', force: boolean) {
-    const shouldQuote = force || !StringReader.canInUnquotedString(inner)
+    const shouldQuote = force ||
+        !StringReader.canInUnquotedString(inner) ||
+        inner.toLowerCase() === 'false' ||
+        inner.toLowerCase() === 'true'
     if (shouldQuote) {
         let quote: "'" | '"'
         switch (quoteType) {
