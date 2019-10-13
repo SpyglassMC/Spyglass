@@ -6,7 +6,7 @@
   "dependencies": {
     "bignumber.js": "^9.0.0",
     "constants": "0.0.2",
-    "datapack-json": "^1.3.5",
+    "datapack-json": "^1.3.7",
     "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
     "minecraft-id": "^0.1.5",
     "vscode-languageserver": "^5.2.1"
@@ -19,20 +19,20 @@
     "@semantic-release/changelog": "^3.0.4",
     "@semantic-release/git": "^7.0.16",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.4",
+    "@types/node": "^12.7.12",
     "@types/power-assert": "^1.5.0",
-    "codecov": "^3.5.0",
+    "codecov": "^3.6.1",
     "espower-typescript": "^9.0.2",
     "gitmoji-cli": "^1.9.4",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.1",
     "nyc": "^14.1.1",
     "power-assert": "^1.5.0",
     "semantic-release": "^15.13.24",
     "semantic-release-gitmoji": "^1.3.0",
     "source-map-support": "^0.5.13",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
-    "typescript": "^3.6.2"
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
   },
   "scripts": {
     "build": "tsc",
