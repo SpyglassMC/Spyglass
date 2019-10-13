@@ -304,7 +304,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 2 },
-                'expected a(n) string tag instead of a(n) byte tag'
+                'expected a string tag instead of a byte tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -381,7 +381,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 4, end: 6 },
-                'expected a(n) byte tag instead of a(n) short tag'
+                'expected a byte tag instead of a short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -395,7 +395,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a byte tag instead of a(n) short tag'
+                'expected a byte tag instead of a short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -409,7 +409,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 7, end: 9 },
-                'expected an int tag instead of a(n) short tag'
+                'expected an int tag instead of a short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])
@@ -423,7 +423,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a long tag instead of a(n) short tag'
+                'expected a long tag instead of a short tag'
             )])
             assert.deepStrictEqual(cache, { def: {}, ref: {} })
             assert.deepStrictEqual(completions, [])

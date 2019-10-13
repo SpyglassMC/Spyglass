@@ -7,7 +7,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind, DiagnosticSeverity, ErrorMessageTracker } from 'vscode-languageserver'
 import { ValueList, NBTNode as NBTSchemaNode, CompoundNode, nbtDocs, NoPropertyNode } from 'mc-nbt-paths'
-import NbtSchemaWalker, { NbtCompoundSchemaNode, NbtListSchemaNode, getString as getStringFromSchemaType } from '../utils/NbtSchemaWalker'
+import NbtSchemaWalker, { NbtCompoundSchemaNode, NbtListSchemaNode, getString } from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
 import { arrayToMessage } from '../utils/utils'
@@ -131,7 +131,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (this.expectedTypes.indexOf(ans.data[NbtTagType]) === -1) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a(n) ${arrayToMessage(this.expectedTypes, false, 'or')} tag instead of a(n) ${ans.data[NbtTagType]} tag`
+                `expected ${arrayToMessage(this.expectedTypes.map(getString), false, 'or')
+                } instead of ${getString(ans.data[NbtTagType])}`
             ))
         }
         return ans
@@ -156,8 +157,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (walker && walker.read().type !== ans.data[NbtTagType]) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected ${getStringFromSchemaType(walker.read().type)} instead of ${
-                getStringFromSchemaType(ans.data[NbtTagType])}`,
+                `expected ${getString(walker.read().type)} instead of ${
+                getString(ans.data[NbtTagType])}`,
                 true,
                 DiagnosticSeverity.Warning
             ))
@@ -314,7 +315,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected a byte tag instead of a(n) ${result.data[NbtTagType]} tag`)
+                            new ParsingError(
+                                { start, end: reader.cursor },
+                                `expected a byte tag instead of ${getString(result.data[NbtTagType])}`
+                            )
                         )
                     }
                 } else if (isNbtIntArrayTag(ans.data)) {
@@ -322,7 +326,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected an int tag instead of a(n) ${result.data[NbtTagType]} tag`)
+                            new ParsingError(
+                                { start, end: reader.cursor },
+                                `expected an int tag instead of ${getString(result.data[NbtTagType])}`
+                            )
                         )
                     }
                 } else {
@@ -330,7 +337,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.data.push(result.data)
                     } else {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, `expected a long tag instead of a(n) ${result.data[NbtTagType]} tag`)
+                            new ParsingError(
+                                { start, end: reader.cursor },
+                                `expected a long tag instead of ${getString(result.data[NbtTagType])}`
+                            )
                         )
                     }
                 }
@@ -378,7 +388,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected a(n) ${ans.data[NbtContentTagType]} tag instead of a(n) ${result.data[NbtTagType]} tag`
+                            `expected ${getString(ans.data[NbtContentTagType])} instead of ${getString(result.data[NbtTagType])}`
                         )
                     )
                 }
