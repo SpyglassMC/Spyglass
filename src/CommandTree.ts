@@ -14,9 +14,9 @@ import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
 
 /**
- * Command tree of Minecraft Java Edition 1.14.4 commands.
+ * Command tree of Minecraft Java Edition 19w41a commands.
  */
-export const tree: CommandTree = {
+export const VanillaTree: CommandTree = {
     line: {
         command: {
             redirect: 'commands'
@@ -381,7 +381,7 @@ export const tree: CommandTree = {
     }
 }
 
-export default tree
+export default VanillaTree
 
 /**
  * Represent a command tree.

@@ -57,17 +57,6 @@ describe('NbtSchemaWalker Tests', () => {
                     type: 'byte',
                     description: 'Whether the command block should be automatically powered'
                 },
-                Command: {
-                    type: 'string',
-                    description: 'The command to run',
-                    suggestions: [
-                        {
-                            function: {
-                                id: 'command'
-                            }
-                        }
-                    ]
-                },
                 conditionMet: {
                     type: 'byte',
                     description: 'If the command block executed last time it was powered (True if not conditional)'
@@ -347,6 +336,12 @@ describe('NbtSchemaWalker Tests', () => {
             )
             assert(actualF === false)
             assert(actualT === true)
+        })
+        it('getString() should return correctly', () => {
+            const actual1 = NbtSchemaWalker.getString('byte')
+            const actual2 = NbtSchemaWalker.getString('int_array')
+            assert(actual1 === 'a byte tag')
+            assert(actual2 === 'an int array tag')
         })
     })
 })

@@ -501,17 +501,6 @@ describe('NbtTagArgumentParser Tests', () => {
                             type: 'byte',
                             description: 'Whether the command block should be automatically powered'
                         },
-                        Command: {
-                            type: 'string',
-                            description: 'The command to run',
-                            suggestions: [
-                                {
-                                    function: {
-                                        id: 'command'
-                                    }
-                                }
-                            ]
-                        },
                         conditionMet: {
                             type: 'byte',
                             description: 'If the command block executed last time it was powered (True if not conditional)'

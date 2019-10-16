@@ -1,6 +1,8 @@
-import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NodeBase, NBTNode, ValueList } from 'mc-nbt-paths'
+import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
 import { posix, ParsedPath } from 'path'
 import { NbtTagTypeName } from '../types/NbtTag'
+import GlobalCache from '../types/GlobalCache'
+import { CompletionItem } from 'vscode-languageserver'
 
 export type NbtNoPropertySchemaNode = NoPropertyNode
 export type NbtCompoundSchemaNode = CompoundNode
@@ -242,12 +244,51 @@ export default class NbtSchemaWalker {
             (node as NoPropertyNode).type === 'long_array'
         )
     }
+
+    /**
+     * Get a human-readable name for a NBT tag type.
+     * @example
+     * getString('byte') => 'a byte tag'
+     * getString('int_array') => 'an int array tag'
+     * @param type The type of the NBT tag.
+     */
+    public static getString(type: 'no-nbt' | NbtTagTypeName) {
+        let article: 'a' | 'an' = 'a'
+        if (type[0] === 'i') {
+            article = 'an'
+        }
+        return `${article} ${type.replace(/_/g, ' ')} tag`
+    }
+
+    public static getCompletions(
+        suggestions: Array<
+            | string
+            | { description?: string, value?: string, values?: string }
+            | { paresr: string, params?: any }
+        >,
+        cache: GlobalCache
+    ): CompletionItem[] {
+        const isParserNode =
+            (value: any): value is { parser: string, params?: any } =>
+                typeof value.parser === 'string'
+        const ans = suggestions.map(
+            v => {
+                if (typeof v === 'string') {
+                    return { label: v }
+                } else if (isParserNode(v)) {
+                    v
+                } else {
+                    // if (v.values) {
+                    //     return { label: v.value, detail: v.description }
+                    // } else {
+                    //     return { label: v.value, detail: v.description }
+                    // }
+                }
+                throw ''
+            }
+        )
+        throw ''
+        // return ans
+    }
 }
 
-export function getString(type: 'no-nbt' | NbtTagTypeName) {
-    let article: 'a' | 'an' = 'a'
-    if (type[0] === 'i') {
-        article = 'an'
-    }
-    return `${article} ${type.replace(/_/g, ' ')} tag`
-}

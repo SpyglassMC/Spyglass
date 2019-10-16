@@ -230,7 +230,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws {ParsingError}
+     * @throws {ParsingError} Tolerable if can't read, otherwise untolerable.
      */
     expect(c: string) {
         const start = this.cursor

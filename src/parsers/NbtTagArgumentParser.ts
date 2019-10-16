@@ -5,9 +5,9 @@ import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, g
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind, DiagnosticSeverity, ErrorMessageTracker } from 'vscode-languageserver'
-import { ValueList, NBTNode as NBTSchemaNode, CompoundNode, nbtDocs, NoPropertyNode } from 'mc-nbt-paths'
-import NbtSchemaWalker, { NbtCompoundSchemaNode, NbtListSchemaNode, getString } from '../utils/NbtSchemaWalker'
+import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
+import { nbtDocs } from 'mc-nbt-paths'
+import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
 import { arrayToMessage } from '../utils/utils'
@@ -96,9 +96,15 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         true: [/^true$/i, _ => getNbtByteTag(1)]
     }
 
+    /**
+     * The diagnostic level of nbt schema is `Warning`. 
+     * 
+     * This field is used to trigger `Error` diagnostics.
+     */
     private readonly expectedTypes: NbtTagTypeName[]
 
     private config: Config
+    private cursor: number
     private cache: GlobalCache
 
     readonly identity = 'nbtTag'
@@ -120,6 +126,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache = EmptyGlobalCache): ArgumentParserResult<NbtTag> {
         this.config = config
         this.cache = cache
+        this.cursor = cursor
         let walker: NbtSchemaWalker | undefined
         if (this.id) {
             const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
@@ -131,8 +138,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (this.expectedTypes.indexOf(ans.data[NbtTagType]) === -1) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected ${arrayToMessage(this.expectedTypes.map(getString), false, 'or')
-                } instead of ${getString(ans.data[NbtTagType])}`
+                `expected ${arrayToMessage(this.expectedTypes.map(NbtSchemaWalker.getString), false, 'or')
+                } instead of ${NbtSchemaWalker.getString(ans.data[NbtTagType])}`
             ))
         }
         return ans
@@ -149,7 +156,43 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 ans = this.parseListOrArray(reader, walker)
                 break
             case undefined:
-
+            case '}':
+            case ']':
+                if (walker) {
+                    const kind = CompletionItemKind.Text
+                    if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                        ans = this.parseCompoundTag(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push({ label: '{}', kind })
+                        }
+                    } else if (NbtSchemaWalker.isListNode(walker.read())) {
+                        ans = this.parseListOrArray(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push({ label: '[]', kind })
+                        }
+                    } else if (walker.read().type === 'byte_array') {
+                        ans = this.parseListOrArray(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push({ label: '[B;]', kind })
+                        }
+                    } else if (walker.read().type === 'int_array') {
+                        ans = this.parseListOrArray(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push({ label: '[I;]', kind })
+                        }
+                    } else if (walker.read().type === 'long_array') {
+                        ans = this.parseListOrArray(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push({ label: '[L;]', kind })
+                        }
+                    } else {
+                        ans = this.parsePrimitiveTag(reader, walker)
+                    }
+                    ans.completions.push()
+                } else {
+                    ans = this.parsePrimitiveTag(reader, walker)
+                }
+                break
             default:
                 ans = this.parsePrimitiveTag(reader, walker)
                 break
@@ -157,8 +200,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (walker && walker.read().type !== ans.data[NbtTagType]) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected ${getString(walker.read().type)} instead of ${
-                getString(ans.data[NbtTagType])}`,
+                `expected ${NbtSchemaWalker.getString(walker.read().type)} instead of ${
+                    NbtSchemaWalker.getString(ans.data[NbtTagType])}`,
                 true,
                 DiagnosticSeverity.Warning
             ))
@@ -173,7 +216,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             cache: { def: {}, ref: {} },
             completions: []
         }
+        const isSchemaUsable = walker && NbtSchemaWalker.isCompoundNode(walker.read())
         try {
+            const whiteSpaceStart = reader.cursor + 1
             reader
                 .expect('{')
                 .skip()
@@ -181,7 +226,27 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             while (reader.canRead() && reader.peek() !== '}') {
                 const start = reader.cursor
                 const key = reader.readString()
-                if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
+                if (!key) {
+                    if (walker && isSchemaUsable &&
+                        this.cursor >= whiteSpaceStart && this.cursor <= reader.cursor - 1) {
+                        const { children } = walker.read() as NbtCompoundSchemaNode
+                        const definedChildren = children ? children : {}
+                        ans.completions.push(...Object
+                            .keys(definedChildren)
+                            .map(
+                                key => ({
+                                    label: key,
+                                    detail: definedChildren[key].description,
+                                    kind: CompletionItemKind.Property
+                                } as CompletionItem)
+                            )
+                        )
+                    }
+                    ans.errors.push(new ParsingError(
+                        { start, end: start + key.length },
+                        'expected a key but got nothing'
+                    ))
+                } else if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + key.length },
                         `invalid key ‘${key}’ which doesn't follow ${
@@ -196,7 +261,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     .skip()
                     .skipWhiteSpace()
                 let isSchemaForValueUsable = false
-                if (walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
+                if (walker && isSchemaUsable) {
                     try {
                         walker
                             .clone()
@@ -317,7 +382,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected a byte tag instead of ${getString(result.data[NbtTagType])}`
+                                `expected a byte tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
                             )
                         )
                     }
@@ -328,7 +393,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected an int tag instead of ${getString(result.data[NbtTagType])}`
+                                `expected an int tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
                             )
                         )
                     }
@@ -339,7 +404,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected a long tag instead of ${getString(result.data[NbtTagType])}`
+                                `expected a long tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
                             )
                         )
                     }
@@ -388,7 +453,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected ${getString(ans.data[NbtContentTagType])} instead of ${getString(result.data[NbtTagType])}`
+                            `expected ${NbtSchemaWalker.getString(ans.data[NbtContentTagType])
+                            } instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
                         )
                     )
                 }

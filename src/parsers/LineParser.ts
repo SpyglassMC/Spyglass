@@ -1,7 +1,7 @@
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
 import Parser, { ArgumentParserResult } from '../types/Parser'
 import StringReader from '../utils/StringReader'
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
+import VanillaTree, { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 import { MarkupContent } from 'vscode-languageserver'
@@ -10,7 +10,18 @@ import GlobalCache, { EmptyGlobalCache } from '../types/GlobalCache'
 
 export default class LineParser implements Parser<Line> {
     constructor(
-        private readonly tree: CommandTree,
+        /**
+         * Whether the line should begin with a slash (`/`).  
+         * `true` - Should. Will throw untolerable errors if the line doesn't match.   
+         * `false` - Shouldn't. Will throw tolerable errors if the line doesn't match.  
+         * `null` - Not care.
+         */
+        private readonly beginningSlash: boolean | null = null,
+        /**
+         * The entry point will be used to access `tree`.
+         */
+        private readonly entryPoint: 'line' | 'commands' = 'line',
+        private readonly tree: CommandTree = VanillaTree,
         private readonly cache: GlobalCache = EmptyGlobalCache,
         private readonly config: Config = VanillaConfig
     ) { }
@@ -27,7 +38,24 @@ export default class LineParser implements Parser<Line> {
 
     parse(reader: StringReader, cursor: number = -1): ParserResult {
         const line: SaturatedLine = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
-        this.parseChildren(reader, this.tree.line, line, cursor)
+        if (reader.peek() === '/') {
+            if (this.beginningSlash === false) {
+                line.errors.push(new ParsingError(
+                    { start: reader.cursor, end: reader.cursor + 1 },
+                    'unexpected leading slash ‘/’'
+                ))
+            }
+            reader.skip()
+        } else {
+            if (this.beginningSlash === true) {
+                line.errors.push(new ParsingError(
+                    { start: reader.cursor, end: reader.cursor + 1 },
+                    `expected a leading slash ‘/’ but got ‘${reader.peek()}’`,
+                    false
+                ))
+            }
+        }
+        this.parseChildren(reader, this.tree[this.entryPoint], line, cursor)
         saturatedLineToLine(line)
         return { data: line }
     }
@@ -156,7 +184,7 @@ export default class LineParser implements Parser<Line> {
      */
     getPartOfHintsAndNode(path: string[]): PartOfHintsAndNode {
         const hints: string[] = []
-        let children = this.tree.line
+        let children = this.tree[this.entryPoint]
         for (let i = 0; i < path.length; i++) {
             const ele = path[i]
             const node = children[ele]
