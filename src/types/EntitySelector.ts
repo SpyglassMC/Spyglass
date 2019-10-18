@@ -1,4 +1,4 @@
-import Range from './Range'
+import Range from './NumberRange'
 import { NbtCompoundTag } from './NbtTag'
 
 /**

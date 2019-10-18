@@ -201,7 +201,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 `expected ${NbtSchemaWalker.getString(walker.read().type)} instead of ${
-                    NbtSchemaWalker.getString(ans.data[NbtTagType])}`,
+                NbtSchemaWalker.getString(ans.data[NbtTagType])}`,
                 true,
                 DiagnosticSeverity.Warning
             ))
@@ -323,7 +323,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
         reader.expect('[')
         let result: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag | NbtListTag>
-        if (reader.canRead(3) && reader.peek(2) === ';') {
+        if (reader.canRead(3) && !StringReader.isQuote(reader.peek(1)) && reader.peek(2) === ';') {
             // Parse as an array.
             result = this.parsePrimitiveArray(reader, walker)
         } else {
