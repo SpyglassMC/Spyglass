@@ -1,4 +1,4 @@
-import LocalCache, { combineLocalCache } from './LocalCache'
+import { LocalCache, combineCache } from './Cache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
 import ArgumentNode from './ArgumentNode'
@@ -49,7 +49,7 @@ export function combineLine(base: Line, override: Line): Line {
     }
     // Cache.
     if (base.cache || override.cache) {
-        base.cache = combineLocalCache(base.cache, override.cache)
+        base.cache = combineCache(base.cache, override.cache)
     }
     // Completions.
     if ((base.completions && base.completions.length !== 0) || (override.completions && override.completions.length !== 0)) {
@@ -78,7 +78,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     // Path.
     base.path = [...base.path, ...override.path]
     // Cache.
-    base.cache = combineLocalCache(base.cache, override.cache)
+    base.cache = combineCache(base.cache, override.cache)
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.
@@ -87,7 +87,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
 }
 
 export function saturatedLineToLine(line: SaturatedLine) {
-    if (Object.keys(line.cache.def).length === 0 && Object.keys(line.cache.ref).length === 0) {
+    if (Object.keys(line.cache).length === 0) {
         delete line.cache
     }
     if (line.errors.length === 0) {

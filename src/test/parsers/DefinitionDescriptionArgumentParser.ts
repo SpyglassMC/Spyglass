@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescriptionArgumentParser'
-import LocalCache, { DescriptionsOfIDs } from '../../types/LocalCache'
+import { LocalCache } from '../../types/Cache'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
@@ -39,21 +39,34 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
         })
         it('Should return cache correctly', () => {
             const parser = new DefinitionDescriptionArgumentParser('tag', 'debug')
-            const reader = new StringReader('foo')
-            const { debug } = ((parser.parse(reader).cache as LocalCache).def.tags as DescriptionsOfIDs)
-            assert(debug === 'foo')
+            const reader = new StringReader('#define tag debug for debug')
+            reader.cursor = 18
+            const { cache } = parser.parse(reader)
+            assert.deepStrictEqual(cache, {
+                tags: {
+                    debug: {
+                        def: [
+                            {
+                                range: { start: 12, end: 17 },
+                                documentation: 'for debug'
+                            }
+                        ],
+                        ref: []
+                    }
+                }
+            })
         })
         it('Should not return cache for empty id', () => {
             const parser = new DefinitionDescriptionArgumentParser('tag', '')
             const reader = new StringReader('foo')
             const { cache } = parser.parse(reader)
-            assert.deepStrictEqual(cache, { def: {}, ref: {} })
+            assert.deepStrictEqual(cache, {})
         })
         it('Should not return cache for wrong definition types', () => {
             const parser = new DefinitionDescriptionArgumentParser('wrongType', 'debugger')
             const reader = new StringReader('foo')
             const { cache } = parser.parse(reader)
-            assert.deepStrictEqual(cache, { def: {}, ref: {} })
+            assert.deepStrictEqual(cache, {})
         })
     })
 })

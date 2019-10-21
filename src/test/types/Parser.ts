@@ -8,20 +8,29 @@ describe('Parser Tests', () => {
         it('Should combine cache, completions and errors', () => {
             const base = {
                 data: 'base',
-                cache: { def: { entities: { a: undefined } }, ref: {} },
+                cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
                 completions: [{ label: 'a' }]
             }
             const override = {
                 data: 'override',
-                cache: { def: { entities: { a: 'foo' } }, ref: {} },
+                cache: {
+                    entities: {
+                        foo: {
+                            def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: []
+                        }
+                    }
+                },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
                 completions: [{ label: 'b' }]
             }
             combineArgumentParserResult<string>(base, override)
             assert.deepStrictEqual(base.cache, {
-                def: { entities: { a: 'foo' } },
-                ref: {}
+                entities: {
+                    foo: {
+                        def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: []
+                    }
+                }
             })
             assert.deepStrictEqual(base.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'old'),

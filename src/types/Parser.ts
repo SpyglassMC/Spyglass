@@ -1,7 +1,7 @@
 import ParsingError from './ParsingError'
-import LocalCache, { combineLocalCache } from './LocalCache'
 import { CompletionItem } from 'vscode-languageserver'
 import StringReader from '../utils/StringReader'
+import { LocalCache, combineCache } from './Cache'
 
 /**
  * Represent an argument parser.
@@ -49,7 +49,7 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
 
 export function combineArgumentParserResult<T>(base: ArgumentParserResult<T>, override: ArgumentParserResult<T>): void {
     // Cache.
-    base.cache = combineLocalCache(base.cache, override.cache)
+    base.cache = combineCache(base.cache, override.cache)
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.

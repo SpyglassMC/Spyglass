@@ -6,7 +6,7 @@ import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
 import { MarkupContent } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
-import GlobalCache, { EmptyGlobalCache } from '../types/GlobalCache'
+import { GlobalCache } from '../types/Cache'
 
 export default class LineParser implements Parser<Line> {
     constructor(
@@ -22,7 +22,7 @@ export default class LineParser implements Parser<Line> {
          */
         private readonly entryPoint: 'line' | 'commands' = 'line',
         private readonly tree: CommandTree = VanillaTree,
-        private readonly cache: GlobalCache = EmptyGlobalCache,
+        private readonly cache: GlobalCache = {},
         private readonly config: Config = VanillaConfig
     ) { }
 
@@ -37,7 +37,7 @@ export default class LineParser implements Parser<Line> {
     }
 
     parse(reader: StringReader, cursor: number = -1): ParserResult {
-        const line: SaturatedLine = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
+        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], path: [] }
         if (reader.peek() === '/') {
             if (this.beginningSlash === false) {
                 line.errors.push(new ParsingError(
@@ -104,7 +104,7 @@ export default class LineParser implements Parser<Line> {
                     if (node.children) {
                         // Compute completions.
                         const newReader = new StringReader(reader)
-                        const result = { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] }
+                        const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
                         this.parseChildren(newReader, node.children, result, cursor)
                         /* istanbul ignore else */
                         if (result.completions && result.completions.length !== 0) {
@@ -190,7 +190,7 @@ export default class LineParser implements Parser<Line> {
             const node = children[ele]
             if (node) {
                 if (node.parser) {
-                    const parser = LineParser.getParser(node.parser, { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] })
+                    const parser = LineParser.getParser(node.parser, { args: [], cache: {}, errors: [], completions: [], path: [] })
                     hints.push(parser.toHint(ele, false))
                 }
                 if (i < path.length - 1) {
@@ -221,7 +221,7 @@ export default class LineParser implements Parser<Line> {
             if (children.hasOwnProperty(key)) {
                 const childNode = children[key]
                 if (childNode.parser) {
-                    const parser = LineParser.getParser(childNode.parser, { args: [], cache: { def: {}, ref: {} }, errors: [], completions: [], path: [] })
+                    const parser = LineParser.getParser(childNode.parser, { args: [], cache: {}, errors: [], completions: [], path: [] })
                     const lastHint = parser.toHint(key, !!node.executable)
                     ans.hint.value += ` **${lastHint}**`
                 }

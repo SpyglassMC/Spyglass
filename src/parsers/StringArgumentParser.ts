@@ -12,7 +12,7 @@ export default class StringArgumentParser extends ArgumentParser<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
-            cache: { def: {}, ref: {} },
+            cache: {  },
             completions: []
         }
         try {

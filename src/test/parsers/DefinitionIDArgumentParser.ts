@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
-import LocalCache, { DescriptionsOfIDs } from '../../types/LocalCache'
+import { LocalCache } from '../../types/Cache'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
@@ -39,15 +39,27 @@ describe('DefinitionIDArgumentParser Tests', () => {
         })
         it('Should return cache correctly', () => {
             const parser = new DefinitionIDArgumentParser('tag')
-            const reader = new StringReader('foo ')
-            const actual = ((parser.parse(reader).cache as LocalCache).def.tags as DescriptionsOfIDs)
-            assert.deepStrictEqual(actual, { foo: undefined })
+            const reader = new StringReader('#define tag debug')
+            reader.cursor = 12
+            const { cache } = parser.parse(reader)
+            assert.deepStrictEqual(cache, {
+                tags: {
+                    debug: {
+                        def: [
+                            {
+                                range: { start: 12, end: 17 }
+                            }
+                        ],
+                        ref: []
+                    }
+                }
+            })
         })
         it('Should not return cache for wrong definition types', () => {
             const parser = new DefinitionIDArgumentParser('wrongType')
             const reader = new StringReader('foo ')
             const { cache } = parser.parse(reader)
-            assert.deepStrictEqual(cache, { def: {}, ref: {} })
+            assert.deepStrictEqual(cache, {})
         })
     })
 })

@@ -1,6 +1,6 @@
 import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
-import GlobalCache, { EmptyGlobalCache } from '../types/GlobalCache'
+import { GlobalCache } from '../types/Cache'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -123,7 +123,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache = EmptyGlobalCache): ArgumentParserResult<NbtTag> {
+    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache = {}): ArgumentParserResult<NbtTag> {
         this.config = config
         this.cache = cache
         this.cursor = cursor
@@ -213,7 +213,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         const ans: ArgumentParserResult<NbtCompoundTag> = {
             data: getNbtCompoundTag({}),
             errors: [],
-            cache: { def: {}, ref: {} },
+            cache: {  },
             completions: []
         }
         const isSchemaUsable = walker && NbtSchemaWalker.isCompoundNode(walker.read())
@@ -318,7 +318,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtListTag([]),
             errors: [],
-            cache: { def: {}, ref: {} },
+            cache: { },
             completions: []
         }
         reader.expect('[')
@@ -340,7 +340,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
             data: getNbtByteArrayTag([]),
             errors: [],
-            cache: { def: {}, ref: {} },
+            cache: { },
             completions: []
         }
         try {
@@ -424,7 +424,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
             data: getNbtListTag([]),
             errors: [],
-            cache: { def: {}, ref: {} },
+            cache: { },
             completions: []
         }
         try {
@@ -477,14 +477,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 return {
                     data: getNbtStringTag(value),
                     errors: [],
-                    cache: { def: {}, ref: {} },
+                    cache: {  },
                     completions: []
                 }
             } catch (p) {
                 return {
                     data: getNbtStringTag(''),
                     errors: [p as ParsingError],
-                    cache: { def: {}, ref: {} },
+                    cache: {  },
                     completions: []
                 }
             }
@@ -496,7 +496,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 return {
                     data: getNbtStringTag(''),
                     errors: [new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing')],
-                    cache: { def: {}, ref: {} },
+                    cache: {  },
                     completions: []
                 }
             } else {
@@ -511,7 +511,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 return {
                                     data: func(value),
                                     errors: [],
-                                    cache: { def: {}, ref: {} },
+                                    cache: {  },
                                     completions: []
                                 }
                             }
@@ -525,14 +525,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         return {
                             data: getNbtStringTag(value),
                             errors: [],
-                            cache: { def: {}, ref: {} },
+                            cache: {  },
                             completions: []
                         }
                     } else {
                         return {
                             data: getNbtStringTag(value),
                             errors: [new ParsingError({ start, end: reader.cursor }, s, true, DiagnosticSeverity.Warning)],
-                            cache: { def: {}, ref: {} },
+                            cache: {  },
                             completions: []
                         }
                     }

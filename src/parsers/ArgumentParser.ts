@@ -1,7 +1,7 @@
 import Parser, { ArgumentParserResult } from '../types/Parser'
 import StringReader from '../utils/StringReader'
 import Config from '../types/Config'
-import GlobalCache from '../types/GlobalCache'
+import { GlobalCache } from '../types/Cache'
 
 /**
  * Base class of argument parsers.

@@ -1,7 +1,7 @@
 import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
 import { posix, ParsedPath } from 'path'
 import { NbtTagTypeName } from '../types/NbtTag'
-import GlobalCache from '../types/GlobalCache'
+import { GlobalCache } from '../types/Cache'
 import { CompletionItem } from 'vscode-languageserver'
 
 export type NbtNoPropertySchemaNode = NoPropertyNode
