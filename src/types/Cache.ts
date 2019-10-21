@@ -1,25 +1,5 @@
 import TextRange from './TextRange'
 
-// const types: (keyof ClientCache)[] = [
-//     'advancements',
-//     'functions',
-//     'lootTables/fishing',
-//     'lootTables/entitiy',
-//     'lootTables/block',
-//     'lootTables/generic',
-//     'predicates',
-//     'recipes',
-//     'tags/blocks',
-//     'tags/entityTypes',
-//     'tags/fluids',
-//     'tags/functions',
-//     'tags/items',
-//     'bossbars',
-//     'entities',
-//     'objectives',
-//     'tags'
-// ]
-
 export type GlobalCache = Cache<GlobalCacheElement>
 export type LocalCache = Cache<LocalCacheElement>
 
@@ -67,7 +47,7 @@ type Unit<T extends GlobalCacheElement | LocalCacheElement> = {
      * 
      * `null` for all categories except for `bossbars`, `entities`, `objectives` and `tags`.
      */
-    def: null | (T & {
+    def: (T & {
         /**
          * The documentation for this element.
          */
@@ -138,40 +118,40 @@ export function combineCache<T extends GlobalCacheElement | LocalCacheElement>
             throw 'Unreachable code'
         }
     }
+    function removeElement(cache: Cache<T>, element: T) {
+        for (const type in cache) {
+            const category = cache[type as keyof Cache<T>] as CacheCategory<T>
+            for (const id in category) {
+                const unit = category[id] as Unit<T>
+                for (const key in unit) {
+                    const elements = unit[key as 'ref' | 'def']
+                    unit[key as 'ref' | 'def'] =
+                        elements.filter(ele => !areElementsEqual(ele, element)) as any
+                }
+            }
+        }
+    }
     function initUnit(type: string, id: string, overrideElement: T) {
         if (!ans[type as keyof Cache<T>]) {
             ans[type as keyof Cache<T>] = {}
         }
         const ansCategory = ans[type as keyof Cache<T>] as CacheCategory<T>
         if (!ansCategory[id]) {
-            ansCategory[id] = { def: null, ref: [] }
+            ansCategory[id] = { def: [], ref: [] }
         }
         const ansUnit = ansCategory[id] as Unit<T>
-        for (const key in ansUnit) {
-            const elements = ansUnit[key as 'ref' | 'def']
-            if (elements) {
-                ansUnit[key as 'ref' | 'def'] = elements.filter(ele => !areElementsEqual(ele, overrideElement)) as any
-            }
-        }
+        removeElement(ans, overrideElement)
         return ansUnit
     }
     const ans: Cache<T> = JSON.parse(JSON.stringify(base))
     for (const type in override) {
-        // istanbul ignore next
         const overrideCategory = override[type as keyof Cache<T>]
         for (const id in overrideCategory) {
             const overrideUnit = overrideCategory[id] as Unit<T>
-            for (const overrideEle of overrideUnit.ref) {
-                const ansUnit = initUnit(type, id, overrideEle)
-                ansUnit.ref.push(overrideEle)
-            }
-            if (overrideUnit.def) {
-                for (const overrideEle of overrideUnit.def) {
+            for (const key in overrideUnit) {
+                for (const overrideEle of overrideUnit[key as 'ref' | 'def']) {
                     const ansUnit = initUnit(type, id, overrideEle)
-                    if (!ansUnit.def) {
-                        ansUnit.def = []
-                    }
-                    ansUnit.def.push(overrideEle)
+                    ansUnit[key as 'ref' | 'def'].push(overrideEle as any)
                 }
             }
         }
@@ -179,29 +159,19 @@ export function combineCache<T extends GlobalCacheElement | LocalCacheElement>
     return ans
 }
 
-/**
- * @deprecated
- */
-export function isClientCacheType(value: any): value is keyof Cache<any> {
-    return (
-        value === 'advancements' ||
-        value === 'functions' ||
-        value === 'lootTables/fishing' ||
-        value === 'lootTables/entitiy' ||
-        value === 'lootTables/block' ||
-        value === 'lootTables/generic' ||
-        value === 'predicates' ||
-        value === 'recipes' ||
-        value === 'tags/blocks' ||
-        value === 'tags/entityTypes' ||
-        value === 'tags/fluids' ||
-        value === 'tags/functions' ||
-        value === 'tags/items' ||
-        value === 'bossbars' ||
-        value === 'entities' ||
-        value === 'objectives' ||
-        value === 'tags'
-    )
+export function trimCache<T extends LocalCacheElement | GlobalCacheElement>(cache: Cache<T>) {
+    for (const type in cache) {
+        const category = cache[type as keyof Cache<T>] as CacheCategory<T>
+        for (const id in category) {
+            const unit = category[id] as Unit<T>
+            if (unit.def.length === 0 && unit.ref.length === 0) {
+                delete category[id]
+            }
+        }
+        if (Object.keys(category).length === 0) {
+            delete cache[type as keyof Cache<T>]
+        }
+    }
 }
 
 type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag'
