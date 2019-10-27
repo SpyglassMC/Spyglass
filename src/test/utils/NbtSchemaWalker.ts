@@ -3,6 +3,10 @@ import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { NBTNode, ValueList, RootNode } from 'mc-nbt-paths'
+import StringReader from '../../utils/StringReader'
+import { CompletionItemKind } from 'vscode-languageserver'
+import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
+import { VanillaConfig } from '../../types/Config'
 
 describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NBTNode | ValueList } = {
@@ -35,17 +39,13 @@ describe('NbtSchemaWalker Tests', () => {
                 Primary: {
                     type: 'int',
                     suggestions: [
-                        {
-                            values: '../misc_group/effect_id.json'
-                        }
+                        { parser: 'NumericID', params: ['minecraft:mob_effect'] }
                     ]
                 },
                 Secondary: {
                     type: 'int',
                     suggestions: [
-                        {
-                            values: '../misc_group/effect_id.json'
-                        }
+                        { parser: 'NumericID', params: ['minecraft:mob_effect'] }
                     ]
                 }
             }
@@ -129,6 +129,35 @@ describe('NbtSchemaWalker Tests', () => {
                     ref: '../block/beacon.json'
                 }
             }
+        },
+        'suggestionsTest.json': {
+            type: 'no-nbt',
+            references: {
+                raw: {
+                    type: 'no-nbt',
+                    suggestions: ['foo']
+                },
+                detailed: {
+                    type: 'no-nbt',
+                    suggestions: [{ value: 'bar', description: 'The Bar' }]
+                },
+                argumentParser: {
+                    type: 'no-nbt',
+                    suggestions: [{ parser: 'Literal', params: ['baz', 'qux'] }]
+                },
+                lineParser: {
+                    type: 'no-nbt',
+                    suggestions: [{
+                        parser: '#', params: [
+                            true,
+                            'commands',
+                            {
+                                commands: { execute: { parser: new LiteralArgumentParser('foo'), executable: true } }
+                            }
+                        ]
+                    }]
+                }
+            }
         }
     }
     let walker: NbtSchemaWalker
@@ -156,7 +185,7 @@ describe('NbtSchemaWalker Tests', () => {
                     goFile('parent')
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: join(‘’, ‘parent’) => ‘parent’')
+                assert(message === 'path not found: join(‘’, ‘parent’) => ‘parent’')
             }
         })
     })
@@ -223,13 +252,13 @@ describe('NbtSchemaWalker Tests', () => {
                         Primary: {
                             type: 'int',
                             suggestions: [
-                                { values: '../misc_group/effect_id.json' }
+                                { parser: 'NumericID', params: ['minecraft:mob_effect'] }
                             ]
                         },
                         Secondary: {
                             type: 'int',
                             suggestions: [
-                                { values: '../misc_group/effect_id.json' }
+                                { parser: 'NumericID', params: ['minecraft:mob_effect'] }
                             ]
                         },
                         Lock: {
@@ -262,7 +291,7 @@ describe('NbtSchemaWalker Tests', () => {
                     .read()
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/non-existent’ [‘non-existent’].')
+                assert(message === 'path not found: ‘roots/blocks.json#minecraft:banner/non-existent’ [‘non-existent’]')
             }
         })
         it("Should throw error when the anchor doen't exist for a RootNode", () => {
@@ -272,7 +301,7 @@ describe('NbtSchemaWalker Tests', () => {
                     .read()
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: ‘roots/blocks.json#non-existent’ [‘non-existent’].')
+                assert(message === 'path not found: ‘roots/blocks.json#non-existent’ [‘non-existent’]')
             }
         })
         it("Should throw error when the anchor doen't exist for a ListNode", () => {
@@ -282,7 +311,7 @@ describe('NbtSchemaWalker Tests', () => {
                     .read()
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/list/oops’ [‘oops’].')
+                assert(message === 'path not found: ‘roots/blocks.json#minecraft:banner/list/oops’ [‘oops’]')
             }
         })
         it("Should throw error when the anchor doen't exist in the references", () => {
@@ -292,8 +321,55 @@ describe('NbtSchemaWalker Tests', () => {
                     .read()
                 fail()
             } catch ({ message }) {
-                assert(message === 'Path not found: ‘roots/blocks.json#minecraft:banner/refTest/non-existent’ [‘non-existent’].')
+                assert(message === 'path not found: ‘roots/blocks.json#minecraft:banner/refTest/non-existent’ [‘non-existent’]')
             }
+        })
+    })
+    describe('getCompletions() Tests', () => {
+        it('Should return empty completions when there are not any suggestions', () => {
+            const actual = walker
+                .go('block/banner.json')
+                .getCompletions(new StringReader(''), 0, VanillaConfig, {})
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return completions for raw suggestions', () => {
+            const actual = walker
+                .go('suggestionsTest.json#raw')
+                .getCompletions(new StringReader(''), 0)
+            assert.deepStrictEqual(actual, [
+                { label: 'foo' }
+            ])
+        })
+        it('Should return completions for detailed suggestions', () => {
+            const actual = walker
+                .go('suggestionsTest.json#detailed')
+                .getCompletions(new StringReader(''), 0)
+            assert.deepStrictEqual(actual, [
+                { label: 'bar', detail: 'The Bar' }
+            ])
+        })
+        it('Should return completions for argument parser suggestions', () => {
+            const actual = walker
+                .go('suggestionsTest.json#argumentParser')
+                .getCompletions(new StringReader(''), 0)
+            assert.deepStrictEqual(actual, [
+                { label: 'baz' },
+                { label: 'qux' }
+            ])
+        })
+        it('Should return completions for line parser suggestions', () => {
+            const actual = walker
+                .go('suggestionsTest.json#lineParser')
+                .getCompletions(new StringReader(''), 0)
+            assert.deepStrictEqual(actual, [
+                { label: '/' }
+            ])
+        })
+        it('Should return empty completions when the result completions of line parser is undefined', () => {
+            const actual = walker
+                .go('suggestionsTest.json#lineParser')
+                .getCompletions(new StringReader(''), undefined)
+            assert.deepStrictEqual(actual, [])
         })
     })
     describe('static Tests', () => {

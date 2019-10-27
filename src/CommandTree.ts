@@ -3,7 +3,7 @@ import BlockArgumentParser from './parsers/BlockArgumentParser'
 import BossbarArgumentParser from './parsers/BossbarArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
-import EntitySelectorArgumentParser from './parsers/EntitySelectorArgumentParser'
+import EntityArgumentParser from './parsers/EntityArgumentParser'
 import IPArgumentParser from './parsers/IPArgumentParser'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
@@ -34,7 +34,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('grant', 'revoke'),
                     children: {
                         targets: {
-                            parser: new EntitySelectorArgumentParser(true, true),
+                            parser: new EntityArgumentParser(true, true),
                             children: {
                                 everything: {
                                     parser: new LiteralArgumentParser('everything'),
@@ -76,7 +76,7 @@ export const VanillaTree: CommandTree = {
             description: 'Adds players to blacklist.',
             children: {
                 name: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -103,7 +103,7 @@ export const VanillaTree: CommandTree = {
                     }
                 },
                 name: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -207,7 +207,7 @@ export const VanillaTree: CommandTree = {
                                     parser: new LiteralArgumentParser('players'),
                                     children: {
                                         targets: {
-                                            parser: new EntitySelectorArgumentParser(true, true),
+                                            parser: new EntityArgumentParser(true, true),
                                             executable: true
                                         }
                                     }
@@ -251,7 +251,7 @@ export const VanillaTree: CommandTree = {
             executable: true,
             children: {
                 targets: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         item: {
@@ -323,7 +323,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('as'),
                     children: {
                         entity: {
-                            parser: new EntitySelectorArgumentParser(),
+                            parser: new EntityArgumentParser(),
                             children: {
                                 subcommand: {
                                     redirect: 'commands.execute'

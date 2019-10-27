@@ -8,7 +8,7 @@ import { GlobalCache } from '../types/Cache'
  */
 export default abstract class ArgumentParser<T> implements Parser<T> {
     /**
-     * Identity of the parser.
+     * Human-readable identity of the parser. Will be shown in hints.
      */
     abstract readonly identity: string
 

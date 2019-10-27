@@ -5,7 +5,7 @@ import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory, LocalCacheElement } from '../types/Cache'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
-    identity = 'string'
+    readonly identity = 'string'
 
     constructor(
         private readonly type: string,

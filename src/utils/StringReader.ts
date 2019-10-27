@@ -4,13 +4,8 @@ export default class StringReader {
     public readonly string: string
     public cursor = 0
 
-    constructor(base: string | StringReader) {
-        if (typeof base === 'string') {
-            this.string = base
-        } else {
-            this.cursor = base.cursor
-            this.string = base.string
-        }
+    constructor(value: string) {
+        this.string = value
     }
 
     get passedString() {
@@ -21,12 +16,18 @@ export default class StringReader {
         return this.string.slice(this.cursor)
     }
 
+    clone() {
+        const ans = new StringReader(this.string)
+        ans.cursor = this.cursor
+        return ans
+    }
+
     canRead(length = 1) {
         return this.cursor + length <= this.string.length
     }
 
     peek(offset = 0) {
-        return this.string[this.cursor + offset]
+        return this.string.charAt(this.cursor + offset)
     }
 
     skip(step = 1) {

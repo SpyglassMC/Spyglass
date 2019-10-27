@@ -479,7 +479,10 @@ describe('NbtTagArgumentParser Tests', () => {
                             type: 'int',
                             suggestions: [
                                 {
-                                    values: '../misc_group/effect_id.json'
+                                    parser: 'NumericID',
+                                    params: [
+                                        'minecraft:mob_effect'
+                                    ]
                                 }
                             ]
                         },
@@ -487,7 +490,10 @@ describe('NbtTagArgumentParser Tests', () => {
                             type: 'int',
                             suggestions: [
                                 {
-                                    values: '../misc_group/effect_id.json'
+                                    parser: 'NumericID',
+                                    params: [
+                                        'minecraft:mob_effect'
+                                    ]
                                 }
                             ]
                         }

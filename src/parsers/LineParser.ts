@@ -4,7 +4,7 @@ import StringReader from '../utils/StringReader'
 import VanillaTree, { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import ParsingError from '../types/ParsingError'
 import Config, { VanillaConfig } from '../types/Config'
-import { MarkupContent } from 'vscode-languageserver'
+import { MarkupContent, CompletionItemKind } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
 import { GlobalCache } from '../types/Cache'
 
@@ -13,10 +13,10 @@ export default class LineParser implements Parser<Line> {
         /**
          * Whether the line should begin with a slash (`/`).  
          * `true` - Should. Will throw untolerable errors if the line doesn't match.   
-         * `false` - Shouldn't. Will throw tolerable errors if the line doesn't match.  
+         * `false` - Shouldn't. Will throw untolerable errors if the line doesn't match.  
          * `null` - Not care.
          */
-        private readonly beginningSlash: boolean | null = null,
+        private readonly beginningSlash: boolean | null = false,
         /**
          * The entry point will be used to access `tree`.
          */
@@ -39,23 +39,33 @@ export default class LineParser implements Parser<Line> {
     parse(reader: StringReader, cursor: number = -1): ParserResult {
         const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], path: [] }
         if (reader.peek() === '/') {
+            // Find a leading slash...
             if (this.beginningSlash === false) {
+                // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
-                    'unexpected leading slash ‘/’'
+                    'unexpected leading slash ‘/’',
+                    false
                 ))
             }
             reader.skip()
         } else {
+            // Don't find a leading slash...
             if (this.beginningSlash === true) {
+                // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
                     `expected a leading slash ‘/’ but got ‘${reader.peek()}’`,
                     false
                 ))
+                if (cursor === reader.cursor) {
+                    line.completions.push({ label: '/' })
+                }
             }
         }
-        this.parseChildren(reader, this.tree[this.entryPoint], line, cursor)
+        if (line.errors.length === 0) {
+            this.parseChildren(reader, this.tree[this.entryPoint], line, cursor)
+        }
         saturatedLineToLine(line)
         return { data: line }
     }
@@ -103,9 +113,8 @@ export default class LineParser implements Parser<Line> {
                     /* istanbul ignore else */
                     if (node.children) {
                         // Compute completions.
-                        const newReader = new StringReader(reader)
                         const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
-                        this.parseChildren(newReader, node.children, result, cursor)
+                        this.parseChildren(reader, node.children, result, cursor)
                         /* istanbul ignore else */
                         if (result.completions && result.completions.length !== 0) {
                             parsedLine.completions.push(...result.completions)
@@ -143,7 +152,7 @@ export default class LineParser implements Parser<Line> {
                 )
             }
         } else {
-            throw new Error('Unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node.')
+            throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node')
         }
         if (node.run) {
             node.run(parsedLine)
@@ -157,7 +166,7 @@ export default class LineParser implements Parser<Line> {
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
                 const node = children[key]
-                const newReader = new StringReader(reader)
+                const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
                 this.parseSingle(newReader, key, node, parsedLine, cursor)
                 const untolerableErrors = parsedLine.errors.filter(v => !v.tolerable)
@@ -171,12 +180,12 @@ export default class LineParser implements Parser<Line> {
                         parsedLine.errors = oldErrors
                         continue
                     }
-                    return
                 }
+                reader.cursor = newReader.cursor
                 return
             }
         }
-        throw new Error('Unreachable error. Maybe there is an empty children in the command tree?')
+        throw new Error('unreachable error. Maybe there is an empty children in the command tree')
     }
 
     /**
@@ -196,7 +205,7 @@ export default class LineParser implements Parser<Line> {
                 if (i < path.length - 1) {
                     const result = getChildren(this.tree, node)
                     if (!result) {
-                        throw new Error(`There are no children in path ‘${path.slice(0, -1).join('.')}’.`)
+                        throw new Error(`there are no children in path ‘${path.slice(0, -1).join('.')}’`)
                     }
                     children = result
                 } else {
@@ -204,10 +213,10 @@ export default class LineParser implements Parser<Line> {
                     return { partOfHints: hints, node }
                 }
             } else {
-                throw new Error(`‘${ele}’ doesn't exist in path ‘${path.slice(0, i).join('.')}’.`)
+                throw new Error(`‘${ele}’ doesn't exist in path ‘${path.slice(0, i).join('.')}’`)
             }
         }
-        throw new Error('Unreachable error. Maybe the path is empty?')
+        throw new Error('unreachable error. Maybe the path is empty')
     }
 
     getHintAndDescription({ node, partOfHints }: PartOfHintsAndNode) {

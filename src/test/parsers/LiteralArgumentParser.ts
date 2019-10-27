@@ -14,7 +14,7 @@ describe('LiteralArgumentParser Tests', () => {
                 fail()
             } catch (e) {
                 const er = <Error>e
-                assert(er.message==='Expected ‘literals.length’ to be more than 0.')
+                assert(er.message === 'expected ‘literals.length’ to be more than 0')
             }
         })
     })
@@ -53,14 +53,8 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''))
             assert.deepStrictEqual(actual.completions,
                 [
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Text
-                    },
-                    {
-                        label: 'foo',
-                        kind: CompletionItemKind.Text
-                    }
+                    { label: 'bar' },
+                    { label: 'foo' }
                 ]
             )
         })

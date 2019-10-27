@@ -13,7 +13,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
     constructor(...literals: string[]) {
         super()
         if (literals.length === 0) {
-            throw new Error('Expected ‘literals.length’ to be more than 0.')
+            throw new Error('expected ‘literals.length’ to be more than 0')
         }
         this.literals = literals.sort()
     }
@@ -27,7 +27,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         }
         //#region Get completions.
         if (!reader.canRead()) {
-            ans.completions = this.literals.map(v => ({ label: v, kind: CompletionItemKind.Text }))
+            ans.completions = this.literals.map(v => ({ label: v }))
         }
         //#endregion
         const start = reader.cursor

@@ -1,8 +1,12 @@
 import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
 import { posix, ParsedPath } from 'path'
 import { NbtTagTypeName } from '../types/NbtTag'
+import { CompletionItem, CompletionItemKind } from 'vscode-languageserver'
+import { getArgumentParser } from '../parsers/ArgumentParsers'
+import StringReader from './StringReader'
+import LineParser from '../parsers/LineParser'
 import { GlobalCache } from '../types/Cache'
-import { CompletionItem } from 'vscode-languageserver'
+import { VanillaConfig } from '../types/Config'
 
 export type NbtNoPropertySchemaNode = NoPropertyNode
 export type NbtCompoundSchemaNode = CompoundNode
@@ -11,6 +15,13 @@ export type NbtListSchemaNode = ListNode
 export type NbtRefSchemaNode = RefNode
 export type NbtSchemaNode = NBTNode
 export type NbtSchemaNodeWithType = NbtSchemaNode & { type: 'no-nbt' | NbtTagTypeName }
+
+type SuggestionNode =
+    | string
+    | DetailedSuggestionNode
+    | ParserSuggestionNode
+type DetailedSuggestionNode = { description?: string, value?: string }
+type ParserSuggestionNode = { parser: string, params?: any }
 
 export default class NbtSchemaWalker {
     constructor(private readonly nbtSchema: typeof nbtDocs) { }
@@ -58,7 +69,7 @@ export default class NbtSchemaWalker {
         }
         if (type === 'filePath') {
             if (!this.nbtSchema.hasOwnProperty(ans)) {
-                throw new Error(`Path not found: join(‘${this[type].full}’, ‘${rel}’) => ‘${ans}’`)
+                throw new Error(`path not found: join(‘${this[type].full}’, ‘${rel}’) => ‘${ans}’`)
             }
             this.cloneParsedPath(posix.parse(''), this.anchorPath)
         }
@@ -194,7 +205,7 @@ export default class NbtSchemaWalker {
                         }
                     }
                     throw new Error(
-                        `Path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${path.join('’, ‘')}’].`
+                        `path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${path.join('’, ‘')}’]`
                     )
                 } else {
                     return node as NbtSchemaNodeWithType
@@ -206,6 +217,37 @@ export default class NbtSchemaWalker {
         )
         this.cache = ans
 
+        return ans
+    }
+
+    getCompletions(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}): CompletionItem[] {
+        const isParserNode =
+            (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
+        const ans: CompletionItem[] = []
+        const suggestions: SuggestionNode[] = this.read().suggestions ? this.read().suggestions as SuggestionNode[] : []
+        suggestions.forEach(
+            v => {
+                if (typeof v === 'string') {
+                    ans.push({ label: v })
+                } else if (isParserNode(v)) {
+                    if (v.parser === '#') {
+                        // LineParser
+                        const parser = new LineParser(...v.params)
+                        const { completions } = parser.parse(reader, cursor).data
+                        if (completions) {
+                            ans.push(...completions)
+                        }
+                    } else {
+                        // Regular ArgumentParser
+                        const parser = getArgumentParser(v.parser, v.params)
+                        const { completions } = parser.parse(reader, cursor, config, cache)
+                        ans.push(...completions)
+                    }
+                } else {
+                    ans.push({ label: v.value as string, detail: v.description })
+                }
+            }
+        )
         return ans
     }
 
@@ -258,37 +300,6 @@ export default class NbtSchemaWalker {
             article = 'an'
         }
         return `${article} ${type.replace(/_/g, ' ')} tag`
-    }
-
-    public static getCompletions(
-        suggestions: Array<
-            | string
-            | { description?: string, value?: string, values?: string }
-            | { paresr: string, params?: any }
-        >,
-        cache: GlobalCache
-    ): CompletionItem[] {
-        const isParserNode =
-            (value: any): value is { parser: string, params?: any } =>
-                typeof value.parser === 'string'
-        const ans = suggestions.map(
-            v => {
-                if (typeof v === 'string') {
-                    return { label: v }
-                } else if (isParserNode(v)) {
-                    v
-                } else {
-                    // if (v.values) {
-                    //     return { label: v.value, detail: v.description }
-                    // } else {
-                    //     return { label: v.value, detail: v.description }
-                    // }
-                }
-                throw ''
-            }
-        )
-        throw ''
-        // return ans
     }
 }
 

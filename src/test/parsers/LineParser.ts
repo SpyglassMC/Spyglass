@@ -40,8 +40,8 @@ export class TestArgumentParser extends ArgumentParser<string> {
                 entities: {
                     foo: {
                         def: [
-                            { 
-                                range: { start, end: start + data.length } 
+                            {
+                                range: { start, end: start + data.length }
                             }
                         ],
                         ref: []
@@ -49,11 +49,11 @@ export class TestArgumentParser extends ArgumentParser<string> {
                 }
             }
         } else if (this.type === 'CACHE') {
-            ans.cache ={
+            ans.cache = {
                 entities: {
                     foo: {
                         def: [
-                            { 
+                            {
                                 range: { start, end: start + data.length },
                                 documentation: '*foo*'
                             },
@@ -85,7 +85,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'Unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node.')
+                assert(message === 'unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node')
             }
         })
         it('Should parse when parser specified', () => {
@@ -364,7 +364,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'Unreachable error. Maybe there is an empty children in the command tree?')
+                assert(message === 'unreachable error. Maybe there is an empty children in the command tree')
             }
         })
         it('Should return the first child if no error occurrs', () => {
@@ -500,7 +500,7 @@ describe('LineParser Tests', () => {
                 parser.getPartOfHintsAndNode([])
                 fail()
             } catch (e) {
-                assert(e.message === 'Unreachable error. Maybe the path is empty?')
+                assert(e.message === 'unreachable error. Maybe the path is empty')
             }
         })
         it("Should throw error when the path doesn't exist", () => {
@@ -509,7 +509,7 @@ describe('LineParser Tests', () => {
                 parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'wtf', 'wtf2'])
                 fail()
             } catch (e) {
-                assert(e.message === "‘wtf’ doesn't exist in path ‘command.execute.run’.")
+                assert(e.message === "‘wtf’ doesn't exist in path ‘command.execute.run’")
             }
         })
         it('Should throw error when there are no children in specific path', () => {
@@ -518,7 +518,7 @@ describe('LineParser Tests', () => {
                 parser.getPartOfHintsAndNode(['command', 'nochildren', 'wtf'])
                 fail()
             } catch (e) {
-                assert(e.message === 'There are no children in path ‘command.nochildren’.')
+                assert(e.message === 'there are no children in path ‘command.nochildren’')
             }
         })
         it('Should return the part of hints and node', () => {
@@ -636,17 +636,18 @@ describe('LineParser Tests', () => {
                 }
             })
         })
-        it('Should return tolerable error when encounters unexpected leeding slash', () => {
+        it('Should return untolerable error when encounters unexpected leeding slash', () => {
             const parser = new LineParser(false, undefined, tree)
             const reader = new StringReader('/foo')
             const actual = parser.parse(reader)
             assert.deepStrictEqual(actual, {
                 data: {
-                    args: [{ data: 'foo', parser: 'test' }],
-                    path: ['command', 'second'],
+                    args: [],
+                    path: [],
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'unexpected leading slash ‘/’'
+                        'unexpected leading slash ‘/’',
+                        false
                     )]
                 }
             })
@@ -657,13 +658,32 @@ describe('LineParser Tests', () => {
             const actual = parser.parse(reader)
             assert.deepStrictEqual(actual, {
                 data: {
-                    args: [{ data: 'foo', parser: 'test' }],
-                    path: ['command', 'second'],
+                    args: [],
+                    path: [],
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
                         'expected a leading slash ‘/’ but got ‘f’',
                         false
                     )]
+                }
+            })
+        })
+        it('Should return completions for the leading slash', () => {
+            const parser = new LineParser(true, undefined, tree)
+            const reader = new StringReader('')
+            const actual = parser.parse(reader, 0)
+            assert.deepStrictEqual(actual, {
+                data: {
+                    args: [],
+                    path: [],
+                    errors: [new ParsingError(
+                        { start: 0, end: 1 },
+                        'expected a leading slash ‘/’ but got ‘’',
+                        false
+                    )],
+                    completions: [
+                        { label: '/' }
+                    ]
                 }
             })
         })
