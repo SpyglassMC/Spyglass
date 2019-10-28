@@ -231,7 +231,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws {ParsingError} Tolerable if can't read, otherwise untolerable.
+     * @throws {ParsingError} (tolerable) when the next char can't match the expected one.
      */
     expect(c: string) {
         const start = this.cursor
@@ -239,7 +239,7 @@ export default class StringReader {
         if (!this.canRead()) {
             throw new ParsingError({ start, end }, `expected ‘${c}’ but got nothing`)
         } else if (this.peek() !== c) {
-            throw new ParsingError({ start, end }, `expected ‘${c}’ but got ‘${this.peek()}’`, false)
+            throw new ParsingError({ start, end }, `expected ‘${c}’ but got ‘${this.peek()}’`)
         }
         return this
     }

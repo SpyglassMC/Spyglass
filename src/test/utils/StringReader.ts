@@ -356,7 +356,7 @@ describe('StringReader Tests', () => {
                 assert(tolerable === true)
             }
         })
-        it('Should throw untolerable error when not matching', () => {
+        it('Should throw tolerable error when not matching', () => {
             const reader = new StringReader('foo')
             try {
                 reader.expect('b')
@@ -366,7 +366,7 @@ describe('StringReader Tests', () => {
                 assert(message.match(/expected ‘b’ but got ‘f’/))
                 assert(range.start === 0)
                 assert(range.end === 1)
-                assert(tolerable === false)
+                assert(tolerable === true)
             }
         })
     })

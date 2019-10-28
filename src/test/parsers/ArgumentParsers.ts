@@ -20,7 +20,7 @@ describe('ArgumentParsers Tests', () => {
         })
         it('Should throw error if there is error thrown', () => {
             try {
-                const actual = getArgumentParser('Literal', [])
+                const actual = getArgumentParser('Literal')
                 fail()
             } catch (e) {
                 assert(e.message === 'error occurred when getting parser from {id: ‘Literal’, params: ‘’}: ' +
