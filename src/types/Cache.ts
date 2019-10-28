@@ -1,5 +1,5 @@
 import TextRange from './TextRange'
-import { CompletionItem, MarkupKind } from 'vscode-languageserver'
+import { CompletionItem } from 'vscode-languageserver'
 
 export type GlobalCache = Cache<GlobalCacheElement>
 export type LocalCache = Cache<LocalCacheElement>

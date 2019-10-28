@@ -78,7 +78,7 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
                 quote = "'"
                 break
             case 'prefer single':
-                const containSingleQuote = inner.indexOf("'") !== -1
+                const containSingleQuote = inner.includes("'")
                 if (containSingleQuote) {
                     quote = '"'
                 } else {
@@ -87,7 +87,7 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
                 break
             case 'prefer double':
             default:
-                const containDoubleQuote = inner.indexOf('"') !== -1
+                const containDoubleQuote = inner.includes('"')
                 if (containDoubleQuote) {
                     quote = "'"
                 } else {

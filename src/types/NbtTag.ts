@@ -138,7 +138,7 @@ export function getNbtDoubleTag(val: number) {
         [NbtTagType]: 'double',
         [ToLintedString]: (lint: LintConfig) => {
             const strValue = getStringFromFloat(val, lint)
-            if (lint.snbtOmitDoubleSuffix && strValue.indexOf('.') !== -1) {
+            if (lint.snbtOmitDoubleSuffix && strValue.includes('.')) {
                 return strValue
             } else {
                 return `${strValue}${lint.snbtDoubleSuffix}`

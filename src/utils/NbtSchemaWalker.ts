@@ -183,7 +183,7 @@ export default class NbtSchemaWalker {
                                                 .goFile(listPath)
                                                 .read() as unknown as ValueList
                                         const stringList = valueList.map(v => typeof v === 'string' ? v : v.value)
-                                        if (stringList.indexOf(key) !== -1) {
+                                        if (stringList.includes(key)) {
                                             const element = node.children[subKey]
                                             return findNodeInChildren(element, path.slice(1))
                                         }
