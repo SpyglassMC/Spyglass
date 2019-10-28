@@ -584,30 +584,10 @@ describe('NbtTagArgumentParser Tests', () => {
                         byteArray: { type: 'byte_array' },
                         intArray: { type: 'int_array' },
                         longArray: { type: 'long_array' },
-                        primitive: { type: 'string' },
-                        raw: {
-                            type: 'no-nbt',
-                            suggestions: ['foo']
-                        },
-                        detailed: {
-                            type: 'no-nbt',
-                            suggestions: [{ value: 'bar', description: 'The Bar' }]
-                        },
-                        argumentParser: {
-                            type: 'no-nbt',
-                            suggestions: [{ parser: 'Literal', params: ['baz', 'qux'] }]
-                        },
-                        lineParser: {
-                            type: 'no-nbt',
-                            suggestions: [{
-                                parser: '#', params: [
-                                    true,
-                                    'commands',
-                                    {
-                                        commands: { execute: { parser: new LiteralArgumentParser('foo'), executable: true } }
-                                    }
-                                ]
-                            }]
+                        primitive: { type: 'byte' },
+                        string: {
+                            type: 'string',
+                            suggestions: [{ parser: 'Literal', params: ['foo', '"bar"'] }]
                         }
                     }
                 },
@@ -811,7 +791,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return empty completions when the schema is a primitive type', () => {
+            it('Should return empty completions when the schema is a non-string primitive type', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ primitive: }')
                 const { data, errors, cache, completions } = parser.parse(reader, 13)
@@ -820,10 +800,10 @@ describe('NbtTagArgumentParser Tests', () => {
                         primitive: getNbtStringTag('')
                     }
                 ))
-                assert.deepStrictEqual(errors, [new ParsingError(
-                    { start: 13, end: 14 },
-                    'expected a tag but got nothing'
-                )])
+                assert.deepStrictEqual(errors, [
+                    new ParsingError({ start: 13, end: 14 }, 'expected a tag but got nothing'),
+                    new ParsingError({ start: 13, end: 13 }, 'expected a byte tag instead of a string tag', true, DiagnosticSeverity.Warning),
+                ])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
@@ -983,6 +963,22 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
+            it('Should return empty completions when the cursor is not at the point for string tag quotes', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const reader = new StringReader('{ string: }')
+                const { data, errors, cache, completions } = parser.parse(reader)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        string: getNbtStringTag('')
+                    }
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 10, end: 11 },
+                    'expected a tag but got nothing'
+                )])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [])
+            })
             it('Should return completions for compound tag keys', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ compound: {} }')
@@ -1012,6 +1008,41 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
+            })
+            it('Should return completions for empty string tags', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const reader = new StringReader('{ string: }')
+                const { data, errors, cache, completions } = parser.parse(reader, 10)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        string: getNbtStringTag('')
+                    }
+                ))
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 10, end: 11 },
+                    'expected a tag but got nothing'
+                )])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [
+                    { label: '"foo"' },
+                    { label: `'"bar"'` }
+                ])
+            })
+            it('Should return completions inside quoted string tags', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const reader = new StringReader('{ string: "" }')
+                const { data, errors, cache, completions } = parser.parse(reader, 11)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        string: getNbtStringTag('')
+                    }
+                ))
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [
+                    { label: 'foo' },
+                    { label: '\\"bar\\"' }
+                ])
             })
         })
     })

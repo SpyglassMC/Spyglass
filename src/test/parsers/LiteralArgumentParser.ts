@@ -27,14 +27,14 @@ describe('LiteralArgumentParser Tests', () => {
         it('Should return correctly for multi literals', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.toHint()
-            assert.strictEqual(actual, '(bar|foo)')
+            assert.strictEqual(actual, '(foo|bar)')
         })
     })
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['bar', 'foo'])
+            assert.deepStrictEqual(actual, ['foo', 'bar'])
         })
     })
     describe('parse() Tests', () => {
@@ -48,13 +48,13 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('actual'))
             assert(actual.data === 'actual')
         })
-        it('Should return completions for empty input', () => {
+        it('Should return completions', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
-            const actual = parser.parse(new StringReader(''))
+            const actual = parser.parse(new StringReader(''), 0)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'bar' },
-                    { label: 'foo' }
+                    { label: 'foo' },
+                    { label: 'bar' }
                 ]
             )
         })
@@ -64,7 +64,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got nothing/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got nothing/))
             assert(pe.tolerable === false)
         })
         it('Should return errors when partial matching', () => {
@@ -73,7 +73,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got ‘F’/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘F’/))
             assert(pe.tolerable === true)
         })
         it('Should return untolerable error when nothing matches', () => {
@@ -82,7 +82,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/expected one of ‘bar’ and ‘foo’ but got ‘spg’/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘spg’/))
             assert(pe.tolerable === false)
         })
     })

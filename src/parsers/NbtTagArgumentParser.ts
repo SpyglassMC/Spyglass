@@ -10,7 +10,7 @@ import { nbtDocs } from 'mc-nbt-paths'
 import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
-import { arrayToMessage } from '../utils/utils'
+import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -176,6 +176,19 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans = this.parsePrimitiveArray(reader, walker, walker.read().type as any)
                         if (this.cursor === start) {
                             ans.completions.push({ label: `[${walker.read().type.toUpperCase()[0]};]` })
+                        }
+                    } else if (walker.read().type === 'string') {
+                        const clonedReader = reader.clone()
+                        ans = this.parsePrimitiveTag(reader, walker)
+                        if (this.cursor === start) {
+                            ans.completions.push(
+                                ...walker
+                                    .getCompletions(clonedReader, this.cursor, this.config, this.cache)
+                                    .map(v => ({
+                                        ...v,
+                                        label: quoteString(v.label, this.config.lint.quoteType, this.config.lint.quoteSnbtStringValues)
+                                    }))
+                            )
                         }
                     } else {
                         ans = this.parsePrimitiveTag(reader, walker)
@@ -359,7 +372,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, walker?: NbtSchemaWalker,
+    private parsePrimitiveArray(reader: StringReader, _walker?: NbtSchemaWalker,
         specifiedType: 'byte_array' | 'int_array' | 'long_array' | null = null):
         ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
@@ -500,13 +513,18 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private parsePrimitiveTag(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
+            const quote = reader.peek()
             try {
+                const clonedReader = reader.clone().skip()
                 const value = reader.readQuotedString()
                 return {
                     data: getNbtStringTag(value),
                     errors: [],
                     cache: {},
-                    completions: []
+                    completions: walker ?
+                        walker.getCompletions(clonedReader, this.cursor, this.config, this.cache)
+                            .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
+                        []
                 }
             } catch (p) {
                 return {

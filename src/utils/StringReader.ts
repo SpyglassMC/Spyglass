@@ -273,7 +273,7 @@ export default class StringReader {
         return /^[0-9a-zA-Z\_\-\.\+]+$/.test(string)
     }
 
-    static isQuote(c: string) {
+    static isQuote(c: string): c is '"' | "'" {
         return c === '"' || c === "'"
     }
 }

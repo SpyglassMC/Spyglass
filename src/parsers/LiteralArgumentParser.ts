@@ -15,10 +15,10 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         if (literals.length === 0) {
             throw new Error('expected ‘literals.length’ to be more than 0')
         }
-        this.literals = literals.sort()
+        this.literals = literals
     }
 
-    parse(reader: StringReader): ArgumentParserResult<string> {
+    parse(reader: StringReader, cursor: number = -1): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -26,7 +26,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Get completions.
-        if (!reader.canRead()) {
+        if (reader.cursor === cursor) {
             ans.completions = this.literals.map(v => ({ label: v }))
         }
         //#endregion
