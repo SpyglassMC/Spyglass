@@ -18,9 +18,9 @@ export type NbtSchemaNodeWithType = NbtSchemaNode & { type: 'no-nbt' | NbtTagTyp
 
 type SuggestionNode =
     | string
-    | DetailedSuggestionNode
+    | DocedSuggestionNode
     | ParserSuggestionNode
-type DetailedSuggestionNode = { description?: string, value?: string }
+type DocedSuggestionNode = { description?: string, value?: string }
 type ParserSuggestionNode = { parser: string, params?: any }
 
 export default class NbtSchemaWalker {
@@ -244,7 +244,7 @@ export default class NbtSchemaWalker {
                         ans.push(...completions)
                     }
                 } else {
-                    ans.push({ label: v.value as string, detail: v.description })
+                    ans.push({ label: v.value as string, documentation: v.description })
                 }
             }
         )

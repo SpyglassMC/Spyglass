@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { LocalCache, isDefinitionType, combineCache, getCategoryKey, GlobalCache, trimCache } from '../../types/Cache'
+import { LocalCache, isDefinitionType, combineCache, getCategoryKey, GlobalCache, trimCache, getCompletions, getSafeCategory } from '../../types/Cache'
 
 describe('Cache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -125,6 +125,38 @@ describe('Cache Tests', () => {
             assert.deepStrictEqual(actual1, override)
             assert.deepStrictEqual(actual2, override)
             assert.deepStrictEqual(actual3, override)
+        })
+    })
+    describe('getSafeCategory() Tests', () => {
+        it('Should return category', () => {
+            const cache = { tags: {} }
+            const actual = getSafeCategory(cache, 'tags')
+            assert(actual === cache.tags)
+        })
+        it('Should return an empty object if the category does not exist', () => {
+            const cache = {}
+            const actual = getSafeCategory(cache, 'tags')
+            assert.deepStrictEqual(actual, {})
+        })
+    })
+    describe('getCompletions() Tests', () => {
+        it('Should return completions', () => {
+            const actual = getCompletions({
+                tags: {
+                    foo: { def: [], ref: [] },
+                    bar: {
+                        def: [{
+                            line: { uri: '', number: 0 },
+                            documentation: 'Documentation for **bar**'
+                        }],
+                        ref: []
+                    }
+                }
+            }, 'tags')
+            assert.deepStrictEqual(actual, [
+                { label: 'foo' },
+                { label: 'bar', documentation: 'Documentation for **bar**' }
+            ])
         })
     })
     describe('getCategoryKey() Tests', () => {

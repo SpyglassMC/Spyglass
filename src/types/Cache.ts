@@ -1,4 +1,5 @@
 import TextRange from './TextRange'
+import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 
 export type GlobalCache = Cache<GlobalCacheElement>
 export type LocalCache = Cache<LocalCacheElement>
@@ -172,6 +173,27 @@ export function trimCache<T extends LocalCacheElement | GlobalCacheElement>(cach
             delete cache[type as keyof Cache<T>]
         }
     }
+}
+
+export function getSafeCategory(cache: GlobalCache, type: keyof Cache<GlobalCacheElement>) {
+    const category = cache[type]
+    return category ? category : {}
+}
+
+export function getCompletions(cache: GlobalCache, type: keyof Cache<GlobalCacheElement>) {
+    const category = cache[type]
+    const ans: CompletionItem[] = []
+    for (const id in category) {
+        const unit = category[id] as Unit<GlobalCacheElement>
+        console.log(unit)
+        const def = unit.def[unit.def.length - 1]
+        const documentation = def ? def.documentation : undefined
+        ans.push({
+            ...{ label: id },
+            ...(documentation ? { documentation } : {})
+        })
+    }
+    return ans
 }
 
 type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag'

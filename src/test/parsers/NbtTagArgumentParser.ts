@@ -991,7 +991,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
-                    { label: 'fooKey', kind: CompletionItemKind.Property, detail: 'Description for the `fooKey`.' },
+                    { label: 'fooKey', kind: CompletionItemKind.Property, documentation: 'Description for the `fooKey`.' },
                     { label: 'barKey', kind: CompletionItemKind.Property },
                     { label: 'quxKey', kind: CompletionItemKind.Property }
                 ])

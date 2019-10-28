@@ -120,6 +120,21 @@ The naming convension for scoreboard objectives.
 The naming convension for compound tag keys in SNBT.  
 @default `['PascalCase', 'camelCase']`
 
+#### strictBossbarCheck: boolean
+
+Whether to throw warnings for undefined bossbars.  
+@default `false`
+
+#### strictObjectiveCheck: boolean
+
+Whether to throw warnings for undefined objectives.  
+@default `false`
+
+#### strictTagCheck: boolean
+
+Whether to throw warnings for undefined tags.  
+@default `false`
+
 ## Contributing
 
 Contributions are welcome!

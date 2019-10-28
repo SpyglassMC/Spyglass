@@ -250,7 +250,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                             kind: CompletionItemKind.Property
                                         },
                                         ...definedChildren[key].description ?
-                                            { detail: definedChildren[key].description } :
+                                            { documentation: definedChildren[key].description } :
                                             {}
                                     } as CompletionItem
                                 )

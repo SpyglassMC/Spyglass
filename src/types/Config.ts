@@ -118,7 +118,22 @@ export type LintConfig = {
      * The naming convension for compound tag keys in SNBT.  
      * @default ['PascalCase', 'camelCase']
      */
-    nameOfSnbtCompoundTagKeys: NamingConventionConfig
+    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
+    /**
+     * Whether to throw warnings for undefined bossbars.  
+     * @default false
+     */
+    strictBossbarCheck: boolean,
+    /**
+     * Whether to throw warnings for undefined objectives.  
+     * @default false
+     */
+    strictObjectiveCheck: boolean,
+    /**
+     * Whether to throw warnings for undefined tags.  
+     * @default false
+     */
+    strictTagCheck: boolean
 }
 
 export default interface Config {
@@ -159,7 +174,10 @@ export const VanillaConfig: Config = {
         snbtSortKeys: false,
         nameOfTags: 'whatever',
         nameOfObjectives: 'whatever',
-        nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
+        nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],
+        strictBossbarCheck: false,
+        strictObjectiveCheck: false,
+        strictTagCheck: false
     }
 }
 

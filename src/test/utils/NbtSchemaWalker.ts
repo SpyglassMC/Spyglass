@@ -345,7 +345,7 @@ describe('NbtSchemaWalker Tests', () => {
                 .go('suggestionsTest.json#detailed')
                 .getCompletions(new StringReader(''), 0)
             assert.deepStrictEqual(actual, [
-                { label: 'bar', detail: 'The Bar' }
+                { label: 'bar', documentation: 'The Bar' }
             ])
         })
         it('Should return completions for argument parser suggestions', () => {
