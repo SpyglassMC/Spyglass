@@ -579,7 +579,7 @@ describe('NbtTagArgumentParser Tests', () => {
                         },
                         list: {
                             type: 'list',
-                            item: { type: 'no-nbt' }
+                            item: { type: 'compound' }
                         },
                         byteArray: { type: 'byte_array' },
                         intArray: { type: 'int_array' },
@@ -826,6 +826,24 @@ describe('NbtTagArgumentParser Tests', () => {
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
+            })
+            it('Should return completions for compound tag brackets at the end of input', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const reader = new StringReader('{ compound:')
+                const { data, errors, cache, completions } = parser.parse(reader, 11)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        compound: getNbtCompoundTag({})
+                    }
+                ))
+                assert.deepStrictEqual(errors, [
+                    new ParsingError({ start: 11, end: 12 }, 'expected ‘{’ but got nothing'),
+                    new ParsingError({ start: 11, end: 12 }, 'expected ‘}’ but got nothing')
+                ])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [
+                    { label: '{}' }
+                ])
             })
             it('Should return completions for compound tag brackets', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)

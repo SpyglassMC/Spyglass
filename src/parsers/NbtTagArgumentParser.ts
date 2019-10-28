@@ -155,9 +155,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             case '[':
                 ans = this.parseListOrArray(reader, walker)
                 break
-            case undefined:
+            case '':
             case '}':
-            case ']':
                 if (walker) {
                     if (NbtSchemaWalker.isCompoundNode(walker.read())) {
                         ans = this.parseCompoundTag(reader, walker)
