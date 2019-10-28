@@ -185,7 +185,6 @@ export function getCompletions(cache: GlobalCache, type: keyof Cache<GlobalCache
     const ans: CompletionItem[] = []
     for (const id in category) {
         const unit = category[id] as Unit<GlobalCacheElement>
-        console.log(unit)
         const def = unit.def[unit.def.length - 1]
         const documentation = def ? def.documentation : undefined
         ans.push({
