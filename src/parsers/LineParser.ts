@@ -9,6 +9,7 @@ import ArgumentParser from './ArgumentParser'
 import { GlobalCache } from '../types/Cache'
 
 export default class LineParser implements Parser<Line> {
+    // istanbul ignore next
     constructor(
         /**
          * Whether the line should begin with a slash (`/`).  
