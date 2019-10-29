@@ -349,9 +349,11 @@ describe('NbtSchemaWalker Tests', () => {
             ])
         })
         it('Should return completions for argument parser suggestions', () => {
+            const out = { type: '' }
             const actual = walker
                 .go('suggestionsTest.json#argumentParser')
-                .getCompletions(new StringReader(''), 0)
+                .getCompletions(new StringReader(''), 0, undefined, undefined, out)
+            assert(out.type === 'string')
             assert.deepStrictEqual(actual, [
                 { label: 'baz' },
                 { label: 'qux' }

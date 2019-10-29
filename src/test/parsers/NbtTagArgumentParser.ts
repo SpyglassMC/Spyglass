@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
 import { constructConfig, VanillaConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
@@ -588,6 +588,21 @@ describe('NbtTagArgumentParser Tests', () => {
                         string: {
                             type: 'string',
                             suggestions: [{ parser: 'Literal', params: ['foo', '"bar"'] }]
+                        },
+                        byte: {
+                            type: 'byte',
+                            suggestions: [{
+                                parser: 'NumericID', params: ['spgoding:test', {
+                                    'spgoding:test': {
+                                        protocol_id: 0,
+                                        entries: {
+                                            'spgoding:test/a': { protocol_id: 0 },
+                                            'spgoding:test/b': { protocol_id: 1 },
+                                            'spgoding:test/c': { protocol_id: 2 }
+                                        }
+                                    }
+                                }]
+                            }]
                         }
                     }
                 },
@@ -1042,6 +1057,31 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [
                     { label: 'foo' },
                     { label: '\\"bar\\"' }
+                ])
+            })
+            it('Should return completions for byte tags', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const reader = new StringReader('{ byte: }')
+                const { data, errors, cache, completions } = parser.parse(reader, 8)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        byte: getNbtStringTag('')
+                    }
+                ))
+                assert.deepStrictEqual(errors, [
+                    new ParsingError(
+                        { start: 8, end: 9 }, 'expected a tag but got nothing'
+                    ),
+                    new ParsingError(
+                        { start: 8, end: 8 }, 'expected a byte tag instead of a string tag',
+                        undefined, DiagnosticSeverity.Warning
+                    )
+                ])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [
+                    { label: '0b', detail: 'spgoding:test/a' },
+                    { label: '1b', detail: 'spgoding:test/b' },
+                    { label: '2b', detail: 'spgoding:test/c' }
                 ])
             })
         })

@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import ParsingError from '../types/ParsingError'
 
 export default class StringReader {
@@ -47,7 +48,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws 
+     * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
      */
     private readNumber() {
         const start = this.cursor
@@ -62,61 +63,62 @@ export default class StringReader {
                 this.cursor = start
                 throw new ParsingError({ start, end }, `expected a number but got ‘${str}’`)
             }
-            return num
+            return str
         } else {
             const end = this.cursor + 1
             const value = this.peek()
             if (value) {
                 throw new ParsingError({ start, end }, `expected a number but got ‘${this.peek()}’ at beginning`, false)
             } else {
-                throw new ParsingError({ start, end }, 'expected a number but got nothing')
+                throw new ParsingError({ start, end }, 'expected a number but got nothing', false)
             }
         }
     }
 
     /**
-     * @throws 
+     * @throws {ParsingError} When the value is float or exceeds the range.
      */
     readInt() {
         const start = this.cursor
-        const num = this.readNumber()
-        if (parseInt(num.toString()) !== num) {
-            // num is not int
+        const str = this.readNumber()
+        const num = parseInt(str)
+        if (str.includes('.')) {
+            // num is float.
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer but got ${num}`)
+            throw new ParsingError({ start, end }, `expected an integer but got ${str}`)
         }
         if (num < -2147483648 || num > 2147483647) {
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${num}`)
+            throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${str}`)
         }
         return num
     }
 
     /**
-     * @throws 
+     * @throws When the value is float.
      */
     readLong() {
         const start = this.cursor
-        const num = this.readNumber()
-        if (parseInt(num.toString()) !== num) {
+        const str = this.readNumber()
+        if (str.includes('.')) {
             // num is float
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected a long but got ${num}`)
+            throw new ParsingError({ start, end }, `expected a long but got ${str}`)
         }
-        return num
+        return new BigNumber(str)
     }
 
     readFloat() {
-        const num = this.readNumber()
-        return num
+        const str = this.readNumber()
+        return parseFloat(str)
     }
 
     readDouble() {
-        const num = this.readNumber()
-        return num
+        const str = this.readNumber()
+        return parseFloat(str)
     }
 
     readUnquotedString() {
