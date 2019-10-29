@@ -1,6 +1,5 @@
 import ArgumentParser from './ArgumentParser'
 import BlockArgumentParser from './BlockArgumentParser'
-import BossbarArgumentParser from './BossbarArgumentParser'
 import DefinitionDescriptionArgumentParser from './DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './DefinitionIDArgumentParser'
 import EntityArgumentParser from './EntityArgumentParser'
@@ -20,7 +19,6 @@ import VectorArgumentParser from './VectorArgumentParser'
 
 export const ArgumentParsers: (new (...params: any) => ArgumentParser<any>)[] = [
     BlockArgumentParser,
-    BossbarArgumentParser,
     DefinitionDescriptionArgumentParser,
     DefinitionIDArgumentParser,
     EntityArgumentParser,

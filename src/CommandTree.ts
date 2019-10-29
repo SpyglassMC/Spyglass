@@ -1,6 +1,5 @@
 import ArgumentParser from './parsers/ArgumentParser'
 import BlockArgumentParser from './parsers/BlockArgumentParser'
-import BossbarArgumentParser from './parsers/BossbarArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import EntityArgumentParser from './parsers/EntityArgumentParser'
@@ -12,6 +11,7 @@ import NumberArgumentParser from './parsers/NumberArgumentParser'
 import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
 import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
+import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -133,7 +133,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
@@ -147,7 +147,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('get'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 max_players_value_visible: {
                                     parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
@@ -165,7 +165,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             executable: true
                         }
                     }
@@ -174,7 +174,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
