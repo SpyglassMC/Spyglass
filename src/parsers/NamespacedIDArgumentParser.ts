@@ -50,7 +50,28 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
 
         //#region Data
         try {
-            ans.data = reader.readNamespacedID()
+            const start = reader.cursor
+            let namespace = Identity.DefaultNamespace
+            const paths: string[] = []
+            if (!reader.canRead()) {
+                throw new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false)
+            }
+            let path0 = reader.readUnquotedString()
+            if (reader.peek() === ':') {
+                namespace = path0
+                path0 = reader
+                    .skip()
+                    .readUnquotedString()
+            }
+            paths.push(path0)
+            while (reader.peek() === Identity.Sep) {
+                paths.push(
+                    reader
+                        .skip()
+                        .readUnquotedString()
+                )
+            }
+            ans.data = new Identity(namespace, paths)
             stringID = ans.data.toString()
             rawLength = reader.cursor - start
         } catch (p) {

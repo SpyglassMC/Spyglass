@@ -234,34 +234,6 @@ export default class StringReader {
     }
 
     /**
-     * @throws {ParsingError} (untolerable) While getting nothing.
-     */
-    readNamespacedID() {
-        const start = this.cursor
-        let namespace = Identity.DefaultNamespace
-        const paths: string[] = []
-        if (!this.canRead()) {
-            throw new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false)
-        }
-        let path0 = this.readUnquotedString()
-        if (this.peek() === ':') {
-            namespace = path0
-            path0 = this
-                .skip()
-                .readUnquotedString()
-        }
-        paths.push(path0)
-        while (this.peek() === Identity.Sep) {
-            paths.push(
-                this
-                    .skip()
-                    .readUnquotedString()
-            )
-        }
-        return new Identity(namespace, paths)
-    }
-
-    /**
      * @throws {ParsingError} (tolerable) When the next char can't match the expected one.
      */
     expect(c: string) {

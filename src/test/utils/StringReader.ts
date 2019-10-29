@@ -339,38 +339,6 @@ describe('StringReader Tests', () => {
             }
         })
     })
-    describe('readNamespacedID() Tests', () => {
-        it('Should return namespaced ID with single path', () => {
-            const reader = new StringReader('spgoding:foo')
-            const actualResult = reader.readNamespacedID()
-            const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult, new Identity('spgoding', ['foo']))
-            assert(actualCursor === 12)
-        })
-        it('Should return namespaced ID with multiple paths', () => {
-            const reader = new StringReader('spgoding:foo/bar/baz')
-            const actualResult = reader.readNamespacedID()
-            const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult, new Identity('spgoding', ['foo', 'bar', 'baz']))
-            assert(actualCursor === 20)
-        })
-        it('Should return namespaced ID without namespace', () => {
-            const reader = new StringReader('foo/bar')
-            const actualResult = reader.readNamespacedID()
-            const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult, new Identity('minecraft', ['foo', 'bar']))
-            assert(actualCursor === 7)
-        })
-        it('Should throw error when encounters nothing', () => {
-            const reader = new StringReader('')
-            try {
-                reader.readNamespacedID()
-                fail()
-            } catch (p) {
-                assert.deepStrictEqual(p, new ParsingError({ start: 0, end: 1 }, 'expected a namespaced ID but got nothing', false))
-            }
-        })
-    })
     describe('expect() Tests', () => {
         it('Should not throw when string match the expectation', () => {
             const reader = new StringReader('foo')

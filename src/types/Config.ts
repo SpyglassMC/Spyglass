@@ -119,11 +119,11 @@ export type LintConfig = {
      * @default ['PascalCase', 'camelCase']
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
-    /**
-     * Whether to throw warnings for undefined bossbars.  
-     * @default false
-     */
-    strictBossbarCheck: boolean,
+    // /**
+    //  * Whether to throw warnings for undefined bossbars.  
+    //  * @default false
+    //  */
+    // strictBossbarCheck: boolean,
     /**
      * Whether to throw warnings for undefined objectives.  
      * @default false
@@ -181,7 +181,7 @@ export const VanillaConfig: Config = {
         nameOfTags: 'whatever',
         nameOfObjectives: 'whatever',
         nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],
-        strictBossbarCheck: false,
+        // strictBossbarCheck: false,
         strictObjectiveCheck: false,
         strictTagCheck: false,
         omitDefaultNamespace: false

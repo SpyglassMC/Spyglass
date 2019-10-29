@@ -47,11 +47,11 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
     completions: CompletionItem[]
 }
 
-export function combineArgumentParserResult<T>(base: ArgumentParserResult<T>, override: ArgumentParserResult<T>): void {
+export function combineArgumentParserResult(base: ArgumentParserResult<any>, override: ArgumentParserResult<any>): void {
     // Cache.
     base.cache = combineCache(base.cache, override.cache)
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.
-    base.errors = [...base.errors, ...override.errors]
+    base.errors = [...base.errors, ...override.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))]
 }

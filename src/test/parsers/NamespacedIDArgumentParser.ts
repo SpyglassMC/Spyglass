@@ -33,10 +33,20 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 'spgoding:bossbar/b': { def: [], ref: [] }
             }
         }
-        it('Should return data', () => {
+        it('Should return data with single path', () => {
             const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
             const actual = parser.parse(new StringReader('spgoding:a'))
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['a']))
+        })
+        it('Should return data with multiple paths', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
+            const actual = parser.parse(new StringReader('spgoding:a/b/c'))
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['a', 'b', 'c']))
+        })
+        it('Should return data without namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
+            const actual = parser.parse(new StringReader('a/b'))
+            assert.deepStrictEqual(actual.data, new Identity('minecraft', ['a', 'b']))
         })
         it('Should return completions for registry entries', () => {
             const parser = new NamespacedIDArgumentParser('spgoding:test', registries)

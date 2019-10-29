@@ -24,7 +24,7 @@ describe('Parser Tests', () => {
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
                 completions: [{ label: 'b' }]
             }
-            combineArgumentParserResult<string>(base, override)
+            combineArgumentParserResult(base, override)
             assert.deepStrictEqual(base.cache, {
                 entities: {
                     foo: {

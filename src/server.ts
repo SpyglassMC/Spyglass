@@ -13,7 +13,7 @@ connection.onInitialize(_params => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: [' ', ',', '{', '[', '=', ':', '@', '\n', '#']
+                triggerCharacters: [' ', ',', '{', '[', '=', ':', '@', '\n', '#', '!', "'", '"']
             },
             definitionProvider: true,
             documentFormattingProvider: true,

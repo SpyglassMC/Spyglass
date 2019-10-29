@@ -5,7 +5,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
 
-export default class NumberArgumentParser extends ArgumentParser<string> {
+export default class NumberArgumentParser extends ArgumentParser<number> {
     identity = 'number'
 
     constructor(type: 'integer' | 'float' | 'double', min?: number, max?: number) {
@@ -13,7 +13,7 @@ export default class NumberArgumentParser extends ArgumentParser<string> {
         this.identity = type
     }
 
-    parse(reader: StringReader): ArgumentParserResult<string> {
+    parse(reader: StringReader, cursor = -1): ArgumentParserResult<number> {
         throw ''
     }
 
