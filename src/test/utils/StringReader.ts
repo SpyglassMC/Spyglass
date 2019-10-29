@@ -3,6 +3,7 @@ import StringReader from '../../utils/StringReader'
 import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
+import BigNumber from 'bignumber.js'
 
 describe('StringReader Tests', () => {
     describe('passedString Tests', () => {
@@ -97,7 +98,7 @@ describe('StringReader Tests', () => {
                 assert(message.match(/expected a number but got nothing/))
                 assert(range.start === 0)
                 assert(range.end === 1)
-                assert(tolerable === true)
+                assert(tolerable === false)
             }
         })
         it('Should throw error for invalid string consisting of valid characters', () => {
@@ -158,7 +159,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('2333foo')
             const actualResult = reader.readLong()
             const actualCursor = reader.cursor
-            assert(actualResult === 2333)
+            assert.deepStrictEqual(actualResult , new BigNumber(2333))
             assert(actualCursor === 4)
         })
         it('Should throw error for float numbers', () => {

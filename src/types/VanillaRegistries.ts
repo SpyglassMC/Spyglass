@@ -1,15 +1,17 @@
-import VanillaRegistries = require('./vanilla_registries.json')
+const VanillaRegistries = require('./vanilla_registries.json') as Registries
 
-export interface Registries {
-    [type: string]: {
-        default?: string,
-        protocol_id: number,
-        entries: Array<{
-            [id: string]: {
-                protocol_id: number
-            }
-        }>
+export type Registry = {
+    default?: string
+    protocol_id: number
+    entries: {
+        [id: string]: {
+            protocol_id: number
+        }
     }
 }
 
-export default VanillaRegistries
+export interface Registries {
+    [type: string]: Registry
+}
+
+export default VanillaRegistries 

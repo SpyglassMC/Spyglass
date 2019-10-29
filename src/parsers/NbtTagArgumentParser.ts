@@ -11,6 +11,7 @@ import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import BigNumber from 'bignumber.js'
 import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
+import { ToLintedString } from '../types/Lintable'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -177,23 +178,41 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         if (this.cursor === start) {
                             ans.completions.push({ label: `[${walker.read().type.toUpperCase()[0]};]` })
                         }
-                    } else if (walker.read().type === 'string') {
+                    } else {
                         const clonedReader = reader.clone()
                         ans = this.parsePrimitiveTag(reader, walker)
                         if (this.cursor === start) {
+                            const out = { type: '' }
+                            // istanbul ignore next
+                            const getLabel = (value: string) => {
+                                if (walker.read().type === 'string') {
+                                    return quoteString(value, this.config.lint.quoteType, this.config.lint.quoteSnbtStringValues)
+                                } else if (walker.read().type === 'byte') {
+                                    return getNbtByteTag(parseFloat(value))[ToLintedString](this.config.lint)
+                                } else if (walker.read().type === 'short') {
+                                    return getNbtShortTag(parseFloat(value))[ToLintedString](this.config.lint)
+                                } else if (walker.read().type === 'int') {
+                                    return getNbtIntTag(parseFloat(value))[ToLintedString](this.config.lint)
+                                } else if (walker.read().type === 'long') {
+                                    return getNbtLongTag(new BigNumber(value))[ToLintedString](this.config.lint)
+                                } else if (walker.read().type === 'float') {
+                                    return getNbtFloatTag(parseFloat(value))[ToLintedString](this.config.lint)
+                                } else if (walker.read().type === 'double') {
+                                    return getNbtDoubleTag(parseFloat(value))[ToLintedString](this.config.lint)
+                                } else {
+                                    return value
+                                }
+                            }
                             ans.completions.push(
                                 ...walker
-                                    .getCompletions(clonedReader, this.cursor, this.config, this.cache)
+                                    .getCompletions(clonedReader, this.cursor, this.config, this.cache, out)
                                     .map(v => ({
                                         ...v,
-                                        label: quoteString(v.label, this.config.lint.quoteType, this.config.lint.quoteSnbtStringValues)
+                                        label: getLabel(v.label)
                                     }))
                             )
                         }
-                    } else {
-                        ans = this.parsePrimitiveTag(reader, walker)
                     }
-                    ans.completions.push()
                 } else {
                     ans = this.parsePrimitiveTag(reader, walker)
                 }
@@ -511,40 +530,34 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     }
 
     private parsePrimitiveTag(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
+        const ans: ArgumentParserResult<NbtTag> = {
+            data: getNbtStringTag(''),
+            errors: [],
+            cache: {},
+            completions: []
+        }
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             const quote = reader.peek()
             try {
                 const clonedReader = reader.clone().skip()
                 const value = reader.readQuotedString()
-                return {
-                    data: getNbtStringTag(value),
-                    errors: [],
-                    cache: {},
-                    completions: walker ?
-                        walker.getCompletions(clonedReader, this.cursor, this.config, this.cache)
-                            .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
-                        []
-                }
+                ans.data = getNbtStringTag(value)
+                ans.completions = walker ?
+                    walker.getCompletions(clonedReader, this.cursor, this.config, this.cache)
+                        .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
+                    []
             } catch (p) {
-                return {
-                    data: getNbtStringTag(''),
-                    errors: [p as ParsingError],
-                    cache: {},
-                    completions: []
-                }
+                ans.data = getNbtStringTag('')
+                ans.errors.push(p)
             }
         } else {
             // Parse as an unquoted string or a number.
             const start = reader.cursor
             const value = reader.readUnquotedString()
             if (value.length === 0) {
-                return {
-                    data: getNbtStringTag(''),
-                    errors: [new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing')],
-                    cache: {},
-                    completions: []
-                }
+                ans.data = getNbtStringTag('')
+                ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing'))
             } else {
                 const failedToMatchAllPatterns = Symbol('failed to match all patterns')
                 try {
@@ -554,12 +567,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         if (NbtTagArgumentParser.Patterns.hasOwnProperty(type)) {
                             const [pattern, func] = NbtTagArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
-                                return {
-                                    data: func(value),
-                                    errors: [],
-                                    cache: {},
-                                    completions: []
-                                }
+                                ans.data = func(value)
+                                return ans
                             }
                         }
                     }
@@ -568,23 +577,17 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     // Parse as an unquoted string.
                     if (s === failedToMatchAllPatterns) {
                         // Ignore `s`.
-                        return {
-                            data: getNbtStringTag(value),
-                            errors: [],
-                            cache: {},
-                            completions: []
-                        }
+                        ans.data = getNbtStringTag(value)
                     } else {
-                        return {
-                            data: getNbtStringTag(value),
-                            errors: [new ParsingError({ start, end: reader.cursor }, s, true, DiagnosticSeverity.Warning)],
-                            cache: {},
-                            completions: []
-                        }
+                        ans.data = getNbtStringTag(value)
+                        ans.errors.push(
+                            new ParsingError({ start, end: reader.cursor }, s, true, DiagnosticSeverity.Warning)
+                        )
                     }
                 }
             }
         }
+        return ans
     }
 
     getExamples(): string[] {

@@ -8,7 +8,12 @@ import IPArgumentParser from './IPArgumentParser'
 import ItemArgumentParser from './ItemArgumentParser'
 import LiteralArgumentParser from './LiteralArgumentParser'
 import MessageArgumentParser from './MessageArgumentParser'
+import NbtTagArgumentParser from './NbtTagArgumentParser'
 import NumberArgumentParser from './NumberArgumentParser'
+import NumericIDArgumentParser from './NumericIDArgumentParser'
+import ObjectiveArgumentParser from './ObjectiveArgumentParser'
+import StringArgumentParser from './StringArgumentParser'
+import TagArgumentParser from './TagArgumentParser'
 import TextComponentArgumentParser from './TextComponentArgumentParser'
 import VectorArgumentParser from './VectorArgumentParser'
 
@@ -22,7 +27,12 @@ export const ArgumentParsers: (new (...params: any) => ArgumentParser<any>)[] = 
     ItemArgumentParser,
     LiteralArgumentParser,
     MessageArgumentParser,
+    NbtTagArgumentParser,
     NumberArgumentParser,
+    NumericIDArgumentParser,
+    ObjectiveArgumentParser,
+    StringArgumentParser,
+    TagArgumentParser,
     TextComponentArgumentParser,
     VectorArgumentParser
 ]

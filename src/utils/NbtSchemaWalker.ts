@@ -220,7 +220,7 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}): CompletionItem[] {
+    getCompletions(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}, out = { type: '' }): CompletionItem[] {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: CompletionItem[] = []
@@ -237,11 +237,13 @@ export default class NbtSchemaWalker {
                         if (completions) {
                             ans.push(...completions)
                         }
+                        out.type = 'string'
                     } else {
                         // Regular ArgumentParser
                         const parser = getArgumentParser(v.parser, v.params)
-                        const { completions } = parser.parse(reader, cursor, config, cache)
+                        const { completions, data } = parser.parse(reader, cursor, config, cache)
                         ans.push(...completions)
+                        out.type = typeof data
                     }
                 } else {
                     ans.push({ label: v.value as string, documentation: v.description })
