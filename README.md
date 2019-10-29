@@ -135,6 +135,12 @@ Whether to throw warnings for undefined objectives.
 Whether to throw warnings for undefined tags.  
 @default `false`
 
+#### omitDefaultNamespace: boolean
+
+Whether to omit default namespace (`minecraft`) in namespaced IDs.  
+Does NOT affect IDs in NBT strings.  
+@default `false`
+
 ## Contributing
 
 Contributions are welcome!

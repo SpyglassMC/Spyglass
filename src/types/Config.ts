@@ -133,7 +133,13 @@ export type LintConfig = {
      * Whether to throw warnings for undefined tags.  
      * @default false
      */
-    strictTagCheck: boolean
+    strictTagCheck: boolean,
+    /**
+     * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
+     * Does NOT affect IDs in NBT strings.  
+     * @default false
+     */
+    omitDefaultNamespace: boolean
 }
 
 export default interface Config {
@@ -177,7 +183,8 @@ export const VanillaConfig: Config = {
         nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],
         strictBossbarCheck: false,
         strictObjectiveCheck: false,
-        strictTagCheck: false
+        strictTagCheck: false,
+        omitDefaultNamespace: false
     }
 }
 

@@ -4,6 +4,7 @@ import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import BigNumber from 'bignumber.js'
+import Identity from '../../types/Identity'
 
 describe('StringReader Tests', () => {
     describe('passedString Tests', () => {
@@ -159,7 +160,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('2333foo')
             const actualResult = reader.readLong()
             const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult , new BigNumber(2333))
+            assert.deepStrictEqual(actualResult, new BigNumber(2333))
             assert(actualCursor === 4)
         })
         it('Should throw error for float numbers', () => {
@@ -335,6 +336,38 @@ describe('StringReader Tests', () => {
                 assert(range.start === 0)
                 assert(range.end === 7)
                 assert(tolerable === false)
+            }
+        })
+    })
+    describe('readNamespacedID() Tests', () => {
+        it('Should return namespaced ID with single path', () => {
+            const reader = new StringReader('spgoding:foo')
+            const actualResult = reader.readNamespacedID()
+            const actualCursor = reader.cursor
+            assert.deepStrictEqual(actualResult, new Identity('spgoding', ['foo']))
+            assert(actualCursor === 12)
+        })
+        it('Should return namespaced ID with multiple paths', () => {
+            const reader = new StringReader('spgoding:foo/bar/baz')
+            const actualResult = reader.readNamespacedID()
+            const actualCursor = reader.cursor
+            assert.deepStrictEqual(actualResult, new Identity('spgoding', ['foo', 'bar', 'baz']))
+            assert(actualCursor === 20)
+        })
+        it('Should return namespaced ID without namespace', () => {
+            const reader = new StringReader('foo/bar')
+            const actualResult = reader.readNamespacedID()
+            const actualCursor = reader.cursor
+            assert.deepStrictEqual(actualResult, new Identity('minecraft', ['foo', 'bar']))
+            assert(actualCursor === 7)
+        })
+        it('Should throw error when encounters nothing', () => {
+            const reader = new StringReader('')
+            try {
+                reader.readNamespacedID()
+                fail()
+            } catch (p) {
+                assert.deepStrictEqual(p, new ParsingError({ start: 0, end: 1 }, 'expected a namespaced ID but got nothing', false))
             }
         })
     })
