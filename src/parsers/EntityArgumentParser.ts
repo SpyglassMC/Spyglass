@@ -6,6 +6,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
 import Config, { VanillaConfig } from '../types/Config'
+import NumberRange from '../types/NumberRange'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
@@ -183,16 +184,133 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.arguments[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
+                        reader
+                            .expect('{')
+                            .skip()
+                            .skipWhiteSpace()
+                        while (reader.canRead()) {
+                            const advancementResult = this.manager.get('NamespacedID', ['$advancements']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                            const advancement: string = advancementResult.data
+                            combineArgumentParserResult(ans, advancementResult)
+                            if (reader.peek() === '}') {
+                                break
+                            }
 
+                            reader
+                                .skipWhiteSpace()
+                                .expect('=')
+                                .skip()
+                                .skipWhiteSpace()
+
+                            ans.data.arguments.advancements = ans.data.arguments.advancements ? ans.data.arguments.advancements : {}
+
+                            if (reader.peek() === '{') {
+                                const advancementObject: { [criterion: string]: boolean } = ans.data.arguments.advancements[advancement] = {}
+                                reader
+                                    .skip()
+                                    .skipWhiteSpace()
+                                while (reader.canRead()) {
+                                    const criterionResult = this.manager.get('String', ['QuotablePhrase']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                                    const criterion: string = criterionResult.data
+                                    combineArgumentParserResult(ans, criterionResult)
+                                    if (reader.peek() === '}') {
+                                        break
+                                    }
+
+                                    reader
+                                        .skipWhiteSpace()
+                                        .expect('=')
+                                        .skip()
+                                        .skipWhiteSpace()
+
+                                    const boolResult = this.manager.get('Literal', ['false', 'true']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                                    const bool = boolResult.data === 'true'
+                                    combineArgumentParserResult(ans, boolResult)
+
+                                    advancementObject[criterion] = bool
+
+                                    reader.skipWhiteSpace()
+                                    if (reader.peek() === ',') {
+                                        reader
+                                            .skip()
+                                            .skipWhiteSpace()
+                                    }
+                                    if (reader.peek() === '}') {
+                                        break
+                                    }
+                                }
+                                reader
+                                    .expect('}')
+                                    .skip()
+                            } else {
+                                const boolResult = this.manager.get('Literal', ['false', 'true']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                                const bool = boolResult.data === 'true'
+                                combineArgumentParserResult(ans, boolResult)
+
+                                ans.data.arguments.advancements[advancement] = bool
+                            }
+
+                            reader.skipWhiteSpace()
+                            if (reader.peek() === ',') {
+                                reader
+                                    .skip()
+                                    .skipWhiteSpace()
+                            }
+                            if (reader.peek() === '}') {
+                                break
+                            }
+                        }
+                        reader
+                            .expect('}')
+                            .skip()
                     } else if (key === 'scores') {
+                        reader
+                            .expect('{')
+                            .skip()
+                            .skipWhiteSpace()
+                        while (reader.canRead()) {
+                            const objectiveResult = this.manager.get('Objective').parse(reader, this.cursor, this.manager, this.config, this.cache)
+                            const objective: string = objectiveResult.data
+                            combineArgumentParserResult(ans, objectiveResult)
+                            if (reader.peek() === '}') {
+                                break
+                            }
 
+                            reader
+                                .skipWhiteSpace()
+                                .expect('=')
+                                .skip()
+                                .skipWhiteSpace()
+
+                            const rangeResult = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                            const range: NumberRange = rangeResult.data
+                            combineArgumentParserResult(ans, rangeResult)
+
+                            ans.data.arguments.scores = ans.data.arguments.scores ? ans.data.arguments.scores : {}
+                            ans.data.arguments.scores[objective] = range
+
+                            reader.skipWhiteSpace()
+                            if (reader.peek() === ',') {
+                                reader
+                                    .skip()
+                                    .skipWhiteSpace()
+                            }
+                            if (reader.peek() === '}') {
+                                break
+                            }
+                        }
+                        reader
+                            .expect('}')
+                            .skip()
                     } else {
                         throw new ParsingError({ start, end: start + key.length }, `unexpected selector argument ‘${key}’`)
                     }
 
                     reader.skipWhiteSpace()
                     if (reader.peek() === ',') {
-                        reader.skip()
+                        reader
+                            .skip()
+                            .skipWhiteSpace()
                     }
 
                     if (reader.peek() === ']') {

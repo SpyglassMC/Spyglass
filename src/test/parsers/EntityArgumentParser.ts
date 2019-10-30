@@ -28,6 +28,15 @@ describe('EntityArgumentParser Tests', () => {
             },
             predicates: {
                 'spgoding:test/predicate': { def: [], ref: [] }
+            },
+            objectives: {
+                foo: { def: [], ref: [] },
+                bar: { def: [], ref: [] }
+            },
+            advancements: {
+                'spgoding:advancement/a': { def: [], ref: [] },
+                'spgoding:advancement/b': { def: [], ref: [] },
+                'spgoding:advancement/c': { def: [], ref: [] }
             }
         }
         it('Should return untolerable error when the input is empty', () => {
@@ -129,6 +138,38 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, { variable: 'a', arguments: expected })
                 assert.deepStrictEqual(actual.errors, [])
             })
+            it('Should return data with ‘scores’ argument', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ scores = { foo = 114.. , bar = ..514 } ]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, {
+                    variable: 'a',
+                    arguments: {
+                        scores: {
+                            foo: new NumberRange('integer', 114),
+                            bar: new NumberRange('integer', undefined, 514)
+                        }
+                    }
+                })
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return data with ‘advancements’ argument', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ advancements = { spgoding:advancement/a = true , spgoding:advancement/b = { critA = false , critB = true } , spgoding:advancement/c = { } } ]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, {
+                    variable: 'a',
+                    arguments: {
+                        advancements: {
+                            'spgoding:advancement/a': true,
+                            'spgoding:advancement/b': {
+                                critA: false,
+                                critB: true
+                            },
+                            'spgoding:advancement/c': {}
+                        }
+                    }
+                })
+                assert.deepStrictEqual(actual.errors, [])
+            })
             it('Should return completions for variable', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('@'), 1, manager, undefined, cache)
@@ -228,6 +269,25 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'creative' },
                     { label: 'spectator' },
                     { label: 'survival' }
+                ])
+            })
+            it('Should return completions for objectives in ‘scores’', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ scores = { } ]'), 15, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'foo' },
+                    { label: 'bar' }
+                ])
+            })
+            it('Should return completions for advancements in ‘advancements’', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ advancements = { } ]'), 21, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'spgoding:advancement/a' },
+                    { label: 'spgoding:advancement/b' },
+                    { label: 'spgoding:advancement/c' }
                 ])
             })
             // it('Should return empty cache when the entity is undefined', () => {
