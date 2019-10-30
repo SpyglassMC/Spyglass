@@ -1,8 +1,9 @@
 import ArgumentParser from './ArgumentParser'
+import Manager from '../types/Manager'
 import NumberRange from '../types/NumberRange'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult } from '../types/Parser'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
     identity = 'numberRange'
@@ -12,14 +13,13 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         this.identity = `${type}Range`
     }
 
-    parse(reader: StringReader, cursor = -1): ArgumentParserResult<NumberRange> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<NumberRange> {
         const ans: ArgumentParserResult<NumberRange> = {
             data: new NumberRange(this.type),
             completions: [],
             errors: [],
             cache: {}
         }
-        const readNumber = () => this.type === 'integer' ? reader.readInt() : reader.readFloat()
         const isDoublePeriods = () => reader.peek() === '.' && reader.peek(1) === '.'
         const start = reader.cursor
 
@@ -37,12 +37,16 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             let min: number | undefined
             let max: number | undefined
             if (!isDoublePeriods()) {
-                min = readNumber()
+                const result = manager.get('Number', [this.type]).parse(reader, cursor)
+                min = result.data
+                combineArgumentParserResult(ans, result)
             }
             if (isDoublePeriods()) {
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
-                    max = readNumber()
+                    const result = manager.get('Number', [this.type]).parse(reader, cursor)
+                    max = result.data
+                    combineArgumentParserResult(ans, result)
                 }
             } else {
                 max = min

@@ -37,6 +37,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('SPGoding'), undefined, manager)
                 assert.deepStrictEqual(actual.data, { plain: 'SPGoding' })
+                assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions', () => {
                 const parser = new EntityArgumentParser()
@@ -75,11 +76,13 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('@a'), undefined, manager)
                 assert.deepStrictEqual(actual.data, { variable: 'a' })
+                assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data for empty-argument selector', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('@a[]'), undefined, manager)
                 assert.deepStrictEqual(actual.data, { variable: 'a' })
+                assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data for selector with simple arguments', () => {
                 const parser = new EntityArgumentParser()
@@ -87,10 +90,11 @@ describe('EntityArgumentParser Tests', () => {
                 const expected = {
                     sort: 'random', x: 1, dx: 2.5, limit: 1,
                     level: new NumberRange('integer', 1),
-                    distance: new NumberRange('integer', undefined, 1)
+                    distance: new NumberRange('float', undefined, 5)
                 }
                 const actual = parser.parse(new StringReader(command), undefined, manager)
                 assert.deepStrictEqual(actual.data, { variable: 'a', arguments: expected })
+                assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions for variable', () => {
                 const parser = new EntityArgumentParser()
@@ -141,6 +145,7 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'y_rotation' },
                     { label: 'z' }
                 ])
+                assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return errors for unclosed brackets', () => {
                 const parser = new EntityArgumentParser()
@@ -173,17 +178,17 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'survival' }
                 ])
             })
-            // it('Should return completions for negative ‘gamemode’ argument', () => {
-            //     const parser = new EntityArgumentParser()
-            //     const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), 17, manager, undefined, cache)
-            //     assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
-            //     assert.deepStrictEqual(actual.completions, [
-            //         { label: 'adventure' },
-            //         { label: 'creative' },
-            //         { label: 'spectator' },
-            //         { label: 'survival' }
-            //     ])
-            // })
+            it('Should return completions for negative ‘gamemode’ argument', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), 17, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'adventure' },
+                    { label: 'creative' },
+                    { label: 'spectator' },
+                    { label: 'survival' }
+                ])
+            })
             // it('Should return empty cache when the entity is undefined', () => {
             //     const parser = new EntityArgumentParser()
             //     const actual = parser.parse(new StringReader('qux'), undefined, undefined, cache)
