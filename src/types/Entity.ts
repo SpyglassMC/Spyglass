@@ -1,4 +1,4 @@
-import Range from './NumberRange'
+import NumberRange from './NumberRange'
 import { NbtCompoundTag } from './NbtTag'
 import Identity from './Identity'
 import GameMode from './GameMode'
@@ -76,12 +76,12 @@ export default interface Entity {
         dy?: number,
         dz?: number,
         limit?: number,
-        distance?: Range,
-        x_rotation?: Range,
-        y_rotation?: Range,
-        level?: Range,
+        distance?: NumberRange,
+        x_rotation?: NumberRange,
+        y_rotation?: NumberRange,
+        level?: NumberRange,
         scores?: {
-            [objective: string]: Range
+            [objective: string]: NumberRange
         },
         advancements?: {
             [id: string]: boolean | {

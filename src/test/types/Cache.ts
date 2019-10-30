@@ -175,6 +175,11 @@ describe('Cache Tests', () => {
             const actual = getCategoryKey(type)
             assert(actual === 'objectives')
         })
+        it('Should return "teams" for "team"', () => {
+            const type = 'team'
+            const actual = getCategoryKey(type)
+            assert(actual === 'teams')
+        })
         it('Should return "tags" for "tag"', () => {
             const type = 'tag'
             const actual = getCategoryKey(type)
