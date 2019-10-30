@@ -135,6 +135,11 @@ export type LintConfig = {
      */
     strictTagCheck: boolean,
     /**
+     * Whether to throw warnings for undefined teams.  
+     * @default false
+     */
+    strictTeamCheck: boolean,
+    /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
      * Does NOT affect IDs in NBT strings.  
      * @default false
@@ -184,6 +189,7 @@ export const VanillaConfig: Config = {
         // strictBossbarCheck: false,
         strictObjectiveCheck: false,
         strictTagCheck: false,
+        strictTeamCheck: false,
         omitDefaultNamespace: false
     }
 }
