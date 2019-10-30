@@ -133,7 +133,9 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         }
                         const isNegative = reader.peek() === '!'
                         if (isNegative) {
-                            reader.skip()
+                            reader
+                                .skip()
+                                .skipWhiteSpace()
                         }
                         const result = parser.parse(reader, this.cursor, this.manager)
                         if (result.data) {
@@ -176,11 +178,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'type') {
                         dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type']), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
-                        const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor)
+                        const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor, this.manager)
                         ans.data.arguments[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'level') {
-                        const result = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor)
+                        const result = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor, this.manager)
                         ans.data.arguments[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {

@@ -11,6 +11,7 @@ import MessageArgumentParser from './MessageArgumentParser'
 import NamespacedIDArgumentParser from './NamespacedIDArgumentParser'
 import NbtTagArgumentParser from './NbtTagArgumentParser'
 import NumberArgumentParser from './NumberArgumentParser'
+import NumberRangeArgumentParser from './NumberRangeArgumentParser'
 import NumericIDArgumentParser from './NumericIDArgumentParser'
 import ObjectiveArgumentParser from './ObjectiveArgumentParser'
 import StringArgumentParser from './StringArgumentParser'
@@ -32,6 +33,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         NamespacedIDArgumentParser,
         NbtTagArgumentParser,
         NumberArgumentParser,
+        NumberRangeArgumentParser,
         NumericIDArgumentParser,
         ObjectiveArgumentParser,
         StringArgumentParser,
