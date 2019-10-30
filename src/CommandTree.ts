@@ -1,28 +1,28 @@
 import ArgumentParser from './parsers/ArgumentParser'
 import BlockArgumentParser from './parsers/BlockArgumentParser'
-import BossbarArgumentParser from './parsers/BossbarArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
-import EntitySelectorArgumentParser from './parsers/EntitySelectorArgumentParser'
+import EntityArgumentParser from './parsers/EntityArgumentParser'
 import IPArgumentParser from './parsers/IPArgumentParser'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import MessageArgumentParser from './parsers/MessageArgumentParser'
+import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 import NumberArgumentParser from './parsers/NumberArgumentParser'
 import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
 import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
 
 /**
- * Command tree of Minecraft Java Edition 1.14.4 commands.
+ * Command tree of Minecraft Java Edition 19w41a commands.
  */
-export const tree: CommandTree = {
+export const VanillaTree: CommandTree = {
     line: {
         command: {
-            redirect: 'command'
+            redirect: 'commands'
         },
         comment: {
-            redirect: 'comment'
+            redirect: 'comments'
         }
     },
     commands: {
@@ -34,7 +34,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('grant', 'revoke'),
                     children: {
                         targets: {
-                            parser: new EntitySelectorArgumentParser(true, true),
+                            parser: new EntityArgumentParser(true, true),
                             children: {
                                 everything: {
                                     parser: new LiteralArgumentParser('everything'),
@@ -76,7 +76,7 @@ export const tree: CommandTree = {
             description: 'Adds players to blacklist.',
             children: {
                 name: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -103,7 +103,7 @@ export const tree: CommandTree = {
                     }
                 },
                 name: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -133,7 +133,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
@@ -147,7 +147,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('get'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 max_players_value_visible: {
                                     parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
@@ -165,7 +165,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             executable: true
                         }
                     }
@@ -174,7 +174,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         id: {
-                            parser: new BossbarArgumentParser(),
+                            parser: new NamespacedIDArgumentParser('$bossbars'),
                             children: {
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
@@ -207,7 +207,7 @@ export const tree: CommandTree = {
                                     parser: new LiteralArgumentParser('players'),
                                     children: {
                                         targets: {
-                                            parser: new EntitySelectorArgumentParser(true, true),
+                                            parser: new EntityArgumentParser(true, true),
                                             executable: true
                                         }
                                     }
@@ -251,7 +251,7 @@ export const tree: CommandTree = {
             executable: true,
             children: {
                 targets: {
-                    parser: new EntitySelectorArgumentParser(true, true),
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         item: {
@@ -323,7 +323,7 @@ export const tree: CommandTree = {
                     parser: new LiteralArgumentParser('as'),
                     children: {
                         entity: {
-                            parser: new EntitySelectorArgumentParser(),
+                            parser: new EntityArgumentParser(),
                             children: {
                                 subcommand: {
                                     redirect: 'commands.execute'
@@ -353,12 +353,17 @@ export const tree: CommandTree = {
                     description: 'Type of the definition',
                     children: {
                         id: {
-                            parser: new DefinitionIDArgumentParser(),
+                            parser: ({ args }) => new DefinitionIDArgumentParser(
+                                args[args.length - 1].data
+                            ),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: new DefinitionDescriptionArgumentParser(),
+                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(
+                                        args[args.length - 2].data,
+                                        args[args.length - 1].data
+                                    ),
                                     description: 'Description of the definition',
                                     executable: true
                                 }
@@ -376,7 +381,7 @@ export const tree: CommandTree = {
     }
 }
 
-export default tree
+export default VanillaTree
 
 /**
  * Represent a command tree.
@@ -390,16 +395,16 @@ export interface CommandTree {
  */
 export interface CommandTreeNode<T> {
     /**
-     * Argument parser to parse this argument.
+     * An argument parser to parse this argument, or a function which constructs an argument parser.
      */
-    parser?: ArgumentParser<T>,
+    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLine) => ArgumentParser<T>),
     /**
-     * Permission level required to perform this node.
+     * The permission level required to perform this node.
      * @default 2
      */
     permission?: 0 | 1 | 2 | 3 | 4,
     /**
-     * Description of the current argument.
+     * A human-readable description of the current argument.
      */
     description?: string,
     /**
@@ -407,7 +412,7 @@ export interface CommandTreeNode<T> {
      */
     executable?: boolean,
     /**
-     * Children of this tree node.
+     * The children of this tree node.
      */
     children?: CommandTreeNodeChildren,
     /**
@@ -426,7 +431,7 @@ export interface CommandTreeNode<T> {
      */
     template?: string,
     /**
-     * Optional function which will be called when the parser finished parsing.  
+     * An optional function which will be called when the parser finished parsing.  
      * Can be used to validate the parsed arguments.
      * @param parsedLine Parsed line.
      */

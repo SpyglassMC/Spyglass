@@ -1,5 +1,6 @@
 import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
 import { formatMessage } from '../utils/utils'
+import TextRange from './TextRange'
 
 /**
  * Represent an error occured while parsing.
@@ -9,7 +10,7 @@ export default class ParsingError {
         /**
          * Range of the error.
          */
-        public readonly range: { start: number, end: number },
+        public readonly range: TextRange,
         /**
          * Human-readable error message.
          */

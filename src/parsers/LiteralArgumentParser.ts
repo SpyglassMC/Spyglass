@@ -1,9 +1,9 @@
 import ArgumentParser from './ArgumentParser'
+import Manager from '../types/Manager'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
+import { ArgumentParserResult } from '../types/Parser'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
@@ -13,20 +13,25 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
     constructor(...literals: string[]) {
         super()
         if (literals.length === 0) {
-            throw new Error('expected `literals.length` to be more than 0')
+            throw new Error('expected ‘literals.length’ to be more than 0')
         }
-        this.literals = literals.sort()
+        this.literals = literals
     }
 
-    parse(reader: StringReader): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = { data: '' }
+    parse(reader: StringReader, cursor: number = -1): ArgumentParserResult<string> {
+        const ans: ArgumentParserResult<string> = {
+            data: '',
+            errors: [],
+            cache: {},
+            completions: []
+        }
         //#region Get completions.
-        if (!reader.canRead()) {
-            ans.completions = this.literals.map(v => ({ label: v, kind: CompletionItemKind.Text }))
+        if (reader.cursor === cursor) {
+            ans.completions = this.literals.map(v => ({ label: v }))
         }
         //#endregion
         const start = reader.cursor
-        const string = reader.readUntilOrEnd(' ')
+        const string = reader.readUnquotedString()
         ans.data = string
         //#region Get errors.
         let isFullMatch = false
@@ -43,7 +48,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
                 if (string.length > 0) {
                     ans.errors = [new ParsingError(
                         { start: start, end: start + string.length },
-                        `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``
+                        `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`
                     )]
                 } else {
                     ans.errors = [new ParsingError(
@@ -55,7 +60,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             } else {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + string.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got \`${string}\``,
+                    `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`,
                     false
                 )]
             }

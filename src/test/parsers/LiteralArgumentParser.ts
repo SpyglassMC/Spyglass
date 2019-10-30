@@ -2,7 +2,6 @@ import * as assert from 'power-assert'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { CompletionItemKind } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 
@@ -14,7 +13,7 @@ describe('LiteralArgumentParser Tests', () => {
                 fail()
             } catch (e) {
                 const er = <Error>e
-                assert(er.message.match(/expected `literals\.length` to be more than 0/))
+                assert(er.message === 'expected ‘literals.length’ to be more than 0')
             }
         })
     })
@@ -27,14 +26,14 @@ describe('LiteralArgumentParser Tests', () => {
         it('Should return correctly for multi literals', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.toHint()
-            assert.strictEqual(actual, '(bar|foo)')
+            assert.strictEqual(actual, '(foo|bar)')
         })
     })
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['bar', 'foo'])
+            assert.deepStrictEqual(actual, ['foo', 'bar'])
         })
     })
     describe('parse() Tests', () => {
@@ -48,26 +47,15 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('actual'))
             assert(actual.data === 'actual')
         })
-        it('Should return completions for empty input', () => {
+        it('Should return completions', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
-            const actual = parser.parse(new StringReader(''))
+            const actual = parser.parse(new StringReader(''), 0)
             assert.deepStrictEqual(actual.completions,
                 [
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Text
-                    },
-                    {
-                        label: 'foo',
-                        kind: CompletionItemKind.Text
-                    }
+                    { label: 'foo' },
+                    { label: 'bar' }
                 ]
             )
-        })
-        it('Should not return completions for input beginning with space', () => {
-            const parser = new LiteralArgumentParser('foo', 'bar')
-            const actual = parser.parse(new StringReader(' idk'))
-            assert(actual.completions === undefined)
         })
         it('Should return untolerable error when input is empty', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
@@ -75,7 +63,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got nothing/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got nothing/))
             assert(pe.tolerable === false)
         })
         it('Should return errors when partial matching', () => {
@@ -84,7 +72,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got `F`/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘F’/))
             assert(pe.tolerable === true)
         })
         it('Should return untolerable error when nothing matches', () => {
@@ -93,7 +81,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/expected one of `bar` and `foo` but got `spg`/))
+            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘spg’/))
             assert(pe.tolerable === false)
         })
     })

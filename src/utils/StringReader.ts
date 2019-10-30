@@ -1,16 +1,13 @@
+import BigNumber from 'bignumber.js'
 import ParsingError from '../types/ParsingError'
+import Identity from '../types/Identity'
 
 export default class StringReader {
     public readonly string: string
     public cursor = 0
 
-    constructor(base: string | StringReader) {
-        if (typeof base === 'string') {
-            this.string = base
-        } else {
-            this.cursor = base.cursor
-            this.string = base.string
-        }
+    constructor(value: string) {
+        this.string = value
     }
 
     get passedString() {
@@ -21,38 +18,54 @@ export default class StringReader {
         return this.string.slice(this.cursor)
     }
 
+    clone() {
+        const ans = new StringReader(this.string)
+        ans.cursor = this.cursor
+        return ans
+    }
+
     canRead(length = 1) {
         return this.cursor + length <= this.string.length
     }
 
-    peek() {
-        return this.string[this.cursor]
+    /**
+     * Peeks a character at the current cursor.
+     * @param offset The index to offset from cursor. @default 0
+     */
+    peek(offset = 0) {
+        return this.string.charAt(this.cursor + offset)
     }
 
-    skip() {
-        this.cursor += 1
+    /**
+     * Skips the current character.
+     * @param step The step to skip. @default 1
+     */
+    skip(step = 1) {
+        this.cursor += step
+        return this
     }
 
     read() {
         return this.string.charAt(this.cursor++)
     }
 
-    skipWhiteSpace(max?: number) {
-        let count = 0
-        while (this.canRead() && StringReader.isWhiteSpace(this.peek()) &&
-            (max === undefined || count < max)) {
+    skipWhiteSpace() {
+        while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
             this.skip()
-            count++
         }
+        return this
     }
 
     /**
-     * @throws 
+     * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
      */
     private readNumber() {
         const start = this.cursor
         let str = ''
         while (this.canRead() && StringReader.canInNumber(this.peek())) {
+            if (this.peek() === '.' && this.peek(1) === '.') {
+                break
+            }
             str += this.read()
         }
         if (str) {
@@ -60,75 +73,76 @@ export default class StringReader {
             if (isNaN(num)) {
                 const end = this.cursor
                 this.cursor = start
-                throw new ParsingError({ start, end }, `expected a number but got \`${str}\``)
+                throw new ParsingError({ start, end }, `expected a number but got ‘${str}’`)
             }
-            return num
+            return str
         } else {
             const end = this.cursor + 1
             const value = this.peek()
             if (value) {
-                throw new ParsingError({ start, end }, `expected a number but got \`${this.peek()}\` at beginning`, false)
+                throw new ParsingError({ start, end }, `expected a number but got ‘${this.peek()}’ at beginning`, false)
             } else {
-                throw new ParsingError({ start, end }, 'expected a number but got nothing')
+                throw new ParsingError({ start, end }, 'expected a number but got nothing', false)
             }
         }
     }
 
     /**
-     * @throws 
+     * @throws {ParsingError} When the value is float or exceeds the range.
      */
     readInt() {
         const start = this.cursor
-        const num = this.readNumber()
-        if (parseInt(num.toString()) !== num) {
-            // num is not int
+        const str = this.readNumber()
+        const num = parseInt(str)
+        if (str.includes('.')) {
+            // num is float.
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer but got ${num}`)
+            throw new ParsingError({ start, end }, `expected an integer but got ${str}`)
         }
         if (num < -2147483648 || num > 2147483647) {
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${num}`)
+            throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${str}`)
         }
         return num
     }
 
     /**
-     * @throws 
+     * @throws When the value is float.
      */
     readLong() {
         const start = this.cursor
-        const num = this.readNumber()
-        if (parseInt(num.toString()) !== num) {
+        const str = this.readNumber()
+        if (str.includes('.')) {
             // num is float
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected a long but got ${num}`)
+            throw new ParsingError({ start, end }, `expected a long but got ${str}`)
         }
-        return num
+        return new BigNumber(str)
     }
 
     readFloat() {
-        const num = this.readNumber()
-        return num
+        const str = this.readNumber()
+        return parseFloat(str)
     }
 
     readDouble() {
-        const num = this.readNumber()
-        return num
+        const str = this.readNumber()
+        return parseFloat(str)
     }
 
     readUnquotedString() {
         let ans = ''
-        while (this.canRead(), StringReader.canInUnquotedString(this.peek())) {
+        while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             ans += this.read()
         }
         return ans
     }
 
     /**
-     * @throws If not an legal quoted string.
+     * @throws {ParsingError} If not an legal quoted string.
      */
     readQuotedString() {
         if (!this.canRead()) {
@@ -141,12 +155,12 @@ export default class StringReader {
         } else {
             const start = this.cursor
             const end = this.cursor + 1
-            throw new ParsingError({ start, end }, `expected a quote (\`'\` or \`"\`) but got \`${quote}\``, false)
+            throw new ParsingError({ start, end }, `expected a quote (‘'’ or ‘"’) but got ‘${quote}’`, false)
         }
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
      */
     private readUntilQuote(terminator: '"' | "'") {
@@ -163,7 +177,7 @@ export default class StringReader {
                 } else {
                     const errStart = this.cursor - 1
                     this.cursor = start
-                    throw new ParsingError({ start: errStart, end: errStart + 1 }, `unexpected escape character \`${c}\``)
+                    throw new ParsingError({ start: errStart, end: errStart + 1 }, `unexpected escape character ‘${c}’`)
                 }
             } else {
                 if (c === escapeChar) {
@@ -177,7 +191,7 @@ export default class StringReader {
         }
         const errStart = this.cursor
         this.cursor = start
-        throw new ParsingError({ start: errStart, end: errStart + 1 }, `expected ending quote \`${terminator}\` but got nothing`)
+        throw new ParsingError({ start: errStart, end: errStart + 1 }, `expected an ending quote ‘${terminator}’ but got nothing`)
     }
 
     /**
@@ -198,7 +212,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      */
     readString() {
         if (!this.canRead()) {
@@ -213,7 +227,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws
+     * @throws {ParsingError}
      */
     readBoolean() {
         const start = this.cursor
@@ -226,21 +240,22 @@ export default class StringReader {
             const end = this.cursor
             this.cursor = start
             const toleratable = 'true'.startsWith(string.toLowerCase()) || 'false'.startsWith(string.toLowerCase())
-            throw new ParsingError({ start, end }, `expected a boolean but got \`${string}\``, toleratable)
+            throw new ParsingError({ start, end }, `expected a boolean but got ‘${string}’`, toleratable)
         }
     }
 
     /**
-     * @throws
+     * @throws {ParsingError} (tolerable) When the next char can't match the expected one.
      */
     expect(c: string) {
         const start = this.cursor
         const end = this.cursor + 1
         if (!this.canRead()) {
-            throw new ParsingError({ start, end }, `expected \`${c}\` but got nothing`)
+            throw new ParsingError({ start, end }, `expected ‘${c}’ but got nothing`)
         } else if (this.peek() !== c) {
-            throw new ParsingError({ start, end }, `expected \`${c}\` but got \`${this.peek()}\``, false)
+            throw new ParsingError({ start, end }, `expected ‘${c}’ but got ‘${this.peek()}’`)
         }
+        return this
     }
 
     readRemaining() {
@@ -252,8 +267,7 @@ export default class StringReader {
     static canInNumber(c: string) {
         // '+' is illegal in number because Mojang wrote so...
         // https://github.com/Mojang/brigadier/blob/master/src/main/java/com/mojang/brigadier/StringReader.java#L88
-        // But it IS legal in NBT numbers, so I will write a `NbtStringReader` and override this function.
-        // ↑ In fact, I'm not sure about it.
+        // But it IS legal in NBT numbers, because Mojang used `readUnquotedString` to parse primitive tags in NBT parser.
         return (
             c === '0' || c === '1' || c === '2' || c === '3' ||
             c === '4' || c === '5' || c === '6' || c === '7' ||
@@ -265,11 +279,15 @@ export default class StringReader {
         return c === ' ' || c === '\t' || c === '\r' || c === '\n' || c === '\r\n'
     }
 
-    static canInUnquotedString(c: string) {
-        return /^[0-9a-zA-Z\_\-\.\+]$/.test(c)
+    /**
+     * Whether the string can be used in unquoted string or not.
+     * @param string A string.
+     */
+    static canInUnquotedString(string: string) {
+        return /^[0-9a-zA-Z\_\-\.\+]+$/.test(string)
     }
 
-    static isQuote(c: string) {
+    static isQuote(c: string): c is '"' | "'" {
         return c === '"' || c === "'"
     }
 }

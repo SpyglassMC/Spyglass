@@ -10,7 +10,10 @@ export default class StringArgumentParser extends ArgumentParser<string> {
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
-            data: ''
+            data: '',
+            errors: [],
+            cache: {  },
+            completions: []
         }
         try {
             switch (this.type) {
@@ -36,7 +39,7 @@ export default class StringArgumentParser extends ArgumentParser<string> {
         if (this.type === 'SingleWord') {
             return ['word', 'word_with_underscores']
         } else if (this.type === 'QuotablePhrase') {
-            return ['word', 'quoted phrase', '""']
+            return ['word', '"quoted phrase"', '""']
         } else {
             return ['word', 'words with spaces', '"and symbols"']
         }

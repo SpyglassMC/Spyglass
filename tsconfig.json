@@ -14,7 +14,8 @@
         "alwaysStrict": true,
         "strictNullChecks": true,
         "declaration": true,
-        "newLine": "LF"
+        "newLine": "LF",
+        "resolveJsonModule": true
     },
     "exclude": [
         "src/test"
