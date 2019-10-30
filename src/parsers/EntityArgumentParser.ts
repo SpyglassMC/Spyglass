@@ -137,7 +137,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                 .skip()
                                 .skipWhiteSpace()
                         }
-                        const result = parser.parse(reader, this.cursor, this.manager)
+                        const result = parser.parse(reader, this.cursor, this.manager, this.config, this.cache)
                         if (result.data) {
                             if (isNegative) {
                                 pushSafely(negKey, result)
@@ -158,10 +158,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.arguments[key] = value
                     } else if (key === 'limit') {
                         const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
-                        console.log(result)
-                        if (result.data) {
-                            ans.data.arguments.limit = result.data
-                        }
+                        ans.data.arguments.limit = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'gamemode') {
                         dealWithNegativableArray(this.manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
@@ -176,7 +173,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'team') {
                         dealWithNegativableArray(this.manager.get('Team'), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type']), key)
+                        dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
                         const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor, this.manager)
                         ans.data.arguments[key] = result.data
@@ -190,9 +187,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'scores') {
 
                     } else {
-                        ans.errors.push(
-                            new ParsingError({ start, end: start + key.length }, `unexpected selector key ‘${key}’`)
-                        )
+                        throw new ParsingError({ start, end: start + key.length }, `unexpected selector argument ‘${key}’`)
                     }
 
                     reader.skipWhiteSpace()

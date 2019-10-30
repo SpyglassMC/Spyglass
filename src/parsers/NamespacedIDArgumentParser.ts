@@ -1,11 +1,11 @@
 import ArgumentParser from './ArgumentParser'
 import Identity from '../types/Identity'
+import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import { ArgumentParserResult } from '../types/Parser'
 import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
 import { VanillaConfig } from '../types/Config'
-import ParsingError from '../types/ParsingError'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
@@ -13,11 +13,15 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
 
     /**
      * 
-     * @param type A type in registries, or a type in cache beginning with hash (`$`).
+     * @param type A type in registries, or a type in cache if beginning with hash (`$`).
      * @param registries The registries.
      */
     // istanbul ignore next
-    constructor(private readonly type: string, private readonly registries = VanillaRegistries) {
+    constructor(
+        private readonly type: string,
+        private readonly registries = VanillaRegistries,
+        private readonly allowTag = false
+    ) {
         super()
     }
 
@@ -28,12 +32,32 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             cache: {},
             completions: []
         }
+        const getCacheTagType = () => {
+            switch (this.type) {
+                case 'minecraft:block':
+                    return 'tags/blocks'
+                case 'minecraft:entity_type':
+                    return 'tags/entityTypes'
+                case 'minecraft:fluid':
+                    return 'tags/fluids'
+                case 'minecraft:item':
+                    return 'tags/items'
+                case '$functions':
+                    return 'tags/functions'
+                default:
+                    throw new Error(`faild to find a tag type for ‘${this.type}’`)
+            }
+        }
         const start = reader.cursor
         let stringID: string = ''
         let rawLength: number = 0
+        let isTag = false
 
         //#region Completions
         if (reader.cursor === cursor) {
+            if (this.allowTag) {
+                ans.completions.push({ label: Identity.TagSymbol })
+            }
             if (this.type.startsWith('$')) {
                 const type = this.type.slice(1)
                 ans.completions.push(...getCompletions(cache, type as any))
@@ -48,13 +72,24 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         //#endregion
 
         //#region Data
-        try {
-            const start = reader.cursor
-            let namespace = Identity.DefaultNamespace
-            const paths: string[] = []
-            if (!reader.canRead()) {
-                throw new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false)
+        let namespace = Identity.DefaultNamespace
+        const paths: string[] = []
+
+        // Whether this is a tag ID.
+        if (this.allowTag && reader.peek() === Identity.TagSymbol) {
+            reader.skip()
+            isTag = true
+            if (reader.cursor === cursor) {
+                // Completions for tag ID.
+                const type = getCacheTagType()
+                ans.completions.push(...getCompletions(cache, type))
             }
+        }
+
+        if (!reader.canRead()) {
+            ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false))
+        } else {
+            // Parse the namespace or the first part of path.
             let path0 = reader.readUnquotedString()
             if (reader.peek() === ':') {
                 namespace = path0
@@ -63,6 +98,8 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     .readUnquotedString()
             }
             paths.push(path0)
+
+            // Parse the following paths.
             while (reader.peek() === Identity.Sep) {
                 paths.push(
                     reader
@@ -70,52 +107,71 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                         .readUnquotedString()
                 )
             }
-            ans.data = new Identity(namespace, paths)
+
+            ans.data = new Identity(namespace, paths, isTag)
             stringID = ans.data.toString()
             rawLength = reader.cursor - start
-        } catch (p) {
-            ans.errors.push(p)
         }
         //#endregion
 
         if (rawLength && stringID) {
-            if (this.type.startsWith('$')) {
-                const type = this.type.slice(1)
-                const category = getSafeCategory(cache, type as any)
+            // Check whether the ID exists in cache or registry.
+            if (isTag) {
+                // For tags.
+                const tagType = getCacheTagType()
+                const category = getSafeCategory(cache, tagType)
                 //#region Errors
                 if (!Object.keys(category).includes(stringID)) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + rawLength },
-                        `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
+                        `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${tagType}’`,
                         undefined,
                         DiagnosticSeverity.Warning
                     ))
                 }
                 //#endregion
-
-                //#region Cache
-                if (Object.keys(category).includes(stringID)) {
+            } else {
+                // For normal IDs.
+                if (this.type.startsWith('$')) {
+                    // For cache IDs.
                     const type = this.type.slice(1)
-                    ans.cache = {
-                        [type]: {
-                            [stringID]: {
-                                def: [],
-                                ref: [{ range: { start, end: start + rawLength } }]
+                    const category = getSafeCategory(cache, type as any)
+                    //#region Errors
+                    if (!Object.keys(category).includes(stringID)) {
+                        ans.errors.push(new ParsingError(
+                            { start, end: start + rawLength },
+                            `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
+                            undefined,
+                            DiagnosticSeverity.Warning
+                        ))
+                    }
+                    //#endregion
+
+                    //#region Cache
+                    if (Object.keys(category).includes(stringID)) {
+                        const type = this.type.slice(1)
+                        ans.cache = {
+                            [type]: {
+                                [stringID]: {
+                                    def: [],
+                                    ref: [{ range: { start, end: start + rawLength } }]
+                                }
                             }
                         }
                     }
+                    //#endregion
+                } else {
+                    // For registry IDs.
+                    const registry = this.registries[this.type]
+                    //#region Errors
+                    if (!Object.keys(registry.entries).includes(stringID)) {
+                        ans.errors.push(new ParsingError(
+                            { start, end: start + rawLength },
+                            `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`
+                        ))
+                    }
+                    //#endregion
                 }
-                //#endregion
-            } else {
-                const registry = this.registries[this.type]
-                //#region Errors
-                if (!Object.keys(registry.entries).includes(stringID)) {
-                    ans.errors.push(new ParsingError(
-                        { start, end: start + rawLength },
-                        `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`
-                    ))
-                }
-                //#endregion
             }
         }
 

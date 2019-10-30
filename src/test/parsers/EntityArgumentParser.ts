@@ -1,12 +1,12 @@
 import * as assert from 'power-assert'
+import { describe, it } from 'mocha'
+import { getNbtCompoundTag, getNbtByteTag } from '../../types/NbtTag'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { describe, it } from 'mocha'
-import { constructConfig } from '../../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
 import NumberRange from '../../types/NumberRange'
+import Identity from '../../types/Identity'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -22,6 +22,12 @@ describe('EntityArgumentParser Tests', () => {
             entities: {
                 foo: { def: [], ref: [] },
                 bar: { def: [{ line: { uri: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
+            },
+            'tags/entityTypes': {
+                'spgoding:mobs': { def: [], ref: [] }
+            },
+            predicates: {
+                'spgoding:test/predicate': { def: [], ref: [] }
             }
         }
         it('Should return untolerable error when the input is empty', () => {
@@ -84,7 +90,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, { variable: 'a' })
                 assert.deepStrictEqual(actual.errors, [])
             })
-            it('Should return data for selector with simple arguments', () => {
+            it('Should return data with simple arguments', () => {
                 const parser = new EntityArgumentParser()
                 const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5]'
                 const expected = {
@@ -93,6 +99,33 @@ describe('EntityArgumentParser Tests', () => {
                     distance: new NumberRange('float', undefined, 5)
                 }
                 const actual = parser.parse(new StringReader(command), undefined, manager)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: expected })
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return data with all kinds of negativable array arguments', () => {
+                const parser = new EntityArgumentParser()
+                const command = '@a[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={Item: {Count: 1b}}]'
+                const expected = {
+                    gamemode: ['adventure'],
+                    negName: ['SPGoding'],
+                    predicate: [new Identity('spgoding', ['test', 'predicate'])],
+                    tag: ['foo'],
+                    negTeam: ['red'],
+                    type: [new Identity('spgoding', ['mobs'], true)],
+                    nbt: [getNbtCompoundTag({ Item: getNbtCompoundTag({ Count: getNbtByteTag(1) }) })]
+                }
+                const actual = parser.parse(new StringReader(command), undefined, manager, undefined, cache)
+                assert.deepEqual(actual.data, { variable: 'a', arguments: expected })
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return data with the same negativable array arguments', () => {
+                const parser = new EntityArgumentParser()
+                const command = '@a[gamemode=adventure,gamemode=!creative,gamemode=!spectator]'
+                const expected = {
+                    gamemode: ['adventure'],
+                    negGamemode: ['creative', 'spectator']
+                }
+                const actual = parser.parse(new StringReader(command), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, { variable: 'a', arguments: expected })
                 assert.deepStrictEqual(actual.errors, [])
             })
@@ -110,12 +143,20 @@ describe('EntityArgumentParser Tests', () => {
                     ]
                 )
             })
-            it('Should return errors for unexpected variable', () => {
+            it('Should return error for unexpected variable', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('@b'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, {})
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError({ start: 1, end: 2 }, 'unexpected selector variable ‘b’')
+                ])
+            })
+            it('Should return error for unexpected argument key', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[foo=bar]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 3, end: 6 }, 'unexpected selector argument ‘foo’')
                 ])
             })
             it('Should return completions for argument keys', () => {

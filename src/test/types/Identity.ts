@@ -34,5 +34,11 @@ describe('Identity Tests', () => {
             const actual = id[ToLintedString](lint)
             assert(actual === 'spgoding:foo/bar')
         })
+        it('Should contain the tag symbol', () => {
+            const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
+            const id = new Identity('spgoding', ['foo', 'bar'], true)
+            const actual = id[ToLintedString](lint)
+            assert(actual === '#spgoding:foo/bar')
+        })
     })
 })
