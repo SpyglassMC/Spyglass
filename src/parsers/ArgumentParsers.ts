@@ -18,34 +18,35 @@ import TeamArgumentParser from './TeamArgumentParser'
 import TextComponentArgumentParser from './TextComponentArgumentParser'
 import VectorArgumentParser from './VectorArgumentParser'
 
+const ArgumentParsers: (new (...params: any) => ArgumentParser<any>)[] = [
+    BlockArgumentParser,
+    DefinitionDescriptionArgumentParser,
+    DefinitionIDArgumentParser,
+    EntityArgumentParser,
+    IPArgumentParser,
+    ItemArgumentParser,
+    LiteralArgumentParser,
+    MessageArgumentParser,
+    NamespacedIDArgumentParser,
+    NbtTagArgumentParser,
+    NumberArgumentParser,
+    NumericIDArgumentParser,
+    ObjectiveArgumentParser,
+    StringArgumentParser,
+    TagArgumentParser,
+    TeamArgumentParser,
+    TextComponentArgumentParser,
+    VectorArgumentParser
+]
+
 /**
  * Get an argument parser from specific ID and params.
  * @param id The name of the class without the suffix (`ArgumentParser`). e.g. `Block`, `NamespacedID`, etc.
  * @param params Optional params for the constructor.
  */
 export function getArgumentParser(id: string, params: any[] = []) {
-    const argumentParsers: (new (...params: any) => ArgumentParser<any>)[] = [
-        BlockArgumentParser,
-        DefinitionDescriptionArgumentParser,
-        DefinitionIDArgumentParser,
-        EntityArgumentParser,
-        IPArgumentParser,
-        ItemArgumentParser,
-        LiteralArgumentParser,
-        MessageArgumentParser,
-        NamespacedIDArgumentParser,
-        NbtTagArgumentParser,
-        NumberArgumentParser,
-        NumericIDArgumentParser,
-        ObjectiveArgumentParser,
-        StringArgumentParser,
-        TagArgumentParser,
-        TeamArgumentParser,
-        TextComponentArgumentParser,
-        VectorArgumentParser
-    ]
     try {
-        for (const parser of argumentParsers) {
+        for (const parser of ArgumentParsers) {
             if (parser.name === `${id}ArgumentParser`) {
                 return new parser(...params)
             }
