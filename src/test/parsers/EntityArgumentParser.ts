@@ -6,6 +6,7 @@ import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import NumberRange from '../../types/NumberRange'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -74,6 +75,22 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser()
                 const actual = parser.parse(new StringReader('@a'), undefined, manager)
                 assert.deepStrictEqual(actual.data, { variable: 'a' })
+            })
+            it('Should return data for empty-argument selector', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[]'), undefined, manager)
+                assert.deepStrictEqual(actual.data, { variable: 'a' })
+            })
+            it('Should return data for selector with simple arguments', () => {
+                const parser = new EntityArgumentParser()
+                const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5]'
+                const expected = {
+                    sort: 'random', x: 1, dx: 2.5, limit: 1,
+                    level: new NumberRange('integer', 1),
+                    distance: new NumberRange('integer', undefined, 1)
+                }
+                const actual = parser.parse(new StringReader(command), undefined, manager)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: expected })
             })
             it('Should return completions for variable', () => {
                 const parser = new EntityArgumentParser()
@@ -144,6 +161,29 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'random' }
                 ])
             })
+            it('Should return completions for ‘gamemode’ argument', () => {
+                const parser = new EntityArgumentParser()
+                const actual = parser.parse(new StringReader('@a[ gamemode = ]'), 15, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+                assert.deepStrictEqual(actual.completions, [
+                    { label: '!' },
+                    { label: 'adventure' },
+                    { label: 'creative' },
+                    { label: 'spectator' },
+                    { label: 'survival' }
+                ])
+            })
+            // it('Should return completions for negative ‘gamemode’ argument', () => {
+            //     const parser = new EntityArgumentParser()
+            //     const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), 17, manager, undefined, cache)
+            //     assert.deepStrictEqual(actual.data, { variable: 'a', arguments: {} })
+            //     assert.deepStrictEqual(actual.completions, [
+            //         { label: 'adventure' },
+            //         { label: 'creative' },
+            //         { label: 'spectator' },
+            //         { label: 'survival' }
+            //     ])
+            // })
             // it('Should return empty cache when the entity is undefined', () => {
             //     const parser = new EntityArgumentParser()
             //     const actual = parser.parse(new StringReader('qux'), undefined, undefined, cache)

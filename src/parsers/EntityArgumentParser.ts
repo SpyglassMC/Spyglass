@@ -156,6 +156,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.arguments[key] = value
                     } else if (key === 'limit') {
                         const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
+                        console.log(result)
                         if (result.data) {
                             ans.data.arguments.limit = result.data
                         }
@@ -175,13 +176,13 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'type') {
                         dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type']), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
-                        // const result = new RangeArgumentParser('float').parse(reader, cursor)
-                        // ans.data.arguments[key] = result.data
-                        // combineArgumentParserResult(ans, result)
+                        const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor)
+                        ans.data.arguments[key] = result.data
+                        combineArgumentParserResult(ans, result)
                     } else if (key === 'level') {
-                        // const result = new RangeArgumentParser('integer').parse(reader, cursor)
-                        // ans.data.arguments[key] = result.data
-                        // combineArgumentParserResult(ans, result)
+                        const result = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor)
+                        ans.data.arguments[key] = result.data
+                        combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
 
                     } else if (key === 'scores') {
