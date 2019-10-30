@@ -1,18 +1,19 @@
 import * as assert from 'power-assert'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { getArgumentParser } from '../../parsers/ArgumentParsers'
 
-describe('ArgumentParsers Tests', () => {
+describe('ArgumentParserManager Tests', () => {
     describe('getArgumentParser() Tests', () => {
+        const manager = new ArgumentParserManager()
         it('Should return the parser respectively', () => {
-            const actual = getArgumentParser('Literal', ['foo'])
+            const actual = manager.get('Literal', ['foo'])
             assert.deepStrictEqual(actual, new LiteralArgumentParser('foo'))
         })
         it('Should throw error if nothing matches', () => {
             try {
-                const actual = getArgumentParser('ThisIsDefinitelyNonExistent', ['foo'])
+                manager.get('ThisIsDefinitelyNonExistent', ['foo'])
                 fail()
             } catch (e) {
                 assert(e.message === 'unknown argument parser ID: ‘ThisIsDefinitelyNonExistent’')
@@ -20,7 +21,7 @@ describe('ArgumentParsers Tests', () => {
         })
         it('Should throw error if there is error thrown', () => {
             try {
-                const actual = getArgumentParser('Literal')
+                manager.get('Literal')
                 fail()
             } catch (e) {
                 assert(e.message === 'error occurred when getting parser from {id: ‘Literal’, params: ‘’}: ' +

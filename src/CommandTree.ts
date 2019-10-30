@@ -7,11 +7,11 @@ import IPArgumentParser from './parsers/IPArgumentParser'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import MessageArgumentParser from './parsers/MessageArgumentParser'
+import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 import NumberArgumentParser from './parsers/NumberArgumentParser'
 import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
 import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
-import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.

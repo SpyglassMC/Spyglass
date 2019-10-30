@@ -1,9 +1,9 @@
 import ArgumentParser from './ArgumentParser'
+import Manager from '../types/Manager'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToMessage } from '../utils/utils'
+import { ArgumentParserResult } from '../types/Parser'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'

@@ -3,9 +3,8 @@ import Identity from '../types/Identity'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import { ArgumentParserResult } from '../types/Parser'
-import { GlobalCache, CacheCategory, GlobalCacheElement, getCompletions, getSafeCategory } from '../types/Cache'
+import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
 import { VanillaConfig } from '../types/Config'
-import { ToLintedString } from '../types/Lintable'
 import ParsingError from '../types/ParsingError'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 
@@ -22,7 +21,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             errors: [],

@@ -1,4 +1,5 @@
 import * as assert from 'power-assert'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
@@ -326,16 +327,17 @@ describe('NbtSchemaWalker Tests', () => {
         })
     })
     describe('getCompletions() Tests', () => {
+        const manager = new ArgumentParserManager()
         it('Should return empty completions when there are not any suggestions', () => {
             const actual = walker
                 .go('block/banner.json')
-                .getCompletions(new StringReader(''), 0, VanillaConfig, {})
+                .getCompletions(new StringReader(''), 0, manager, VanillaConfig, {})
             assert.deepStrictEqual(actual, [])
         })
         it('Should return completions for raw suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#raw')
-                .getCompletions(new StringReader(''), 0)
+                .getCompletions(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual, [
                 { label: 'foo' }
             ])
@@ -343,7 +345,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return completions for detailed suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#detailed')
-                .getCompletions(new StringReader(''), 0)
+                .getCompletions(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual, [
                 { label: 'bar', documentation: 'The Bar' }
             ])
@@ -352,7 +354,7 @@ describe('NbtSchemaWalker Tests', () => {
             const out = { type: '' }
             const actual = walker
                 .go('suggestionsTest.json#argumentParser')
-                .getCompletions(new StringReader(''), 0, undefined, undefined, out)
+                .getCompletions(new StringReader(''), 0, manager, undefined, undefined, out)
             assert(out.type === 'string')
             assert.deepStrictEqual(actual, [
                 { label: 'baz' },
@@ -362,7 +364,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return completions for line parser suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getCompletions(new StringReader(''), 0)
+                .getCompletions(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual, [
                 { label: '/' }
             ])
@@ -370,7 +372,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return empty completions when the result completions of line parser is undefined', () => {
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getCompletions(new StringReader(''), undefined)
+                .getCompletions(new StringReader(''), undefined, manager)
             assert.deepStrictEqual(actual, [])
         })
     })

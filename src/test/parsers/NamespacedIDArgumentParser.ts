@@ -62,7 +62,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return completions for cache units', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader(''), 0, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -81,7 +81,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return warning when the id cannot be resolved in cache category', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('foo'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
@@ -97,7 +97,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return cache when the id is already defined', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('spgoding:bossbar/a'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('spgoding:bossbar/a'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['bossbar', 'a']))
             assert.deepStrictEqual(actual.cache, {
                 bossbars: {
@@ -110,7 +110,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return empty cache when the id is undefined', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('spgoding:bossbar/c'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('spgoding:bossbar/c'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['bossbar', 'c']))
             assert.deepStrictEqual(actual.cache, {})
         })
