@@ -100,26 +100,27 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a[]'), 3, undefined, cache)
                 assert.deepStrictEqual(actual.data, { variable: 'a' })
                 assert.deepStrictEqual(actual.completions, [
-                    { label: 'sort' },
-                    { label: 'x' },
-                    { label: 'y' },
-                    { label: 'z' },
-                    { label: 'dx' },
-                    { label: 'dy' },
-                    { label: 'dz' },
-                    { label: 'distance' },
-                    { label: 'x_rotation' },
-                    { label: 'y_rotation' },
-                    { label: 'level' },
-                    { label: 'limit' },
-                    { label: 'tag' },
-                    { label: 'team' },
-                    { label: 'gamemode' },
-                    { label: 'name' },
-                    { label: 'type' },
-                    { label: 'scores' },
-                    { label: 'advancement' },
-                    { label: 'nbt' }
+                    { label: 'advancements'},
+                    { label: 'distance'},
+                    { label: 'dx'},
+                    { label: 'dy'},
+                    { label: 'dz'},
+                    { label: 'gamemode'},
+                    { label: 'level'},
+                    { label: 'limit'},
+                    { label: 'name'},
+                    { label: 'nbt'},
+                    { label: 'predicate'},
+                    { label: 'scores'},
+                    { label: 'sort'},
+                    { label: 'tag'},
+                    { label: 'team'},
+                    { label: 'type'},
+                    { label: 'x'},
+                    { label: 'x_rotation'},
+                    { label: 'y'},
+                    { label: 'y_rotation'},
+                    { label: 'z'}
                 ])
             })
             it('Should return errors for unclosed brackets', () => {

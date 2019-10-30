@@ -135,6 +135,11 @@ Whether to throw warnings for undefined objectives.
 Whether to throw warnings for undefined tags.  
 @default `false`
 
+#### strictTeamCheck: boolean
+
+Whether to throw warnings for undefined teams.  
+@default `false`
+
 #### omitDefaultNamespace: boolean
 
 Whether to omit default namespace (`minecraft`) in namespaced IDs.  

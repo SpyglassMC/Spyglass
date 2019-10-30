@@ -14,30 +14,9 @@ import NumericIDArgumentParser from './NumericIDArgumentParser'
 import ObjectiveArgumentParser from './ObjectiveArgumentParser'
 import StringArgumentParser from './StringArgumentParser'
 import TagArgumentParser from './TagArgumentParser'
+import TeamArgumentParser from './TeamArgumentParser'
 import TextComponentArgumentParser from './TextComponentArgumentParser'
 import VectorArgumentParser from './VectorArgumentParser'
-
-export const ArgumentParsers: (new (...params: any) => ArgumentParser<any>)[] = [
-    BlockArgumentParser,
-    DefinitionDescriptionArgumentParser,
-    DefinitionIDArgumentParser,
-    EntityArgumentParser,
-    IPArgumentParser,
-    ItemArgumentParser,
-    LiteralArgumentParser,
-    MessageArgumentParser,
-    NamespacedIDArgumentParser,
-    NbtTagArgumentParser,
-    NumberArgumentParser,
-    NumericIDArgumentParser,
-    ObjectiveArgumentParser,
-    StringArgumentParser,
-    TagArgumentParser,
-    TextComponentArgumentParser,
-    VectorArgumentParser
-]
-
-export default ArgumentParsers
 
 /**
  * Get an argument parser from specific ID and params.
@@ -45,8 +24,28 @@ export default ArgumentParsers
  * @param params Optional params for the constructor.
  */
 export function getArgumentParser(id: string, params: any[] = []) {
+    const argumentParsers: (new (...params: any) => ArgumentParser<any>)[] = [
+        BlockArgumentParser,
+        DefinitionDescriptionArgumentParser,
+        DefinitionIDArgumentParser,
+        EntityArgumentParser,
+        IPArgumentParser,
+        ItemArgumentParser,
+        LiteralArgumentParser,
+        MessageArgumentParser,
+        NamespacedIDArgumentParser,
+        NbtTagArgumentParser,
+        NumberArgumentParser,
+        NumericIDArgumentParser,
+        ObjectiveArgumentParser,
+        StringArgumentParser,
+        TagArgumentParser,
+        TeamArgumentParser,
+        TextComponentArgumentParser,
+        VectorArgumentParser
+    ]
     try {
-        for (const parser of ArgumentParsers) {
+        for (const parser of argumentParsers) {
             if (parser.name === `${id}ArgumentParser`) {
                 return new parser(...params)
             }
