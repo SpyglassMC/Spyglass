@@ -1,16 +1,17 @@
 import ArgumentParser from './ArgumentParser'
+import BigNumber from 'bignumber.js'
 import Config, { VanillaConfig } from '../types/Config'
-import { GlobalCache } from '../types/Cache'
-import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
+import Manager from '../types/Manager'
+import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
-import { nbtDocs } from 'mc-nbt-paths'
-import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
-import { checkNamingConvention } from '../types/NamingConventionConfig'
-import BigNumber from 'bignumber.js'
 import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { checkNamingConvention } from '../types/NamingConventionConfig'
+import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
+import { GlobalCache } from '../types/Cache'
+import { nbtDocs } from 'mc-nbt-paths'
+import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
@@ -107,6 +108,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private config: Config
     private cursor: number
     private cache: GlobalCache
+    private manager: Manager<ArgumentParser<any>>
 
     readonly identity = 'nbtTag'
 
@@ -124,10 +126,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache = {}): ArgumentParserResult<NbtTag> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache = {}): ArgumentParserResult<NbtTag> {
         this.config = config
         this.cache = cache
         this.cursor = cursor
+        this.manager = manager
         let walker: NbtSchemaWalker | undefined
         if (this.id) {
             const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
@@ -205,7 +208,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             }
                             ans.completions.push(
                                 ...walker
-                                    .getCompletions(clonedReader, this.cursor, this.config, this.cache, out)
+                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, out)
                                     .map(v => ({
                                         ...v,
                                         label: getLabel(v.label)
@@ -544,7 +547,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const value = reader.readQuotedString()
                 ans.data = getNbtStringTag(value)
                 ans.completions = walker ?
-                    walker.getCompletions(clonedReader, this.cursor, this.config, this.cache)
+                    walker.getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache)
                         .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
                     []
             } catch (p) {

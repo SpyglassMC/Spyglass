@@ -28,7 +28,7 @@ describe('TeamArgumentParser Tests', () => {
         })
         it('Should return completions', () => {
             const parser = new TeamArgumentParser()
-            const actual = parser.parse(new StringReader(''), 0, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -48,14 +48,14 @@ describe('TeamArgumentParser Tests', () => {
         it('Should not return warning when the strict team check pass', () => {
             const parser = new TeamArgumentParser()
             const config = constructConfig({ lint: { strictTeamheck: true } })
-            const actual = parser.parse(new StringReader('foo'), undefined, config, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, config, cache)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warning when the strict team check fail', () => {
             const parser = new TeamArgumentParser()
             const config = constructConfig({ lint: { strictTeamCheck: true } })
-            const actual = parser.parse(new StringReader('qux'), undefined, config, cache)
+            const actual = parser.parse(new StringReader('qux'), undefined,undefined,  config, cache)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
@@ -63,7 +63,7 @@ describe('TeamArgumentParser Tests', () => {
         })
         it('Should return cache when the team is already defined', () => {
             const parser = new TeamArgumentParser()
-            const actual = parser.parse(new StringReader('foo'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
                 teams: {
@@ -76,7 +76,7 @@ describe('TeamArgumentParser Tests', () => {
         })
         it('Should return empty cache when the team is undefined', () => {
             const parser = new TeamArgumentParser()
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.cache, {})
         })

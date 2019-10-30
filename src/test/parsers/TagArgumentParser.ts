@@ -28,7 +28,7 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return completions', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader(''), 0, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -48,14 +48,14 @@ describe('TagArgumentParser Tests', () => {
         it('Should not return warning when the strict tag check pass', () => {
             const parser = new TagArgumentParser()
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const actual = parser.parse(new StringReader('foo'), undefined, config, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, config, cache)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warning when the strict tag check fail', () => {
             const parser = new TagArgumentParser()
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const actual = parser.parse(new StringReader('qux'), undefined, config, cache)
+            const actual = parser.parse(new StringReader('qux'), undefined, undefined, config, cache)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'undefined tag ‘qux’', undefined, DiagnosticSeverity.Warning)
@@ -63,7 +63,7 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return cache when the tag is already defined', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader('foo'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
                 tags: {
@@ -76,7 +76,7 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return empty cache when the tag is undefined', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.cache, {})
         })

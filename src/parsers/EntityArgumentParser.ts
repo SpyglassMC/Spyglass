@@ -1,36 +1,40 @@
 import ArgumentParser from './ArgumentParser'
 import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
+import Manager from '../types/Manager'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { VanillaConfig } from '../types/Config'
 import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
-import LiteralArgumentParser from './LiteralArgumentParser'
-import NumberArgumentParser from './NumberArgumentParser'
-import NbtTagArgumentParser from './NbtTagArgumentParser'
-import StringArgumentParser from './StringArgumentParser'
-import NamespacedIDArgumentParser from './NamespacedIDArgumentParser'
-import TagArgumentParser from './TagArgumentParser'
+import Config, { VanillaConfig } from '../types/Config'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
+
+    private cursor: number
+    private manager: Manager<ArgumentParser<any>>
+    private config: Config
+    private cache: GlobalCache
 
     constructor(
         private readonly multiple = true,
         private readonly onlyPlayers = false
     ) { super() }
 
-    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {
         const start = reader.cursor
+        this.cursor = cursor
+        this.manager = manager
+        this.config = config
+        this.cache = cache
 
         if (reader.peek() === '@') {
-            return this.parseSelector(reader, cursor, config, cache)
+            return this.parseSelector(reader)
         } else {
-            return this.parsePlain(reader, cursor, config, cache)
+            return this.parsePlain(reader)
         }
     }
 
-    private parsePlain(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}) {
+    private parsePlain(reader: StringReader) {
         const ans: ArgumentParserResult<Entity> = {
             data: {},
             errors: [],
@@ -40,9 +44,9 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         const start = reader.cursor
 
         // Completions
-        if (cursor === start) {
+        if (this.cursor === start) {
             ans.completions.push({ label: '@' })
-            ans.completions.push(...getCompletions(cache, 'entities'))
+            ans.completions.push(...getCompletions(this.cache, 'entities'))
         }
 
         // Data
@@ -57,7 +61,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
 
         // Cache
-        const category = getSafeCategory(cache, 'entities')
+        const category = getSafeCategory(this.cache, 'entities')
         if (Object.keys(category).includes(plain)) {
             ans.cache = {
                 entities: {
@@ -72,7 +76,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         return ans
     }
 
-    private parseSelector(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}) {
+    private parseSelector(reader: StringReader) {
         const ans: ArgumentParserResult<Entity> = {
             data: {},
             errors: [],
@@ -81,7 +85,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
         const start = reader.cursor
 
-        if (cursor === start + 1) {
+        if (this.cursor === start + 1) {
             ans.completions.push({ label: 'a' }, { label: 'e' }, { label: 'p' }, { label: 'r' }, { label: 's' })
         }
 
@@ -101,7 +105,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             if (reader.peek() === '[') {
                 reader.skip()
                 while (reader.canRead()) {
-                    if (EntityArgumentParser.isCursorInWhiteSpace(reader, cursor)) {
+                    if (EntityArgumentParser.isCursorInWhiteSpace(reader, this.cursor)) {
                         ans.completions.push(...SelectorArgumentKeys.map(v => ({ label: v })))
                     }
                     if (reader.peek() === ']') {
@@ -124,14 +128,14 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     }
                     const dealWithNegativableArray = (parser: ArgumentParser<any>, key: string) => {
                         const negKey = `neg${key[0].toUpperCase()}${key.slice(1)}`
-                        if (cursor === reader.cursor) {
+                        if (this.cursor === reader.cursor) {
                             ans.completions.push({ label: '!' })
                         }
                         const isNegative = reader.peek() === '!'
                         if (isNegative) {
                             reader.skip()
                         }
-                        const result = parser.parse(reader, cursor)
+                        const result = parser.parse(reader, this.cursor, this.manager)
                         if (result.data) {
                             if (isNegative) {
                                 pushSafely(negKey, result)
@@ -142,7 +146,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         combineArgumentParserResult(ans, result)
                     }
                     if (key === 'sort') {
-                        const result = new LiteralArgumentParser('arbitrary', 'furthest', 'nearest', 'random').parse(reader, cursor)
+                        const result = this.manager.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, this.cursor, this.manager)
                         if (result.data) {
                             ans.data.arguments.sort = result.data as SelectorSortMethod
                         }
@@ -151,25 +155,25 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         const value = reader.readFloat()
                         ans.data.arguments[key] = value
                     } else if (key === 'limit') {
-                        const result = new NumberArgumentParser('integer', 1).parse(reader, cursor)
+                        const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
                         if (result.data) {
                             ans.data.arguments.limit = result.data
                         }
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'gamemode') {
-                        dealWithNegativableArray(new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'), key)
+                        dealWithNegativableArray(this.manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
                     } else if (key === 'name') {
-                        dealWithNegativableArray(new StringArgumentParser(), key)
+                        dealWithNegativableArray(this.manager.get('String'), key)
                     } else if (key === 'nbt') {
-                        dealWithNegativableArray(new NbtTagArgumentParser('compound', 'entities' /*TODO*/), key)
+                        dealWithNegativableArray(this.manager.get('NbtTag', ['compound', 'entities' /*TODO*/]), key)
                     } else if (key === 'predicate') {
-                        dealWithNegativableArray(new NamespacedIDArgumentParser('$predicates'), key)
+                        dealWithNegativableArray(this.manager.get('NamespacedID', ['$predicates']), key)
                     } else if (key === 'tag') {
-                        dealWithNegativableArray(new TagArgumentParser(), key)
+                        dealWithNegativableArray(this.manager.get('Tag'), key)
                     } else if (key === 'team') {
-                        // dealWithNegativableArray(new TeamArgumentParser(), key)
+                        dealWithNegativableArray(this.manager.get('Team'), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(new NamespacedIDArgumentParser('minecraft:entity_type'), key)
+                        dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type']), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
                         // const result = new RangeArgumentParser('float').parse(reader, cursor)
                         // ans.data.arguments[key] = result.data
@@ -181,7 +185,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'advancements') {
 
                     } else if (key === 'scores') {
-                        // scores
+
                     } else {
                         ans.errors.push(
                             new ParsingError({ start, end: start + key.length }, `unexpected selector key ‘${key}’`)

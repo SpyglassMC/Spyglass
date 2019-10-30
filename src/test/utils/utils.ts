@@ -1,4 +1,5 @@
 import * as assert from 'power-assert'
+import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
 import { formatMessage, arrayToMessage, escapeString, quoteString } from '../../utils/utils'
 

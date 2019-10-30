@@ -14,7 +14,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
         this.registry = registries[type]
     }
 
-    parse(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<number> {
+    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<number> {
         const ans: ArgumentParserResult<number> = {
             data: NaN,
             errors: [],

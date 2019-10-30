@@ -1,6 +1,7 @@
+import Config from '../types/Config'
+import Manager from '../types/Manager'
 import Parser, { ArgumentParserResult } from '../types/Parser'
 import StringReader from '../utils/StringReader'
-import Config from '../types/Config'
 import { GlobalCache } from '../types/Cache'
 
 /**
@@ -19,7 +20,7 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * @param config A config of the language server.
      * @param cache A global cache of the current workspace.
      */
-    abstract parse(reader: StringReader, cursor?: number, config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, cursor: number, manager?: Manager<ArgumentParser<any>>, config?: Config, cache?: GlobalCache): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`

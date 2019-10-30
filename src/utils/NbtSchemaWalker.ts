@@ -1,12 +1,14 @@
-import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
-import { posix, ParsedPath } from 'path'
-import { NbtTagTypeName } from '../types/NbtTag'
-import { CompletionItem, CompletionItemKind } from 'vscode-languageserver'
-import { getArgumentParser } from '../parsers/ArgumentParsers'
-import StringReader from './StringReader'
-import LineParser from '../parsers/LineParser'
+import ArgumentParserManager from '../parsers/ArgumentParserManager'
+import { CompletionItem } from 'vscode-languageserver'
 import { GlobalCache } from '../types/Cache'
+import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
+import { NbtTagTypeName } from '../types/NbtTag'
+import { posix, ParsedPath } from 'path'
 import { VanillaConfig } from '../types/Config'
+import LineParser from '../parsers/LineParser'
+import StringReader from './StringReader'
+import Manager from '../types/Manager'
+import ArgumentParser from '../parsers/ArgumentParser'
 
 export type NbtNoPropertySchemaNode = NoPropertyNode
 export type NbtCompoundSchemaNode = CompoundNode
@@ -220,7 +222,7 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(reader: StringReader, cursor = -1, config = VanillaConfig, cache: GlobalCache = {}, out = { type: '' }): CompletionItem[] {
+    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}, out = { type: '' }): CompletionItem[] {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: CompletionItem[] = []
@@ -233,15 +235,15 @@ export default class NbtSchemaWalker {
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)
-                        const { completions } = parser.parse(reader, cursor).data
+                        const { completions } = parser.parse(reader, cursor, manager).data
                         if (completions) {
                             ans.push(...completions)
                         }
                         out.type = 'string'
                     } else {
                         // Regular ArgumentParser
-                        const parser = getArgumentParser(v.parser, v.params)
-                        const { completions, data } = parser.parse(reader, cursor, config, cache)
+                        const parser = manager.get(v.parser, v.params)
+                        const { completions, data } = parser.parse(reader, cursor, manager, config, cache)
                         ans.push(...completions)
                         out.type = typeof data
                     }
