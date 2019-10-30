@@ -89,6 +89,13 @@ describe('StringReader Tests', () => {
             assert(actualResult === 233)
             assert(actualCursor === 3)
         })
+        it('Should stop at double periods', () => {
+            const reader = new StringReader('233..234')
+            const actualResult = reader.readInt()
+            const actualCursor = reader.cursor
+            assert(actualResult === 233)
+            assert(actualCursor === 3)
+        })
         it('Should throw error for nothing', () => {
             const reader = new StringReader('')
             try {

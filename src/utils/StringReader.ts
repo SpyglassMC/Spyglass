@@ -28,10 +28,18 @@ export default class StringReader {
         return this.cursor + length <= this.string.length
     }
 
+    /**
+     * Peeks a character at the current cursor.
+     * @param offset The index to offset from cursor. @default 0
+     */
     peek(offset = 0) {
         return this.string.charAt(this.cursor + offset)
     }
 
+    /**
+     * Skips the current character.
+     * @param step The step to skip. @default 1
+     */
     skip(step = 1) {
         this.cursor += step
         return this
@@ -55,6 +63,9 @@ export default class StringReader {
         const start = this.cursor
         let str = ''
         while (this.canRead() && StringReader.canInNumber(this.peek())) {
+            if (this.peek() === '.' && this.peek(1) === '.') {
+                break
+            }
             str += this.read()
         }
         if (str) {
