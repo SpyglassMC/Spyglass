@@ -112,7 +112,7 @@ describe('StringReader Tests', () => {
         it('Should throw error for invalid string consisting of valid characters', () => {
             const reader = new StringReader('2.3.3')
             try {
-                reader.readInt()
+                reader.readFloat()
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
@@ -136,13 +136,13 @@ describe('StringReader Tests', () => {
             }
         })
         it('Should throw error for float numbers', () => {
-            const reader = new StringReader('1.2')
+            const reader = new StringReader('1.0')
             try {
                 reader.readInt()
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/expected an integer but got 1\.2/))
+                assert(message.match(/expected an integer but got 1\.0/))
                 assert(range.start === 0)
                 assert(range.end === 3)
                 assert(tolerable === true)
