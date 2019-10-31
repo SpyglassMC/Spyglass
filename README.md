@@ -105,6 +105,11 @@ Whether to keep at least one decimal place in SNBT or not.
 Whether to sort the keys of a compound tag in SNBT or not.  
 @default `false`
 
+#### timeOmitTickUnit: boolean
+
+Whether to omit the unit of tick (`t`) in time arguments.  
+@default `false`
+
 #### nameOfTags: `NamingConventionConfig`
 
 The naming convension for scoreboard tags.  

@@ -1,4 +1,5 @@
 import StringReader from './StringReader'
+import { CompletionItem } from 'vscode-languageserver'
 
 /**
  * Format input message.
@@ -99,4 +100,12 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
     } else {
         return inner
     }
+}
+
+/**
+ * Convert an array of any to an array of `CompletionItem`.
+ * @param array An array
+ */
+export function arrayToCompletions(array: any[]): CompletionItem[] {
+    return array.map(v => ({ label: v.toString() }))
 }

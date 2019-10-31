@@ -1,7 +1,7 @@
 import * as assert from 'power-assert'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage, escapeString, quoteString } from '../../utils/utils'
+import { formatMessage, arrayToMessage, escapeString, quoteString, arrayToCompletions } from '../../utils/utils'
 
 describe('utils.ts Tests', () => {
     describe('formatMessage() Tests', () => {
@@ -118,6 +118,17 @@ describe('utils.ts Tests', () => {
             const force = false
             const actual = quoteString(inner, quoteType, force)
             assert(actual === '"tRuE"')
+        })
+    })
+    describe('arrayToCompletions() Tests', () => {
+        it('Should escape string.', () => {
+            const arr = ['a', 2, 'c']
+            const actual = arrayToCompletions(arr)
+            assert.deepEqual(actual, [
+                { label: 'a' },
+                { label: '2' },
+                { label: 'c' }
+            ])
         })
     })
 })

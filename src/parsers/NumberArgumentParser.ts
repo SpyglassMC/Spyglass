@@ -1,6 +1,7 @@
 import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
+import ParsingError from '../types/ParsingError'
 
 export default class NumberArgumentParser extends ArgumentParser<number> {
     identity = 'number'
@@ -21,10 +22,23 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
             errors: [],
             cache: {}
         }
+        const start = reader.cursor
         try {
             ans.data = this.type === 'integer' ? reader.readInt() : reader.readFloat()
         } catch (p) {
             ans.errors.push(p)
+        }
+        if (this.min !== undefined && ans.data < this.min) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                `expected a number larger than ${this.min} but got ${ans.data}`
+            ))
+        }
+        if (this.max !== undefined && ans.data > this.max) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                `expected a number smaller than ${this.max} but got ${ans.data}`
+            ))
         }
         return ans
     }

@@ -105,6 +105,11 @@ export type LintConfig = {
      */
     snbtSortKeys: boolean,
     /**
+     * Whether to omit the unit of tick (`t`) in time arguments.  
+     * @default false
+     */
+    timeOmitTickUnit: boolean,
+    /**
      * The naming convension for scoreboard tags.  
      * @default 'whatever'
      */
@@ -183,6 +188,7 @@ export const VanillaConfig: Config = {
         snbtOmitDoubleSuffix: false,
         snbtKeepDecimalPlace: true,
         snbtSortKeys: false,
+        timeOmitTickUnit: false,
         nameOfTags: 'whatever',
         nameOfObjectives: 'whatever',
         nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],

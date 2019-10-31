@@ -3,12 +3,12 @@ import BlockArgumentParser from './parsers/BlockArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
 import EntityArgumentParser from './parsers/EntityArgumentParser'
-import IPArgumentParser from './parsers/IPArgumentParser'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import MessageArgumentParser from './parsers/MessageArgumentParser'
 import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 import NumberArgumentParser from './parsers/NumberArgumentParser'
+import StringArgumentParser from './parsers/StringArgumentParser'
 import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
 import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
@@ -92,8 +92,8 @@ export const VanillaTree: CommandTree = {
             permission: 3,
             description: 'Adds IP addresses to blacklist.',
             children: {
-                address: {
-                    parser: new IPArgumentParser(),
+                name: {
+                    parser: new EntityArgumentParser(true, true),
                     executable: true,
                     children: {
                         reason: {
@@ -102,8 +102,8 @@ export const VanillaTree: CommandTree = {
                         }
                     }
                 },
-                name: {
-                    parser: new EntityArgumentParser(true, true),
+                address: {
+                    parser: new StringArgumentParser(),
                     executable: true,
                     children: {
                         reason: {
