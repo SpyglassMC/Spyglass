@@ -9,6 +9,7 @@
     "datapack-json": "^2.0.0",
     "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
     "minecraft-id": "^0.1.5",
+    "python-range": "^1.0.4",
     "vscode-languageserver": "^5.2.1"
   },
   "directories": {

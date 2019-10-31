@@ -5,6 +5,9 @@ import StringReader from '../utils/StringReader'
 import { arrayToMessage } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 
+/**
+ * A literal is defined as a string which consists of [0-9a-zA-Z_].
+ */
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
 
@@ -31,7 +34,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         }
         //#endregion
         const start = reader.cursor
-        const string = reader.readUnquotedString()
+        const string = reader.readUnquotedString(c => /^[0-9a-zA-Z\_]+$/.test(c))
         ans.data = string
         //#region Get errors.
         let isFullMatch = false
