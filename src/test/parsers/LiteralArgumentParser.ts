@@ -16,6 +16,11 @@ describe('LiteralArgumentParser Tests', () => {
                 assert(er.message === 'expected ‘literals.length’ to be more than 0')
             }
         })
+        it('Should push extraChars', () => {
+            const parser = new LiteralArgumentParser('foo', 'b!!$')
+            const actual = parser.parse(new StringReader('b!!$'))
+            assert(actual.data === 'b!!$')
+        })
     })
     describe('toHint() Tests', () => {
         it('Should return correctly for single literal', () => {
@@ -46,6 +51,16 @@ describe('LiteralArgumentParser Tests', () => {
             const parser = new LiteralArgumentParser('expected')
             const actual = parser.parse(new StringReader('actual'))
             assert(actual.data === 'actual')
+        })
+        it('Should stop in time if the value is full matched', () => {
+            const parser = new LiteralArgumentParser('foo')
+            const actual = parser.parse(new StringReader('fooB'))
+            assert(actual.data === 'foo')
+        })
+        it('Should not stop if the value is full matched but there are still literals which start with the value', () => {
+            const parser = new LiteralArgumentParser('foo', 'fooBar')
+            const actual = parser.parse(new StringReader('fooB'))
+            assert(actual.data === 'fooB')
         })
         it('Should return completions', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')

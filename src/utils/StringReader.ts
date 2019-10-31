@@ -133,9 +133,9 @@ export default class StringReader {
         return parseFloat(str)
     }
 
-    readUnquotedString(checker = StringReader.canInUnquotedString) {
+    readUnquotedString() {
         let ans = ''
-        while (this.canRead() && checker(this.peek())) {
+        while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             ans += this.read()
         }
         return ans

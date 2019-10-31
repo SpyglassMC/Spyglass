@@ -6,7 +6,7 @@ import ParsingError from '../types/ParsingError'
 
 export default class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static readonly Category = ['belowName', 'list', 'sidebar']
-    static readonly Color = ['black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white']
+    static readonly Colors = ['black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white']
     static readonly Sep = '.'
 
     readonly identity = 'scoreboardSlot'
@@ -36,25 +36,10 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
                 ans.data = category
             } else {
                 reader.skip()
-
-                const teamResult = manager.get('Literal', ['team']).parse(reader, cursor)
-                const team = teamResult.data as 'team' | ''
+                const teamResult = manager.get('Literal', ScoreboardSlotArgumentParser.Colors.map(v=>`team${ScoreboardSlotArgumentParser.Sep}${v}`)).parse(reader, cursor)
+                const team = teamResult.data as string
                 combineArgumentParserResult(ans, teamResult)
-
-                if (reader.peek() === ScoreboardSlotArgumentParser.Sep) {
-                    reader.skip()
-
-                    const colorResult = manager.get('Literal', ScoreboardSlotArgumentParser.Color).parse(reader, cursor)
-                    const color = colorResult.data as string
-                    combineArgumentParserResult(ans, colorResult)
-                    ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}${ScoreboardSlotArgumentParser.Sep}${color}`
-                } else {
-                    ans.errors.push(new ParsingError(
-                        { start: reader.cursor, end: reader.cursor + 1 },
-                        `expected ‘${ScoreboardSlotArgumentParser.Sep}’ but got ‘${reader.peek()}’`
-                    ))
-                    ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}`
-                }
+                ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}`
             }
         } else {
             ans.data = category

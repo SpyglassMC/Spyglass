@@ -39,38 +39,28 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for ‘team’ under ‘sidebar’', () => {
+        it('Should return completions for teams under ‘sidebar’', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('sidebar.'), 8, manager)
-            assert.deepStrictEqual(actual.data, 'sidebar.')
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: 'team' }
-                ]
-            )
-        })
-        it('Should return completions for colors under ‘sidebar.team’', () => {
-            const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('sidebar.team.'), 13, manager)
+            const actual = parser.parse(new StringReader('sidebar.team.'), 8, manager)
             assert.deepStrictEqual(actual.data, 'sidebar.team.')
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'black' },
-                    { label: 'dark_blue' },
-                    { label: 'dark_green' },
-                    { label: 'dark_aqua' },
-                    { label: 'dark_red' },
-                    { label: 'dark_purple' },
-                    { label: 'gold' },
-                    { label: 'gray' },
-                    { label: 'dark_gray' },
-                    { label: 'blue' },
-                    { label: 'green' },
-                    { label: 'aqua' },
-                    { label: 'red' },
-                    { label: 'light_purple' },
-                    { label: 'yellow' },
-                    { label: 'white' }
+                    { label: 'team.black' },
+                    { label: 'team.dark_blue' },
+                    { label: 'team.dark_green' },
+                    { label: 'team.dark_aqua' },
+                    { label: 'team.dark_red' },
+                    { label: 'team.dark_purple' },
+                    { label: 'team.gold' },
+                    { label: 'team.gray' },
+                    { label: 'team.dark_gray' },
+                    { label: 'team.blue' },
+                    { label: 'team.green' },
+                    { label: 'team.aqua' },
+                    { label: 'team.red' },
+                    { label: 'team.light_purple' },
+                    { label: 'team.yellow' },
+                    { label: 'team.white' }
                 ]
             )
         })
@@ -93,17 +83,6 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 4, end: 5 },
                     'only ‘sidebar’ has sub slots'
-                )
-            ])
-        })
-        it('Should return error when fail to find color under ‘sidebar.team’', () => {
-            const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('sidebar.team'), undefined, manager)
-            assert.deepStrictEqual(actual.data, 'sidebar.team')
-            assert.deepStrictEqual(actual.errors, [
-                new ParsingError(
-                    { start: 12, end: 13 },
-                    'expected ‘.’ but got ‘’'
                 )
             ])
         })

@@ -5,13 +5,11 @@ import StringReader from '../utils/StringReader'
 import { arrayToMessage } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 
-/**
- * A literal is defined as a string which consists of [0-9a-zA-Z_].
- */
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
 
     private readonly literals: string[]
+    private readonly extraChars: string[] = []
 
     constructor(...literals: string[]) {
         super()
@@ -19,6 +17,15 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             throw new Error('expected ‘literals.length’ to be more than 0')
         }
         this.literals = literals
+        for (const literal of literals) {
+            if (!StringReader.canInUnquotedString(literal)) {
+                for (const char of literal) {
+                    if (!this.extraChars.includes(char) && !StringReader.canInUnquotedString(char)) {
+                        this.extraChars.push(char)
+                    }
+                }
+            }
+        }
     }
 
     parse(reader: StringReader, cursor: number = -1): ArgumentParserResult<string> {
@@ -33,25 +40,38 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             ans.completions = this.literals.map(v => ({ label: v }))
         }
         //#endregion
+        //#region Data
         const start = reader.cursor
-        const string = reader.readUnquotedString(c => /^[0-9a-zA-Z\_]+$/.test(c))
-        ans.data = string
+        let remaningLiterals = this.literals
+        let value = ''
+        while (reader.canRead() && (StringReader.canInUnquotedString(reader.peek()) || this.extraChars.includes(reader.peek()))) {
+            const nextValue = `${value}${reader.peek()}`
+            const nextRemaningLiterals = remaningLiterals.filter(v => v.startsWith(nextValue))
+            if (remaningLiterals.includes(value) && nextRemaningLiterals.length === 0) {
+                break
+            }
+            reader.skip()
+            value = nextValue
+            remaningLiterals = nextRemaningLiterals
+        }
+        ans.data = value
+        //#endregion
         //#region Get errors.
         let isFullMatch = false
         let isPartialMatch = false
         for (const literal of this.literals) {
-            if (literal === string) {
+            if (literal === value) {
                 isFullMatch = true
-            } else if (literal.toLowerCase().startsWith(string.toLowerCase())) {
+            } else if (literal.toLowerCase().startsWith(value.toLowerCase())) {
                 isPartialMatch = true
             }
         }
         if (!isFullMatch) {
             if (isPartialMatch) {
-                if (string.length > 0) {
+                if (value.length > 0) {
                     ans.errors = [new ParsingError(
-                        { start: start, end: start + string.length },
-                        `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`
+                        { start: start, end: start + value.length },
+                        `expected one of ${arrayToMessage(this.literals)} but got ‘${value}’`
                     )]
                 } else {
                     ans.errors = [new ParsingError(
@@ -62,8 +82,8 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
                 }
             } else {
                 ans.errors = [new ParsingError(
-                    { start: start, end: start + string.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got ‘${string}’`,
+                    { start: start, end: start + value.length },
+                    `expected one of ${arrayToMessage(this.literals)} but got ‘${value}’`,
                     false
                 )]
             }
