@@ -3,7 +3,6 @@ import BlockArgumentParser from './BlockArgumentParser'
 import DefinitionDescriptionArgumentParser from './DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './DefinitionIDArgumentParser'
 import EntityArgumentParser from './EntityArgumentParser'
-import IPArgumentParser from './IPArgumentParser'
 import ItemArgumentParser from './ItemArgumentParser'
 import LiteralArgumentParser from './LiteralArgumentParser'
 import Manager from '../types/Manager'
@@ -26,7 +25,6 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         DefinitionDescriptionArgumentParser,
         DefinitionIDArgumentParser,
         EntityArgumentParser,
-        IPArgumentParser,
         ItemArgumentParser,
         LiteralArgumentParser,
         MessageArgumentParser,
