@@ -59,7 +59,7 @@ export default class StringReader {
     /**
      * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
      */
-    private readNumber() {
+    readNumber() {
         const start = this.cursor
         let str = ''
         while (this.canRead() && StringReader.canInNumber(this.peek())) {
@@ -271,7 +271,7 @@ export default class StringReader {
         return (
             c === '0' || c === '1' || c === '2' || c === '3' ||
             c === '4' || c === '5' || c === '6' || c === '7' ||
-            c === '8' || c === '9' || c === '.' || c === '-'
+            c === '8' || c === '9' || c === '-' || c === '.'
         )
     }
 
