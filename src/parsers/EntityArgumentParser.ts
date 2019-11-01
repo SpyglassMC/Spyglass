@@ -1,12 +1,13 @@
-import ArgumentParser from './ArgumentParser'
-import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
-import Manager from '../types/Manager'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
+import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
+import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
+import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
+import Manager from '../types/Manager'
 import NumberRange from '../types/NumberRange'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
@@ -107,7 +108,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 reader.skip()
                 while (reader.canRead()) {
                     if (EntityArgumentParser.isCursorInWhiteSpace(reader, this.cursor)) {
-                        ans.completions.push(...SelectorArgumentKeys.map(v => ({ label: v })))
+                        ans.completions.push(...arrayToCompletions(SelectorArgumentKeys))
                     }
                     if (reader.peek() === ']') {
                         break
@@ -166,6 +167,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'name') {
                         dealWithNegativableArray(this.manager.get('String'), key)
                     } else if (key === 'nbt') {
+                        // TODO: NBT schema.
                         dealWithNegativableArray(this.manager.get('NbtTag', ['compound', 'entities' /*TODO*/]), key)
                     } else if (key === 'predicate') {
                         dealWithNegativableArray(this.manager.get('NamespacedID', ['$predicates']), key)
