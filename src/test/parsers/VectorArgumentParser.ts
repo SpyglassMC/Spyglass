@@ -3,7 +3,6 @@ import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { ShouldCorrect } from '../../types/Vector'
 
 describe('VectorArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -17,14 +16,18 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5'])
         })
+        it('Should return examples for Vector4', () => {
+            const parser = new VectorArgumentParser(4)
+            const actual = parser.getExamples()
+            assert.deepStrictEqual(actual, ['0 0 0 0', '~ ~ ~ ~', '^ ^ ^ ^'])
+        })
     })
     describe('parse() Tests', () => {
         it('Should return data', () => {
             const parser = new VectorArgumentParser(2, false)
             const actual = parser.parse(new StringReader('0 ~-0.5'))
-            assert.deepEqual(actual.data[0], { value: 0, type: 'absolute', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: -0.5, type: 'relative', hasDot: false })
-            assert.deepEqual(actual.data[ShouldCorrect], false)
+            assert.deepEqual(actual.data.elements[0], { value: '0', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '-0.5', type: 'relative' })
         })
         it('Should return completions at the beginning of input', () => {
             const parser = new VectorArgumentParser(2, undefined, true, false)
@@ -53,9 +56,9 @@ describe('VectorArgumentParser Tests', () => {
         it('Should return error when local coordinates are mixed with non-local coordinates', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('^1 ~ -1'))
-            assert.deepEqual(actual.data[0], { value: 1, type: 'local', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: 0, type: 'relative', hasDot: false })
-            assert.deepEqual(actual.data[2], { value: -1, type: 'absolute', hasDot: true })
+            assert.deepEqual(actual.data.elements[0], { value: '1', type: 'local' })
+            assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
+            assert.deepEqual(actual.data.elements[2], { value: '-1', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 7 }, 'cannot mix local coordinates and non-local coordinates together')
             ])
@@ -63,27 +66,27 @@ describe('VectorArgumentParser Tests', () => {
         it('Should return error when local coordinates are not allowed', () => {
             const parser = new VectorArgumentParser(2, undefined, false)
             const actual = parser.parse(new StringReader('^-1 ^.5'))
-            assert.deepEqual(actual.data[0], { value: -1, type: 'local', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: 0.5, type: 'local', hasDot: false })
+            assert.deepEqual(actual.data.elements[0], { value: '-1', type: 'local' })
+            assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'local' })
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'local coordinate ‘^-1’ is not allowed'),
-                new ParsingError({ start: 4, end: 7 }, 'local coordinate ‘^0.5’ is not allowed')
+                new ParsingError({ start: 4, end: 7 }, 'local coordinate ‘^.5’ is not allowed')
             ])
         })
         it('Should return error when relative coordinates are not allowed', () => {
             const parser = new VectorArgumentParser(2, undefined, undefined, false)
             const actual = parser.parse(new StringReader('1 ~'))
-            assert.deepEqual(actual.data[0], { value: 1, type: 'absolute', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: 0, type: 'relative', hasDot: false })
+            assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 2, end: 3 }, 'relative coordinate ‘~0’ is not allowed')
+                new ParsingError({ start: 2, end: 3 }, 'relative coordinate ‘~’ is not allowed')
             ])
         })
         it('Should return error when failed to find sep', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('1 ~'))
-            assert.deepEqual(actual.data[0], { value: 1, type: 'absolute', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: 0, type: 'relative', hasDot: false })
+            assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 3, end: 4 }, 'expected ‘ ’ but got nothing')
             ])
@@ -91,8 +94,8 @@ describe('VectorArgumentParser Tests', () => {
         it('Should return error for illegal number', () => {
             const parser = new VectorArgumentParser(2)
             const actual = parser.parse(new StringReader('1 ~1.4.5.1.4'))
-            assert.deepEqual(actual.data[0], { value: 1, type: 'absolute', hasDot: true })
-            assert.deepEqual(actual.data[1], { value: 0, type: 'relative', hasDot: false })
+            assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 3, end: 12 }, 'expected a number but got ‘1.4.5.1.4’')
             ])

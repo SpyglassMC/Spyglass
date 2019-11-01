@@ -1,6 +1,6 @@
-const VanillaBlocks = require('./vanilla_registries.json') as Blocks
+const VanillaBlockDefinitions = require('./vanilla_registries.json') as BlockDefinitions
 
-export type Block = {
+export type BlockDefinition = {
     properties?: {
         [key: string]: string[]
     }
@@ -13,8 +13,8 @@ export type Block = {
     }>
 }
 
-export interface Blocks {
-    [id: string]: Block
+export interface BlockDefinitions {
+    [id: string]: BlockDefinition
 }
 
-export default VanillaBlocks
+export default VanillaBlockDefinitions

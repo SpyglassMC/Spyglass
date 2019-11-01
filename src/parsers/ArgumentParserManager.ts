@@ -4,6 +4,7 @@ import DefinitionDescriptionArgumentParser from './DefinitionDescriptionArgument
 import DefinitionIDArgumentParser from './DefinitionIDArgumentParser'
 import EntityArgumentParser from './EntityArgumentParser'
 import ItemArgumentParser from './ItemArgumentParser'
+import ItemSlotArgumentParser from './ItemSlotArgumentParser'
 import LiteralArgumentParser from './LiteralArgumentParser'
 import Manager from '../types/Manager'
 import MessageArgumentParser from './MessageArgumentParser'
@@ -13,10 +14,14 @@ import NumberArgumentParser from './NumberArgumentParser'
 import NumberRangeArgumentParser from './NumberRangeArgumentParser'
 import NumericIDArgumentParser from './NumericIDArgumentParser'
 import ObjectiveArgumentParser from './ObjectiveArgumentParser'
+import ObjectiveCriterionArgumentParser from './ObjectiveCriterionArgumentParser'
+import ParticleArgumentParser from './ParticleArgumentParser'
+import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringArgumentParser from './StringArgumentParser'
 import TagArgumentParser from './TagArgumentParser'
 import TeamArgumentParser from './TeamArgumentParser'
 import TextComponentArgumentParser from './TextComponentArgumentParser'
+import TimeArgumentParser from './TimeArgumentParser'
 import VectorArgumentParser from './VectorArgumentParser'
 
 export default class ArgumentParserManager implements Manager<ArgumentParser<any>> {
@@ -26,6 +31,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         DefinitionIDArgumentParser,
         EntityArgumentParser,
         ItemArgumentParser,
+        ItemSlotArgumentParser,
         LiteralArgumentParser,
         MessageArgumentParser,
         NamespacedIDArgumentParser,
@@ -34,10 +40,14 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         NumberRangeArgumentParser,
         NumericIDArgumentParser,
         ObjectiveArgumentParser,
+        ObjectiveCriterionArgumentParser,
+        ParticleArgumentParser,
+        ScoreboardSlotArgumentParser,
         StringArgumentParser,
         TagArgumentParser,
         TeamArgumentParser,
         TextComponentArgumentParser,
+        TimeArgumentParser,
         VectorArgumentParser
     ]
 

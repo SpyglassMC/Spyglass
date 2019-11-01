@@ -15,6 +15,21 @@ Language server for Minecraft: Java Edition datapacks.
 
 There are lots of lint rules which can help format your commands.
 
+#### blockStateAppendSpaceAfterComma: `boolean`
+
+Whether to append spaces after commas in block states or not.  
+@default `false`
+
+#### blockStatePutSpacesAroundEqualSign: `boolean`
+
+Whether to put spaces around equal signs in block states or not.  
+@default `false`
+
+#### blockStateSortKeys: `boolean`
+
+Whether to sort the keys in block states or not.  
+@default `false`
+
 #### quoteType: `'always single' | 'always double' | 'prefer single' | 'prefer double'`
 
 Quotes used in NBT strings and phrase strings.  
@@ -33,21 +48,21 @@ When the strings in entity selectors should be quoted.
 
 #### quoteSnbtStringKeys: `boolean`
 
-When the string keys in SNBT should be quoted.  
+When the string keys in SNBTs should be quoted.  
 `true`: Always.  
 `false`: Only when there are special characters in the string.  
 @default `false`
 
 #### quoteNbtStringValues: `boolean`
 
-When the string values in SNBT should be quoted.  
+When the string values in SNBTs should be quoted.  
 `true`: Always.  
 `false`: Only when there are special characters in the string.  
 @default `true`
 
 #### snbtAppendSpaceAfterColon: `boolean`
 
-Whether to append spaces after colons in SNBT or not.  
+Whether to append spaces after colons in SNBTs or not.  
 @default `true`
 
 #### snbtAppendSpaceAfterComma: `boolean`
@@ -57,52 +72,52 @@ Whether to append spaces after commas in SNBT or not.
 
 #### snbtAppendSpaceAfterSemicolon: `boolean`
 
-Whether to append spaces after semicolons in SNBT or not.  
+Whether to append spaces after semicolons in SNBTs or not.  
 @default `true`
 
 #### snbtByteSuffix: `'b' | 'B'`
 
-The suffix used for TAG_Byte in SNBT.  
+The suffix used for TAG_Byte in SNBTs.  
 @default `'b'`
 
 #### snbtUseBooleans: `boolean`
 
-Whether `0b` and `1b` should be represents by `false` and `true` in SNBT or not.  
+Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.  
 @default `false`
 
 #### snbtShortSuffix: `'s' | 'S'`
 
-The suffix used for TAG_Short in SNBT.  
+The suffix used for TAG_Short in SNBTs.  
 @default `'s'`
 
 #### snbtLongSuffix: `'l' | 'L'`
 
-The suffix used for TAG_Long in SNBT.  
+The suffix used for TAG_Long in SNBTs.  
 @default `'L'`
 
 #### snbtFloatSuffix: `'f' | 'F'`
 
-The suffix used for TAG_Float in SNBT.  
+The suffix used for TAG_Float in SNBTs.  
 @default `'f'`
 
 #### snbtDoubleSuffix: `'d' | 'D'`
 
-The suffix used for TAG_Double in SNBT.  
+The suffix used for TAG_Double in SNBTs.  
 @default `'d'`
 
 #### snbtOmitDoubleSuffix: `boolean`
 
-Whether to omit the suffix of double numbers when possible in SNBT or not.  
+Whether to omit the suffix of double numbers when possible in SNBTs or not.  
 @default `false`
 
 #### snbtKeepDecimalPlace: `boolean`
 
-Whether to keep at least one decimal place in SNBT or not.  
+Whether to keep at least one decimal place in SNBTs or not.  
 @default `true`
 
 #### snbtSortKeys: `boolean`
 
-Whether to sort the keys of a compound tag in SNBT or not.  
+Whether to sort keys in compound tags in SNBTs or not.  
 @default `false`
 
 #### timeOmitTickUnit: boolean
@@ -122,7 +137,7 @@ The naming convension for scoreboard objectives.
 
 #### nameOfSnbtCompoundTagKeys: `NamingConventionConfig`
 
-The naming convension for compound tag keys in SNBT.  
+The naming convension for compound tag keys in SNBTs.  
 @default `['PascalCase', 'camelCase']`
 
 <!-- #### strictBossbarCheck: boolean
@@ -148,8 +163,14 @@ Whether to throw warnings for undefined teams.
 #### omitDefaultNamespace: boolean
 
 Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-Does NOT affect IDs in NBT strings.  
+Does NOT affect namespaced IDs in NBT strings.  
 @default `false`
+
+<!-- #### vectorKeepDecimalPlace: boolean
+
+Whether to keep at least one decimal place in vectors or not.  
+If sets to `false`, the decimal place will still be kept to avoid center-correcting when necessary.  
+@default `true` -->
 
 ## Contributing
 

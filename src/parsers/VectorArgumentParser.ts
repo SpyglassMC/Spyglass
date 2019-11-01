@@ -2,7 +2,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import ArgumentParser from './ArgumentParser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import Vector, { VectorElement, ShouldCorrect } from '../types/Vector'
+import Vector, { VectorElement } from '../types/Vector'
 
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static readonly LocalSymbol = '^'
@@ -12,7 +12,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     readonly identity = 'vector'
 
     constructor(
-        private readonly dimension: 2 | 3,
+        private readonly dimension: 2 | 3 | 4,
         private readonly shouldCorrect = true,
         private readonly allowLocal = true,
         private readonly allowRelative = true
@@ -23,7 +23,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     parse(reader: StringReader, cursor = -1): ArgumentParserResult<Vector> {
         const ans: ArgumentParserResult<Vector> = {
             // tslint:disable-next-line: prefer-object-spread
-            data: Object.assign([], { [ShouldCorrect]: this.shouldCorrect }),
+            data: new Vector([]),
             completions: [],
             errors: [],
             cache: {}
@@ -37,7 +37,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
             try {
                 while (dimension) {
                     const result = this.parseElement(reader, cursor)
-                    ans.data.push(result.data)
+                    ans.data.elements.push(result.data)
                     combineArgumentParserResult(ans, result)
 
                     hasLocal = hasLocal || result.data.type === 'local'
@@ -75,7 +75,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
 
     private parseElement(reader: StringReader, cursor :number) {
         const ans: ArgumentParserResult<VectorElement> = {
-            data: { value: 0, type: 'absolute', hasDot: false },
+            data: { value: '', type: 'absolute' },
             completions: [],
             errors: [],
             cache: {}
@@ -97,8 +97,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         if (StringReader.canInNumber(reader.peek())) {
             try {
                 const str = reader.readNumber()
-                ans.data.hasDot = !str.includes('.')
-                ans.data.value = parseFloat(str)
+                ans.data.value = str
             } catch (p) {
                 ans.errors.push(p)
             }
@@ -131,8 +130,10 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     getExamples(): string[] {
         if (this.dimension === 2) {
             return ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2']
-        } else {
+        } else if (this.dimension === 3) {
             return ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5']
+        } else {
+            return ['0 0 0 0', '~ ~ ~ ~', '^ ^ ^ ^']
         }
     }
 }

@@ -15,6 +15,21 @@ export type EnvConfig = {
 
 export type LintConfig = {
     /**
+     * Whether to append spaces after commas in block states or not.  
+     * @default false
+     */
+    blockStateAppendSpaceAfterComma: boolean,
+    /**
+     * Whether to put spaces around equal signs in block states or not.  
+     * @default false
+     */
+    blockStatePutSpacesAroundEqualSign: boolean,
+    /**
+     * Whether to sort keys in block states or not.  
+     * @default false
+     */
+    blockStateSortKeys: boolean,
+    /**
      * Quotes used in NBT strings and phrase strings.  
      * `always single`: Always use single quotes.  
      * `always double`: Always use double quotes.  
@@ -31,76 +46,76 @@ export type LintConfig = {
      */
     quoteEntitySelectorStrings: boolean,
     /**
-     * When the string keys in SNBT should be quoted.  
+     * When the string keys in SNBTs should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default false
      */
     quoteSnbtStringKeys: boolean,
     /**
-     * When the string values in SNBT should be quoted.  
+     * When the string values in SNBTs should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default true
      */
     quoteSnbtStringValues: boolean,
     /**
-     * Whether to append spaces after colons in SNBT or not.  
+     * Whether to append spaces after colons in SNBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterColon: boolean,
     /**
-     * Whether to append spaces after commas in SNBT or not.  
+     * Whether to append spaces after commas in SNBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterComma: boolean,
     /**
-     * Whether to append spaces after semicolons in SNBT or not.  
+     * Whether to append spaces after semicolons in SNBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterSemicolon: boolean,
     /**
-     * The suffix used for TAG_Byte in SNBT.  
+     * The suffix used for TAG_Byte in SNBTs.  
      * @default 'b'
      */
     snbtByteSuffix: 'b' | 'B',
     /**
-     * Whether `0b` and `1b` should be represents by `false` and `true` in SNBT or not.  
+     * Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.  
      * @default false
      */
     snbtUseBooleans: boolean,
     /**
-     * The suffix used for TAG_Short in SNBT.  
+     * The suffix used for TAG_Short in SNBTs.  
      * @default 's'
      */
     snbtShortSuffix: 's' | 'S',
     /**
-     * The suffix used for TAG_Long in SNBT.  
+     * The suffix used for TAG_Long in SNBTs.  
      * @default 'L'
      */
     snbtLongSuffix: 'l' | 'L',
     /**
-     * The suffix used for TAG_Float in SNBT.  
+     * The suffix used for TAG_Float in SNBTs.  
      * @default 'f'
      */
     snbtFloatSuffix: 'f' | 'F',
     /**
-     * The suffix used for TAG_Double in SNBT.  
+     * The suffix used for TAG_Double in SNBTs.  
      * @default 'd'
      */
     snbtDoubleSuffix: 'd' | 'D',
     /**
-     * Whether to omit the suffix of double numbers when possible in SNBT or not.  
+     * Whether to omit the suffix of double numbers when possible in SNBTs or not.  
      * @default false
      */
     snbtOmitDoubleSuffix: boolean,
     /**
-     * Whether to keep at least one decimal place in SNBT or not.  
+     * Whether to keep at least one decimal place in SNBTs or not.  
      * @default true
      */
     snbtKeepDecimalPlace: boolean,
     /**
-     * Whether to sort the keys of a compound tag in SNBT or not.  
+     * Whether to sort keys in compound tags in SNBTs or not.  
      * @default false
      */
     snbtSortKeys: boolean,
@@ -120,7 +135,7 @@ export type LintConfig = {
      */
     nameOfObjectives: NamingConventionConfig,
     /**
-     * The naming convension for compound tag keys in SNBT.  
+     * The naming convension for compound tag keys in SNBTs.  
      * @default ['PascalCase', 'camelCase']
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
@@ -146,10 +161,16 @@ export type LintConfig = {
     strictTeamCheck: boolean,
     /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-     * Does NOT affect IDs in NBT strings.  
+     * Does NOT affect namespaced IDs in NBT strings.  
      * @default false
      */
-    omitDefaultNamespace: boolean
+    omitDefaultNamespace: boolean,
+    // /**
+    //  * Whether to keep at least one decimal place in vectors or not.  
+    //  * If sets to `false`, the decimal place will still be kept to avoid center-correcting when necessary.  
+    //  * @default true
+    //  */
+    // vectorKeepDecimalPlace: boolean
 }
 
 export default interface Config {
@@ -172,6 +193,9 @@ export const VanillaConfig: Config = {
         version: 'JE1.14.4'
     },
     lint: {
+        blockStateAppendSpaceAfterComma: false,
+        blockStatePutSpacesAroundEqualSign: false,
+        blockStateSortKeys: false,
         quoteType: 'prefer double',
         quoteEntitySelectorStrings: false,
         quoteSnbtStringKeys: false,
@@ -196,7 +220,8 @@ export const VanillaConfig: Config = {
         strictObjectiveCheck: false,
         strictTagCheck: false,
         strictTeamCheck: false,
-        omitDefaultNamespace: false
+        omitDefaultNamespace: false,
+        // vectorKeepDecimalPlace: true
     }
 }
 
