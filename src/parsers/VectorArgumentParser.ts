@@ -13,9 +13,10 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
 
     constructor(
         private readonly dimension: 2 | 3 | 4,
-        private readonly shouldCorrect = true,
         private readonly allowLocal = true,
-        private readonly allowRelative = true
+        private readonly allowRelative = true,
+        private readonly min: undefined | number = undefined,
+        private readonly max: undefined | number = undefined,
     ) {
         super()
     }
@@ -73,7 +74,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         return ans
     }
 
-    private parseElement(reader: StringReader, cursor :number) {
+    private parseElement(reader: StringReader, cursor: number) {
         const ans: ArgumentParserResult<VectorElement> = {
             data: { value: '', type: 'absolute' },
             completions: [],
@@ -98,6 +99,19 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
             try {
                 const str = reader.readNumber()
                 ans.data.value = str
+                const num = parseFloat(str)
+                if (this.min !== undefined && num < this.min) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        `expected a number larger than ${this.min} but got ${num}`
+                    ))
+                }
+                if (this.max !== undefined && num > this.max) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        `expected a number smaller than ${this.max} but got ${num}`
+                    ))
+                }
             } catch (p) {
                 ans.errors.push(p)
             }

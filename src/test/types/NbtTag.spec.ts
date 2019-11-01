@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtByteArrayTag, getNbtIntArrayTag, getNbtLongArrayTag, getNbtListTag, getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
+import { getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtByteArrayTag, getNbtIntArrayTag, getNbtLongArrayTag, getNbtListTag, getNbtCompoundTag, getNbtStringTag, isNbtByteTag, isNbtShortTag, isNbtIntTag, isNbtLongTag, isNbtFloatTag, isNbtDoubleTag, isNbtByteArrayTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtListTag, isNbtStringTag, isNbtCompoundTag } from '../../types/NbtTag'
 import { constructConfig } from '../../types/Config'
 import BigNumber from 'bignumber.js'
 import { ToLintedString } from '../../types/Lintable'
@@ -11,6 +11,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: { snbtByteSuffix: 'b' } })
             const tag = getNbtByteTag(123)
             const actual = tag[ToLintedString](lint)
+            assert(isNbtByteTag(tag))
             assert(actual === '123b')
         })
     })
@@ -19,6 +20,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: { snbtShortSuffix: 's' } })
             const tag = getNbtShortTag(30000)
             const actual = tag[ToLintedString](lint)
+            assert(isNbtShortTag(tag))
             assert(actual === '30000s')
         })
     })
@@ -27,6 +29,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: {} })
             const tag = getNbtIntTag(12345678)
             const actual = tag[ToLintedString](lint)
+            assert(isNbtIntTag(tag))
             assert(actual === '12345678')
         })
     })
@@ -35,6 +38,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: { snbtLongSuffix: 'L' } })
             const tag = getNbtLongTag(new BigNumber(100000000))
             const actual = tag[ToLintedString](lint)
+            assert(isNbtLongTag(tag))
             assert(actual === '100000000L')
         })
     })
@@ -43,6 +47,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: { snbtFloatSuffix: 'f' } })
             const tag = getNbtFloatTag(12.34)
             const actual = tag[ToLintedString](lint)
+            assert(isNbtFloatTag(tag))
             assert(actual === '12.34f')
         })
         it('Should keep decimal place', () => {
@@ -57,6 +62,7 @@ describe('NbtTag Tests', () => {
             const { lint } = constructConfig({ lint: { snbtDoubleSuffix: 'd' } })
             const tag = getNbtDoubleTag(12.34)
             const actual = tag[ToLintedString](lint)
+            assert(isNbtDoubleTag(tag))
             assert(actual === '12.34d')
         })
         it('Should omit suffix when possible', () => {
@@ -80,6 +86,7 @@ describe('NbtTag Tests', () => {
             })
             const tag = getNbtByteArrayTag([getNbtByteTag(1), getNbtByteTag(2)])
             const actual = tag[ToLintedString](lint)
+            assert(isNbtByteArrayTag(tag))
             assert(actual === '[B; 1b, 2b]')
         })
         it('Should not contain spaces according to the lint settings', () => {
@@ -117,6 +124,7 @@ describe('NbtTag Tests', () => {
             })
             const tag = getNbtIntArrayTag([getNbtIntTag(1), getNbtIntTag(2)])
             const actual = tag[ToLintedString](lint)
+            assert(isNbtIntArrayTag(tag))
             assert(actual === '[I; 1, 2]')
         })
     })
@@ -131,6 +139,7 @@ describe('NbtTag Tests', () => {
             })
             const tag = getNbtLongArrayTag([getNbtLongTag(new BigNumber(1)), getNbtLongTag(new BigNumber(2))])
             const actual = tag[ToLintedString](lint)
+            assert(isNbtLongArrayTag(tag))
             assert(actual === '[L; 1L, 2L]')
         })
     })
@@ -144,6 +153,7 @@ describe('NbtTag Tests', () => {
             })
             const tag = getNbtListTag([getNbtLongTag(new BigNumber(1)), getNbtLongTag(new BigNumber(2))])
             const actual = tag[ToLintedString](lint)
+            assert(isNbtListTag(tag))
             assert(actual === '[1L, 2L]')
         })
     })
@@ -157,6 +167,7 @@ describe('NbtTag Tests', () => {
             })
             const tag = getNbtStringTag('foo')
             const actual = tag[ToLintedString](lint)
+            assert(isNbtStringTag(tag))
             assert(actual === '"foo"')
         })
     })
@@ -178,6 +189,7 @@ describe('NbtTag Tests', () => {
                 })
             })
             const actualWithSpaces = tag[ToLintedString](lintWithSpaces)
+            assert(isNbtCompoundTag(tag))
             assert(actualWithSpaces === '{foo: 1s, baz: {qux: 2s}}')
         })
         it('Should convert to a string without spaces', () => {
