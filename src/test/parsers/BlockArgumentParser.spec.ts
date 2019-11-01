@@ -10,7 +10,7 @@ import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 
 describe('BlockArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
-        it('Should return examples for Vector2', () => {
+        it('Should return examples', () => {
             const parser = new BlockArgumentParser()
             const actual = parser.getExamples()
             assert.deepEqual(actual, ['stone', 'minecraft:stone', 'stone[foo=bar]', 'stone{bar:baz}'])
