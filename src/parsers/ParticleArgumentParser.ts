@@ -8,7 +8,7 @@ import ParsingError from '../types/ParsingError'
 import Particle from '../types/Particle'
 import StringReader from '../utils/StringReader'
 import Time from '../types/Time'
-import VanillaBlockDefinitions from '../types/VanillaBlocks'
+import VanillaBlockDefinitions from '../types/VanillaBlockDefinitions'
 import VanillaRegistries from '../types/VanillaRegistries'
 import Vector from '../types/Vector'
 
@@ -45,7 +45,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                     ans.data.param = color
                     break
                 case 'minecraft:block':
-                    const blockResult = manager.get('Block', [this.blockDefinitions]).parse(reader, cursor)
+                    const blockResult = manager.get('Block', [this.blockDefinitions, this.registries]).parse(reader, cursor)
                     const block = blockResult.data as Block
                     combineArgumentParserResult(ans, blockResult)
                     ans.data.param = block

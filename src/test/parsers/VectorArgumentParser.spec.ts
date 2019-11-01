@@ -34,7 +34,8 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), 0)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '^' },]
+                    { label: '^' }
+                ]
             )
         })
         it('Should return completions at the beginning of an element', () => {

@@ -1,12 +1,13 @@
+import { arrayToCompletions } from '../utils/utils'
+import { ArgumentParserResult } from '../types/Parser'
+import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
+import { VanillaConfig } from '../types/Config'
+import { DiagnosticSeverity } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
 import Identity from '../types/Identity'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
-import { ArgumentParserResult } from '../types/Parser'
-import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
-import { VanillaConfig } from '../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -63,9 +64,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 ans.completions.push(...getCompletions(cache, type as any))
             } else {
                 const registry = this.registries[this.type]
-                const getCompletions = (registry: Registry) => Object
-                    .keys(registry.entries)
-                    .map(v => ({ label: v }))
+                const getCompletions = (registry: Registry) => arrayToCompletions(Object.keys(registry.entries))
                 ans.completions.push(...getCompletions(registry))
             }
         }

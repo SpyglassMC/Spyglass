@@ -2,7 +2,7 @@ import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
 import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate } from '../CommandTree'
 import { fail } from 'assert'
-import { TestArgumentParser } from './parsers/LineParser'
+import { TestArgumentParser } from './parsers/LineParser.spec'
 
 describe('CommandTree Tests', () => {
     describe('getChildren() Tests', () => {

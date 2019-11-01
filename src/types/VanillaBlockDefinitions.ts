@@ -14,7 +14,7 @@ export type BlockDefinition = {
 }
 
 export interface BlockDefinitions {
-    [id: string]: BlockDefinition
+    [id: string]: BlockDefinition | undefined
 }
 
 export default VanillaBlockDefinitions

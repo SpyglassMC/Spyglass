@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import Manager from '../types/Manager'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { arrayToMessage } from '../utils/utils'
+import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
@@ -37,7 +37,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         }
         //#region Get completions.
         if (reader.cursor === cursor) {
-            ans.completions = this.literals.map(v => ({ label: v }))
+            ans.completions = arrayToCompletions(this.literals)
         }
         //#endregion
         //#region Data

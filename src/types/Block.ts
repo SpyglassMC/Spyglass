@@ -2,8 +2,12 @@ import { LintConfig } from './Config'
 import { NbtCompoundTag, getNbtCompoundTag } from './NbtTag'
 import Identity from './Identity'
 import Lintable, { ToLintedString } from './Lintable'
+import BlockArgumentParser from '../parsers/BlockArgumentParser'
 
 export default class Block implements Lintable {
+    static readonly StatesBeginSymbol = '['
+    static readonly StatesEndSymbol = ']'
+
     constructor(
         public id: Identity,
         public states: {
@@ -35,7 +39,9 @@ export default class Block implements Lintable {
             stateKeys = stateKeys.sort()
         }
         const states = stateKeys.length > 0 ?
-            `[${stateKeys.map(v => `${v}${this.getEqualSign(lint)}${this.states[v]}`).join(this.getComma(lint))}]` :
+            `${Block.StatesBeginSymbol}${
+                stateKeys.map(v => `${v}${this.getEqualSign(lint)}${this.states[v]}`).join(this.getComma(lint))
+            }${Block.StatesEndSymbol}` :
             ''
 
         const tag = Object.keys(this.nbt).length > 0 ? this.nbt[ToLintedString](lint) : ''

@@ -133,9 +133,15 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         this.manager = manager
         let walker: NbtSchemaWalker | undefined
         if (this.id) {
-            const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
-            walker = new NbtSchemaWalker(this.nbtSchema)
-            walker.go(nbtSchemaPath)
+            try {
+                const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
+                walker = new NbtSchemaWalker(this.nbtSchema)
+                walker
+                    .go(nbtSchemaPath)
+                    .read()
+            } catch (ignored) {
+                walker = undefined
+            }
         }
         const start = reader.cursor
         const ans = this.parseTag(reader, walker)
