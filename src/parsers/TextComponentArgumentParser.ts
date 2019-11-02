@@ -11,11 +11,20 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
         super()
     }
 
+    // istanbul ignore next
     parse(reader: StringReader): ArgumentParserResult<string> {
-        throw ''
+        const ans: ArgumentParserResult<string> = {
+            data: reader.readRemaining(),
+            errors: [],
+            cache: {},
+            completions: []
+        }
+
+        return ans
     }
 
+    // istanbul ignore next
     getExamples(): string[] {
-        throw ''
+        return ['"hello world"', '""', '{"text":"hello world"}', '[""]']
     }
 }
