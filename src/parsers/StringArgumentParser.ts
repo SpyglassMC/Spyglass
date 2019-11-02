@@ -6,7 +6,9 @@ import ParsingError from '../types/ParsingError'
 export default class StringArgumentParser extends ArgumentParser<string> {
     readonly identity = 'string'
 
-    constructor(private readonly type: StringArgumentParserType = 'SingleWord') { super() }
+    constructor(
+        private readonly type: StringArgumentParserType = 'SingleWord'
+        ) { super() }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {

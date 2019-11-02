@@ -50,8 +50,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 walker = new NbtSchemaWalker(this.nbtSchema)
                 walker
                     .go(nbtSchemaPath)
-                    .read()
+                walker.read()
             } catch (ignored) {
+                /* istanbul ignore next */
                 walker = undefined
             }
         }
@@ -67,42 +68,60 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         types: Array<'a key' | 'a compound filter' | 'an index'>,
         allowEmpty: boolean) {
         let subWalker: NbtSchemaWalker | undefined = undefined
+
+        //#region Completions
+        if (types.includes('a key') && walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
+            if (reader.cursor === this.cursor) {
+                const node = walker.read() as NbtCompoundSchemaNode
+                const children = node.children /* istanbul ignore next */ || {}
+                const keys = Object.keys(children)
+                ans.completions.push(...arrayToCompletions(keys))
+            }
+        }
+        //#endregion
+
         if (types.includes('a key') && this.canParseKey(reader)) {
-            if (walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
-                subWalker = walker
-            } else {
-                ans.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
-                    'keys can only exist in compound tags',
-                    true, DiagnosticSeverity.Warning
-                ))
+            if (walker) {
+                if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                    subWalker = walker
+                } else {
+                    ans.errors.push(new ParsingError(
+                        { start: reader.cursor, end: reader.cursor + 1 },
+                        'keys are only used for compound tags',
+                        true, DiagnosticSeverity.Warning
+                    ))
+                }
             }
             this.parseKey(ans, reader, subWalker)
         } else if (types.includes('a compound filter') && this.canParseCompoundFilter(reader)) {
-            if (walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
-                subWalker = walker
-            } else {
-                ans.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
-                    'compound filters can only exist after compound tags',
-                    true, DiagnosticSeverity.Warning
-                ))
+            if (walker) {
+                if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                    subWalker = walker
+                } else {
+                    ans.errors.push(new ParsingError(
+                        { start: reader.cursor, end: reader.cursor + 1 },
+                        'compound filters are only used for compound tags',
+                        true, DiagnosticSeverity.Warning
+                    ))
+                }
             }
             this.parseCompoundFilter(ans, reader, subWalker)
         } else if (types.includes('an index') && this.canParseIndex(reader)) {
-            if (walker && (
-                NbtSchemaWalker.isListNode(walker.read()) ||
-                walker.read().type === 'byte_array' ||
-                walker.read().type === 'int_array' ||
-                walker.read().type === 'long_array'
-            )) {
-                subWalker = walker
-            } else {
-                ans.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
-                    'indexes can only exist after lists/arrays tags',
-                    true, DiagnosticSeverity.Warning
-                ))
+            if (walker) {
+                if ((
+                    NbtSchemaWalker.isListNode(walker.read()) ||
+                    walker.read().type === 'byte_array' ||
+                    walker.read().type === 'int_array' ||
+                    walker.read().type === 'long_array'
+                )) {
+                    subWalker = walker
+                } else {
+                    ans.errors.push(new ParsingError(
+                        { start: reader.cursor, end: reader.cursor + 1 },
+                        'indexes are only used for lists/arrays tags',
+                        true, DiagnosticSeverity.Warning
+                    ))
+                }
             }
             this.parseIndex(ans, reader, subWalker)
         } else {
@@ -118,20 +137,23 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     private parseKey(ans: ArgumentParserResult<NbtPath>, reader: StringReader, walker: NbtSchemaWalker | undefined) {
         let subWalker: NbtSchemaWalker | undefined = undefined
         const start = reader.cursor
-        const result = this.manager
-            .get('String', ['QuotablePhrase'])
-            .parse(reader, this.cursor, this.manager, this.config, this.cache)
-        const key = result.data
-        ans.data.value.push(key as string)
-        combineArgumentParserResult(ans, result)
+        let key: string = ''
+        try {
+            if (reader.peek() === '"') {
+                key = reader.readQuotedString()
+            } else {
+                while (reader.canRead() && StringReader.canInUnquotedString(reader.peek()) && reader.peek() !== '.') {
+                    key += reader.read()
+                }
+            }
+        } catch (p) {
+            /* istanbul ignore next */
+            ans.errors.push(p)
+        }
+        ans.data.value.push(key)
 
         if (walker) {
             const node = walker.read() as NbtCompoundSchemaNode
-            const children = node.children /* istanbul ignore next */ || {}
-            const keys = Object.keys(children)
-            if (start === this.cursor) {
-                ans.completions.push(...arrayToCompletions(keys))
-            }
 
             try {
                 subWalker = walker
@@ -173,8 +195,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
     private parseIndex(ans: ArgumentParserResult<NbtPath>, reader: StringReader, walker: NbtSchemaWalker | undefined) {
         let subWalker: NbtSchemaWalker | undefined = undefined
-        const start = reader.cursor
         this.parseIndexBegin(ans, reader)
+        reader.skipWhiteSpace()
 
         const checkSchema = () => {
             if (!subWalker && walker) {
@@ -186,7 +208,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 } catch (ignored) {
                     subWalker = undefined
                     ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
+                        { start: reader.cursor, end: reader.cursor + 1 },
                         "the current tag doesn't have extra items",
                         true, DiagnosticSeverity.Warning
                     ))
@@ -200,7 +222,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         } else if (this.canParseIndexNumber(reader)) {
             this.parseIndexNumber(ans, reader)
         }
+
+        reader.skipWhiteSpace()
         this.parseIndexEnd(ans, reader)
+
         if (this.canParseSep(reader)) {
             checkSchema()
             this.parseSep(ans, reader)
@@ -239,7 +264,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 .expect('[')
                 .skip()
             ans.data.value.push(NbtPathIndexBegin)
-        } /* istanbul ignore next */ catch (p) {
+        } catch (p) {
+            /* istanbul ignore next */
             ans.errors.push(p)
         }
     }
@@ -258,7 +284,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 .expect(']')
                 .skip()
             ans.data.value.push(NbtPathIndexEnd)
-        } /* istanbul ignore next */ catch (p) {
+        } catch (p) {
+            /* istanbul ignore next */
             ans.errors.push(p)
         }
     }
