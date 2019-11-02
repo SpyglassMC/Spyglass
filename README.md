@@ -30,6 +30,54 @@ Whether to put spaces around equal signs in block states or not.
 Whether to sort the keys in block states or not.  
 @default `false`
 
+#### entitySelectorAppendSpaceAfterComma: `boolean`
+
+Whether to append spaces after commas in entity selectors or not.  
+@default `false`
+
+#### entitySelectorPutSpacesAroundEqualSign: `boolean`
+
+Whether to put spaces around equal signs in entity selectors or not.  
+@default `false`
+
+#### entitySelectorKeyOrder: `(keyof SelectorParsedArgument)[]`
+
+In which order the arguments in entity selectors should be. The default order is based on the research
+by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
+@default
+```json
+[
+    "sort",
+    "limit",
+    "type",
+    "gamemode",
+    "gamemodeNeg",
+    "level",
+    "team",
+    "teamNeg",
+    "typeNeg",
+    "tag",
+    "tagNeg",
+    "name",
+    "nameNeg",
+    "predicate",
+    "predicateNeg",
+    "scores",
+    "advancements",
+    "nbt",
+    "nbtNeg",
+    "x",
+    "y",
+    "z",
+    "dx",
+    "dy",
+    "dz",
+    "distance",
+    "x_rotation",
+    "y_rotation"
+]
+```
+
 #### quoteType: `'always single' | 'always double' | 'prefer single' | 'prefer double'`
 
 Quotes used in NBT strings and phrase strings.  
@@ -125,11 +173,6 @@ Whether to sort keys in compound tags in SNBTs or not.
 Whether to omit the unit of tick (`t`) in time arguments.  
 @default `false`
 
-#### nameOfTags: `NamingConventionConfig`
-
-The naming convension for scoreboard tags.  
-@default `'whatever'`
-
 #### nameOfObjectives: `NamingConventionConfig`
 
 The naming convension for scoreboard objectives.  
@@ -139,6 +182,16 @@ The naming convension for scoreboard objectives.
 
 The naming convension for compound tag keys in SNBTs.  
 @default `['PascalCase', 'camelCase']`
+
+#### nameOfTags: `NamingConventionConfig`
+
+The naming convension for scoreboard tags.  
+@default `'whatever'`
+
+#### nameOfTeams: `NamingConventionConfig`
+
+The naming convension for teams.  
+@default `'whatever'`
 
 <!-- #### strictBossbarCheck: boolean
 

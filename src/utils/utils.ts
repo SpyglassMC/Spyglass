@@ -1,5 +1,7 @@
 import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
+import { ToLintedString } from '../types/Lintable'
+import { LintConfig } from '../types/Config'
 
 /**
  * Format input message.
@@ -108,4 +110,16 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
  */
 export function arrayToCompletions(array: any[]): CompletionItem[] {
     return array.map(v => ({ label: v.toString() }))
+}
+
+/**
+ * Convert specific value to linted string.
+ * @param value Any value.
+ */
+export function toLintedString(value: any, lint: LintConfig): string {
+    if (value && value[ToLintedString]) {
+        return value[ToLintedString](lint)
+    } else {
+        return `${value}`
+    }
 }

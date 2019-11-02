@@ -1,7 +1,9 @@
 import * as assert from 'power-assert'
+import Lintable, { ToLintedString } from '../../types/Lintable'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage, escapeString, quoteString, arrayToCompletions } from '../../utils/utils'
+import { formatMessage, arrayToMessage, escapeString, quoteString, arrayToCompletions, toLintedString } from '../../utils/utils'
+import { constructConfig, LintConfig } from '../../types/Config'
 
 describe('utils.ts Tests', () => {
     describe('formatMessage() Tests', () => {
@@ -129,6 +131,23 @@ describe('utils.ts Tests', () => {
                 { label: '2' },
                 { label: 'c' }
             ])
+        })
+    })
+    describe('toLintedString() Tests', () => {
+        it('Should return for lintable object', () => {
+            const { lint } = constructConfig({})
+            const object = new class implements Lintable {
+                [ToLintedString](_lint: LintConfig) {
+                    return 'aaa'
+                }
+            }
+            const actual = toLintedString(object, lint)
+            assert(actual === 'aaa')
+        })
+        it('Should return for non-lintable object', () => {
+            const { lint } = constructConfig({})
+            const actual = toLintedString(undefined, lint)
+            assert(actual === 'undefined')
         })
     })
 })

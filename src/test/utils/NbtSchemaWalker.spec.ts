@@ -199,6 +199,15 @@ describe('NbtSchemaWalker Tests', () => {
             assert(actual === 'minecraft:banner/test')
         })
     })
+    describe('get path() Tests', () => {
+        it('Should return correctly', () => {
+            walker
+                .goAnchor('minecraft:banner')
+                .goAnchor('test')
+            const actual = walker.path
+            assert(actual === '#minecraft:banner/test')
+        })
+    })
     describe('go() Tests', () => {
         it('Should go correctly', () => {
             walker.go('roots/blocks.json#minecraft:banner')

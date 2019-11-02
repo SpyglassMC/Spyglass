@@ -1,3 +1,4 @@
+import { SelectorParsedArgument } from './Entity'
 import NamingConventionConfig from './NamingConventionConfig'
 
 export type EnvConfig = {
@@ -8,9 +9,9 @@ export type EnvConfig = {
     permissionLevel: 0 | 1 | 2 | 3 | 4,
     /**
      * Game version.  
-     * @default 'JE1.14.4'
+     * @default 'JE1.15'
      */
-    version: 'JE1.14.4'
+    version: 'JE1.15'
 }
 
 export type LintConfig = {
@@ -29,6 +30,51 @@ export type LintConfig = {
      * @default false
      */
     blockStateSortKeys: boolean,
+    /**
+     * Whether to append spaces after commas in entity selectors or not.  
+     * @default false
+     */
+    entitySelectorAppendSpaceAfterComma: boolean,
+    /**
+     * Whether to put spaces around equal signs in entity selectors or not.  
+     * @default false
+     */
+    entitySelectorPutSpacesAroundEqualSign: boolean,
+    /**
+     * In which order the arguments in entity selectors should be. The default order is based on the research
+     * by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
+     * @default [
+     *     'sort',
+     *     'limit',
+     *     'type',
+     *     'gamemode',
+     *     'gamemodeNeg',
+     *     'level',
+     *     'team',
+     *     'teamNeg',
+     *     'typeNeg',
+     *     'tag',
+     *     'tagNeg',
+     *     'name',
+     *     'nameNeg',
+     *     'predicate',
+     *     'predicateNeg',
+     *     'scores',
+     *     'advancements',
+     *     'nbt',
+     *     'nbtNeg',
+     *     'x',
+     *     'y',
+     *     'z',
+     *     'dx',
+     *     'dy',
+     *     'dz',
+     *     'distance',
+     *     'x_rotation',
+     *     'y_rotation'
+     * ]
+     */
+    entitySelectorKeyOrder: (keyof SelectorParsedArgument)[],
     /**
      * Quotes used in NBT strings and phrase strings.  
      * `always single`: Always use single quotes.  
@@ -125,11 +171,6 @@ export type LintConfig = {
      */
     timeOmitTickUnit: boolean,
     /**
-     * The naming convension for scoreboard tags.  
-     * @default 'whatever'
-     */
-    nameOfTags: NamingConventionConfig,
-    /**
      * The naming convension for scoreboard objectives.  
      * @default 'whatever'
      */
@@ -139,6 +180,16 @@ export type LintConfig = {
      * @default ['PascalCase', 'camelCase']
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
+    /**
+     * The naming convension for scoreboard tags.  
+     * @default 'whatever'
+     */
+    nameOfTags: NamingConventionConfig,
+    /**
+     * The naming convension for teams.  
+     * @default 'whatever'
+     */
+    nameOfTeams: NamingConventionConfig,
     // /**
     //  * Whether to throw warnings for undefined bossbars.  
     //  * @default false
@@ -190,12 +241,44 @@ export default interface Config {
 export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
-        version: 'JE1.14.4'
+        version: 'JE1.15'
     },
     lint: {
         blockStateAppendSpaceAfterComma: false,
         blockStatePutSpacesAroundEqualSign: false,
         blockStateSortKeys: false,
+        entitySelectorAppendSpaceAfterComma: false,
+        entitySelectorPutSpacesAroundEqualSign: false,
+        entitySelectorKeyOrder: [
+            'sort',
+            'limit',
+            'type',
+            'gamemode',
+            'gamemodeNeg',
+            'level',
+            'team',
+            'teamNeg',
+            'typeNeg',
+            'tag',
+            'tagNeg',
+            'name',
+            'nameNeg',
+            'predicate',
+            'predicateNeg',
+            'scores',
+            'advancements',
+            'nbt',
+            'nbtNeg',
+            'x',
+            'y',
+            'z',
+            'dx',
+            'dy',
+            'dz',
+            'distance',
+            'x_rotation',
+            'y_rotation'
+        ],
         quoteType: 'prefer double',
         quoteEntitySelectorStrings: false,
         quoteSnbtStringKeys: false,
@@ -213,9 +296,10 @@ export const VanillaConfig: Config = {
         snbtKeepDecimalPlace: true,
         snbtSortKeys: false,
         timeOmitTickUnit: false,
-        nameOfTags: 'whatever',
         nameOfObjectives: 'whatever',
         nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],
+        nameOfTags: 'whatever',
+        nameOfTeams: 'whatever',
         // strictBossbarCheck: false,
         strictObjectiveCheck: false,
         strictTagCheck: false,

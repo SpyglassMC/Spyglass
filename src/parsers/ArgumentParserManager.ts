@@ -9,6 +9,7 @@ import LiteralArgumentParser from './LiteralArgumentParser'
 import Manager from '../types/Manager'
 import MessageArgumentParser from './MessageArgumentParser'
 import NamespacedIDArgumentParser from './NamespacedIDArgumentParser'
+import NbtPathArgumentParser from './NbtPathArgumentParser'
 import NbtTagArgumentParser from './NbtTagArgumentParser'
 import NumberArgumentParser from './NumberArgumentParser'
 import NumberRangeArgumentParser from './NumberRangeArgumentParser'
@@ -35,6 +36,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         LiteralArgumentParser,
         MessageArgumentParser,
         NamespacedIDArgumentParser,
+        NbtPathArgumentParser,
         NbtTagArgumentParser,
         NumberArgumentParser,
         NumberRangeArgumentParser,

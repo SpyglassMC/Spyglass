@@ -151,7 +151,7 @@ export default class StringReader {
         const quote = this.peek()
         if (StringReader.isQuote(quote)) {
             this.skip()
-            return this.readUntilQuote(<'"' | "'">quote)
+            return this.readUntilQuote(quote)
         } else {
             const start = this.cursor
             const end = this.cursor + 1

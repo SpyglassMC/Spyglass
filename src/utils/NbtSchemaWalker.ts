@@ -48,6 +48,9 @@ export default class NbtSchemaWalker {
             return posix.format(this)
         }
     }
+    get path(): string {
+        return `${this.filePath.full}#${this.anchorPath.full}`
+    }
 
     private cache: undefined | NbtSchemaNodeWithType
 

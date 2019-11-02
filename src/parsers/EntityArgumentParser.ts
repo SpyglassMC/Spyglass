@@ -38,7 +38,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
     private parsePlain(reader: StringReader) {
         const ans: ArgumentParserResult<Entity> = {
-            data: {},
+            data: new Entity(),
             errors: [],
             cache: {},
             completions: []
@@ -80,7 +80,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
     private parseSelector(reader: StringReader) {
         const ans: ArgumentParserResult<Entity> = {
-            data: {},
+            data: new Entity(),
             errors: [],
             cache: {},
             completions: []
@@ -114,7 +114,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         break
                     }
 
-                    ans.data.arguments = ans.data.arguments ? ans.data.arguments : {}
                     const start = reader.cursor
                     const key = reader.readString()
 
@@ -125,11 +124,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         .skipWhiteSpace()
 
                     const pushSafely = (key: any, result: any) => {
-                        (ans.data.arguments as any)[key] = (ans.data.arguments as any)[key] ? (ans.data.arguments as any)[key] : [];
-                        (ans.data.arguments as any)[key].push(result.data)
+                        (ans.data.argument as any)[key] = (ans.data.argument as any)[key] ? (ans.data.argument as any)[key] : [];
+                        (ans.data.argument as any)[key].push(result.data)
                     }
                     const dealWithNegativableArray = (parser: ArgumentParser<any>, key: string) => {
-                        const negKey = `neg${key[0].toUpperCase()}${key.slice(1)}`
+                        const keyNeg = `${key}Neg`
                         if (this.cursor === reader.cursor) {
                             ans.completions.push({ label: '!' })
                         }
@@ -142,7 +141,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         const result = parser.parse(reader, this.cursor, this.manager, this.config, this.cache)
                         if (result.data) {
                             if (isNegative) {
-                                pushSafely(negKey, result)
+                                pushSafely(keyNeg, result)
                             } else {
                                 pushSafely(key, result)
                             }
@@ -152,15 +151,15 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     if (key === 'sort') {
                         const result = this.manager.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, this.cursor, this.manager)
                         if (result.data) {
-                            ans.data.arguments.sort = result.data as SelectorSortMethod
+                            ans.data.argument.sort = result.data as SelectorSortMethod
                         }
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
                         const value = reader.readFloat()
-                        ans.data.arguments[key] = value
+                        ans.data.argument[key] = value
                     } else if (key === 'limit') {
                         const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
-                        ans.data.arguments.limit = result.data
+                        ans.data.argument.limit = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'gamemode') {
                         dealWithNegativableArray(this.manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
@@ -179,11 +178,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
                         const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor, this.manager)
-                        ans.data.arguments[key] = result.data
+                        ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'level') {
                         const result = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor, this.manager)
-                        ans.data.arguments[key] = result.data
+                        ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
                         reader
@@ -204,10 +203,10 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                 .skip()
                                 .skipWhiteSpace()
 
-                            ans.data.arguments.advancements = ans.data.arguments.advancements ? ans.data.arguments.advancements : {}
+                            ans.data.argument.advancements = ans.data.argument.advancements ? ans.data.argument.advancements : {}
 
                             if (reader.peek() === '{') {
-                                const advancementObject: { [criterion: string]: boolean } = ans.data.arguments.advancements[advancement] = {}
+                                const advancementObject: { [criterion: string]: boolean } = ans.data.argument.advancements[advancement] = {}
                                 reader
                                     .skip()
                                     .skipWhiteSpace()
@@ -249,7 +248,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                 const bool = boolResult.data === 'true'
                                 combineArgumentParserResult(ans, boolResult)
 
-                                ans.data.arguments.advancements[advancement] = bool
+                                ans.data.argument.advancements[advancement] = bool
                             }
 
                             reader.skipWhiteSpace()
@@ -288,8 +287,8 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                             const range: NumberRange = rangeResult.data
                             combineArgumentParserResult(ans, rangeResult)
 
-                            ans.data.arguments.scores = ans.data.arguments.scores ? ans.data.arguments.scores : {}
-                            ans.data.arguments.scores[objective] = range
+                            ans.data.argument.scores = ans.data.argument.scores ? ans.data.argument.scores : {}
+                            ans.data.argument.scores[objective] = range
 
                             reader.skipWhiteSpace()
                             if (reader.peek() === ',') {
