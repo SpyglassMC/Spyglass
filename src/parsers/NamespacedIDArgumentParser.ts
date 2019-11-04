@@ -62,6 +62,9 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             if (this.type.startsWith('$')) {
                 const type = this.type.slice(1)
                 ans.completions.push(...getCompletions(cache, type as any))
+                if (type.startsWith('lootTables/')) {
+                    ans.completions.push(...getCompletions(cache, 'lootTables/generic'))
+                }
             } else {
                 const registry = this.registries[this.type]
                 const getCompletions = (registry: Registry) => arrayToCompletions(Object.keys(registry.entries))
