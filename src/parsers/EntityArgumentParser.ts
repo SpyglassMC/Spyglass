@@ -48,7 +48,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
         // Completions
         if (this.cursor === start) {
-            ans.completions.push({ label: '@' })
             ans.completions.push(...getCompletions(this.cache, 'entities'))
         }
 
@@ -331,11 +330,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
                     reader.skipWhiteSpace()
                     if (reader.peek() === ',') {
-                        reader
-                            .skip()
-                            .skipWhiteSpace()
+                        reader.skip()
+                        if (EntityArgumentParser.isCursorInWhiteSpace(reader, this.cursor)) {
+                            ans.completions.push(...arrayToCompletions(SelectorArgumentKeys))
+                        }
                     }
-
                     if (reader.peek() === ']') {
                         break
                     }

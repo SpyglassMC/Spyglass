@@ -1,0 +1,11 @@
+*
+*/**
+
+!lib/*
+!lib/*/**
+!CHANGELOG.md
+!icon.png
+!LICENSE
+!package-lock.json
+!package.json
+!README.md

@@ -61,7 +61,6 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.completions,
                     [
-                        { label: '@' },
                         { label: 'foo' },
                         { label: 'bar', documentation: 'The doc of **bar**' }
                     ]
@@ -200,6 +199,35 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[]'), 3, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'advancements' },
+                    { label: 'distance' },
+                    { label: 'dx' },
+                    { label: 'dy' },
+                    { label: 'dz' },
+                    { label: 'gamemode' },
+                    { label: 'level' },
+                    { label: 'limit' },
+                    { label: 'name' },
+                    { label: 'nbt' },
+                    { label: 'predicate' },
+                    { label: 'scores' },
+                    { label: 'sort' },
+                    { label: 'tag' },
+                    { label: 'team' },
+                    { label: 'type' },
+                    { label: 'x' },
+                    { label: 'x_rotation' },
+                    { label: 'y' },
+                    { label: 'y_rotation' },
+                    { label: 'z' }
+                ])
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return completions for argument keys after comma', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@a[gamemode=adventure,]'), 22, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', { gamemode: ['adventure'] }))
                 assert.deepStrictEqual(actual.completions, [
                     { label: 'advancements' },
                     { label: 'distance' },

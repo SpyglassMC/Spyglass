@@ -1,15 +1,15 @@
 {
   "name": "datapack-language-server",
   "version": "1.0.0",
-  "description": "Language server for Minecraft: Java Edition datapacks.",
-  "main": "src",
+  "main": "lib/client.js",
   "dependencies": {
     "bignumber.js": "^9.0.0",
-    "constants": "0.0.2",
     "datapack-json": "^2.0.0",
     "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
     "minecraft-id": "^0.1.5",
     "python-range": "^1.0.4",
+    "vscode": "^1.1.36",
+    "vscode-languageclient": "^6.0.0-next.2",
     "vscode-languageserver": "^5.2.1"
   },
   "directories": {
@@ -54,5 +54,34 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/SPGoding/datapack-language-server/issues"
-  }
+  },
+  "publisher": "SPGoding",
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "displayName": "Datapack Helper Plus (MCF)",
+  "description": "A NPM package and an VSCode extension which make editing mcfunctions much easier",
+  "categories": [
+    "Formatters",
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "minecraft",
+    "datapack",
+    "mcfunction"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "mcfunction",
+        "extensions": [
+          "mcfunction"
+        ]
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:mcfunction"
+  ]
 }

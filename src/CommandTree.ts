@@ -88,7 +88,7 @@ export const VanillaTree: CommandTree = {
             permission: 3,
             description: 'Adds players to blacklist.',
             children: {
-                name: {
+                player: {
                     parser: new EntityArgumentParser('multiple', 'players'),
                     executable: true,
                     children: {

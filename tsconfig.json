@@ -18,6 +18,7 @@
         "resolveJsonModule": true
     },
     "exclude": [
-        "src/test"
+        "src/test",
+        "lib"
     ]
 }

@@ -11,6 +11,7 @@ import ParsingError from '../types/ParsingError'
 import Identity from '../types/Identity'
 import Vector from '../types/Vector'
 import NbtPath from '../types/NbtPath'
+import { constructConfig } from '../types/Config'
 
 describe('CommandTree Tests', () => {
     describe('getChildren() Tests', () => {
@@ -255,6 +256,22 @@ describe('CommandTree Tests', () => {
                 { data: new NbtPath(['CustomName']), parser: 'nbtPath' }
             ])
             assert.deepEqual(data.path, ['command', 'data', 'get', 'target', 'block', 'pos', 'path'])
+            assert.deepEqual(data.cache, undefined)
+            assert.deepEqual(data.errors, undefined)
+            assert.deepEqual(data.completions, undefined)
+        })
+        it.only('setblock ~ ~ ~ minecraft:grass_block[]', () => {
+            const parser = new LineParser(false, undefined, undefined, cache)
+            const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
+            const { data } = parser.parse(reader, 37, manager)
+            assert.deepEqual(data.args, [
+                { data: 'setblock', parser: 'literal' },
+                { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector' },
+                { data: 'get', parser: 'literal' },
+                { data: 'block', parser: 'literal' },
+                { data: new NbtPath(['CustomName']), parser: 'nbtPath' }
+            ])
+            assert.deepEqual(data.path, ['command', 'setblock', 'pos', 'block'])
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, undefined)

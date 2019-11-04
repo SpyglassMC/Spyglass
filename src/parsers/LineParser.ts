@@ -115,11 +115,14 @@ export default class LineParser implements Parser<Line> {
                     /* istanbul ignore else */
                     if (node.children && cursor === reader.cursor) {
                         // Compute completions.
-                        const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
-                        this.parseChildren(reader, manager, node.children, result, cursor)
-                        /* istanbul ignore else */
-                        if (result.completions && result.completions.length !== 0) {
-                            parsedLine.completions.push(...result.completions)
+                        const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
+                        if (shouldParseChildren) {
+                            const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
+                            this.parseChildren(reader, manager, node.children, result, cursor)
+                            /* istanbul ignore else */
+                            if (result.completions && result.completions.length !== 0) {
+                                parsedLine.completions.push(...result.completions)
+                            }
                         }
                     }
                 }

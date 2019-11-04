@@ -133,11 +133,11 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     }
 
     private getCompletionsForSymbols(ans: ArgumentParserResult<any>) {
-        if (this.allowLocal) {
-            ans.completions.push({ label: VectorArgumentParser.LocalSymbol })
-        }
         if (this.allowRelative) {
             ans.completions.push({ label: VectorArgumentParser.RelativeSymbol })
+        }
+        if (this.allowLocal) {
+            ans.completions.push({ label: VectorArgumentParser.LocalSymbol })
         }
     }
 

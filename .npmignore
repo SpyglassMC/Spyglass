@@ -1,2 +1,14 @@
-/src
+/.circleci
+/.nyc_output
+/.vscode
+/coverage
 /lib/**/*.js.map
+/node_modules
+/src
+/.gitattributes
+/.gitignore
+/.nycrc.json
+/.releaserc.json
+/.renovaterc.json
+/tsconfig.json
+/tslint.json

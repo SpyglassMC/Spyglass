@@ -4,8 +4,15 @@
         "@semantic-release/changelog",
         "@semantic-release/npm",
         [
+            "semantic-release-vsce",
+            {
+                "packageVsix": "datapack-language-server.vsix"
+            }
+        ],
+        [
             "@semantic-release/github",
             {
+                "assets": "datapack-language-server.vsix",
                 "releasedLabels": [":ok_hand: resolved", ":rocket: released"]
             }
         ],
