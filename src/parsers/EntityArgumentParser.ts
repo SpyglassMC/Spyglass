@@ -8,6 +8,7 @@ import Manager from '../types/Manager'
 import NumberRange from '../types/NumberRange'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import Identity from '../types/Identity'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
@@ -86,6 +87,8 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             completions: []
         }
         const start = reader.cursor
+        let isMultiple = false
+        let containsNonPlayer = false
 
         if (this.cursor === start + 1) {
             ans.completions.push({ label: 'a' }, { label: 'e' }, { label: 'p' }, { label: 'r' }, { label: 's' })
@@ -100,6 +103,12 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             const variable = reader.read()
             if (EntityArgumentParser.isVariable(variable)) {
                 ans.data.variable = variable
+                if (variable === 'a') {
+                    isMultiple = true
+                } else if (variable === 'e') {
+                    isMultiple = true
+                    containsNonPlayer = true
+                }
             } else {
                 ans.errors.push(new ParsingError({ start: start + 1, end: start + 2 }, `unexpected selector variable ‘${variable}’`))
             }
@@ -144,6 +153,14 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                 pushSafely(keyNeg, result)
                             } else {
                                 pushSafely(key, result)
+                                if (key === 'type') {
+                                    const id = (result.data as Identity).toString()
+                                    if (id === 'minecraft:player') {
+                                        containsNonPlayer = false
+                                    } else {
+                                        containsNonPlayer = true
+                                    }
+                                }
                             }
                         }
                         combineArgumentParserResult(ans, result)
@@ -159,7 +176,12 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.argument[key] = value
                     } else if (key === 'limit') {
                         const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
-                        ans.data.argument.limit = result.data
+                        ans.data.argument.limit = result.data as number
+                        if (ans.data.argument.limit === 1) {
+                            isMultiple = false
+                        } else {
+                            isMultiple = true
+                        }
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'gamemode') {
                         dealWithNegativableArray(this.manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
@@ -326,6 +348,20 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             ans.errors.push(p)
         }
         //#endregion
+
+        if (this.amount === 'single' && isMultiple) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                'the selector contains multiple entities'
+            ))
+        }
+
+        if (this.type === 'players' && containsNonPlayer) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                'the selector contains non-player entities'
+            ))
+        }
 
         return ans
     }

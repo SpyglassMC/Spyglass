@@ -286,6 +286,56 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'spgoding:advancement/c' }
                 ])
             })
+            it('Should return multiple-entity error for @a', () => {
+                const parser = new EntityArgumentParser('single', 'entities')
+                const actual = parser.parse(new StringReader('@a'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 0, end: 2 }, 'the selector contains multiple entities')
+                ])
+            })
+            it('Should return multiple-entity error for @r[limit=2]', () => {
+                const parser = new EntityArgumentParser('single', 'entities')
+                const actual = parser.parse(new StringReader('@r[limit=2]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'r', { limit: 2 }))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 0, end: 11 }, 'the selector contains multiple entities')
+                ])
+            })
+            it('Should not return multiple-entity error for @s', () => {
+                const parser = new EntityArgumentParser('single', 'entities')
+                const actual = parser.parse(new StringReader('@s'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 's'))
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should not return multiple-entity error for @e[limit=1]', () => {
+                const parser = new EntityArgumentParser('single', 'entities')
+                const actual = parser.parse(new StringReader('@e[limit=1]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'e', { limit: 1 }))
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return non-player error for @e', () => {
+                const parser = new EntityArgumentParser('multiple', 'players')
+                const actual = parser.parse(new StringReader('@e'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'e'))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 0, end: 2 }, 'the selector contains non-player entities')
+                ])
+            })
+            it('Should return non-player error for @e[type=zombie]', () => {
+                const parser = new EntityArgumentParser('multiple', 'players')
+                const actual = parser.parse(new StringReader('@e[type=zombie]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'e', { type: [new Identity(undefined, ['zombie'])] }))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 0, end: 15 }, 'the selector contains non-player entities')
+                ])
+            })
+            it('Should not return non-player error for @e[type=player]', () => {
+                const parser = new EntityArgumentParser('multiple', 'players')
+                const actual = parser.parse(new StringReader('@e[type=minecraft:player]'), undefined, manager, undefined, cache)
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'e', { type: [new Identity(undefined, ['player'])] }))
+                assert.deepStrictEqual(actual.errors, [])
+            })
         })
     })
 })
