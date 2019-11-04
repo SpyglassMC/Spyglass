@@ -25,10 +25,10 @@ import Identity from './types/Identity'
 import TagArgumentParser from './parsers/TagArgumentParser'
 import TeamArgumentParser from './parsers/TeamArgumentParser'
 
-/* istanbul ignore next */
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
  */
+/* istanbul ignore next */
 export const VanillaTree: CommandTree = {
     line: {
         command: {
@@ -1732,6 +1732,22 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
+        spectate: {
+            parser: new LiteralArgumentParser('spectate'),
+            executable: true,
+            children: {
+                target: {
+                    parser: new EntityArgumentParser('single', 'entities'),
+                    executable: true,
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('single', 'players'),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
         spreadplayers: {
             parser: new LiteralArgumentParser('spreadplayers'),
             children: {
@@ -2116,6 +2132,101 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 value: {
                                     parser: new NumberArgumentParser('integer'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        weather: {
+            parser: new LiteralArgumentParser('weather'),
+            children: {
+                clear_rain_thunder: {
+                    parser: new LiteralArgumentParser('clear', 'rain', 'thunder'),
+                    executable: true,
+                    children: {
+                        duration: {
+                            parser: new NumberArgumentParser('integer', 1, 1000000),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
+        whitelist: {
+            parser: new LiteralArgumentParser('whitelist'),
+            permission: 3,
+            children: {
+                add_remove: {
+                    parser: new LiteralArgumentParser('add', 'remove'),
+                    children: {
+                        plauer: {
+                            parser: new EntityArgumentParser('multiple', 'players'),
+                            executable: true
+                        }
+                    }
+                },
+                list_off_on_reload: {
+                    parser: new LiteralArgumentParser('list', 'off', 'on', 'reload'),
+                    executable: true
+                }
+            }
+        },
+        worldborder: {
+            parser: new LiteralArgumentParser('worldborder'),
+            children: {
+                add_set: {
+                    parser: new LiteralArgumentParser('add', 'set'),
+                    children: {
+                        distance: {
+                            parser: new NumberArgumentParser('float', 1, 60000000),
+                            executable: true,
+                            children: {
+                                time: {
+                                    parser: new NumberArgumentParser('integer', 0),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                center: {
+                    parser: new LiteralArgumentParser('center'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(2),
+                            executable: true
+                        }
+                    }
+                },
+                damage: {
+                    parser: new LiteralArgumentParser('damage'),
+                    children: {
+                        amount_buffer: {
+                            parser: new LiteralArgumentParser('amount', 'buffer'),
+                            children: {
+                                value: {
+                                    parser: new NumberArgumentParser('float', 0),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                get: {
+                    parser: new LiteralArgumentParser('get'),
+                    executable: true
+                },
+                warning: {
+                    parser: new LiteralArgumentParser('warning'),
+                    children: {
+                        distance_time: {
+                            parser: new LiteralArgumentParser('distance', 'time'),
+                            children: {
+                                value: {
+                                    parser: new NumberArgumentParser('float', 0),
                                     executable: true
                                 }
                             }

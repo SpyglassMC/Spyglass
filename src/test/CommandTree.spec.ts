@@ -160,7 +160,7 @@ describe('CommandTree Tests', () => {
             })
         })
     })
-    describe.only('Just Fucking Parse', () => {
+    describe('Just Fucking Parse', () => {
         const manager = new ArgumentParserManager()
         const cache = {
             advancements: {

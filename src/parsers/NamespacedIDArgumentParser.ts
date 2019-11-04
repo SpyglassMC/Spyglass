@@ -138,8 +138,11 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     // For cache IDs.
                     const type = this.type.slice(1)
                     const category = getSafeCategory(cache, type as any)
+                    const inGenericLootTable = type.startsWith('lootTables/') ?
+                        Object.keys(getSafeCategory(cache, 'lootTables/generic')).includes(stringID) :
+                        false
                     //#region Errors
-                    if (!Object.keys(category).includes(stringID)) {
+                    if (!Object.keys(category).includes(stringID) && !inGenericLootTable) {
                         ans.errors.push(new ParsingError(
                             { start, end: start + rawLength },
                             `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
@@ -169,7 +172,9 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     if (!Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: start + rawLength },
-                            `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`
+                            `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`,
+                            undefined,
+                            DiagnosticSeverity.Warning
                         ))
                     }
                     //#endregion
