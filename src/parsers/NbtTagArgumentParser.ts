@@ -112,8 +112,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     readonly identity = 'nbtTag'
 
+    //istanbul ignore next
     constructor(
-        type: NbtTagTypeName | NbtTagTypeName[],
+        type: NbtTagTypeName | NbtTagTypeName[] = [
+            'compound', 'list', 'byte_array', 'int_array', 'long_array',
+            'byte', 'short', 'int', 'long', 'string', 'float', 'double'
+        ],
         private readonly category: 'blocks' | 'entities' | 'items',
         private readonly id: string | undefined = undefined,
         private readonly nbtSchema = nbtDocs

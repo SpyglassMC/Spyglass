@@ -6,13 +6,18 @@ import EntityArgumentParser from './parsers/EntityArgumentParser'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import MessageArgumentParser from './parsers/MessageArgumentParser'
+import NbtPathArgumentParser from './parsers/NbtPathArgumentParser'
+import NbtTagArgumentParser from './parsers/NbtTagArgumentParser'
 import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
 import NumberArgumentParser from './parsers/NumberArgumentParser'
 import StringArgumentParser from './parsers/StringArgumentParser'
 import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
 import VectorArgumentParser from './parsers/VectorArgumentParser'
 import { SaturatedLine } from './types/Line'
+import ObjectiveArgumentParser from './parsers/ObjectiveArgumentParser'
+import NumberRangeArgumentParser from './parsers/NumberRangeArgumentParser'
 
+/* istanbul ignore next */
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
  */
@@ -34,7 +39,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('grant', 'revoke'),
                     children: {
                         targets: {
-                            parser: new EntityArgumentParser(true, true),
+                            parser: new EntityArgumentParser('multiple', 'players'),
                             children: {
                                 everything: {
                                     parser: new LiteralArgumentParser('everything'),
@@ -44,11 +49,11 @@ export const VanillaTree: CommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            // parser: new AdvancementArgumentParser(),
+                                            parser: new NamespacedIDArgumentParser('$advancements'),
                                             executable: true,
                                             children: {
                                                 criterion: {
-                                                    // parser: new AdvancementCriterionArgumentParser(),
+                                                    parser: new StringArgumentParser('SingleWord'),
                                                     executable: true
                                                 }
                                             }
@@ -59,7 +64,7 @@ export const VanillaTree: CommandTree = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            // parser: new AdvancementArgumentParser(),
+                                            parser: new NamespacedIDArgumentParser('$advancements'),
                                             executable: true
                                         }
                                     }
@@ -76,7 +81,7 @@ export const VanillaTree: CommandTree = {
             description: 'Adds players to blacklist.',
             children: {
                 name: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntityArgumentParser('multiple', 'players'),
                     executable: true,
                     children: {
                         reason: {
@@ -93,7 +98,7 @@ export const VanillaTree: CommandTree = {
             description: 'Adds IP addresses to blacklist.',
             children: {
                 name: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntityArgumentParser('multiple', 'players'),
                     executable: true,
                     children: {
                         reason: {
@@ -207,7 +212,7 @@ export const VanillaTree: CommandTree = {
                                     parser: new LiteralArgumentParser('players'),
                                     children: {
                                         targets: {
-                                            parser: new EntityArgumentParser(true, true),
+                                            parser: new EntityArgumentParser('multiple', 'players'),
                                             executable: true
                                         }
                                     }
@@ -251,7 +256,7 @@ export const VanillaTree: CommandTree = {
             executable: true,
             children: {
                 targets: {
-                    parser: new EntityArgumentParser(true, true),
+                    parser: new EntityArgumentParser('multiple', 'players'),
                     executable: true,
                     children: {
                         item: {
@@ -286,7 +291,7 @@ export const VanillaTree: CommandTree = {
                                             parser: new LiteralArgumentParser('filtered'),
                                             children: {
                                                 block: {
-                                                    parser: new BlockArgumentParser(),
+                                                    parser: new BlockArgumentParser(true),
                                                     executable: true,
                                                     children: {
                                                         cloneMode: {
@@ -315,18 +320,675 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
+        data: {
+            parser: new LiteralArgumentParser('data'),
+            children: {
+                get: {
+                    parser: new LiteralArgumentParser('get'),
+                    children: {
+                        target: {
+                            template: 'nbt_holder',
+                            executable: true,
+                            children: {
+                                path: {
+                                    parser: ({ args }) => {
+                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            // TODO: get ID from parsed entity.
+                                            return new NbtPathArgumentParser('entities')
+                                        } else {
+                                            return new NbtPathArgumentParser('blocks')
+                                        }
+                                    },
+                                    executable: true,
+                                    children: {
+                                        scale: {
+                                            parser: new NumberArgumentParser('float'),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                merge: {
+                    parser: new LiteralArgumentParser('merge'),
+                    children: {
+                        target: {
+                            template: 'nbt_holder',
+                            children: {
+                                nbt: {
+                                    parser: ({ args }) => {
+                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            // TODO: get ID from parsed entity.
+                                            return new NbtTagArgumentParser('compound', 'entities')
+                                        } else {
+                                            return new NbtTagArgumentParser('compound', 'blocks')
+                                        }
+                                    },
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                modify: {
+                    parser: new LiteralArgumentParser('modify'),
+                    children: {
+                        target: {
+                            template: 'nbt_holder',
+                            children: {
+                                targetPath: {
+                                    parser: ({ args }) => {
+                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            // TODO: get ID from parsed entity.
+                                            return new NbtPathArgumentParser('entities')
+                                        } else {
+                                            return new NbtPathArgumentParser('blocks')
+                                        }
+                                    },
+                                    children: {
+                                        modification: {
+                                            template: 'data_modification',
+                                            children: {
+                                                from: {
+                                                    parser: new LiteralArgumentParser('from'),
+                                                    children: {
+                                                        source: {
+                                                            template: 'nbt_holder',
+                                                            children: {
+                                                                sourcePath: {
+                                                                    parser: ({ args }) => {
+                                                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                                        if (type === 'block') {
+                                                                            // TODO: get ID from parsed entity.
+                                                                            return new NbtPathArgumentParser('entities')
+                                                                        } else {
+                                                                            return new NbtPathArgumentParser('blocks')
+                                                                        }
+                                                                    },
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                value: {
+                                                    parser: new LiteralArgumentParser('value'),
+                                                    children: {
+                                                        nbt: {
+                                                            parser: ({ args }) => {
+                                                                const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                                if (type === 'entity') {
+                                                                    // TODO: get ID from parsed entity.
+                                                                    return new NbtTagArgumentParser(undefined, 'entities')
+                                                                } else {
+                                                                    return new NbtTagArgumentParser(undefined, 'blocks')
+                                                                }
+                                                            },
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                remove: {
+                    parser: new LiteralArgumentParser('remove'),
+                    children: {
+                        target: {
+                            template: 'nbt_holder',
+                            executable: true,
+                            children: {
+                                path: {
+                                    parser: ({ args }) => {
+                                        const type = args[args.length - 2].data as 'block' | 'entity'
+                                        if (type === 'block') {
+                                            return new NbtPathArgumentParser('blocks')
+                                        } else {
+                                            // TODO: get ID from parsed entity.
+                                            return new NbtPathArgumentParser('entities')
+                                        }
+                                    },
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        datapack: {
+            parser: new LiteralArgumentParser('datapack'),
+            children: {
+                disable: {
+                    parser: new LiteralArgumentParser('disable'),
+                    children: {
+                        name: {
+                            parser: new StringArgumentParser('QuotablePhrase'),
+                            executable: true
+                        }
+                    }
+                },
+                enable: {
+                    parser: new LiteralArgumentParser('enable'),
+                    children: {
+                        name: {
+                            parser: new StringArgumentParser('QuotablePhrase'),
+                            executable: true,
+                            children: {
+                                first_last: {
+                                    parser: new LiteralArgumentParser('first', 'last'),
+                                    executable: true
+                                },
+                                before_after: {
+                                    parser: new LiteralArgumentParser('before', 'after'),
+                                    children: {
+                                        existing: {
+                                            parser: new StringArgumentParser('QuotablePhrase'),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                list: {
+                    parser: new LiteralArgumentParser('list'),
+                    executable: true,
+                    children: {
+                        available_enabled: {
+                            parser: new LiteralArgumentParser('available', 'enabled'),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
+        debug: {
+            parser: new LiteralArgumentParser('debug'),
+            permission: 3,
+            children: {
+                start_stop_report: {
+                    parser: new LiteralArgumentParser('start', 'stop', 'report'),
+                    executable: true
+                }
+            }
+        },
+        deop: {
+            parser: new LiteralArgumentParser('deop'),
+            permission: 3,
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    executable: true
+                }
+            }
+        },
+        difficulty: {
+            parser: new LiteralArgumentParser('difficulty'),
+            executable: true,
+            children: {
+                difficulty: {
+                    parser: new LiteralArgumentParser('easy', 'normal', 'hard', 'peaceful'),
+                    executable: true
+                }
+            }
+        },
+        effect: {
+            parser: new LiteralArgumentParser('effect'),
+            children: {
+                clear: {
+                    parser: new LiteralArgumentParser('clear'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            executable: true,
+                            children: {
+                                effect: {
+                                    parser: new NamespacedIDArgumentParser('minecraft:mob_effect'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                give: {
+                    parser: new LiteralArgumentParser('give'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            children: {
+                                effect: {
+                                    parser: new NamespacedIDArgumentParser('minecraft:mob_effect'),
+                                    executable: true,
+                                    children: {
+                                        seconds: {
+                                            parser: new NumberArgumentParser('integer', 0, 1000000),
+                                            executable: true,
+                                            children: {
+                                                amplifier: {
+                                                    parser: new NumberArgumentParser('integer', 0, 255),
+                                                    executable: true,
+                                                    children: {
+                                                        hideParticles: {
+                                                            template: 'templates.boolean',
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        enchant: {
+            parser: new LiteralArgumentParser('enchant'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    children: {
+                        enchantment: {
+                            parser: new NamespacedIDArgumentParser('minecraft:enchantment'),
+                            executable: true,
+                            children: {
+                                level: {
+                                    parser: new NumberArgumentParser('integer', 0, 5),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        gamemode: {
+            parser: new LiteralArgumentParser('defaultgamemode', 'gamemode'),
+            children: {
+                mode: {
+                    parser: new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'),
+                    executable: true
+                }
+            }
+        },
         execute: {
             parser: new LiteralArgumentParser('execute'),
-            description: 'TODO',
             children: {
+                align: {
+                    parser: new LiteralArgumentParser('align'),
+                    children: {
+                        axes: {
+                            parser: new LiteralArgumentParser('x', 'xy', 'xyz', 'xz', 'xzy', 'y', 'yx', 'yxz', 'yz', 'yzx', 'z', 'zx', 'zxy', 'zy', 'zyx'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        }
+                    }
+                },
+                anchored: {
+                    parser: new LiteralArgumentParser('anchored'),
+                    children: {
+                        eyes_feet: {
+                            parser: new LiteralArgumentParser('eyes', 'feet'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        }
+                    }
+                },
                 as: {
                     parser: new LiteralArgumentParser('as'),
                     children: {
                         entity: {
-                            parser: new EntityArgumentParser(),
+                            parser: new EntityArgumentParser('multiple', 'entities'),
                             children: {
                                 subcommand: {
                                     redirect: 'commands.execute'
+                                }
+                            }
+                        }
+                    }
+                },
+                at: {
+                    parser: new LiteralArgumentParser('at'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        }
+                    }
+                },
+                facing: {
+                    parser: new LiteralArgumentParser('facing'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        },
+                        entity: {
+                            parser: new LiteralArgumentParser('entity'),
+                            children: {
+                                target: {
+                                    parser: new EntityArgumentParser('single', 'entities'),
+                                    children: {
+                                        eyes_feet: {
+                                            parser: new LiteralArgumentParser('eyes', 'feet'),
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'commands.execute'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                in: {
+                    parser: new LiteralArgumentParser('in'),
+                    children: {
+                        dimension: {
+                            parser: new NamespacedIDArgumentParser('minecraft:dimension_type'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        }
+                    }
+                },
+                positioned: {
+                    parser: new LiteralArgumentParser('positioned'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        },
+                        as: {
+                            parser: new LiteralArgumentParser('as'),
+                            children: {
+                                entity: {
+                                    parser: new EntityArgumentParser('multiple', 'entities'),
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'commands.execute'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                rotated: {
+                    parser: new LiteralArgumentParser('rotated'),
+                    children: {
+                        rot: {
+                            parser: new VectorArgumentParser(2),
+                            children: {
+                                subcommand: {
+                                    redirect: 'commands.execute'
+                                }
+                            }
+                        },
+                        as: {
+                            parser: new LiteralArgumentParser('as'),
+                            children: {
+                                entity: {
+                                    parser: new EntityArgumentParser('multiple', 'entities'),
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'commands.execute'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                store: {
+                    parser: new LiteralArgumentParser('store'),
+                    children: {
+                        result_success: {
+                            parser: new LiteralArgumentParser('result', 'success'),
+                            children: {
+                                nbt_holder: {
+                                    template: 'nbt_holder',
+                                    children: {
+                                        path: {
+                                            parser: ({ args }) => {
+                                                const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                if (type === 'entity') {
+                                                    // TODO: get ID from parsed entity.
+                                                    return new NbtPathArgumentParser('entities')
+                                                } else {
+                                                    return new NbtPathArgumentParser('blocks')
+                                                }
+                                            },
+                                            children: {
+                                                type: {
+                                                    parser: new LiteralArgumentParser('byte', 'short', 'int', 'long', 'float', 'double'),
+                                                    children: {
+                                                        scale: {
+                                                            parser: new NumberArgumentParser('float'),
+                                                            children: {
+                                                                subcommand: {
+                                                                    redirect: 'commands.execute'
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                bossbar: {
+                                    parser: new LiteralArgumentParser('bossbar'),
+                                    children: {
+                                        id: {
+                                            parser: new NamespacedIDArgumentParser('$bossbars'),
+                                            children: {
+                                                max_value: {
+                                                    parser: new LiteralArgumentParser('max', 'value'),
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'commands.execute'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                score: {
+                                    parser: new LiteralArgumentParser('score'),
+                                    children: {
+                                        score: {
+                                            template: 'templates.single_score',
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'commands.execute'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                if_unless: {
+                    parser: new LiteralArgumentParser('if', 'unless'),
+                    children: {
+                        block: {
+                            parser: new LiteralArgumentParser('block'),
+                            children: {
+                                pos: {
+                                    parser: new VectorArgumentParser(3),
+                                    children: {
+                                        block: {
+                                            parser: new BlockArgumentParser(true),
+                                            executable: true,
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'commands.execute'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        blocks: {
+                            parser: new LiteralArgumentParser('blocks'),
+                            children: {
+                                start: {
+                                    parser: new VectorArgumentParser(3),
+                                    children: {
+                                        end: {
+                                            parser: new VectorArgumentParser(3),
+                                            children: {
+                                                destination: {
+                                                    parser: new VectorArgumentParser(3),
+                                                    children: {
+                                                        all_masked: {
+                                                            parser: new LiteralArgumentParser('all', 'masked'),
+                                                            executable: true,
+                                                            children: {
+                                                                subcommand: {
+                                                                    redirect: 'commands.execute'
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        data: {
+                            parser: new LiteralArgumentParser('data'),
+                            children: {
+                                nbt_holder: {
+                                    template: 'nbt_holder',
+                                    children: {
+                                        path: {
+                                            parser: ({ args }) => {
+                                                const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                if (type === 'entity') {
+                                                    // TODO: get ID from parsed entity.
+                                                    return new NbtPathArgumentParser('entities')
+                                                } else {
+                                                    return new NbtPathArgumentParser('blocks')
+                                                }
+                                            },
+                                            executable: true,
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'commands.execute'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        entity: {
+                            parser: new LiteralArgumentParser('entity'),
+                            children: {
+                                entities: {
+                                    parser: new EntityArgumentParser('multiple', 'entities'),
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'commands.execute'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        predicate: {
+                            parser: new LiteralArgumentParser('predicate'),
+                            children: {
+                                id: {
+                                    parser: new NamespacedIDArgumentParser('$predicates'),
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'commands.execute'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        score: {
+                            parser: new LiteralArgumentParser('score'),
+                            children: {
+                                target: {
+                                    template: 'templates.single_score',
+                                    children: {
+                                        operation: {
+                                            parser: new LiteralArgumentParser('<','<=','=','>','>='),
+                                            children: {
+                                                source: {
+                                                    template: 'templates.single_score',
+                                                    executable: true,
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'commands.execute'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        matches: {
+                                            parser: new LiteralArgumentParser('matches'),
+                                            children: {
+                                                range: {
+                                                    parser: new NumberRangeArgumentParser('integer'),
+                                                    executable: true,
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'commands.execute'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -343,13 +1005,13 @@ export const VanillaTree: CommandTree = {
             }
         }
     },
-    comments: { // #define (entity|tag|objective) <id: string> [description: string]
+    comments: { // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
         '#define': {
             parser: new LiteralArgumentParser('#define'),
-            description: 'Define an entity tag, a scoreboard objective or a fake player. Will be used for completions.',
+            description: 'Defines a bossbar, an entity name, a scoreboard objective, a data storage, an entity tag or a team. Will be used for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('entity', 'tag', 'objective'),
+                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'storage', 'tag', 'team'),
                     description: 'Type of the definition',
                     children: {
                         id: {
@@ -377,6 +1039,61 @@ export const VanillaTree: CommandTree = {
     templates: {
         boolean: {
             parser: new LiteralArgumentParser('false', 'true')
+        },
+        single_score: {
+            parser: new EntityArgumentParser('single', 'entities'),
+            children: {
+                objective: {
+                    parser: new ObjectiveArgumentParser()
+                }
+            }
+        },
+        multiple_score: {
+            parser: new EntityArgumentParser('multiple', 'entities'),
+            children: {
+                objective: {
+                    parser: new ObjectiveArgumentParser()
+                }
+            }
+        }
+    },
+    data_modification: {
+        simple: {
+            parser: new LiteralArgumentParser('append', 'merge', 'prepend', 'set')
+        },
+        insert: {
+            parser: new LiteralArgumentParser('insert'),
+            children: {
+                index: {
+                    parser: new NumberArgumentParser('integer')
+                }
+            }
+        }
+    },
+    nbt_holder: {
+        block: {
+            parser: new LiteralArgumentParser('block'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3)
+                }
+            }
+        },
+        entity: {
+            parser: new LiteralArgumentParser('entity'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('single', 'entities')
+                }
+            }
+        },
+        storage: {
+            parser: new LiteralArgumentParser('storage'),
+            children: {
+                id: {
+                    parser: new NamespacedIDArgumentParser('$storages')
+                }
+            }
         }
     }
 }

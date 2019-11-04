@@ -18,8 +18,8 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     private cache: GlobalCache
 
     constructor(
-        private readonly multiple = true,
-        private readonly onlyPlayers = false
+        private readonly amount: 'single' | 'multiple',
+        private readonly type: 'players' | 'entities'
     ) { super() }
 
     parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {

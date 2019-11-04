@@ -279,7 +279,7 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(undefined, undefined, tree)
             const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
-            parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
+            parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line, 4)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
             )

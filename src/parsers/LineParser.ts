@@ -72,7 +72,7 @@ export default class LineParser implements Parser<Line> {
         return { data: line }
     }
 
-    parseSingle(reader: StringReader, manager: Manager<ArgumentParser<any>>, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1) {
+    parseSingle(reader: StringReader, manager: Manager<ArgumentParser<any>>, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1, isTheLastElement: boolean = false) {
         parsedLine.path.push(key)
         if (node.redirect) {
             if (node.redirect.indexOf('.') === -1) {
@@ -83,10 +83,10 @@ export default class LineParser implements Parser<Line> {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
                 const redirect = this.tree[seg[0]][seg[1]]
-                this.parseSingle(reader, manager, seg[1], redirect, parsedLine, cursor)
+                this.parseSingle(reader, manager, seg[1], redirect, parsedLine, cursor, isTheLastElement)
             }
         } else if (node.template) {
-            if (node.template.indexOf('.') === -1) {
+            if (!node.template.includes('.')) {
                 // Use `children` as the template.
                 const template = fillChildrenTemplate(node, this.tree[node.template])
                 this.parseChildren(reader, manager, template, parsedLine, cursor)
@@ -94,7 +94,7 @@ export default class LineParser implements Parser<Line> {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
                 const template = fillSingleTemplate(node, this.tree[seg[0]][seg[1]])
-                this.parseSingle(reader, manager, seg[1], template, parsedLine, cursor)
+                this.parseSingle(reader, manager, seg[1], template, parsedLine, cursor, isTheLastElement)
             }
         } else if (node.parser) {
             const start = reader.cursor
@@ -113,7 +113,7 @@ export default class LineParser implements Parser<Line> {
                     reader.skip()
                     // The input line is end with a space.
                     /* istanbul ignore else */
-                    if (node.children) {
+                    if (node.children && cursor === reader.cursor) {
                         // Compute completions.
                         const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
                         this.parseChildren(reader, manager, node.children, result, cursor)
@@ -130,19 +130,22 @@ export default class LineParser implements Parser<Line> {
                         new ParsingError({ start: reader.cursor, end: reader.string.length }, `expected nothing but got ‘${reader.remainingString}’`)
                     )
                 } else {
-                    if (reader.peek() === ' ') {
-                        reader.skip()
-                        this.parseChildren(reader, manager, node.children, parsedLine, cursor)
-                        // Downgrade errors.
-                        parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
-                    } else {
-                        parsedLine.errors.push(
-                            new ParsingError({ start: reader.cursor, end: reader.string.length }, 'expected a space to seperate two arguments')
-                        )
+                    const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
+                    if (shouldParseChildren) {
+                        if (reader.peek() === ' ') {
+                            reader.skip()
+                            this.parseChildren(reader, manager, node.children, parsedLine, cursor)
+                            // Downgrade errors.
+                            parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
+                        } else {
+                            parsedLine.errors.push(
+                                new ParsingError({ start: reader.cursor, end: reader.string.length }, 'expected a space to seperate two arguments')
+                            )
+                        }
                     }
                 }
             }
-            // Handle permission level.
+            // Check permission level.
             const level = node.permission !== undefined ? node.permission : 2
             const levelMax = this.config.env.permissionLevel
             if (level > levelMax) {
@@ -170,18 +173,16 @@ export default class LineParser implements Parser<Line> {
                 const node = children[key]
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
-                this.parseSingle(newReader, manager, key, node, parsedLine, cursor)
-                const untolerableErrors = parsedLine.errors.filter(v => !v.tolerable)
-                if (untolerableErrors.length > 0) {
-                    // Has untolerable error(s).
-                    if (i !== Object.keys(children).length - 1) {
-                        // Still has other children.
-                        // Restore parsedLine.
-                        parsedLine.args.pop()
-                        parsedLine.path.pop()
-                        parsedLine.errors = oldErrors
-                        continue
-                    }
+                const isTheLastElement = i === Object.keys(children).length - 1
+                this.parseSingle(newReader, manager, key, node, parsedLine, cursor, isTheLastElement)
+                if (
+                    !isTheLastElement && /* Has untolerable errors */
+                    parsedLine.errors.filter(v => !v.tolerable).length > 0
+                ) {
+                    parsedLine.args.pop()
+                    parsedLine.path.pop()
+                    parsedLine.errors = oldErrors
+                    continue
                 }
                 reader.cursor = newReader.cursor
                 return

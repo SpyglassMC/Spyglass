@@ -12,7 +12,7 @@ import Entity from '../../types/Entity'
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
-            const parser = new EntityArgumentParser()
+            const parser = new EntityArgumentParser('multiple', 'entities')
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498'])
         })
@@ -41,7 +41,7 @@ describe('EntityArgumentParser Tests', () => {
             }
         }
         it('Should return untolerable error when the input is empty', () => {
-            const parser = new EntityArgumentParser()
+            const parser = new EntityArgumentParser('multiple', 'entities')
             const actual = parser.parse(new StringReader(''), undefined, manager)
             assert.deepStrictEqual(actual.data, new Entity())
             assert.deepStrictEqual(actual.errors, [
@@ -50,13 +50,13 @@ describe('EntityArgumentParser Tests', () => {
         })
         describe('For plain entities', () => {
             it('Should return data', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('SPGoding'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity('SPGoding'))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.completions,
@@ -68,7 +68,7 @@ describe('EntityArgumentParser Tests', () => {
                 )
             })
             it('Should return cache when the entity is already defined', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('foo'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity('foo'))
                 assert.deepStrictEqual(actual.cache, {
@@ -81,7 +81,7 @@ describe('EntityArgumentParser Tests', () => {
                 })
             })
             it('Should return empty cache when the entity is undefined', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('qux'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity('qux'))
                 assert.deepStrictEqual(actual.cache, {})
@@ -89,19 +89,19 @@ describe('EntityArgumentParser Tests', () => {
         })
         describe('For entity selectors', () => {
             it('Should return data for simple selector', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data for empty-argument selector', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[]'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with simple arguments', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5]'
                 const expected = {
                     sort: 'random', x: 1, dx: 2.5, limit: 1,
@@ -113,7 +113,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with all kinds of negativable array arguments', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const command = '@a[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={Item: {Count: 1b}}]'
                 const expected = {
                     gamemode: ['adventure'],
@@ -129,7 +129,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with the same negativable array arguments', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const command = '@a[gamemode=adventure,gamemode=!creative,gamemode=!spectator]'
                 const expected = {
                     gamemode: ['adventure'],
@@ -140,7 +140,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with ‘scores’ argument', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ scores = { foo = 114.. , bar = ..514 } ]'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a',
                     {
@@ -152,7 +152,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with ‘advancements’ argument', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ advancements = { spgoding:advancement/a = true , spgoding:advancement/b = { critA = false , critB = true } , spgoding:advancement/c = { } } ]'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', {
                     advancements: {
@@ -167,7 +167,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions for variable', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@'), 1, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.completions,
@@ -181,7 +181,7 @@ describe('EntityArgumentParser Tests', () => {
                 )
             })
             it('Should return error for unexpected variable', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@b'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.errors, [
@@ -189,7 +189,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return error for unexpected argument key', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[foo=bar]'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [
@@ -197,7 +197,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for argument keys', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[]'), 3, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
@@ -226,7 +226,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return errors for unclosed brackets', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a['), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [
@@ -234,7 +234,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for ‘sort’ argument', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ sort = ]'), 11, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
@@ -245,7 +245,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for ‘gamemode’ argument', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ]'), 15, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
@@ -257,7 +257,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for negative ‘gamemode’ argument', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), 17, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
@@ -268,7 +268,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for objectives in ‘scores’', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ scores = { } ]'), 15, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
@@ -277,7 +277,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for advancements in ‘advancements’', () => {
-                const parser = new EntityArgumentParser()
+                const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ advancements = { } ]'), 21, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [

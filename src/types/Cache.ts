@@ -24,6 +24,7 @@ export interface Cache<T extends GlobalCacheElement | LocalCacheElement> {
     bossbars?: CacheCategory<T>,
     entities?: CacheCategory<T>,
     objectives?: CacheCategory<T>,
+    storages?: CacheCategory<T>,
     tags?: CacheCategory<T>,
     teams?: CacheCategory<T>
 }
@@ -196,7 +197,7 @@ export function getCompletions(cache: GlobalCache, type: keyof Cache<GlobalCache
     return ans
 }
 
-type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team'
+type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'storage'
 
 export function isDefinitionType(value: string): value is DefinitionType {
     return (
@@ -204,7 +205,8 @@ export function isDefinitionType(value: string): value is DefinitionType {
         value === 'entity' ||
         value === 'objective' ||
         value === 'tag' || 
-        value === 'team'
+        value === 'team'|| 
+        value === 'storage'
     )
 }
 
@@ -217,6 +219,8 @@ export function getCategoryKey(type: DefinitionType): keyof Cache<any> {
         return 'objectives'
     } else if (type === 'team') {
         return 'teams'
+    } else if (type === 'storage') {
+        return 'storages'
     } else {
         return 'tags'
     }
