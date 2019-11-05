@@ -1,3 +1,8 @@
+# [v1.2.1](https://github.com/SPGoding/datapack-language-server/compare/v1.2.0...v1.2.1) (2019-11-05)
+
+## 🐛 Bug Fixes
+- [`9fdeede`](https://github.com/SPGoding/datapack-language-server/commit/9fdeede)  Try fixing loading bug
+
 # [v1.2.0](https://github.com/SPGoding/datapack-language-server/compare/v1.1.0...v1.2.0) (2019-11-05)
 
 ## ✨ New Features
