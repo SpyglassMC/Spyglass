@@ -22,16 +22,16 @@ Just joking. Semantic highlighting will be implemented whenever https://github.c
 The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '@', '\n', '!', "'", '"']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
 
 DHP can provide completions for simple literals:
-![literal]()
+<!-- ![literal]() -->
 
 For complex entity selectors:
-![selector]()
+<!-- ![selector]() -->
 
 For more complex NBTs:
-![nbt]()
+<!-- ![nbt]() -->
 
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
-![ohhhhhh]()
+<!-- ![ohhhhhh]() -->
 
 ## Folding Ranges
 
@@ -47,26 +47,26 @@ execute if score @s test matches 5 run say 5
 #endregion
 ```
 
-![folding-region]()
+<!-- ![folding-region]() -->
 
 ## Diagnostics
 
 DHP provides real-time diagnostics about your commands. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
 
-![permission-level]()
-![fill-out-of-range]()
+<!-- ![permission-level]() -->
+<!-- ![fill-out-of-range]() -->
 
 ## Hover Information
 
 DHP shows user-defined documentation when you hover on specific arguments, e.g. on function namespaced IDs, tags, teams, etc.
 
-![hover-on-function]()
+<!-- ![hover-on-function]() -->
 
 ## Resolving Namespaced IDs
 
 You can navigate to advancements, loot tables, functions, predicates and all kinds of tags by Ctrl-clicking on their namespaced IDs.
 
-![navigate-to-predicate]()
+<!-- ![navigate-to-predicate]() -->
 
 ## Goto Definitions
 
@@ -88,7 +88,7 @@ All the references of the same symbol in the whole workspace will be renamed.
 
 You can get hints about next arguments while typing.
 
-![signature-help]()
+<!-- ![signature-help]() -->
 
 ## Formatting (aka Linting)
 
