@@ -60,7 +60,7 @@
     "url": "https://github.com/SPGoding/datapack-language-server/issues"
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.39.0"
   },
   "displayName": "Datapack Helper Plus (MCF)",
   "description": "A NPM package and an VSCode extension which make editing mcfunctions much easier",
