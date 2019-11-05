@@ -1897,7 +1897,9 @@ export const VanillaTree: CommandTree = {
             }
         },
         normal: {
-            parser: new CommentArgumentParser()
+            parser: new CommentArgumentParser(),
+            permission: 0,
+            executable: true
         }
     },
     templates: {
