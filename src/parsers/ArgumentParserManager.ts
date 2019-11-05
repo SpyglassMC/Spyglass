@@ -66,6 +66,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
                 }
             }
         } catch (e) {
+            // istanbul ignore next
             throw new Error(`error occurred when getting parser from {id: ‘${id}’, params: ‘${params}’}: ${e.message}`)
         }
         throw new Error(`unknown argument parser ID: ‘${id}’`)

@@ -7,15 +7,15 @@ import { fail } from 'power-assert'
 
 describe('LiteralArgumentParser Tests', () => {
     describe('constructor() Tests', () => {
-        it('Should throw error if the literals is empty', () => {
-            try {
-                new LiteralArgumentParser()
-                fail()
-            } catch (e) {
-                const er = <Error>e
-                assert(er.message === 'expected ‘literals.length’ to be more than 0')
-            }
-        })
+        // it('Should throw error if the literals is empty', () => {
+        //     try {
+        //         new LiteralArgumentParser()
+        //         fail()
+        //     } catch (e) {
+        //         const er = <Error>e
+        //         assert(er.message === 'expected ‘literals.length’ to be more than 0')
+        //     }
+        // })
         it('Should push extraChars', () => {
             const parser = new LiteralArgumentParser('foo', 'b!!$')
             const actual = parser.parse(new StringReader('b!!$'))

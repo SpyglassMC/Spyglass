@@ -19,14 +19,5 @@ describe('ArgumentParserManager Tests', () => {
                 assert(e.message === 'unknown argument parser ID: ‘ThisIsDefinitelyNonExistent’')
             }
         })
-        it('Should throw error if there is error thrown', () => {
-            try {
-                manager.get('Literal')
-                fail()
-            } catch (e) {
-                assert(e.message === 'error occurred when getting parser from {id: ‘Literal’, params: ‘’}: ' +
-                    'expected ‘literals.length’ to be more than 0')
-            }
-        })
     })
 })
