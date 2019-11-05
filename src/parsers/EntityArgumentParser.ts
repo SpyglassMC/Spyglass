@@ -48,6 +48,13 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         // Completions
         if (this.cursor === start) {
             ans.completions.push(...getCompletions(this.cache, 'entities'))
+            ans.completions.push(
+                { label: '@a', commitCharacters: ['[', ' '] },
+                { label: '@e', commitCharacters: ['[', ' '] },
+                { label: '@p', commitCharacters: ['[', ' '] },
+                { label: '@r', commitCharacters: ['[', ' '] },
+                { label: '@s', commitCharacters: ['[', ' '] }
+            )
         }
 
         // Data
@@ -89,7 +96,13 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         let containsNonPlayer = false
 
         if (this.cursor === start + 1) {
-            ans.completions.push({ label: 'a' }, { label: 'e' }, { label: 'p' }, { label: 'r' }, { label: 's' })
+            ans.completions.push(
+                { label: 'a', commitCharacters: ['[', ' '] },
+                { label: 'e', commitCharacters: ['[', ' '] },
+                { label: 'p', commitCharacters: ['[', ' '] },
+                { label: 'r', commitCharacters: ['[', ' '] },
+                { label: 's', commitCharacters: ['[', ' '] }
+            )
         }
 
         //#region Data

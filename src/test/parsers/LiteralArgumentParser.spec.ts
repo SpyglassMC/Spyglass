@@ -72,6 +72,16 @@ describe('LiteralArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should return partial completions', () => {
+            const parser = new LiteralArgumentParser('foo', 'bar', 'baz')
+            const actual = parser.parse(new StringReader('b'), 1)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    { label: 'bar' },
+                    { label: 'baz' }
+                ]
+            )
+        })
         it('Should return untolerable error when input is empty', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader(''))

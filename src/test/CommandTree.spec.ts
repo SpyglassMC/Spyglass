@@ -169,6 +169,22 @@ describe('CommandTree Tests', () => {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
+        it('advancement g', () => {
+            const parser = new LineParser(false, undefined, undefined, cache)
+            const reader = new StringReader('advancement g')
+            const { data } = parser.parse(reader, 13, manager)
+            assert.deepEqual(data.args, [
+                { data: 'advancement', parser: 'literal' },
+                { data: 'g', parser: 'literal' }
+            ])
+            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke'])
+            assert.deepEqual(data.cache, undefined)
+            assert.deepEqual(data.errors, [
+                new ParsingError({ start: 12, end: 13 }, 'expected one of ‘grant’ and ‘revoke’ but got ‘g’'),
+                new ParsingError({ start: 13, end: 15 }, 'expected more arguments but got nothing')
+            ])
+            assert.deepEqual(data.completions, [{ label: 'grant' }])
+        })
         it('advancement (grant|revoke) <targets> everything', () => {
             const parser = new LineParser(false, undefined, undefined, cache)
             const reader = new StringReader('advancement grant @s everything')
@@ -272,7 +288,6 @@ describe('CommandTree Tests', () => {
             ])
             assert.deepEqual(data.path, ['command', 'setblock', 'pos', 'block'])
             assert.deepEqual(data.cache, undefined)
-            console.log(data.errors)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, [{ label: 'snowy' }])
         })

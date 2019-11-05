@@ -2,12 +2,11 @@ import BigNumber from 'bignumber.js'
 import ParsingError from '../types/ParsingError'
 
 export default class StringReader {
-    public readonly string: string
     public cursor = 0
 
-    constructor(value: string) {
-        this.string = value
-    }
+    constructor(
+        public readonly string: string
+    ) { }
 
     get passedString() {
         return this.string.slice(0, this.cursor)

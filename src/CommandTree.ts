@@ -100,7 +100,7 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
-        ban_ip: {
+        'ban-ip': {
             parser: new LiteralArgumentParser('ban-ip'),
             permission: 3,
             description: 'Adds IP addresses to blacklist.',
@@ -767,7 +767,13 @@ export const VanillaTree: CommandTree = {
             children: {
                 mode: {
                     parser: new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'),
-                    executable: true
+                    executable: true,
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('multiple', 'players'),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
@@ -1865,10 +1871,10 @@ export const VanillaTree: CommandTree = {
             }
         }
     },
-    comments: { 
-        // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
-        '#define': {
-            parser: new LiteralArgumentParser('#define'),
+    comments: {
+        // #$define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
+        '#$define': {
+            parser: new LiteralArgumentParser('#$define'),
             description: 'Defines a bossbar, an entity name, a scoreboard objective, a data storage, an entity tag or a team. Will be used for completions.',
             children: {
                 type: {

@@ -62,7 +62,12 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.completions,
                     [
                         { label: 'foo' },
-                        { label: 'bar', documentation: 'The doc of **bar**' }
+                        { label: 'bar', documentation: 'The doc of **bar**' },
+                        { label: '@a', commitCharacters: ['[', ' '] },
+                        { label: '@e', commitCharacters: ['[', ' '] },
+                        { label: '@p', commitCharacters: ['[', ' '] },
+                        { label: '@r', commitCharacters: ['[', ' '] },
+                        { label: '@s', commitCharacters: ['[', ' '] }
                     ]
                 )
             })
@@ -171,11 +176,11 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.completions,
                     [
-                        { label: 'a' },
-                        { label: 'e' },
-                        { label: 'p' },
-                        { label: 'r' },
-                        { label: 's' }
+                        { label: 'a', commitCharacters: ['[', ' '] },
+                        { label: 'e', commitCharacters: ['[', ' '] },
+                        { label: 'p', commitCharacters: ['[', ' '] },
+                        { label: 'r', commitCharacters: ['[', ' '] },
+                        { label: 's', commitCharacters: ['[', ' '] }
                     ]
                 )
             })

@@ -3,6 +3,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
+import { TextEdit } from 'vscode-languageserver'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
@@ -37,6 +38,15 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         //#region Get completions.
         if (reader.cursor === cursor) {
             ans.completions = arrayToCompletions(this.literals)
+        }
+        //#endregion        
+        //#region Get partial completions.
+        const lengthToCursor = cursor - reader.cursor
+        if (lengthToCursor > 0) {
+            const textToCursor = reader.remainingString.slice(0, lengthToCursor).toLowerCase()
+            const candidates = this.literals
+                .filter(v => v.toLowerCase().startsWith(textToCursor))
+            ans.completions.push(...arrayToCompletions(candidates))
         }
         //#endregion
         //#region Data
