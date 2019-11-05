@@ -1,4 +1,4 @@
-const VanillaRegistries = require('./vanilla_registries') as Registries
+import VanillaRegistries from './vanilla_registries'
 
 export type Registry = {
     default?: string
@@ -14,4 +14,4 @@ export interface Registries {
     [type: string]: Registry
 }
 
-export default VanillaRegistries 
+export default VanillaRegistries as Registries

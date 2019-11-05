@@ -1,4 +1,4 @@
-const VanillaBlockDefinitions = require('./vanilla_blocks') as BlockDefinitions
+import VanillaBlockDefinitions from './vanilla_blocks'
 
 export type BlockDefinition = {
     properties?: {
@@ -17,4 +17,4 @@ export interface BlockDefinitions {
     [id: string]: BlockDefinition | undefined
 }
 
-export default VanillaBlockDefinitions
+export default VanillaBlockDefinitions as BlockDefinitions
