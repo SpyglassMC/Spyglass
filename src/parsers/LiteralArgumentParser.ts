@@ -1,5 +1,4 @@
 import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'

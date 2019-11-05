@@ -1,7 +1,6 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
 import Manager from '../types/Manager'
-import ParsingError from '../types/ParsingError'
 import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries from '../types/VanillaRegistries'

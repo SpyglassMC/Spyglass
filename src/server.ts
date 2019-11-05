@@ -1,5 +1,5 @@
 // istanbul ignore next
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range } from 'vscode-languageserver'
 import { GlobalCache } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
@@ -20,7 +20,7 @@ connection.onInitialize(params => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: [' ', ',', '{', '[', '=', ':', '@', '\n', '!', "'", '"']
+                triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '\n', '!', "'", '"']
             },
             // definitionProvider: true,
             // documentFormattingProvider: true,
@@ -99,10 +99,8 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
         strings.push(...stringsAfterStartLine)
 
         lines.splice(startLine)
-        let lineNumber = startLine
         for (const string of stringsAfterStartLine) {
             parseString(string, lines)
-            lineNumber++
         }
     }
     updateDiagnostics(uri)

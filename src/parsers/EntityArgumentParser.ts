@@ -24,7 +24,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     ) { super() }
 
     parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {
-        const start = reader.cursor
         this.cursor = cursor
         this.manager = manager
         this.config = config

@@ -1,5 +1,5 @@
 import Lintable, { ToLintedString } from './Lintable'
-import { LintConfig } from './Config';
+import { LintConfig } from './Config'
 
 export default class Time implements Lintable {
     constructor(

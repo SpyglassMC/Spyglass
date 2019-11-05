@@ -2,7 +2,6 @@ import { LintConfig } from './Config'
 import { NbtCompoundTag, getNbtCompoundTag } from './NbtTag'
 import Identity from './Identity'
 import Lintable, { ToLintedString } from './Lintable'
-import BlockArgumentParser from '../parsers/BlockArgumentParser'
 
 export default class Block implements Lintable {
     static readonly StatesBeginSymbol = '['

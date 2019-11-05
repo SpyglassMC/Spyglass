@@ -1,12 +1,9 @@
 import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { CompletionItemKind } from 'vscode-languageserver'
 import Manager from '../types/Manager'
 import { VanillaConfig } from '../types/Config'
 import { GlobalCache } from '../types/Cache'
-import Entity from '../types/Entity'
 import Message from '../types/Message'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {

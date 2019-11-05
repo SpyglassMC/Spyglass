@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import ParsingError from '../types/ParsingError'
-import Identity from '../types/Identity'
 
 export default class StringReader {
     public readonly string: string

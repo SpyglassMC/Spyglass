@@ -3,9 +3,9 @@ import Lintable, { ToLintedString } from './Lintable'
 
 export default class NumberRange implements Lintable {
     constructor(
-        private readonly type: 'integer' | 'float',
-        private readonly min?: number,
-        private readonly max?: number
+        readonly type: 'integer' | 'float',
+        readonly min?: number,
+        readonly max?: number
     ) { }
 
     [ToLintedString](_lint: LintConfig) {

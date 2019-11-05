@@ -3,7 +3,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { GlobalCache, getCompletions, getSafeCategory, combineCache } from '../types/Cache'
+import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
 import { VanillaConfig } from '../types/Config'
 
 export default class TeamArgumentParser extends ArgumentParser<string> {

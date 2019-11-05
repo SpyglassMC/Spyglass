@@ -1,4 +1,4 @@
-const VanillaRegistries = require('./vanilla_registries.json') as Registries
+const VanillaRegistries = require('./vanilla_registries') as Registries
 
 export type Registry = {
     default?: string

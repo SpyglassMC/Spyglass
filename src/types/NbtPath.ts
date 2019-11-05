@@ -2,7 +2,6 @@ import Lintable, { ToLintedString } from './Lintable'
 import { LintConfig } from './Config'
 import { toLintedString, quoteString } from '../utils/utils'
 import { NbtCompoundTag, isNbtCompoundTag } from './NbtTag'
-import StringReader from '../utils/StringReader'
 
 export const NbtPathIndexBegin = Symbol('[')
 export const NbtPathIndexEnd = Symbol(']')

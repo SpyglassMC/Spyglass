@@ -1,4 +1,3 @@
-import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import { CompletionItem } from 'vscode-languageserver'
 import { GlobalCache } from '../types/Cache'
 import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'

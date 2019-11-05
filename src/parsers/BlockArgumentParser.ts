@@ -1,4 +1,3 @@
-import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { nbtDocs } from 'mc-nbt-paths'
 import { NbtCompoundTag } from '../types/NbtTag'
@@ -7,12 +6,9 @@ import Block from '../types/Block'
 import Config from '../types/Config'
 import Identity from '../types/Identity'
 import Manager from '../types/Manager'
-import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import Time from '../types/Time'
 import VanillaBlockDefinitions from '../types/VanillaBlockDefinitions'
 import VanillaRegistries from '../types/VanillaRegistries'
-import Vector from '../types/Vector'
 import { GlobalCache } from '../types/Cache'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {

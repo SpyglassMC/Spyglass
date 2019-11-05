@@ -2,12 +2,12 @@ import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
 import Manager from '../types/Manager'
-import Parser, { ArgumentParserResult } from '../types/Parser'
+import Parser from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaTree, { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { GlobalCache } from '../types/Cache'
-import { MarkupContent, CompletionItemKind } from 'vscode-languageserver'
+import { MarkupContent } from 'vscode-languageserver'
 
 export default class LineParser implements Parser<Line> {
     // istanbul ignore next

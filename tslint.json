@@ -40,5 +40,11 @@
         "prefer-while": true,
         "no-unused-variable": true,
         "no-switch-case-fall-through": true
+    },
+    "linterOptions": {
+        "exclude": [
+            "src/types/vanilla_blocks.ts",
+            "src/types/vanilla_registries.ts"
+        ]
     }
 }

@@ -1,4 +1,3 @@
-import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { GlobalCache } from '../types/Cache'
 import { nbtDocs } from 'mc-nbt-paths'

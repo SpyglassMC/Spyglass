@@ -1,4 +1,4 @@
-const VanillaBlockDefinitions = require('./vanilla_blocks.json') as BlockDefinitions
+const VanillaBlockDefinitions = require('./vanilla_blocks') as BlockDefinitions
 
 export type BlockDefinition = {
     properties?: {
