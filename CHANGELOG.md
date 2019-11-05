@@ -1,3 +1,8 @@
+# [v1.2.0](https://github.com/SPGoding/datapack-language-server/compare/v1.1.0...v1.2.0) (2019-11-05)
+
+## ✨ New Features
+- [`c11aad8`](https://github.com/SPGoding/datapack-language-server/commit/c11aad8)  Add completions and diagnostics sender (Issues: [`#88`](https://github.com/SPGoding/datapack-language-server/issues/88))
+
 # [v1.1.0](https://github.com/SPGoding/datapack-language-server/compare/v1.0.0...v1.1.0) (2019-11-04)
 
 ## ✨ New Features
