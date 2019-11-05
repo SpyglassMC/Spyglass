@@ -47,29 +47,38 @@ connection.onInitialize(params => {
     }
 })
 
-function parseString(string: string, lines: Line[], uri: string, lineNumber: number) {
+function parseString(string: string, lines: Line[]) {
     if (string.match(/^\s*$/)) {
         lines.push({ args: [], path: [] })
     } else {
         const reader = new StringReader(string)
         const { data } = new LineParser(false, 'line', undefined, cache, config).parse(reader, undefined, manager)
         lines.push(data)
-        if (data.errors && data.errors.length > 0) {
-            connection.sendDiagnostics({ uri, diagnostics: data.errors.map(v => v.toDiagnostic(lineNumber)) })
-        }
     }
+}
+
+function updateDiagnostics(uri: string) {
+    const lines = linesOfUri.get(uri) as Line[]
+    const diagnostics = []
+    let lineNumber = 0
+    for (const line of lines) {
+        if (line.errors) {
+            diagnostics.push(...line.errors.map(v => v.toDiagnostic(lineNumber)))
+        }
+        lineNumber++
+    }
+    connection.sendDiagnostics({ uri, diagnostics })
 }
 
 connection.onDidOpenTextDocument(({ textDocument: { text, uri } }) => {
     const lines: Line[] = []
     const strings = text.split('\n')
-    let lineNumber = 0
     for (const string of strings) {
-        parseString(string, lines, uri, lineNumber)
-        lineNumber++
+        parseString(string, lines)
     }
     linesOfUri.set(uri, lines)
     stringsOfUri.set(uri, strings)
+    updateDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) => {
     for (const change of contentChanges) {
@@ -92,10 +101,11 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
         lines.splice(startLine)
         let lineNumber = startLine
         for (const string of stringsAfterStartLine) {
-            parseString(string, lines, uri, lineNumber)
+            parseString(string, lines)
             lineNumber++
         }
     }
+    updateDiagnostics(uri)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     linesOfUri.delete(uri)
