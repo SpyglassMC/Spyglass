@@ -24,6 +24,7 @@ import ScoreboardSlotArgumentParser from './parsers/ScoreboardSlotArgumentParser
 import Identity from './types/Identity'
 import TagArgumentParser from './parsers/TagArgumentParser'
 import TeamArgumentParser from './parsers/TeamArgumentParser'
+import CommentArgumentParser from './parsers/CommentArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1894,6 +1895,9 @@ export const VanillaTree: CommandTree = {
                     }
                 }
             }
+        },
+        normal: {
+            parser: new CommentArgumentParser()
         }
     },
     templates: {

@@ -1,5 +1,5 @@
 // istanbul ignore next
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
 import { GlobalCache } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
@@ -30,7 +30,7 @@ connection.onInitialize(params => {
             // documentOnTypeFormattingProvider: {
             //     firstTriggerCharacter: '\n'
             // },
-            // foldingRangeProvider: true,
+            foldingRangeProvider: true,
             // hoverProvider: true,
             // referencesProvider: true,
             // renameProvider: {
@@ -117,8 +117,23 @@ connection.onCompletion(({ textDocument: { uri }, position: { line, character } 
     return data.completions
 })
 
-// connection.onFoldingRanges(({ textDocument: { uri } }) => {
-//     FoldingRange
-// })
+connection.onFoldingRanges(({ textDocument: { uri } }) => {
+    const strings = stringsOfUri.get(uri) as string[]
+    const startLineNumbers: number[] = []
+    const foldingRanges: FoldingRange[] = []
+    let i = 0
+    for (const string of strings) {
+        if (string.startsWith('#region')) {
+            startLineNumbers.push(i)
+        } else if (string.startsWith('#endregion')) {
+            const startLineNumber = startLineNumbers.pop()
+            if (startLineNumber) {
+                foldingRanges.push(FoldingRange.create(startLineNumber, i, undefined, undefined, FoldingRangeKind.Region))
+            }
+        }
+        i += 1
+    }
+    return foldingRanges
+})
 
 connection.listen()
