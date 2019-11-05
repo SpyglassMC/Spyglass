@@ -127,7 +127,7 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
             startLineNumbers.push(i)
         } else if (string.startsWith('#endregion')) {
             const startLineNumber = startLineNumbers.pop()
-            if (startLineNumber) {
+            if (startLineNumber !== undefined) {
                 foldingRanges.push(FoldingRange.create(startLineNumber, i, undefined, undefined, FoldingRangeKind.Region))
             }
         }

@@ -40,6 +40,7 @@ export default class LineParser implements Parser<Line> {
 
     parse(reader: StringReader, cursor: number = -1, manager: Manager<ArgumentParser<any>>): ParserResult {
         const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], path: [] }
+        const backupReader = reader.clone()
         if (reader.peek() === '/') {
             // Find a leading slash...
             if (this.beginningSlash === false) {
@@ -67,6 +68,9 @@ export default class LineParser implements Parser<Line> {
         }
         if (line.errors.length === 0) {
             this.parseChildren(reader, manager, this.tree[this.entryPoint], line, cursor)
+        }
+        if (backupReader.peek() === '#' && line.errors.length > 0) {
+            return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], path: ['comment'], completions: line.completions } }
         }
         saturatedLineToLine(line)
         return { data: line }

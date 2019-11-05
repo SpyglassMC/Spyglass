@@ -24,7 +24,6 @@ import ScoreboardSlotArgumentParser from './parsers/ScoreboardSlotArgumentParser
 import Identity from './types/Identity'
 import TagArgumentParser from './parsers/TagArgumentParser'
 import TeamArgumentParser from './parsers/TeamArgumentParser'
-import CommentArgumentParser from './parsers/CommentArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1866,7 +1865,8 @@ export const VanillaTree: CommandTree = {
             }
         }
     },
-    comments: { // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
+    comments: { 
+        // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             description: 'Defines a bossbar, an entity name, a scoreboard objective, a data storage, an entity tag or a team. Will be used for completions.',
@@ -1895,11 +1895,6 @@ export const VanillaTree: CommandTree = {
                     }
                 }
             }
-        },
-        normal: {
-            parser: new CommentArgumentParser(),
-            permission: 0,
-            executable: true
         }
     },
     templates: {
