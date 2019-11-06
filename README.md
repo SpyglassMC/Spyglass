@@ -21,15 +21,15 @@ Just joking. Semantic highlighting will be implemented whenever https://github.c
 
 You can get hints about the arguments of commands while typing.
 
-![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.png)
-![signature-help-2](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help-2.png)
+![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.gif)
+![signature-help-2](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help-2.gif)
 
 ## Completions
 
 The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '@', '\n', '!', "'", '"']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
 
 DHP can provide completions for simple commands:
-![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.png)
+![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
 **The following completion features are still WIP:**
 
@@ -59,7 +59,7 @@ execute if score @s test matches 5 run say 5
 #endregion
 ```
 
-![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.png)
+![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.gif)
 
 ## Hover Information
 
