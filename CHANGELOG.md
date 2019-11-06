@@ -1,3 +1,14 @@
+# [v1.2.2](https://github.com/SPGoding/datapack-language-server/compare/v1.2.1...v1.2.2) (2019-11-05)
+
+## 🐛 Bug Fixes
+- [`f9dcaa4`](https://github.com/SPGoding/datapack-language-server/commit/f9dcaa4)  Try fixing 
+- [`5e7f7b9`](https://github.com/SPGoding/datapack-language-server/commit/5e7f7b9)  Fix a lot 
+- [`22e40b8`](https://github.com/SPGoding/datapack-language-server/commit/22e40b8)  Fix tests 
+- [`c4e7f25`](https://github.com/SPGoding/datapack-language-server/commit/c4e7f25)  Fix comment 
+- [`08dd0a5`](https://github.com/SPGoding/datapack-language-server/commit/08dd0a5)  Fix comments 
+- [`64a9151`](https://github.com/SPGoding/datapack-language-server/commit/64a9151)  Fix comment 
+- [`8d89e5f`](https://github.com/SPGoding/datapack-language-server/commit/8d89e5f)  Fix a lot
+
 # [v1.2.1](https://github.com/SPGoding/datapack-language-server/compare/v1.2.0...v1.2.1) (2019-11-05)
 
 ## 🐛 Bug Fixes
