@@ -1,3 +1,8 @@
+# [v1.3.0](https://github.com/SPGoding/datapack-language-server/compare/v1.2.3...v1.3.0) (2019-11-06)
+
+## ✨ New Features
+- [`c5d191d`](https://github.com/SPGoding/datapack-language-server/commit/c5d191d)  Add signature help (Issues: [`#95`](https://github.com/SPGoding/datapack-language-server/issues/95))
+
 # [v1.2.3](https://github.com/SPGoding/datapack-language-server/compare/v1.2.2...v1.2.3) (2019-11-06)
 
 ## 🐛 Bug Fixes
