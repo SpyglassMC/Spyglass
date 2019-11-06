@@ -1,6 +1,8 @@
 // istanbul ignore next
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation } from 'vscode-languageserver'
-import { GlobalCache, getSafeCategory, Unit, LocalCacheElement } from './types/Cache'
+import * as fs from 'fs-extra'
+import * as path from 'path'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder } from 'vscode-languageserver'
+import { getSafeCategory, Unit, LocalCacheElement, CacheFile } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -11,14 +13,20 @@ const connection = createConnection(ProposedFeatures.all)
 const linesOfUri = new Map<string, Line[]>()
 const stringsOfUri = new Map<string, string[]>()
 
-const cache: GlobalCache = {}
-const config = VanillaConfig
 const manager = new ArgumentParserManager()
+const config = VanillaConfig
+let cache: CacheFile = { cache: {}, files: {} }
+let workspaceFolder: WorkspaceFolder
 
-const lineParser = new LineParser(false, 'line', undefined, cache, config)
+const lineParser = new LineParser(false, 'line', undefined, cache.cache, config)
 
-connection.onInitialize(params => {
-    params.workspaceFolders
+connection.onInitialize(async ({ workspaceFolders }) => {
+    if (!workspaceFolders || workspaceFolders.length !== 1) {
+        return { capabilities: {} }
+    }
+    workspaceFolder = workspaceFolders[0]
+    await updateCache()
+
     return {
         capabilities: {
             completionProvider: {
@@ -49,6 +57,31 @@ connection.onInitialize(params => {
         }
     }
 })
+
+async function updateCache() {
+    const cachePath = path.resolve(workspaceFolder.uri, '.datapackcache')
+    if (fs.existsSync(cachePath)) {
+        cache = await fs.readJson(cachePath, { encoding: 'utf8' })
+    }
+    for (const rel in cache.files) {
+        if (cache.files.hasOwnProperty(rel)) {
+            const abs = path.resolve(workspaceFolder.uri, rel)
+            if (!fs.existsSync(abs)) {
+                // This cached file was deleted.
+                // TODO: Remove it from all cache elements.
+            } else {
+                const lastUpdate = cache.files[rel]
+                const lastModified = (await fs.stat(abs)).mtimeMs
+                if (lastUpdate < lastModified) {
+                    // This cached files was newly modified.
+                    // TODO: Remove it from all cache elements.
+                    // TODO: Add it to all cache categories.
+                    cache.files[rel] = lastModified
+                }
+            }
+        }
+    }
+}
 
 function parseString(string: string, lines: Line[]) {
     if (string.match(/^\s*$/)) {
@@ -120,25 +153,6 @@ connection.onCompletion(({ textDocument: { uri }, position: { line, character } 
     return data.completions
 })
 
-connection.onFoldingRanges(({ textDocument: { uri } }) => {
-    const strings = stringsOfUri.get(uri) as string[]
-    const startLineNumbers: number[] = []
-    const foldingRanges: FoldingRange[] = []
-    let i = 0
-    for (const string of strings) {
-        if (string.startsWith('#region')) {
-            startLineNumbers.push(i)
-        } else if (string.startsWith('#endregion')) {
-            const startLineNumber = startLineNumbers.pop()
-            if (startLineNumber !== undefined) {
-                foldingRanges.push(FoldingRange.create(startLineNumber, i, undefined, undefined, FoldingRangeKind.Region))
-            }
-        }
-        i += 1
-    }
-    return foldingRanges
-})
-
 connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
     const strings = stringsOfUri.get(uri) as string[]
     const reader = new StringReader(strings[lineNumber])
@@ -176,6 +190,25 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
     }
 
     return { signatures, activeParameter: 1, activeSignature: 0 }
+})
+
+connection.onFoldingRanges(({ textDocument: { uri } }) => {
+    const strings = stringsOfUri.get(uri) as string[]
+    const startLineNumbers: number[] = []
+    const foldingRanges: FoldingRange[] = []
+    let i = 0
+    for (const string of strings) {
+        if (string.startsWith('#region')) {
+            startLineNumbers.push(i)
+        } else if (string.startsWith('#endregion')) {
+            const startLineNumber = startLineNumbers.pop()
+            if (startLineNumber !== undefined) {
+                foldingRanges.push(FoldingRange.create(startLineNumber, i, undefined, undefined, FoldingRangeKind.Region))
+            }
+        }
+        i += 1
+    }
+    return foldingRanges
 })
 
 // connection.onDidChangeWatchedFiles(({ changes }) => {

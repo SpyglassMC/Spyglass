@@ -4,6 +4,13 @@ import { CompletionItem } from 'vscode-languageserver'
 export type GlobalCache = Cache<GlobalCacheElement>
 export type LocalCache = Cache<LocalCacheElement>
 
+export interface CacheFile {
+    cache: GlobalCache,
+    files: {
+        [rel: string]: number
+    }
+}
+
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
  */
