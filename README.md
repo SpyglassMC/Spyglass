@@ -170,12 +170,12 @@ Quotes used in NBT strings and phrase strings.
 `'prefer double'`: Always use double quotes, unless there are double quotes in the string.  
 @default `'prefer double'`  
 
-### quoteEntitySelectorStrings: `boolean`
+<!-- ### quoteEntitySelectorStrings: `boolean`
 
 When the strings in entity selectors should be quoted.  
 `true`: Always.  
 `false`: Only when there are special characters in the string.  
-@default `false`
+@default `false` -->
 
 ### quoteSnbtStringKeys: `boolean`
 

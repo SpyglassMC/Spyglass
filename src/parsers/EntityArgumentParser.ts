@@ -9,6 +9,7 @@ import NumberRange from '../types/NumberRange'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Identity from '../types/Identity'
+import MapAbstractParser from './MapAbstractParser'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
@@ -112,77 +113,65 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
 
         //#region Data
-        try {
-            /// Variable
-            reader
-                .expect('@')
-                .skip()
-            const variable = reader.read()
-            if (EntityArgumentParser.isVariable(variable)) {
-                ans.data.variable = variable
-                if (variable === 'a') {
-                    isMultiple = true
-                } else if (variable === 'e') {
-                    isMultiple = true
-                    containsNonPlayer = true
-                }
-            } else {
-                ans.errors.push(new ParsingError({ start: start + 1, end: start + 2 }, `unexpected selector variable ‘${variable}’`))
+        /// Variable
+        reader
+            .expect('@')
+            .skip()
+        const variable = reader.read()
+        if (EntityArgumentParser.isVariable(variable)) {
+            ans.data.variable = variable
+            if (variable === 'a') {
+                isMultiple = true
+            } else if (variable === 'e') {
+                isMultiple = true
+                containsNonPlayer = true
             }
-            /// Arguments
-            if (reader.peek() === '[') {
-                reader.skip()
-                while (reader.canRead()) {
-                    if (EntityArgumentParser.isCursorInWhiteSpace(reader, this.cursor)) {
-                        ans.completions.push(...arrayToCompletions(SelectorArgumentKeys))
-                    }
-                    if (reader.peek() === ']') {
-                        break
-                    }
-                    const start = reader.cursor
-                    const key = reader.readString()
-
+        } else {
+            ans.errors.push(new ParsingError({ start: start + 1, end: start + 2 }, `unexpected selector variable ‘${variable}’`))
+        }
+        /// Arguments
+        if (reader.peek() === '[') {
+            const pushSafely = (key: any, result: any) => {
+                (ans.data.argument as any)[key] = (ans.data.argument as any)[key] || [];
+                (ans.data.argument as any)[key].push(result.data)
+            }
+            const dealWithNegativableArray = (parser: ArgumentParser<any>, key: string) => {
+                const keyNeg = `${key}Neg`
+                if (this.cursor === reader.cursor) {
+                    ans.completions.push({ label: '!' })
+                }
+                const isNegative = reader.peek() === '!'
+                if (isNegative) {
                     reader
-                        .skipWhiteSpace()
-                        .expect('=')
                         .skip()
                         .skipWhiteSpace()
-
-                    const pushSafely = (key: any, result: any) => {
-                        (ans.data.argument as any)[key] = (ans.data.argument as any)[key] ? (ans.data.argument as any)[key] : [];
-                        (ans.data.argument as any)[key].push(result.data)
-                    }
-                    const dealWithNegativableArray = (parser: ArgumentParser<any>, key: string) => {
-                        const keyNeg = `${key}Neg`
-                        if (this.cursor === reader.cursor) {
-                            ans.completions.push({ label: '!' })
-                        }
-                        const isNegative = reader.peek() === '!'
-                        if (isNegative) {
-                            reader
-                                .skip()
-                                .skipWhiteSpace()
-                        }
-                        const result = parser.parse(reader, this.cursor, this.manager, this.config, this.cache)
-                        if (result.data) {
-                            if (isNegative) {
-                                pushSafely(keyNeg, result)
+                }
+                const result = parser.parse(reader, this.cursor, this.manager, this.config, this.cache)
+                if (result.data) {
+                    if (isNegative) {
+                        pushSafely(keyNeg, result)
+                    } else {
+                        pushSafely(key, result)
+                        if (key === 'type') {
+                            const id = (result.data as Identity).toString()
+                            if (id === 'minecraft:player') {
+                                containsNonPlayer = false
                             } else {
-                                pushSafely(key, result)
-                                if (key === 'type') {
-                                    const id = (result.data as Identity).toString()
-                                    if (id === 'minecraft:player') {
-                                        containsNonPlayer = false
-                                    } else {
-                                        containsNonPlayer = true
-                                    }
-                                }
+                                containsNonPlayer = true
                             }
                         }
-                        combineArgumentParserResult(ans, result)
                     }
+                }
+                combineArgumentParserResult(ans, result)
+            }
+            new MapAbstractParser<string, Entity>(
+                '[', '=', ',', ']',
+                manager => {
+                    return manager.get('Literal', SelectorArgumentKeys)
+                },
+                (ans, reader, cursor, manager, config, cache, key, range) => {
                     if (key === 'sort') {
-                        const result = this.manager.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, this.cursor, this.manager)
+                        const result = manager.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, cursor, manager, config, cache)
                         if (result.data) {
                             ans.data.argument.sort = result.data as SelectorSortMethod
                         }
@@ -191,7 +180,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         const value = reader.readFloat()
                         ans.data.argument[key] = value
                     } else if (key === 'limit') {
-                        const result = this.manager.get('Number', ['integer', 1]).parse(reader, this.cursor, this.manager)
+                        const result = manager.get('Number', ['integer', 1]).parse(reader, cursor, manager, config, cache)
                         ans.data.argument.limit = result.data as number
                         if (ans.data.argument.limit === 1) {
                             isMultiple = false
@@ -200,168 +189,69 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         }
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'gamemode') {
-                        dealWithNegativableArray(this.manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
+                        dealWithNegativableArray(manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
                     } else if (key === 'name') {
-                        dealWithNegativableArray(this.manager.get('String'), key)
+                        dealWithNegativableArray(manager.get('String'), key)
                     } else if (key === 'nbt') {
                         // TODO: NBT schema.
-                        dealWithNegativableArray(this.manager.get('NbtTag', ['compound', 'entities' /*TODO*/]), key)
+                        dealWithNegativableArray(manager.get('NbtTag', ['compound', 'entities', /*TODO*/]), key)
                     } else if (key === 'predicate') {
-                        dealWithNegativableArray(this.manager.get('NamespacedID', ['$predicates']), key)
+                        dealWithNegativableArray(manager.get('NamespacedID', ['$predicates']), key)
                     } else if (key === 'tag') {
-                        dealWithNegativableArray(this.manager.get('Tag'), key)
+                        dealWithNegativableArray(manager.get('Tag'), key)
                     } else if (key === 'team') {
-                        dealWithNegativableArray(this.manager.get('Team'), key)
+                        dealWithNegativableArray(manager.get('Team'), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(this.manager.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
+                        dealWithNegativableArray(manager.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
                     } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
-                        const result = this.manager.get('NumberRange', ['float']).parse(reader, this.cursor, this.manager)
+                        const result = manager.get('NumberRange', ['float']).parse(reader, cursor, manager, config, cache)
                         ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'level') {
-                        const result = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor, this.manager)
+                        const result = manager.get('NumberRange', ['integer']).parse(reader, cursor, manager, config, cache)
                         ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
-                        reader
-                            .expect('{')
-                            .skip()
-                            .skipWhiteSpace()
-                        while (reader.canRead()) {
-                            const advancementResult = this.manager.get('NamespacedID', ['$advancements']).parse(reader, this.cursor, this.manager, this.config, this.cache)
-                            const advancement: string = advancementResult.data
-                            combineArgumentParserResult(ans, advancementResult)
-                            if (reader.peek() === '}') {
-                                break
-                            }
-
-                            reader
-                                .skipWhiteSpace()
-                                .expect('=')
-                                .skip()
-                                .skipWhiteSpace()
-
-                            ans.data.argument.advancements = ans.data.argument.advancements ? ans.data.argument.advancements : {}
-
-                            if (reader.peek() === '{') {
-                                const advancementObject: { [criterion: string]: boolean } = ans.data.argument.advancements[advancement] = {}
-                                reader
-                                    .skip()
-                                    .skipWhiteSpace()
-                                while (reader.canRead()) {
-                                    const criterionResult = this.manager.get('String', ['QuotablePhrase']).parse(reader, this.cursor, this.manager, this.config, this.cache)
-                                    const criterion: string = criterionResult.data
-                                    combineArgumentParserResult(ans, criterionResult)
-                                    if (reader.peek() === '}') {
-                                        break
-                                    }
-
-                                    reader
-                                        .skipWhiteSpace()
-                                        .expect('=')
-                                        .skip()
-                                        .skipWhiteSpace()
-
+                        new MapAbstractParser<Identity, Entity>(
+                            '{', '=', ',', '}',
+                            manager => manager.get('NamespacedID', ['$advancements']),
+                            (ans, reader, cursor, manager, config, cache, adv, range) => {
+                                ans.data.argument.advancements = ans.data.argument.advancements || {}
+                                if (reader.peek() === '{') {
+                                    const criteriaObject: { [crit: string]: boolean } = ans.data.argument.advancements[adv.toString()] = {}
+                                    new MapAbstractParser<string, Entity>(
+                                        '{', '=', ',', '}',
+                                        manager => manager.get('String', ['QuotablePhrase']),
+                                        (ans, reader, cursor, manager, config, cache, crit) => {
+                                            const boolResult = manager.get('Literal', ['false', 'true']).parse(reader, cursor, manager, config, cache)
+                                            const bool = boolResult.data === 'true'
+                                            combineArgumentParserResult(ans, boolResult)
+                                            criteriaObject[crit] = bool
+                                        }
+                                    ).parse(ans, reader, cursor, manager, config, cache)
+                                } else {
                                     const boolResult = this.manager.get('Literal', ['false', 'true']).parse(reader, this.cursor, this.manager, this.config, this.cache)
                                     const bool = boolResult.data === 'true'
                                     combineArgumentParserResult(ans, boolResult)
 
-                                    advancementObject[criterion] = bool
-
-                                    reader.skipWhiteSpace()
-                                    if (reader.peek() === ',') {
-                                        reader
-                                            .skip()
-                                            .skipWhiteSpace()
-                                    }
-                                    if (reader.peek() === '}') {
-                                        break
-                                    }
+                                    ans.data.argument.advancements[adv.toString()] = bool
                                 }
-                                reader
-                                    .expect('}')
-                                    .skip()
-                            } else {
-                                const boolResult = this.manager.get('Literal', ['false', 'true']).parse(reader, this.cursor, this.manager, this.config, this.cache)
-                                const bool = boolResult.data === 'true'
-                                combineArgumentParserResult(ans, boolResult)
-
-                                ans.data.argument.advancements[advancement] = bool
                             }
-
-                            reader.skipWhiteSpace()
-                            if (reader.peek() === ',') {
-                                reader
-                                    .skip()
-                                    .skipWhiteSpace()
-                            }
-                            if (reader.peek() === '}') {
-                                break
-                            }
-                        }
-                        reader
-                            .expect('}')
-                            .skip()
+                        ).parse(ans, reader, cursor, manager, config, cache)
                     } else if (key === 'scores') {
-                        reader
-                            .expect('{')
-                            .skip()
-                            .skipWhiteSpace()
-                        while (reader.canRead()) {
-                            const objectiveResult = this.manager.get('Objective').parse(reader, this.cursor, this.manager, this.config, this.cache)
-                            const objective: string = objectiveResult.data
-                            combineArgumentParserResult(ans, objectiveResult)
-                            if (reader.peek() === '}') {
-                                break
+                        new MapAbstractParser<string, Entity>(
+                            '{', '=', ',', '}',
+                            manager => manager.get('Objective'),
+                            (ans, reader, cursor, manager, config, cache, objective) => {
+                                const rangeResult = manager.get('NumberRange', ['integer']).parse(reader, cursor, manager, config, cache) as ArgumentParserResult<NumberRange>
+                                combineArgumentParserResult(ans, rangeResult)
+                                ans.data.argument.scores = ans.data.argument.scores || {}
+                                ans.data.argument.scores[objective] = rangeResult.data
                             }
-
-                            reader
-                                .skipWhiteSpace()
-                                .expect('=')
-                                .skip()
-                                .skipWhiteSpace()
-
-                            const rangeResult = this.manager.get('NumberRange', ['integer']).parse(reader, this.cursor, this.manager, this.config, this.cache)
-                            const range: NumberRange = rangeResult.data
-                            combineArgumentParserResult(ans, rangeResult)
-
-                            ans.data.argument.scores = ans.data.argument.scores ? ans.data.argument.scores : {}
-                            ans.data.argument.scores[objective] = range
-
-                            reader.skipWhiteSpace()
-                            if (reader.peek() === ',') {
-                                reader
-                                    .skip()
-                                    .skipWhiteSpace()
-                            }
-                            if (reader.peek() === '}') {
-                                break
-                            }
-                        }
-                        reader
-                            .expect('}')
-                            .skip()
-                    } else {
-                        throw new ParsingError({ start, end: start + key.length }, `unexpected selector argument ‘${key}’`)
-                    }
-
-                    reader.skipWhiteSpace()
-                    if (reader.peek() === ',') {
-                        reader.skip()
-                        if (EntityArgumentParser.isCursorInWhiteSpace(reader, this.cursor)) {
-                            ans.completions.push(...arrayToCompletions(SelectorArgumentKeys))
-                        }
-                    }
-                    if (reader.peek() === ']') {
-                        break
+                        ).parse(ans, reader, cursor, manager, config, cache)
                     }
                 }
-                reader
-                    .expect(']')
-                    .skip()
-            }
-        } catch (p) {
-            ans.errors.push(p)
+            ).parse(ans, reader, this.cursor, this.manager, this.config, this.cache)
         }
         //#endregion
 
@@ -380,12 +270,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
 
         return ans
-    }
-
-    private static isCursorInWhiteSpace(reader: StringReader, cursor: number) {
-        const whiteSpaceStart = reader.cursor
-        const whiteSpaceEnd = reader.skipWhiteSpace().cursor
-        return whiteSpaceStart <= cursor && cursor <= whiteSpaceEnd
     }
 
     private static isVariable(value: string): value is 'p' | 'a' | 'r' | 's' | 'e' {

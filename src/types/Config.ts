@@ -84,13 +84,13 @@ export type LintConfig = {
      * @default 'prefer double'
      */
     quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double',
-    /**
-     * When the strings in entity selectors should be quoted.  
-     * `true`: Always.  
-     * `false`: Only when there are special characters in the string.  
-     * @default false
-     */
-    quoteEntitySelectorStrings: boolean,
+    // /**
+    //  * When the strings in entity selectors should be quoted.  
+    //  * `true`: Always.  
+    //  * `false`: Only when there are special characters in the string.  
+    //  * @default false
+    //  */
+    // quoteEntitySelectorStrings: boolean,
     /**
      * When the string keys in SNBTs should be quoted.  
      * `true`: Always.  
@@ -280,7 +280,7 @@ export const VanillaConfig: Config = {
             'y_rotation'
         ],
         quoteType: 'prefer double',
-        quoteEntitySelectorStrings: false,
+        // quoteEntitySelectorStrings: false,
         quoteSnbtStringKeys: false,
         quoteSnbtStringValues: true,
         snbtAppendSpaceAfterColon: true,

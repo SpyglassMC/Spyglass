@@ -36,12 +36,6 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Get completions.
-        // TODO: Remove this.
-        // if (reader.cursor === cursor) {
-        //     ans.completions = arrayToCompletions(this.literals)
-        // }
-        // //#endregion        
-        // //#region Get partial completions.
         const lengthToCursor = cursor - reader.cursor
         if (lengthToCursor >= 0) {
             const textToCursor = reader.remainingString.slice(0, lengthToCursor).toLowerCase()

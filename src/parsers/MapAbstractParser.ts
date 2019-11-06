@@ -1,12 +1,12 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { GlobalCache } from '../types/Cache'
 import ArgumentParser from './ArgumentParser'
-import { VanillaConfig } from '../types/Config'
+import Config, { VanillaConfig } from '../types/Config'
 import Manager from '../types/Manager'
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 
-export default class MapAbstractParser<K, V, R> {
+export default class MapAbstractParser<K, R> {
     readonly identity = 'mapAbstractParser'
 
     constructor(
@@ -15,8 +15,7 @@ export default class MapAbstractParser<K, V, R> {
         private readonly keyValuePairSep: string,
         private readonly endChar: string,
         private readonly getKeyParser: (manager: Manager<ArgumentParser<K>>, ans: ArgumentParserResult<R>) => ArgumentParser<K>,
-        private readonly getValueParser: (manager: Manager<ArgumentParser<V>>, ans: ArgumentParserResult<R>, key: K, keyRange: TextRange) => ArgumentParser<V>,
-        private readonly setAns: (key: K, value: V, ans: ArgumentParserResult<R>) => void
+        private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: GlobalCache, key: K, keyRange: TextRange) => void
     ) { }
 
     // istanbul ignore next
@@ -45,10 +44,7 @@ export default class MapAbstractParser<K, V, R> {
                     .skip()
                     .skipWhiteSpace()
 
-                const valueResult = this.getValueParser(manager, ans, key, { start, end }).parse(reader, cursor, manager, config, cache)
-                const value = valueResult.data
-                combineArgumentParserResult(ans, valueResult)
-                this.setAns(key, value, ans)
+                this.parseValue(ans, reader, cursor, manager, config, cache, key, { start, end })
 
                 reader.skipWhiteSpace()
 

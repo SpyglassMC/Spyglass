@@ -203,7 +203,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a[foo=bar]'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 6 }, 'unexpected selector argument ‘foo’')
+                    new ParsingError({ start: 3, end: 6 }, 'expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’ or ‘z’ but got ‘foo’')
                 ])
             })
             it('Should return completions for argument keys', () => {
