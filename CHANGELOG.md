@@ -1,3 +1,8 @@
+# [v1.4.0](https://github.com/SPGoding/datapack-language-server/compare/v1.3.0...v1.4.0) (2019-11-06)
+
+## ✨ New Features
+- [`882d9f0`](https://github.com/SPGoding/datapack-language-server/commit/882d9f0)  Support color provider (Issues: [`#89`](https://github.com/SPGoding/datapack-language-server/issues/89))
+
 # [v1.3.0](https://github.com/SPGoding/datapack-language-server/compare/v1.2.3...v1.3.0) (2019-11-06)
 
 ## ✨ New Features
