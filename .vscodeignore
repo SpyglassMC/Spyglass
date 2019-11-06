@@ -1,11 +1,11 @@
 *
 */**
 
+!node_modules/**
 !lib/*.js
 !lib/*/**.js
 !CHANGELOG.md
 !icon.png
 !LICENSE
-!package-lock.json
 !package.json
 !README.md

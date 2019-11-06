@@ -36,9 +36,9 @@ connection.onInitialize(params => {
             // renameProvider: {
             //     prepareProvider: true
             // },
-            // signatureHelpProvider: {
-            //     triggerCharacters: [' ', '\n']
-            // },
+            signatureHelpProvider: {
+                triggerCharacters: [' ', '\n']
+            },
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
                 openClose: true
@@ -135,5 +135,13 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
     }
     return foldingRanges
 })
+
+// connection.onSignatureHelp(({ position: { character: char, line }, textDocument: { uri } }) => {
+
+// })
+
+// connection.onColorPresentation(({ color, range, textDocument: { uri } }) => {
+
+// })
 
 connection.listen()
