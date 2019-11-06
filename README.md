@@ -61,6 +61,12 @@ execute if score @s test matches 5 run say 5
 
 ![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.gif)
 
+## Color Information
+
+DHP will display colors for `dust` particles. You can change the colors by hovering your cursor on them.
+
+![color-particle](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-particle.gif)
+
 ## Hover Information
 
 This is WIP.

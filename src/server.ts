@@ -1,12 +1,11 @@
 // istanbul ignore next
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation } from 'vscode-languageserver'
-import { GlobalCache } from './types/Cache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation } from 'vscode-languageserver'
+import { GlobalCache, getSafeCategory, Unit, LocalCacheElement } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
-import { SignatureHelp } from 'vscode'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfUri = new Map<string, Line[]>()
@@ -34,6 +33,7 @@ connection.onInitialize(params => {
             //     firstTriggerCharacter: '\n'
             // },
             foldingRangeProvider: true,
+            colorProvider: true,
             // hoverProvider: true,
             // referencesProvider: true,
             // renameProvider: {
@@ -178,8 +178,57 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
     return { signatures, activeParameter: 1, activeSignature: 0 }
 })
 
-// connection.onColorPresentation(({ color, range, textDocument: { uri } }) => {
+// connection.onDidChangeWatchedFiles(({ changes }) => {
 
 // })
+
+connection.onDocumentColor(({ textDocument: { uri } }) => {
+    const ans: ColorInformation[] = []
+    const lines = linesOfUri.get(uri) as Line[]
+    let i = 0
+    for (const line of lines) {
+        const dustColors = getSafeCategory(line.cache, 'colors/dust')
+        for (const key in dustColors) {
+            if (dustColors.hasOwnProperty(key)) {
+                const numbers = key.split(' ').map(v => parseFloat(v))
+                const color = {
+                    red: numbers[0],
+                    green: numbers[1],
+                    blue: numbers[2],
+                    alpha: numbers[3]
+                }
+                const unit = dustColors[key] as Unit<LocalCacheElement>
+                for (const { range: { start, end } } of unit.ref) {
+                    ans.push({
+                        range: { start: { character: start, line: i }, end: { character: end, line: i } },
+                        color
+                    })
+                }
+            }
+        }
+        // TODO: For colors in SNBTs.
+        i++
+    }
+    return ans
+})
+
+connection.onColorPresentation(({
+    color: { red: r, green: g, blue: b, alpha: a },
+    range: { start: { character: startChar, line }, end: { character: endChar } },
+    textDocument: { uri }
+}) => {
+    const ans: ColorPresentation[] = []
+    const strings = stringsOfUri.get(uri) as string[]
+    const string = strings[line].slice(startChar, endChar)
+    if (string.startsWith('dust')) {
+        ans.push({ label: `dust ${r} ${g} ${b} ${a}` })
+    } else if (string.startsWith('minecraft:dust')) {
+        ans.push({ label: `minecraft:dust ${r} ${g} ${b} ${a}` })
+    } else {
+        // TODO: For colors in SNBTs.
+    }
+
+    return ans
+})
 
 connection.listen()

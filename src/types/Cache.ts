@@ -26,7 +26,8 @@ export interface Cache<T extends GlobalCacheElement | LocalCacheElement> {
     objectives?: CacheCategory<T>,
     storages?: CacheCategory<T>,
     tags?: CacheCategory<T>,
-    teams?: CacheCategory<T>
+    teams?: CacheCategory<T>,
+    'colors/dust'?: CacheCategory<T>
 }
 
 /**
@@ -42,7 +43,7 @@ export type CacheCategory<T extends GlobalCacheElement | LocalCacheElement> = {
 /**
  * An unit in `ClientCacheCategory`.
  */
-type Unit<T extends GlobalCacheElement | LocalCacheElement> = {
+export type Unit<T extends GlobalCacheElement | LocalCacheElement> = {
     /**
      * The definition element of this unit.
      * 
@@ -177,9 +178,9 @@ export function trimCache<T extends LocalCacheElement | GlobalCacheElement>(cach
     }
 }
 
-export function getSafeCategory(cache: GlobalCache, type: keyof Cache<GlobalCacheElement>) {
-    const category = cache[type]
-    return category ? category : {}
+export function getSafeCategory(cache: Cache<any> | undefined, type: keyof Cache<GlobalCacheElement>) {
+    cache = cache || {}
+    return cache[type] || {}
 }
 
 export function getCompletions(cache: GlobalCache, type: keyof Cache<GlobalCacheElement>) {
@@ -204,8 +205,8 @@ export function isDefinitionType(value: string): value is DefinitionType {
         value === 'bossbar' ||
         value === 'entity' ||
         value === 'objective' ||
-        value === 'tag' || 
-        value === 'team'|| 
+        value === 'tag' ||
+        value === 'team' ||
         value === 'storage'
     )
 }

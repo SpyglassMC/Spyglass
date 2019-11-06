@@ -35,8 +35,8 @@ export function activate(context: ExtensionContext) {
         // Register the server for plain text documents
         documentSelector: [{ scheme: 'file', language: 'mcfunction' }],
         synchronize: {
-            // Notify the server about file changes to '.clientrc files contained in the workspace
-            fileEvents: workspace.createFileSystemWatcher('**/.datapackrc.json')
+            // Notify the server about file changes to '.datapackrc.json files contained in the root directory
+            fileEvents: workspace.createFileSystemWatcher('.datapackrc.json')
         }
     }
 

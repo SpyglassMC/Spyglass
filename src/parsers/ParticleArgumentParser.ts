@@ -32,6 +32,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
             cache: {},
             completions: []
         }
+        const start = reader.cursor
 
         const typeResult = manager.get('NamespacedID', ['minecraft:particle_type', this.registries]).parse(reader, cursor, manager, config, cache)
         const type = typeResult.data as Identity
@@ -48,6 +49,18 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                     const color = colorResult.data as Vector
                     combineArgumentParserResult(ans, colorResult)
                     ans.data.param = color
+                    /* istanbul ignore else */
+                    if (ans.errors.length === 0) {
+                        const key = `${parseFloat(color.elements[0].value)} ${parseFloat(color.elements[1].value)} ${parseFloat(color.elements[2].value)} ${parseFloat(color.elements[3].value)}`
+                        ans.cache = {
+                            'colors/dust': {
+                                [key]: {
+                                    def: [],
+                                    ref: [{ range: { start, end: reader.cursor} }]
+                                }
+                            }
+                        }
+                    }
                     break
                 case 'minecraft:block':
                 case 'minecraft:falling_dust':

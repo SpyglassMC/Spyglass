@@ -138,6 +138,11 @@ describe('Cache Tests', () => {
             const actual = getSafeCategory(cache, 'tags')
             assert.deepStrictEqual(actual, {})
         })
+        it('Should return an empty object if the cache does not exist', () => {
+            const cache = undefined
+            const actual = getSafeCategory(cache, 'tags')
+            assert.deepStrictEqual(actual, {})
+        })
     })
     describe('getCompletions() Tests', () => {
         it('Should return completions', () => {

@@ -74,6 +74,14 @@ describe('ParticleArgumentParser Tests', () => {
                     { value: '1.00', type: 'absolute' }
                 ])
             ))
+            assert.deepEqual(actual.cache, {
+                'colors/dust': {
+                    '0.93 0.4 0.8 1': {
+                        def: [],
+                        ref: [{ range: { start: 0, end: 34 } }]
+                    }
+                }
+            })
         })
         it('Should return data for ‘block’ particle', () => {
             const parser = new ParticleArgumentParser(blockDefinitions, registries)
