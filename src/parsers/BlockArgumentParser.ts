@@ -10,6 +10,8 @@ import StringReader from '../utils/StringReader'
 import VanillaBlockDefinitions from '../types/VanillaBlockDefinitions'
 import VanillaRegistries from '../types/VanillaRegistries'
 import { GlobalCache } from '../types/Cache'
+import MapAbstractParser from './MapAbstractParser'
+import ParsingError from '../types/ParsingError'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {
     readonly identity = 'block'
@@ -52,53 +54,70 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
     private parseStates(reader: StringReader, cursor: number, ans: ArgumentParserResult<Block>, id: Identity): void {
         if (reader.peek() === Block.StatesBeginSymbol) {
-            reader
-                .skip()
-                .skipWhiteSpace()
             // FIXME: Completions for block tags.
             // FIXME: Do not provide completions for existing keys.
             const definition = this.blockDefinitions[id.toString()]
-            let properties = definition ? definition.properties : {}
-            properties = properties || {}
-            try {
-                do {
-                    const keyResult = this.manager.get('Literal', Object.keys(properties)).parse(reader, cursor, this.manager, this.config, this.cache)
-                    const key = keyResult.data as string
-                    ans.completions.push(...keyResult.completions)
-                    if (!reader.canRead() || reader.peek() === Block.StatesEndSymbol) {
-                        break
+            const properties = definition ? (definition.properties || {}) : {}
+
+            new MapAbstractParser<string, string, Block>(
+                Block.StatesBeginSymbol, '=', ',', Block.StatesEndSymbol,
+                (manager, ans) => {
+                    const existingKeys = Object.keys(ans.data.states)
+                    const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
+                    return manager.get('Literal', keys)
+                },
+                (manager, ans, key, range) => {
+                    if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
+                        ans.errors.push(new ParsingError(range, `duplicate key ‘${key}’`))
                     }
-                    keyResult.completions = []
-                    combineArgumentParserResult(ans, keyResult)
-
-                    reader
-                        .skipWhiteSpace()
-                        .expect('=')
-                        .skip()
-                        .skipWhiteSpace()
-
-                    if (key) {
-                        const valueResult = this.manager.get('Literal', properties[key]).parse(reader, cursor, this.manager, this.config, this.cache)
-                        const value = valueResult.data as string
-                        combineArgumentParserResult(ans, valueResult)
-                        reader.skipWhiteSpace()
-
+                    return manager.get('Literal', properties[key])
+                },
+                (key, value, ans) => {
+                    // if (key !== '') {
                         ans.data.states[key] = value
-                    }
+                    // }
+                }
+            ).parse(ans, reader, cursor, this.manager, this.config, this.cache)
 
-                    if (reader.peek() === ',') {
-                        reader
-                            .skip()
-                            .skipWhiteSpace()
-                    }
-                } while (reader.canRead() && reader.peek() !== Block.StatesEndSymbol)
+            // try {
+            //     do {
+            //         const keyResult = this.manager.get('Literal', Object.keys(properties)).parse(reader, cursor, this.manager, this.config, this.cache)
+            //         const key = keyResult.data as string
+            //         ans.completions.push(...keyResult.completions)
+            //         if (!reader.canRead() || reader.peek() === Block.StatesEndSymbol) {
+            //             break
+            //         }
+            //         keyResult.completions = []
+            //         combineArgumentParserResult(ans, keyResult)
 
-                reader
-                    .expect(Block.StatesEndSymbol)
-                    .skip()
-            } catch (p) {
-                ans.errors.push(p)
-            }
+            //         reader
+            //             .skipWhiteSpace()
+            //             .expect('=')
+            //             .skip()
+            //             .skipWhiteSpace()
+
+            //         if (key) {
+            //             const valueResult = this.manager.get('Literal', properties[key]).parse(reader, cursor, this.manager, this.config, this.cache)
+            //             const value = valueResult.data as string
+            //             combineArgumentParserResult(ans, valueResult)
+            //             reader.skipWhiteSpace()
+
+            //             ans.data.states[key] = value
+            //         }
+
+            //         if (reader.peek() === ',') {
+            //             reader
+            //                 .skip()
+            //                 .skipWhiteSpace()
+            //         }
+            //     } while (reader.canRead() && reader.peek() !== Block.StatesEndSymbol)
+
+            //     reader
+            //         .expect(Block.StatesEndSymbol)
+            //         .skip()
+            // } catch (p) {
+            //     ans.errors.push(p)
+            // }
         }
     }
 

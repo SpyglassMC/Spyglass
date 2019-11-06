@@ -177,7 +177,7 @@ export type LintConfig = {
     nameOfObjectives: NamingConventionConfig,
     /**
      * The naming convension for compound tag keys in SNBTs.  
-     * @default ['PascalCase', 'camelCase']
+     * @default 'whatever'
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
     /**
@@ -297,7 +297,7 @@ export const VanillaConfig: Config = {
         snbtSortKeys: false,
         timeOmitTickUnit: false,
         nameOfObjectives: 'whatever',
-        nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase'],
+        nameOfSnbtCompoundTagKeys: 'whatever',
         nameOfTags: 'whatever',
         nameOfTeams: 'whatever',
         // strictBossbarCheck: false,

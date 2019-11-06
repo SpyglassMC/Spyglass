@@ -87,7 +87,7 @@ describe('ItemSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'expected one of ‘armor’, ‘container’, ‘enderchest’, ‘horse’, ‘hotbar’, ‘inventory’, ‘villager’ and ‘weapon’ but got ‘foo’'
+                    'expected ‘armor’, ‘container’, ‘enderchest’, ‘horse’, ‘hotbar’, ‘inventory’, ‘villager’ or ‘weapon’ but got ‘foo’'
                 ),
                 new ParsingError(
                     { start: 3, end: 4 },

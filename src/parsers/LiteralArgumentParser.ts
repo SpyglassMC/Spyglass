@@ -36,16 +36,16 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Get completions.
-        if (reader.cursor === cursor) {
-            ans.completions = arrayToCompletions(this.literals)
-        }
-        //#endregion        
-        //#region Get partial completions.
+        // TODO: Remove this.
+        // if (reader.cursor === cursor) {
+        //     ans.completions = arrayToCompletions(this.literals)
+        // }
+        // //#endregion        
+        // //#region Get partial completions.
         const lengthToCursor = cursor - reader.cursor
-        if (lengthToCursor > 0) {
+        if (lengthToCursor >= 0) {
             const textToCursor = reader.remainingString.slice(0, lengthToCursor).toLowerCase()
-            const candidates = this.literals
-                .filter(v => v.toLowerCase().startsWith(textToCursor))
+            const candidates = this.literals.filter(v => v.toLowerCase().startsWith(textToCursor))
             ans.completions.push(...arrayToCompletions(candidates))
         }
         //#endregion
@@ -66,33 +66,17 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         ans.data = value
         //#endregion
         //#region Get errors.
-        let isFullMatch = false
-        let isPartialMatch = false
-        for (const literal of this.literals) {
-            if (literal === value) {
-                isFullMatch = true
-            } else if (literal.toLowerCase().startsWith(value.toLowerCase())) {
-                isPartialMatch = true
-            }
-        }
-        if (!isFullMatch) {
-            if (isPartialMatch) {
-                if (value.length > 0) {
-                    ans.errors = [new ParsingError(
-                        { start: start, end: start + value.length },
-                        `expected one of ${arrayToMessage(this.literals)} but got ‘${value}’`
-                    )]
-                } else {
-                    ans.errors = [new ParsingError(
-                        { start: start, end: start + 1 },
-                        `expected one of ${arrayToMessage(this.literals)} but got nothing`,
-                        false
-                    )]
-                }
-            } else {
+        if (!this.literals.includes(value)) {
+            if (value.length > 0) {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + value.length },
-                    `expected one of ${arrayToMessage(this.literals)} but got ‘${value}’`,
+                    `expected ${arrayToMessage(this.literals, true, 'or')} but got ‘${value}’`,
+                    false
+                )]
+            } else {
+                ans.errors = [new ParsingError(
+                    { start: start, end: start + 1 },
+                    `expected ${arrayToMessage(this.literals, true, 'or')} but got nothing`,
                     false
                 )]
             }

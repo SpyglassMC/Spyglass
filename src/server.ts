@@ -36,9 +36,9 @@ connection.onInitialize(params => {
             // renameProvider: {
             //     prepareProvider: true
             // },
-            signatureHelpProvider: {
-                triggerCharacters: [' ', '\n']
-            },
+            // signatureHelpProvider: {
+            //     triggerCharacters: [' ', '\n']
+            // },
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
                 openClose: true

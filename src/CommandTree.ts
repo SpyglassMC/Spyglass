@@ -83,23 +83,6 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
-        ban: {
-            parser: new LiteralArgumentParser('ban'),
-            permission: 3,
-            description: 'Adds players to blacklist.',
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    executable: true,
-                    children: {
-                        reason: {
-                            parser: new MessageArgumentParser(),
-                            executable: true
-                        }
-                    }
-                }
-            }
-        },
         'ban-ip': {
             parser: new LiteralArgumentParser('ban-ip'),
             permission: 3,
@@ -135,6 +118,23 @@ export const VanillaTree: CommandTree = {
                 ips_players: {
                     parser: new LiteralArgumentParser('ips', 'players'),
                     executable: true
+                }
+            }
+        },
+        ban: {
+            parser: new LiteralArgumentParser('ban'),
+            permission: 3,
+            description: 'Adds players to blacklist.',
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    executable: true,
+                    children: {
+                        reason: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
@@ -328,6 +328,54 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
+        datapack: {
+            parser: new LiteralArgumentParser('datapack'),
+            children: {
+                disable: {
+                    parser: new LiteralArgumentParser('disable'),
+                    children: {
+                        name: {
+                            parser: new StringArgumentParser('QuotablePhrase'),
+                            executable: true
+                        }
+                    }
+                },
+                enable: {
+                    parser: new LiteralArgumentParser('enable'),
+                    children: {
+                        name: {
+                            parser: new StringArgumentParser('QuotablePhrase'),
+                            executable: true,
+                            children: {
+                                first_last: {
+                                    parser: new LiteralArgumentParser('first', 'last'),
+                                    executable: true
+                                },
+                                before_after: {
+                                    parser: new LiteralArgumentParser('before', 'after'),
+                                    children: {
+                                        existing: {
+                                            parser: new StringArgumentParser('QuotablePhrase'),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                list: {
+                    parser: new LiteralArgumentParser('list'),
+                    executable: true,
+                    children: {
+                        available_enabled: {
+                            parser: new LiteralArgumentParser('available', 'enabled'),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
         data: {
             parser: new LiteralArgumentParser('data'),
             children: {
@@ -469,54 +517,6 @@ export const VanillaTree: CommandTree = {
                                     executable: true
                                 }
                             }
-                        }
-                    }
-                }
-            }
-        },
-        datapack: {
-            parser: new LiteralArgumentParser('datapack'),
-            children: {
-                disable: {
-                    parser: new LiteralArgumentParser('disable'),
-                    children: {
-                        name: {
-                            parser: new StringArgumentParser('QuotablePhrase'),
-                            executable: true
-                        }
-                    }
-                },
-                enable: {
-                    parser: new LiteralArgumentParser('enable'),
-                    children: {
-                        name: {
-                            parser: new StringArgumentParser('QuotablePhrase'),
-                            executable: true,
-                            children: {
-                                first_last: {
-                                    parser: new LiteralArgumentParser('first', 'last'),
-                                    executable: true
-                                },
-                                before_after: {
-                                    parser: new LiteralArgumentParser('before', 'after'),
-                                    children: {
-                                        existing: {
-                                            parser: new StringArgumentParser('QuotablePhrase'),
-                                            executable: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                list: {
-                    parser: new LiteralArgumentParser('list'),
-                    executable: true,
-                    children: {
-                        available_enabled: {
-                            parser: new LiteralArgumentParser('available', 'enabled'),
-                            executable: true
                         }
                     }
                 }
@@ -890,32 +890,8 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
-        msg: {
-            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    children: {
-                        message: {
-                            parser: new MessageArgumentParser(),
-                            executable: true
-                        }
-                    }
-                }
-            }
-        },
         op: {
             parser: new LiteralArgumentParser('op'),
-            permission: 3,
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    executable: true
-                }
-            }
-        },
-        pardon: {
-            parser: new LiteralArgumentParser('pardon'),
             permission: 3,
             children: {
                 player: {
@@ -930,6 +906,16 @@ export const VanillaTree: CommandTree = {
             children: {
                 address: {
                     parser: new StringArgumentParser('SingleWord'),
+                    executable: true
+                }
+            }
+        },
+        pardon: {
+            parser: new LiteralArgumentParser('pardon'),
+            permission: 3,
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
                     executable: true
                 }
             }
@@ -1412,11 +1398,6 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
-        stop: {
-            parser: new LiteralArgumentParser('stop'),
-            permission: 4,
-            executable: true
-        },
         stopsound: {
             parser: new LiteralArgumentParser('stopsound'),
             children: {
@@ -1438,6 +1419,11 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
+        stop: {
+            parser: new LiteralArgumentParser('stop'),
+            permission: 4,
+            executable: true
+        },
         summon: {
             parser: new LiteralArgumentParser('summon'),
             children: {
@@ -1450,7 +1436,8 @@ export const VanillaTree: CommandTree = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtTagArgumentParser('compound', 'entities', (args[args.length - 2].data as Identity).toString())
+                                    parser: ({ args }) => new NbtTagArgumentParser('compound', 'entities', (args[args.length - 2].data as Identity).toString()),
+                                    executable: true
                                 }
                             }
                         }
@@ -1478,6 +1465,16 @@ export const VanillaTree: CommandTree = {
                             executable: true
                         }
                     }
+                }
+            }
+        },
+        teammsg: {
+            parser: new LiteralArgumentParser('teammsg', 'tm'),
+            permission: 0,
+            children: {
+                message: {
+                    parser: new MessageArgumentParser(),
+                    executable: true
                 }
             }
         },
@@ -1602,14 +1599,14 @@ export const VanillaTree: CommandTree = {
         teleport: {
             parser: new LiteralArgumentParser('teleport', 'tp'),
             children: {
-                destination: {
-                    parser: new VectorArgumentParser(3),
-                    executable: true
-                },
                 entity: {
                     parser: new EntityArgumentParser('multiple', 'entities'),
                     executable: true,
                     children: {
+                        entity: {
+                            parser: new EntityArgumentParser('single', 'entities'),
+                            executable: true
+                        },
                         destination: {
                             parser: new VectorArgumentParser(3),
                             executable: true,
@@ -1643,21 +1640,11 @@ export const VanillaTree: CommandTree = {
                                     executable: true
                                 }
                             }
-                        },
-                        entity: {
-                            parser: new EntityArgumentParser('single', 'entities'),
-                            executable: true
                         }
                     }
-                }
-            }
-        },
-        teammsg: {
-            parser: new LiteralArgumentParser('teammsg', 'tm'),
-            permission: 0,
-            children: {
-                message: {
-                    parser: new MessageArgumentParser(),
+                },                
+                destination: {
+                    parser: new VectorArgumentParser(3),
                     executable: true
                 }
             }
@@ -1869,6 +1856,20 @@ export const VanillaTree: CommandTree = {
                     }
                 }
             }
+        },
+        w: {
+            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    children: {
+                        message: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                }
+            }
         }
     },
     comments: {
@@ -1908,7 +1909,7 @@ export const VanillaTree: CommandTree = {
             parser: new LiteralArgumentParser('false', 'true')
         },
         single_score: {
-            parser: new EntityArgumentParser('single', 'entities'),
+            parser: new EntityArgumentParser('single', 'entities', true),
             children: {
                 objective: {
                     parser: new ObjectiveArgumentParser()
@@ -1916,7 +1917,7 @@ export const VanillaTree: CommandTree = {
             }
         },
         multiple_score: {
-            parser: new EntityArgumentParser('multiple', 'entities'),
+            parser: new EntityArgumentParser('multiple', 'entities', true),
             children: {
                 objective: {
                     parser: new ObjectiveArgumentParser()
@@ -1953,7 +1954,7 @@ export const VanillaTree: CommandTree = {
             parser: new LiteralArgumentParser('entity'),
             children: {
                 entity: {
-                    parser: new EntityArgumentParser('single', 'entities')
+                    parser: new EntityArgumentParser('multiple', 'entities')
                 }
             }
         }
@@ -2241,37 +2242,7 @@ export const VanillaTree: CommandTree = {
                 result_success: {
                     parser: new LiteralArgumentParser('result', 'success'),
                     children: {
-                        nbt_holder: {
-                            template: 'nbt_holder',
-                            children: {
-                                path: {
-                                    parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
-                                        if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
-                                        } else {
-                                            return new NbtPathArgumentParser('blocks')
-                                        }
-                                    },
-                                    children: {
-                                        type: {
-                                            parser: new LiteralArgumentParser('byte', 'short', 'int', 'long', 'float', 'double'),
-                                            children: {
-                                                scale: {
-                                                    parser: new NumberArgumentParser('float'),
-                                                    children: {
-                                                        subcommand: {
-                                                            redirect: 'execute_subcommand'
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
+                        
                         bossbar: {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {
@@ -2298,6 +2269,37 @@ export const VanillaTree: CommandTree = {
                                     children: {
                                         subcommand: {
                                             redirect: 'execute_subcommand'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        nbt_holder: {
+                            template: 'nbt_holder',
+                            children: {
+                                path: {
+                                    parser: ({ args }) => {
+                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            // TODO: get ID from parsed entity.
+                                            return new NbtPathArgumentParser('entities')
+                                        } else {
+                                            return new NbtPathArgumentParser('blocks')
+                                        }
+                                    },
+                                    children: {
+                                        type: {
+                                            parser: new LiteralArgumentParser('byte', 'short', 'int', 'long', 'float', 'double'),
+                                            children: {
+                                                scale: {
+                                                    parser: new NumberArgumentParser('float'),
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'execute_subcommand'
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }

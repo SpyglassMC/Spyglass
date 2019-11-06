@@ -88,17 +88,17 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got nothing/))
+            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got nothing/))
             assert(pe.tolerable === false)
         })
-        it('Should return errors when partial matching', () => {
+        it('Should return untolerable errors when partial matching', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const { errors } = parser.parse(new StringReader('F'))
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘F’/))
-            assert(pe.tolerable === true)
+            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got ‘F’/))
+            assert(pe.tolerable === false)
         })
         it('Should return untolerable error when nothing matches', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
@@ -106,7 +106,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/expected one of ‘foo’ and ‘bar’ but got ‘spg’/))
+            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got ‘spg’/))
             assert(pe.tolerable === false)
         })
     })

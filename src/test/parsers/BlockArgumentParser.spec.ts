@@ -113,13 +113,26 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return completions for state keys', () => {
             const parser = new BlockArgumentParser(false, blockDefinitions, registries)
-            const actual = parser.parse(new StringReader('minecraft:stone[=]'), 16, manager)
+            const actual = parser.parse(new StringReader('minecraft:stone[]'), 16, manager)
             assert.deepEqual(actual.data, new Block(
                 new Identity('minecraft', ['stone'])
             ))
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'snowy' },
+                    { label: 'age' }
+                ]
+            )
+        })
+        it('Should not return redundant completions for state keys', () => {
+            const parser = new BlockArgumentParser(false, blockDefinitions, registries)
+            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,]'), 27, manager)
+            assert.deepEqual(actual.data, new Block(
+                new Identity('minecraft', ['stone']),
+                { snowy: 'true' }
+            ))
+            assert.deepStrictEqual(actual.completions,
+                [
                     { label: 'age' }
                 ]
             )
@@ -154,13 +167,27 @@ describe('BlockArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(actual.completions, [])
         })
+        it('Should return error for dupliate keys', () => {
+            const parser = new BlockArgumentParser(false, blockDefinitions, registries)
+            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,snowy=false]'), 0, manager)
+            assert.deepStrictEqual(actual.errors,
+                [
+                    new ParsingError(
+                        { start: 27, end: 32 }, 'expected ‘age’ but got ‘snowy’'
+                    ),
+                    new ParsingError(
+                        { start: 27, end: 32 }, 'duplicate key ‘snowy’'
+                    )
+                ]
+            )
+        })
         it('Should return error when the end bracket is missing', () => {
             const parser = new BlockArgumentParser(false, blockDefinitions, registries)
             const actual = parser.parse(new StringReader('minecraft:stone[snowy='), 0, manager)
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 22, end: 23 }, 'expected one of ‘true’ and ‘false’ but got nothing'
+                        { start: 22, end: 23 }, 'expected ‘true’ or ‘false’ but got nothing'
                     ),
                     new ParsingError(
                         { start: 22, end: 23 }, 'expected ‘]’ but got nothing'

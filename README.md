@@ -264,7 +264,7 @@ The naming convension for scoreboard objectives.
 ### nameOfSnbtCompoundTagKeys: `NamingConventionConfig`
 
 The naming convension for compound tag keys in SNBTs.  
-@default `['PascalCase', 'camelCase']`
+@default `'whatever'`
 
 ### nameOfTags: `NamingConventionConfig`
 

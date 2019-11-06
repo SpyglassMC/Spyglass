@@ -51,11 +51,11 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             } else {
                 max = min
             }
-            if (min && max && min > max) {
+            if (min !== undefined && max !== undefined && min > max) {
                 ans.errors.push(
                     new ParsingError({ start, end: reader.cursor }, `the minimum value ${min} is larger than the maximum value ${max}`)
                 )
-            } else if (!min && !max) {
+            } else if (min === undefined && max === undefined) {
                 ans.errors.push(
                     new ParsingError({ start, end: reader.cursor }, 'expected either a minimum value or a maximum value')
                 )

@@ -20,7 +20,8 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
     constructor(
         private readonly amount: 'single' | 'multiple',
-        private readonly type: 'players' | 'entities'
+        private readonly type: 'players' | 'entities',
+        private readonly greedy = false
     ) { super() }
 
     parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {
@@ -58,7 +59,12 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
 
         // Data
-        const plain = reader.readUnquotedString()
+        let plain
+        if (this.greedy) {
+            plain = reader.readUntilOrEnd(' ')
+        } else {
+            plain = reader.readUnquotedString()
+        }
         if (plain) {
             ans.data.plain = plain
         }
@@ -133,7 +139,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     if (reader.peek() === ']') {
                         break
                     }
-
                     const start = reader.cursor
                     const key = reader.readString()
 
