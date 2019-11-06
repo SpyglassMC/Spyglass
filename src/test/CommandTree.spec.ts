@@ -177,7 +177,10 @@ describe('CommandTree Tests', () => {
                 { data: 'advancement', parser: 'literal' },
                 { data: 'g', parser: 'literal' }
             ])
-            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke'])
+            assert.deepEqual(data.hint, {
+                fix: ['advancement', '(grant|revoke)'],
+                options: ['<targets: entity>']
+            })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, [
                 new ParsingError({ start: 12, end: 13 }, 'expected ‘grant’ or ‘revoke’ but got ‘g’'),
@@ -195,7 +198,10 @@ describe('CommandTree Tests', () => {
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'everything', parser: 'literal' }
             ])
-            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke', 'targets', 'everything'])
+            assert.deepEqual(data.hint, {
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'everything'],
+                options: []
+            })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, undefined)
@@ -211,7 +217,10 @@ describe('CommandTree Tests', () => {
                 { data: 'only', parser: 'literal' },
                 { data: new Identity(undefined, ['test']), parser: 'namespacedID' }
             ])
-            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke', 'targets', 'only', 'advancement'])
+            assert.deepEqual(data.hint, {
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>'],
+                options: []
+            })
             assert.deepEqual(data.cache, {
                 advancements: {
                     'minecraft:test': { def: [], ref: [{ range: { start: 26, end: 30 } }] }
@@ -232,7 +241,10 @@ describe('CommandTree Tests', () => {
                 { data: new Identity(undefined, ['test']), parser: 'namespacedID' },
                 { data: 'aaa', parser: 'string' }
             ])
-            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke', 'targets', 'only', 'advancement', 'criterion'])
+            assert.deepEqual(data.hint, {
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>', '<criterion: string>'],
+                options: []
+            })
             assert.deepEqual(data.cache, {
                 advancements: {
                     'minecraft:test': { def: [], ref: [{ range: { start: 26, end: 30 } }] }
@@ -252,7 +264,10 @@ describe('CommandTree Tests', () => {
                 { data: 'through', parser: 'literal' },
                 { data: new Identity(undefined, ['test']), parser: 'namespacedID' }
             ])
-            assert.deepEqual(data.path, ['command', 'advancement', 'grant_revoke', 'targets', 'from_through_until', 'advancement'])
+            assert.deepEqual(data.hint, {
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespacedID>'],
+                options: []
+            })
             assert.deepEqual(data.cache, {
                 advancements: {
                     'minecraft:test': { def: [], ref: [{ range: { start: 30, end: 44 } }] }
@@ -269,10 +284,13 @@ describe('CommandTree Tests', () => {
                 { data: 'data', parser: 'literal' },
                 { data: 'get', parser: 'literal' },
                 { data: 'block', parser: 'literal' },
-                { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector' },
+                { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
                 { data: new NbtPath(['CustomName']), parser: 'nbtPath' }
             ])
-            assert.deepEqual(data.path, ['command', 'data', 'get', 'target', 'block', 'pos', 'path'])
+            assert.deepEqual(data.hint, {
+                fix: ['data', 'get', 'block', '<pos: vector3D>', '<path: nbtPath>'],
+                options: []
+            })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, undefined)
@@ -283,10 +301,13 @@ describe('CommandTree Tests', () => {
             const { data } = parser.parse(reader, 37, manager)
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
-                { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector' },
+                { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
                 { data: new Block(new Identity(undefined, ['grass_block'])), parser: 'block' }
             ])
-            assert.deepEqual(data.path, ['command', 'setblock', 'pos', 'block'])
+            assert.deepEqual(data.hint, {
+                fix: ['setblock', '<pos: vector3D>', '<block: block>'],
+                options: ['[destroy|keep|replace]']
+            })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, [{ label: 'snowy' }])

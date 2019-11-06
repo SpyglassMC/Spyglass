@@ -7,7 +7,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Language server for Minecraft: Java Edition datapacks.
+Language server for Minecraft: Java Edition datapacks. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
 
 # Features
 
@@ -17,21 +17,33 @@ Nope. I follow the spirit of [no code](https://github.com/kelseyhightower/nocode
 
 Just joking. Semantic highlighting will be implemented whenever https://github.com/microsoft/vscode-languageserver-node/pull/367 is resolved. Before that, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension.
 
+## Signature Information
+
+You can get hints about the arguments of commands while typing.
+
+![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.png)
+![signature-help-2](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help-2.png)
+
 ## Completions
 
 The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '@', '\n', '!', "'", '"']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
 
-DHP can provide completions for simple literals:
-<!-- ![literal]() -->
+DHP can provide completions for simple commands:
+![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.png)
 
-For complex entity selectors:
-<!-- ![selector]() -->
+**The following completion features are still WIP:**
 
 For more complex NBTs:
 <!-- ![nbt]() -->
 
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
 <!-- ![ohhhhhh]() -->
+
+## Diagnostics
+
+DHP provides real-time diagnostics about your commands. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
+
+![diagnostics](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/diagnostics.gif)
 
 ## Folding Ranges
 
@@ -47,16 +59,11 @@ execute if score @s test matches 5 run say 5
 #endregion
 ```
 
-<!-- ![folding-region]() -->
-
-## Diagnostics
-
-DHP provides real-time diagnostics about your commands. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
-
-<!-- ![permission-level]() -->
-<!-- ![fill-out-of-range]() -->
+![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.png)
 
 ## Hover Information
+
+This is WIP.
 
 DHP shows user-defined documentation when you hover on specific arguments, e.g. on function namespaced IDs, tags, teams, etc.
 
@@ -64,19 +71,27 @@ DHP shows user-defined documentation when you hover on specific arguments, e.g. 
 
 ## Resolving Namespaced IDs
 
+This is WIP.
+
 You can navigate to advancements, loot tables, functions, predicates and all kinds of tags by Ctrl-clicking on their namespaced IDs.
 
 <!-- ![navigate-to-predicate]() -->
 
 ## Goto Definitions
 
+This is WIP.
+
 You can goto the definitions of entities, tags, teams, bossbars and data storages by Ctrl-clicking on their names.
 
 ## Finding References
 
+This is WIP.
+
 You can find all the references of entities, tags, teams, bossbars and data storages by pressing Alt F12.
 
 ## Renaming
+
+This is WIP.
 
 You can rename entities, tags, teams, bossbars and data storages by pressing F2 or other configured key on their names.
 
@@ -84,13 +99,9 @@ All the references of the same symbol in the whole workspace will be renamed.
 
 **Warning**: your input can be accidentally corrupted by using this feature. Use it at your own risk.
 
-## Signature Help
-
-You can get hints about next arguments while typing.
-
-<!-- ![signature-help]() -->
-
 ## Formatting (aka Linting)
+
+This is WIP.
 
 Your command will be formatted after you commit `\n` character. Alternatively, you can trigger it manually by pressing Alt + Shift + F or other configured hotkey.
 

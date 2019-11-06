@@ -1512,9 +1512,8 @@ export const VanillaTree: CommandTree = {
                             parser: new TeamArgumentParser(),
                             executable: true,
                             children: {
-                                entity: {
-                                    parser: new EntityArgumentParser('multiple', 'entities'),
-                                    executable: true
+                                members: {
+                                    redirect: 'templates.members'
                                 }
                             }
                         }
@@ -1523,9 +1522,8 @@ export const VanillaTree: CommandTree = {
                 leave: {
                     parser: new LiteralArgumentParser('leave'),
                     children: {
-                        entity: {
-                            parser: new EntityArgumentParser('multiple', 'entities'),
-                            executable: true
+                        members: {
+                            redirect: 'templates.members'
                         }
                     }
                 },
@@ -1642,7 +1640,7 @@ export const VanillaTree: CommandTree = {
                             }
                         }
                     }
-                },                
+                },
                 destination: {
                     parser: new VectorArgumentParser(3),
                     executable: true
@@ -1926,6 +1924,15 @@ export const VanillaTree: CommandTree = {
         },
         color: {
             parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
+        },
+        members: {
+            parser: new EntityArgumentParser('multiple', 'entities', true),
+            executable: true,
+            children: {
+                'a member': {
+                    redirect: 'templates.members'
+                }
+            }
         }
     },
     data_modification: {
@@ -2242,7 +2249,7 @@ export const VanillaTree: CommandTree = {
                 result_success: {
                     parser: new LiteralArgumentParser('result', 'success'),
                     children: {
-                        
+
                         bossbar: {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {

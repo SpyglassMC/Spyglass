@@ -9,7 +9,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static readonly RelativeSymbol = '~'
     static readonly Sep = ' '
 
-    readonly identity = 'vector'
+    identity = 'vector'
 
     constructor(
         private readonly dimension: 2 | 3 | 4,
@@ -19,6 +19,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         private readonly max: undefined | number = undefined,
     ) {
         super()
+        this.identity = `vector${dimension}D`
     }
 
     parse(reader: StringReader, cursor = -1): ArgumentParserResult<Vector> {

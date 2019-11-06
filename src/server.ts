@@ -1,11 +1,12 @@
 // istanbul ignore next
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation } from 'vscode-languageserver'
 import { GlobalCache } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
+import { SignatureHelp } from 'vscode'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfUri = new Map<string, Line[]>()
@@ -14,6 +15,8 @@ const stringsOfUri = new Map<string, string[]>()
 const cache: GlobalCache = {}
 const config = VanillaConfig
 const manager = new ArgumentParserManager()
+
+const lineParser = new LineParser(false, 'line', undefined, cache, config)
 
 connection.onInitialize(params => {
     params.workspaceFolders
@@ -36,9 +39,9 @@ connection.onInitialize(params => {
             // renameProvider: {
             //     prepareProvider: true
             // },
-            // signatureHelpProvider: {
-            //     triggerCharacters: [' ', '\n']
-            // },
+            signatureHelpProvider: {
+                triggerCharacters: [' ', '\n']
+            },
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
                 openClose: true
@@ -49,10 +52,10 @@ connection.onInitialize(params => {
 
 function parseString(string: string, lines: Line[]) {
     if (string.match(/^\s*$/)) {
-        lines.push({ args: [], path: [] })
+        lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
         const reader = new StringReader(string)
-        const { data } = new LineParser(false, 'line', undefined, cache, config).parse(reader, undefined, manager)
+        const { data } = lineParser.parse(reader, undefined, manager)
         lines.push(data)
     }
 }
@@ -113,7 +116,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 connection.onCompletion(({ textDocument: { uri }, position: { line, character } }) => {
     const strings = stringsOfUri.get(uri) as string[]
     const reader = new StringReader(strings[line])
-    const { data } = new LineParser(false, 'line', undefined, cache, config).parse(reader, character, manager)
+    const { data } = lineParser.parse(reader, character, manager)
     return data.completions
 })
 
@@ -136,9 +139,44 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
     return foldingRanges
 })
 
-// connection.onSignatureHelp(({ position: { character: char, line }, textDocument: { uri } }) => {
+connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
+    const strings = stringsOfUri.get(uri) as string[]
+    const reader = new StringReader(strings[lineNumber])
+    const { data: { hint: { fix, options } } } = lineParser.parse(reader, char, manager)
 
-// })
+    const fixLabelBeginning = fix.length > 1 ? fix.slice(0, -1).join(' ') + ' ' : ''
+    const fixLabelLast = fix[fix.length - 1]
+    const signatures: SignatureInformation[] = []
+    const nonEmptyOptions = options.length > 0 ? options : ['']
+
+    for (const option of nonEmptyOptions) {
+        signatures.push({
+            label: `${fixLabelBeginning}${fixLabelLast} ${option}`,
+            parameters: [
+                {
+                    label: [
+                        0,
+                        fixLabelBeginning.length
+                    ]
+                },
+                {
+                    label: [
+                        fixLabelBeginning.length,
+                        fixLabelBeginning.length + fixLabelLast.length
+                    ]
+                },
+                {
+                    label: [
+                        fixLabelBeginning.length + fixLabelLast.length,
+                        fixLabelBeginning.length + fixLabelLast.length + option.length
+                    ]
+                }
+            ]
+        })
+    }
+
+    return { signatures, activeParameter: 1, activeSignature: 0 }
+})
 
 // connection.onColorPresentation(({ color, range, textDocument: { uri } }) => {
 

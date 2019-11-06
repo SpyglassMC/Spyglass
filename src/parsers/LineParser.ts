@@ -39,7 +39,7 @@ export default class LineParser implements Parser<Line> {
     }
 
     parse(reader: StringReader, cursor: number = -1, manager: Manager<ArgumentParser<any>>): ParserResult {
-        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], path: [] }
+        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
         const backupReader = reader.clone()
         if (reader.peek() === '/') {
             // Find a leading slash...
@@ -71,41 +71,49 @@ export default class LineParser implements Parser<Line> {
         }
         // istanbul ignore next
         if (backupReader.peek() === '#' && line.errors.length > 0) {
-            return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], path: ['comment'], completions: line.completions } }
+            return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], hint: { fix: [], options: [] }, completions: line.completions } }
         }
         saturatedLineToLine(line)
         return { data: line }
     }
 
-    parseSingle(reader: StringReader, manager: Manager<ArgumentParser<any>>, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1, isTheLastElement: boolean = false) {
-        parsedLine.path.push(key)
+    parseSingle(reader: StringReader, manager: Manager<ArgumentParser<any>>, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1, isTheLastElement: boolean = false, optional = false) {
         if (node.redirect) {
             if (node.redirect.indexOf('.') === -1) {
                 // Redirect to children.
                 const redirect = this.tree[node.redirect]
-                this.parseChildren(reader, manager, redirect, parsedLine, cursor)
+                this.parseChildren(reader, manager, redirect, parsedLine, cursor, optional)
             } else {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
                 const redirect = this.tree[seg[0]][seg[1]]
-                this.parseSingle(reader, manager, seg[1], redirect, parsedLine, cursor, isTheLastElement)
+                this.parseSingle(reader, manager, seg[1], redirect, parsedLine, cursor, isTheLastElement, optional)
             }
         } else if (node.template) {
             if (!node.template.includes('.')) {
                 // Use `children` as the template.
                 const template = fillChildrenTemplate(node, this.tree[node.template])
-                this.parseChildren(reader, manager, template, parsedLine, cursor)
+                this.parseChildren(reader, manager, template, parsedLine, cursor, optional)
             } else {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
                 const template = fillSingleTemplate(node, this.tree[seg[0]][seg[1]])
-                this.parseSingle(reader, manager, seg[1], template, parsedLine, cursor, isTheLastElement)
+                this.parseSingle(reader, manager, seg[1], template, parsedLine, cursor, isTheLastElement, optional)
             }
         } else if (node.parser) {
             const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine)
             const { cache, completions, data, errors } = parser.parse(reader, cursor, manager, this.config, this.cache)
-            combineSaturatedLine(parsedLine, { args: [{ data, parser: parser.identity }], cache, completions, errors, path: [] })
+            combineSaturatedLine(parsedLine, {
+                args: [{ data, parser: parser.identity }],
+                hint: { fix: [], options: [] },
+                cache, completions, errors
+            })
+            if (start <= cursor && cursor <= reader.cursor) {
+                parsedLine.hint.options = this.getHintsInChildren(manager, node)
+            }
+            parsedLine.hint.fix.push(parser.toHint(key, optional))
+
             // Handle trailing data or absent data.
             if (!reader.canRead(2)) {
                 // The input line is all parsed.
@@ -121,14 +129,16 @@ export default class LineParser implements Parser<Line> {
                     if (node.children && cursor === reader.cursor) {
                         // Compute completions.
                         const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
-                        // istanbul ignore next
+                        /* istanbul ignore else */
                         if (shouldParseChildren) {
-                            const result = { args: [], cache: {}, errors: [], completions: [], path: [] }
-                            this.parseChildren(reader, manager, node.children, result, cursor)
+                            const result = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+                            this.parseChildren(reader, manager, node.children, result, cursor, optional)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
                                 parsedLine.completions.push(...result.completions)
                             }
+                            parsedLine.hint.fix.push(...result.hint.fix)
+                            parsedLine.hint.options.push(...result.hint.options)
                         }
                     }
                 }
@@ -143,7 +153,7 @@ export default class LineParser implements Parser<Line> {
                     if (shouldParseChildren) {
                         if (reader.peek() === ' ') {
                             reader.skip()
-                            this.parseChildren(reader, manager, node.children, parsedLine, cursor)
+                            this.parseChildren(reader, manager, node.children, parsedLine, cursor, optional)
                             // Downgrade errors.
                             parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                         } else {
@@ -173,7 +183,7 @@ export default class LineParser implements Parser<Line> {
         }
     }
 
-    parseChildren(reader: StringReader, manager: Manager<ArgumentParser<any>>, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, cursor: number = -1) {
+    parseChildren(reader: StringReader, manager: Manager<ArgumentParser<any>>, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, cursor: number = -1, optional = false) {
         let i = -1
         for (const key in children) {
             i += 1
@@ -183,13 +193,13 @@ export default class LineParser implements Parser<Line> {
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
                 const isTheLastElement = i === Object.keys(children).length - 1
-                this.parseSingle(newReader, manager, key, node, parsedLine, cursor, isTheLastElement)
+                this.parseSingle(newReader, manager, key, node, parsedLine, cursor, isTheLastElement, optional)
                 if (
                     !isTheLastElement && /* Has untolerable errors */
                     parsedLine.errors.filter(v => !v.tolerable).length > 0
                 ) {
                     parsedLine.args.pop()
-                    parsedLine.path.pop()
+                    parsedLine.hint.fix.pop()
                     parsedLine.errors = oldErrors
                     continue
                 }
@@ -200,61 +210,28 @@ export default class LineParser implements Parser<Line> {
         throw new Error('unreachable error. Maybe there is an empty children in the command tree')
     }
 
-    /**
-     * @throws When path not exist.
-     */
-    getPartOfHintsAndNode(path: string[]): PartOfHintsAndNode {
-        const hints: string[] = []
-        let children = this.tree[this.entryPoint]
-        for (let i = 0; i < path.length; i++) {
-            const ele = path[i]
-            const node = children[ele]
-            if (node) {
-                if (node.parser) {
-                    const parser = LineParser.getParser(node.parser, { args: [], cache: {}, errors: [], completions: [], path: [] })
-                    hints.push(parser.toHint(ele, false))
-                }
-                if (i < path.length - 1) {
-                    const result = getChildren(this.tree, node)
-                    if (!result) {
-                        throw new Error(`there are no children in path ‘${path.slice(0, -1).join('.')}’`)
-                    }
-                    children = result
-                } else {
-                    // Meet the last element of path.
-                    return { partOfHints: hints, node }
-                }
-            } else {
-                throw new Error(`‘${ele}’ doesn't exist in path ‘${path.slice(0, i).join('.')}’`)
-            }
-        }
-        throw new Error('unreachable error. Maybe the path is empty')
-    }
-
-    getHintAndDescription({ node, partOfHints }: PartOfHintsAndNode) {
-        const ans: HintAndDescription = { hint: { kind: 'markdown', value: partOfHints.join(' ') }, description: { kind: 'markdown', value: '' } }
-        if (node.description) {
-            ans.description.value = node.description
-        }
-        const children = getChildren(this.tree, node)
+    getHintsInChildren(manager: Manager<ArgumentParser<any>>, node: CommandTreeNode<any>) {
+        const ans: string[] = []
+        const children = node.children || {}
         for (const key in children) {
-            /* istanbul ignore next */
+            /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
-                const childNode = children[key]
-                if (childNode.parser) {
-                    const parser = LineParser.getParser(childNode.parser, { args: [], cache: {}, errors: [], completions: [], path: [] })
-                    const lastHint = parser.toHint(key, !!node.executable)
-                    ans.hint.value += ` **${lastHint}**`
+                const line: SaturatedLine = {
+                    args: [],
+                    hint: { fix: [], options: [] },
+                    cache: {},
+                    completions: [],
+                    errors: []
                 }
+                const subNode = children[key]
+                this.parseSingle(new StringReader(''), manager, key, subNode, line, -1, undefined, node.executable)
+                const option = line.hint.fix[0]
+                ans.push(option)
             }
         }
         return ans
     }
 }
-
-type PartOfHintsAndNode = { partOfHints: string[], node: CommandTreeNode<any> }
-
-type HintAndDescription = { hint: MarkupContent, description: MarkupContent }
 
 type ParserResult = {
     data: Line

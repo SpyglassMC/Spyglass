@@ -81,7 +81,7 @@ describe('LineParser Tests', () => {
             const input = 'foo'
             const parser = new LineParser(undefined, undefined, {})
             const node: CommandTreeNode<string> = {}
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             try {
                 parser.parseSingle(new StringReader(input), manager, 'node', node, line)
                 fail()
@@ -94,7 +94,7 @@ describe('LineParser Tests', () => {
             const input = 'foo'
             const parser = new LineParser(undefined, undefined, {})
             const node: CommandTreeNode<string> = { parser: new TestArgumentParser(), executable: true }
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
@@ -110,7 +110,7 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(undefined, undefined, tree)
             const node: CommandTreeNode<string> = { redirect: 'redirect' }
-            const line = { args: [{ data: 'parsed', parser: 'test' }], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
@@ -126,7 +126,7 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(undefined, undefined, tree)
             const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
-            const line = { args: [{ data: 'parsed', parser: 'test' }], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
@@ -141,7 +141,7 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(undefined, undefined, tree)
             const node: CommandTreeNode<string> = { template: 'template', executable: true }
-            const line = { args: [{ data: 'parsed', parser: 'test' }], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
@@ -156,7 +156,7 @@ describe('LineParser Tests', () => {
             }
             const parser = new LineParser(undefined, undefined, tree)
             const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
-            const line = { args: [{ data: 'parsed', parser: 'test' }], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
@@ -170,7 +170,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'expected more arguments but got nothing')])
@@ -191,7 +191,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }]
@@ -213,7 +213,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'f', parser: 'test' }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'expected a space to seperate two arguments')])
@@ -234,7 +234,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'node', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
             assert.deepStrictEqual(line.errors,
@@ -252,7 +252,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
@@ -278,7 +278,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line, 4)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
@@ -299,7 +299,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
@@ -330,7 +330,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.foo, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }, { data: 'baz', parser: 'test' }])
         })
@@ -349,7 +349,7 @@ describe('LineParser Tests', () => {
                 }
             }
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), manager, 'test', tree.commands.foo, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
         })
@@ -360,7 +360,7 @@ describe('LineParser Tests', () => {
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
             const children: CommandTreeNodeChildren = {}
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             try {
                 parser.parseChildren(reader, manager, children, line)
                 fail()
@@ -384,7 +384,7 @@ describe('LineParser Tests', () => {
             }
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, manager, tree.children, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
@@ -403,7 +403,7 @@ describe('LineParser Tests', () => {
             }
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, manager, tree.children, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
@@ -427,7 +427,7 @@ describe('LineParser Tests', () => {
             }
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, manager, tree.children, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
@@ -446,7 +446,7 @@ describe('LineParser Tests', () => {
             }
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [], path: [], errors: [new ParsingError({ start: 0, end: 1 }, 'old error')], cache: {}, completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'old error')], cache: {}, completions: [] }
             parser.parseChildren(reader, manager, tree.children, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
@@ -470,113 +470,9 @@ describe('LineParser Tests', () => {
             }
             const reader = new StringReader('foo')
             const parser = new LineParser(undefined, undefined, tree)
-            const line = { args: [{ data: 'parsed', parser: 'test' }], path: [], cache: {}, errors: [], completions: [] }
+            const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, manager, tree.children, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
-        })
-    })
-    describe('getPartOfHintsAndNode() Tests', () => {
-        const tree: CommandTree = {
-            line: { command: { redirect: 'commands' } },
-            commands: {
-                execute: {
-                    parser: new TestArgumentParser(),
-                    executable: true,
-                    children: {
-                        run: {
-                            parser: new TestArgumentParser(),
-                            children: {
-                                command: {
-                                    redirect: 'commands'
-                                }
-                            }
-                        }
-                    }
-                },
-                nochildren: {}
-            }
-        }
-        it('Should throw error when the path is empty', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            try {
-                parser.getPartOfHintsAndNode([])
-                fail()
-            } catch (e) {
-                assert(e.message === 'unreachable error. Maybe the path is empty')
-            }
-        })
-        it("Should throw error when the path doesn't exist", () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            try {
-                parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'wtf', 'wtf2'])
-                fail()
-            } catch (e) {
-                assert(e.message === "‘wtf’ doesn't exist in path ‘command.execute.run’")
-            }
-        })
-        it('Should throw error when there are no children in specific path', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            try {
-                parser.getPartOfHintsAndNode(['command', 'nochildren', 'wtf'])
-                fail()
-            } catch (e) {
-                assert(e.message === 'there are no children in path ‘command.nochildren’')
-            }
-        })
-        it('Should return the part of hints and node', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            const { partOfHints, node } = parser.getPartOfHintsAndNode(['command', 'execute', 'run', 'command'])
-            assert.deepStrictEqual(partOfHints, ['<execute: test>', '<run: test>'])
-            assert.deepStrictEqual(node, { redirect: 'commands' })
-        })
-    })
-    describe('getHintAndDescription() Tests', () => {
-        const tree: CommandTree = {
-            line: { command: { redirect: 'commands' } },
-            commands: {
-                execute: {
-                    parser: new TestArgumentParser(),
-                    executable: true,
-                    children: {
-                        run: {
-                            parser: new TestArgumentParser(),
-                            children: {
-                                command: {
-                                    redirect: 'commands'
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        it('Should contain description', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            const node = { description: 'foo' }
-            const partOfHints: string[] = []
-            const { description } = parser.getHintAndDescription({ node, partOfHints })
-            assert.deepStrictEqual(description, { kind: 'markdown', value: 'foo' })
-        })
-        it('Should append last hint if parser exists', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            const node = { children: { foo: { parser: new TestArgumentParser() } } }
-            const partOfHints = ['execute', '(if|unless)']
-            const { hint } = parser.getHintAndDescription({ node, partOfHints })
-            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless) **<foo: test>**' })
-        })
-        it('Should append optional last hint if parser exists and the node is executable', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            const node = { children: { foo: { parser: new TestArgumentParser() } }, executable: true }
-            const partOfHints = ['execute', '(if|unless)']
-            const { hint } = parser.getHintAndDescription({ node, partOfHints })
-            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless) **[foo: test]**' })
-        })
-        it('Should not append last hint if parser does not exist', () => {
-            const parser = new LineParser(undefined, undefined, tree)
-            const node = { children: { foo: {} } }
-            const partOfHints: string[] = ['execute', '(if|unless)']
-            const { hint } = parser.getHintAndDescription({ node, partOfHints })
-            assert.deepStrictEqual(hint, { kind: 'markdown', value: 'execute (if|unless)' })
         })
     })
     describe('parse() Test', () => {
@@ -619,11 +515,56 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: {
                     args: [{ data: 'a', parser: 'test' }, { data: 'b', parser: 'test' }, { data: 'c', parser: 'test' }],
-                    path: ['command', 'second', 'first', 'only'],
+                    hint: {
+                        fix: ['<second: test>', '<first: test>', '<only: test>'],
+                        options: []
+                    },
                     errors: [
                         new ParsingError({ start: 2, end: 3 }, 'expected ‘error’ and did get ‘error’'),
                         new ParsingError({ start: 4, end: 5 }, 'expected ‘ERROR’ and did get ‘ERROR’')
                     ]
+                }
+            })
+        })
+        it('Should return hint.options correctly', () => {
+            const tree: CommandTree = {
+                line: {
+                    command: {
+                        redirect: 'commands'
+                    }
+                },
+                commands: {
+                    first: {
+                        parser: new TestArgumentParser('normal'),
+                        children: {
+                            second: {
+                                parser: new TestArgumentParser('normal'),
+                                executable: true,
+                                children: {
+                                    foo: {
+                                        parser: new TestArgumentParser('normal'),
+                                        executable: true
+                                    },
+                                    bar: {
+                                        parser: new TestArgumentParser('normal'),
+                                        executable: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            const reader = new StringReader('first second')
+            const parser = new LineParser(undefined, undefined, tree)
+            const actual = parser.parse(reader, 9, manager)
+            assert.deepStrictEqual(actual, {
+                data: {
+                    args: [{ data: 'first', parser: 'test' }, { data: 'second', parser: 'test' }],
+                    hint: {
+                        fix: ['<first: test>', '<second: test>'],
+                        options: ['[foo: test]', '[bar: test]']
+                    }
                 }
             })
         })
@@ -634,7 +575,10 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: {
                     args: [{ data: 'foo', parser: 'test' }],
-                    path: ['command', 'second']
+                    hint: {
+                        fix: ['<second: test>'],
+                        options: []
+                    }
                 }
             })
         })
@@ -645,7 +589,7 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: {
                     args: [],
-                    path: [],
+                    hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
                         'unexpected leading slash ‘/’',
@@ -661,7 +605,7 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: {
                     args: [],
-                    path: [],
+                    hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
                         'expected a leading slash ‘/’ but got ‘f’',
@@ -677,7 +621,7 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: {
                     args: [],
-                    path: [],
+                    hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
                         'expected a leading slash ‘/’ but got ‘’',

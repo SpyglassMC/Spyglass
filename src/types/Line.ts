@@ -12,9 +12,12 @@ export default interface Line {
      */
     args: ArgumentNode<any>[]
     /**
-     * Path of the command tree.
+     * Hints.
      */
-    path: string[]
+    hint: {
+        fix: string[],
+        options: string[]
+    }
     /**
      * All cache of the line.
      */
@@ -43,9 +46,12 @@ export function combineLine(base: Line, override: Line): Line {
     if (override.args.length !== 0) {
         base.args = [...base.args, ...override.args]
     }
-    // Path.
-    if (override.path.length !== 0) {
-        base.path = [...base.path, ...override.path]
+    // Hint.
+    if (override.hint.fix.length !== 0) {
+        base.hint.fix = [...base.hint.fix, ...override.hint.fix]
+    }
+    if (override.hint.options.length !== 0) {
+        base.hint.options = [...base.hint.options, ...override.hint.options]
     }
     // Cache.
     if (base.cache || override.cache) {
@@ -75,8 +81,9 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     override.errors = override.errors ? override.errors : []
     // Args.
     base.args = [...base.args, ...override.args]
-    // Path.
-    base.path = [...base.path, ...override.path]
+    // Hint.
+    base.hint.fix = [...base.hint.fix, ...override.hint.fix]
+    base.hint.options = [...base.hint.options, ...override.hint.options]
     // Cache.
     base.cache = combineCache(base.cache, override.cache)
     // Completions.

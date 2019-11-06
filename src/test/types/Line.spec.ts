@@ -6,83 +6,90 @@ import ParsingError from '../../types/ParsingError'
 describe('Line Tests', () => {
     describe('combineLine() Tests', () => {
         it('Should combine args', () => {
-            const base = { args: [{ data: 'execute', parser: 'test' }], path: [] }
-            const override = { args: [{ data: 'if', parser: 'test' }], path: [] }
+            const base = { args: [{ data: 'execute', parser: 'test' }], hint: { fix: [], options: [] } }
+            const override = { args: [{ data: 'if', parser: 'test' }], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }], path: [] })
+            assert.deepStrictEqual(base, { args: [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }], hint: { fix: [], options: [] } })
         })
-        it('Should combine path', () => {
-            const base = { args: [], path: ['a'] }
-            const override = { args: [], path: ['b'] }
+        it('Should combine hint.fix', () => {
+            const base = { args: [], hint: { fix: ['a'], options: [] } }
+            const override = { args: [], hint: { fix: ['b'], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], path: ['a', 'b'] })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: ['a', 'b'], options: [] } })
+        })
+        it('Should combine hint.options', () => {
+            const base = { args: [], hint: { fix: [], options: ['a'] } }
+            const override = { args: [], hint: { fix: [], options: ['b'] } }
+            combineLine(base, override)
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: ['a', 'b'] } })
         })
         it('Should combine cache', () => {
-            const base = { args: [], cache: {}, path: [] }
-            const override = { args: [], cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } }, path: [] }
+            const base = { args: [], cache: {}, hint: { fix: [], options: [] } }
+            const override = { args: [], cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } }, hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, override)
         })
         it('Should return parsed completions', () => {
-            const base = { args: [], completions: [{ label: 'foo' }], path: [] }
-            const override = { args: [], path: [] }
+            const base = { args: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } }
+            const override = { args: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], path: [] })
+            assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } })
         })
         it('Should return new completions', () => {
-            const base = { args: [], path: [] }
-            const override = { args: [], completions: [{ label: 'foo' }], path: [] }
+            const base = { args: [], hint: { fix: [], options: [] } }
+            const override = { args: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], path: [] })
+            assert.deepStrictEqual(base, { args: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } })
         })
         it('Should not return empty error array', () => {
-            const base = { args: [], errors: [], path: [] }
-            const override = { args: [], errors: [], path: [] }
+            const base = { args: [], errors: [], hint: { fix: [], options: [] } }
+            const override = { args: [], errors: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], path: [] })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] } })
         })
         it('Should return parsed errors', () => {
             const parsedError = new ParsingError({ start: 0, end: 3 }, 'parsed')
-            const base = { args: [], errors: [parsedError], path: [] }
-            const override = { args: [], errors: [], path: [] }
+            const base = { args: [], errors: [parsedError], hint: { fix: [], options: [] } }
+            const override = { args: [], errors: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], path: [], errors: [parsedError] })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] }, errors: [parsedError] })
         })
         it('Should return new errors', () => {
             const newError = new ParsingError({ start: 0, end: 3 }, 'new')
-            const base = { args: [], errors: [], path: [] }
-            const override = { args: [], errors: [newError], path: [] }
+            const base = { args: [], errors: [], hint: { fix: [], options: [] } }
+            const override = { args: [], errors: [newError], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], path: [], errors: [newError] })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] }, errors: [newError] })
         })
         it('Should combine parsed errors and new errors', () => {
             const parsedError = new ParsingError({ start: 0, end: 3 }, 'parsed')
             const newError = new ParsingError({ start: 0, end: 3 }, 'new')
-            const base = { args: [], errors: [parsedError], path: [] }
-            const override = { args: [], errors: [newError], path: [] }
+            const base = { args: [], errors: [parsedError], hint: { fix: [], options: [] } }
+            const override = { args: [], errors: [newError], hint: { fix: [], options: [] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], path: [], errors: [parsedError, newError] })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] }, errors: [parsedError, newError] })
         })
     })
     describe('combineSaturatedLine() Tests', () => {
-        it('Should combine args, path, cache, completions and errors', () => {
+        it('Should combine args, hint, cache, completions and errors', () => {
             const base = {
                 args: [{ data: 'execute', parser: 'test' }],
                 cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
-                path: ['a'],
+                hint: { fix: ['a'], options: ['c'] },
                 completions: [{ label: 'a' }]
             }
             const override = {
                 args: [{ data: 'if', parser: 'test' }],
                 cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
-                path: ['b'],
+                hint: { fix: ['b'], options: ['d'] },
                 completions: [{ label: 'b' }]
             }
             combineSaturatedLine(base, override)
             assert.deepStrictEqual(base.args, [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }])
-            assert.deepStrictEqual(base.path, ['a', 'b'])
+            assert.deepStrictEqual(base.hint.fix, ['a', 'b'])
+            assert.deepStrictEqual(base.hint.options, ['c', 'd'])
             assert.deepStrictEqual(
                 base.cache,
                 { entities: { foo: { def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: [] } } }
@@ -97,21 +104,21 @@ describe('Line Tests', () => {
     describe('saturatedLineToLine() Tests', () => {
         it('Should remove empty cache, errors or completions', () => {
             const line = {
-                args: [], cache: {}, errors: [], completions: [], path: []
+                args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }
             }
             saturatedLineToLine(line)
-            assert.deepStrictEqual(line, { args: [], path: [] })
+            assert.deepStrictEqual(line, { args: [], hint: { fix: [], options: [] } })
         })
         it('Should not remove non-empty cache, errors or completions', () => {
             const line = {
-                args: [], path: [],
+                args: [], hint: { fix: [], options: [] },
                 cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
                 completions: [{ label: 'completion' }]
             }
             saturatedLineToLine(line)
             assert.deepStrictEqual(line, {
-                args: [], path: [],
+                args: [], hint: { fix: [], options: [] },
                 cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
                 completions: [{ label: 'completion' }]

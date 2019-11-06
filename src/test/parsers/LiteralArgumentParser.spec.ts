@@ -25,13 +25,23 @@ describe('LiteralArgumentParser Tests', () => {
     describe('toHint() Tests', () => {
         it('Should return correctly for single literal', () => {
             const parser = new LiteralArgumentParser('foo')
-            const actual = parser.toHint()
+            const actual = parser.toHint('', false)
             assert.strictEqual(actual, 'foo')
         })
-        it('Should return correctly for multi literals', () => {
+        it('Should return correctly for multiple literals', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
-            const actual = parser.toHint()
+            const actual = parser.toHint('', false)
             assert.strictEqual(actual, '(foo|bar)')
+        })
+        it('Should return correctly for optional single literal', () => {
+            const parser = new LiteralArgumentParser('foo')
+            const actual = parser.toHint('', true)
+            assert.strictEqual(actual, '[foo]')
+        })
+        it('Should return correctly for optional multiple literals', () => {
+            const parser = new LiteralArgumentParser('foo', 'bar')
+            const actual = parser.toHint('', true)
+            assert.strictEqual(actual, '[foo|bar]')
         })
     })
     describe('getExamples() Tests', () => {

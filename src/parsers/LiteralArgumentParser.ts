@@ -80,12 +80,19 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         return ans
     }
 
-    toHint(): string {
-        if (this.literals.length === 1) {
-            return this.literals[0]
+    toHint(_: string, optional: boolean): string {
+        let ans: string
+        if (optional) {
+            ans = `[${this.literals.join('|')}]`
         } else {
-            return `(${this.literals.join('|')})`
+            if (this.literals.length === 1) {
+                ans = this.literals[0]
+            } else {
+                ans = `(${this.literals.join('|')})`
+            }
         }
+
+        return ans
     }
 
     getExamples(): string[] {
