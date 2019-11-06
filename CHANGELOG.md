@@ -1,3 +1,10 @@
+# [v1.2.3](https://github.com/SPGoding/datapack-language-server/compare/v1.2.2...v1.2.3) (2019-11-06)
+
+## 🐛 Bug Fixes
+- [`6382ac3`](https://github.com/SPGoding/datapack-language-server/commit/6382ac3)  Fix dependencies problems 
+- [`3ae2be2`](https://github.com/SPGoding/datapack-language-server/commit/3ae2be2)  Fix not providing completions for block states (Issues: [`#91`](https://github.com/SPGoding/datapack-language-server/issues/91))
+- [`1a5f121`](https://github.com/SPGoding/datapack-language-server/commit/1a5f121)  Fix completions for entity selectors (Issues: [`#94`](https://github.com/SPGoding/datapack-language-server/issues/94))
+
 # [v1.2.2](https://github.com/SPGoding/datapack-language-server/compare/v1.2.1...v1.2.2) (2019-11-05)
 
 ## 🐛 Bug Fixes
