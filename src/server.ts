@@ -2,12 +2,14 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder } from 'vscode-languageserver'
-import { getSafeCategory, Unit, LocalCacheElement, CacheFile } from './types/Cache'
+import { getSafeCategory, Unit, LocalCacheElement, CacheFile, removeGlobalElement, removeUnit, GlobalCache, Cache, combineCache, localToGlobalCache } from './types/Cache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
+import { Files } from 'vscode-languageserver'
+import Identity from './types/Identity'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfUri = new Map<string, Line[]>()
@@ -17,6 +19,9 @@ const manager = new ArgumentParserManager()
 const config = VanillaConfig
 let cache: CacheFile = { cache: {}, files: {} }
 let workspaceFolder: WorkspaceFolder
+let workspaceFolderPath: string
+let dotPath: string
+let cachePath: string
 
 const lineParser = new LineParser(false, 'line', undefined, cache.cache, config)
 
@@ -25,6 +30,19 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         return { capabilities: {} }
     }
     workspaceFolder = workspaceFolders[0]
+    workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
+    dotPath = path.join(workspaceFolderPath, '.datapack')
+    cachePath = path.join(dotPath, 'cache.json')
+
+    connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
+    connection.console.info(`dotPath = ${dotPath}`)
+    connection.console.info(`cachePath = ${cachePath}`)
+    if (!fs.pathExistsSync(dotPath)) {
+        fs.mkdirpSync(dotPath)
+    }
+    if (fs.existsSync(cachePath)) {
+        cache = await fs.readJson(cachePath, { encoding: 'utf8' })
+    }
     await updateCache()
 
     return {
@@ -59,28 +77,78 @@ connection.onInitialize(async ({ workspaceFolders }) => {
 })
 
 async function updateCache() {
-    const cachePath = path.resolve(workspaceFolder.uri, '.datapackcache')
-    if (fs.existsSync(cachePath)) {
-        cache = await fs.readJson(cachePath, { encoding: 'utf8' })
-    }
     for (const rel in cache.files) {
         if (cache.files.hasOwnProperty(rel)) {
-            const abs = path.resolve(workspaceFolder.uri, rel)
+            const abs = path.join(workspaceFolderPath, rel)
+            const { id, category } = await Identity.fromPath(rel)
             if (!fs.existsSync(abs)) {
-                // This cached file was deleted.
-                // TODO: Remove it from all cache elements.
+                // The cached file was deleted.
+                removeUnit(cache.cache, category, id.toString())
+                removeGlobalElement(cache.cache, { rel, checkLineNumber: () => true })
             } else {
+                // The cached file still exists.
                 const lastUpdate = cache.files[rel]
                 const lastModified = (await fs.stat(abs)).mtimeMs
                 if (lastUpdate < lastModified) {
-                    // This cached files was newly modified.
-                    // TODO: Remove it from all cache elements.
-                    // TODO: Add it to all cache categories.
+                    // The cached file was newly modified.
+                    removeGlobalElement(cache.cache, { rel, checkLineNumber: () => true })
+                    addGlobalElement(cache.cache, abs, rel, category)
                     cache.files[rel] = lastModified
                 }
             }
         }
     }
+    const walker = async (p: string, category: keyof Cache<any>) => {
+        if (await fs.pathExists(p)) {
+            const dirs = await fs.readdir(p)
+            for (const d of dirs) {
+                const abs = path.join(p, d)
+                const stat = await fs.stat(abs)
+                if (stat.isDirectory()) {
+                    await walker(abs, category)
+                } else {
+                    const rel = path.relative(workspaceFolderPath, abs)
+                    if (!cache.files[rel]) {
+                        cache.files[rel] = stat.mtimeMs
+                        addGlobalElement(cache.cache, abs, rel, category)
+                    }
+                }
+            }
+        }
+    }
+    const dataPath = path.join(workspaceFolderPath, 'data')
+    if (!(await fs.pathExists(dataPath))) {
+        fs.mkdirpSync(dataPath)
+    }
+    const namespaces = await fs.readdir(dataPath)
+    for (const namespace of namespaces) {
+        const abs = path.join(dataPath, namespace)
+        const stat = await fs.stat(abs)
+        if (stat.isDirectory()) {
+            walker(path.join(abs, 'functions'), 'functions')
+        }
+    }
+
+    await fs.writeJson(cachePath, cache, { encoding: 'utf8' })
+}
+
+async function addGlobalElement(cache: GlobalCache, abs: string, rel: string, category: keyof Cache<any>) {
+    if (category === 'functions') {
+        const lines: Line[] = []
+        const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split('\n')
+        for (const string of strings) {
+            parseString(string, lines)
+        }
+        let i = 0
+        for (const line of lines) {
+            if (line.cache) {
+                const globalCache = localToGlobalCache(line.cache, rel, i)
+                combineCache(cache, globalCache)
+            }
+            i++
+        }
+    }
+    // TODO: Add elements of files under other categories.
 }
 
 function parseString(string: string, lines: Line[]) {
@@ -138,6 +206,15 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
         for (const string of stringsAfterStartLine) {
             parseString(string, lines)
         }
+        // Update cache
+        updateCache()
+        // const abs = Files.uriToFilePath(uri) as string
+        // const rel = path.relative(workspaceFolderPath, abs)
+        // const lastModified = fs.statSync(abs).mtimeMs
+        // // The cached file was newly modified.
+        // removeGlobalElement(cache.cache, { rel, checkLineNumber: () => true /* (num) => num >= startLine*/ })
+        // addGlobalElement(cache.cache, abs, rel, 'functions')
+        // cache.files[rel] = lastModified
     }
     updateDiagnostics(uri)
 })

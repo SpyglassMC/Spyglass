@@ -18,7 +18,7 @@ describe('ObjectiveArgumentParser Tests', () => {
         const cache = {
             objectives: {
                 foo: { def: [], ref: [] },
-                bar: { def: [{ line: { uri: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
+                bar: { def: [{ line: { rel: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
             }
         }
         it('Should return data', () => {

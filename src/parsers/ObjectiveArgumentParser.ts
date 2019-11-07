@@ -9,7 +9,9 @@ import { VanillaConfig } from '../types/Config'
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
     readonly identity = 'objective'
 
-    constructor() {
+    constructor(
+        private readonly isDefinition = false
+    ) {
         super()
     }
 
@@ -39,13 +41,21 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                 false
             ))
         } else {
-            if (config.lint.strictObjectiveCheck && !Object.keys(category).includes(value)) {
-                ans.errors.push(new ParsingError(
-                    { start, end: start + value.length },
-                    `undefined objective ‘${value}’`,
-                    undefined,
-                    DiagnosticSeverity.Warning
-                ))
+            if (!Object.keys(category).includes(value)) {
+                if (this.isDefinition) {
+                    ans.cache = {
+                        objectives: {
+                            [value]: { def: [{ range: { start, end: reader.cursor } }], ref: [] }
+                        }
+                    }
+                } else if (config.lint.strictObjectiveCheck) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: start + value.length },
+                        `undefined objective ‘${value}’`,
+                        undefined,
+                        DiagnosticSeverity.Warning
+                    ))
+                }
             }
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(

@@ -82,7 +82,7 @@ describe('Cache Tests', () => {
                 advancements: {
                     foo: {
                         def: [],
-                        ref: [{ line: { uri: 'test', number: 0 } }]
+                        ref: [{ line: { rel: 'test', number: 0 } }]
                     }
                 }
             }
@@ -90,7 +90,7 @@ describe('Cache Tests', () => {
                 entities: {
                     foo: {
                         def: [],
-                        ref: [{ line: { uri: 'test', number: 0 } }]
+                        ref: [{ line: { rel: 'test', number: 0 } }]
                     }
                 }
             }
@@ -151,7 +151,7 @@ describe('Cache Tests', () => {
                     foo: { def: [], ref: [] },
                     bar: {
                         def: [{
-                            line: { uri: '', number: 0 },
+                            line: { rel: '', number: 0 },
                             documentation: 'Documentation for **bar**'
                         }],
                         ref: []

@@ -18,7 +18,7 @@ export interface Cache<T extends GlobalCacheElement | LocalCacheElement> {
     advancements?: CacheCategory<T>,
     functions?: CacheCategory<T>,
     'lootTables/fishing'?: CacheCategory<T>,
-    'lootTables/entitiy'?: CacheCategory<T>,
+    'lootTables/entity'?: CacheCategory<T>,
     'lootTables/block'?: CacheCategory<T>,
     'lootTables/generic'?: CacheCategory<T>,
     predicates?: CacheCategory<T>,
@@ -79,9 +79,9 @@ export type GlobalCacheElement = {
      */
     line: {
         /**
-         * The file URI.
+         * The relative path of the file from the workspace.
          */
-        uri: string,
+        rel: string,
         /**
          * The line number.
          */
@@ -112,6 +112,70 @@ function isLocalElement(value: any): value is LocalCacheElement {
     return value.range && typeof value.range.start === 'number' && typeof value.range.end === 'number'
 }
 
+export function areElementsEqual<T extends GlobalCacheElement | LocalCacheElement>(a: T, b: T) {
+    // istanbul ignore else
+    if (isGlobalElement(a) && isGlobalElement(b)) {
+        return a.line.number === b.line.number && a.line.rel === b.line.rel
+    } else if (isLocalElement(a) && isLocalElement(b)) {
+        return a.range.start === b.range.start && a.range.end === b.range.end
+    } else {
+        throw 'Unreachable code'
+    }
+}
+
+export function removeElement<T extends GlobalCacheElement | LocalCacheElement>(cache: Cache<T>, element: T) {
+    for (const type in cache) {
+        const category = cache[type as keyof Cache<T>] as CacheCategory<T>
+        for (const id in category) {
+            const unit = category[id] as Unit<T>
+            for (const key in unit) {
+                const elements = unit[key as 'ref' | 'def']
+                unit[key as 'ref' | 'def'] =
+                    elements.filter(ele => !areElementsEqual(ele, element)) as any
+            }
+        }
+    }
+}
+
+export function removeGlobalElement(
+    cache: Cache<GlobalCacheElement>,
+    { rel, checkLineNumber }: { rel: string, checkLineNumber(num: number): boolean }
+) {
+    for (const type in cache) {
+        const category = cache[type as keyof Cache<GlobalCacheElement>] as CacheCategory<GlobalCacheElement>
+        for (const id in category) {
+            const unit = category[id] as Unit<GlobalCacheElement>
+            for (const key in unit) {
+                const elements = unit[key as 'ref' | 'def']
+                unit[key as 'ref' | 'def'] =
+                    elements.filter(ele => !(ele.line.rel === rel && checkLineNumber(ele.line.number))) as any
+            }
+        }
+    }
+}
+
+export function removeUnit(cache: Cache<any>, type: keyof Cache<any>, id: string) {
+    const category = getSafeCategory(cache, type)
+    delete category[id]
+}
+
+export function localToGlobalCache(cache: LocalCache, rel: string, number: number) {
+    const ans  = JSON.parse(JSON.stringify(cache)) as GlobalCache
+    for (const type in ans) {
+        const category = ans[type as keyof GlobalCache]
+        for (const id in category) {
+            const unit = category[id] as Unit<GlobalCacheElement>
+            for (const key in unit) {
+                for (const ele of unit[key as 'ref' | 'def']) {
+                    ele.line = { rel, number }
+                    delete (ele as any as LocalCacheElement).range
+                }
+            }
+        }
+    }
+    return ans
+}
+
 /**
  * Combine base cache with overriding cache.
  * @param base Base cache.
@@ -119,29 +183,6 @@ function isLocalElement(value: any): value is LocalCacheElement {
  */
 export function combineCache<T extends GlobalCacheElement | LocalCacheElement>
     (base: Cache<T> = {}, override: Cache<T> = {}) {
-    function areElementsEqual(a: T, b: T) {
-        // istanbul ignore else
-        if (isGlobalElement(a) && isGlobalElement(b)) {
-            return a.line.number === b.line.number && a.line.uri === b.line.uri
-        } else if (isLocalElement(a) && isLocalElement(b)) {
-            return a.range.start === b.range.start && a.range.end === b.range.end
-        } else {
-            throw 'Unreachable code'
-        }
-    }
-    function removeElement(cache: Cache<T>, element: T) {
-        for (const type in cache) {
-            const category = cache[type as keyof Cache<T>] as CacheCategory<T>
-            for (const id in category) {
-                const unit = category[id] as Unit<T>
-                for (const key in unit) {
-                    const elements = unit[key as 'ref' | 'def']
-                    unit[key as 'ref' | 'def'] =
-                        elements.filter(ele => !areElementsEqual(ele, element)) as any
-                }
-            }
-        }
-    }
     function initUnit(type: string, id: string, overrideElement: T) {
         if (!ans[type as keyof Cache<T>]) {
             ans[type as keyof Cache<T>] = {}

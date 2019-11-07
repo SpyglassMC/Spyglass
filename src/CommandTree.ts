@@ -1137,7 +1137,7 @@ export const VanillaTree: CommandTree = {
                             parser: new LiteralArgumentParser('add'),
                             children: {
                                 objective: {
-                                    parser: new ObjectiveArgumentParser(),
+                                    parser: new ObjectiveArgumentParser(true),
                                     children: {
                                         criterion: {
                                             parser: new ObjectiveCriterionArgumentParser(),
@@ -1872,35 +1872,35 @@ export const VanillaTree: CommandTree = {
     },
     comments: {
         // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
-        // '#define': {
-        //     parser: new LiteralArgumentParser('#$define'),
-        //     description: 'Defines a bossbar, an entity name, a scoreboard objective, a data storage, an entity tag or a team. Will be used for completions.',
-        //     children: {
-        //         type: {
-        //             parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'storage', 'tag', 'team'),
-        //             description: 'Type of the definition',
-        //             children: {
-        //                 id: {
-        //                     parser: ({ args }) => new DefinitionIDArgumentParser(
-        //                         args[args.length - 1].data
-        //                     ),
-        //                     description: 'ID',
-        //                     executable: true,
-        //                     children: {
-        //                         description: {
-        //                             parser: ({ args }) => new DefinitionDescriptionArgumentParser(
-        //                                 args[args.length - 2].data,
-        //                                 args[args.length - 1].data
-        //                             ),
-        //                             description: 'Description of the definition',
-        //                             executable: true
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        '#define': {
+            parser: new LiteralArgumentParser('#define'),
+            description: 'Defines a bossbar, an entity name, a scoreboard objective, a data storage, an entity tag or a team. Will be used for completions.',
+            children: {
+                type: {
+                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'storage', 'tag', 'team'),
+                    description: 'Type of the definition',
+                    children: {
+                        id: {
+                            parser: ({ args }) => new DefinitionIDArgumentParser(
+                                args[args.length - 1].data
+                            ),
+                            description: 'ID',
+                            executable: true,
+                            children: {
+                                description: {
+                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(
+                                        args[args.length - 2].data,
+                                        args[args.length - 1].data
+                                    ),
+                                    description: 'Description of the definition',
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     templates: {
         boolean: {

@@ -36,7 +36,7 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
                 ans.data = category
             } else {
                 reader.skip()
-                const teamResult = manager.get('Literal', ScoreboardSlotArgumentParser.Colors.map(v=>`team${ScoreboardSlotArgumentParser.Sep}${v}`)).parse(reader, cursor)
+                const teamResult = manager.get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`)).parse(reader, cursor)
                 const team = teamResult.data as string
                 combineArgumentParserResult(ans, teamResult)
                 ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}`
