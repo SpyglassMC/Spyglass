@@ -54,7 +54,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"']
             },
-            definitionProvider: true,
+            // definitionProvider: true,
             // documentFormattingProvider: true,
             // documentLinkProvider: {
             //     resolveProvider: true
@@ -384,8 +384,11 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
     return foldingRanges
 })
 
-connection.onDefinition(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    await updateCacheFile(cache)
     const rel = getRelFromUri(uri)
+    const line = (linesOfRel.get(rel) as Line[])[number]
+
     throw ''
 })
 

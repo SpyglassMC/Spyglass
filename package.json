@@ -70,6 +70,7 @@
   },
   "displayName": "Datapack Helper Plus (MCF)",
   "description": "A NPM package and an VSCode extension which make editing mcfunctions much easier",
+  "icon": "icon.png",
   "categories": [
     "Formatters",
     "Linters",
