@@ -54,7 +54,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"']
             },
-            // definitionProvider: true,
+            definitionProvider: true,
             // documentFormattingProvider: true,
             // documentLinkProvider: {
             //     resolveProvider: true
@@ -382,6 +382,11 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
         i += 1
     }
     return foldingRanges
+})
+
+connection.onDefinition(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    const rel = getRelFromUri(uri)
+    throw ''
 })
 
 // connection.onDidChangeWatchedFiles(({ changes }) => {
