@@ -1,5 +1,3 @@
-# datapack-language-server
-
 ![banner](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/banner.png)
 
 [![CircleCI](https://img.shields.io/circleci/build/github/SPGoding/datapack-language-server.svg?logo=circleci&style=flat-square)](https://circleci.com/gh/SPGoding/datapack-language-server)
@@ -9,7 +7,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Language server for Minecraft: Java Edition datapacks. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
+A NPM package and an VSCode extension which make editing Minecraft: Java Edition datapacks much easier. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
 
 # Features
 
@@ -87,15 +85,15 @@ You can navigate to advancements, loot tables, functions, predicates and all kin
 
 ## Goto Definitions
 
-This is WIP.
-
 You can goto the definitions of entities, tags, teams, bossbars and data storages by Ctrl-clicking on their names.
+
+![goto-definition](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/goto-definition.gif)
 
 ## Finding References
 
-This is WIP.
-
 You can find all the references of entities, tags, teams, bossbars and data storages by pressing Alt F12.
+
+![peek-references](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/peek-references.gif)
 
 ## Renaming
 

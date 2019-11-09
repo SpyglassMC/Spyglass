@@ -1,8 +1,8 @@
-// istanbul ignore next
 import * as fs from 'fs-extra'
 import * as path from 'path'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache } from './types/ClientCache'
+import { URI } from 'vscode-uri'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -17,7 +17,7 @@ const stringsOfRel = new Map<string, string[]>()
 
 const manager = new ArgumentParserManager()
 const config = VanillaConfig
-let cache: CacheFile = { cache: {}, files: {} }
+let cacheFile: CacheFile = { cache: {}, files: {} }
 let workspaceFolder: WorkspaceFolder
 let workspaceFolderPath: string
 let dotPath: string
@@ -45,16 +45,16 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         fs.mkdirpSync(dataPath)
     }
     if (fs.existsSync(cachePath)) {
-        cache = await fs.readJson(cachePath, { encoding: 'utf8' })
+        cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
     }
-    await updateCacheFile(cache)
+    await updateCacheFile(cacheFile)
 
     return {
         capabilities: {
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"']
             },
-            // definitionProvider: true,
+            definitionProvider: true,
             // documentFormattingProvider: true,
             // documentLinkProvider: {
             //     resolveProvider: true
@@ -65,10 +65,10 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             foldingRangeProvider: true,
             colorProvider: true,
             // hoverProvider: true,
-            // referencesProvider: true,
-            // renameProvider: {
-            //     prepareProvider: true
-            // },
+            referencesProvider: true,
+            renameProvider: {
+                prepareProvider: true
+            },
             signatureHelpProvider: {
                 triggerCharacters: [' ']
             },
@@ -84,6 +84,10 @@ function getRelFromUri(uri: string) {
     const abs = Files.uriToFilePath(uri) as string
     const rel = path.relative(workspaceFolderPath, abs)
     return rel
+}
+
+function getUriFromRel(rel: string) {
+    return URI.file(path.join(workspaceFolderPath, rel)).toString()
 }
 
 async function updateCacheFile(cacheFile: CacheFile) {
@@ -248,7 +252,7 @@ function parseString(string: string, lines: Line[]) {
     if (string.match(/^\s*$/)) {
         lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
-        const parser = new LineParser(false, 'line', undefined, cache.cache, config)
+        const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
         const reader = new StringReader(string)
         const { data } = parser.parse(reader, undefined, manager)
         lines.push(data)
@@ -303,7 +307,7 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
             parseString(string, lines)
         }
     }
-    updateCacheFile(cache)
+    updateCacheFile(cacheFile)
     updateDiagnostics(rel, uri)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
@@ -315,7 +319,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 connection.onCompletion(({ textDocument: { uri }, position: { line, character } }) => {
     const rel = getRelFromUri(uri)
     const strings = stringsOfRel.get(rel) as string[]
-    const parser = new LineParser(false, 'line', undefined, cache.cache, config)
+    const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
     const reader = new StringReader(strings[line])
     const { data } = parser.parse(reader, character, manager)
     return data.completions
@@ -324,7 +328,7 @@ connection.onCompletion(({ textDocument: { uri }, position: { line, character } 
 connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     const strings = stringsOfRel.get(rel) as string[]
-    const parser = new LineParser(false, 'line', undefined, cache.cache, config)
+    const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
     const reader = new StringReader(strings[lineNumber])
     const { data: { hint: { fix, options } } } = parser.parse(reader, char, manager)
     const signatures: SignatureInformation[] = []
@@ -384,12 +388,82 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
     return foldingRanges
 })
 
-connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
-    await updateCacheFile(cache)
+async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
+    await updateCacheFile(cacheFile)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
+    const result = getCacheFromChar(line.cache || {}, char)
+    if (result) {
+        const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
+        if (unit && unit[key].length > 0) {
+            return unit[key].map(v => ({
+                uri: getUriFromRel(v.rel as string),
+                range: {
+                    start: { line: v.line as number, character: v.start },
+                    end: { line: v.line as number, character: v.end }
+                }
+            }))
+        }
+    }
+    return null
+}
 
-    throw ''
+connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    return await getReferencesOrDefinition(uri, number, char, 'def')
+})
+
+connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    return await getReferencesOrDefinition(uri, number, char, 'ref')
+})
+
+connection.onPrepareRename(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    const rel = getRelFromUri(uri)
+    const line = (linesOfRel.get(rel) as Line[])[number]
+    const result = getCacheFromChar(line.cache || {}, char)
+    if (result) {
+        return {
+            start: { line: number, character: result.start },
+            end: { line: number, character: result.end }
+        }
+    } else {
+        return null
+    }
+})
+
+connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
+    const rel = getRelFromUri(uri)
+    const line = (linesOfRel.get(rel) as Line[])[number]
+    const result = getCacheFromChar(line.cache || {}, char)
+    if (result) {
+        const changes: { [uri: string]: TextEdit[] } = {}
+        const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
+        if (unit) {
+            for (const def of unit.def) {
+                changes[getUriFromRel(def.rel as string)] = changes[getUriFromRel(def.rel as string)] || []
+                changes[getUriFromRel(def.rel as string)].push({
+                    newText: newName,
+                    range: {
+                        start: { line: def.line as number, character: def.start },
+                        end: { line: def.line as number, character: def.end }
+                    }
+                })
+            }
+            for (const ref of unit.ref) {
+                changes[getUriFromRel(ref.rel as string)] = changes[getUriFromRel(ref.rel as string)] || []
+                changes[getUriFromRel(ref.rel as string)].push({
+                    newText: newName,
+                    range: {
+                        start: { line: ref.line as number, character: ref.start },
+                        end: { line: ref.line as number, character: ref.end }
+                    }
+                })
+            }
+        }
+
+        return { changes }
+    } else {
+        return null
+    }
 })
 
 // connection.onDidChangeWatchedFiles(({ changes }) => {

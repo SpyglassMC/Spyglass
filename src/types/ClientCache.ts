@@ -87,6 +87,26 @@ export interface CachePosition extends TextRange {
 //     }
 // }
 
+export function getCacheFromChar(cache: ClientCache, char: number) {
+    for (const type in cache) {
+        const category = cache[type as CacheKey] as CacheCategory
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            for (const def of unit.def) {
+                if (def.start <= char && char <= def.end) {
+                    return { type: type as CacheKey, id, start: def.start, end: def.end }
+                }
+            }
+            for (const ref of unit.ref) {
+                if (ref.start <= char && char <= ref.end) {
+                    return { type: type as CacheKey, id, start: ref.start, end: ref.end }
+                }
+            }
+        }
+    }
+    return undefined
+}
+
 export function removeCachePosition(cache: ClientCache, rel: string) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
