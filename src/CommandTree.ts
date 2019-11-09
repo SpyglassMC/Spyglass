@@ -785,7 +785,8 @@ export const VanillaTree: CommandTree = {
                     executable: true,
                     children: {
                         value: {
-                            template: 'templates.boolean'
+                            template: 'templates.boolean',
+                            executable: true
                         }
                     }
                 },
@@ -794,7 +795,8 @@ export const VanillaTree: CommandTree = {
                     executable: true,
                     children: {
                         value: {
-                            parser: new NumberArgumentParser('integer', 0)
+                            parser: new NumberArgumentParser('integer', 0),
+                            executable: true
                         }
                     }
                 }

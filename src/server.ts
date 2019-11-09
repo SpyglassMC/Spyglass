@@ -70,7 +70,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             //     prepareProvider: true
             // },
             signatureHelpProvider: {
-                triggerCharacters: [' ', '\n']
+                triggerCharacters: [' ']
             },
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,

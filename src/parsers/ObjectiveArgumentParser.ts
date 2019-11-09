@@ -3,7 +3,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
+import { ClientCache, getCompletions, getSafeCategory, CacheCategory, CachePosition, CacheUnit } from '../types/ClientCache'
 import { VanillaConfig } from '../types/Config'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
