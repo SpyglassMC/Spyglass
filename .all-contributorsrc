@@ -20,6 +20,15 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "MinecraftPeace",
+      "name": "MinecraftPeace",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/57551211?v=4",
+      "profile": "https://github.com/MinecraftPeace",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
