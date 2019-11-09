@@ -1,3 +1,12 @@
+# [v1.5.0](https://github.com/SPGoding/datapack-language-server/compare/v1.4.0...v1.5.0) (2019-11-09)
+
+## ✨ New Features
+- [`a14a056`](https://github.com/SPGoding/datapack-language-server/commit/a14a056)  Finish cache 
+
+## 🐛 Bug Fixes
+- [`b69c39e`](https://github.com/SPGoding/datapack-language-server/commit/b69c39e)  Fix gamerule and completions (Issues: [`#98`](https://github.com/SPGoding/datapack-language-server/issues/98) [`#99`](https://github.com/SPGoding/datapack-language-server/issues/99))
+- [`3fd66c8`](https://github.com/SPGoding/datapack-language-server/commit/3fd66c8)  Fix errors while parsing comments (Issues: [`#99`](https://github.com/SPGoding/datapack-language-server/issues/99))
+
 # [v1.4.0](https://github.com/SPGoding/datapack-language-server/compare/v1.3.0...v1.4.0) (2019-11-06)
 
 ## ✨ New Features
