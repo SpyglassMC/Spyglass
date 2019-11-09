@@ -20,6 +20,15 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "YijunYuan",
+      "name": "Yijun Yuan",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7012463?v=4",
+      "profile": "https://github.com/YijunYuan",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
