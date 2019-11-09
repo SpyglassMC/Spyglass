@@ -185,6 +185,7 @@ async function updateCacheFile(cacheFile: CacheFile) {
         const { id, category: key } = await Identity.fromRel(rel)
         if (!(await fs.pathExists(abs))) {
             fileDeleted(rel, key, id)
+            delete cacheFile.files[rel]
         } else {
             const stat = await fs.stat(abs)
             const lastModified = stat.mtimeMs
@@ -326,36 +327,38 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
     const parser = new LineParser(false, 'line', undefined, cache.cache, config)
     const reader = new StringReader(strings[lineNumber])
     const { data: { hint: { fix, options } } } = parser.parse(reader, char, manager)
-
-    const fixLabelBeginning = fix.length > 1 ? fix.slice(0, -1).join(' ') + ' ' : ''
-    const fixLabelLast = fix[fix.length - 1]
     const signatures: SignatureInformation[] = []
-    const nonEmptyOptions = options.length > 0 ? options : ['']
 
-    for (const option of nonEmptyOptions) {
-        signatures.push({
-            label: `${fixLabelBeginning}${fixLabelLast} ${option}`,
-            parameters: [
-                {
-                    label: [
-                        0,
-                        fixLabelBeginning.length
-                    ]
-                },
-                {
-                    label: [
-                        fixLabelBeginning.length,
-                        fixLabelBeginning.length + fixLabelLast.length
-                    ]
-                },
-                {
-                    label: [
-                        fixLabelBeginning.length + fixLabelLast.length,
-                        fixLabelBeginning.length + fixLabelLast.length + option.length
-                    ]
-                }
-            ]
-        })
+    if (fix.length > 0) {
+        const fixLabelBeginning = fix.length > 1 ? fix.slice(0, -1).join(' ') + ' ' : ''
+        const fixLabelLast = fix[fix.length - 1]
+        const nonEmptyOptions = options.length > 0 ? options : ['']
+
+        for (const option of nonEmptyOptions) {
+            signatures.push({
+                label: `${fixLabelBeginning}${fixLabelLast} ${option}`,
+                parameters: [
+                    {
+                        label: [
+                            0,
+                            fixLabelBeginning.length
+                        ]
+                    },
+                    {
+                        label: [
+                            fixLabelBeginning.length,
+                            fixLabelBeginning.length + fixLabelLast.length
+                        ]
+                    },
+                    {
+                        label: [
+                            fixLabelBeginning.length + fixLabelLast.length,
+                            fixLabelBeginning.length + fixLabelLast.length + option.length
+                        ]
+                    }
+                ]
+            })
+        }
     }
 
     return { signatures, activeParameter: 1, activeSignature: 0 }

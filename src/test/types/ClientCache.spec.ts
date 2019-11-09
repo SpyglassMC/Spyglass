@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition } from '../../types/ClientCache'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -13,6 +13,24 @@ describe('ClientCache Tests', () => {
             const value = 'whatIsThis'
             const actual = isDefinitionType(value)
             assert(actual === false)
+        })
+    })
+    describe('removeCacheUnit() Tests', () => {
+        it('Should remove the unit', () => {
+            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
+            const actual = removeCacheUnit(cache, 'entities', 'foo')
+            assert.deepEqual(cache, {
+                entities: {}
+            })
+        })
+    })
+    describe('removeCachePosition() Tests', () => {
+        it('Should remove the pos', () => {
+            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, rel: 'data/minecraft/functions/a.mcfunction' }], ref: [] } } }
+            const actual = removeCachePosition(cache, 'data/minecraft/functions/a.mcfunction')
+            assert.deepEqual(cache, {
+                entities: { foo: { def: [], ref: [] } }
+            })
         })
     })
     describe('combineCache() Tests', () => {
@@ -56,6 +74,40 @@ describe('ClientCache Tests', () => {
             const actual = combineCache(base, override)
             assert.deepStrictEqual(actual, override)
         })
+        it('Should set additional information', () => {
+            const base: ClientCache = {}
+            const override: ClientCache = {
+                entities: {
+                    foo: {
+                        def: [{ start: 0, end: 3 }],
+                        ref: []
+                    }
+                }
+            }
+            const actual = combineCache(base, override, { rel: 'blabla', line: 0 })
+            assert.deepStrictEqual(actual, {
+                entities: {
+                    foo: {
+                        def: [{ start: 0, end: 3, rel: 'blabla', line: 0 }],
+                        ref: []
+                    }
+                }
+            })
+        })
+        it('Should not combine when the override unit is empty', () => {
+            const base: ClientCache = {}
+            const override: ClientCache = {
+                entities: {
+                    foo: {
+                        def: [],
+                        ref: []
+                    }
+                }
+            }
+            const actual = combineCache(base, override)
+            assert.deepStrictEqual(actual, base)
+        })
+        // TODO: Remove this.
         // it('Should remove elements with the same location as the override ones in ClientCache', () => {
         //     const base: ClientCache = {
         //         advancements: {
@@ -210,6 +262,29 @@ describe('ClientCache Tests', () => {
         })
         it('Should trim units', () => {
             const actual: ClientCache = {
+                objectives: {
+                    test: {
+                        def: [],
+                        ref: [{ start: 0, end: 3 }]
+                    },
+                    test2: {
+                        def: [],
+                        ref: []
+                    }
+                }
+            }
+            trimCache(actual)
+            assert.deepStrictEqual(actual, {
+                objectives: {
+                    test: {
+                        def: [],
+                        ref: [{ start: 0, end: 3 }]
+                    }
+                }
+            })
+        })
+        it("Should not trim units which doesn't need definitions", () => {
+            const actual: ClientCache = {
                 advancements: {
                     test: {
                         def: [],
@@ -226,14 +301,18 @@ describe('ClientCache Tests', () => {
                 advancements: {
                     test: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
+                    },
+                    test2: {
+                        def: [],
+                        ref: []
                     }
                 }
             })
         })
         it('Should trim categories', () => {
             const actual: ClientCache = {
-                advancements: {
+                objectives: {
                     test: {
                         def: [],
                         ref: []
@@ -242,6 +321,16 @@ describe('ClientCache Tests', () => {
             }
             trimCache(actual)
             assert.deepStrictEqual(actual, {})
+        })
+    })
+    describe('isLootTableType() Tests', () => {
+        it('Should return true', () => {
+            const actual = isLootTableType('lootTables/block')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = isLootTableType('advancements')
+            assert(actual === false)
         })
     })
 })

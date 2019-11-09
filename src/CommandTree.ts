@@ -24,6 +24,7 @@ import ScoreboardSlotArgumentParser from './parsers/ScoreboardSlotArgumentParser
 import Identity from './types/Identity'
 import TagArgumentParser from './parsers/TagArgumentParser'
 import TeamArgumentParser from './parsers/TeamArgumentParser'
+import ArgumentNode from './types/ArgumentNode'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1884,15 +1885,15 @@ export const VanillaTree: CommandTree = {
                     children: {
                         id: {
                             parser: ({ args }) => new DefinitionIDArgumentParser(
-                                args[args.length - 1].data
+                                getArgOrDefault(args, -1, '')
                             ),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
                                     parser: ({ args }) => new DefinitionDescriptionArgumentParser(
-                                        args[args.length - 2].data,
-                                        args[args.length - 1].data
+                                        getArgOrDefault(args, -2, ''),
+                                        getArgOrDefault(args, -1, '')
                                     ),
                                     description: 'Description of the definition',
                                     executable: true
@@ -2152,14 +2153,6 @@ export const VanillaTree: CommandTree = {
         facing: {
             parser: new LiteralArgumentParser('facing'),
             children: {
-                pos: {
-                    parser: new VectorArgumentParser(3),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                },
                 entity: {
                     parser: new LiteralArgumentParser('entity'),
                     children: {
@@ -2175,6 +2168,14 @@ export const VanillaTree: CommandTree = {
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                pos: {
+                    parser: new VectorArgumentParser(3),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
                         }
                     }
                 }
@@ -2196,14 +2197,6 @@ export const VanillaTree: CommandTree = {
         positioned: {
             parser: new LiteralArgumentParser('positioned'),
             children: {
-                pos: {
-                    parser: new VectorArgumentParser(3),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                },
                 as: {
                     parser: new LiteralArgumentParser('as'),
                     children: {
@@ -2214,6 +2207,14 @@ export const VanillaTree: CommandTree = {
                                     redirect: 'execute_subcommand'
                                 }
                             }
+                        }
+                    }
+                },
+                pos: {
+                    parser: new VectorArgumentParser(3),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
                         }
                     }
                 }
@@ -2222,14 +2223,6 @@ export const VanillaTree: CommandTree = {
         rotated: {
             parser: new LiteralArgumentParser('rotated'),
             children: {
-                rot: {
-                    parser: new VectorArgumentParser(2, false),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                },
                 as: {
                     parser: new LiteralArgumentParser('as'),
                     children: {
@@ -2240,6 +2233,14 @@ export const VanillaTree: CommandTree = {
                                     redirect: 'execute_subcommand'
                                 }
                             }
+                        }
+                    }
+                },
+                rot: {
+                    parser: new VectorArgumentParser(2, false),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
                         }
                     }
                 }
@@ -2476,6 +2477,10 @@ export const VanillaTree: CommandTree = {
 }
 
 export default VanillaTree
+
+export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
+    return args.length >= lastIndex ? args[args.length - lastIndex].data : fallback
+}
 
 /**
  * Represent a command tree.

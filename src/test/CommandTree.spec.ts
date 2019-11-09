@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate } from '../CommandTree'
+import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate, getArgOrDefault } from '../CommandTree'
 import { fail } from 'assert'
 import { TestArgumentParser } from './parsers/LineParser.spec'
 import LineParser from '../parsers/LineParser'
@@ -15,6 +15,16 @@ import { constructConfig } from '../types/Config'
 import Block from '../types/Block'
 
 describe('CommandTree Tests', () => {
+    describe('getArgOrDefault() Tests', () => {
+        it('Should return the arg data', () => {
+            const actual = getArgOrDefault([{ data: 'foo', parser: 'literal' }], 1, 'bar')
+            assert(actual === 'foo')
+        })
+        it('Should return the fallback value', () => {
+            const actual = getArgOrDefault([{ data: 'foo', parser: 'literal' }], 2, 'bar')
+            assert(actual === 'bar')
+        })
+    })
     describe('getChildren() Tests', () => {
         const tree: CommandTree = {
             line: { command: { redirect: 'commands' } },
@@ -311,6 +321,21 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, [{ label: 'snowy' }])
+        })
+        it('# This is a comment.', () => {
+            const parser = new LineParser(false, undefined, undefined, cache)
+            const reader = new StringReader('# This is a comment.')
+            const { data } = parser.parse(reader, undefined, manager)
+            assert.deepEqual(data.args, [
+                { data: '# This is a comment', parser: 'string' }
+            ])
+            assert.deepEqual(data.hint, {
+                fix: [],
+                options: []
+            })
+            assert.deepEqual(data.cache, undefined)
+            assert.deepEqual(data.errors, undefined)
+            assert.deepEqual(data.completions, undefined)
         })
     })
 })

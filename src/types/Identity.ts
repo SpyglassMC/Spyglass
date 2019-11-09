@@ -39,7 +39,7 @@ export default class Identity implements Lintable {
      * @param ext The extension of the file. Defaults to `.json`.
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
-    toPath(category: keyof ClientCache, ext: string = '.json', side: 'assets' | 'data' = 'data') {
+    toRel(category: keyof ClientCache, ext: string = '.json', side: 'assets' | 'data' = 'data') {
         let datapackCategory: string
         if (category === 'tags/blocks' ||
             category === 'tags/entityTypes' ||

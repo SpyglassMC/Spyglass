@@ -1,4 +1,5 @@
 import * as assert from 'power-assert'
+import * as path from 'path'
 import { describe, it } from 'mocha'
 import Identity from '../../types/Identity'
 import { constructConfig } from '../../types/Config'
@@ -44,23 +45,23 @@ describe('Identity Tests', () => {
     describe('toPath() Tests', () => {
         it('Should return correctly for tags', () => {
             const id = new Identity('spgoding', ['entity_types', 'foo', 'bar'])
-            const actual = id.toPath('tags/entityTypes')
-            assert(actual === 'data/spgoding/tags/entity_types/foo/bar.json')
+            const actual = id.toRel('tags/entityTypes')
+            assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for loot tables', () => {
             const id = new Identity('spgoding', ['foo', 'bar'])
-            const actual = id.toPath('lootTables/block')
-            assert(actual === 'data/spgoding/loot_tables/foo/bar.json')
+            const actual = id.toRel('lootTables/block')
+            assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for simple categories', () => {
             const id = new Identity('spgoding', ['foo', 'bar'])
-            const actual = id.toPath('functions', '.mcfunction', 'data')
-            assert(actual === 'data/spgoding/functions/foo/bar.mcfunction')
+            const actual = id.toRel('functions', '.mcfunction', 'data')
+            assert(actual === ['data', 'spgoding', 'functions', 'foo', 'bar.mcfunction'].join(path.sep))
         })
     })
     describe('fromPath() Tests', () => {
         it('Should return correctly', async () => {
-            const { id, ext, side, category } = await Identity.fromPath('data/spgoding/functions/foo/bar.mcfunction')
+            const { id, ext, side, category } = await Identity.fromRel('data/spgoding/functions/foo/bar.mcfunction')
             assert(id.toString() === 'spgoding:foo/bar')
             assert(ext === '.mcfunction')
             assert(side === 'data')

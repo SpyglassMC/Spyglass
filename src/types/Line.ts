@@ -73,7 +73,7 @@ export function combineLine(base: Line, override: Line): Line {
     // Errors.
     if ((base.errors && base.errors.length !== 0) || (override.errors && override.errors.length !== 0)) {
         /* istanbul ignore next */
-        base.errors = [...base.errors ? base.errors : [], ...override.errors ? override.errors : []]
+        base.errors = [...base.errors || [], ...override.errors || []]
     } else {
         delete base.errors
     }
@@ -82,9 +82,9 @@ export function combineLine(base: Line, override: Line): Line {
 
 export function combineSaturatedLine(base: SaturatedLine, override: Line): SaturatedLine {
     /* istanbul ignore next */
-    override.completions = override.completions ? override.completions : []
+    override.completions = override.completions || []
     /* istanbul ignore next */
-    override.errors = override.errors ? override.errors : []
+    override.errors = override.errors || []
     // Args.
     base.args = [...base.args, ...override.args]
     // Hint.

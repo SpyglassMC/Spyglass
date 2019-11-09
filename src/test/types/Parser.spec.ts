@@ -8,7 +8,7 @@ describe('Parser Tests', () => {
         it('Should combine cache, completions and errors', () => {
             const base = {
                 data: 'base',
-                cache: { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } },
+                cache: { entities: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
                 completions: [{ label: 'a' }]
             }
@@ -17,7 +17,7 @@ describe('Parser Tests', () => {
                 cache: {
                     entities: {
                         foo: {
-                            def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: []
+                            doc: 'foo', def: [{ start: 0, end: 3 }], ref: []
                         }
                     }
                 },
@@ -28,7 +28,7 @@ describe('Parser Tests', () => {
             assert.deepStrictEqual(base.cache, {
                 entities: {
                     foo: {
-                        def: [{ range: { start: 0, end: 3 }, documentation: 'foo' }], ref: []
+                        doc: 'foo', def: [{ start: 0, end: 3 }], ref: []
                     }
                 }
             })

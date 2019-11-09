@@ -13,9 +13,6 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
 
     constructor(...literals: string[]) {
         super()
-        // if (literals.length === 0) {
-        //     throw new Error('expected ‘literals.length’ to be more than 0')
-        // }
         this.literals = literals
         for (const literal of literals) {
             if (!StringReader.canInUnquotedString(literal)) {

@@ -117,23 +117,28 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         const ansUnit = ansCategory[id] as CacheUnit
         return ansUnit
     }
-    function addPos(type: CacheKey, id: string, pos: CachePosition) {
+    function addPos(id: string, pos: CachePosition, poses: CachePosition[]) {
         if (addition) {
             pos.rel = addition.rel
             pos.line = addition.line
         }
-        const ansUnit = initUnit(type as CacheKey, id)
-        ansUnit.def.push(pos)
+        poses.push(pos)
     }
     for (const type in override) {
         const overrideCategory = override[type as CacheKey]
         for (const id in overrideCategory) {
             const overrideUnit = overrideCategory[id] as CacheUnit
-            for (const overridePos of overrideUnit.def) {
-                addPos(type as CacheKey, id, overridePos)
-            }
-            for (const overridePos of overrideUnit.ref) {
-                addPos(type as CacheKey, id, overridePos)
+            if (overrideUnit.def.length > 0 || overrideUnit.ref.length > 0 || overrideUnit.doc) {
+                const ansUnit = initUnit(type as CacheKey, id)
+                for (const overridePos of overrideUnit.def) {
+                    addPos(id, overridePos, ansUnit.def)
+                }
+                for (const overridePos of overrideUnit.ref) {
+                    addPos(id, overridePos, ansUnit.ref)
+                }
+                if (overrideUnit.doc) {
+                    ansUnit.doc = overrideUnit.doc
+                }
             }
         }
     }
@@ -143,10 +148,19 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
 export function trimCache(cache: ClientCache) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
-        for (const id in category) {
-            const unit = category[id] as CacheUnit
-            if (unit.def.length === 0 && unit.ref.length === 0) {
-                delete category[id]
+        if (type === 'bossbars' ||
+            type === 'entities' ||
+            type === 'objectives' ||
+            type === 'tags' ||
+            type === 'teams' ||
+            type === 'storages' ||
+            type === 'colors/dust'
+        ) {
+            for (const id in category) {
+                const unit = category[id] as CacheUnit
+                if (unit.def.length === 0 && unit.ref.length === 0) {
+                    delete category[id]
+                }
             }
         }
         if (Object.keys(category).length === 0) {
