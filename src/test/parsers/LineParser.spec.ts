@@ -40,11 +40,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
             ans.cache = {
                 entities: {
                     foo: {
-                        def: [
-                            {
-                                range: { start, end: start + data.length }
-                            }
-                        ],
+                        def: [{ start, end: start + data.length }],
                         ref: []
                     }
                 }
@@ -53,12 +49,8 @@ export class TestArgumentParser extends ArgumentParser<string> {
             ans.cache = {
                 entities: {
                     foo: {
-                        def: [
-                            {
-                                range: { start, end: start + data.length },
-                                documentation: '*foo*'
-                            },
-                        ],
+                        doc: '*foo*',
+                        def: [{ start, end: start + data.length }],
                         ref: []
                     }
                 }

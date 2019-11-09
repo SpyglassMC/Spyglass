@@ -18,7 +18,7 @@ describe('ObjectiveArgumentParser Tests', () => {
         const cache = {
             objectives: {
                 foo: { def: [], ref: [] },
-                bar: { def: [{ line: { rel: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
+                bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
             }
         }
         it('Should return data', () => {
@@ -77,7 +77,7 @@ describe('ObjectiveArgumentParser Tests', () => {
                 objectives: {
                     foo: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     }
                 }
             })

@@ -9,7 +9,7 @@ import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import { nbtDocs } from 'mc-nbt-paths'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
@@ -107,7 +107,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     private config: Config
     private cursor: number
-    private cache: GlobalCache
+    private cache: ClientCache
     private manager: Manager<ArgumentParser<any>>
 
     readonly identity = 'nbtTag'

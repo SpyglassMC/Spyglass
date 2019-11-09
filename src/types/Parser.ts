@@ -1,7 +1,7 @@
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
 import StringReader from '../utils/StringReader'
-import { LocalCache, combineCache } from './Cache'
+import { ClientCache, combineCache } from './ClientCache'
 
 /**
  * Represent an argument parser.
@@ -40,7 +40,7 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
     /**
      * Local cache. Exist in the result of argument parsers.
      */
-    cache: LocalCache
+    cache: ClientCache
     /**
      * Completions. Exist in the result of argument parsers.
      */

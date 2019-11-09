@@ -1,6 +1,5 @@
 import * as assert from 'power-assert'
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
-import { LocalCache } from '../../types/Cache'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
@@ -45,11 +44,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             assert.deepStrictEqual(cache, {
                 tags: {
                     debug: {
-                        def: [
-                            {
-                                range: { start: 12, end: 17 }
-                            }
-                        ],
+                        def: [{ start: 12, end: 17 }],
                         ref: []
                     }
                 }

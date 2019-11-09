@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
-import { isDefinitionType, getCategoryKey, CacheCategory, LocalCacheElement } from '../types/Cache'
+import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 
 export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
     readonly identity = 'string'
@@ -23,14 +23,9 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
         if (id) {
             if (isDefinitionType(this.type)) {
                 ans.cache[getCategoryKey(this.type)] = {}
-                const category = ans.cache[getCategoryKey(this.type)] as CacheCategory<LocalCacheElement>
+                const category = ans.cache[getCategoryKey(this.type)] as CacheCategory
                 category[id] = {
-                    def: [{
-                        range: {
-                            start,
-                            end: start + id.length
-                        }
-                    }],
+                    def: [{ start, end: start + id.length }],
                     ref: []
                 }
             }

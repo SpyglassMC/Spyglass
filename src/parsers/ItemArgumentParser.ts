@@ -1,5 +1,5 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import { nbtDocs } from 'mc-nbt-paths'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
@@ -23,10 +23,10 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
     }
 
     private config: Config | undefined
-    private cache: GlobalCache | undefined
+    private cache: ClientCache | undefined
     private manager: Manager<ArgumentParser<any>>
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config?: Config, cache?: GlobalCache): ArgumentParserResult<Item> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config?: Config, cache?: ClientCache): ArgumentParserResult<Item> {
         const ans: ArgumentParserResult<Item> = {
             data: new Item(new Identity()),
             errors: [],

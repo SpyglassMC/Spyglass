@@ -1,6 +1,6 @@
 import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
+import { getCompletions, getSafeCategory, ClientCache } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
 import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
@@ -17,7 +17,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     private cursor: number
     private manager: Manager<ArgumentParser<any>>
     private config: Config
-    private cache: GlobalCache
+    private cache: ClientCache
 
     constructor(
         private readonly amount: 'single' | 'multiple',
@@ -25,7 +25,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         private readonly greedy = false
     ) { super() }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Entity> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Entity> {
         this.cursor = cursor
         this.manager = manager
         this.config = config
@@ -82,7 +82,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 entities: {
                     [plain]: {
                         def: [],
-                        ref: [{ range: { start, end: start + plain.length } }]
+                        ref: [{ start, end: start + plain.length }]
                     }
                 }
             }
@@ -169,7 +169,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 manager => {
                     return manager.get('Literal', SelectorArgumentKeys)
                 },
-                (ans, reader, cursor, manager, config, cache, key, range) => {
+                (ans, reader, cursor, manager, config, cache, key) => {
                     if (key === 'sort') {
                         const result = manager.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, cursor, manager, config, cache)
                         if (result.data) {
@@ -215,7 +215,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         new MapAbstractParser<Identity, Entity>(
                             '{', '=', ',', '}',
                             manager => manager.get('NamespacedID', ['$advancements']),
-                            (ans, reader, cursor, manager, config, cache, adv, range) => {
+                            (ans, reader, cursor, manager, config, cache, adv) => {
                                 ans.data.argument.advancements = ans.data.argument.advancements || {}
                                 if (reader.peek() === '{') {
                                     const criteriaObject: { [crit: string]: boolean } = ans.data.argument.advancements[adv.toString()] = {}

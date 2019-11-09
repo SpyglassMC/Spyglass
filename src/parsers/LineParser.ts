@@ -6,8 +6,7 @@ import Parser from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaTree, { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
-import { GlobalCache } from '../types/Cache'
-import { MarkupContent } from 'vscode-languageserver'
+import { ClientCache } from '../types/ClientCache'
 
 export default class LineParser implements Parser<Line> {
     // istanbul ignore next
@@ -24,7 +23,7 @@ export default class LineParser implements Parser<Line> {
          */
         private readonly entryPoint: 'line' | 'commands' = 'line',
         private readonly tree: CommandTree = VanillaTree,
-        private readonly cache: GlobalCache = {},
+        private readonly cache: ClientCache = {},
         private readonly config: Config = VanillaConfig
     ) { }
 

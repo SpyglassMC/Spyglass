@@ -11,7 +11,7 @@ import VanillaBlockDefinitions from '../types/VanillaBlockDefinitions'
 import VanillaRegistries from '../types/VanillaRegistries'
 import Vector from '../types/Vector'
 import { VanillaConfig } from '../types/Config'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 
 export default class ParticleArgumentParser extends ArgumentParser<Particle<any>> {
     readonly identity = 'particle'
@@ -25,7 +25,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Particle<any>> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Particle<any>> {
         const ans: ArgumentParserResult<Particle<any>> = {
             data: new Particle(new Identity()),
             errors: [],
@@ -56,7 +56,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                             'colors/dust': {
                                 [key]: {
                                     def: [],
-                                    ref: [{ range: { start, end: reader.cursor} }]
+                                    ref: [{ start, end: reader.cursor }]
                                 }
                             }
                         }

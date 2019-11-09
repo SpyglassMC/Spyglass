@@ -1,6 +1,6 @@
 import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
-import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
+import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
 import { VanillaConfig } from '../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
@@ -26,7 +26,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             errors: [],

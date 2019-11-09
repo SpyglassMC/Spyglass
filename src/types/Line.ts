@@ -1,4 +1,4 @@
-import { LocalCache, combineCache } from './Cache'
+import { ClientCache, combineCache } from './ClientCache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
 import ArgumentNode from './ArgumentNode'
@@ -10,22 +10,28 @@ export default interface Line {
     /**
      * All parsed arguments of the line.
      */
-    args: ArgumentNode<any>[]
+    args: ArgumentNode<any>[],
     /**
      * Hints.
      */
     hint: {
+        /**
+         * Hints for previous nodes. The last element in the array stands for the current node.
+         */
         fix: string[],
+        /**
+         * Hints for the next node.
+         */
         options: string[]
-    }
+    },
     /**
      * All cache of the line.
      */
-    cache?: LocalCache
+    cache?: ClientCache,
     /**
      * All errors occured while parsing the line.
      */
-    errors?: ParsingError[]
+    errors?: ParsingError[],
     /**
      * All completions in this line.
      */
@@ -36,7 +42,7 @@ export default interface Line {
  * `Line` without optional properties.
  */
 export interface SaturatedLine extends Line {
-    cache: LocalCache,
+    cache: ClientCache,
     errors: ParsingError[],
     completions: CompletionItem[]
 }

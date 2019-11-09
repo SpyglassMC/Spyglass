@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import Lintable, { ToLintedString } from './Lintable'
-import { Cache } from './Cache'
+import { ClientCache } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 
@@ -39,7 +39,7 @@ export default class Identity implements Lintable {
      * @param ext The extension of the file. Defaults to `.json`.
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
-    toPath(category: keyof Cache<any>, ext: string = '.json', side: 'assets' | 'data' = 'data') {
+    toPath(category: keyof ClientCache, ext: string = '.json', side: 'assets' | 'data' = 'data') {
         let datapackCategory: string
         if (category === 'tags/blocks' ||
             category === 'tags/entityTypes' ||
@@ -64,8 +64,8 @@ export default class Identity implements Lintable {
      * datapack category.
      */
     /* istanbul ignore next */
-    static async fromPath(rel: string):
-        Promise<{ id: Identity, category: keyof Cache<any>, ext: string, side: 'assets' | 'data' }> {
+    static async fromRel(rel: string):
+        Promise<{ id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' }> {
         rel = path.normalize(rel)
         const segs = rel.split(path.sep)
         const ext = path.extname(rel)
@@ -75,7 +75,7 @@ export default class Identity implements Lintable {
         const paths = segs.slice(3)
         paths[paths.length - 1] = path.basename(paths[paths.length - 1], ext)
         const id = new Identity(namespace, paths)
-        let category: keyof Cache<any>
+        let category: keyof ClientCache
         if (datapackCategory === 'tags') {
             switch (paths[0]) {
                 case 'block':
@@ -116,7 +116,7 @@ export default class Identity implements Lintable {
                 category = 'lootTables/generic'
             }
         } else {
-            category = datapackCategory as keyof Cache<any>
+            category = datapackCategory as keyof ClientCache
         }
         return { id, category, ext, side }
     }

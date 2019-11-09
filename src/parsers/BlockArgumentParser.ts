@@ -9,7 +9,7 @@ import Manager from '../types/Manager'
 import StringReader from '../utils/StringReader'
 import VanillaBlockDefinitions from '../types/VanillaBlockDefinitions'
 import VanillaRegistries from '../types/VanillaRegistries'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import MapAbstractParser from './MapAbstractParser'
 import ParsingError from '../types/ParsingError'
 
@@ -27,10 +27,10 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
     }
 
     private config: Config | undefined
-    private cache: GlobalCache | undefined
+    private cache: ClientCache | undefined
     private manager: Manager<ArgumentParser<any>>
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config?: Config, cache?: GlobalCache): ArgumentParserResult<Block> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config?: Config, cache?: ClientCache): ArgumentParserResult<Block> {
         const ans: ArgumentParserResult<Block> = {
             data: new Block(new Identity()),
             errors: [],

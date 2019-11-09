@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
-import { isDefinitionType, getCategoryKey, CacheCategory, LocalCacheElement } from '../types/Cache'
+import { isDefinitionType, getCategoryKey, CacheCategory, ClientCache } from '../types/ClientCache'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     readonly identity = 'string'
@@ -26,15 +26,14 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
         if (description) {
             if (isDefinitionType(this.type)) {
                 if (this.id) {
-                    ans.cache[getCategoryKey(this.type)] = {}
-                    const category = ans.cache[getCategoryKey(this.type)] as CacheCategory<LocalCacheElement>
+                    const key = getCategoryKey(this.type)
+                    ans.cache[key] = {}
+                    const category = ans.cache[key] as CacheCategory
                     category[this.id] = {
+                        doc: description,
                         def: [{
-                            range: {
-                                start: start - 1 - this.id.length,
-                                end: start - 1
-                            },
-                            documentation: description
+                            start: start - 1 - this.id.length,
+                            end: start - 1,
                         }],
                         ref: []
                     }

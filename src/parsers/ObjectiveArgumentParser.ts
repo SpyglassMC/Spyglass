@@ -3,7 +3,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { GlobalCache, getCompletions, getSafeCategory } from '../types/Cache'
+import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
 import { VanillaConfig } from '../types/Config'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
@@ -15,7 +15,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<string> {
+    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -45,7 +45,10 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                 if (this.isDefinition) {
                     ans.cache = {
                         objectives: {
-                            [value]: { def: [{ range: { start, end: reader.cursor } }], ref: [] }
+                            [value]: {
+                                def: [{ start, end: reader.cursor }],
+                                ref: []
+                            }
                         }
                     }
                 } else if (config.lint.strictObjectiveCheck) {
@@ -71,7 +74,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                 objectives: {
                     [value]: {
                         def: [],
-                        ref: [{ range: { start, end: start + value.length } }]
+                        ref: [{ start, end: start + value.length }]
                     }
                 }
             }

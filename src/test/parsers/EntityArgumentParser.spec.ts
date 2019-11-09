@@ -22,7 +22,7 @@ describe('EntityArgumentParser Tests', () => {
         const cache = {
             entities: {
                 foo: { def: [], ref: [] },
-                bar: { def: [{ line: { rel: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
+                bar: { def: [], ref: [], doc: 'The doc of **bar**' }
             },
             'tags/entityTypes': {
                 'spgoding:mobs': { def: [], ref: [] }
@@ -85,7 +85,7 @@ describe('EntityArgumentParser Tests', () => {
                     entities: {
                         foo: {
                             def: [],
-                            ref: [{ range: { start: 0, end: 3 } }]
+                            ref: [{  start: 0, end: 3  }]
                         }
                     }
                 })

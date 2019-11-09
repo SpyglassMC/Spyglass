@@ -3,7 +3,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import Manager from '../types/Manager'
 import { VanillaConfig } from '../types/Config'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import Message from '../types/Message'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {
@@ -13,7 +13,7 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<Message> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Message> {
         const ans: ArgumentParserResult<Message> = {
             data: new Message([]),
             errors: [],

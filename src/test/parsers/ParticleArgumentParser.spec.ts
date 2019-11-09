@@ -78,7 +78,7 @@ describe('ParticleArgumentParser Tests', () => {
                 'colors/dust': {
                     '0.93 0.4 0.8 1': {
                         def: [],
-                        ref: [{ range: { start: 0, end: 34 } }]
+                        ref: [{ start: 0, end: 34 }]
                     }
                 }
             })

@@ -1,5 +1,5 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
 import Manager from '../types/Manager'
@@ -15,11 +15,11 @@ export default class MapAbstractParser<K, R> {
         private readonly keyValuePairSep: string,
         private readonly endChar: string,
         private readonly getKeyParser: (manager: Manager<ArgumentParser<K>>, ans: ArgumentParserResult<R>) => ArgumentParser<K>,
-        private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: GlobalCache, key: K, keyRange: TextRange) => void
+        private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache, key: K, keyRange: TextRange) => void
     ) { }
 
     // istanbul ignore next
-    parse(ans: ArgumentParserResult<R>, reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}) {
+    parse(ans: ArgumentParserResult<R>, reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}) {
         try {
             reader
                 .expect(this.beginChar)

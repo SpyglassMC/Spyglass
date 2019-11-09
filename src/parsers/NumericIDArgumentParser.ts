@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import { ArgumentParserResult } from '../types/Parser'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import { VanillaConfig } from '../types/Config'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
@@ -14,7 +14,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
         this.registry = registries[type]
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: GlobalCache = {}): ArgumentParserResult<number> {
+    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<number> {
         const ans: ArgumentParserResult<number> = {
             data: NaN,
             errors: [],

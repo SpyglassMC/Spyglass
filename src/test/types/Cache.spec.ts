@@ -1,8 +1,8 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { LocalCache, isDefinitionType, combineCache, getCategoryKey, GlobalCache, trimCache, getCompletions, getSafeCategory } from '../../types/Cache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache } from '../../types/ClientCache'
 
-describe('Cache Tests', () => {
+describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
         it('Should return true', () => {
             const value = 'entity'
@@ -17,12 +17,12 @@ describe('Cache Tests', () => {
     })
     describe('combineCache() Tests', () => {
         it('Should combine when base is undefiend', () => {
-            const override: LocalCache = { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } }
+            const override: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
             const actual = combineCache(undefined, override)
             assert.deepStrictEqual(actual, override)
         })
         it('Should combine when override is undefiend', () => {
-            const base: LocalCache = { entities: { foo: { def: [{ range: { start: 0, end: 3 } }], ref: [] } } }
+            const base: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
             const actual = combineCache(base, undefined)
             assert.deepStrictEqual(actual, base)
         })
@@ -31,11 +31,11 @@ describe('Cache Tests', () => {
             assert.deepStrictEqual(actual, {})
         })
         it('Should load def in override cache', () => {
-            const base: LocalCache = {}
-            const override: LocalCache = {
+            const base: ClientCache = {}
+            const override: ClientCache = {
                 entities: {
                     foo: {
-                        def: [{ range: { start: 0, end: 3 } }],
+                        def: [{ start: 0, end: 3 }],
                         ref: []
                     }
                 }
@@ -44,66 +44,66 @@ describe('Cache Tests', () => {
             assert.deepStrictEqual(actual, override)
         })
         it('Should load ref in override cache', () => {
-            const base: LocalCache = {}
-            const override: LocalCache = {
+            const base: ClientCache = {}
+            const override: ClientCache = {
                 entities: {
                     foo: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     }
                 }
             }
             const actual = combineCache(base, override)
             assert.deepStrictEqual(actual, override)
         })
-        it('Should remove elements with the same location as the override ones in LocalCache', () => {
-            const base: LocalCache = {
-                advancements: {
-                    foo: {
-                        def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
-                    }
-                }
-            }
-            const override: LocalCache = {
-                entities: {
-                    foo: {
-                        def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
-                    }
-                }
-            }
-            const actual = combineCache(base, override)
-            trimCache(actual)
-            assert.deepStrictEqual(actual, override)
-        })
-        it('Should remove elements with the same location as the override ones in GlobalCache', () => {
-            const base: GlobalCache = {
-                advancements: {
-                    foo: {
-                        def: [],
-                        ref: [{ line: { rel: 'test', number: 0 } }]
-                    }
-                }
-            }
-            const override: GlobalCache = {
-                entities: {
-                    foo: {
-                        def: [],
-                        ref: [{ line: { rel: 'test', number: 0 } }]
-                    }
-                }
-            }
-            const actual = combineCache(base, override)
-            trimCache(actual)
-            assert.deepStrictEqual(actual, override)
-        })
+        // it('Should remove elements with the same location as the override ones in ClientCache', () => {
+        //     const base: ClientCache = {
+        //         advancements: {
+        //             foo: {
+        //                 def: [],
+        //                 ref: [{ start: 0, end: 3 }]
+        //             }
+        //         }
+        //     }
+        //     const override: ClientCache = {
+        //         entities: {
+        //             foo: {
+        //                 def: [],
+        //                 ref: [{ start: 0, end: 3 }]
+        //             }
+        //         }
+        //     }
+        //     const actual = combineCache(base, override)
+        //     trimCache(actual)
+        //     assert.deepStrictEqual(actual, override)
+        // })
+        // it('Should remove elements with the same location as the override ones in ClientCache', () => {
+        //     const base: ClientCache = {
+        //         advancements: {
+        //             foo: {
+        //                 def: [],
+        //                 ref: [{ line: { rel: 'test', number: 0 } }]
+        //             }
+        //         }
+        //     }
+        //     const override: ClientCache = {
+        //         entities: {
+        //             foo: {
+        //                 def: [],
+        //                 ref: [{ line: { rel: 'test', number: 0 } }]
+        //             }
+        //         }
+        //     }
+        //     const actual = combineCache(base, override)
+        //     trimCache(actual)
+        //     assert.deepStrictEqual(actual, override)
+        // })
         it('Should complete base object', () => {
-            const base1: LocalCache = {}
-            const base2: LocalCache = {
+            const base1: ClientCache = {}
+            const base2: ClientCache = {
                 entities: {}
             }
-            const base3: LocalCache = {
+            const base3: ClientCache = {
                 entities: {
                     foo: {
                         def: [],
@@ -111,11 +111,11 @@ describe('Cache Tests', () => {
                     }
                 }
             }
-            const override: LocalCache = {
+            const override: ClientCache = {
                 entities: {
                     foo: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     }
                 }
             }
@@ -150,10 +150,8 @@ describe('Cache Tests', () => {
                 tags: {
                     foo: { def: [], ref: [] },
                     bar: {
-                        def: [{
-                            line: { rel: '', number: 0 },
-                            documentation: 'Documentation for **bar**'
-                        }],
+                        doc: 'Documentation for **bar**',
+                        def: [{ rel: '', line: 0, start: 0, end: 0 }],
                         ref: []
                     }
                 }
@@ -198,11 +196,11 @@ describe('Cache Tests', () => {
     })
     describe('trimCache() Tests', () => {
         it('Should not trim units with content', () => {
-            const cache: LocalCache = {
+            const cache: ClientCache = {
                 advancements: {
                     test: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     }
                 }
             }
@@ -211,11 +209,11 @@ describe('Cache Tests', () => {
             assert.deepStrictEqual(actual, cache)
         })
         it('Should trim units', () => {
-            const actual: LocalCache = {
+            const actual: ClientCache = {
                 advancements: {
                     test: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     },
                     test2: {
                         def: [],
@@ -234,7 +232,7 @@ describe('Cache Tests', () => {
             })
         })
         it('Should trim categories', () => {
-            const actual: LocalCache = {
+            const actual: ClientCache = {
                 advancements: {
                     test: {
                         def: [],

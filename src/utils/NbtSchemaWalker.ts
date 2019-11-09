@@ -1,5 +1,5 @@
 import { CompletionItem } from 'vscode-languageserver'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
@@ -224,7 +224,7 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: GlobalCache = {}, out = { type: '' }): CompletionItem[] {
+    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}, out = { type: '' }): CompletionItem[] {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: CompletionItem[] = []

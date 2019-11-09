@@ -18,7 +18,7 @@ describe('TeamArgumentParser Tests', () => {
         const cache = {
             teams: {
                 foo: { def: [], ref: [] },
-                bar: { def: [{ line: { rel: '', number: 0 }, documentation: 'The doc of **bar**' }], ref: [] }
+                bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
             }
         }
         it('Should return data', () => {
@@ -55,7 +55,7 @@ describe('TeamArgumentParser Tests', () => {
         it('Should return warning when the strict team check fail', () => {
             const parser = new TeamArgumentParser()
             const config = constructConfig({ lint: { strictTeamCheck: true } })
-            const actual = parser.parse(new StringReader('qux'), undefined,undefined,  config, cache)
+            const actual = parser.parse(new StringReader('qux'), undefined, undefined, config, cache)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
@@ -69,7 +69,7 @@ describe('TeamArgumentParser Tests', () => {
                 teams: {
                     foo: {
                         def: [],
-                        ref: [{ range: { start: 0, end: 3 } }]
+                        ref: [{ start: 0, end: 3 }]
                     }
                 }
             })

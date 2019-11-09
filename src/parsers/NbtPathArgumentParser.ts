@@ -7,7 +7,7 @@ import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { GlobalCache } from '../types/Cache'
+import { ClientCache } from '../types/ClientCache'
 import { nbtDocs } from 'mc-nbt-paths'
 import { NbtCompoundTag } from '../types/NbtTag'
 import NbtPath, { NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../types/NbtPath'
@@ -15,7 +15,7 @@ import NbtPath, { NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../type
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     private config: Config
     private cursor: number
-    private cache: GlobalCache
+    private cache: ClientCache
     private manager: Manager<ArgumentParser<any>>
 
     readonly identity = 'nbtPath'

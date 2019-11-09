@@ -1,0 +1,210 @@
+import TextRange from './TextRange'
+import { CompletionItem } from 'vscode-languageserver'
+
+export interface CacheFile {
+    cache: ClientCache,
+    files: {
+        [rel: string]: number
+    }
+}
+
+/**
+ * Represent a cache which is used to accelerate renaming and computing completions. 
+ */
+export interface ClientCache {
+    advancements?: CacheCategory,
+    functions?: CacheCategory,
+    'lootTables/fishing'?: CacheCategory,
+    'lootTables/entity'?: CacheCategory,
+    'lootTables/block'?: CacheCategory,
+    'lootTables/generic'?: CacheCategory,
+    predicates?: CacheCategory,
+    recipes?: CacheCategory,
+    'tags/blocks'?: CacheCategory,
+    'tags/entityTypes'?: CacheCategory,
+    'tags/fluids'?: CacheCategory,
+    'tags/functions'?: CacheCategory,
+    'tags/items'?: CacheCategory,
+    bossbars?: CacheCategory,
+    entities?: CacheCategory,
+    objectives?: CacheCategory,
+    storages?: CacheCategory,
+    tags?: CacheCategory,
+    teams?: CacheCategory,
+    'colors/dust'?: CacheCategory
+}
+
+export type CacheKey = keyof ClientCache
+
+/**
+ * A category in `ClientCache`.
+ */
+export type CacheCategory = {
+    /**
+     * The unit regarding this id.
+     */
+    [id: string]: CacheUnit | undefined
+}
+
+/**
+ * An unit in `CacheCategory`.
+ */
+export type CacheUnit = {
+    /**
+     * The user-defined documentation for the unit.
+     */
+    doc?: string,
+    /**
+     * The definition element of this unit.
+     * 
+     * Duplicate definitions will override the first ones.
+     * 
+     * Empty for all categories except for `bossbars`, `entities`, `objectives`, `storages` and `tags`.
+     */
+    def: CachePosition[],
+    /**
+     * All reference elements of this unit.
+     */
+    ref: CachePosition[]
+}
+
+/**
+ * An element in `CacheUnit`.
+ */
+export interface CachePosition extends TextRange {
+    rel?: string,
+    line?: number
+}
+
+// export function areElementsEqual(a: TextRange, b: TextRange) {
+//     // istanbul ignore else
+//     if (isGlobalElement(a) && isGlobalElement(b)) {
+//         return a.line.number === b.line.number && a.line.rel === b.line.rel
+//     } else if (isLocalElement(a) && isLocalElement(b)) {
+//         return a.range.start === b.range.start && a.range.end === b.range.end
+//     } else {
+//         throw 'Unreachable code'
+//     }
+// }
+
+export function removeCachePosition(cache: ClientCache, rel: string) {
+    for (const type in cache) {
+        const category = cache[type as CacheKey] as CacheCategory
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            unit.def = unit.def.filter(ele => ele.rel !== rel)
+            unit.ref = unit.ref.filter(ele => ele.rel !== rel)
+        }
+    }
+}
+
+export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) {
+    const category = getSafeCategory(cache, type)
+    delete category[id]
+}
+
+/**
+ * Combine base cache with overriding cache.
+ * @param base Base cache.
+ * @param override Overriding cache.
+ */
+export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { rel: string, line: number }) {
+    const ans: ClientCache = JSON.parse(JSON.stringify(base))
+    function initUnit(type: CacheKey, id: string) {
+        ans[type] = getSafeCategory(ans, type)
+        const ansCategory = ans[type] as CacheCategory
+        ansCategory[id] = ansCategory[id] || { def: [], ref: [] }
+        const ansUnit = ansCategory[id] as CacheUnit
+        return ansUnit
+    }
+    function addPos(type: CacheKey, id: string, pos: CachePosition) {
+        if (addition) {
+            pos.rel = addition.rel
+            pos.line = addition.line
+        }
+        const ansUnit = initUnit(type as CacheKey, id)
+        ansUnit.def.push(pos)
+    }
+    for (const type in override) {
+        const overrideCategory = override[type as CacheKey]
+        for (const id in overrideCategory) {
+            const overrideUnit = overrideCategory[id] as CacheUnit
+            for (const overridePos of overrideUnit.def) {
+                addPos(type as CacheKey, id, overridePos)
+            }
+            for (const overridePos of overrideUnit.ref) {
+                addPos(type as CacheKey, id, overridePos)
+            }
+        }
+    }
+    return ans
+}
+
+export function trimCache(cache: ClientCache) {
+    for (const type in cache) {
+        const category = cache[type as CacheKey] as CacheCategory
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            if (unit.def.length === 0 && unit.ref.length === 0) {
+                delete category[id]
+            }
+        }
+        if (Object.keys(category).length === 0) {
+            delete cache[type as CacheKey]
+        }
+    }
+}
+
+export function getSafeCategory(cache: ClientCache | undefined, type: CacheKey) {
+    cache = cache || {}
+    return cache[type] || {}
+}
+
+export function getCompletions(cache: ClientCache, type: CacheKey) {
+    const category = getSafeCategory(cache, type)
+    const ans: CompletionItem[] = []
+    for (const id in category) {
+        const unit = category[id] as CacheUnit
+        const documentation = unit.doc || undefined
+        ans.push({
+            ...{ label: id },
+            ...(documentation ? { documentation } : {})
+        })
+    }
+    return ans
+}
+
+type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'storage'
+
+export function isDefinitionType(value: string): value is DefinitionType {
+    return (
+        value === 'bossbar' ||
+        value === 'entity' ||
+        value === 'objective' ||
+        value === 'tag' ||
+        value === 'team' ||
+        value === 'storage'
+    )
+}
+
+export function getCategoryKey(type: DefinitionType): CacheKey {
+    if (type === 'bossbar') {
+        return 'bossbars'
+    } else if (type === 'entity') {
+        return 'entities'
+    } else if (type === 'objective') {
+        return 'objectives'
+    } else if (type === 'team') {
+        return 'teams'
+    } else if (type === 'storage') {
+        return 'storages'
+    } else {
+        return 'tags'
+    }
+}
+
+type LootTableType = 'lootTables/block' | 'lootTables/entity' | 'lootTables/fishing' | 'lootTables/generic'
+
+export function isLootTableType(type: CacheKey): type is LootTableType {
+    return type.startsWith('lootTables/')
+}
