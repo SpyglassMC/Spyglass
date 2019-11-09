@@ -97,13 +97,13 @@ You can find all the references of entities, tags, teams, bossbars and data stor
 
 ## Renaming
 
-This is WIP.
-
 You can rename entities, tags, teams, bossbars and data storages by pressing F2 or other configured key on their names.
 
 All the references of the same symbol in the whole workspace will be renamed.
 
 **Warning**: your input can be accidentally corrupted by using this feature. Use it at your own risk.
+
+![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
 
 ## Formatting (aka Linting)
 
