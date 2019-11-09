@@ -1,3 +1,8 @@
+# [v1.6.0](https://github.com/SPGoding/datapack-language-server/compare/v1.5.0...v1.6.0) (2019-11-09)
+
+## ✨ New Features
+- [`a3a7826`](https://github.com/SPGoding/datapack-language-server/commit/a3a7826)  Support renaming (Issues: [`#71`](https://github.com/SPGoding/datapack-language-server/issues/71) [`#74`](https://github.com/SPGoding/datapack-language-server/issues/74) [`#76`](https://github.com/SPGoding/datapack-language-server/issues/76))
+
 # [v1.5.0](https://github.com/SPGoding/datapack-language-server/compare/v1.4.0...v1.5.0) (2019-11-09)
 
 ## ✨ New Features
