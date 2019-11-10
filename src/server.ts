@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
@@ -55,12 +55,13 @@ connection.onInitialize(async ({ workspaceFolders }) => {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"']
             },
             definitionProvider: true,
+            didChangeWatchedFiles: true,
             // documentFormattingProvider: true,
             // documentLinkProvider: {
             //     resolveProvider: true
             // },
             // documentOnTypeFormattingProvider: {
-            //     firstTriggerCharacter: '\n'
+            //     firstTrigge rCharacter: '\n'
             // },
             foldingRangeProvider: true,
             colorProvider: true,
@@ -80,6 +81,11 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     }
 })
 
+setInterval(
+    () => void fs.writeFile(cachePath, JSON.stringify(cacheFile)),
+    60000
+)
+
 function getRelFromUri(uri: string) {
     const abs = Files.uriToFilePath(uri) as string
     const rel = path.relative(workspaceFolderPath, abs)
@@ -90,17 +96,17 @@ function getUriFromRel(rel: string) {
     return URI.file(path.join(workspaceFolderPath, rel)).toString()
 }
 
-async function updateCacheFile(cacheFile: CacheFile) {
+const cacheFileOperations = {
     // lootTables/*
     // ADDED: Add to relevant lootTables/* cache category.
     // MODIFIED: Move from one of the lootTables/* category to relevant lootTables/* cache category.
     // DELETED: Remove the ID from all lootTables/* categories.
-    const addLootTable = (id: string, type: CacheKey) => {
+    addLootTable: (id: string, type: CacheKey) => {
         const category = getSafeCategory(cacheFile.cache, type)
         category[id] = { def: [], ref: [] }
         cacheFile.cache[type] = category
-    }
-    const modifyLootTable = (id: string, type: CacheKey) => {
+    },
+    modifyLootTable: (id: string, type: CacheKey) => {
         const category = getSafeCategory(cacheFile.cache, type)
         let otherKeys: CacheKey[] = ['lootTables/block', 'lootTables/entity', 'lootTables/fishing', 'lootTables/generic']
         otherKeys = otherKeys.filter(v => v !== type)
@@ -114,28 +120,28 @@ async function updateCacheFile(cacheFile: CacheFile) {
             }
         }
         cacheFile.cache[type] = category
-    }
-    const deleteLootTable = (id: string) => {
+    },
+    deleteLootTable: (id: string) => {
         removeCacheUnit(cacheFile.cache, 'lootTables/block', id)
         removeCacheUnit(cacheFile.cache, 'lootTables/entity', id)
         removeCacheUnit(cacheFile.cache, 'lootTables/fishing', id)
         removeCacheUnit(cacheFile.cache, 'lootTables/generic', id)
-    }
+    },
 
     // functions
     // ADDED: Add to functions cache category.
     // MODIFIED & DELETED: Remove all cache positions with the specific rel.
     // ADDED & MODIFIED: Combine all caches of all lines.
     // DELETED: Remove from functions cache category.
-    const addFunction = (id: string) => {
+    addFunction: (id: string) => {
         const category = getSafeCategory(cacheFile.cache, 'functions')
         category[id] = { def: [], ref: [] }
         cacheFile.cache.functions = category
-    }
-    const removeFunctionFromAllCachePositions = (rel: string) => {
+    },
+    removeFunctionFromAllCachePositions: (rel: string) => {
         removeCachePosition(cacheFile.cache, rel)
-    }
-    const combineCacheOfLines = async (rel: string, abs: string) => {
+    },
+    combineCacheOfLines: async (rel: string, abs: string) => {
         let lines = linesOfRel.get(rel)
         if (!lines) {
             lines = []
@@ -151,51 +157,53 @@ async function updateCacheFile(cacheFile: CacheFile) {
             i++
         }
         cacheFile.cache = combineCache(cacheFile.cache, cacheOfLines)
-    }
-    const removeFunction = (id: string) => {
+    },
+    removeFunction: (id: string) => {
         removeCacheUnit(cacheFile.cache, 'functions', id)
-    }
+    },
 
     // advancements, predicates, tags/*, recipes:
     // ADDED: Add to advancements cache category.
     // DELETED: Remove from advancements cache category.
-    const fileAdded = async (rel: string, abs: string, type: CacheKey, id: Identity) => {
+    fileAdded: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
         if (isLootTableType(type)) {
-            addLootTable(id.toString(), type)
+            cacheFileOperations.addLootTable(id.toString(), type)
         } else if (type === 'functions') {
-            addFunction(id.toString())
-            await combineCacheOfLines(rel, abs)
+            cacheFileOperations.addFunction(id.toString())
+            await cacheFileOperations.combineCacheOfLines(rel, abs)
+        }
+    },
+    fileModified: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
+        if (isLootTableType(type)) {
+            cacheFileOperations.modifyLootTable(id.toString(), type)
+        } else if (type === 'functions') {
+            cacheFileOperations.removeFunctionFromAllCachePositions(rel)
+            await cacheFileOperations.combineCacheOfLines(rel, abs)
+        }
+    },
+    fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
+        if (isLootTableType(type)) {
+            cacheFileOperations.deleteLootTable(id.toString())
+        } else if (type === 'functions') {
+            cacheFileOperations.removeFunctionFromAllCachePositions(rel)
+            cacheFileOperations.removeFunction(id.toString())
         }
     }
-    const fileModified = async (rel: string, abs: string, type: CacheKey, id: Identity) => {
-        if (isLootTableType(type)) {
-            modifyLootTable(id.toString(), type)
-        } else if (type === 'functions') {
-            removeFunctionFromAllCachePositions(rel)
-            await combineCacheOfLines(rel, abs)
-        }
-    }
-    const fileDeleted = (rel: string, type: CacheKey, id: Identity) => {
-        if (isLootTableType(type)) {
-            deleteLootTable(id.toString())
-        } else if (type === 'functions') {
-            removeFunctionFromAllCachePositions(rel)
-            removeFunction(id.toString())
-        }
-    }
+}
 
+async function updateCacheFile(cacheFile: CacheFile) {
     for (const rel in cacheFile.files) {
         const abs = path.join(workspaceFolderPath, rel)
         const { id, category: key } = await Identity.fromRel(rel)
         if (!(await fs.pathExists(abs))) {
-            fileDeleted(rel, key, id)
+            cacheFileOperations.fileDeleted(rel, key, id)
             delete cacheFile.files[rel]
         } else {
             const stat = await fs.stat(abs)
             const lastModified = stat.mtimeMs
             const lastUpdated = cacheFile.files[rel]
             if (lastModified > lastUpdated) {
-                fileModified(rel, abs, key, id)
+                cacheFileOperations.fileModified(rel, abs, key, id)
                 cacheFile.files[rel] = lastModified
             }
         }
@@ -212,7 +220,7 @@ async function updateCacheFile(cacheFile: CacheFile) {
                 const rel = path.relative(workspaceFolderPath, dir)
                 const { id, category: key } = await Identity.fromRel(rel)
                 if (!cacheFile.files[rel]) {
-                    fileAdded(rel, dir, key, id)
+                    cacheFileOperations.fileAdded(rel, dir, key, id)
                     cacheFile.files[rel] = stat.mtimeMs
                 }
             }
@@ -244,8 +252,6 @@ async function updateCacheFile(cacheFile: CacheFile) {
     }
 
     trimCache(cacheFile.cache)
-
-    await fs.writeFile(cachePath, JSON.stringify(cacheFile))
 }
 
 function parseString(string: string, lines: Line[]) {
@@ -307,13 +313,35 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
             parseString(string, lines)
         }
     }
-    updateCacheFile(cacheFile)
+    // updateCacheFile(cacheFile)
     updateDiagnostics(rel, uri)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     linesOfRel.delete(rel)
     stringsOfRel.delete(rel)
+})
+
+connection.onDidChangeWatchedFiles(async ({ changes }) => {
+    for (const { uri, type } of changes) {
+        const rel = getRelFromUri(uri)
+        const abs = path.join(workspaceFolderPath, rel)
+        const { category, id } = await Identity.fromRel(rel)
+        switch (type) {
+            case FileChangeType.Created:
+                cacheFileOperations.fileAdded(rel, abs, category, id)
+                break
+            case FileChangeType.Changed:
+                cacheFileOperations.fileModified(rel, abs, category, id)
+                break
+            case FileChangeType.Deleted:
+            default:
+                cacheFileOperations.fileDeleted(rel, category, id)
+                break
+        }
+    }
+
+    trimCache(cacheFile.cache)
 })
 
 connection.onCompletion(({ textDocument: { uri }, position: { line, character } }) => {
@@ -389,7 +417,7 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
 })
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
-    await updateCacheFile(cacheFile)
+    // await updateCacheFile(cacheFile)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
@@ -436,8 +464,10 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         const changes: { [uri: string]: TextEdit[] } = {}
-        const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
+        const category = getSafeCategory(cacheFile.cache, result.type)
+        const unit = category[result.id]
         if (unit) {
+            // Rename.
             for (const def of unit.def) {
                 changes[getUriFromRel(def.rel as string)] = changes[getUriFromRel(def.rel as string)] || []
                 changes[getUriFromRel(def.rel as string)].push({
@@ -458,6 +488,18 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
                     }
                 })
             }
+
+            // Update cache.
+            const targetCategory = getSafeCategory(cacheFile.cache, result.type)
+            const targetUnit = targetCategory[newName]
+            if (targetUnit) {
+                targetUnit.def.push(...unit.def)
+                targetUnit.ref.push(...unit.ref)
+            } else {
+                targetCategory[newName] = unit
+                cacheFile.cache[result.type] = targetCategory
+            }
+            delete category[result.id]
         }
 
         return { changes }
@@ -465,10 +507,6 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
         return null
     }
 })
-
-// connection.onDidChangeWatchedFiles(({ changes }) => {
-
-// })
 
 connection.onDocumentColor(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
