@@ -337,6 +337,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/YijunYuan"><img src="https://avatars0.githubusercontent.com/u/7012463?v=4" width="100px;" alt="Yijun Yuan"/><br /><sub><b>Yijun Yuan</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AYijunYuan" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/MinecraftPeace"><img src="https://avatars2.githubusercontent.com/u/57551211?v=4" width="100px;" alt="MinecraftPeace"/><br /><sub><b>MinecraftPeace</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMinecraftPeace" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/K-bai"><img src="https://avatars2.githubusercontent.com/u/31344344?v=4" width="100px;" alt="K-bai"/><br /><sub><b>K-bai</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AK-bai" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt="Heyu"/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
   </tr>
 </table>
 
