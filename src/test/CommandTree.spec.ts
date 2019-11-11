@@ -233,7 +233,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, {
                 advancements: {
-                    'minecraft:test': { def: [], ref: [{ range: { start: 26, end: 30 } }] }
+                    'minecraft:test': { def: [], ref: [{ start: 26, end: 30 }] }
                 }
             })
             assert.deepEqual(data.errors, undefined)
@@ -257,7 +257,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, {
                 advancements: {
-                    'minecraft:test': { def: [], ref: [{ range: { start: 26, end: 30 } }] }
+                    'minecraft:test': { def: [], ref: [{ start: 26, end: 30 }] }
                 }
             })
             assert.deepEqual(data.errors, undefined)
@@ -280,7 +280,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, {
                 advancements: {
-                    'minecraft:test': { def: [], ref: [{ range: { start: 30, end: 44 } }] }
+                    'minecraft:test': { def: [], ref: [{ start: 30, end: 44 }] }
                 }
             })
             assert.deepEqual(data.errors, undefined)

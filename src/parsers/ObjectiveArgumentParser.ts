@@ -33,7 +33,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
         const value = reader.readUnquotedString()
         ans.data = value
         //#endregion
-        //#region Errors
+        //#region Errors & Cache
         if (!value) {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
@@ -59,24 +59,21 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                         DiagnosticSeverity.Warning
                     ))
                 }
+            } else {
+                ans.cache = {
+                    objectives: {
+                        [value]: {
+                            def: [],
+                            ref: [{ start, end: start + value.length }]
+                        }
+                    }
+                }
             }
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + value.length },
                     `‘${value}’ exceeds the max length of objective name`
                 ))
-            }
-        }
-        //#endregion
-        //#region Cache
-        if (Object.keys(category).includes(value)) {
-            ans.cache = {
-                objectives: {
-                    [value]: {
-                        def: [],
-                        ref: [{ start, end: start + value.length }]
-                    }
-                }
             }
         }
         //#endregion

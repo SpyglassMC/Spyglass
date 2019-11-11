@@ -82,7 +82,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
 })
 
 setInterval(
-    () => void fs.writeFile(cachePath, JSON.stringify(cacheFile)),
+    () => void fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' }),
     60000
 )
 
@@ -313,6 +313,7 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) =
             parseString(string, lines)
         }
     }
+    // TODO: Remove this.
     // updateCacheFile(cacheFile)
     updateDiagnostics(rel, uri)
 })
@@ -417,6 +418,7 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
 })
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
+    // TODO: Remove this.
     // await updateCacheFile(cacheFile)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
@@ -462,7 +464,7 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
-    if (result) {
+    if (result && !result.type.startsWith('colors/')) {
         const changes: { [uri: string]: TextEdit[] } = {}
         const category = getSafeCategory(cacheFile.cache, result.type)
         const unit = category[result.id]

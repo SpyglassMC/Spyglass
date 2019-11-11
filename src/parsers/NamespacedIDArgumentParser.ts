@@ -159,7 +159,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                             [type]: {
                                 [stringID]: {
                                     def: [],
-                                    ref: [{ range: { start, end: start + rawLength } }]
+                                    ref: [{ start, end: start + rawLength }]
                                 }
                             }
                         }

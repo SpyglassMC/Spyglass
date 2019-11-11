@@ -242,7 +242,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 bossbars: {
                     'spgoding:bossbar/a': {
                         def: [],
-                        ref: [{ range: { start: 0, end: 18 } }]
+                        ref: [{ start: 0, end: 18 }]
                     }
                 }
             })

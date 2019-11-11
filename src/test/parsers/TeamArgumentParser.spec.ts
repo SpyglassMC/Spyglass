@@ -61,7 +61,7 @@ describe('TeamArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
-        it('Should return cache when the team is already defined', () => {
+        it('Should return cache', () => {
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')

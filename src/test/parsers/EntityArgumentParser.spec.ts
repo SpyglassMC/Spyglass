@@ -77,7 +77,7 @@ describe('EntityArgumentParser Tests', () => {
                     ]
                 )
             })
-            it('Should return cache when the entity is already defined', () => {
+            it('Should return cache when the entity is a plain name', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('foo'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity('foo'))

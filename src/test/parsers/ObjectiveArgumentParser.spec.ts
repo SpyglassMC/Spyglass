@@ -69,7 +69,7 @@ describe('ObjectiveArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'undefined objective ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
-        it('Should return cache when the objective is already defined', () => {
+        it('Should return cache when the objective is a reference', () => {
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')

@@ -10,6 +10,11 @@ export interface CacheFile {
 
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
+ * 
+ * For advancements, functions, loot_tables, predicates, recipes and tags/*: Should rename files.  
+ * For entities, data storages and tags: Should use #define comments to define.  
+ * For bossbars, objectives and teams: Should use respective `add` commands to define.  
+ * For colors/*: Simply ignores.
  */
 export interface ClientCache {
     advancements?: CacheCategory,

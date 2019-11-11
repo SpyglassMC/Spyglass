@@ -61,7 +61,7 @@ describe('TagArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'undefined tag ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
-        it('Should return cache when the tag is already defined', () => {
+        it('Should return cache', () => {
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')
