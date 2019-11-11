@@ -11,8 +11,8 @@ export interface CacheFile {
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
  * 
- * For advancements, functions, loot_tables, predicates, recipes and tags/*: Should rename files.  
- * For entities, data storages and tags: Should use #define comments to define.  
+ * For advancements, functions, lootTables/*, predicates, recipes and tags/*: Should rename files.  
+ * For entities, storages and tags: Should use #define comments to define.  
  * For bossbars, objectives and teams: Should use respective `add` commands to define.  
  * For colors/*: Simply ignores.
  */
@@ -81,6 +81,7 @@ export interface CachePosition extends TextRange {
     line?: number
 }
 
+// TODO: Remove this.
 // export function areElementsEqual(a: TextRange, b: TextRange) {
 //     // istanbul ignore else
 //     if (isGlobalElement(a) && isGlobalElement(b)) {
@@ -246,4 +247,23 @@ type LootTableType = 'lootTables/block' | 'lootTables/entity' | 'lootTables/fish
 
 export function isLootTableType(type: CacheKey): type is LootTableType {
     return type.startsWith('lootTables/')
+}
+
+type TagType = 'tags/blocks' | 'tags/entityTypes' | 'tags/functions' | 'tags/fluids' | 'tags/items'
+
+export function isTagType(type: CacheKey): type is TagType {
+    return type.startsWith('tags/')
+}
+
+type FileType = 'advancements' | 'functions' | 'predicates' | 'recipes' | TagType | LootTableType
+
+export function isFileType(type: CacheKey): type is FileType {
+    return (
+        type === 'advancements' ||
+        type === 'functions' ||
+        type === 'predicates' ||
+        type === 'recipes' ||
+        isTagType(type) ||
+        isLootTableType(type)
+    )
 }

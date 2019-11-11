@@ -42,30 +42,49 @@ describe('Identity Tests', () => {
             assert(actual === '#spgoding:foo/bar')
         })
     })
-    describe('toPath() Tests', () => {
-        it('Should return correctly for tags', () => {
-            const id = new Identity('spgoding', ['entity_types', 'foo', 'bar'])
+    describe('toRel() Tests', () => {
+        it('Should return correctly for entity_types tags', () => {
+            const id = new Identity('spgoding', ['foo', 'bar'])
             const actual = id.toRel('tags/entityTypes')
             assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
+        })
+        it('Should return correctly for other tags', () => {
+            const id = new Identity('spgoding', ['foo', 'bar'])
+            const actual = id.toRel('tags/blocks')
+            assert(actual === ['data', 'spgoding', 'tags', 'blocks', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for loot tables', () => {
             const id = new Identity('spgoding', ['foo', 'bar'])
             const actual = id.toRel('lootTables/block')
             assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
-        it('Should return correctly for simple categories', () => {
+        it('Should return correctly for functions', () => {
             const id = new Identity('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('functions', '.mcfunction', 'data')
+            const actual = id.toRel('functions', 'data')
             assert(actual === ['data', 'spgoding', 'functions', 'foo', 'bar.mcfunction'].join(path.sep))
         })
     })
-    describe('fromPath() Tests', () => {
+    describe('static fromRel() Tests', () => {
         it('Should return correctly', async () => {
             const { id, ext, side, category } = await Identity.fromRel('data/spgoding/functions/foo/bar.mcfunction')
             assert(id.toString() === 'spgoding:foo/bar')
             assert(ext === '.mcfunction')
             assert(side === 'data')
             assert(category === 'functions')
+        })
+    })
+    describe('static fromString() Tests', () => {
+        it('Should convert from full id', () => {
+            const id = Identity.fromString('minecraft:foo/bar')
+            assert(`${id}` === 'minecraft:foo/bar')
+        })
+        it('Should convert from id which omits namespace', () => {
+            const id = Identity.fromString('foo/bar')
+            assert(`${id}` === 'minecraft:foo/bar')
+        })
+        it('Should convert from id which begins with a tag symbol', () => {
+            const id = Identity.fromString('#spgoding:foo/bar')
+            assert(`${id}` === 'spgoding:foo/bar')
         })
     })
 })

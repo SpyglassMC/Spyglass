@@ -1,8 +1,8 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -14,6 +14,7 @@ import Identity from './types/Identity'
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
 const stringsOfRel = new Map<string, string[]>()
+const versionOfRel = new Map<string, number | null>()
 
 const manager = new ArgumentParserManager()
 const config = VanillaConfig
@@ -83,7 +84,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
 
 setInterval(
     () => void fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' }),
-    60000
+    30000
 )
 
 function getRelFromUri(uri: string) {
@@ -163,14 +164,26 @@ const cacheFileOperations = {
     },
 
     // advancements, predicates, tags/*, recipes:
-    // ADDED: Add to advancements cache category.
-    // DELETED: Remove from advancements cache category.
+    // ADDED: Add to respective cache category.
+    // DELETED: Remove from respective cache category.
+    addDefault: (id: string, type: CacheKey) => {
+        const category = getSafeCategory(cacheFile.cache, type)
+        category[id] = { def: [], ref: [] }
+        cacheFile.cache[type] = category
+    },
+    removeDefault: (id: string, type: CacheKey) => {
+        removeCacheUnit(cacheFile.cache, type, id)
+    },
+
+    // Hooks.
     fileAdded: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
         if (isLootTableType(type)) {
             cacheFileOperations.addLootTable(id.toString(), type)
         } else if (type === 'functions') {
             cacheFileOperations.addFunction(id.toString())
             await cacheFileOperations.combineCacheOfLines(rel, abs)
+        } else {
+            cacheFileOperations.addDefault(id.toString(), type)
         }
     },
     fileModified: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
@@ -187,6 +200,8 @@ const cacheFileOperations = {
         } else if (type === 'functions') {
             cacheFileOperations.removeFunctionFromAllCachePositions(rel)
             cacheFileOperations.removeFunction(id.toString())
+        } else {
+            cacheFileOperations.removeDefault(id.toString(), type)
         }
     }
 }
@@ -278,7 +293,7 @@ function updateDiagnostics(rel: string, uri: string) {
     connection.sendDiagnostics({ uri, diagnostics })
 }
 
-connection.onDidOpenTextDocument(({ textDocument: { text, uri } }) => {
+connection.onDidOpenTextDocument(({ textDocument: { text, uri, version } }) => {
     const rel = getRelFromUri(uri)
     const lines: Line[] = []
     const strings = text.split('\n')
@@ -287,10 +302,13 @@ connection.onDidOpenTextDocument(({ textDocument: { text, uri } }) => {
     }
     linesOfRel.set(rel, lines)
     stringsOfRel.set(rel, strings)
+    versionOfRel.set(rel, version)
     updateDiagnostics(rel, uri)
 })
-connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri } }) => {
+connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, version } }) => {
     const rel = getRelFromUri(uri)
+    versionOfRel.set(rel, version)
+
     for (const change of contentChanges) {
         const { text: changeText } = change
         const {
@@ -321,6 +339,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     linesOfRel.delete(rel)
     stringsOfRel.delete(rel)
+    versionOfRel.delete(rel)
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
@@ -465,46 +484,59 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result && !result.type.startsWith('colors/')) {
-        const changes: { [uri: string]: TextEdit[] } = {}
+        const documentChanges: (TextDocumentEdit | RenameFile)[] = []
         const category = getSafeCategory(cacheFile.cache, result.type)
         const unit = category[result.id]
         if (unit) {
-            // Rename.
-            for (const def of unit.def) {
-                changes[getUriFromRel(def.rel as string)] = changes[getUriFromRel(def.rel as string)] || []
-                changes[getUriFromRel(def.rel as string)].push({
-                    newText: newName,
-                    range: {
-                        start: { line: def.line as number, character: def.start },
-                        end: { line: def.line as number, character: def.end }
+            try {
+                const targetCategory = getSafeCategory(cacheFile.cache, result.type)
+                const targetID = Identity.fromString(newName).toString()
+                if (targetID !== result.id) {
+                    // Rename file if necessary.
+                    if (isFileType(result.type)) {
+                        const getUriFromID = (id: string) => getUriFromRel(Identity.fromString(id).toRel(result.type))
+                        const oldUri = getUriFromID(result.id)
+                        const newUri = getUriFromID(newName)
+                        documentChanges.push(RenameFile.create(oldUri, newUri, { ignoreIfExists: true }))
                     }
-                })
-            }
-            for (const ref of unit.ref) {
-                changes[getUriFromRel(ref.rel as string)] = changes[getUriFromRel(ref.rel as string)] || []
-                changes[getUriFromRel(ref.rel as string)].push({
-                    newText: newName,
-                    range: {
-                        start: { line: ref.line as number, character: ref.start },
-                        end: { line: ref.line as number, character: ref.end }
-                    }
-                })
-            }
 
-            // Update cache.
-            const targetCategory = getSafeCategory(cacheFile.cache, result.type)
-            const targetUnit = targetCategory[newName]
-            if (targetUnit) {
-                targetUnit.def.push(...unit.def)
-                targetUnit.ref.push(...unit.ref)
-            } else {
-                targetCategory[newName] = unit
-                cacheFile.cache[result.type] = targetCategory
+                    // Change file content.
+                    for (const key in unit) {
+                        if (key === 'def' || key === 'ref') {
+                            for (const pos of unit[key]) {
+                                documentChanges.push({
+                                    textDocument: { uri, version: versionOfRel.get(rel) || null },
+                                    edits: [{
+                                        newText: newName,
+                                        range: {
+                                            start: { line: pos.line as number, character: pos.start },
+                                            end: { line: pos.line as number, character: pos.end }
+                                        }
+                                    }]
+                                })
+                            }
+                        }
+                    }
+
+                    // Update cache.
+                    const targetUnit = targetCategory[targetID]
+                    if (targetUnit) {
+                        targetUnit.def.push(...unit.def)
+                        targetUnit.ref.push(...unit.ref)
+                    } else {
+                        targetCategory[targetID] = unit
+                        cacheFile.cache[result.type] = targetCategory
+                    }
+                    delete category[result.id]
+                } else {
+                    return null
+                }
+            } catch (ignored) {
+                return null
             }
-            delete category[result.id]
         }
 
-        return { changes }
+        return { documentChanges }
     } else {
         return null
     }

@@ -9,13 +9,18 @@
 
 A NPM package and an VSCode extension which make editing Minecraft: Java Edition datapacks much easier. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
 
+# Note
+
+0. Please use the root directory of your data pack as the workspace.
+1. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool. The cache will only be updated if the watched files are updated on disk, so it's highly recommended to enable the Auto Save feature of VSCode.
+
 # Features
 
 ## Semantic Highlighting
 
 Nope. I follow the spirit of [no code](https://github.com/kelseyhightower/nocode) project so I wrote no code about semantic coloring. There won't be any issues about it, yah!
 
-Just joking. Semantic highlighting will be implemented whenever https://github.com/microsoft/vscode-languageserver-node/pull/367 is resolved. Before that, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension.
+Just joking. Semantic highlighting will be implemented whenever https://github.com/microsoft/vscode-languageserver-node/pull/367 is resolved. Before that, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension. All the screenshots below are taken with both mine and Arcensoth's extension enabled.
 
 ## Signature Information
 
@@ -101,9 +106,13 @@ You can rename entities, tags, teams, bossbars and data storages by pressing F2 
 
 All the references of the same symbol in the whole workspace will be renamed.
 
-**Warning**: your input can be accidentally corrupted by using this feature. Use it at your own risk.
+**WARNING**: your input can be accidentally corrupted by using this feature. Use it at your own risk.
 
 ![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
+
+Additionally, the corresponding advancement, function, loot table, predicate, recipe or tag file in the workspace will be renamed too.
+
+![rename-function](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-function.gif)
 
 ## Formatting (aka Linting)
 
@@ -113,7 +122,7 @@ Your command will be formatted after you commit `\n` character. Alternatively, y
 
 There are several linting rules you can set in the configuration file.
 
-**Warning**: your input can be accidentally losed by using this feature. Use it at your own risk. This feature is disabled by default.
+**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default.
 
 ### blockStateAppendSpaceAfterComma: `boolean`
 

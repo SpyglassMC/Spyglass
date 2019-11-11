@@ -61,7 +61,7 @@ describe('TeamArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
-        it('Should return cache', () => {
+        it('Should return cache if the team is an reference', () => {
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
             assert.deepStrictEqual(actual.data, 'foo')
@@ -70,6 +70,19 @@ describe('TeamArgumentParser Tests', () => {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
+                    }
+                }
+            })
+        })
+        it('Should return cache if the team is a definition', () => {
+            const parser = new TeamArgumentParser(true)
+            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
+            assert.deepStrictEqual(actual.data, 'qux')
+            assert.deepStrictEqual(actual.cache, {
+                teams: {
+                    qux: {
+                        def: [{ start: 0, end: 3 }],
+                        ref: []
                     }
                 }
             })

@@ -68,11 +68,11 @@ export default class LineParser implements Parser<Line> {
         if (line.errors.length === 0) {
             this.parseChildren(reader, manager, this.tree[this.entryPoint], line, cursor)
         }
+        saturatedLineToLine(line)
         // istanbul ignore next
         if (backupReader.peek() === '#' && line.errors.length > 0) {
             return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], hint: { fix: [], options: [] }, completions: line.completions } }
         }
-        saturatedLineToLine(line)
         return { data: line }
     }
 

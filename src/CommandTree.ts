@@ -1488,7 +1488,7 @@ export const VanillaTree: CommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         team: {
-                            parser: new TeamArgumentParser(),
+                            parser: new TeamArgumentParser(true),
                             executable: true,
                             children: {
                                 displayName: {
@@ -1885,15 +1885,15 @@ export const VanillaTree: CommandTree = {
                     children: {
                         id: {
                             parser: ({ args }) => new DefinitionIDArgumentParser(
-                                getArgOrDefault(args, -1, '')
+                                getArgOrDefault(args, 1, '')
                             ),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
                                     parser: ({ args }) => new DefinitionDescriptionArgumentParser(
-                                        getArgOrDefault(args, -2, ''),
-                                        getArgOrDefault(args, -1, '')
+                                        getArgOrDefault(args, 2, ''),
+                                        getArgOrDefault(args, 1, '')
                                     ),
                                     description: 'Description of the definition',
                                     executable: true
@@ -2479,7 +2479,7 @@ export const VanillaTree: CommandTree = {
 export default VanillaTree
 
 export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
-    return args.length >= lastIndex ? args[args.length - lastIndex].data : fallback
+    return 0 <= lastIndex && lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
 }
 
 /**

@@ -9,7 +9,9 @@ import { VanillaConfig } from '../types/Config'
 export default class TeamArgumentParser extends ArgumentParser<string> {
     readonly identity = 'team'
 
-    constructor() {
+    constructor(
+        private readonly isDefinition = false
+    ) {
         super()
     }
 
@@ -31,29 +33,39 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
         const value = reader.readUnquotedString()
         ans.data = value
         //#endregion
-        //#region Errors
+        //#region Errors & Cache
         if (!value) {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
                 'expected a team but got nothing',
                 false
             ))
-        } else if (config.lint.strictTeamCheck && !Object.keys(category).includes(value)) {
-            ans.errors.push(new ParsingError(
-                { start, end: start + value.length },
-                `undefined team ‘${value}’`,
-                undefined,
-                DiagnosticSeverity.Warning
-            ))
-        }
-        //#endregion
-        //#region Cache
-        if (Object.keys(category).includes(value)) {
-            ans.cache = {
-                teams: {
-                    [value]: {
-                        def: [],
-                        ref: [{ start, end: start + value.length }]
+        } else {
+            if (config.lint.strictTeamCheck && !Object.keys(category).includes(value)) {
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    `undefined team ‘${value}’`,
+                    undefined,
+                    DiagnosticSeverity.Warning
+                ))
+            }
+
+            if (Object.keys(category).includes(value)) {
+                ans.cache = {
+                    teams: {
+                        [value]: {
+                            def: [],
+                            ref: [{ start, end: start + value.length }]
+                        }
+                    }
+                }
+            } else if (this.isDefinition) {
+                ans.cache = {
+                    teams: {
+                        [value]: {
+                            def: [{ start, end: start + value.length }],
+                            ref: []
+                        }
                     }
                 }
             }

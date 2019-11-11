@@ -39,14 +39,11 @@ export default class Identity implements Lintable {
      * @param ext The extension of the file. Defaults to `.json`.
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
-    toRel(category: keyof ClientCache, ext: string = '.json', side: 'assets' | 'data' = 'data') {
+    toRel(category: keyof ClientCache, side: 'assets' | 'data' = 'data') {
         let datapackCategory: string
-        if (category === 'tags/blocks' ||
-            category === 'tags/entityTypes' ||
-            category === 'tags/fluids' ||
-            category === 'tags/functions' ||
-            category === 'tags/items') {
-            datapackCategory = 'tags'
+        let ext: string
+        if (category === 'tags/entityTypes') {
+            datapackCategory = 'tags/entity_types'
         } else if (category === 'lootTables/block' ||
             category === 'lootTables/entity' ||
             category === 'lootTables/fishing' ||
@@ -54,6 +51,11 @@ export default class Identity implements Lintable {
             datapackCategory = 'loot_tables'
         } else {
             datapackCategory = category
+        }
+        if (category === 'functions') {
+            ext = '.mcfunction'
+        } else {
+            ext = '.json'
         }
         return `${side}${sep}${this.namespace}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
     }
@@ -78,23 +80,14 @@ export default class Identity implements Lintable {
         let category: keyof ClientCache
         if (datapackCategory === 'tags') {
             switch (paths[0]) {
-                case 'block':
-                    category = 'tags/blocks'
-                    break
                 case 'entity_types':
                     category = 'tags/entityTypes'
                     break
-                case 'fluids':
-                    category = 'tags/fluids'
-                    break
-                case 'functions':
-                    category = 'tags/functions'
-                    break
-                case 'items':
                 default:
-                    category = 'tags/items'
+                    category = `tags/${paths[0]}` as keyof ClientCache
                     break
             }
+            paths.splice(0, 1)
         } else if (datapackCategory === 'loot_tables') {
             const file = await fs.readFile(rel, 'utf8')
             try {
@@ -119,5 +112,17 @@ export default class Identity implements Lintable {
             category = datapackCategory as keyof ClientCache
         }
         return { id, category, ext, side }
+    }
+
+    static fromString(str: string) {
+        if (str[0] === Identity.TagSymbol) {
+            str = str.slice(1)
+        }
+        const parts = str.split(':')
+        if (parts.length === 1) {
+            return new Identity(undefined, parts[0].split(Identity.Sep))
+        } else {
+            return new Identity(parts[0], parts[1].split(Identity.Sep))
+        }
     }
 }

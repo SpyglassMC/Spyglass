@@ -51,7 +51,6 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         }
         const start = reader.cursor
         let stringID: string = ''
-        let rawLength: number = 0
         let isTag = false
 
         //#region Completions
@@ -112,11 +111,10 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
 
             ans.data = new Identity(namespace, paths, isTag)
             stringID = ans.data.toString()
-            rawLength = reader.cursor - start
         }
         //#endregion
 
-        if (rawLength && stringID) {
+        if (reader.cursor - start && stringID) {
             // Check whether the ID exists in cache or registry.
             if (isTag) {
                 // For tags.
@@ -125,11 +123,24 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 //#region Errors
                 if (!Object.keys(category).includes(stringID)) {
                     ans.errors.push(new ParsingError(
-                        { start, end: start + rawLength },
+                        { start, end: reader.cursor },
                         `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${tagType}’`,
                         undefined,
                         DiagnosticSeverity.Warning
                     ))
+                }
+                //#endregion
+
+                //#region Cache
+                if (Object.keys(category).includes(stringID)) {
+                    ans.cache = {
+                        [tagType]: {
+                            [stringID]: {
+                                def: [],
+                                ref: [{ start, end: reader.cursor }]
+                            }
+                        }
+                    }
                 }
                 //#endregion
             } else {
@@ -144,7 +155,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     //#region Errors
                     if (!Object.keys(category).includes(stringID) && !inGenericLootTable) {
                         ans.errors.push(new ParsingError(
-                            { start, end: start + rawLength },
+                            { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
                             undefined,
                             DiagnosticSeverity.Warning
@@ -159,7 +170,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                             [type]: {
                                 [stringID]: {
                                     def: [],
-                                    ref: [{ start, end: start + rawLength }]
+                                    ref: [{ start, end: reader.cursor }]
                                 }
                             }
                         }
@@ -171,7 +182,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     //#region Errors
                     if (!Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
-                            { start, end: start + rawLength },
+                            { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`,
                             undefined,
                             DiagnosticSeverity.Warning

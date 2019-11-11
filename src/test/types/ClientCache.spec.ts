@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar } from '../../types/ClientCache'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -246,6 +246,41 @@ describe('ClientCache Tests', () => {
             assert(actual === 'tags')
         })
     })
+    describe('getCacheFromChar() Tests', () => {
+        it('Should return def', () => {
+            const actual = getCacheFromChar({
+                tags: {
+                    foo: {
+                        def: [{ start: 0, end: 1 }],
+                        ref: []
+                    }
+                }
+            }, 1)
+            assert.deepEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+        })
+        it('Should return ref', () => {
+            const actual = getCacheFromChar({
+                tags: {
+                    foo: {
+                        def: [],
+                        ref: [{ start: 0, end: 1 }]
+                    }
+                }
+            }, 1)
+            assert.deepEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+        })
+        it('Should return undefined', () => {
+            const actual = getCacheFromChar({
+                tags: {
+                    foo: {
+                        def: [{ start: 0, end: 1 }],
+                        ref: [{ start: 0, end: 1 }]
+                    }
+                }
+            }, 2)
+            assert(actual === undefined)
+        })
+    })
     describe('trimCache() Tests', () => {
         it('Should not trim units with content', () => {
             const cache: ClientCache = {
@@ -330,6 +365,26 @@ describe('ClientCache Tests', () => {
         })
         it('Should return false', () => {
             const actual = isLootTableType('advancements')
+            assert(actual === false)
+        })
+    })
+    describe('isTagType() Tests', () => {
+        it('Should return true', () => {
+            const actual = isTagType('tags/blocks')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = isTagType('advancements')
+            assert(actual === false)
+        })
+    })
+    describe('isFileType() Tests', () => {
+        it('Should return true', () => {
+            const actual = isFileType('advancements')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = isFileType('entities')
             assert(actual === false)
         })
     })

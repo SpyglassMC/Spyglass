@@ -327,7 +327,7 @@ describe('CommandTree Tests', () => {
             const reader = new StringReader('# This is a comment.')
             const { data } = parser.parse(reader, undefined, manager)
             assert.deepEqual(data.args, [
-                { data: '# This is a comment', parser: 'string' }
+                { data: '# This is a comment.', parser: 'string' }
             ])
             assert.deepEqual(data.hint, {
                 fix: [],
