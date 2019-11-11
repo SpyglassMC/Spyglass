@@ -56,6 +56,33 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "switefaster",
+      "name": "switefaster",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/19944539?v=4",
+      "profile": "https://github.com/switefaster",
+      "contributions": [
+        "financial"
+      ]
+    },
+    {
+      "login": "MarsCloud",
+      "name": "MarsCloud",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/43104628?v=4",
+      "profile": "https://github.com/MarsCloud",
+      "contributions": [
+        "financial"
+      ]
+    },
+    {
+      "login": "PutEgg",
+      "name": "Heyu",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/15832518?v=4",
+      "profile": "https://github.com/PutEgg",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7

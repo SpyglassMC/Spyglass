@@ -339,7 +339,8 @@ If sets to `false`, the decimal place will still be kept to avoid center-correct
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 <table>
   <tr>
     <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt="SPGoding"/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Tests">⚠️</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Documentation">📖</a></td>
@@ -347,9 +348,16 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/MinecraftPeace"><img src="https://avatars2.githubusercontent.com/u/57551211?v=4" width="100px;" alt="MinecraftPeace"/><br /><sub><b>MinecraftPeace</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMinecraftPeace" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/K-bai"><img src="https://avatars2.githubusercontent.com/u/31344344?v=4" width="100px;" alt="K-bai"/><br /><sub><b>K-bai</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AK-bai" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?v=4" width="100px;" alt="pca006132"/><br /><sub><b>pca006132</b></sub></a><br /><a href="#ideas-pca006132" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt="switefaster"/><br /><sub><b>switefaster</b></sub></a><br /><a href="#financial-switefaster" title="Financial">💵</a></td>
+    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="#financial-MarsCloud" title="Financial">💵</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt="Heyu"/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
   </tr>
 </table>
 
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 And to those who haven't told me a GitHub account:
@@ -363,6 +371,12 @@ And to those who haven't told me a GitHub account:
     <td align="center"><a href="https://afdian.net/u/64da395e2b6811e99c7652540025c377"><img src="https://pic.afdiancdn.com/default/avatar/default-avatar@2x.png" width="100px;" alt="爱发电用户_4vCR"/><br /><sub><b>爱发电用户_4vCR</b></sub></a><br /><a href="#financial-爱发电用户_4vCR" title="Financial">💵</a></td>
     <td align="center"><a href="https://afdian.net/u/9c5521849fb011e99ecc52540025c377"><img src="https://pic.afdiancdn.com/user/9c5521849fb011e99ecc52540025c377/avatar/5d5ebfa0c83f7a50304bb472c9d320c1_w640_h640_s69.jpg" width="100px;" alt="夏白千层心"/><br /><sub><b>夏白千层心</b></sub></a><br /><a href="#financial-夏白千层心" title="Financial">💵</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2176760"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2176760&size=middle" width="100px;" alt="MCSugar_cane"/><br /><sub><b>MCSugar_cane</b></sub></a><br /><a href="#financial-MCSugar_cane" title="Financial">💵</a></td>
+    <td align="center"><a href="https://afdian.net/@ChongXG"><img src="https://pic.afdiancdn.com/user/80487c58bfa911e8856452540025c377/avatar/c71ebb2c5c792b45d6f5b5bf087b0625_w1536_h1536_s1404.jpg" width="100px;" alt="虫小哥"/><br /><sub><b>虫小哥</b></sub></a><br /><a href="#financial-虫小哥" title="Financial">💵</a></td>
+    <td align="center"><a href="https://afdian.net/@dhwpcs"><img src="https://pic.afdiancdn.com/user/470992469a5c11e881aa52540025c377/avatar/407310e7b07629c97d42949e4522f1c8_w395_h395_s71.jpg" width="100px;" alt="Craft_Kevin"/><br /><sub><b>Craft_Kevin</b></sub></a><br /><a href="#financial-Craft_Kevin" title="Financial">💵</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt="陌余Oucher"/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#financial-陌余Oucher" title="Financial">💵</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=145106"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle" width="100px;" alt="龙腾猫跃"/><br /><sub><b>龙腾猫跃</b></sub></a><br /><a href="#financial-龙腾猫跃" title="Financial">💵</a></td>
   </tr>
 </table>
 <!-- markdownlint-enable -->
