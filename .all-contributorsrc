@@ -47,6 +47,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "PutEgg",
+      "name": "Heyu",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/15832518?v=4",
+      "profile": "https://github.com/PutEgg",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7
