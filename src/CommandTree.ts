@@ -872,8 +872,36 @@ export const VanillaTree: CommandTree = {
         loot: {
             parser: new LiteralArgumentParser('loot'),
             children: {
+                replace: {
+                    parser: new LiteralArgumentParser('replace'),
+                    children: {
+                        target: {
+                            template: 'item_holder',
+                            children: {
+                                slot: {
+                                    parser: new ItemSlotArgumentParser(),
+                                    children: {
+                                        count: {
+                                            parser: new NumberArgumentParser('integer'),
+                                            children: {
+                                                source: {
+                                                    template: 'loot_source',
+                                                    executable: true
+                                                }
+                                            }
+                                        },
+                                        source: {
+                                            template: 'loot_source',
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 target: {
-                    template: 'loot_target',
+                    template: 'loot_target_without_replace',
                     children: {
                         source: {
                             template: 'loot_source',
@@ -1995,25 +2023,12 @@ export const VanillaTree: CommandTree = {
             }
         }
     },
-    loot_target: {
+    loot_target_without_replace: {
         spawn: {
             parser: new LiteralArgumentParser('spawn'),
             children: {
                 pos: {
                     parser: new VectorArgumentParser(3)
-                }
-            }
-        },
-        replace: {
-            parser: new LiteralArgumentParser('replace'),
-            children: {
-                target: {
-                    template: 'item_holder',
-                    children: {
-                        slot: {
-                            parser: new ItemSlotArgumentParser()
-                        }
-                    }
                 }
             }
         },
