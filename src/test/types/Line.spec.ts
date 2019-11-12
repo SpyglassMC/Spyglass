@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import Line, { combineLine, combineSaturatedLine, saturatedLineToLine } from '../../types/Line'
+import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine } from '../../types/Line'
 import ParsingError from '../../types/ParsingError'
 
 describe('Line Tests', () => {
@@ -18,10 +18,10 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base, { args: [], hint: { fix: ['a', 'b'], options: [] } })
         })
         it('Should combine hint.options', () => {
-            const base = { args: [], hint: { fix: [], options: ['a'] } }
-            const override = { args: [], hint: { fix: [], options: ['b'] } }
+            const base: Line = { args: [], hint: { fix: [], options: [['a', ['a']]] } }
+            const override: Line = { args: [], hint: { fix: [], options: [['b', ['b']]] } }
             combineLine(base, override)
-            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: ['a', 'b'] } })
+            assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [['a', ['a']], ['b', ['b']]] } })
         })
         it('Should combine cache', () => {
             const base = { args: [], cache: {}, hint: { fix: [], options: [] } }
@@ -72,24 +72,24 @@ describe('Line Tests', () => {
     })
     describe('combineSaturatedLine() Tests', () => {
         it('Should combine args, hint, cache, completions and errors', () => {
-            const base = {
+            const base: SaturatedLine = {
                 args: [{ data: 'execute', parser: 'test' }],
                 cache: { entities: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
-                hint: { fix: ['a'], options: ['c'] },
+                hint: { fix: ['a'], options: [['c', ['c']]] },
                 completions: [{ label: 'a' }]
             }
-            const override = {
+            const override: Line = {
                 args: [{ data: 'if', parser: 'test' }],
                 cache: { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
-                hint: { fix: ['b'], options: ['d'] },
+                hint: { fix: ['b'], options: [['d', ['d']]] },
                 completions: [{ label: 'b' }]
             }
             combineSaturatedLine(base, override)
             assert.deepStrictEqual(base.args, [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }])
             assert.deepStrictEqual(base.hint.fix, ['a', 'b'])
-            assert.deepStrictEqual(base.hint.options, ['c', 'd'])
+            assert.deepStrictEqual(base.hint.options, [['c', ['c']], ['d', ['d']]])
             assert.deepStrictEqual(
                 base.cache,
                 { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } }

@@ -1643,10 +1643,6 @@ export const VanillaTree: CommandTree = {
                                 facing: {
                                     parser: new LiteralArgumentParser('facing'),
                                     children: {
-                                        pos: {
-                                            parser: new VectorArgumentParser(3),
-                                            executable: true
-                                        },
                                         entity: {
                                             parser: new LiteralArgumentParser('entity'),
                                             children: {
@@ -1661,6 +1657,10 @@ export const VanillaTree: CommandTree = {
                                                     }
                                                 }
                                             }
+                                        },                                        
+                                        pos: {
+                                            parser: new VectorArgumentParser(3),
+                                            executable: true
                                         }
                                     }
                                 },
@@ -2075,13 +2075,13 @@ export const VanillaTree: CommandTree = {
         loot: {
             parser: new LiteralArgumentParser('loot'),
             children: {
-                fishing: {
+                fishingLootTable: {
                     parser: new NamespacedIDArgumentParser('$lootTables/fishing')
                 },
-                entity: {
+                entityLootTable: {
                     parser: new NamespacedIDArgumentParser('$lootTables/entity')
                 },
-                block: {
+                blockLootTable: {
                     parser: new NamespacedIDArgumentParser('$lootTables/block')
                 }
             }
@@ -2494,7 +2494,7 @@ export const VanillaTree: CommandTree = {
 export default VanillaTree
 
 export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
-    return lastIndex >= args.length ? args[args.length - lastIndex].data : fallback
+    return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
 }
 
 /**

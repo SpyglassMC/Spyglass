@@ -16,13 +16,13 @@ export default interface Line {
      */
     hint: {
         /**
-         * Hints for previous nodes. The last element in the array stands for the current node.
+         * Hints for previous nodes.
          */
         fix: string[],
         /**
-         * Hints for the next node.
+         * Hints for the current node and the next node.
          */
-        options: string[]
+        options: [string, string[]][]
     },
     /**
      * All cache of the line.

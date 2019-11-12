@@ -388,31 +388,31 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
     const { data: { hint: { fix, options } } } = parser.parse(reader, char, manager)
     const signatures: SignatureInformation[] = []
 
-    if (fix.length > 0) {
-        const fixLabelBeginning = fix.length > 1 ? fix.slice(0, -1).join(' ') + ' ' : ''
-        const fixLabelLast = fix[fix.length - 1]
-        const nonEmptyOptions = options.length > 0 ? options : ['']
+    const fixLabel = fix.length > 0 ? fix.join(' ') + ' ' : ''
+    const nonEmptyOptions: [string, string[]][] = options.length > 0 ? options : [['', ['']]]
 
-        for (const option of nonEmptyOptions) {
+    for (let [current, nextOptions] of nonEmptyOptions) {
+        nextOptions = nextOptions.length > 0 ? nextOptions : ['']
+        for (const option of nextOptions) {
             signatures.push({
-                label: `${fixLabelBeginning}${fixLabelLast} ${option}`,
+                label: `${fixLabel}${current} ${option}`,
                 parameters: [
                     {
                         label: [
                             0,
-                            fixLabelBeginning.length
+                            fixLabel.length
                         ]
                     },
                     {
                         label: [
-                            fixLabelBeginning.length,
-                            fixLabelBeginning.length + fixLabelLast.length
+                            fixLabel.length,
+                            fixLabel.length + current.length
                         ]
                     },
                     {
                         label: [
-                            fixLabelBeginning.length + fixLabelLast.length,
-                            fixLabelBeginning.length + fixLabelLast.length + option.length
+                            fixLabel.length + current.length,
+                            fixLabel.length + current.length + option.length
                         ]
                     }
                 ]
@@ -420,7 +420,7 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
         }
     }
 
-    return { signatures, activeParameter: 1, activeSignature: 0 }
+    return { signatures, activeParameter: 1, activeSignature: signatures.length - 1 }
 })
 
 connection.onFoldingRanges(({ textDocument: { uri } }) => {

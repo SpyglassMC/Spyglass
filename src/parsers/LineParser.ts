@@ -109,9 +109,13 @@ export default class LineParser implements Parser<Line> {
                 cache, completions, errors
             })
             if (start <= cursor && cursor <= reader.cursor) {
-                parsedLine.hint.options = this.getHintsInChildren(manager, node)
+                parsedLine.hint.options.push([
+                    parser.toHint(key, optional),
+                    this.getHintsInChildren(manager, node)
+                ])
+            } else {
+                parsedLine.hint.fix.push(parser.toHint(key, optional))
             }
-            parsedLine.hint.fix.push(parser.toHint(key, optional))
 
             // Handle trailing data or absent data.
             if (!reader.canRead(2)) {

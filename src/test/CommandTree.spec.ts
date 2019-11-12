@@ -188,8 +188,8 @@ describe('CommandTree Tests', () => {
                 { data: 'g', parser: 'literal' }
             ])
             assert.deepEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)'],
-                options: ['<targets: entity>']
+                fix: ['advancement'],
+                options: [['(grant|revoke)', ['<targets: entity>']]]
             })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, [
@@ -315,8 +315,8 @@ describe('CommandTree Tests', () => {
                 { data: new Block(new Identity(undefined, ['grass_block'])), parser: 'block' }
             ])
             assert.deepEqual(data.hint, {
-                fix: ['setblock', '<pos: vector3D>', '<block: block>'],
-                options: ['[destroy|keep|replace]']
+                fix: ['setblock', '<pos: vector3D>'],
+                options: [['<block: block>', ['[destroy|keep|replace]']]]
             })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, undefined)

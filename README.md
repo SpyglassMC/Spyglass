@@ -27,7 +27,6 @@ Just joking. Semantic highlighting will be implemented whenever https://github.c
 You can get hints about the arguments of commands while typing.
 
 ![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.gif)
-![signature-help-2](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help-2.gif)
 
 ## Completions
 
@@ -108,7 +107,7 @@ All the references of the same symbol in the whole workspace will be renamed.
 
 ![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
 
-Additionally, the corresponding advancement, function, loot table, predicate, recipe or tag file in the workspace will be renamed too.
+Additionally, if you rename a namespaced ID with file definition (e.g. the ID for advancement, function, loot table, predicate, recipe or tag), the corresponding file in the workspace will be renamed/moved too.
 
 ![rename-function](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-function.gif)
 

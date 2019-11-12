@@ -554,8 +554,8 @@ describe('LineParser Tests', () => {
                 data: {
                     args: [{ data: 'first', parser: 'test' }, { data: 'second', parser: 'test' }],
                     hint: {
-                        fix: ['<first: test>', '<second: test>'],
-                        options: ['[foo: test]', '[bar: test]']
+                        fix: ['<first: test>'],
+                        options: [['<second: test>', ['[foo: test]', '[bar: test]']]]
                     }
                 }
             })
