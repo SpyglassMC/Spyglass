@@ -1,8 +1,8 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -57,10 +57,8 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             },
             definitionProvider: true,
             didChangeWatchedFiles: true,
+            documentLinkProvider: true,
             // documentFormattingProvider: true,
-            // documentLinkProvider: {
-            //     resolveProvider: true
-            // },
             // documentOnTypeFormattingProvider: {
             //     firstTrigge rCharacter: '\n'
             // },
@@ -540,6 +538,43 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
     } else {
         return null
     }
+})
+
+connection.onDocumentLinks(({ textDocument: { uri } }) => {
+    const rel = getRelFromUri(uri)
+    const lines = linesOfRel.get(rel)
+    if (lines) {
+        const ans: DocumentLink[] = []
+        let i = 0
+        for (const { cache } of lines) {
+            for (const type in cache) {
+                if (isFileType(type)) {
+                    const category = cache[type]
+                    for (const id in category) {
+                        if (category.hasOwnProperty(id)) {
+                            try {
+                                const toLink = (v: CachePosition) => ({
+                                    range: {
+                                        start: { line: i, character: v.start },
+                                        end: { line: i, character: v.end }
+                                    },
+                                    target: getUriFromRel(Identity.fromString(id).toRel(type))
+                                })
+                                const unit = category[id] as CacheUnit
+                                ans.push(...unit.def.map(toLink))
+                                ans.push(...unit.ref.map(toLink))
+                            } catch (ignored) {
+                                continue
+                            }
+                        }
+                    }
+                }
+            }
+            i++
+        }
+        return ans
+    }
+    return null
 })
 
 connection.onDocumentColor(({ textDocument: { uri } }) => {
