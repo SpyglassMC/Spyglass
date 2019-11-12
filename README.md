@@ -82,11 +82,9 @@ DHP shows user-defined documentation when you hover on specific arguments, e.g. 
 
 ## Resolving Namespaced IDs
 
-This is WIP.
-
 You can navigate to advancements, loot tables, functions, predicates and all kinds of tags by Ctrl-clicking on their namespaced IDs.
 
-<!-- ![navigate-to-predicate]() -->
+![document-link](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/document-link.gif)
 
 ## Goto Definitions
 
