@@ -1,3 +1,12 @@
+# [v1.7.0](https://github.com/SPGoding/datapack-language-server/compare/v1.6.0...v1.7.0) (2019-11-12)
+
+## ✨ New Features
+- [`c85ef42`](https://github.com/SPGoding/datapack-language-server/commit/c85ef42)  Support document links (Issues: [`#73`](https://github.com/SPGoding/datapack-language-server/issues/73))
+
+## 🐛 Bug Fixes
+- [`94c9a4d`](https://github.com/SPGoding/datapack-language-server/commit/94c9a4d)  Fix bugs about renaming 
+- [`5c633ba`](https://github.com/SPGoding/datapack-language-server/commit/5c633ba)  Fix not parsing count argument in /loot command (Issues: [`#121`](https://github.com/SPGoding/datapack-language-server/issues/121))
+
 # [v1.6.0](https://github.com/SPGoding/datapack-language-server/compare/v1.5.0...v1.6.0) (2019-11-09)
 
 ## ✨ New Features
