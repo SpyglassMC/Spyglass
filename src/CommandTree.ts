@@ -2479,7 +2479,7 @@ export const VanillaTree: CommandTree = {
 export default VanillaTree
 
 export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
-    return 0 <= lastIndex && lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
+    return lastIndex >= args.length ? args[args.length - lastIndex].data : fallback
 }
 
 /**

@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import Lintable, { ToLintedString } from './Lintable'
-import { ClientCache } from './ClientCache'
+import { ClientCache, isLootTableType } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 
@@ -43,14 +43,11 @@ export default class Identity implements Lintable {
         let datapackCategory: string
         let ext: string
         if (category === 'tags/entityTypes') {
-            datapackCategory = 'tags/entity_types'
-        } else if (category === 'lootTables/block' ||
-            category === 'lootTables/entity' ||
-            category === 'lootTables/fishing' ||
-            category === 'lootTables/generic') {
+            datapackCategory = `tags${sep}entity_types`
+        } else if (isLootTableType(category)) {
             datapackCategory = 'loot_tables'
         } else {
-            datapackCategory = category
+            datapackCategory = category.replace(/\//g, sep)
         }
         if (category === 'functions') {
             ext = '.mcfunction'
