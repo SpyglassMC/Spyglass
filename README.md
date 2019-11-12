@@ -12,7 +12,7 @@ A NPM package and an VSCode extension which make editing Minecraft: Java Edition
 # Note
 
 0. Please use the root directory of your data pack as the workspace.
-1. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool. The cache will only be updated if the watched files are updated on disk, so it's highly recommended to enable the Auto Save feature of VSCode.
+1. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool.
 
 # Features
 

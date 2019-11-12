@@ -53,7 +53,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"']
+                triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']
             },
             definitionProvider: true,
             didChangeWatchedFiles: true,
@@ -102,7 +102,7 @@ const cacheFileOperations = {
     // DELETED: Remove the ID from all lootTables/* categories.
     addLootTable: (id: string, type: CacheKey) => {
         const category = getSafeCategory(cacheFile.cache, type)
-        category[id] = { def: [], ref: [] }
+        category[id] = category[id] || { def: [], ref: [] }
         cacheFile.cache[type] = category
     },
     modifyLootTable: (id: string, type: CacheKey) => {
@@ -134,10 +134,10 @@ const cacheFileOperations = {
     // DELETED: Remove from functions cache category.
     addFunction: (id: string) => {
         const category = getSafeCategory(cacheFile.cache, 'functions')
-        category[id] = { def: [], ref: [] }
+        category[id] = category[id] || { def: [], ref: [] }
         cacheFile.cache.functions = category
     },
-    removeFunctionFromAllCachePositions: (rel: string) => {
+    removeCachePositionsWith: (rel: string) => {
         removeCachePosition(cacheFile.cache, rel)
     },
     combineCacheOfLines: async (rel: string, abs: string) => {
@@ -166,7 +166,7 @@ const cacheFileOperations = {
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: CacheKey) => {
         const category = getSafeCategory(cacheFile.cache, type)
-        category[id] = { def: [], ref: [] }
+        category[id] = category[id] || { def: [], ref: [] }
         cacheFile.cache[type] = category
     },
     removeDefault: (id: string, type: CacheKey) => {
@@ -188,7 +188,7 @@ const cacheFileOperations = {
         if (isLootTableType(type)) {
             cacheFileOperations.modifyLootTable(id.toString(), type)
         } else if (type === 'functions') {
-            cacheFileOperations.removeFunctionFromAllCachePositions(rel)
+            cacheFileOperations.removeCachePositionsWith(rel)
             await cacheFileOperations.combineCacheOfLines(rel, abs)
         }
     },
@@ -196,7 +196,7 @@ const cacheFileOperations = {
         if (isLootTableType(type)) {
             cacheFileOperations.deleteLootTable(id.toString())
         } else if (type === 'functions') {
-            cacheFileOperations.removeFunctionFromAllCachePositions(rel)
+            cacheFileOperations.removeCachePositionsWith(rel)
             cacheFileOperations.removeFunction(id.toString())
         } else {
             cacheFileOperations.removeDefault(id.toString(), type)
@@ -303,7 +303,8 @@ connection.onDidOpenTextDocument(({ textDocument: { text, uri, version } }) => {
     versionOfRel.set(rel, version)
     updateDiagnostics(rel, uri)
 })
-connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, version } }) => {
+connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
+    // connection.console.log(`BC: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
     versionOfRel.set(rel, version)
 
@@ -329,9 +330,11 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
             parseString(string, lines)
         }
     }
-    // TODO: Remove this.
-    // updateCacheFile(cacheFile)
+
+    cacheFileOperations.removeCachePositionsWith(rel)
+    await cacheFileOperations.combineCacheOfLines(rel, '')
     updateDiagnostics(rel, uri)
+    // connection.console.log(`AC: ${JSON.stringify(cacheFile)}`)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
@@ -341,16 +344,21 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
+    // connection.console.log(`BW: ${JSON.stringify(cacheFile)}`)
+    // connection.console.log(`WC: ${JSON.stringify(changes)}`)
     for (const { uri, type } of changes) {
         const rel = getRelFromUri(uri)
         const abs = path.join(workspaceFolderPath, rel)
         const { category, id } = await Identity.fromRel(rel)
+
         switch (type) {
             case FileChangeType.Created:
                 cacheFileOperations.fileAdded(rel, abs, category, id)
+                cacheFile.files[rel] = (await fs.stat(abs)).mtimeMs
                 break
             case FileChangeType.Changed:
                 cacheFileOperations.fileModified(rel, abs, category, id)
+                cacheFile.files[rel] = (await fs.stat(abs)).mtimeMs
                 break
             case FileChangeType.Deleted:
             default:
@@ -360,6 +368,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     }
 
     trimCache(cacheFile.cache)
+    // connection.console.log(`AW: ${JSON.stringify(cacheFile)}`)
 })
 
 connection.onCompletion(({ textDocument: { uri }, position: { line, character } }) => {
@@ -454,11 +463,9 @@ async function getReferencesOrDefinition(uri: string, number: number, char: numb
     }
     return null
 }
-
 connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     return await getReferencesOrDefinition(uri, number, char, 'def')
 })
-
 connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     return await getReferencesOrDefinition(uri, number, char, 'ref')
 })
@@ -472,12 +479,11 @@ connection.onPrepareRename(({ textDocument: { uri }, position: { character: char
             start: { line: number, character: result.start },
             end: { line: number, character: result.end }
         }
-    } else {
-        return null
     }
+    return null
 })
-
 connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
+    // connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
@@ -492,10 +498,17 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
                 if (targetID !== result.id) {
                     // Rename file if necessary.
                     if (isFileType(result.type)) {
-                        const getUriFromID = (id: string) => getUriFromRel(Identity.fromString(id).toRel(result.type))
-                        const oldUri = getUriFromID(result.id)
-                        const newUri = getUriFromID(newName)
+                        const getRelFromID = (id: string) => Identity.fromString(id).toRel(result.type)
+                        const oldRel = getRelFromID(result.id)
+                        const newRel = getRelFromID(targetID)
+                        const oldUri = getUriFromRel(oldRel)
+                        const newUri = getUriFromRel(newRel)
                         documentChanges.push(RenameFile.create(oldUri, newUri, { ignoreIfExists: true }))
+                        // Update cache.
+                        if (cacheFile.files[oldRel] !== undefined) {
+                            cacheFile.files[newRel] = cacheFile.files[oldRel]
+                            delete cacheFile.files[oldRel]
+                        }
                     }
 
                     // Change file content.
@@ -534,6 +547,7 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
             }
         }
 
+        // connection.console.log(`AR: ${JSON.stringify(cacheFile)}`)
         return { documentChanges }
     } else {
         return null
