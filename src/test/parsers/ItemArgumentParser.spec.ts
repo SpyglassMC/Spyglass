@@ -6,6 +6,7 @@ import Identity from '../../types/Identity'
 import Item from '../../types/Item'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import StringReader from '../../utils/StringReader'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -51,8 +52,21 @@ describe('ItemArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'minecraft:stick' },
-                    { label: 'minecraft:diamond_sword' }
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'stick',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'diamond_sword',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })

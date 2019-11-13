@@ -4,7 +4,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import { Registries } from '../../types/VanillaRegistries'
 import Identity from '../../types/Identity'
 import { fail } from 'assert'
@@ -25,6 +25,35 @@ describe('NamespacedIDArgumentParser Tests', () => {
             entries: {
                 'minecraft:water': { protocol_id: 0 },
                 'minecraft:lava': { protocol_id: 1 }
+            }
+        },
+        'minecraft:item': {
+            protocol_id: 2,
+            entries: {
+                'minecraft:stick': { protocol_id: 0 }
+            }
+        },
+        'minecraft:block': {
+            protocol_id: 3,
+            entries: {
+                'minecraft:stone': { protocol_id: 0 }
+            }
+        },
+        'minecraft:entity_type': {
+            protocol_id: 4,
+            entries: {
+                'minecraft:area_effect_cloud': { protocol_id: 0 }
+            }
+        },
+        'spgoding:seg_completion_test': {
+            protocol_id: 5,
+            entries: {
+                'spgoding:foo':  { protocol_id: 0 },
+                'spgoding:foo/bar':  { protocol_id: 1 },
+                'spgoding:foo/bar/baz':  { protocol_id: 2 },
+                'minecraft:foo':  { protocol_id: 3 },
+                'minecraft:foo/bar':  { protocol_id: 4 },
+                'minecraft:foo/bar/baz':  { protocol_id: 5 },
             }
         }
     }
@@ -47,16 +76,14 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 'spgoding:function/2': { def: [], ref: [] }
             },
             'tags/fluids': {
-                'spgoding:fluid/1': { def: [], ref: [] },
-                'spgoding:fluid/2': { def: [], ref: [] }
+                'minecraft:fluid_tag': { def: [], ref: [] }
             },
             'tags/entityTypes': {
                 'spgoding:entity_type/1': { def: [], ref: [] },
                 'spgoding:entity_type/2': { def: [], ref: [] }
             },
             'tags/blocks': {
-                'spgoding:block/1': { def: [], ref: [] },
-                'spgoding:block/2': { def: [], ref: [] }
+                'minecraft:block/1': { def: [], ref: [] }
             },
             'tags/items': {
                 'spgoding:item/1': { def: [], ref: [] },
@@ -86,8 +113,8 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return data with tag ID', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:fluid', registries, true)
-            const actual = parser.parse(new StringReader('#spgoding:fluid/a'), undefined, manager)
-            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['fluid', 'a'], true))
+            const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), undefined, manager)
+            assert.deepStrictEqual(actual.data, new Identity('minecraft', ['fluid_tag'], true))
         })
         it('Should return completions for registry entries', () => {
             const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
@@ -95,9 +122,11 @@ describe('NamespacedIDArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:a' },
-                    { label: 'spgoding:b' },
-                    { label: 'spgoding:c' }
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    }
                 ]
             )
         })
@@ -107,8 +136,11 @@ describe('NamespacedIDArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:bossbar/a' },
-                    { label: 'spgoding:bossbar/b' }
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    }
                 ]
             )
         })
@@ -118,83 +150,238 @@ describe('NamespacedIDArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:loot_table/block' },
-                    { label: 'spgoding:loot_table/generic' }
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    }
                 ]
             )
         })
-        it('Should return completions for tag symbol', () => {
+        it('Should return completions for fluid and fluid tags', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:fluid', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '#' },
-                    { label: 'minecraft:water' },
-                    { label: 'minecraft:lava' }
+                    {
+                        label: '#minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'fluid_tag',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'water',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'lava',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })
-        it('Should return completions for fluid tags', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:fluid', registries, true)
-            const actual = parser.parse(new StringReader('#'), 1, manager, undefined, cache)
-            assert.deepStrictEqual(actual.data, new Identity())
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: 'spgoding:fluid/1' },
-                    { label: 'spgoding:fluid/2' }
-                ]
-            )
-        })
-        it('Should return completions for function tags', () => {
+        it('Should return completions for functions and function tags', () => {
             const parser = new NamespacedIDArgumentParser('$functions', registries, true)
-            const actual = parser.parse(new StringReader('#'), 1, manager, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:function/1' },
-                    { label: 'spgoding:function/2' }
+                    {
+                        label: '#spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    }
                 ]
             )
         })
-        it('Should return completions for item tags', () => {
+        it('Should return completions for items and item tags', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:item', registries, true)
-            const actual = parser.parse(new StringReader('#'), 1, manager, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:item/1' },
-                    { label: 'spgoding:item/2' }
+                    {
+                        label: '#spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'stick',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })
-        it('Should return completions for block tags', () => {
+        it('Should return completions for blocks and block tags', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:block', registries, true)
-            const actual = parser.parse(new StringReader('#'), 1, manager, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:block/1' },
-                    { label: 'spgoding:block/2' }
+                    {
+                        label: '#minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'block',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    },
+                    {
+                        label: 'stone',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })
-        it('Should return completions for entity type tags', () => {
+        it('Should return completions for entity types and entity type tags', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries, true)
-            const actual = parser.parse(new StringReader('#'), 1, manager, undefined, cache)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'spgoding:entity_type/1' },
-                    { label: 'spgoding:entity_type/2' }
+                    {
+                        label: '#spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'area_effect_cloud',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })
-        it('Should not return completions for tags when the cursor is not at the point', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries, true)
-            const actual = parser.parse(new StringReader('#'), undefined, manager)
+        it('Should return completions for namespaces and the first path in default namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
+            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
-            assert.deepStrictEqual(actual.completions, [])
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    },
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for the first path in non-default namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
+            const actual = parser.parse(new StringReader('spgoding:'), 9, manager, undefined, cache)
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['']))
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    },
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for the second path in non-default namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
+            const actual = parser.parse(new StringReader('spgoding:foo/'), 13, manager, undefined, cache)
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo', '']))
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'bar',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    },
+                    {
+                        label: 'bar',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for the third path in non-default namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
+            const actual = parser.parse(new StringReader('spgoding:foo/bar/'), 17, manager, undefined, cache)
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo','bar','']))
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'baz',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for the second path in default namespace', () => {
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
+            const actual = parser.parse(new StringReader('foo/'), 4, manager, undefined, cache)
+            assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo', '']))
+            assert.deepStrictEqual(actual.completions,
+                [                    
+                    {
+                        label: 'bar',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    },
+                    {
+                        label: 'bar',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
         })
         it('Should return untolerable error when the input is empty', () => {
             const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
@@ -266,8 +453,8 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should throw error when tag are not allowed here', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries)
-            const actual = parser.parse(new StringReader('#test'), undefined, manager, undefined, cache)
-            assert.deepStrictEqual(actual.data, new Identity('minecraft', ['test'], true))
+            const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), undefined, manager, undefined, cache)
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['entity_type', '1'], true))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'tags are not allowed here')
             ])

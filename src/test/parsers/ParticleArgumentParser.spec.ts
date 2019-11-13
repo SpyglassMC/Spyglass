@@ -9,6 +9,7 @@ import ParticleArgumentParser from '../../parsers/ParticleArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import Vector from '../../types/Vector'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('ParticleArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -113,10 +114,31 @@ describe('ParticleArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'minecraft:cloud' },
-                    { label: 'minecraft:dust' },
-                    { label: 'minecraft:block' },
-                    { label: 'minecraft:item' }
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'cloud',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'dust',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'block',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'item',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })

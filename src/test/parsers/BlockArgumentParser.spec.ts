@@ -7,6 +7,7 @@ import Identity from '../../types/Identity'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('BlockArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -106,8 +107,21 @@ describe('BlockArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'minecraft:stone' },
-                    { label: 'minecraft:grass_block' }
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'stone',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: 'grass_block',
+                        kind: CompletionItemKind.Field,
+                        commitCharacters: [' ']
+                    }
                 ]
             )
         })

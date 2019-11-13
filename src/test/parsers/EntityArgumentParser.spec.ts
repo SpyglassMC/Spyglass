@@ -8,6 +8,7 @@ import StringReader from '../../utils/StringReader'
 import NumberRange from '../../types/NumberRange'
 import Identity from '../../types/Identity'
 import Entity from '../../types/Entity'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -314,9 +315,11 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a[ advancements = { } ]'), 21, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.completions, [
-                    { label: 'spgoding:advancement/a' },
-                    { label: 'spgoding:advancement/b' },
-                    { label: 'spgoding:advancement/c' }
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    }
                 ])
             })
             it('Should return multiple-entity error for @a', () => {

@@ -2,13 +2,14 @@ import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
 import { VanillaConfig } from '../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
 import Identity from '../types/Identity'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import Manager from '../types/Manager'
+import HashSet from '../types/HashSet'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -54,12 +55,12 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         let stringID: string = ''
         let isTag = false
 
-        const keyCandidates: string[] = []
+        const tagCandidates: string[] = []
         const regularCandidates: string[] = []
         if (this.allowTag) {
             const type = getCacheTagType()
             const category = getSafeCategory(cache, type)
-            keyCandidates.push(...Object.keys(category))
+            tagCandidates.push(...Object.keys(category))
         }
         if (this.type.startsWith('$')) {
             const type = this.type.slice(1)
@@ -72,6 +73,40 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             regularCandidates.push(...Object.keys(registry.entries))
         }
 
+        //#region Completions
+        const namespaces: HashSet = {}
+        const folders: HashSet = {}
+        const files: HashSet = {}
+        if (cursor === reader.cursor) {
+            for (const candidate of tagCandidates) {
+                const namespace = candidate.split(':')[0]
+                const paths = candidate.split(':')[1].split('/')
+
+                namespaces[`${Identity.TagSymbol}${namespace}`] = true
+                if (namespace === Identity.DefaultNamespace) {
+                    if (paths.length >= 2) {
+                        folders[paths[0]] = true
+                    } else {
+                        files[paths[0]] = true
+                    }
+                }
+            }
+            for (const candidate of regularCandidates) {
+                const namespace = candidate.split(':')[0]
+                const paths = candidate.split(':')[1].split('/')
+
+                namespaces[namespace] = true
+                if (namespace === Identity.DefaultNamespace) {
+                    if (paths.length >= 2) {
+                        folders[paths[0]] = true
+                    } else {
+                        files[paths[0]] = true
+                    }
+                }
+            }
+        }
+        //#endregion
+
         //#region Data
         let namespace = Identity.DefaultNamespace
         const paths: string[] = []
@@ -80,19 +115,14 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         if (reader.peek() === Identity.TagSymbol) {
             reader.skip()
             isTag = true
-            if (this.allowTag) {
-                if (reader.cursor === cursor) {
-                    // Completions for tag ID.
-                    const type = getCacheTagType()
-                    ans.completions.push(...getCompletions(cache, type))
-                }
-            } else {
+            if (!this.allowTag) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     'tags are not allowed here'
                 ))
             }
         }
+        let candidates = isTag ? tagCandidates : regularCandidates
 
         if (!reader.canRead()) {
             ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false))
@@ -100,19 +130,51 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             // Parse the namespace or the first part of path.
             let path0 = reader.readUnquotedString()
             if (reader.peek() === ':') {
+                reader.skip()
                 namespace = path0
-                path0 = reader
-                    .skip()
-                    .readUnquotedString()
+                //#region Completions
+                candidates = candidates
+                    .filter(v => v.startsWith(`${namespace}:`))
+                    .map(v => v.slice(namespace.length + 1))
+                if (cursor === reader.cursor) {
+                    for (const candidate of candidates) {
+                        const paths = candidate.split(Identity.Sep)
+
+                        if (paths.length >= 2) {
+                            folders[paths[0]] = true
+                        } else {
+                            files[paths[0]] = true
+                        }
+                    }
+                }
+                //#endregion
+                path0 = reader.readUnquotedString()
+            } else {
+                candidates = candidates
+                    .filter(v => v.startsWith(`${Identity.DefaultNamespace}:`))
+                    .map(v => v.slice(Identity.DefaultNamespace.length + 1))
             }
             paths.push(path0)
 
             // Parse the following paths.
             while (reader.peek() === Identity.Sep) {
+                reader.skip()
+                //#region Completions
+                candidates = candidates.filter(v => v.startsWith(paths.join(Identity.Sep)))
+                if (cursor === reader.cursor) {
+                    for (const candidate of candidates) {
+                        const candidatePaths = candidate.split(Identity.Sep)
+
+                        if (candidatePaths.length - paths.length >= 2) {
+                            folders[candidatePaths[paths.length]] = true
+                        } else if (candidatePaths.length - paths.length === 1) {
+                            files[candidatePaths[paths.length]] = true
+                        }
+                    }
+                }
+                //#endregion
                 paths.push(
-                    reader
-                        .skip()
-                        .readUnquotedString()
+                    reader.readUnquotedString()
                 )
             }
 
@@ -199,6 +261,27 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 }
             }
         }
+
+        //#region Completions
+        // namespace -> CompletionItemKind.Module
+        // folder -> CompletionItemKind.Folder
+        // file -> CompletionItemKind.Field
+        Object.keys(namespaces).forEach(k => void ans.completions.push({
+            label: k,
+            kind: CompletionItemKind.Module,
+            commitCharacters: [':']
+        }))
+        Object.keys(folders).forEach(k => void ans.completions.push({
+            label: k,
+            kind: CompletionItemKind.Folder,
+            commitCharacters: ['/']
+        }))
+        Object.keys(files).forEach(k => void ans.completions.push({
+            label: k,
+            kind: CompletionItemKind.Field,
+            commitCharacters: [' ']
+        }))
+        //#endregion
 
         return ans
     }
