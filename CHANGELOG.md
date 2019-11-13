@@ -1,3 +1,16 @@
+# [v1.8.0](https://github.com/SPGoding/datapack-language-server/compare/v1.7.0...v1.8.0) (2019-11-13)
+
+## ✨ New Features
+- [`8313ec5`](https://github.com/SPGoding/datapack-language-server/commit/8313ec5)  Finish completions for namespaced IDs (Issues: [`#101`](https://github.com/SPGoding/datapack-language-server/issues/101))
+
+## 🐛 Bug Fixes
+- [`afd537f`](https://github.com/SPGoding/datapack-language-server/commit/afd537f)  Fix cache updating 
+- [`13cb439`](https://github.com/SPGoding/datapack-language-server/commit/13cb439)  Fix weird signature help (Issues: [`#124`](https://github.com/SPGoding/datapack-language-server/issues/124))
+- [`e33e937`](https://github.com/SPGoding/datapack-language-server/commit/e33e937)  Fix entity argument parser (Issues: [`#128`](https://github.com/SPGoding/datapack-language-server/issues/128))
+- [`62caef8`](https://github.com/SPGoding/datapack-language-server/commit/62caef8)  Remove redundant errors for leading whitespaces (Issues: [`#131`](https://github.com/SPGoding/datapack-language-server/issues/131))
+- [`639f370`](https://github.com/SPGoding/datapack-language-server/commit/639f370)  Fix not allowing tags in function command (Issues: [`#134`](https://github.com/SPGoding/datapack-language-server/issues/134))
+- [`392187a`](https://github.com/SPGoding/datapack-language-server/commit/392187a)  Fix Pose tag of armor stands (Issues: [`#133`](https://github.com/SPGoding/datapack-language-server/issues/133))
+
 # [v1.7.0](https://github.com/SPGoding/datapack-language-server/compare/v1.6.0...v1.7.0) (2019-11-12)
 
 ## ✨ New Features
