@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
@@ -19,57 +19,73 @@ const versionOfRel = new Map<string, number | null>()
 const manager = new ArgumentParserManager()
 const config = VanillaConfig
 let cacheFile: CacheFile = { cache: {}, files: {} }
-let workspaceFolder: WorkspaceFolder
-let workspaceFolderPath: string
-let dotPath: string
-let cachePath: string
-let dataPath: string
+let workspaceFolder: WorkspaceFolder | undefined
+let workspaceFolderPath: string | undefined
+let dotPath: string | undefined
+let cachePath: string | undefined
+let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders }) => {
-    if (!workspaceFolders || workspaceFolders.length !== 1) {
-        return { capabilities: {} }
-    }
-    workspaceFolder = workspaceFolders[0]
-    workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
-    dotPath = path.join(workspaceFolderPath, '.datapack')
-    cachePath = path.join(dotPath, 'cache.json')
-    dataPath = path.join(workspaceFolderPath, 'data')
+    if (workspaceFolders) {
+        workspaceFolder = workspaceFolders[0]
+        workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
+        dotPath = path.join(workspaceFolderPath, '.datapack')
+        cachePath = path.join(dotPath, 'cache.json')
+        dataPath = path.join(workspaceFolderPath, 'data')
 
-    connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
-    connection.console.info(`dotPath = ${dotPath}`)
-    connection.console.info(`cachePath = ${cachePath}`)
-    connection.console.info(`dataPath = ${dataPath}`)
-    if (!fs.pathExistsSync(dotPath)) {
-        fs.mkdirpSync(dotPath)
+        connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
+        connection.console.info(`dotPath = ${dotPath}`)
+        connection.console.info(`cachePath = ${cachePath}`)
+        connection.console.info(`dataPath = ${dataPath}`)
+        if (!fs.pathExistsSync(dotPath)) {
+            fs.mkdirpSync(dotPath)
+        }
+        if (!fs.pathExistsSync(dataPath)) {
+            fs.mkdirpSync(dataPath)
+        }
+        if (fs.existsSync(cachePath)) {
+            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+        }
+        await updateCacheFile(cacheFile, workspaceFolderPath)
+
+        return {
+            capabilities: {
+                completionProvider: {
+                    triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']
+                },
+                definitionProvider: true,
+                didChangeWatchedFiles: true,
+                documentLinkProvider: true,
+                documentHighlightProvider: true,
+                // documentFormattingProvider: true,
+                // documentOnTypeFormattingProvider: {
+                //     firstTrigge rCharacter: '\n'
+                // },
+                foldingRangeProvider: true,
+                colorProvider: true,
+                // hoverProvider: true,
+                referencesProvider: true,
+                renameProvider: {
+                    prepareProvider: true
+                },
+                signatureHelpProvider: {
+                    triggerCharacters: [' ']
+                },
+                textDocumentSync: {
+                    change: TextDocumentSyncKind.Incremental,
+                    openClose: true
+                }
+            }
+        } as InitializeResult
     }
-    if (!fs.pathExistsSync(dataPath)) {
-        fs.mkdirpSync(dataPath)
-    }
-    if (fs.existsSync(cachePath)) {
-        cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
-    }
-    await updateCacheFile(cacheFile)
 
     return {
         capabilities: {
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']
             },
-            definitionProvider: true,
-            didChangeWatchedFiles: true,
-            documentLinkProvider: true,
-            documentHighlightProvider: true,
-            // documentFormattingProvider: true,
-            // documentOnTypeFormattingProvider: {
-            //     firstTrigge rCharacter: '\n'
-            // },
             foldingRangeProvider: true,
             colorProvider: true,
-            // hoverProvider: true,
-            referencesProvider: true,
-            renameProvider: {
-                prepareProvider: true
-            },
             signatureHelpProvider: {
                 triggerCharacters: [' ']
             },
@@ -78,22 +94,35 @@ connection.onInitialize(async ({ workspaceFolders }) => {
                 openClose: true
             }
         }
-    }
+    } as InitializeResult
 })
 
 setInterval(
-    () => void fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' }),
+    () => {
+        if (cachePath) {
+            fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' })
+        }
+    },
     30000
 )
 
 function getRelFromUri(uri: string) {
     const abs = Files.uriToFilePath(uri) as string
-    const rel = path.relative(workspaceFolderPath, abs)
+    if (workspaceFolderPath) {
+        return path.relative(workspaceFolderPath, abs)
+    }
+    return abs
+}
+
+function getAbsFromRel(rel: string) {
+    if (workspaceFolderPath) {
+        return path.join(workspaceFolderPath, rel)
+    }
     return rel
 }
 
 function getUriFromRel(rel: string) {
-    return URI.file(path.join(workspaceFolderPath, rel)).toString()
+    return URI.file(getAbsFromRel(rel)).toString()
 }
 
 const cacheFileOperations = {
@@ -205,7 +234,7 @@ const cacheFileOperations = {
     }
 }
 
-async function updateCacheFile(cacheFile: CacheFile) {
+async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string) {
     for (const rel in cacheFile.files) {
         const abs = path.join(workspaceFolderPath, rel)
         const { id, category: key } = await Identity.fromRel(rel)
@@ -240,9 +269,9 @@ async function updateCacheFile(cacheFile: CacheFile) {
             }
         }
     }
-    const namespaces = await fs.readdir(dataPath)
+    const namespaces = await fs.readdir(dataPath as string)
     for (const namespace of namespaces) {
-        const namespacePath = path.join(dataPath, namespace)
+        const namespacePath = path.join(dataPath as string, namespace)
         const advancementsPath = path.join(namespacePath, 'advancements')
         const functionsPath = path.join(namespacePath, 'functions')
         const lootTablesPath = path.join(namespacePath, 'loot_tables')
@@ -349,7 +378,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`WC: ${JSON.stringify(changes)}`)
     for (const { uri, type } of changes) {
         const rel = getRelFromUri(uri)
-        const abs = path.join(workspaceFolderPath, rel)
+        const abs = getAbsFromRel(rel)
         const { category, id } = await Identity.fromRel(rel)
 
         switch (type) {
