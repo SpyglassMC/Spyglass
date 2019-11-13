@@ -39,6 +39,7 @@ export default class LineParser implements Parser<Line> {
 
     parse(reader: StringReader, cursor: number = -1, manager: Manager<ArgumentParser<any>>): ParserResult {
         const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+        reader.skipWhiteSpace()
         const backupReader = reader.clone()
         if (reader.peek() === '/') {
             // Find a leading slash...
