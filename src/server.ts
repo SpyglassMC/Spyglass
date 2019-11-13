@@ -1,8 +1,8 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -58,6 +58,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             definitionProvider: true,
             didChangeWatchedFiles: true,
             documentLinkProvider: true,
+            documentHighlightProvider: true,
             // documentFormattingProvider: true,
             // documentOnTypeFormattingProvider: {
             //     firstTrigge rCharacter: '\n'
@@ -444,8 +445,6 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
 })
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
-    // TODO: Remove this.
-    // await updateCacheFile(cacheFile)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
@@ -469,6 +468,33 @@ connection.onDefinition(async ({ textDocument: { uri }, position: { character: c
 connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     return await getReferencesOrDefinition(uri, number, char, 'ref')
 })
+connection.onDocumentHighlight(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+    const rel = getRelFromUri(uri)
+    const lines = linesOfRel.get(rel) as Line[]
+    const line = lines[number]
+    const result = getCacheFromChar(line.cache || {}, char)
+    if (result) {
+        const ans: DocumentHighlight[] = []
+        let i = 0
+        for (const line of lines) {
+            const unit = getSafeCategory(line.cache, result.type)[result.id]
+            if (unit) {
+                const ref = [...unit.def, ...unit.ref]
+                if (ref.length > 0) {
+                    ans.push(...ref.map(v => ({
+                        range: {
+                            start: { line: i, character: v.start },
+                            end: { line: i, character: v.end }
+                        }
+                    })))
+                }
+            }
+            i++
+        }
+        return ans
+    }
+    return null
+})
 
 connection.onPrepareRename(({ textDocument: { uri }, position: { character: char, line: number } }) => {
     const rel = getRelFromUri(uri)
@@ -483,7 +509,7 @@ connection.onPrepareRename(({ textDocument: { uri }, position: { character: char
     return null
 })
 connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
-    // connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
+    connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
@@ -493,61 +519,59 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
         const unit = category[result.id]
         if (unit) {
             try {
+                const getRelFromID = (id: string) => Identity.fromString(id).toRel(result.type)
                 const targetCategory = getSafeCategory(cacheFile.cache, result.type)
-                const targetID = Identity.fromString(newName).toString()
-                if (targetID !== result.id) {
-                    // Rename file if necessary.
-                    if (isFileType(result.type)) {
-                        const getRelFromID = (id: string) => Identity.fromString(id).toRel(result.type)
-                        const oldRel = getRelFromID(result.id)
-                        const newRel = getRelFromID(targetID)
-                        const oldUri = getUriFromRel(oldRel)
-                        const newUri = getUriFromRel(newRel)
-                        documentChanges.push(RenameFile.create(oldUri, newUri, { ignoreIfExists: true }))
-                        // Update cache.
-                        if (cacheFile.files[oldRel] !== undefined) {
-                            cacheFile.files[newRel] = cacheFile.files[oldRel]
-                            delete cacheFile.files[oldRel]
+                const targetID = isNamespacedType(result.type) ? Identity.fromString(newName).toString() : newName
+
+                // Change file content.
+                for (const key in unit) {
+                    if (key === 'def' || key === 'ref') {
+                        for (const pos of unit[key]) {
+                            documentChanges.push({
+                                textDocument: { uri: getUriFromRel(pos.rel as string), version: versionOfRel.get(rel) || null },
+                                edits: [{
+                                    newText: newName,
+                                    range: {
+                                        start: { line: pos.line as number, character: pos.start },
+                                        end: { line: pos.line as number, character: pos.end }
+                                    }
+                                }]
+                            })
                         }
                     }
-
-                    // Change file content.
-                    for (const key in unit) {
-                        if (key === 'def' || key === 'ref') {
-                            for (const pos of unit[key]) {
-                                documentChanges.push({
-                                    textDocument: { uri, version: versionOfRel.get(rel) || null },
-                                    edits: [{
-                                        newText: newName,
-                                        range: {
-                                            start: { line: pos.line as number, character: pos.start },
-                                            end: { line: pos.line as number, character: pos.end }
-                                        }
-                                    }]
-                                })
-                            }
-                        }
-                    }
-
-                    // Update cache.
-                    const targetUnit = targetCategory[targetID]
-                    if (targetUnit) {
-                        targetUnit.def.push(...unit.def)
-                        targetUnit.ref.push(...unit.ref)
-                    } else {
-                        targetCategory[targetID] = unit
-                        cacheFile.cache[result.type] = targetCategory
-                    }
-                    delete category[result.id]
-                } else {
-                    return null
                 }
+
+                // Rename file if necessary.
+                if (isFileType(result.type)) {
+                    const oldRel = getRelFromID(result.id)
+                    const oldUri = getUriFromRel(oldRel)
+                    const newRel = getRelFromID(targetID)
+                    const newUri = getUriFromRel(newRel)
+                    documentChanges.push(RenameFile.create(oldUri, newUri, { ignoreIfExists: true }))
+                    // Update cache.
+                    if (cacheFile.files[oldRel] !== undefined) {
+                        cacheFile.files[newRel] = cacheFile.files[oldRel]
+                        delete cacheFile.files[oldRel]
+                    }
+                }
+
+                // Update cache.
+                const targetUnit = targetCategory[targetID]
+                if (targetUnit) {
+                    targetUnit.def.push(...unit.def)
+                    targetUnit.ref.push(...unit.ref)
+                } else {
+                    targetCategory[targetID] = unit
+                    cacheFile.cache[result.type] = targetCategory
+                }
+                delete category[result.id]
             } catch (ignored) {
                 return null
             }
         }
 
-        // connection.console.log(`AR: ${JSON.stringify(cacheFile)}`)
+        connection.console.log(`DC: ${JSON.stringify(documentChanges)}`)
+        connection.console.log(`AR: ${JSON.stringify(cacheFile)}`)
         return { documentChanges }
     } else {
         return null

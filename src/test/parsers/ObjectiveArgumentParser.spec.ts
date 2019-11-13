@@ -84,11 +84,11 @@ describe('ObjectiveArgumentParser Tests', () => {
         })
         it('Should return cache when the objective is a definition', () => {
             const parser = new ObjectiveArgumentParser(true)
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
-            assert.deepStrictEqual(actual.data, 'qux')
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
+            assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
                 objectives: {
-                    qux: {
+                    foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []
                     }

@@ -76,11 +76,11 @@ describe('TeamArgumentParser Tests', () => {
         })
         it('Should return cache if the team is a definition', () => {
             const parser = new TeamArgumentParser(true)
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
-            assert.deepStrictEqual(actual.data, 'qux')
+            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
+            assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
                 teams: {
-                    qux: {
+                    foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []
                     }

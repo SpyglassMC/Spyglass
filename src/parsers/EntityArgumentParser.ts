@@ -21,8 +21,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
     constructor(
         private readonly amount: 'single' | 'multiple',
-        private readonly type: 'players' | 'entities',
-        private readonly greedy = false
+        private readonly type: 'players' | 'entities'
     ) { super() }
 
     parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Entity> {
@@ -61,11 +60,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
         // Data
         let plain
-        if (this.greedy) {
-            plain = reader.readUntilOrEnd(' ')
-        } else {
-            plain = reader.readUnquotedString()
-        }
+        plain = reader.readUntilOrEnd(' ')
         if (plain) {
             ans.data.plain = plain
         }

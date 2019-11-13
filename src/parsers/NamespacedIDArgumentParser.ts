@@ -8,6 +8,7 @@ import Identity from '../types/Identity'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
+import Manager from '../types/Manager'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -26,7 +27,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             errors: [],
@@ -53,37 +54,43 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         let stringID: string = ''
         let isTag = false
 
-        //#region Completions
-        if (reader.cursor === cursor) {
-            if (this.allowTag) {
-                ans.completions.push({ label: Identity.TagSymbol })
-            }
-            if (this.type.startsWith('$')) {
-                const type = this.type.slice(1)
-                ans.completions.push(...getCompletions(cache, type as any))
-                if (type.startsWith('lootTables/')) {
-                    ans.completions.push(...getCompletions(cache, 'lootTables/generic'))
-                }
-            } else {
-                const registry = this.registries[this.type]
-                const getCompletions = (registry: Registry) => arrayToCompletions(Object.keys(registry.entries))
-                ans.completions.push(...getCompletions(registry))
-            }
+        const keyCandidates: string[] = []
+        const regularCandidates: string[] = []
+        if (this.allowTag) {
+            const type = getCacheTagType()
+            const category = getSafeCategory(cache, type)
+            keyCandidates.push(...Object.keys(category))
         }
-        //#endregion
+        if (this.type.startsWith('$')) {
+            const type = this.type.slice(1)
+            regularCandidates.push(...Object.keys(getSafeCategory(cache, type as any)))
+            if (type.startsWith('lootTables/')) {
+                regularCandidates.push(...Object.keys(getSafeCategory(cache, 'lootTables/generic')))
+            }
+        } else {
+            const registry = this.registries[this.type]
+            regularCandidates.push(...Object.keys(registry.entries))
+        }
 
         //#region Data
         let namespace = Identity.DefaultNamespace
         const paths: string[] = []
 
         // Whether this is a tag ID.
-        if (this.allowTag && reader.peek() === Identity.TagSymbol) {
+        if (reader.peek() === Identity.TagSymbol) {
             reader.skip()
             isTag = true
-            if (reader.cursor === cursor) {
-                // Completions for tag ID.
-                const type = getCacheTagType()
-                ans.completions.push(...getCompletions(cache, type))
+            if (this.allowTag) {
+                if (reader.cursor === cursor) {
+                    // Completions for tag ID.
+                    const type = getCacheTagType()
+                    ans.completions.push(...getCompletions(cache, type))
+                }
+            } else {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    'tags are not allowed here'
+                ))
             }
         }
 

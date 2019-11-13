@@ -7,12 +7,12 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-A NPM package and an VSCode extension which make editing Minecraft: Java Edition datapacks much easier. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
+A really heavy language server providing completions, signatures, renaming, definitions, references, diagnostics, folding ranges, color information, hover information and document links for data packs in JE 1.15. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
 
 # Note
 
-0. Please use the root directory of your data pack as the workspace.
-1. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool.
+0. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool.
+1. Please use the root directory of your data pack as the workspace. Otherwise you can't use all features provided by DHP which depend on the cache file. 
 
 # Features
 

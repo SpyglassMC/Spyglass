@@ -51,12 +51,6 @@ describe('EntityArgumentParser Tests', () => {
         describe('For plain entities', () => {
             it('Should return data', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('SPGoding'), undefined, manager)
-                assert.deepStrictEqual(actual.data, new Entity('SPGoding'))
-                assert.deepStrictEqual(actual.errors, [])
-            })
-            it('Should return greedy data', () => {
-                const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader('$ASDASD'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity('$ASDASD'))
                 assert.deepStrictEqual(actual.errors, [])

@@ -267,3 +267,13 @@ export function isFileType(type: string): type is FileType {
         isLootTableType(type as CacheKey)
     )
 }
+
+type NamespacedType = 'bossbars' | 'storages' | FileType
+
+export function isNamespacedType(type: CacheKey): type is NamespacedType {
+    return (
+        type === 'bossbars' ||
+        type === 'storages' ||
+        isFileType(type as CacheKey)
+    )
+}

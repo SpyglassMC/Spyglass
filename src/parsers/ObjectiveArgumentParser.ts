@@ -41,13 +41,22 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                 false
             ))
         } else {
-            if (!Object.keys(category).includes(value)) {
-                if (this.isDefinition) {
+            if (this.isDefinition) {
+                ans.cache = {
+                    objectives: {
+                        [value]: {
+                            def: [{ start, end: reader.cursor }],
+                            ref: []
+                        }
+                    }
+                }
+            } else {
+                if (Object.keys(category).includes(value)) {
                     ans.cache = {
                         objectives: {
                             [value]: {
-                                def: [{ start, end: reader.cursor }],
-                                ref: []
+                                def: [],
+                                ref: [{ start, end: start + value.length }]
                             }
                         }
                     }
@@ -58,15 +67,6 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                         undefined,
                         DiagnosticSeverity.Warning
                     ))
-                }
-            } else {
-                ans.cache = {
-                    objectives: {
-                        [value]: {
-                            def: [],
-                            ref: [{ start, end: start + value.length }]
-                        }
-                    }
                 }
             }
             if (value.length > 16) {

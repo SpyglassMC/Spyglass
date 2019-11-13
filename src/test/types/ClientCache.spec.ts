@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -107,49 +107,6 @@ describe('ClientCache Tests', () => {
             const actual = combineCache(base, override)
             assert.deepStrictEqual(actual, base)
         })
-        // TODO: Remove this.
-        // it('Should remove elements with the same location as the override ones in ClientCache', () => {
-        //     const base: ClientCache = {
-        //         advancements: {
-        //             foo: {
-        //                 def: [],
-        //                 ref: [{ start: 0, end: 3 }]
-        //             }
-        //         }
-        //     }
-        //     const override: ClientCache = {
-        //         entities: {
-        //             foo: {
-        //                 def: [],
-        //                 ref: [{ start: 0, end: 3 }]
-        //             }
-        //         }
-        //     }
-        //     const actual = combineCache(base, override)
-        //     trimCache(actual)
-        //     assert.deepStrictEqual(actual, override)
-        // })
-        // it('Should remove elements with the same location as the override ones in ClientCache', () => {
-        //     const base: ClientCache = {
-        //         advancements: {
-        //             foo: {
-        //                 def: [],
-        //                 ref: [{ line: { rel: 'test', number: 0 } }]
-        //             }
-        //         }
-        //     }
-        //     const override: ClientCache = {
-        //         entities: {
-        //             foo: {
-        //                 def: [],
-        //                 ref: [{ line: { rel: 'test', number: 0 } }]
-        //             }
-        //         }
-        //     }
-        //     const actual = combineCache(base, override)
-        //     trimCache(actual)
-        //     assert.deepStrictEqual(actual, override)
-        // })
         it('Should complete base object', () => {
             const base1: ClientCache = {}
             const base2: ClientCache = {
@@ -385,6 +342,16 @@ describe('ClientCache Tests', () => {
         })
         it('Should return false', () => {
             const actual = isFileType('entities')
+            assert(actual === false)
+        })
+    })
+    describe('isNamespacedType() Tests', () => {
+        it('Should return true', () => {
+            const actual = isNamespacedType('advancements')
+            assert(actual === true)
+        })
+        it('Should return false', () => {
+            const actual = isNamespacedType('entities')
             assert(actual === false)
         })
     })

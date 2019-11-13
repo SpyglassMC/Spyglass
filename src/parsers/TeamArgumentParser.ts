@@ -41,25 +41,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
                 false
             ))
         } else {
-            if (config.lint.strictTeamCheck && !Object.keys(category).includes(value)) {
-                ans.errors.push(new ParsingError(
-                    { start, end: start + value.length },
-                    `undefined team ‘${value}’`,
-                    undefined,
-                    DiagnosticSeverity.Warning
-                ))
-            }
-
-            if (Object.keys(category).includes(value)) {
-                ans.cache = {
-                    teams: {
-                        [value]: {
-                            def: [],
-                            ref: [{ start, end: start + value.length }]
-                        }
-                    }
-                }
-            } else if (this.isDefinition) {
+            if (this.isDefinition) {
                 ans.cache = {
                     teams: {
                         [value]: {
@@ -67,6 +49,24 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
                             ref: []
                         }
                     }
+                }
+            } else {
+                if (Object.keys(category).includes(value)) {
+                    ans.cache = {
+                        teams: {
+                            [value]: {
+                                def: [],
+                                ref: [{ start, end: start + value.length }]
+                            }
+                        }
+                    }
+                } else if (config.lint.strictTeamCheck) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: start + value.length },
+                        `undefined team ‘${value}’`,
+                        undefined,
+                        DiagnosticSeverity.Warning
+                    ))
                 }
             }
         }
