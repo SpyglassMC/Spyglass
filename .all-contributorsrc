@@ -22,42 +22,6 @@
       ]
     },
     {
-      "login": "YijunYuan",
-      "name": "Yijun Yuan",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/7012463?v=4",
-      "profile": "https://github.com/YijunYuan",
-      "contributions": [
-        "bug"
-      ]
-    },
-    {
-      "login": "MinecraftPeace",
-      "name": "MinecraftPeace",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/57551211?v=4",
-      "profile": "https://github.com/MinecraftPeace",
-      "contributions": [
-        "bug"
-      ]
-    },
-    {
-      "login": "K-bai",
-      "name": "K-bai",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/31344344?v=4",
-      "profile": "https://github.com/K-bai",
-      "contributions": [
-        "bug"
-      ]
-    },
-    {
-      "login": "pca006132",
-      "name": "pca006132",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/12198657?v=4",
-      "profile": "https://github.com/pca006132",
-      "contributions": [
-        "ideas"
-      ]
-    },
-    {
       "login": "switefaster",
       "name": "switefaster",
       "avatar_url": "https://avatars2.githubusercontent.com/u/19944539?v=4",
@@ -82,6 +46,42 @@
       "profile": "https://github.com/PutEgg",
       "contributions": [
         "financial"
+      ]
+    },
+    {
+      "login": "pca006132",
+      "name": "pca006132",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12198657?v=4",
+      "profile": "https://github.com/pca006132",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "YijunYuan",
+      "name": "Yijun Yuan",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7012463?v=4",
+      "profile": "https://github.com/YijunYuan",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "MinecraftPeace",
+      "name": "MinecraftPeace",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/57551211?v=4",
+      "profile": "https://github.com/MinecraftPeace",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "K-bai",
+      "name": "K-bai",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/31344344?v=4",
+      "profile": "https://github.com/K-bai",
+      "contributions": [
+        "bug"
       ]
     },
     {
