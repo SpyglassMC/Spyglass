@@ -375,7 +375,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`BW: ${JSON.stringify(cacheFile)}`)
-    // connection.console.log(`WC: ${JSON.stringify(changes)}`)
+    connection.console.log(`WC: ${JSON.stringify(changes)}`)
     for (const { uri, type } of changes) {
         const rel = getRelFromUri(uri)
         const abs = getAbsFromRel(rel)

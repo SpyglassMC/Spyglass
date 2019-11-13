@@ -43,6 +43,12 @@ For more complex NBTs:
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
 <!-- ![ohhhhhh]() -->
 
+## Definition Comments
+
+You can use `#define (entity|storage|tag) <id: string> [description: string]` to define an entity, a data storage or a scoreboard tag. Definition comments will be used to compute completions, rename symbols and find references/definitions. The game will treat definition comments as normal comments and simply ignore them.
+
+![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
+
 ## Diagnostics
 
 DHP provides real-time diagnostics about your commands. It can show syntax errors as Minecraft does, and even give your more detailed warnings.

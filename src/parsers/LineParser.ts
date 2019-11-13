@@ -71,7 +71,7 @@ export default class LineParser implements Parser<Line> {
         }
         saturatedLineToLine(line)
         // istanbul ignore next
-        if (backupReader.peek() === '#' && line.errors.length > 0) {
+        if (backupReader.peek() === '#' && line.errors && line.errors.length > 0) {
             return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], hint: { fix: [], options: [] }, completions: line.completions } }
         }
         return { data: line }

@@ -33,7 +33,13 @@ describe('TeamArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'foo' },
-                    { label: 'bar', documentation: 'The doc of **bar**' }
+                    {
+                        label: 'bar',
+                        documentation: {
+                            kind: 'markdown',
+                            value: 'The doc of **bar**'
+                        }
+                    }
                 ]
             )
         })

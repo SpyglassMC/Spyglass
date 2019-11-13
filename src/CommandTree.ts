@@ -389,7 +389,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             // TODO: get ID from parsed entity.
                                             return new NbtPathArgumentParser('entities')
@@ -417,7 +417,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 nbt: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             // TODO: get ID from parsed entity.
                                             return new NbtTagArgumentParser('compound', 'entities')
@@ -439,7 +439,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 targetPath: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             // TODO: get ID from parsed entity.
                                             return new NbtPathArgumentParser('entities')
@@ -459,7 +459,7 @@ export const VanillaTree: CommandTree = {
                                                             children: {
                                                                 sourcePath: {
                                                                     parser: ({ args }) => {
-                                                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                         if (type === 'block') {
                                                                             // TODO: get ID from parsed entity.
                                                                             return new NbtPathArgumentParser('entities')
@@ -478,7 +478,7 @@ export const VanillaTree: CommandTree = {
                                                     children: {
                                                         nbt: {
                                                             parser: ({ args }) => {
-                                                                const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                                                const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
                                                                     // TODO: get ID from parsed entity.
                                                                     return new NbtTagArgumentParser(undefined, 'entities')
@@ -507,7 +507,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity'
+                                        const type =getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
                                         if (type === 'block') {
                                             return new NbtPathArgumentParser('blocks')
                                         } else {
@@ -1468,7 +1468,7 @@ export const VanillaTree: CommandTree = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtTagArgumentParser('compound', 'entities', (args[args.length - 2].data as Identity).toString()),
+                                    parser: ({ args }) => new NbtTagArgumentParser('compound', 'entities', getArgOrDefault(args, 2, new Identity()).toString()),
                                     executable: true
                                 }
                             }
@@ -1903,7 +1903,7 @@ export const VanillaTree: CommandTree = {
         }
     },
     comments: {
-        // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
+        // #define (entity|storage|tag) <id: string> [description: string]
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             description: 'Defines an entity name (like fake player), a data storage or an entity tag. Will be used for completions.',

@@ -1,6 +1,7 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
 import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
+import { MarkupKind } from 'vscode-languageserver'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -167,7 +168,7 @@ describe('ClientCache Tests', () => {
             }, 'tags')
             assert.deepStrictEqual(actual, [
                 { label: 'foo' },
-                { label: 'bar', documentation: 'Documentation for **bar**' }
+                { label: 'bar', documentation: { kind: MarkupKind.Markdown, value: 'Documentation for **bar**' } }
             ])
         })
     })

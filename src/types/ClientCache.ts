@@ -1,5 +1,5 @@
 import TextRange from './TextRange'
-import { CompletionItem } from 'vscode-languageserver'
+import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 
 export interface CacheFile {
     cache: ClientCache,
@@ -208,7 +208,7 @@ export function getCompletions(cache: ClientCache, type: CacheKey) {
         const documentation = unit.doc || undefined
         ans.push({
             ...{ label: id },
-            ...(documentation ? { documentation } : {})
+            ...(documentation ? { documentation: { kind: MarkupKind.Markdown, value: documentation } } : {})
         })
     }
     return ans

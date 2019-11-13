@@ -322,6 +322,30 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, [{ label: 'snowy' }])
         })
+        it('#define entity SPGoding', () => {
+            const parser = new LineParser(false, undefined, undefined, cache)
+            const reader = new StringReader('#define entity SPGoding')
+            const { data } = parser.parse(reader, undefined, manager)
+            assert.deepEqual(data.args, [
+                { data: '#define', parser: 'literal' },
+                { data: 'entity', parser: 'literal' },
+                { data: 'SPGoding', parser: 'string' }
+            ])
+            assert.deepEqual(data.hint, {
+                fix: ['#define', '(entity|storage|tag)', '<id: string>'],
+                options: []
+            })
+            assert.deepEqual(data.cache, {
+                entities: {
+                    SPGoding: {
+                        def: [{ start: 15, end: 23 }],
+                        ref: []
+                    }
+                }
+            })
+            assert.deepEqual(data.errors, undefined)
+            assert.deepEqual(data.completions, undefined)
+        })
         it('# This is a comment.', () => {
             const parser = new LineParser(false, undefined, undefined, cache)
             const reader = new StringReader('# This is a comment.')
