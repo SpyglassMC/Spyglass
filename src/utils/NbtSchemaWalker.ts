@@ -131,15 +131,16 @@ export default class NbtSchemaWalker {
         }
         const file = this.nbtSchema[this.filePath.full]
         const findNodeInChildren =
-            (node: NbtSchemaNode, path: string[]): NbtSchemaNodeWithType => {
+            (node: NbtSchemaNode, paths: string[], walker: NbtSchemaWalker): NbtSchemaNodeWithType => {
                 // Handle the node before recurse its children.
                 if (NbtSchemaWalker.isRefNode(node)) {
+                    const subWalker = walker
+                        .clone()
+                        .go(node.ref)
                     return findNodeInChildren(
-                        this
-                            .clone()
-                            .go(node.ref)
-                            .read(),
-                        path
+                        subWalker.read(),
+                        paths,
+                        subWalker
                     )
                 } else if (NbtSchemaWalker.isCompoundNode(node)) {
                     if (node.child_ref) {
@@ -158,12 +159,13 @@ export default class NbtSchemaWalker {
                         }
                         return findNodeInChildren(
                             ansNode,
-                            path
+                            paths,
+                            walker
                         )
                     }
                 }
-                if (path.length > 0) {
-                    const key = path[0]
+                if (paths.length > 0) {
+                    const key = paths[0]
                     if (
                         (
                             NbtSchemaWalker.isCompoundNode(node) ||
@@ -173,7 +175,7 @@ export default class NbtSchemaWalker {
                         // Has 'children'.
                         const child = node.children[key]
                         if (child) {
-                            return findNodeInChildren(child, path.slice(1))
+                            return findNodeInChildren(child, paths.slice(1), walker)
                         } else if (NbtSchemaWalker.isRootNode(node)) {
                             // $ anchors for RootNode.
                             for (const subKey in node.children) {
@@ -189,7 +191,7 @@ export default class NbtSchemaWalker {
                                         const stringList = valueList.map(v => typeof v === 'string' ? v : v.value)
                                         if (stringList.includes(key)) {
                                             const element = node.children[subKey]
-                                            return findNodeInChildren(element, path.slice(1))
+                                            return findNodeInChildren(element, paths.slice(1), walker)
                                         }
                                     }
                                 }
@@ -198,18 +200,18 @@ export default class NbtSchemaWalker {
                     } else if (NbtSchemaWalker.isListNode(node)) {
                         // Has 'item'.
                         if (key === '[]') {
-                            return findNodeInChildren(node.item, path.slice(1))
+                            return findNodeInChildren(node.item, paths.slice(1), walker)
                         }
                     }
                     if (node.references) {
                         // Has 'references'.
                         const child = node.references[key]
                         if (child) {
-                            return findNodeInChildren(child, path.slice(1))
+                            return findNodeInChildren(child, paths.slice(1), walker)
                         }
                     }
                     throw new Error(
-                        `path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${path.join('’, ‘')}’]`
+                        `path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${paths.join('’, ‘')}’]`
                     )
                 } else {
                     return node as NbtSchemaNodeWithType
@@ -217,7 +219,8 @@ export default class NbtSchemaWalker {
             }
         const ans = findNodeInChildren(
             file as NbtSchemaNode,
-            this.anchorPath.full.split(posix.sep).filter(v => !!v)
+            this.anchorPath.full.split(posix.sep).filter(v => !!v),
+            this
         )
         this.cache = ans
 

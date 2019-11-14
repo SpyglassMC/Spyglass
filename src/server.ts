@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, isLootTableType, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType } from './types/ClientCache'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
 import { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
@@ -18,7 +18,7 @@ const versionOfRel = new Map<string, number | null>()
 
 const manager = new ArgumentParserManager()
 const config = VanillaConfig
-let cacheFile: CacheFile = { cache: {}, files: {} }
+let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 let workspaceFolder: WorkspaceFolder | undefined
 let workspaceFolderPath: string | undefined
 let dotPath: string | undefined
@@ -46,6 +46,9 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         }
         if (fs.existsSync(cachePath)) {
             cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+            if (cacheFile.version !== LatestCacheFileVersion) {
+                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+            }
         }
         await updateCacheFile(cacheFile, workspaceFolderPath)
 
@@ -127,38 +130,7 @@ function getUriFromRel(rel: string) {
 }
 
 const cacheFileOperations = {
-    // lootTables/*
-    // ADDED: Add to relevant lootTables/* cache category.
-    // MODIFIED: Move from one of the lootTables/* category to relevant lootTables/* cache category.
-    // DELETED: Remove the ID from all lootTables/* categories.
-    addLootTable: (id: string, type: CacheKey) => {
-        const category = getSafeCategory(cacheFile.cache, type)
-        category[id] = category[id] || { def: [], ref: [] }
-        cacheFile.cache[type] = category
-    },
-    modifyLootTable: (id: string, type: CacheKey) => {
-        const category = getSafeCategory(cacheFile.cache, type)
-        let otherKeys: CacheKey[] = ['lootTables/block', 'lootTables/entity', 'lootTables/fishing', 'lootTables/generic']
-        otherKeys = otherKeys.filter(v => v !== type)
-        for (const key of otherKeys) {
-            const otherCategory = getSafeCategory(cacheFile.cache, key)
-            const otherUnit = otherCategory[id]
-            if (otherUnit) {
-                delete otherCategory[id]
-                category[id] = otherUnit
-                break
-            }
-        }
-        cacheFile.cache[type] = category
-    },
-    deleteLootTable: (id: string) => {
-        removeCacheUnit(cacheFile.cache, 'lootTables/block', id)
-        removeCacheUnit(cacheFile.cache, 'lootTables/entity', id)
-        removeCacheUnit(cacheFile.cache, 'lootTables/fishing', id)
-        removeCacheUnit(cacheFile.cache, 'lootTables/generic', id)
-    },
-
-    // functions
+    //#region functions
     // ADDED: Add to functions cache category.
     // MODIFIED & DELETED: Remove all cache positions with the specific rel.
     // ADDED & MODIFIED: Combine all caches of all lines.
@@ -191,8 +163,9 @@ const cacheFileOperations = {
     removeFunction: (id: string) => {
         removeCacheUnit(cacheFile.cache, 'functions', id)
     },
+    //#endregion
 
-    // advancements, predicates, tags/*, recipes:
+    //#region advancements, lootTables, predicates, tags/*, recipes:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: CacheKey) => {
@@ -203,12 +176,11 @@ const cacheFileOperations = {
     removeDefault: (id: string, type: CacheKey) => {
         removeCacheUnit(cacheFile.cache, type, id)
     },
+    //#endregion
 
     // Hooks.
     fileAdded: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
-        if (isLootTableType(type)) {
-            cacheFileOperations.addLootTable(id.toString(), type)
-        } else if (type === 'functions') {
+        if (type === 'functions') {
             cacheFileOperations.addFunction(id.toString())
             await cacheFileOperations.combineCacheOfLines(rel, abs)
         } else {
@@ -216,17 +188,13 @@ const cacheFileOperations = {
         }
     },
     fileModified: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
-        if (isLootTableType(type)) {
-            cacheFileOperations.modifyLootTable(id.toString(), type)
-        } else if (type === 'functions') {
+        if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
             await cacheFileOperations.combineCacheOfLines(rel, abs)
         }
     },
     fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
-        if (isLootTableType(type)) {
-            cacheFileOperations.deleteLootTable(id.toString())
-        } else if (type === 'functions') {
+        if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
             cacheFileOperations.removeFunction(id.toString())
         } else {

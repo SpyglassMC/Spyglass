@@ -55,7 +55,7 @@ describe('Identity Tests', () => {
         })
         it('Should return correctly for loot tables', () => {
             const id = new Identity('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('lootTables/block')
+            const actual = id.toRel('lootTables')
             assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for functions', () => {

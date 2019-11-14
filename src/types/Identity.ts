@@ -1,7 +1,6 @@
 import * as path from 'path'
-import * as fs from 'fs-extra'
 import Lintable, { ToLintedString } from './Lintable'
-import { ClientCache, isLootTableType } from './ClientCache'
+import { ClientCache } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 
@@ -44,7 +43,7 @@ export default class Identity implements Lintable {
         let ext: string
         if (category === 'tags/entityTypes') {
             datapackCategory = `tags${sep}entity_types`
-        } else if (isLootTableType(category)) {
+        } else if (category === 'lootTables') {
             datapackCategory = 'loot_tables'
         } else {
             datapackCategory = category.replace(/\//g, sep)
@@ -86,25 +85,7 @@ export default class Identity implements Lintable {
             }
             paths.splice(0, 1)
         } else if (datapackCategory === 'loot_tables') {
-            const file = await fs.readFile(rel, 'utf8')
-            try {
-                const json = JSON.parse(file)
-                if (typeof json.type === 'string') {
-                    if (json.type.endsWith('block')) {
-                        category = 'lootTables/block'
-                    } else if (json.type.endsWith('entity')) {
-                        category = 'lootTables/entity'
-                    } else if (json.type.endsWith('fishing')) {
-                        category = 'lootTables/fishing'
-                    } else {
-                        category = 'lootTables/generic'
-                    }
-                } else {
-                    category = 'lootTables/generic'
-                }
-            } catch (ignored) {
-                category = 'lootTables/generic'
-            }
+                category = 'lootTables'
         } else {
             category = datapackCategory as keyof ClientCache
         }

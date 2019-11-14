@@ -13,6 +13,7 @@ import { ClientCache } from '../types/ClientCache'
 import { nbtDocs } from 'mc-nbt-paths'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
+import MapAbstractParser from './MapAbstractParser'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -254,74 +255,80 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             completions: []
         }
         const isSchemaAvailable = walker && NbtSchemaWalker.isCompoundNode(walker.read())
-        try {
-            const whiteSpaceStart = reader.cursor + 1
-            reader
-                .expect('{')
-                .skip()
-                .skipWhiteSpace()
-            while (reader.canRead()) {
-                // Not checking `reader.peek() !== '}'` here because we want it to 
-                // provide completions of keys for empty compound tags.
+        new MapAbstractParser<string, NbtCompoundTag>(
+            '{', ':', ',', '}',
+            (ans, reader, cursor) => {
+                const result: ArgumentParserResult<string> = {
+                    data: '',
+                    cache: {},
+                    completions: [],
+                    errors: []
+                }
                 const start = reader.cursor
-                const key = reader.readString()
-                //#region Key
-                if (!key) {
-                    // Provide completions of keys in this compound tag.
-                    if (walker && isSchemaAvailable &&
-                        this.cursor >= whiteSpaceStart && this.cursor <= reader.cursor) {
+                try {
+                    const key = reader.readString()
+                    result.data = key
+                    //#region Completions                    
+                    if (walker && isSchemaAvailable && cursor === reader.cursor) {
                         const { children } = walker.read() as NbtCompoundSchemaNode
-                        const definedChildren = children ? children : {}
-                        ans.completions.push(...Object
-                            .keys(definedChildren)
-                            .map(
-                                key => (
-                                    {
-                                        ...{
-                                            label: key,
-                                            kind: CompletionItemKind.Property
-                                        },
-                                        ...definedChildren[key].description ?
-                                            { documentation: definedChildren[key].description } :
-                                            {}
-                                    } as CompletionItem
-                                )
+                        const safeChildren = children ? children : {}
+                        const existingKeys = Object.keys(ans.data)
+                        const keys = Object.keys(safeChildren).filter(v => !existingKeys.includes(v))
+                        result.completions.push(...keys.map(
+                            key => (
+                                {
+                                    ...{
+                                        label: key,
+                                        kind: CompletionItemKind.Property
+                                    },
+                                    ...safeChildren[key].description ?
+                                        { documentation: safeChildren[key].description } :
+                                        {}
+                                } as CompletionItem
                             )
                         )
-                    }
-                    if (reader.peek() === '}') {
-                        // This is a special case for empty compound tags (`{}`). We simply `break` after providing
-                        // completions of keys.
-                        break
-                    }
-                    ans.errors.push(new ParsingError(
-                        { start, end: start + 1 },
-                        'expected a key but got nothing'
-                    ))
-                } else if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
-                    // Check whether the current key follows the naming convention.
-                    ans.errors.push(new ParsingError(
-                        { start, end: start + key.length },
-                        `invalid key ‘${key}’ which doesn't follow ${
-                        arrayToMessage(this.config.lint.nameOfSnbtCompoundTagKeys)} convention`,
-                        true,
-                        DiagnosticSeverity.Warning
-                    ))
-                }
-                // Check duplicate key.
-                if (ans.data[key] !== undefined) {
-                    ans.errors.push(
-                        new ParsingError(
-                            { start, end: start + key.length },
-                            `duplicate compound key ‘${key}’`,
-                            true,
-                            DiagnosticSeverity.Warning
                         )
-                    )
+                    }
+                    //#endregion
+                    if (!key) {
+                        result.errors.push(new ParsingError(
+                            { start, end: start + 1 },
+                            'expected a key but got nothing'
+                        ))
+                    } else {
+                        // Check whether the current key follows the naming convention.
+                        if (!checkNamingConvention(key, this.config.lint.nameOfSnbtCompoundTagKeys)) {
+                            result.errors.push(new ParsingError(
+                                { start, end: start + key.length },
+                                `invalid key ‘${key}’ which doesn't follow ${
+                                arrayToMessage(this.config.lint.nameOfSnbtCompoundTagKeys)} convention`,
+                                true,
+                                DiagnosticSeverity.Warning
+                            ))
+                        }
+                        // Check duplicate key.
+                        if (ans.data[key] !== undefined) {
+                            result.errors.push(
+                                new ParsingError(
+                                    { start, end: start + key.length },
+                                    `duplicate compound key ‘${key}’`,
+                                    true,
+                                    DiagnosticSeverity.Warning
+                                )
+                            )
+                        }
+                    }
+                } catch (p) {
+                    /* istanbul ignore next */
+                    result.errors.push(p)
                 }
+                return result
+            },
+            (ans, reader, _cursor, _manager, _config, _cache, key, keyRange) => {
+                let isUnexpectedKey = false
                 // Check whether the schema for the key is available.
                 let isSchemaForKeyAvailable = false
-                if (walker && isSchemaAvailable && key) {
+                if (walker && isSchemaAvailable) {
                     try {
                         walker
                             .clone()
@@ -330,52 +337,32 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         isSchemaForKeyAvailable = true
                     } catch (ignored) {
                         if (!(walker.read() as NbtCompoundSchemaNode).additionalChildren) {
-                            // The key is unexpected.
-                            ans.errors.push(
-                                new ParsingError(
-                                    { start, end: start + key.length },
-                                    `unexpected key ‘${key}’`,
-                                    true,
-                                    DiagnosticSeverity.Warning
-                                )
-                            )
+                            isUnexpectedKey = true
                         }
                     }
                 }
-                //#endregion
-                reader
-                    .skipWhiteSpace()
-                    .expect(':')
-                    .skip()
-                    .skipWhiteSpace()
-                //#region Value
                 const result = this.parseTag(
                     reader,
                     (walker && isSchemaForKeyAvailable) ? walker.clone().goAnchor(key) : undefined
                 )
-                //#endregion
-                reader.skipWhiteSpace()
-                if (reader.peek() === ',') {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
+                if (isUnexpectedKey) {
+                    result.errors.push(
+                        new ParsingError(
+                            keyRange,
+                            `unexpected key ‘${key}’`,
+                            true,
+                            DiagnosticSeverity.Warning
+                        )
+                    )
                 }
                 if (key) {
                     ans.data[key] = result.data
                 }
                 combineArgumentParserResult(ans, result)
-                if (reader.peek() === '}') {
-                    break
-                }
             }
-            reader
-                .expect('}')
-                .skip()
-        } catch (p) {
-            ans.errors.push(p)
-        } finally {
-            return ans
-        }
+        ).parse(ans, reader, this.cursor, this.manager, this.config, this.cache)
+
+        return ans
     }
 
     private parseListOrArray(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {

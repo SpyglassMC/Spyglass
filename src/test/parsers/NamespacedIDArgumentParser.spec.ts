@@ -89,11 +89,8 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 'spgoding:item/1': { def: [], ref: [] },
                 'spgoding:item/2': { def: [], ref: [] }
             },
-            'lootTables/block': {
-                'spgoding:loot_table/block': { def: [], ref: [] }
-            },
-            'lootTables/generic': {
-                'spgoding:loot_table/generic': { def: [], ref: [] }
+            lootTables: {
+                'spgoding:loot_table/foo': { def: [], ref: [] }
             }
         }
         it('Should return data with single path', () => {
@@ -132,20 +129,6 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return completions for cache units', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
-            assert.deepStrictEqual(actual.data, new Identity())
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
-                    }
-                ]
-            )
-        })
-        it('Should return completions for generic loot tables', () => {
-            const parser = new NamespacedIDArgumentParser('$lootTables/block', registries)
             const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
@@ -400,11 +383,11 @@ describe('NamespacedIDArgumentParser Tests', () => {
             ])
         })
         it('Should return warning when the id cannot be resolved in loot table cache', () => {
-            const parser = new NamespacedIDArgumentParser('$lootTables/block', registries)
+            const parser = new NamespacedIDArgumentParser('$lootTables', registries)
             const actual = parser.parse(new StringReader('foo'), undefined, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables/block’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', () => {

@@ -65,9 +65,6 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         if (this.type.startsWith('$')) {
             const type = this.type.slice(1)
             regularCandidates.push(...Object.keys(getSafeCategory(cache, type as any)))
-            if (type.startsWith('lootTables/')) {
-                regularCandidates.push(...Object.keys(getSafeCategory(cache, 'lootTables/generic')))
-            }
         } else {
             const registry = this.registries[this.type]
             regularCandidates.push(...Object.keys(registry.entries))
@@ -218,11 +215,8 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     // For cache IDs.
                     const type = this.type.slice(1)
                     const category = getSafeCategory(cache, type as any)
-                    const inGenericLootTable = type.startsWith('lootTables/') ?
-                        Object.keys(getSafeCategory(cache, 'lootTables/generic')).includes(stringID) :
-                        false
                     //#region Errors
-                    if (!Object.keys(category).includes(stringID) && !inGenericLootTable) {
+                    if (!Object.keys(category).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,

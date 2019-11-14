@@ -60,10 +60,12 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
             new MapAbstractParser<string, Block>(
                 Block.StatesBeginSymbol, '=', ',', Block.StatesEndSymbol,
-                (manager, ans) => {
+                (ans, reader, cursor, manager, config, cache) => {
                     const existingKeys = Object.keys(ans.data.states)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
-                    return manager.get('Literal', keys)
+                    return manager
+                        .get('Literal', keys)
+                        .parse(reader, cursor, manager, config, cache)
                 },
                 (ans, reader, cursor, manager, config, cache, key, range) => {
                     if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {

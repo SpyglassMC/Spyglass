@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, isLootTableType, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 
 describe('ClientCache Tests', () => {
@@ -314,16 +314,6 @@ describe('ClientCache Tests', () => {
             }
             trimCache(actual)
             assert.deepStrictEqual(actual, {})
-        })
-    })
-    describe('isLootTableType() Tests', () => {
-        it('Should return true', () => {
-            const actual = isLootTableType('lootTables/block')
-            assert(actual === true)
-        })
-        it('Should return false', () => {
-            const actual = isLootTableType('advancements')
-            assert(actual === false)
         })
     })
     describe('isTagType() Tests', () => {

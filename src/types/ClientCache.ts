@@ -1,17 +1,20 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 
+export const LatestCacheFileVersion = 1
+
 export interface CacheFile {
     cache: ClientCache,
     files: {
         [rel: string]: number
     }
+    version: number
 }
 
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
  * 
- * For advancements, functions, lootTables/*, predicates, recipes and tags/*: Should rename files.  
+ * For advancements, functions, lootTables, predicates, recipes and tags/*: Should rename files.  
  * For entities, storages and tags: Should use #define comments to define.  
  * For bossbars, objectives and teams: Should use respective `add` commands to define.  
  * For colors/*: Simply ignores.
@@ -19,10 +22,7 @@ export interface CacheFile {
 export interface ClientCache {
     advancements?: CacheCategory,
     functions?: CacheCategory,
-    'lootTables/fishing'?: CacheCategory,
-    'lootTables/entity'?: CacheCategory,
-    'lootTables/block'?: CacheCategory,
-    'lootTables/generic'?: CacheCategory,
+    lootTables?: CacheCategory,
     predicates?: CacheCategory,
     recipes?: CacheCategory,
     'tags/blocks'?: CacheCategory,
@@ -80,18 +80,6 @@ export interface CachePosition extends TextRange {
     rel?: string,
     line?: number
 }
-
-// TODO: Remove this.
-// export function areElementsEqual(a: TextRange, b: TextRange) {
-//     // istanbul ignore else
-//     if (isGlobalElement(a) && isGlobalElement(b)) {
-//         return a.line.number === b.line.number && a.line.rel === b.line.rel
-//     } else if (isLocalElement(a) && isLocalElement(b)) {
-//         return a.range.start === b.range.start && a.range.end === b.range.end
-//     } else {
-//         throw 'Unreachable code'
-//     }
-// }
 
 export function getCacheFromChar(cache: ClientCache, char: number) {
     for (const type in cache) {
@@ -243,28 +231,22 @@ export function getCategoryKey(type: DefinitionType): CacheKey {
     }
 }
 
-type LootTableType = 'lootTables/block' | 'lootTables/entity' | 'lootTables/fishing' | 'lootTables/generic'
-
-export function isLootTableType(type: CacheKey): type is LootTableType {
-    return type.startsWith('lootTables/')
-}
-
 type TagType = 'tags/blocks' | 'tags/entityTypes' | 'tags/functions' | 'tags/fluids' | 'tags/items'
 
 export function isTagType(type: CacheKey): type is TagType {
     return type.startsWith('tags/')
 }
 
-type FileType = 'advancements' | 'functions' | 'predicates' | 'recipes' | TagType | LootTableType
+type FileType = 'advancements' | 'functions' | 'lootTables' | 'predicates' | 'recipes' | TagType
 
 export function isFileType(type: string): type is FileType {
     return (
         type === 'advancements' ||
         type === 'functions' ||
+        type === 'lootTables' ||
         type === 'predicates' ||
         type === 'recipes' ||
-        isTagType(type as CacheKey) ||
-        isLootTableType(type as CacheKey)
+        isTagType(type as CacheKey)
     )
 }
 

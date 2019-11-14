@@ -2065,7 +2065,7 @@ export const VanillaTree: CommandTree = {
             parser: new LiteralArgumentParser('fish'),
             children: {
                 id: {
-                    parser: new NamespacedIDArgumentParser('$lootTables/fishing'),
+                    parser: new NamespacedIDArgumentParser('$lootTables'),
                     children: {
                         location: {
                             parser: new VectorArgumentParser(3),
@@ -2086,14 +2086,8 @@ export const VanillaTree: CommandTree = {
         loot: {
             parser: new LiteralArgumentParser('loot'),
             children: {
-                fishingLootTable: {
-                    parser: new NamespacedIDArgumentParser('$lootTables/fishing')
-                },
-                entityLootTable: {
-                    parser: new NamespacedIDArgumentParser('$lootTables/entity')
-                },
-                blockLootTable: {
-                    parser: new NamespacedIDArgumentParser('$lootTables/block')
+                lootTable: {
+                    parser: new NamespacedIDArgumentParser('$lootTables')
                 }
             }
         },

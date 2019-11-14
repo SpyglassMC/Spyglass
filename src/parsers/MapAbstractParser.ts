@@ -14,21 +14,32 @@ export default class MapAbstractParser<K, R> {
         private readonly keyValueSep: string,
         private readonly keyValuePairSep: string,
         private readonly endChar: string,
-        private readonly getKeyParser: (manager: Manager<ArgumentParser<K>>, ans: ArgumentParserResult<R>) => ArgumentParser<K>,
+        private readonly parseKeyResult: (ans: ArgumentParserResult<R>, reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache) => ArgumentParserResult<K>,
         private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache, key: K, keyRange: TextRange) => void
     ) { }
 
     // istanbul ignore next
     parse(ans: ArgumentParserResult<R>, reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}) {
+        /**
+         * Move cursor to the end of the white spaces, so that we can provide
+         * completions when the cursor is in white spaces.
+         */
+        const skipWhiteSpaceForCursor = () => {
+            const whiteSpaceStart = reader.cursor
+            reader.skipWhiteSpace()
+            if (whiteSpaceStart <= cursor && cursor <= reader.cursor) {
+                cursor = reader.cursor
+            }
+        }
         try {
             reader
                 .expect(this.beginChar)
                 .skip()
-                .skipWhiteSpace()
 
             while (true) {
+                skipWhiteSpaceForCursor()
                 const start = reader.cursor
-                const keyResult = this.getKeyParser(manager, ans).parse(reader, cursor, manager, config, cache)
+                const keyResult = this.parseKeyResult(ans, reader, cursor, manager, config, cache)
                 const key = keyResult.data
                 const end = reader.cursor
                 ans.completions.push(...keyResult.completions)
@@ -42,16 +53,14 @@ export default class MapAbstractParser<K, R> {
                     .skipWhiteSpace()
                     .expect(this.keyValueSep)
                     .skip()
-                    .skipWhiteSpace()
 
+                skipWhiteSpaceForCursor()
                 this.parseValue(ans, reader, cursor, manager, config, cache, key, { start, end })
 
                 reader.skipWhiteSpace()
 
                 if (reader.peek() === this.keyValuePairSep) {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
+                    reader.skip()
                     continue
                 }
                 if (!(reader.canRead() && reader.peek() !== this.endChar)) {
