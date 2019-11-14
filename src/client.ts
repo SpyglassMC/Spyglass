@@ -11,65 +11,63 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 let client: LanguageClient
 
 export function activate(context: ExtensionContext) {
-    if (!workspace.workspaceFolders || workspace.workspaceFolders.length <= 1) {
-        // The server is implemented in node
-        const serverModule = context.asAbsolutePath(
-            join('lib', 'server.js')
-        )
-        // The debug options for the server
-        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-        const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] }
+    // The server is implemented in node
+    const serverModule = context.asAbsolutePath(
+        join('lib', 'server.js')
+    )
+    // The debug options for the server
+    // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+    const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] }
 
-        // If the extension is launched in debug mode then the debug server options are used
-        // Otherwise the run options are used
-        const serverOptions: ServerOptions = {
-            run: { module: serverModule, transport: TransportKind.ipc },
-            debug: {
-                module: serverModule,
-                transport: TransportKind.ipc,
-                options: debugOptions
-            }
+    // If the extension is launched in debug mode then the debug server options are used
+    // Otherwise the run options are used
+    const serverOptions: ServerOptions = {
+        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {
+            module: serverModule,
+            transport: TransportKind.ipc,
+            options: debugOptions
         }
-
-        // Options to control the language client
-        const clientOptions: LanguageClientOptions = {
-            // Register the server for mcfunction documents
-            documentSelector: [
-                { language: 'mcfunction' },
-                { language: 'mcfunction-snapshot' }
-            ],
-            synchronize: {
-                fileEvents: []
-            }
-        }
-
-        if (workspace.workspaceFolders) {
-            (clientOptions.synchronize as any).fileEvents.push(
-                workspace.createFileSystemWatcher(
-                    new RelativePattern(workspace.workspaceFolders[0], '.datapackrc.json')
-                ),
-                workspace.createFileSystemWatcher(
-                    new RelativePattern(workspace.workspaceFolders[0], 'data/*/{advancements,loot_tables,predicates,recipes}/**/*.json')
-                ),
-                workspace.createFileSystemWatcher(
-                    new RelativePattern(workspace.workspaceFolders[0], 'data/*/tags/{blocks,entity_types,fluids,functions,items}/**/*.json')
-                ),
-                workspace.createFileSystemWatcher(
-                    new RelativePattern(workspace.workspaceFolders[0], 'data/*/functions/**/*.mcfunction')
-                ))
-        }
-
-        // Create the language client and start the client.
-        client = new LanguageClient(
-            'mcfunctionLanguageServer',
-            'MCFunction Language Server',
-            serverOptions,
-            clientOptions
-        )
-
-        // Start the client. This will also launch the server
-        client.start()
     }
+
+    // Options to control the language client
+    const clientOptions: LanguageClientOptions = {
+        // Register the server for mcfunction documents
+        documentSelector: [
+            { language: 'mcfunction' },
+            { language: 'mcfunction-snapshot' }
+        ],
+        synchronize: {
+            fileEvents: []
+        }
+    }
+
+    if (workspace.workspaceFolders) {
+        (clientOptions.synchronize as any).fileEvents.push(
+            workspace.createFileSystemWatcher(
+                new RelativePattern(workspace.workspaceFolders[0], '.datapackrc.json')
+            ),
+            workspace.createFileSystemWatcher(
+                new RelativePattern(workspace.workspaceFolders[0], 'data/*/{advancements,loot_tables,predicates,recipes}/**/*.json')
+            ),
+            workspace.createFileSystemWatcher(
+                new RelativePattern(workspace.workspaceFolders[0], 'data/*/tags/{blocks,entity_types,fluids,functions,items}/**/*.json')
+            ),
+            workspace.createFileSystemWatcher(
+                new RelativePattern(workspace.workspaceFolders[0], 'data/*/functions/**/*.mcfunction')
+            ))
+    }
+
+    // Create the language client and start the client.
+    client = new LanguageClient(
+        'mcfunctionLanguageServer',
+        'MCFunction Language Server',
+        serverOptions,
+        clientOptions
+    )
+
+    // Start the client. This will also launch the server
+    client.start()
 }
 
 export function deactivate(): Thenable<void> | undefined {
