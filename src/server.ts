@@ -26,6 +26,7 @@ let cachePath: string | undefined
 let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders }) => {
+    const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.']
     if (workspaceFolders) {
         workspaceFolder = workspaceFolders[0]
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
@@ -51,7 +52,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         return {
             capabilities: {
                 completionProvider: {
-                    triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']
+                    triggerCharacters: completionTriggerCharacters
                 },
                 definitionProvider: true,
                 didChangeWatchedFiles: true,
@@ -82,7 +83,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']
+                triggerCharacters: completionTriggerCharacters
             },
             foldingRangeProvider: true,
             colorProvider: true,
@@ -375,7 +376,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`BW: ${JSON.stringify(cacheFile)}`)
-    connection.console.log(`WC: ${JSON.stringify(changes)}`)
+    // connection.console.log(`WC: ${JSON.stringify(changes)}`)
     for (const { uri, type } of changes) {
         const rel = getRelFromUri(uri)
         const abs = getAbsFromRel(rel)

@@ -8,7 +8,7 @@ import { TextEdit } from 'vscode-languageserver'
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
 
-    private readonly literals: string[]
+    protected readonly literals: string[]
     private readonly extraChars: string[] = []
 
     constructor(...literals: string[]) {
