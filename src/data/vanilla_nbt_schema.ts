@@ -1,3 +1,8 @@
+/**
+ * The following contents are adjusted from [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths).
+ * I personally really appreciate what MrYurihi, Levertion and Bassab03 have done, and thanks for your 
+ * `Unlicense` license, which is really cool.
+ */
 export default {
 	"block/banner.json": {
 		"type": "compound",
