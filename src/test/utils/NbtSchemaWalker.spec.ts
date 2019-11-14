@@ -3,14 +3,13 @@ import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { NBTNode, ValueList, RootNode } from 'mc-nbt-paths'
+import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/VanillaNbtSchema'
 import StringReader from '../../utils/StringReader'
-import { CompletionItemKind } from 'vscode-languageserver'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { VanillaConfig } from '../../types/Config'
 
 describe('NbtSchemaWalker Tests', () => {
-    const schemas: { [key: string]: NBTNode | ValueList } = {
+    const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
         'block/banner.json': {
             type: 'compound',
             children: {
@@ -231,19 +230,19 @@ describe('NbtSchemaWalker Tests', () => {
                 .read()
             assert(actual === schemas['block/group/command_block.json'])
         })
-        it('Should return RootNode', () => {
+        it('Should return NbtRootSchemaNode', () => {
             const actual = walker
                 .go('roots/blocks.json')
                 .read()
             assert(actual === schemas['roots/blocks.json'])
         })
-        it('Should handle regular anchors for RootNode', () => {
+        it('Should handle regular anchors for NbtRootSchemaNode', () => {
             const actual = walker
                 .go('roots/blocks.json#minecraft:banner')
                 .read()
             assert(actual === schemas['block/banner.json'])
         })
-        it('Should handle anchors beginning with $ for RootNode', () => {
+        it('Should handle anchors beginning with $ for NbtRootSchemaNode', () => {
             const actual = walker
                 .go('roots/blocks.json#minecraft:repeating_command_block')
                 .read()
@@ -304,7 +303,7 @@ describe('NbtSchemaWalker Tests', () => {
                 assert(message === 'path not found: ‘roots/blocks.json#minecraft:banner/non-existent’ [‘non-existent’]')
             }
         })
-        it("Should throw error when the anchor doen't exist for a RootNode", () => {
+        it("Should throw error when the anchor doen't exist for a NbtRootSchemaNode", () => {
             try {
                 walker
                     .go('roots/blocks.json#non-existent')
@@ -386,7 +385,7 @@ describe('NbtSchemaWalker Tests', () => {
         })
     })
     describe('static Tests', () => {
-        it('isRootNode() should return correctly', () => {
+        it('isNbtRootSchemaNode() should return correctly', () => {
             const actualF = NbtSchemaWalker.isRootNode(schemas['block/banner.json'])
             const actualT = NbtSchemaWalker.isRootNode(schemas['roots/blocks.json'])
             assert(actualF === false)
@@ -407,7 +406,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('isRefNode() should return correctly', () => {
             const actualF = NbtSchemaWalker.isRefNode(schemas['block/banner.json'])
             const actualT = NbtSchemaWalker.isRefNode(
-                (schemas['roots/blocks.json'] as RootNode).children['minecraft:banner']
+                (schemas['roots/blocks.json'] as NbtRootSchemaNode).children['minecraft:banner']
             )
             assert(actualF === false)
             assert(actualT === true)

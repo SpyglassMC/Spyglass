@@ -1,14 +1,14 @@
 import ArgumentParser from './ArgumentParser'
 import Config, { VanillaConfig } from '../types/Config'
 import Manager from '../types/Manager'
-import NbtSchemaWalker, { NbtCompoundSchemaNode } from '../utils/NbtSchemaWalker'
+import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import VanillaNbtSchema, { NbtCompoundSchemaNode } from '../types/VanillaNbtSchema'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { ClientCache } from '../types/ClientCache'
-import { nbtDocs } from 'mc-nbt-paths'
 import { NbtCompoundTag } from '../types/NbtTag'
 import NbtPath, { NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../types/NbtPath'
 
@@ -23,7 +23,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     constructor(
         private readonly category: 'blocks' | 'entities' | 'items',
         private readonly id: string | undefined = undefined,
-        private readonly nbtSchema = nbtDocs
+        private readonly nbtSchema = VanillaNbtSchema
     ) {
         super()
     }

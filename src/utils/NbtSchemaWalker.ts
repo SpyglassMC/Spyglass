@@ -1,6 +1,6 @@
 import { CompletionItem } from 'vscode-languageserver'
 import { ClientCache } from '../types/ClientCache'
-import { nbtDocs, NoPropertyNode, CompoundNode, RootNode, ListNode, RefNode, NBTNode, ValueList } from 'mc-nbt-paths'
+import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchema, ValueList } from '../types/VanillaNbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
 import { VanillaConfig } from '../types/Config'
@@ -8,14 +8,6 @@ import LineParser from '../parsers/LineParser'
 import StringReader from './StringReader'
 import Manager from '../types/Manager'
 import ArgumentParser from '../parsers/ArgumentParser'
-
-export type NbtNoPropertySchemaNode = NoPropertyNode
-export type NbtCompoundSchemaNode = CompoundNode
-export type NbtRootSchemaNode = RootNode
-export type NbtListSchemaNode = ListNode
-export type NbtRefSchemaNode = RefNode
-export type NbtSchemaNode = NBTNode
-export type NbtSchemaNodeWithType = NbtSchemaNode & { type: 'no-nbt' | NbtTagTypeName }
 
 type SuggestionNode =
     | string
@@ -25,7 +17,7 @@ type DocedSuggestionNode = { description?: string, value?: string }
 type ParserSuggestionNode = { parser: string, params?: any }
 
 export default class NbtSchemaWalker {
-    constructor(private readonly nbtSchema: typeof nbtDocs) { }
+    constructor(private readonly nbtSchema: NbtSchema) { }
 
     readonly filePath: ParsedPath & { full: string } = {
         root: '',
@@ -260,39 +252,39 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    public static isRootNode(node: NBTNode | ValueList): node is RootNode {
-        return (node as RootNode).type === 'root'
+    public static isRootNode(node: NbtSchemaNode | ValueList): node is NbtRootSchemaNode {
+        return (node as NbtRootSchemaNode).type === 'root'
     }
 
-    public static isCompoundNode(node: NBTNode | ValueList): node is CompoundNode {
-        return (node as CompoundNode).type === 'compound'
+    public static isCompoundNode(node: NbtSchemaNode | ValueList): node is NbtCompoundSchemaNode {
+        return (node as NbtCompoundSchemaNode).type === 'compound'
     }
 
-    public static isListNode(node: NBTNode | ValueList): node is ListNode {
-        return (node as ListNode).type === 'list'
+    public static isListNode(node: NbtSchemaNode | ValueList): node is NbtListSchemaNode {
+        return (node as NbtListSchemaNode).type === 'list'
     }
 
-    public static isRefNode(node: NBTNode | ValueList): node is RefNode {
-        return !!(node as RefNode).ref
+    public static isRefNode(node: NbtSchemaNode | ValueList): node is NbtRefSchemaNode {
+        return !!(node as NbtRefSchemaNode).ref
     }
 
-    public static isValueList(node: NBTNode | ValueList): node is ValueList {
+    public static isValueList(node: NbtSchemaNode | ValueList): node is ValueList {
         return node instanceof Array
     }
 
-    public static isNoPropertyNode(node: NBTNode | ValueList): node is NoPropertyNode {
+    public static isNoPropertyNode(node: NbtSchemaNode | ValueList): node is NbtNoPropertySchemaNode {
         return (
-            (node as NoPropertyNode).type === 'no-nbt' ||
-            (node as NoPropertyNode).type === 'byte' ||
-            (node as NoPropertyNode).type === 'short' ||
-            (node as NoPropertyNode).type === 'int' ||
-            (node as NoPropertyNode).type === 'long' ||
-            (node as NoPropertyNode).type === 'float' ||
-            (node as NoPropertyNode).type === 'double' ||
-            (node as NoPropertyNode).type === 'byte_array' ||
-            (node as NoPropertyNode).type === 'string' ||
-            (node as NoPropertyNode).type === 'int_array' ||
-            (node as NoPropertyNode).type === 'long_array'
+            (node as NbtNoPropertySchemaNode).type === 'no-nbt' ||
+            (node as NbtNoPropertySchemaNode).type === 'byte' ||
+            (node as NbtNoPropertySchemaNode).type === 'short' ||
+            (node as NbtNoPropertySchemaNode).type === 'int' ||
+            (node as NbtNoPropertySchemaNode).type === 'long' ||
+            (node as NbtNoPropertySchemaNode).type === 'float' ||
+            (node as NbtNoPropertySchemaNode).type === 'double' ||
+            (node as NbtNoPropertySchemaNode).type === 'byte_array' ||
+            (node as NbtNoPropertySchemaNode).type === 'string' ||
+            (node as NbtNoPropertySchemaNode).type === 'int_array' ||
+            (node as NbtNoPropertySchemaNode).type === 'long_array'
         )
     }
 

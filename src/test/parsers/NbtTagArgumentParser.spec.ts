@@ -9,7 +9,7 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
-import { NBTNode, ValueList } from 'mc-nbt-paths'
+import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
 
 describe('NbtTagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -461,7 +461,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(completions, [])
         })
         describe('Tests for Schemas', () => {
-            const schemas: { [key: string]: NBTNode | ValueList } = {
+            const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
                 'block/banner.json': {
                     type: 'compound',
                     children: {

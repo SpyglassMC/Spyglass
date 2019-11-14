@@ -1,5 +1,5 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { nbtDocs } from 'mc-nbt-paths'
+import VanillaNbtSchema from '../types/VanillaNbtSchema'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import Block from '../types/Block'
@@ -21,7 +21,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
         private readonly allowTag = false,
         private readonly blockDefinitions = VanillaBlockDefinitions,
         private readonly registries = VanillaRegistries,
-        private readonly nbtSchema = nbtDocs
+        private readonly nbtSchema = VanillaNbtSchema
     ) {
         super()
     }

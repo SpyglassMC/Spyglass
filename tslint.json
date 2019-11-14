@@ -43,8 +43,9 @@
     },
     "linterOptions": {
         "exclude": [
-            "src/types/vanilla_blocks.ts",
-            "src/types/vanilla_registries.ts"
+            "src/data/nbt_schema.ts",
+            "src/data/vanilla_blocks.ts",
+            "src/data/vanilla_registries.ts"
         ]
     }
 }

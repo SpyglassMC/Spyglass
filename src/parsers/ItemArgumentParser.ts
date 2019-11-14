@@ -1,6 +1,6 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ClientCache } from '../types/ClientCache'
-import { nbtDocs } from 'mc-nbt-paths'
+import VanillaNbtSchema from '../types/VanillaNbtSchema'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
@@ -17,7 +17,7 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
     constructor(
         private readonly allowTag = false,
         private readonly registries = VanillaRegistries,
-        private readonly nbtSchema = nbtDocs
+        private readonly nbtSchema = VanillaNbtSchema
     ) {
         super()
     }

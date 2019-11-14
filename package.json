@@ -26,7 +26,6 @@
     "bignumber.js": "^9.0.0",
     "datapack-json": "^2.0.0",
     "fs-extra": "^8.1.0",
-    "mc-nbt-paths": "git+https://github.com/CommandBlockLogic/mc-nbt-paths.git",
     "minecraft-id": "^0.1.5",
     "python-range": "^1.0.4",
     "vscode-languageclient": "^5.2.1",
