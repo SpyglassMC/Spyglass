@@ -1,3 +1,10 @@
+# [v1.8.2](https://github.com/SPGoding/datapack-language-server/compare/v1.8.1...v1.8.2) (2019-11-14)
+
+## 🐛 Bug Fixes
+- [`cdfdc64`](https://github.com/SPGoding/datapack-language-server/commit/cdfdc64)  Fix not activating on multi workspaces (Issues: [`#146`](https://github.com/SPGoding/datapack-language-server/issues/146))
+- [`fc7e568`](https://github.com/SPGoding/datapack-language-server/commit/fc7e568)  Fix dependency errors (Issues: [`#132`](https://github.com/SPGoding/datapack-language-server/issues/132) [`#133`](https://github.com/SPGoding/datapack-language-server/issues/133))
+- [`2029504`](https://github.com/SPGoding/datapack-language-server/commit/2029504)  Fix reporting warning for vanilla namespaced IDs (Issues: [`#148`](https://github.com/SPGoding/datapack-language-server/issues/148))
+
 # [v1.8.1](https://github.com/SPGoding/datapack-language-server/compare/v1.8.0...v1.8.1) (2019-11-14)
 
 ## 🐛 Bug Fixes
