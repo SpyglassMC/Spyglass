@@ -1350,7 +1350,8 @@ export const VanillaTree: CommandTree = {
                             executable: true,
                             children: {
                                 mode: {
-                                    parser: new LiteralArgumentParser('destroy', 'keep', 'replace')
+                                    parser: new LiteralArgumentParser('destroy', 'keep', 'replace'),
+                                    executable: true
                                 }
                             }
                         }
