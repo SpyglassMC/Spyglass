@@ -12,7 +12,7 @@ A really heavy language server providing completions, signatures, renaming, defi
 # Note
 
 0. DHP uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool.
-1. Please use the root directory of your data pack as the workspace. Otherwise you can't use all features provided by DHP which depend on the cache file. 
+1. Please use the root directory of your data pack as the workspace. Otherwise you can't use all features depending on the cache file. 
 
 # Features
 
@@ -30,7 +30,7 @@ You can get hints about the arguments of commands while typing.
 
 ## Completions
 
-The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '@', '!', "'", '"', '.']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
+The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
 
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
@@ -201,12 +201,12 @@ Quotes used in NBT strings and phrase strings.
 `'prefer double'`: Always use double quotes, unless there are double quotes in the string.  
 @default `'prefer double'`  
 
-<!-- ### quoteEntitySelectorStrings: `boolean`
+### quoteEntitySelectorKeys: `boolean`
 
-When the strings in entity selectors should be quoted.  
+When the keys in entity selectors should be quoted.  
 `true`: Always.  
-`false`: Only when there are special characters in the string.  
-@default `false` -->
+`false`: Never.  
+@default `false`
 
 ### quoteSnbtStringKeys: `boolean`
 
