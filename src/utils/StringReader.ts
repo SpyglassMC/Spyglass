@@ -140,7 +140,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws {ParsingError} If not an legal quoted string.
+     * @throws {ParsingError} If it's not an legal quoted string.
      */
     readQuotedString() {
         if (!this.canRead()) {
@@ -210,7 +210,7 @@ export default class StringReader {
     }
 
     /**
-     * @throws {ParsingError}
+     * @throws {ParsingError} If it's not an legal quoted string.
      */
     readString() {
         if (!this.canRead()) {
