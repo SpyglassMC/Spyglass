@@ -307,10 +307,15 @@ The naming convension for scoreboard tags.
 The naming convension for teams.  
 @default `'whatever'`
 
-<!-- ### strictBossbarCheck: boolean
+### strictBossbarCheck: boolean
 
 Whether to throw warnings for undefined bossbars.  
-@default `false` -->
+@default `false`
+
+### strictStorageCheck: boolean
+
+Whether to throw warnings for undefined data storages.  
+@default `false`
 
 ### strictObjectiveCheck: boolean
 
@@ -325,6 +330,56 @@ Whether to throw warnings for undefined tags.
 ### strictTeamCheck: boolean
 
 Whether to throw warnings for undefined teams.  
+@default `false`
+
+### strictAdvancementCheck: boolean
+
+Whether to throw warnings for advancements which don't exist in your workspace.  
+@default `false`
+
+### strictFunctionCheck: boolean
+
+Whether to throw warnings for functions which don't exist in your workspace.  
+@default `false`
+
+### strictLootTableCheck: boolean
+
+Whether to throw warnings for loot tables which don't exist in your workspace.  
+@default `false`
+
+### strictPredicateCheck: boolean
+
+Whether to throw warnings for predicates which don't exist in your workspace.  
+@default `false`
+
+### strictRecipeCheck: boolean
+
+Whether to throw warnings for recipes which don't exist in your workspace.  
+@default `false`
+
+### strictBlockTagCheck: boolean
+
+Whether to throw warnings for block tags which don't exist in your workspace.  
+@default `false`
+
+### strictEntityTypeTagCheck: boolean
+
+Whether to throw warnings for entity type tags which don't exist in your workspace.  
+@default `false`
+
+### strictFluidTagCheck: boolean
+
+Whether to throw warnings for fluid tags which don't exist in your workspace.  
+@default `false`
+
+### strictFunctionTagCheck: boolean
+
+Whether to throw warnings for function tags which don't exist in your workspace.  
+@default `false`
+
+### strictItemTagCheck: boolean
+
+Whether to throw warnings for item tags which don't exist in your workspace.  
 @default `false`
 
 ### omitDefaultNamespace: boolean

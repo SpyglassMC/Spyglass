@@ -1,7 +1,7 @@
 import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
-import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
-import { VanillaConfig } from '../types/Config'
+import { ClientCache, getCompletions, getSafeCategory, CacheKey } from '../types/ClientCache'
+import Config, { VanillaConfig } from '../types/Config'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
 import Identity from '../types/Identity'
@@ -187,7 +187,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 const tagType = getCacheTagType()
                 const category = getSafeCategory(cache, tagType)
                 //#region Errors
-                if (!Object.keys(category).includes(stringID)) {
+                if (this.shouldStrictCheck(tagType, config) && !Object.keys(category).includes(stringID)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${tagType}’`,
@@ -216,7 +216,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     const type = this.type.slice(1)
                     const category = getSafeCategory(cache, type as any)
                     //#region Errors
-                    if (!Object.keys(category).includes(stringID)) {
+                    if (this.shouldStrictCheck(type as CacheKey, config) && !Object.keys(category).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
@@ -278,6 +278,38 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         //#endregion
 
         return ans
+    }
+
+    /* istanbul ignore next: tired of writing tests */
+    private shouldStrictCheck(key: CacheKey, { lint }: Config) {
+        switch (key) {
+            case 'advancements':
+                return lint.strictAdvancementCheck
+            case 'functions':
+                return lint.strictFunctionCheck
+            case 'lootTables':
+                return lint.strictLootTableCheck
+            case 'predicates':
+                return lint.strictPredicateCheck
+            case 'recipes':
+                return lint.strictRecipeCheck
+            case 'tags/blocks':
+                return lint.strictBlockTagCheck
+            case 'tags/entityTypes':
+                return lint.strictEntityTypeTagCheck
+            case 'tags/fluids':
+                return lint.strictFluidTagCheck
+            case 'tags/functions':
+                return lint.strictFunctionTagCheck
+            case 'tags/items':
+                return lint.strictItemTagCheck
+            case 'bossbars':
+                return lint.strictBossbarCheck
+            case 'storages':
+                return lint.strictStorageCheck
+            default:
+                return false
+        }
     }
 
     getExamples(): string[] {

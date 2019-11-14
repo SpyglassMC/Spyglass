@@ -48,12 +48,12 @@ describe('NamespacedIDArgumentParser Tests', () => {
         'spgoding:seg_completion_test': {
             protocol_id: 5,
             entries: {
-                'spgoding:foo':  { protocol_id: 0 },
-                'spgoding:foo/bar':  { protocol_id: 1 },
-                'spgoding:foo/bar/baz':  { protocol_id: 2 },
-                'minecraft:foo':  { protocol_id: 3 },
-                'minecraft:foo/bar':  { protocol_id: 4 },
-                'minecraft:foo/bar/baz':  { protocol_id: 5 },
+                'spgoding:foo': { protocol_id: 0 },
+                'spgoding:foo/bar': { protocol_id: 1 },
+                'spgoding:foo/bar/baz': { protocol_id: 2 },
+                'minecraft:foo': { protocol_id: 3 },
+                'minecraft:foo/bar': { protocol_id: 4 },
+                'minecraft:foo/bar/baz': { protocol_id: 5 },
             }
         }
     }
@@ -336,7 +336,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
         it('Should return completions for the third path in non-default namespace', () => {
             const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
             const actual = parser.parse(new StringReader('spgoding:foo/bar/'), 17, manager, undefined, cache)
-            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo','bar','']))
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo', 'bar', '']))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
@@ -352,7 +352,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo/'), 4, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo', '']))
             assert.deepStrictEqual(actual.completions,
-                [                    
+                [
                     {
                         label: 'bar',
                         kind: CompletionItemKind.Folder,
@@ -375,24 +375,27 @@ describe('NamespacedIDArgumentParser Tests', () => {
             ])
         })
         it('Should return warning when the id cannot be resolved in cache category', () => {
+            const config = constructConfig({ lint: { strictBossbarCheck: true } })
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('foo'), undefined, manager, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, manager, config, cache)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in loot table cache', () => {
+            const config = constructConfig({ lint: { strictLootTableCheck: true } })
             const parser = new NamespacedIDArgumentParser('$lootTables', registries)
-            const actual = parser.parse(new StringReader('foo'), undefined, manager, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), undefined, manager, config, cache)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', () => {
+            const config = constructConfig({ lint: { strictFunctionTagCheck: true } })
             const parser = new NamespacedIDArgumentParser('$functions', registries, true)
-            const actual = parser.parse(new StringReader('#spgoding:function/114514'), undefined, manager, undefined, cache)
+            const actual = parser.parse(new StringReader('#spgoding:function/114514'), undefined, manager, config, cache)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['function', '114514'], true))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 25 }, 'faild to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
@@ -434,7 +437,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 assert(e.message === 'faild to find a tag type for ‘spgoding:test’')
             }
         })
-        it('Should throw error when tag are not allowed here', () => {
+        it('Should throw error when tags are not allowed here', () => {
             const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries)
             const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), undefined, manager, undefined, cache)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['entity_type', '1'], true))

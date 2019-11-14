@@ -190,11 +190,16 @@ export type LintConfig = {
      * @default 'whatever'
      */
     nameOfTeams: NamingConventionConfig,
-    // /**
-    //  * Whether to throw warnings for undefined bossbars.  
-    //  * @default false
-    //  */
-    // strictBossbarCheck: boolean,
+    /**
+     * Whether to throw warnings for undefined bossbars.  
+     * @default false
+     */
+    strictBossbarCheck: boolean,
+    /**
+     * Whether to throw warnings for undefined data storages.  
+     * @default false
+     */
+    strictStorageCheck: boolean,
     /**
      * Whether to throw warnings for undefined objectives.  
      * @default false
@@ -210,6 +215,56 @@ export type LintConfig = {
      * @default false
      */
     strictTeamCheck: boolean,
+    /**
+     * Whether to throw warnings for advancements which don't exist in your workspace.  
+     * @default false
+     */
+    strictAdvancementCheck: boolean,
+    /**
+     * Whether to throw warnings for functions which don't exist in your workspace.  
+     * @default false
+     */
+    strictFunctionCheck: boolean,
+    /**
+     * Whether to throw warnings for loot tables which don't exist in your workspace.  
+     * @default false
+     */
+    strictLootTableCheck: boolean,
+    /**
+     * Whether to throw warnings for predicates which don't exist in your workspace.  
+     * @default false
+     */
+    strictPredicateCheck: boolean,
+    /**
+     * Whether to throw warnings for recipes which don't exist in your workspace.  
+     * @default false
+     */
+    strictRecipeCheck: boolean,
+    /**
+     * Whether to throw warnings for block tags which don't exist in your workspace.  
+     * @default false
+     */
+    strictBlockTagCheck: boolean,
+    /**
+     * Whether to throw warnings for entity type tags which don't exist in your workspace.  
+     * @default false
+     */
+    strictEntityTypeTagCheck: boolean,
+    /**
+     * Whether to throw warnings for fluid tags which don't exist in your workspace.  
+     * @default false
+     */
+    strictFluidTagCheck: boolean,
+    /**
+     * Whether to throw warnings for function tags which don't exist in your workspace.  
+     * @default false
+     */
+    strictFunctionTagCheck: boolean,
+    /**
+     * Whether to throw warnings for item tags which don't exist in your workspace.  
+     * @default false
+     */
+    strictItemTagCheck: boolean,
     /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
      * Does NOT affect namespaced IDs in NBT strings.  
@@ -300,10 +355,21 @@ export const VanillaConfig: Config = {
         nameOfSnbtCompoundTagKeys: 'whatever',
         nameOfTags: 'whatever',
         nameOfTeams: 'whatever',
-        // strictBossbarCheck: false,
+        strictBossbarCheck: false,
+        strictStorageCheck: false,
         strictObjectiveCheck: false,
         strictTagCheck: false,
         strictTeamCheck: false,
+        strictAdvancementCheck: false,
+        strictFunctionCheck: false,
+        strictLootTableCheck: false,
+        strictPredicateCheck: false,
+        strictRecipeCheck: false,
+        strictBlockTagCheck: false,
+        strictEntityTypeTagCheck: false,
+        strictFluidTagCheck: false,
+        strictFunctionTagCheck: false,
+        strictItemTagCheck: false,
         omitDefaultNamespace: false,
         // vectorKeepDecimalPlace: true
     }
