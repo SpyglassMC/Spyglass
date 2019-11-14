@@ -1638,14 +1638,14 @@ export const VanillaTree: CommandTree = {
         teleport: {
             parser: new LiteralArgumentParser('teleport', 'tp'),
             children: {
+                destination: {
+                    parser: new VectorArgumentParser(3),
+                    executable: true
+                },
                 entity: {
                     parser: new EntityArgumentParser('multiple', 'entities'),
                     executable: true,
                     children: {
-                        entity: {
-                            parser: new EntityArgumentParser('single', 'entities'),
-                            executable: true
-                        },
                         destination: {
                             parser: new VectorArgumentParser(3),
                             executable: true,
@@ -1679,12 +1679,12 @@ export const VanillaTree: CommandTree = {
                                     executable: true
                                 }
                             }
+                        },                        
+                        entity: {
+                            parser: new EntityArgumentParser('single', 'entities'),
+                            executable: true
                         }
                     }
-                },
-                destination: {
-                    parser: new VectorArgumentParser(3),
-                    executable: true
                 }
             }
         },

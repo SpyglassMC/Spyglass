@@ -54,6 +54,13 @@ describe('VectorArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'expected a vector but got nothing', false)
             ])
         })
+        it('Should return untolerable error when the input is not a vector', () => {
+            const parser = new VectorArgumentParser(3)
+            const actual = parser.parse(new StringReader('f'))
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError({ start: 0, end: 1 }, 'expected a vector but got ‘f’', false)
+            ])
+        })
         it('Should return error when local coordinates are mixed with non-local coordinates', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('^1 ~ -1'))

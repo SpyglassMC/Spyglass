@@ -33,32 +33,43 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         const start = reader.cursor
 
         if (reader.canRead()) {
-            let dimension: number = this.dimension
-            let hasLocal = false
-            let hasNonLocal = false
-            try {
-                while (dimension) {
-                    const result = this.parseElement(reader, cursor)
-                    ans.data.elements.push(result.data)
-                    combineArgumentParserResult(ans, result)
+            if (StringReader.canInNumber(reader.peek()) ||
+                reader.peek() === VectorArgumentParser.LocalSymbol ||
+                reader.peek() === VectorArgumentParser.RelativeSymbol
+            ) {
+                let dimension: number = this.dimension
+                let hasLocal = false
+                let hasNonLocal = false
+                try {
+                    while (dimension) {
+                        const result = this.parseElement(reader, cursor)
+                        ans.data.elements.push(result.data)
+                        combineArgumentParserResult(ans, result)
 
-                    hasLocal = hasLocal || result.data.type === 'local'
-                    hasNonLocal = hasNonLocal || result.data.type !== 'local'
+                        hasLocal = hasLocal || result.data.type === 'local'
+                        hasNonLocal = hasNonLocal || result.data.type !== 'local'
 
-                    if (--dimension) {
-                        reader
-                            .expect(VectorArgumentParser.Sep)
-                            .skip()
+                        if (--dimension) {
+                            reader
+                                .expect(VectorArgumentParser.Sep)
+                                .skip()
+                        }
                     }
+                } catch (p) {
+                    ans.errors.push(p)
                 }
-            } catch (p) {
-                ans.errors.push(p)
-            }
 
-            if (hasLocal && hasNonLocal) {
+                if (hasLocal && hasNonLocal) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        'cannot mix local coordinates and non-local coordinates together'
+                    ))
+                }
+            } else {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    'cannot mix local coordinates and non-local coordinates together'
+                    { start, end: start + 1 },
+                    `expected a vector but got ‘${reader.peek()}’`,
+                    false
                 ))
             }
         } else {
