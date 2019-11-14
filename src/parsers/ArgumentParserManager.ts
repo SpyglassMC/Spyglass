@@ -17,6 +17,7 @@ import NumericIDArgumentParser from './NumericIDArgumentParser'
 import ObjectiveArgumentParser from './ObjectiveArgumentParser'
 import ObjectiveCriterionArgumentParser from './ObjectiveCriterionArgumentParser'
 import ParticleArgumentParser from './ParticleArgumentParser'
+import QuotableLiteralArgumentParser from './QuotableLiteralArgumentParser'
 import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringArgumentParser from './StringArgumentParser'
 import TagArgumentParser from './TagArgumentParser'
@@ -44,6 +45,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         ObjectiveArgumentParser,
         ObjectiveCriterionArgumentParser,
         ParticleArgumentParser,
+        QuotableLiteralArgumentParser,
         ScoreboardSlotArgumentParser,
         StringArgumentParser,
         TagArgumentParser,
