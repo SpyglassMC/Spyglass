@@ -21,7 +21,8 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
     constructor(
         private readonly amount: 'single' | 'multiple',
-        private readonly type: 'players' | 'entities'
+        private readonly type: 'players' | 'entities',
+        private readonly greedy = false
     ) { super() }
 
     parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Entity> {
@@ -60,7 +61,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
         // Data
         let plain
-        plain = reader.readUntilOrEnd(' ')
+        if (this.greedy) {
+            plain = reader.readUntilOrEnd(' ')
+        } else {
+            plain = reader.readUnquotedString()
+        }
         if (plain) {
             ans.data.plain = plain
         }
@@ -161,8 +166,10 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             }
             new MapAbstractParser<string, Entity>(
                 '[', '=', ',', ']',
-                manager => {
-                    return manager.get('QuotableLiteral', [SelectorArgumentKeys, this.config.lint.quoteEntitySelectorKeys])
+                (_ans, reader, cursor, manager, config, cache) => {
+                    return manager
+                        .get('QuotableLiteral', [SelectorArgumentKeys, this.config.lint.quoteEntitySelectorKeys])
+                        .parse(reader, cursor, manager, config, cache)
                 },
                 (ans, reader, cursor, manager, config, cache, key) => {
                     if (key === 'sort') {
@@ -209,14 +216,22 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'advancements') {
                         new MapAbstractParser<Identity, Entity>(
                             '{', '=', ',', '}',
-                            manager => manager.get('NamespacedID', ['$advancements']),
+                            (ans, reader, cursor, manager, config, cache) => {
+                                return manager
+                                    .get('NamespacedID', ['$advancements'])
+                                    .parse(reader, cursor, manager, config, cache)
+                            },
                             (ans, reader, cursor, manager, config, cache, adv) => {
                                 ans.data.argument.advancements = ans.data.argument.advancements || {}
                                 if (reader.peek() === '{') {
                                     const criteriaObject: { [crit: string]: boolean } = ans.data.argument.advancements[adv.toString()] = {}
                                     new MapAbstractParser<string, Entity>(
                                         '{', '=', ',', '}',
-                                        manager => manager.get('String', ['QuotablePhrase']),
+                                        (ans, reader, cursor, manager, config, cache) => {
+                                            return manager
+                                                .get('String', ['$QuotablePhrase'])
+                                                .parse(reader, cursor, manager, config, cache)
+                                        },
                                         (ans, reader, cursor, manager, config, cache, crit) => {
                                             const boolResult = manager.get('Literal', ['false', 'true']).parse(reader, cursor, manager, config, cache)
                                             const bool = boolResult.data === 'true'
@@ -225,7 +240,9 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                         }
                                     ).parse(ans, reader, cursor, manager, config, cache)
                                 } else {
-                                    const boolResult = this.manager.get('Literal', ['false', 'true']).parse(reader, this.cursor, this.manager, this.config, this.cache)
+                                    const boolResult = manager
+                                        .get('Literal', ['false', 'true'])
+                                        .parse(reader, cursor, manager, config, cache)
                                     const bool = boolResult.data === 'true'
                                     combineArgumentParserResult(ans, boolResult)
 
@@ -236,7 +253,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'scores') {
                         new MapAbstractParser<string, Entity>(
                             '{', '=', ',', '}',
-                            manager => manager.get('Objective'),
+                            (ans, reader, cursor, manager, config, cache) => {
+                                return manager
+                                    .get('Objective')
+                                    .parse(reader, cursor, manager, config, cache)
+                            },
                             (ans, reader, cursor, manager, config, cache, objective) => {
                                 const rangeResult = manager.get('NumberRange', ['integer']).parse(reader, cursor, manager, config, cache) as ArgumentParserResult<NumberRange>
                                 combineArgumentParserResult(ans, rangeResult)

@@ -533,6 +533,15 @@ export const VanillaTree: CommandTree = {
                 }
             }
         },
+        defaultgamemode: {
+            parser: new LiteralArgumentParser('defaultgamemode'),
+            children: {
+                mode: {
+                    parser: new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'),
+                    executable: true
+                }
+            }
+        },
         deop: {
             parser: new LiteralArgumentParser('deop'),
             permission: 3,
@@ -765,7 +774,7 @@ export const VanillaTree: CommandTree = {
             }
         },
         gamemode: {
-            parser: new LiteralArgumentParser('defaultgamemode', 'gamemode'),
+            parser: new LiteralArgumentParser('gamemode'),
             children: {
                 mode: {
                     parser: new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'),
@@ -1311,7 +1320,7 @@ export const VanillaTree: CommandTree = {
                             parser: new LiteralArgumentParser('reset'),
                             children: {
                                 targets: {
-                                    parser: new EntityArgumentParser('multiple', 'entities'),
+                                    parser: new EntityArgumentParser('multiple', 'entities', true),
                                     executable: true,
                                     children: {
                                         objective: {
@@ -1939,7 +1948,7 @@ export const VanillaTree: CommandTree = {
             parser: new LiteralArgumentParser('false', 'true')
         },
         single_score: {
-            parser: new EntityArgumentParser('single', 'entities'),
+            parser: new EntityArgumentParser('single', 'entities', true),
             children: {
                 objective: {
                     parser: new ObjectiveArgumentParser()
@@ -1947,7 +1956,7 @@ export const VanillaTree: CommandTree = {
             }
         },
         multiple_score: {
-            parser: new EntityArgumentParser('multiple', 'entities'),
+            parser: new EntityArgumentParser('multiple', 'entities', true),
             children: {
                 objective: {
                     parser: new ObjectiveArgumentParser()
@@ -1958,7 +1967,7 @@ export const VanillaTree: CommandTree = {
             parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
         },
         members: {
-            parser: new EntityArgumentParser('multiple', 'entities'),
+            parser: new EntityArgumentParser('multiple', 'entities', true),
             executable: true,
             children: {
                 'a member': {

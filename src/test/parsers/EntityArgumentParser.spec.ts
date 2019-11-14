@@ -50,10 +50,16 @@ describe('EntityArgumentParser Tests', () => {
             ])
         })
         describe('For plain entities', () => {
-            it('Should return data', () => {
-                const parser = new EntityArgumentParser('multiple', 'entities')
+            it('Should return greedy data', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader('$ASDASD'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity('$ASDASD'))
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return normal data', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities', true)
+                const actual = parser.parse(new StringReader('foo'), undefined, manager)
+                assert.deepStrictEqual(actual.data, new Entity('foo'))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions', () => {
