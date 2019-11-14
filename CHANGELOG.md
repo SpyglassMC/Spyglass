@@ -1,3 +1,13 @@
+# [v1.8.1](https://github.com/SPGoding/datapack-language-server/compare/v1.8.0...v1.8.1) (2019-11-14)
+
+## 🐛 Bug Fixes
+- [`4cde2b7`](https://github.com/SPGoding/datapack-language-server/commit/4cde2b7)  Fix reporting errors for comments (Issues: [`#136`](https://github.com/SPGoding/datapack-language-server/issues/136))
+- [`441e4a9`](https://github.com/SPGoding/datapack-language-server/commit/441e4a9)  Fix not supporting quotes in entity selectors (Issues: [`#139`](https://github.com/SPGoding/datapack-language-server/issues/139))
+- [`09a6fe7`](https://github.com/SPGoding/datapack-language-server/commit/09a6fe7)  Make entity selector parser less greedy (Issues: [`#142`](https://github.com/SPGoding/datapack-language-server/issues/142))
+- [`f9c9918`](https://github.com/SPGoding/datapack-language-server/commit/f9c9918)  Fix not throwing error for non-vector arguments (Issues: [`#143`](https://github.com/SPGoding/datapack-language-server/issues/143))
+- [`bb20a27`](https://github.com/SPGoding/datapack-language-server/commit/bb20a27)  Fix setblock not executable (Issues: [`#145`](https://github.com/SPGoding/datapack-language-server/issues/145))
+- [`7c3368d`](https://github.com/SPGoding/datapack-language-server/commit/7c3368d)  Fix completions for NBTs (Issues: [`#132`](https://github.com/SPGoding/datapack-language-server/issues/132))
+
 # [v1.8.0](https://github.com/SPGoding/datapack-language-server/compare/v1.7.0...v1.8.0) (2019-11-13)
 
 ## ✨ New Features
