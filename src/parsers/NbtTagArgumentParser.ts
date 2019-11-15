@@ -196,7 +196,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         const clonedReader = reader.clone()
                         ans = this.parsePrimitiveTag(reader, walker)
                         if (this.cursor === start) {
-                            const out = { type: '' }
                             // istanbul ignore next
                             const getLabel = (value: string) => {
                                 if (walker.read().type === 'string') {
@@ -219,7 +218,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             }
                             ans.completions.push(
                                 ...walker
-                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, out)
+                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache)
                                     .map(v => ({
                                         ...v,
                                         label: getLabel(v.label)
@@ -275,19 +274,17 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         const existingKeys = Object.keys(ans.data)
                         const keys = Object.keys(safeChildren).filter(v => !existingKeys.includes(v))
                         result.completions.push(...keys.map(
-                            key => (
-                                {
-                                    ...{
-                                        label: key,
-                                        kind: CompletionItemKind.Property
-                                    },
-                                    ...safeChildren[key].description ?
-                                        { documentation: safeChildren[key].description } :
-                                        {}
-                                } as CompletionItem
+                            key => ({
+                                ...{
+                                    label: quoteString(key, this.config.lint.quoteType, this.config.lint.quoteSnbtStringKeys),
+                                    kind: CompletionItemKind.Property
+                                },
+                                ...safeChildren[key].description ?
+                                    { documentation: safeChildren[key].description } :
+                                    {}
+                            } as CompletionItem
                             )
-                        )
-                        )
+                        ))
                     }
                     //#endregion
                     if (!key) {
@@ -540,7 +537,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             // Parse as a quoted string.
             const quote = reader.peek()
             try {
-                const clonedReader = reader.clone().skip()
+                const clonedReader = reader.clone()
                 const value = reader.readQuotedString()
                 ans.data = getNbtStringTag(value)
                 ans.completions = walker ?

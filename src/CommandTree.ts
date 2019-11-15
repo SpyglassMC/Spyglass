@@ -748,7 +748,8 @@ export const VanillaTree: CommandTree = {
                             }
                         },
                         all: {
-                            parser: new LiteralArgumentParser('all')
+                            parser: new LiteralArgumentParser('all'),
+                            executable: true
                         }
                     }
                 },
@@ -1718,12 +1719,12 @@ export const VanillaTree: CommandTree = {
                 set: {
                     parser: new LiteralArgumentParser('set'),
                     children: {
-                        value: {
-                            parser: new TimeArgumentParser(),
-                            executable: true
-                        },
                         literals: {
                             parser: new LiteralArgumentParser('day', 'night', 'noon', 'midnight'),
+                            executable: true
+                        },
+                        value: {
+                            parser: new TimeArgumentParser(),
                             executable: true
                         }
                     }
@@ -2272,7 +2273,6 @@ export const VanillaTree: CommandTree = {
                 result_success: {
                     parser: new LiteralArgumentParser('result', 'success'),
                     children: {
-
                         bossbar: {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {
@@ -2342,25 +2342,6 @@ export const VanillaTree: CommandTree = {
         if_unless: {
             parser: new LiteralArgumentParser('if', 'unless'),
             children: {
-                block: {
-                    parser: new LiteralArgumentParser('block'),
-                    children: {
-                        pos: {
-                            parser: new VectorArgumentParser(3),
-                            children: {
-                                block: {
-                                    parser: new BlockArgumentParser(true),
-                                    executable: true,
-                                    children: {
-                                        subcommand: {
-                                            redirect: 'execute_subcommand'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 blocks: {
                     parser: new LiteralArgumentParser('blocks'),
                     children: {
@@ -2383,6 +2364,25 @@ export const VanillaTree: CommandTree = {
                                                     }
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                block: {
+                    parser: new LiteralArgumentParser('block'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3),
+                            children: {
+                                block: {
+                                    parser: new BlockArgumentParser(true),
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
                                         }
                                     }
                                 }

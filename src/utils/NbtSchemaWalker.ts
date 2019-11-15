@@ -219,7 +219,7 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}, out = { type: '' }): CompletionItem[] {
+    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): CompletionItem[] {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: CompletionItem[] = []
@@ -229,20 +229,21 @@ export default class NbtSchemaWalker {
                 if (typeof v === 'string') {
                     ans.push({ label: v })
                 } else if (isParserNode(v)) {
+                    const out = { cursor }
+                    const subReader = new StringReader(reader.readString(out))
+                    console.log(`${out.cursor} in ${subReader.string} from ${reader.string}:${cursor}`)
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)
-                        const { completions } = parser.parse(reader, cursor, manager).data
+                        const { completions } = parser.parse(subReader, out.cursor, manager).data
                         if (completions) {
                             ans.push(...completions)
                         }
-                        out.type = 'string'
                     } else {
                         // Regular ArgumentParser
                         const parser = manager.get(v.parser, v.params)
-                        const { completions, data } = parser.parse(reader, cursor, manager, config, cache)
+                        const { completions } = parser.parse(subReader, out.cursor, manager, config, cache)
                         ans.push(...completions)
-                        out.type = typeof data
                     }
                 } else {
                     ans.push({ label: v.value as string, documentation: v.description })

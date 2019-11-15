@@ -443,6 +443,7 @@ And to those who haven't told me a GitHub account:
   <tr>
     <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt="陌余Oucher"/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#financial-陌余Oucher" title="Financial">💵</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=145106"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle" width="100px;" alt="龙腾猫跃"/><br /><sub><b>龙腾猫跃</b></sub></a><br /><a href="#financial-龙腾猫跃" title="Financial">💵</a></td>
+    <td align="center"><a href="https://search.mcbbs.net/home.php?mod=space&uid=641356"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=641356&size=middle" width="100px;" alt="雪颜の顾"/><br /><sub><b>雪颜の顾</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3A雪颜の顾" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 <!-- markdownlint-enable -->

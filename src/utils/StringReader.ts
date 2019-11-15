@@ -131,7 +131,11 @@ export default class StringReader {
         return parseFloat(str)
     }
 
-    readUnquotedString() {
+    /**
+     * @param out Stores a cursor which will be transformed to a cursor in the string. 
+     */
+    readUnquotedString(out: { cursor: number } = { cursor: -1 }) {
+        out.cursor -= this.cursor
         let ans = ''
         while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             ans += this.read()
@@ -141,15 +145,18 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
+     * @param out Stores a cursor which will be transformed to a cursor in the string. 
      */
-    readQuotedString() {
+    readQuotedString(out: { cursor: number } = { cursor: -1 }) {
+        out.cursor -= this.cursor
         if (!this.canRead()) {
             return ''
         }
         const quote = this.peek()
         if (StringReader.isQuote(quote)) {
+            out.cursor -= 1
             this.skip()
-            return this.readUntilQuote(quote)
+            return this.readUntilQuote(quote, out)
         } else {
             const start = this.cursor
             const end = this.cursor + 1
@@ -160,8 +167,9 @@ export default class StringReader {
     /**
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
+     * @param out Stores a cursor which will be transformed to a cursor in the string. 
      */
-    private readUntilQuote(terminator: '"' | "'") {
+    private readUntilQuote(terminator: '"' | "'", out: { cursor: number }) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -179,6 +187,9 @@ export default class StringReader {
                 }
             } else {
                 if (c === escapeChar) {
+                    if (out.cursor + start + 1 >= this.cursor) {
+                        out.cursor -= 1
+                    }
                     escaped = true
                 } else if (c === terminator) {
                     return ans
@@ -211,16 +222,17 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
+     * @param out Stores a cursor which will be transformed to a cursor in the string. 
      */
-    readString() {
+    readString(out: { cursor: number } = { cursor: -1 }) {
         if (!this.canRead()) {
             return ''
         }
         const c = this.peek()
         if (StringReader.isQuote(c)) {
-            return this.readQuotedString()
+            return this.readQuotedString(out)
         } else {
-            return this.readUnquotedString()
+            return this.readUnquotedString(out)
         }
     }
 

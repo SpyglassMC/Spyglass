@@ -1120,9 +1120,12 @@ export default {
 	"entity/falling_block.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"../ref/block_entity.json"
 		],
 		"children": {
+			"TileEntityData": {
+				"ref": "compound"
+			},
 			"BlockState": {
 				"description": "Block that the falling block represents",
 				"type": "compound",
@@ -3468,7 +3471,7 @@ export default {
 				"description": "Pitch and Yaw of the entity",
 				"type": "list",
 				"item": {
-					"type": "double"
+					"type": "float"
 				}
 			},
 			"FallDistance": {
@@ -4098,12 +4101,12 @@ export default {
 	"ref/potion_effect.json": {
 		"type": "compound",
 		"children": {
-			"ID": {
+			"Id": {
 				"type": "byte",
 				"description": "The ID of the effect",
 				"suggestions": [
 					{
-						"parser": "NamespacedID",
+						"parser": "NumericID",
 						"params": [
 							"minecraft:mob_effect"
 						]

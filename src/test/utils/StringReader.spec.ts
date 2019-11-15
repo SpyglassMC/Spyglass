@@ -210,6 +210,12 @@ describe('StringReader Tests', () => {
             assert(actualResult === 'hahaha')
             assert(actualCursor === 6)
         })
+        it('Should return the out cursor', () => {
+            const reader = new StringReader('hahaha$')
+            const out = { cursor: 2 }
+            reader.readUnquotedString(out)
+            assert(out.cursor === 2)
+        })
     })
     describe('readQuotedString() Tests', () => {
         it('Should return empty string when cannot read', () => {
@@ -265,6 +271,18 @@ describe('StringReader Tests', () => {
                 assert(range.end === 7)
                 assert(tolerable === true)
             }
+        })
+        it('Should return the out cursor correctly if it is after an escape', () => {
+            const reader = new StringReader('"foo\\"bar"')
+            const out = { cursor: 6 } // ‘b’ in ‘"foo\"bar"’
+            reader.readQuotedString(out)
+            assert(out.cursor === 4) // ‘b’ in ‘foo"bar’
+        })
+        it('Should return the out cursor correctly if it is before an escape', () => {
+            const reader = new StringReader('"foo\\"bar"')
+            const out = { cursor: 1 } // ‘f’ in ‘"foo\"bar"’
+            reader.readQuotedString(out)
+            assert(out.cursor === 0) // ‘f’ in ‘foo"bar’
         })
     })
     describe('readUntilOrEnd() Tests', () => {

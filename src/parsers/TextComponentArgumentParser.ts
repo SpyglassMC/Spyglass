@@ -1,21 +1,111 @@
 import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult } from '../types/Parser'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import Manager from '../types/Manager'
+import Config, { constructConfig } from '../types/Config'
+import { ClientCache } from '../types/ClientCache'
+import { NbtSchema } from '../types/VanillaNbtSchema'
 
 export default class TextComponentArgumentParser extends ArgumentParser<string> {
     readonly identity = 'textComponent'
 
-    constructor() {
-        super()
+    private static readonly TextComponentSchema: NbtSchema = {
+        'roots/blocks.json': {
+            type: 'root',
+            children: {
+                'spgoding:json_object': {
+                    type: 'compound',
+                    children: {
+                        text: {
+                            type: 'string'
+                        },
+                        translate: {
+                            type: 'string'
+                        },
+                        keybind: {
+                            type: 'string'
+                        },
+                        score: {
+                            type: 'compound',
+                            children: {
+                                name: {
+                                    type: 'string',
+                                    suggestions: [
+                                        {
+                                            parser: 'Entity',
+                                            params: [
+                                                'single',
+                                                'entities',
+                                                true
+                                            ]
+                                        }
+                                    ]
+                                },
+                                objective: {
+                                    type: 'string',
+                                    suggestions: [
+                                        {
+                                            parser: 'Objective'
+                                        }
+                                    ]
+                                },
+                                value: {
+                                    type: 'string'
+                                }
+                            }
+                        },
+                        selector: {
+                            type: 'string',
+                            suggestions: [
+                                {
+                                    parser: 'Entity',
+                                    params: [
+                                        'multiple',
+                                        'entities'
+                                    ]
+                                }
+                            ]
+                        },
+                        
+                    }
+                },
+                'spgoding:json_array': {
+                    type: 'list',
+                    item: {
+                        ref: './blocks.json#spgoding:json_object'
+                    }
+                }
+            }
+        }
     }
 
+    constructor() { super() }
+
     // istanbul ignore next
-    parse(reader: StringReader): ArgumentParserResult<string> {
+    parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<string> {
+        const jsonConfig = constructConfig({
+            lint: {
+                ...config.lint,
+                quoteType: 'always double',
+                quoteSnbtStringKeys: true,
+                quoteSnbtStringValues: true,
+                snbtUseBooleans: true,
+                snbtOmitDoubleSuffix: true
+            }
+        })
         const ans: ArgumentParserResult<string> = {
-            data: reader.readRemaining(),
+            data: '',
             errors: [],
             cache: {},
             completions: []
+        }
+        if (reader.peek() === '{') {
+            const result = manager
+                .get('NbtTag', [
+                    ['compound'], 'blocks', 'spgoding:json_object',
+                    TextComponentArgumentParser.TextComponentSchema])
+                .parse(reader, cursor, manager, config, cache)
+            combineArgumentParserResult(ans, result)
         }
 
         return ans
