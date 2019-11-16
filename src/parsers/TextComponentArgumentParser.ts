@@ -144,6 +144,14 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                 ])
                 .parse(reader, cursor, manager, jsonConfig, cache)
             combineArgumentParserResult(ans, result)
+        } else {
+            const result = manager
+                .get('NbtTag', [
+                    ['list'], 'blocks', 'spgoding:json_array',
+                    TextComponentArgumentParser.TextComponentSchema
+                ])
+                .parse(reader, cursor, manager, jsonConfig, cache)
+            combineArgumentParserResult(ans, result)
         }
 
         return ans

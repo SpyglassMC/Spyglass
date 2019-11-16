@@ -342,6 +342,12 @@ describe('NbtSchemaWalker Tests', () => {
                 .getCompletions(new StringReader(''), 0, manager, VanillaConfig, {})
             assert.deepStrictEqual(actual, [])
         })
+        it('Should return empty completions for raw suggestions when the cursor is not at the point', () => {
+            const actual = walker
+                .go('suggestionsTest.json#raw')
+                .getCompletions(new StringReader(''), -1, manager)
+            assert.deepStrictEqual(actual, [])
+        })
         it('Should return completions for raw suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#raw')
@@ -349,6 +355,12 @@ describe('NbtSchemaWalker Tests', () => {
             assert.deepStrictEqual(actual, [
                 { label: 'foo' }
             ])
+        })
+        it('Should return empty completions for detailed suggestions when the cursor is not at the point', () => {
+            const actual = walker
+                .go('suggestionsTest.json#detailed')
+                .getCompletions(new StringReader(''), -1, manager)
+            assert.deepStrictEqual(actual, [])
         })
         it('Should return completions for detailed suggestions', () => {
             const actual = walker

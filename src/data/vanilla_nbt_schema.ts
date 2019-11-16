@@ -3819,7 +3819,12 @@ export default {
 				"children": {
 					"Name": {
 						"description": "A JSON text component for the items name",
-						"type": "string"
+						"type": "string",
+						"suggestions": [
+							{
+								"parser": "TextComponent"
+							}
+						]
 					},
 					"color": {
 						"description": "The color of leather armor. Still exists on other items",
@@ -3829,7 +3834,12 @@ export default {
 						"description": "Lines of lore. Each line is a JSON text component",
 						"type": "list",
 						"item": {
-							"type": "string"
+							"type": "string",
+							"suggestions": [
+								{
+									"parser": "TextComponent"
+								}
+							]
 						}
 					}
 				}
@@ -4094,7 +4104,12 @@ export default {
 		"children": {
 			"CustomName": {
 				"type": "string",
-				"description": "A JSON text component custom name"
+				"description": "A JSON text component custom name",
+				"suggestions": [
+					{
+						"parser": "TextComponent"
+					}
+				]
 			}
 		}
 	},

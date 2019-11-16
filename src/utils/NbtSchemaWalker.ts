@@ -234,7 +234,9 @@ export default class NbtSchemaWalker {
         suggestions.forEach(
             v => {
                 if (typeof v === 'string') {
-                    ans.push({ label: v })
+                    if (reader.cursor === cursor) {
+                        ans.push({ label: v })
+                    }
                 } else if (isParserNode(v)) {
                     const out = { cursor }
                     const subReader = new StringReader(reader.readString(out))
@@ -252,7 +254,9 @@ export default class NbtSchemaWalker {
                         ans.push(...completions)
                     }
                 } else {
-                    ans.push({ label: v.value as string, documentation: v.description })
+                    if (reader.cursor === cursor) {
+                        ans.push({ label: v.value as string, documentation: v.description })
+                    }
                 }
             }
         )

@@ -39,13 +39,14 @@ The extension can compute completions as you typing commands. Completions will a
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-**The following completion features are still WIP:**
+For more complex NBT tags:
+![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
-For more complex NBTs:
-<!-- ![nbt]() -->
+And also NBT paths:
+![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
-<!-- ![ohhhhhh]() -->
+![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
 
 ## Definition Comments
 
