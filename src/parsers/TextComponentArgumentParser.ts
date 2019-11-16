@@ -26,6 +26,9 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                         keybind: {
                             type: 'string'
                         },
+                        insertion: {
+                            type: 'string'
+                        },
                         score: {
                             type: 'compound',
                             children: {
@@ -78,6 +81,104 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                                 }
                             ]
                         },
+                        color: {
+                            type: 'string',
+                            suggestions: [
+                                'black',
+                                'dark_blue',
+                                'dark_green',
+                                'dark_aqua',
+                                'dark_red',
+                                'dark_purple',
+                                'gold',
+                                'gray',
+                                'dark_gray',
+                                'blue',
+                                'green',
+                                'aqua',
+                                'red',
+                                'light_purple',
+                                'yellow',
+                                'white',
+                                'reset'
+                            ]
+                        },
+                        interpret: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        bold: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        italic: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        underlined: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        strikethrough: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        obfuscated: {
+                            type: 'byte',
+                            suggestions: [
+                                'false',
+                                'true'
+                            ]
+                        },
+                        entity: {
+                            type: 'string',
+                            suggestions: [
+                                {
+                                    parser: 'Entity',
+                                    params: [
+                                        'multiple',
+                                        'entities'
+                                    ]
+                                }
+                            ]
+                        },
+                        block: {
+                            type: 'string',
+                            suggestions: [
+                                {
+                                    parser: 'Vector',
+                                    params: [
+                                        3
+                                    ]
+                                }
+                            ]
+                        },
+                        storage: {
+                            type: 'string',
+                            suggestions: [
+                                {
+                                    parser: 'NamespacedID',
+                                    params: [
+                                        '$storages'
+                                    ]
+                                }
+                            ]
+                        },
                         clickEvent: {
                             type: 'compound',
                             children: {
@@ -101,6 +202,22 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                                             ]
                                         }
                                     ]
+                                }
+                            }
+                        },
+                        hoverEvent: {
+                            type: 'compound',
+                            children: {
+                                action: {
+                                    type: 'string',
+                                    suggestions: [
+                                        'show_text',
+                                        'show_item',
+                                        'show_entity'
+                                    ]
+                                },
+                                value: {
+                                    type: 'string'
                                 }
                             }
                         }
@@ -144,7 +261,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                 ])
                 .parse(reader, cursor, manager, jsonConfig, cache)
             combineArgumentParserResult(ans, result)
-        } else {
+        } else if (reader.peek() === '[') {
             const result = manager
                 .get('NbtTag', [
                     ['list'], 'blocks', 'spgoding:json_array',
@@ -152,6 +269,12 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                 ])
                 .parse(reader, cursor, manager, jsonConfig, cache)
             combineArgumentParserResult(ans, result)
+        } else {
+            try {
+                ans.data = reader.readString()
+            } catch (p) {
+                ans.errors.push(p)
+            }
         }
 
         return ans
