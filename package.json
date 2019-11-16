@@ -1,6 +1,6 @@
 {
   "name": "datapack-language-server",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "preview": true,
   "main": "lib/client.js",
   "author": "SPGoding",
