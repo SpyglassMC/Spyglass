@@ -139,15 +139,22 @@ export default class NbtSchemaWalker {
                         const ansNode = JSON.parse(JSON.stringify(node))
                         delete ansNode.child_ref
                         for (const refPath of node.child_ref) {
-                            const refNode =
-                                this
-                                    .clone()
-                                    .go(refPath)
-                                    .read() as NbtCompoundSchemaNode
-                            if (refNode.additionalChildren) {
-                                ansNode.additionalChildren = true
-                            }
+                            const subWalker = walker
+                                .clone()
+                                .go(refPath)
+                            const refNode = subWalker.read() as NbtCompoundSchemaNode
+                            ansNode.additionalChildren = ansNode.additionalChildren || refNode.additionalChildren
                             ansNode.children = { ...ansNode.children, ...refNode.children }
+                            // istanbul ignore next
+                            if (paths.length > 0) {
+                                try {
+                                    return findNodeInChildren(
+                                        refNode,
+                                        JSON.parse(JSON.stringify(paths)),
+                                        subWalker
+                                    )
+                                } catch (ignored) { }
+                            }
                         }
                         return findNodeInChildren(
                             ansNode,
@@ -176,7 +183,7 @@ export default class NbtSchemaWalker {
                                     if (subKey[0] === '$') {
                                         const listPath = subKey.slice(1)
                                         const valueList =
-                                            this
+                                            walker
                                                 .clone()
                                                 .goFile(listPath)
                                                 .read() as unknown as ValueList
@@ -231,7 +238,6 @@ export default class NbtSchemaWalker {
                 } else if (isParserNode(v)) {
                     const out = { cursor }
                     const subReader = new StringReader(reader.readString(out))
-                    console.log(`${out.cursor} in ${subReader.string} from ${reader.string}:${cursor}`)
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)

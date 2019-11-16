@@ -1,30 +1,33 @@
+import { SaturatedLine } from './types/Line'
+import ArgumentNode from './types/ArgumentNode'
 import ArgumentParser from './parsers/ArgumentParser'
 import BlockArgumentParser from './parsers/BlockArgumentParser'
 import DefinitionDescriptionArgumentParser from './parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from './parsers/DefinitionIDArgumentParser'
+import Entity from './types/Entity'
 import EntityArgumentParser from './parsers/EntityArgumentParser'
+import Identity from './types/Identity'
 import ItemArgumentParser from './parsers/ItemArgumentParser'
+import ItemSlotArgumentParser from './parsers/ItemSlotArgumentParser'
 import LiteralArgumentParser from './parsers/LiteralArgumentParser'
 import MessageArgumentParser from './parsers/MessageArgumentParser'
-import NbtPathArgumentParser from './parsers/NbtPathArgumentParser'
-import NbtTagArgumentParser from './parsers/NbtTagArgumentParser'
 import NamespacedIDArgumentParser from './parsers/NamespacedIDArgumentParser'
+import NbtPathArgumentParser from './parsers/NbtPathArgumentParser'
+import NbtSchemaWalker from './utils/NbtSchemaWalker'
+import NbtTagArgumentParser from './parsers/NbtTagArgumentParser'
 import NumberArgumentParser from './parsers/NumberArgumentParser'
-import StringArgumentParser from './parsers/StringArgumentParser'
-import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
-import VectorArgumentParser from './parsers/VectorArgumentParser'
-import { SaturatedLine } from './types/Line'
-import ObjectiveArgumentParser from './parsers/ObjectiveArgumentParser'
 import NumberRangeArgumentParser from './parsers/NumberRangeArgumentParser'
-import ItemSlotArgumentParser from './parsers/ItemSlotArgumentParser'
-import ParticleArgumentParser from './parsers/ParticleArgumentParser'
-import TimeArgumentParser from './parsers/TimeArgumentParser'
+import ObjectiveArgumentParser from './parsers/ObjectiveArgumentParser'
 import ObjectiveCriterionArgumentParser from './parsers/ObjectiveCriterionArgumentParser'
+import ParticleArgumentParser from './parsers/ParticleArgumentParser'
 import ScoreboardSlotArgumentParser from './parsers/ScoreboardSlotArgumentParser'
-import Identity from './types/Identity'
+import StringArgumentParser from './parsers/StringArgumentParser'
 import TagArgumentParser from './parsers/TagArgumentParser'
 import TeamArgumentParser from './parsers/TeamArgumentParser'
-import ArgumentNode from './types/ArgumentNode'
+import TextComponentArgumentParser from './parsers/TextComponentArgumentParser'
+import TimeArgumentParser from './parsers/TimeArgumentParser'
+import VanillaNbtSchema, { NbtSchema } from './types/VanillaNbtSchema'
+import VectorArgumentParser from './parsers/VectorArgumentParser'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -389,10 +392,12 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
+                                        console.log(args)
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtPathArgumentParser('entities', anchor)
                                         } else {
                                             return new NbtPathArgumentParser('blocks')
                                         }
@@ -419,8 +424,9 @@ export const VanillaTree: CommandTree = {
                                     parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtTagArgumentParser('compound', 'entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtTagArgumentParser('compound', 'entities', anchor)
                                         } else {
                                             return new NbtTagArgumentParser('compound', 'blocks')
                                         }
@@ -441,8 +447,9 @@ export const VanillaTree: CommandTree = {
                                     parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtPathArgumentParser('entities', anchor)
                                         } else {
                                             return new NbtPathArgumentParser('blocks')
                                         }
@@ -460,9 +467,10 @@ export const VanillaTree: CommandTree = {
                                                                 sourcePath: {
                                                                     parser: ({ args }) => {
                                                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
-                                                                        if (type === 'block') {
-                                                                            // TODO: get ID from parsed entity.
-                                                                            return new NbtPathArgumentParser('entities')
+                                                                        if (type === 'entity') {
+                                                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                                                            return new NbtPathArgumentParser('entities', anchor)
                                                                         } else {
                                                                             return new NbtPathArgumentParser('blocks')
                                                                         }
@@ -480,8 +488,9 @@ export const VanillaTree: CommandTree = {
                                                             parser: ({ args }) => {
                                                                 const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
-                                                                    // TODO: get ID from parsed entity.
-                                                                    return new NbtTagArgumentParser(undefined, 'entities')
+                                                                    const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                                                    const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                                                    return new NbtTagArgumentParser(undefined, 'entities', anchor)
                                                                 } else {
                                                                     return new NbtTagArgumentParser(undefined, 'blocks')
                                                                 }
@@ -507,12 +516,13 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        const type =getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
                                         if (type === 'block') {
                                             return new NbtPathArgumentParser('blocks')
                                         } else {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtPathArgumentParser('entities', anchor)
                                         }
                                     },
                                     executable: true
@@ -1669,7 +1679,7 @@ export const VanillaTree: CommandTree = {
                                                     }
                                                 }
                                             }
-                                        },                                        
+                                        },
                                         pos: {
                                             parser: new VectorArgumentParser(3),
                                             executable: true
@@ -1681,7 +1691,7 @@ export const VanillaTree: CommandTree = {
                                     executable: true
                                 }
                             }
-                        },                        
+                        },
                         entity: {
                             parser: new EntityArgumentParser('single', 'entities'),
                             executable: true
@@ -2311,8 +2321,9 @@ export const VanillaTree: CommandTree = {
                                     parser: ({ args }) => {
                                         const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtPathArgumentParser('entities', anchor)
                                         } else {
                                             return new NbtPathArgumentParser('blocks')
                                         }
@@ -2400,8 +2411,9 @@ export const VanillaTree: CommandTree = {
                                     parser: ({ args }) => {
                                         const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            // TODO: get ID from parsed entity.
-                                            return new NbtPathArgumentParser('entities')
+                                            const entity = getArgOrDefault(args, 1, new Entity()) as Entity
+                                            const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
+                                            return new NbtPathArgumentParser('entities', anchor)
                                         } else {
                                             return new NbtPathArgumentParser('blocks')
                                         }
@@ -2497,6 +2509,23 @@ export const VanillaTree: CommandTree = {
 }
 
 export default VanillaTree
+
+export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
+    if (entity.argument && entity.argument.type) {
+        const firstID = entity.argument.type[0]
+        if (!firstID.isTag) {
+            const anchor = firstID.toString()
+            try {
+                new NbtSchemaWalker(schema)
+                    .goFile('roots/entities.json')
+                    .goAnchor(anchor)
+                    .read()
+                return anchor
+            } catch (ignored) { }
+        }
+    }
+    return 'base'
+}
 
 export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
     return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback

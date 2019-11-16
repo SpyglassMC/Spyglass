@@ -14,6 +14,27 @@ describe('NbtTag Tests', () => {
             assert(isNbtByteTag(tag))
             assert(actual === '123b')
         })
+        it('Should convert to ‘false’ correctly', () => {
+            const { lint } = constructConfig({ lint: { snbtByteSuffix: 'b', snbtUseBooleans: true } })
+            const tag = getNbtByteTag(0)
+            const actual = tag[ToLintedString](lint)
+            assert(isNbtByteTag(tag))
+            assert(actual === 'false')
+        })
+        it('Should convert to ‘true’ correctly', () => {
+            const { lint } = constructConfig({ lint: { snbtByteSuffix: 'b', snbtUseBooleans: true } })
+            const tag = getNbtByteTag(1)
+            const actual = tag[ToLintedString](lint)
+            assert(isNbtByteTag(tag))
+            assert(actual === 'true')
+        })
+        it('Should convert to a string correctly even if snbtUseBooleans is true', () => {
+            const { lint } = constructConfig({ lint: { snbtByteSuffix: 'b', snbtUseBooleans: true } })
+            const tag = getNbtByteTag(2)
+            const actual = tag[ToLintedString](lint)
+            assert(isNbtByteTag(tag))
+            assert(actual === '2b')
+        })
     })
     describe('getNbtShortTag() Tests', () => {
         it('Should convert to a string correctly', () => {

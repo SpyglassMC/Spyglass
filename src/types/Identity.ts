@@ -10,9 +10,9 @@ export default class Identity implements Lintable {
     static readonly TagSymbol = '#'
 
     constructor(
-        private readonly namespace = Identity.DefaultNamespace,
-        private readonly path: string[] = [],
-        private readonly isTag = false
+        readonly namespace = Identity.DefaultNamespace,
+        readonly path: string[] = [],
+        readonly isTag = false
     ) { }
 
     [ToLintedString](lint: LintConfig): string {

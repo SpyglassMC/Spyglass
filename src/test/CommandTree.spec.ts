@@ -1,18 +1,17 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate, getArgOrDefault } from '../CommandTree'
-import { fail } from 'assert'
+import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
-import LineParser from '../parsers/LineParser'
-import StringReader from '../utils/StringReader'
+import { NbtSchemaNode, ValueList } from '../types/VanillaNbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import Entity from '../types/Entity'
-import ParsingError from '../types/ParsingError'
-import Identity from '../types/Identity'
-import Vector from '../types/Vector'
-import NbtPath from '../types/NbtPath'
-import { constructConfig } from '../types/Config'
 import Block from '../types/Block'
+import Entity from '../types/Entity'
+import Identity from '../types/Identity'
+import LineParser from '../parsers/LineParser'
+import NbtPath from '../types/NbtPath'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
+import Vector from '../types/Vector'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -170,6 +169,52 @@ describe('CommandTree Tests', () => {
                     }
                 }
             })
+        })
+    })
+    describe('getSchemaAnchor() Tests', () => {
+        const schema: { [key: string]: NbtSchemaNode | ValueList } = {
+            'entity/spgoding.json': {
+                type: 'compound',
+                children: {
+                    Base: {
+                        type: 'int'
+                    }
+                }
+            },
+            'roots/entities.json': {
+                type: 'root',
+                children: {
+                    base: {
+                        type: 'no-nbt'
+                    },
+                    'minecraft:spgoding': {
+                        ref: '../entity/spgoding.json'
+                    }
+                }
+            }
+        }
+        it('Should return base when type does not exist', () => {
+            const entity = new Entity('foo')
+            const actual = getSchemaAnchor(entity, schema)
+            assert(actual=== 'base')
+        })
+        it('Should return base when the first type is a tag', () => {
+            const id = new Identity('minecraft', ['spgoding'], true)
+            const entity = new Entity(undefined, 'e', { type: [id] })
+            const actual = getSchemaAnchor(entity, schema)
+            assert(actual=== 'base')
+        })
+        it('Should return base when the first type cannot be interpreted as an anchor', () => {
+            const id = new Identity('minecraft', ['qwertyuiop'])
+            const entity = new Entity(undefined, 'e', { type: [id] })
+            const actual = getSchemaAnchor(entity, schema)
+            assert(actual=== 'base')
+        })
+        it('Should return the respective schema', () => {
+            const id = new Identity('minecraft', ['spgoding'])
+            const entity = new Entity(undefined, 'e', { type: [id] })
+            const actual = getSchemaAnchor(entity, schema)
+            assert(actual=== 'minecraft:spgoding')
         })
     })
     describe('Just Fucking Parse', () => {

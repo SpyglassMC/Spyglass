@@ -4288,11 +4288,15 @@ export default {
 	"roots/blocks.json": {
 		"type": "root",
 		"children": {
-			"any": {
-				"ref": "../block/any.json"
-			},
 			"none": {
 				"type": "no-nbt"
+			},
+			"base": {
+				"type": "compound",
+				"additionalChildren": true,
+				"child_ref": [
+					"../ref/block_entity.json"
+				]
 			},
 			"$../block/group/shulker_box.json": {
 				"ref": "../block/chest.json"
@@ -4371,11 +4375,15 @@ export default {
 	"roots/entities.json": {
 		"type": "root",
 		"children": {
-			"any": {
-				"ref": "../entity/any.json"
-			},
 			"none": {
 				"ref": "../ref/entity.json"
+			},
+			"base": {
+				"type": "compound",
+				"additionalChildren": true,
+				"child_ref": [
+					"../ref/mob.json"
+				]
 			},
 			"$../entity/group/mob.json": {
 				"ref": "../ref/mob.json"
@@ -4592,11 +4600,15 @@ export default {
 	"roots/items.json": {
 		"type": "root",
 		"children": {
-			"any": {
-				"ref": "../item/any.json"
-			},
 			"none": {
 				"ref": "../ref/item_tag.json"
+			},
+			"base": {
+				"type": "compound",
+				"additionalChildren": true,
+				"child_ref": [
+					"../ref/item_tag.json"
+				]
 			},
 			"$../item/group/generic.json": {
 				"ref": "../ref/item_tag.json"

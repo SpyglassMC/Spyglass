@@ -109,7 +109,20 @@ export function getNbtLongArrayTag(val: NbtLongTag[]) {
 }
 
 export function getNbtByteTag(val: number) {
-    return getNbtNumberTag(val, 'byte', 'snbtByteSuffix') as NbtByteTag
+    // tslint:disable-next-line: prefer-object-spread
+    return Object.assign(val, {
+        [NbtTagType]: 'byte' as 'byte',
+        [ToLintedString]: (lint: LintConfig) => {
+            if (lint.snbtUseBooleans) {
+                if (val === 0) {
+                    return 'false'
+                } else if (val === 1) {
+                    return 'true'
+                }
+            }
+            return `${val}${lint.snbtByteSuffix}`
+        }
+    })
 }
 
 export function getNbtShortTag(val: number) {

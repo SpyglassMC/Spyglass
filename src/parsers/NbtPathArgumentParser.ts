@@ -45,8 +45,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             try {
                 const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
                 walker = new NbtSchemaWalker(this.nbtSchema)
-                walker
-                    .go(nbtSchemaPath)
+                walker.go(nbtSchemaPath)
                 walker.read()
             } catch (ignored) {
                 /* istanbul ignore next */
@@ -67,6 +66,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         let subWalker: NbtSchemaWalker | undefined = undefined
 
         //#region Completions
+        // console.log(types)
+        // console.log(walker && NbtSchemaWalker.isCompoundNode(walker.read()))
+        // console.log(walker && NbtSchemaWalker.isCompoundNode(walker.read()))
         if (types.includes('a key') && walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
             if (reader.cursor === this.cursor) {
                 const node = walker.read() as NbtCompoundSchemaNode

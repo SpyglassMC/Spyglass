@@ -15,6 +15,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
             children: {
                 'spgoding:json_object': {
                     type: 'compound',
+                    additionalChildren: true,
                     children: {
                         text: {
                             type: 'string'
@@ -66,7 +67,43 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                                 }
                             ]
                         },
-                        
+                        nbt: {
+                            type: 'string',
+                            suggestions: [
+                                {
+                                    parser: 'NbtPath',
+                                    params: [
+                                        'blocks'
+                                    ]
+                                }
+                            ]
+                        },
+                        clickEvent: {
+                            type: 'compound',
+                            children: {
+                                action: {
+                                    type: 'string',
+                                    suggestions: [
+                                        'open_url',
+                                        'run_command',
+                                        'change_page',
+                                        'suggest_command'
+                                    ]
+                                },
+                                value: {
+                                    type: 'string',
+                                    suggestions: [
+                                        {
+                                            parser: '#',
+                                            params: [
+                                                null,
+                                                'commands'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 },
                 'spgoding:json_array': {
@@ -103,8 +140,9 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
             const result = manager
                 .get('NbtTag', [
                     ['compound'], 'blocks', 'spgoding:json_object',
-                    TextComponentArgumentParser.TextComponentSchema])
-                .parse(reader, cursor, manager, config, cache)
+                    TextComponentArgumentParser.TextComponentSchema
+                ])
+                .parse(reader, cursor, manager, jsonConfig, cache)
             combineArgumentParserResult(ans, result)
         }
 

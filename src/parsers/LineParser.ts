@@ -135,7 +135,7 @@ export default class LineParser implements Parser<Line> {
                         const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
-                            const result = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+                            const result = { args: parsedLine.args, cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
                             this.parseChildren(reader, manager, node.children, result, cursor, optional)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {

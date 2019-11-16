@@ -3,8 +3,8 @@ import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToLintedString } from '../../types/Lintable'
 import Entity from '../../types/Entity'
-import Vector from '../../types/Vector'
 import Identity from '../../types/Identity'
+import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
 
 describe('Entity Tests', () => {
     describe('[ToLintedString]() Tests', () => {
