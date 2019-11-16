@@ -1,3 +1,8 @@
+# [v1.9.0](https://github.com/SPGoding/datapack-language-server/compare/v1.8.4...v1.9.0) (2019-11-16)
+
+## ✨ New Features
+- [`942373b`](https://github.com/SPGoding/datapack-language-server/commit/942373b)  Add folding regions for comments (Issues: [`#158`](https://github.com/SPGoding/datapack-language-server/issues/158))
+
 # [v1.8.4](https://github.com/SPGoding/datapack-language-server/compare/v1.8.3...v1.8.4) (2019-11-16)
 
 ## 🐛 Bug Fixes
