@@ -425,17 +425,57 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
 connection.onFoldingRanges(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     const strings = stringsOfRel.get(rel) as string[]
-    const startLineNumbers: number[] = []
+    const regionStartLineNumbers: number[] = []
     const foldingRanges: FoldingRange[] = []
+    const commentStartLineNumers: {
+        [amount: number]: number | undefined
+    } = {}
+    const getHashAmount = (string: string) => {
+        const reader = new StringReader(string)
+        let ans = 0
+        while (reader.canRead() && reader.peek() === '#') {
+            reader.skip()
+            ans += 1
+        }
+        return ans
+    }
     let i = 0
     for (const string of strings) {
-        if (string.startsWith('#region')) {
-            startLineNumbers.push(i)
-        } else if (string.startsWith('#endregion')) {
-            const startLineNumber = startLineNumbers.pop()
-            if (startLineNumber !== undefined) {
-                foldingRanges.push(FoldingRange.create(startLineNumber, i, undefined, undefined, FoldingRangeKind.Region))
+        if (string.startsWith('#')) {
+            if (string.startsWith('#region')) {
+                regionStartLineNumbers.push(i)
+            } else if (string.startsWith('#endregion')) {
+                const startLineNumber = regionStartLineNumbers.pop()
+                if (startLineNumber !== undefined) {
+                    foldingRanges.push(FoldingRange.create(
+                        startLineNumber, i,
+                        undefined, undefined,
+                        FoldingRangeKind.Region
+                    ))
+                }
             }
+        }
+        const amount = getHashAmount(string)
+        for (const key in commentStartLineNumers) {
+            const keyAmount = parseFloat(key)
+            if (amount > 0 && keyAmount >= amount && commentStartLineNumers[keyAmount] !== undefined) {
+                foldingRanges.push(FoldingRange.create(
+                    commentStartLineNumers[keyAmount] as number, i - 1,
+                    undefined, undefined,
+                    FoldingRangeKind.Region
+                ))
+                delete commentStartLineNumers[keyAmount]
+            } else if (i === strings.length - 1) {
+                foldingRanges.push(FoldingRange.create(
+                    commentStartLineNumers[keyAmount] as number, i,
+                    undefined, undefined,
+                    FoldingRangeKind.Region
+                ))
+                delete commentStartLineNumers[keyAmount]
+            }
+        }
+        if (amount > 0) {
+            commentStartLineNumers[amount] = i
         }
         i += 1
     }
@@ -507,7 +547,7 @@ connection.onPrepareRename(({ textDocument: { uri }, position: { character: char
     return null
 })
 connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
-    connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
+    // connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
     const line = (linesOfRel.get(rel) as Line[])[number]
     const result = getCacheFromChar(line.cache || {}, char)
@@ -568,8 +608,8 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
             }
         }
 
-        connection.console.log(`DC: ${JSON.stringify(documentChanges)}`)
-        connection.console.log(`AR: ${JSON.stringify(cacheFile)}`)
+        // connection.console.log(`DC: ${JSON.stringify(documentChanges)}`)
+        // connection.console.log(`AR: ${JSON.stringify(cacheFile)}`)
         return { documentChanges }
     } else {
         return null
