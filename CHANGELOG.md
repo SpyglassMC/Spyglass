@@ -1,3 +1,9 @@
+# [v1.8.4](https://github.com/SPGoding/datapack-language-server/compare/v1.8.3...v1.8.4) (2019-11-16)
+
+## 🐛 Bug Fixes
+- [`a0d7ff8`](https://github.com/SPGoding/datapack-language-server/commit/a0d7ff8)  Fix bugs of completions for text components 
+- [`20e5335`](https://github.com/SPGoding/datapack-language-server/commit/20e5335)  Complete completions for text components (Issues: [`#155`](https://github.com/SPGoding/datapack-language-server/issues/155))
+
 # [v1.8.3](https://github.com/SPGoding/datapack-language-server/compare/v1.8.2...v1.8.3) (2019-11-16)
 
 ## 🐛 Bug Fixes
