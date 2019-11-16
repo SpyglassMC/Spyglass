@@ -9,9 +9,9 @@
 [![Codecov](https://img.shields.io/codecov/c/gh/SPGoding/datapack-language-server.svg?logo=codecov&style=flat-square)](https://codecov.io/gh/SPGoding/datapack-language-server)
 [![License](https://img.shields.io/github/license/SPGoding/datapack-language-server.svg?style=flat-square)](https://github.com/SPGoding/datapack-language-server/blob/master/LICENSE)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
-[![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
+[![Gitmoji](https://img.shields.io/badge/gitmoji-%20%F0%9F%98%9C%20%F0%9F%98%8D-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack Helper Plus，简称 DHP，中文名大憨批，是 ![pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一个能够为 Minecraft Java版 1.15 的数据包提供补全、签名信息、重命名、查找定义或引用、错误提示、折叠、颜色信息、悬浮信息与文档链接的重型语言服务器。目前仍在制作当中，因此有些功能还未完成，均有下文有所标注。
+Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一个能够为 Minecraft Java版 1.15 的数据包提供补全、签名信息、重命名、查找定义或引用、错误提示、折叠、颜色信息、悬浮信息与文档链接的重型语言服务器。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。大憨批目前仍在制作当中，因此有些功能还未完成，均在下文有所标注。
 
 # 安装
 
@@ -28,7 +28,7 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 ![pca006132](https:
 
 ## 语义化高亮
 
-不存在的。
+不存在的。近阶段请使用 [Arcensoth](https://github.com/Arcensoth) 制作的 [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) 插件。下面的截图都是既使用了 Arcensoth 的高亮插件、也使用了我的大憨批来截图的。
 
 ## 签名信息
 
@@ -98,13 +98,13 @@ execute if score @s test matches 5 run say 5
 
 ## 跳转到定义
 
-您可以通过按着 Ctrl 左击实体名、标签名、队伍名、bossbar ID、数据储存 ID 来跳转到对应的定义行数。
+您可以通过按着 Ctrl 左击记分项名、实体名、标签名、队伍名、bossbar ID、数据储存 ID 来跳转到对应的定义行数。
 
 ![goto-definition](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/goto-definition.gif)
 
 ## 查找引用
 
-您可以通过 Shift + F12 快捷键或其他自行设定的按键来查找所有该进度、战利品表、函数、断言、数据包标签、实体、标签、队伍、bossbar 或数据储存在当前工作空间中的所有引用。
+您可以通过 Shift + F12 快捷键或其他自行设定的按键来查找所有该进度、战利品表、函数、断言、数据包标签、实体、标签、计分项、队伍、bossbar 或数据储存在当前工作空间中的所有引用。
 
 ![peek-references](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/peek-references.gif)
 
@@ -130,7 +130,9 @@ execute if score @s test matches 5 run say 5
 
 # 贡献者
 
-感谢这些可爱的人们对本项目的各种帮助。为更新及时，请查看 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 中的相应部分。
+感谢这些可爱的人们对本项目的各种帮助。为更新及时，请查看 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 中的相应部分。下方仅放置截图作为预览。
+
+[attachimg]1411491[/attachimg]
 
 # Q：大憨批就是个垃圾！
 
@@ -141,7 +143,7 @@ execute if score @s test matches 5 run say 5
 谢谢。您有很多种对大憨批表示支持的方式。
 
 - 如果您喜欢大憨批的话，这就足够了。
-- 如果您的 MCBBS 帐号有权限的话，在本人的插件发布页评满各项分值，这对本人申请精华有很大帮助；
+- 如果您的 MCBBS 帐号有权限的话，在本人的论坛发布页评满各项分值，这对本人申请精华有很大帮助；
 - 如果您有 GitHub 帐号的话，给本人的 [GitHub 仓库](https://github.com/SPGoding/datapack-language-server)点一个 Star；
 - 如果您有微软帐号的话，在本人的[插件发布页](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server&ssr=false#review-details)给一个五星好评。
 - 如果您有 CBer 朋友的话，把大憨批安利给 TA；

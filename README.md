@@ -98,13 +98,13 @@ You can navigate to advancements, loot tables, functions, predicates and all kin
 
 ## Goto Definitions
 
-You can goto the definitions of entities, tags, teams, bossbars and data storages in the workspace by Ctrl-clicking on their names.
+You can goto the definitions of objectives, entities, tags, teams, bossbars and data storages in the workspace by Ctrl-clicking on their names.
 
 ![goto-definition](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/goto-definition.gif)
 
 ## Finding References
 
-You can find all the references of entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes and all kinds of datapack tags in the workspace by pressing Shift + F12 or other configured key.
+You can find all the references of objectives, entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes and all kinds of datapack tags in the workspace by pressing Shift + F12 or other configured key.
 
 ![peek-references](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/peek-references.gif)
 
