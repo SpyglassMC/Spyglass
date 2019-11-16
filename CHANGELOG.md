@@ -1,3 +1,9 @@
+# [v1.8.3](https://github.com/SPGoding/datapack-language-server/compare/v1.8.2...v1.8.3) (2019-11-16)
+
+## 🐛 Bug Fixes
+- [`9d7b2d2`](https://github.com/SPGoding/datapack-language-server/commit/9d7b2d2)  Fix not providing completions for escaped string (Issues: [`#138`](https://github.com/SPGoding/datapack-language-server/issues/138))
+- [`3c65a08`](https://github.com/SPGoding/datapack-language-server/commit/3c65a08)  Fix completions for NBT tags and NBT paths (Issues: [`#138`](https://github.com/SPGoding/datapack-language-server/issues/138))
+
 # [v1.8.2](https://github.com/SPGoding/datapack-language-server/compare/v1.8.1...v1.8.2) (2019-11-14)
 
 ## 🐛 Bug Fixes
