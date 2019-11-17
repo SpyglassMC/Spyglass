@@ -54,8 +54,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
     private parseStates(reader: StringReader, cursor: number, ans: ArgumentParserResult<Block>, id: Identity): void {
         if (reader.peek() === Block.StatesBeginSymbol) {
-            // FIXME: Completions for block tags.
-            const definition = this.blockDefinitions[id.toString()]
+            const definition = !id.isTag ? this.blockDefinitions[id.toString()] : undefined
             const properties = definition ? (definition.properties || {}) : {}
 
             new MapAbstractParser<string, Block>(
@@ -63,9 +62,13 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                 (ans, reader, cursor, manager, config, cache) => {
                     const existingKeys = Object.keys(ans.data.states)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
-                    return manager
+                    const result = manager
                         .get('Literal', keys)
                         .parse(reader, cursor, manager, config, cache)
+                    if (id.isTag) {
+                        result.errors = []
+                    }
+                    return result
                 },
                 (ans, reader, cursor, manager, config, cache, key, range) => {
                     if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
@@ -73,6 +76,9 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                     }
                     const result = manager.get('Literal', properties[key]).parse(reader, cursor, manager, config, cache)
                     ans.data.states[key] = result.data
+                    if (id.isTag) {
+                        result.errors = []
+                    }
                     combineArgumentParserResult(ans, result)
                 }
             ).parse(ans, reader, cursor, this.manager, this.config, this.cache)

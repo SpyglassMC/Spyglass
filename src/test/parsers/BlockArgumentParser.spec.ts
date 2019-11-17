@@ -209,5 +209,14 @@ describe('BlockArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should not return errors for block tags', () => {
+            const parser = new BlockArgumentParser(true, blockDefinitions, registries)
+            const actual = parser.parse(new StringReader('#minecraft:stone[snowy=true]'), undefined, manager)
+            assert.deepEqual(actual.data, new Block(
+                new Identity('minecraft', ['stone'], true),
+                { snowy: 'true' }
+            ))
+            assert.deepStrictEqual(actual.errors, [])
+        })
     })
 })
