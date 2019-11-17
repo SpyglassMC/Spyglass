@@ -1120,7 +1120,7 @@ export default {
 	"entity/falling_block.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"../ref/entity.json"
 		],
 		"children": {
 			"TileEntityData": {
