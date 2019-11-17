@@ -1,3 +1,8 @@
+# [v1.9.3](https://github.com/SPGoding/datapack-language-server/compare/v1.9.2...v1.9.3) (2019-11-17)
+
+## 🐛 Bug Fixes
+- [`b8005b9`](https://github.com/SPGoding/datapack-language-server/commit/b8005b9)  Add missing contributors
+
 # [v1.9.2](https://github.com/SPGoding/datapack-language-server/compare/v1.9.1...v1.9.2) (2019-11-17)
 
 ## 🐛 Bug Fixes
