@@ -1391,7 +1391,7 @@ export const VanillaTree: CommandTree = {
             }
         },
         spawnpoint: {
-            parser: new LiteralArgumentParser('setworldspawn'),
+            parser: new LiteralArgumentParser('spawnpoint'),
             executable: true,
             children: {
                 player: {
