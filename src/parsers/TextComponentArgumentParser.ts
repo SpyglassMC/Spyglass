@@ -106,43 +106,43 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
                         interpret: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         bold: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         italic: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         underlined: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         strikethrough: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         obfuscated: {
                             type: 'byte',
                             suggestions: [
-                                'false',
-                                'true'
+                                '0',
+                                '1'
                             ]
                         },
                         entity: {
