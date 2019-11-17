@@ -1,3 +1,8 @@
+# [v1.9.2](https://github.com/SPGoding/datapack-language-server/compare/v1.9.1...v1.9.2) (2019-11-17)
+
+## 🐛 Bug Fixes
+- [`44d1572`](https://github.com/SPGoding/datapack-language-server/commit/44d1572)  Fix folding regions
+
 # [v1.9.1](https://github.com/SPGoding/datapack-language-server/compare/v1.9.0...v1.9.1) (2019-11-16)
 
 ## 🐛 Bug Fixes
