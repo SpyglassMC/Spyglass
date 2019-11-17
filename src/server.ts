@@ -437,6 +437,9 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
             reader.skip()
             ans += 1
         }
+        if (!StringReader.isWhiteSpace(reader.peek())) {
+            ans = 0
+        }
         return ans
     }
     let i = 0
