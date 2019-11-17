@@ -1,3 +1,12 @@
+# [v1.9.4](https://github.com/SPGoding/datapack-language-server/compare/v1.9.3...v1.9.4) (2019-11-17)
+
+## 🐛 Bug Fixes
+- [`627ac38`](https://github.com/SPGoding/datapack-language-server/commit/627ac38)  Fix missing Tags tag for falling blocks (Issues: [`#162`](https://github.com/SPGoding/datapack-language-server/issues/162))
+- [`add9d9b`](https://github.com/SPGoding/datapack-language-server/commit/add9d9b)  Fix missing Item tag in snowballs (Issues: [`#164`](https://github.com/SPGoding/datapack-language-server/issues/164))
+- [`e071859`](https://github.com/SPGoding/datapack-language-server/commit/e071859)  Add missing spawnpoint command (Issues: [`#165`](https://github.com/SPGoding/datapack-language-server/issues/165))
+- [`b28bff8`](https://github.com/SPGoding/datapack-language-server/commit/b28bff8)  Fix errors for block states of a block tag (Issues: [`#166`](https://github.com/SPGoding/datapack-language-server/issues/166))
+- [`9adcbf7`](https://github.com/SPGoding/datapack-language-server/commit/9adcbf7)  Fix warnings for booleans in text components (Issues: [`#163`](https://github.com/SPGoding/datapack-language-server/issues/163))
+
 # [v1.9.3](https://github.com/SPGoding/datapack-language-server/compare/v1.9.2...v1.9.3) (2019-11-17)
 
 ## 🐛 Bug Fixes
