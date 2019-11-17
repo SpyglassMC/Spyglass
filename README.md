@@ -39,13 +39,13 @@ The extension can compute completions as you typing commands. Completions will a
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-For more complex NBT tags:
+For more complex NBT tags, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
 ![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
-And also NBT paths:
+And also NBT paths, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
-FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
+FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU, though this shitty feature doesn't always work well:
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
 
 ## Definition Comments
@@ -409,14 +409,17 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt="SPGoding"/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Tests">⚠️</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/MrYurihi"><img src="https://avatars3.githubusercontent.com/u/17830663?v=4" width="100px;" alt="MrYurihi"/><br /><sub><b>MrYurihi</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MrYurihi" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Levertion"><img src="https://avatars1.githubusercontent.com/u/26185209?v=4" width="100px;" alt="Levertion"/><br /><sub><b>Levertion</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Levertion" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Bassab03"><img src="https://avatars3.githubusercontent.com/u/21043977?v=4" width="100px;" alt="Bassab03"/><br /><sub><b>Bassab03</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Bassab03" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt="switefaster"/><br /><sub><b>switefaster</b></sub></a><br /><a href="#financial-switefaster" title="Financial">💵</a></td>
     <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="#financial-MarsCloud" title="Financial">💵</a></td>
     <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt="Heyu"/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/RicoloveFeng"><img src="https://avatars1.githubusercontent.com/u/44725122?v=4" width="100px;" alt="RicoloveFeng"/><br /><sub><b>RicoloveFeng</b></sub></a><br /><a href="#financial-RicoloveFeng" title="Financial">💵</a></td>
     <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?v=4" width="100px;" alt="pca006132"/><br /><sub><b>pca006132</b></sub></a><br /><a href="#ideas-pca006132" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/YijunYuan"><img src="https://avatars0.githubusercontent.com/u/7012463?v=4" width="100px;" alt="Yijun Yuan"/><br /><sub><b>Yijun Yuan</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AYijunYuan" title="Bug reports">🐛</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/MinecraftPeace"><img src="https://avatars2.githubusercontent.com/u/57551211?v=4" width="100px;" alt="MinecraftPeace"/><br /><sub><b>MinecraftPeace</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMinecraftPeace" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/K-bai"><img src="https://avatars2.githubusercontent.com/u/31344344?v=4" width="100px;" alt="K-bai"/><br /><sub><b>K-bai</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AK-bai" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/ruhuasiyu"><img src="https://avatars2.githubusercontent.com/u/31852729?v=4" width="100px;" alt="ruhuasiyu"/><br /><sub><b>ruhuasiyu</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Aruhuasiyu" title="Bug reports">🐛</a> <a href="#ideas-ruhuasiyu" title="Ideas, Planning, & Feedback">🤔</a></td>
