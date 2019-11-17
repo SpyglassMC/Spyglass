@@ -425,6 +425,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/ruhuasiyu"><img src="https://avatars2.githubusercontent.com/u/31852729?v=4" width="100px;" alt="ruhuasiyu"/><br /><sub><b>ruhuasiyu</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Aruhuasiyu" title="Bug reports">🐛</a> <a href="#ideas-ruhuasiyu" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?v=4" width="100px;" alt="??"/><br /><sub><b>??</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/TouchFisha"><img src="https://avatars0.githubusercontent.com/u/48653079?v=4" width="100px;" alt="TouchFisha"/><br /><sub><b>TouchFisha</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3ATouchFisha" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->

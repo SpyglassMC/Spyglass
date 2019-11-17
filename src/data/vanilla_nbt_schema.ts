@@ -774,7 +774,15 @@ export default {
 			},
 			"Potion": {
 				"type": "string",
-				"description": "Name of the potion effect on the arrow"
+				"description": "Name of the potion effect on the arrow",
+				"suggestions": [
+					{
+						"parser": "NamespacedID",
+						"params": [
+							"minecraft:potion"
+						]
+					}
+				]
 			},
 			"CustomPotionEffects": {
 				"type": "list",
@@ -4267,6 +4275,9 @@ export default {
 						"description": "UUIDLeast of the thrower"
 					}
 				}
+			},
+			"Item": {
+				"ref": "./item.json"
 			}
 		}
 	},
