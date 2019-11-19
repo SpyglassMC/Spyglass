@@ -9,7 +9,6 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import Manager from '../types/Manager'
-import HashSet from '../types/HashSet'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -71,20 +70,20 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         }
 
         //#region Completions
-        const namespaces: HashSet = {}
-        const folders: HashSet = {}
-        const files: HashSet = {}
+        const namespaces = new Set<string>()
+        const folders= new Set<string>()
+        const files= new Set<string>()
         if (cursor === reader.cursor) {
             for (const candidate of tagCandidates) {
                 const namespace = candidate.split(':')[0]
                 const paths = candidate.split(':')[1].split('/')
 
-                namespaces[`${Identity.TagSymbol}${namespace}`] = true
+                namespaces.add(`${Identity.TagSymbol}${namespace}`)
                 if (namespace === Identity.DefaultNamespace) {
                     if (paths.length >= 2) {
-                        folders[paths[0]] = true
+                        folders.add(paths[0])
                     } else {
-                        files[paths[0]] = true
+                        files.add(paths[0])
                     }
                 }
             }
@@ -92,12 +91,12 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 const namespace = candidate.split(':')[0]
                 const paths = candidate.split(':')[1].split('/')
 
-                namespaces[namespace] = true
+                namespaces.add(namespace)
                 if (namespace === Identity.DefaultNamespace) {
                     if (paths.length >= 2) {
-                        folders[paths[0]] = true
+                        folders.add(paths[0])
                     } else {
-                        files[paths[0]] = true
+                        files.add(paths[0])
                     }
                 }
             }
@@ -138,9 +137,9 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                         const paths = candidate.split(Identity.Sep)
 
                         if (paths.length >= 2) {
-                            folders[paths[0]] = true
+                            folders.add(paths[0]) 
                         } else {
-                            files[paths[0]] = true
+                            files.add(paths[0])
                         }
                     }
                 }
@@ -163,9 +162,9 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                         const candidatePaths = candidate.split(Identity.Sep)
 
                         if (candidatePaths.length - paths.length >= 2) {
-                            folders[candidatePaths[paths.length]] = true
+                            folders.add(candidatePaths[paths.length])
                         } else if (candidatePaths.length - paths.length === 1) {
-                            files[candidatePaths[paths.length]] = true
+                            files.add(candidatePaths[paths.length])
                         }
                     }
                 }
@@ -260,17 +259,17 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
-        Object.keys(namespaces).forEach(k => void ans.completions.push({
+        namespaces.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Module,
             commitCharacters: [':']
         }))
-        Object.keys(folders).forEach(k => void ans.completions.push({
+        folders.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Folder,
             commitCharacters: ['/']
         }))
-        Object.keys(files).forEach(k => void ans.completions.push({
+        files.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Field,
             commitCharacters: [' ']
