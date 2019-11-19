@@ -41,16 +41,16 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         if (!fs.pathExistsSync(dotPath)) {
             fs.mkdirpSync(dotPath)
         }
-        if (!fs.pathExistsSync(dataPath)) {
-            fs.mkdirpSync(dataPath)
-        }
         if (fs.existsSync(cachePath)) {
             cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
             if (cacheFile.version !== LatestCacheFileVersion) {
                 cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
             }
         }
+        console.time('updateCacheFile')
         await updateCacheFile(cacheFile, workspaceFolderPath)
+        console.timeEnd('updateCacheFile')
+        saveCacheFile()
 
         return {
             capabilities: {
@@ -101,14 +101,13 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     } as InitializeResult
 })
 
-setInterval(
-    () => {
-        if (cachePath) {
-            fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' })
-        }
-    },
-    30000
-)
+setInterval(saveCacheFile, 30000)
+
+async function saveCacheFile() {
+    if (cachePath) {
+        await fs.writeFile(cachePath as string, JSON.stringify(cacheFile), { encoding: 'utf8' })
+    }
+}
 
 function getRelFromUri(uri: string) {
     const abs = Files.uriToFilePath(uri) as string
@@ -131,15 +130,9 @@ function getUriFromRel(rel: string) {
 
 const cacheFileOperations = {
     //#region functions
-    // ADDED: Add to functions cache category.
     // MODIFIED & DELETED: Remove all cache positions with the specific rel.
-    // ADDED & MODIFIED: Combine all caches of all lines.
+    // MODIFIED: Combine all caches of all lines.
     // DELETED: Remove from functions cache category.
-    addFunction: (id: string) => {
-        const category = getSafeCategory(cacheFile.cache, 'functions')
-        category[id] = category[id] || { def: [], ref: [] }
-        cacheFile.cache.functions = category
-    },
     removeCachePositionsWith: (rel: string) => {
         removeCachePosition(cacheFile.cache, rel)
     },
@@ -160,12 +153,9 @@ const cacheFileOperations = {
         }
         cacheFile.cache = combineCache(cacheFile.cache, cacheOfLines)
     },
-    removeFunction: (id: string) => {
-        removeCacheUnit(cacheFile.cache, 'functions', id)
-    },
     //#endregion
 
-    //#region advancements, lootTables, predicates, tags/*, recipes:
+    //#region advancements, functions, lootTables, predicates, tags/*, recipes:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: CacheKey) => {
@@ -179,15 +169,10 @@ const cacheFileOperations = {
     //#endregion
 
     // Hooks.
-    fileAdded: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
-        if (type === 'functions') {
-            cacheFileOperations.addFunction(id.toString())
-            await cacheFileOperations.combineCacheOfLines(rel, abs)
-        } else {
-            cacheFileOperations.addDefault(id.toString(), type)
-        }
+    fileAdded: async (type: CacheKey, id: Identity) => {
+        cacheFileOperations.addDefault(id.toString(), type)
     },
-    fileModified: async (rel: string, abs: string, type: CacheKey, id: Identity) => {
+    fileModified: async (rel: string, abs: string, type: CacheKey) => {
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
             await cacheFileOperations.combineCacheOfLines(rel, abs)
@@ -196,10 +181,8 @@ const cacheFileOperations = {
     fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
-            cacheFileOperations.removeFunction(id.toString())
-        } else {
-            cacheFileOperations.removeDefault(id.toString(), type)
         }
+        cacheFileOperations.removeDefault(id.toString(), type)
     }
 }
 
@@ -215,30 +198,35 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
             const lastModified = stat.mtimeMs
             const lastUpdated = cacheFile.files[rel]
             if (lastModified > lastUpdated) {
-                cacheFileOperations.fileModified(rel, abs, key, id)
+                cacheFileOperations.fileModified(rel, abs, key)
                 cacheFile.files[rel] = lastModified
             }
         }
     }
 
+    const promises: Promise<void>[] = []
+    const addedFiles: [string, string, CacheKey][] = []
     const walk = async (abs: string) => {
         const names = await fs.readdir(abs)
-        for (const name of names) {
-            const dir = path.join(abs, name)
-            const stat = await fs.stat(dir)
-            if (stat.isDirectory()) {
-                await walk(dir)
-            } else {
-                const rel = path.relative(workspaceFolderPath, dir)
-                const { id, category: key } = await Identity.fromRel(rel)
-                if (!cacheFile.files[rel]) {
-                    cacheFileOperations.fileAdded(rel, dir, key, id)
-                    cacheFile.files[rel] = stat.mtimeMs
+        await Promise.all(
+            names.map(async name => {
+                const dir = path.join(abs, name)
+                const stat = await fs.stat(dir)
+                if (stat.isDirectory()) {
+                    await walk(dir)
+                } else {
+                    const rel = path.relative(workspaceFolderPath, dir)
+                    const { id, category: key } = await Identity.fromRel(rel)
+                    if (!cacheFile.files[rel]) {
+                        cacheFileOperations.fileAdded(key, id)
+                        cacheFile.files[rel] = stat.mtimeMs
+                        addedFiles.push([rel, dir, key])
+                    }
                 }
-            }
-        }
+            })
+        )
     }
-    const namespaces = await fs.readdir(dataPath as string)
+    const namespaces = fs.pathExistsSync(dataPath as string) ? await fs.readdir(dataPath as string) : []
     for (const namespace of namespaces) {
         const namespacePath = path.join(dataPath as string, namespace)
         const advancementsPath = path.join(namespacePath, 'advancements')
@@ -258,10 +246,16 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
         ]
         for (const datapackCategoryPath of datapackCategoryPaths) {
             if (await fs.pathExists(datapackCategoryPath)) {
-                walk(datapackCategoryPath)
+                promises.push(walk(datapackCategoryPath))
             }
         }
     }
+    await Promise.all(promises)
+    await Promise.all(
+        addedFiles.map(
+            ([rel, abs, key]) => cacheFileOperations.fileModified(rel, abs, key)
+        )
+    )
 
     trimCache(cacheFile.cache)
 }
@@ -352,11 +346,11 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
 
         switch (type) {
             case FileChangeType.Created:
-                cacheFileOperations.fileAdded(rel, abs, category, id)
+                cacheFileOperations.fileAdded(category, id)
                 cacheFile.files[rel] = (await fs.stat(abs)).mtimeMs
                 break
             case FileChangeType.Changed:
-                cacheFileOperations.fileModified(rel, abs, category, id)
+                cacheFileOperations.fileModified(rel, abs, category)
                 cacheFile.files[rel] = (await fs.stat(abs)).mtimeMs
                 break
             case FileChangeType.Deleted:

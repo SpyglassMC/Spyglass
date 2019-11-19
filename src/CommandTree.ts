@@ -392,7 +392,6 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        console.log(args)
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
