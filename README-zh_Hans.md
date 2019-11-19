@@ -17,7 +17,7 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 点这个图标就可以从网页安装：[![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)。
 
-或者，您也可以直接打开 VSCode，按 Ctrl + Shift + P，删掉里面的 `>`，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
+或者，您也可以直接打开 VSCode，按 Ctrl + P，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
 
 # 注意
 
