@@ -2319,7 +2319,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
                                             const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
@@ -2409,7 +2409,7 @@ export const VanillaTree: CommandTree = {
                             children: {
                                 path: {
                                     parser: ({ args }) => {
-                                        const type = args[args.length - 2].data as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
                                             const anchor = getSchemaAnchor(entity, VanillaNbtSchema)
