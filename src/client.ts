@@ -4,13 +4,18 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment } from 'vscode'
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
 
 let client: LanguageClient
+const item = window.createStatusBarItem(StatusBarAlignment.Left)
 
 export function activate(context: ExtensionContext) {
+    item.text = '$(sync) Initializing DHP features...'
+    item.tooltip = 'This may take longer for large projects.'
+    item.show()
+
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(
         join('lib', 'server.js')
@@ -60,17 +65,23 @@ export function activate(context: ExtensionContext) {
 
     // Create the language client and start the client.
     client = new LanguageClient(
-        'mcfunctionLanguageServer',
-        'MCFunction Language Server',
+        'datapackLanguageServer',
+        'Datapack Language Server',
         serverOptions,
         clientOptions
     )
 
     // Start the client. This will also launch the server
     client.start()
+
+    client.onReady().then(() => {
+        item.text = '$(check) Initialized DHP features.'
+        item.tooltip = 'Enjoy!'
+    })
 }
 
 export function deactivate(): Thenable<void> | undefined {
+    item.dispose()
     if (!client) {
         return undefined
     }
