@@ -1,4 +1,4 @@
-import VanillaNbtSchema from '../data/vanilla_nbt_schema'
+import VanillaNbtSchema from '../data/JE1.15/nbt_schema'
 import { NbtTagTypeName } from './NbtTag'
 
 export type NbtSchema = { [key: string]: NbtSchemaNode | ValueList }

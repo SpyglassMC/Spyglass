@@ -1,4 +1,4 @@
-import VanillaRegistries from '../data/vanilla_registries'
+import VanillaRegistries from '../data/JE1.15/registries'
 
 export type Registry = {
     default?: string

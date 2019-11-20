@@ -1,4 +1,4 @@
-import VanillaBlockDefinitions from '../data/vanilla_blocks'
+import VanillaBlockDefinitions from '../data/JE1.15/blocks'
 
 export type BlockDefinition = {
     properties?: {
