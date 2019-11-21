@@ -50,9 +50,6 @@ export function activate(context: ExtensionContext) {
     if (workspace.workspaceFolders) {
         (clientOptions.synchronize as any).fileEvents.push(
             workspace.createFileSystemWatcher(
-                new RelativePattern(workspace.workspaceFolders[0], '.datapackrc.json')
-            ),
-            workspace.createFileSystemWatcher(
                 new RelativePattern(workspace.workspaceFolders[0], 'data/*/{advancements,loot_tables,predicates,recipes}/**/*.json')
             ),
             workspace.createFileSystemWatcher(

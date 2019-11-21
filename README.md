@@ -134,6 +134,10 @@ There are several linting rules you can set in the configuration file.
 
 **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default.
 
+## Configuration File
+
+
+
 ### blockStateAppendSpaceAfterComma: `boolean`
 
 Whether to append spaces after commas in block states or not.  

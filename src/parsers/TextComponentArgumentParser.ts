@@ -237,46 +237,53 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
 
     // istanbul ignore next
     parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<string> {
-        const jsonConfig = constructConfig({
-            lint: {
-                ...config.lint,
-                quoteType: 'always double',
-                quoteSnbtStringKeys: true,
-                quoteSnbtStringValues: true,
-                snbtUseBooleans: true,
-                snbtOmitDoubleSuffix: true
-            }
-        })
+        // const jsonConfig = constructConfig({
+        //     lint: {
+        //         ...config.lint,
+        //         quoteType: 'always double',
+        //         quoteSnbtStringKeys: true,
+        //         quoteSnbtStringValues: true,
+        //         snbtUseBooleans: true,
+        //         snbtOmitDoubleSuffix: true
+        //     }
+        // })
+        // const ans: ArgumentParserResult<string> = {
+        //     data: '',
+        //     errors: [],
+        //     cache: {},
+        //     completions: []
+        // }
+        // if (reader.peek() === '{') {
+        //     const result = manager
+        //         .get('NbtTag', [
+        //             ['compound'], 'blocks', 'spgoding:json_object',
+        //             TextComponentArgumentParser.TextComponentSchema
+        //         ])
+        //         .parse(reader, cursor, manager, jsonConfig, cache)
+        //     combineArgumentParserResult(ans, result)
+        // } else if (reader.peek() === '[') {
+        //     const result = manager
+        //         .get('NbtTag', [
+        //             ['list'], 'blocks', 'spgoding:json_array',
+        //             TextComponentArgumentParser.TextComponentSchema
+        //         ])
+        //         .parse(reader, cursor, manager, jsonConfig, cache)
+        //     combineArgumentParserResult(ans, result)
+        // } else {
+        //     try {
+        //         ans.data = reader.readString()
+        //     } catch (p) {
+        //         ans.errors.push(p)
+        //     }
+        // }
+
+        // return ans        
         const ans: ArgumentParserResult<string> = {
-            data: '',
+            data: reader.readRemaining(),
             errors: [],
             cache: {},
             completions: []
         }
-        if (reader.peek() === '{') {
-            const result = manager
-                .get('NbtTag', [
-                    ['compound'], 'blocks', 'spgoding:json_object',
-                    TextComponentArgumentParser.TextComponentSchema
-                ])
-                .parse(reader, cursor, manager, jsonConfig, cache)
-            combineArgumentParserResult(ans, result)
-        } else if (reader.peek() === '[') {
-            const result = manager
-                .get('NbtTag', [
-                    ['list'], 'blocks', 'spgoding:json_array',
-                    TextComponentArgumentParser.TextComponentSchema
-                ])
-                .parse(reader, cursor, manager, jsonConfig, cache)
-            combineArgumentParserResult(ans, result)
-        } else {
-            try {
-                ans.data = reader.readString()
-            } catch (p) {
-                ans.errors.push(p)
-            }
-        }
-
         return ans
     }
 

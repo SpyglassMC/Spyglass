@@ -26,7 +26,7 @@ let cachePath: string | undefined
 let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders }) => {
-    const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.']
+    const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     if (workspaceFolders) {
         workspaceFolder = workspaceFolders[0]
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
@@ -47,9 +47,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
                 cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
             }
         }
-        console.time('updateCacheFile')
         await updateCacheFile(cacheFile, workspaceFolderPath)
-        console.timeEnd('updateCacheFile')
         saveCacheFile()
 
         return {
@@ -324,8 +322,9 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
         }
     }
 
-    cacheFileOperations.removeCachePositionsWith(rel)
-    await cacheFileOperations.combineCacheOfLines(rel, '')
+    cacheFileOperations.fileModified(rel, '', 'functions')
+    trimCache(cacheFile.cache)
+
     updateDiagnostics(rel, uri)
     // connection.console.log(`AC: ${JSON.stringify(cacheFile)}`)
 })
@@ -387,29 +386,32 @@ connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, t
     for (let [current, nextOptions] of nonEmptyOptions) {
         nextOptions = nextOptions.length > 0 ? nextOptions : ['']
         for (const option of nextOptions) {
-            signatures.push({
-                label: `${fixLabel}${current} ${option}`,
-                parameters: [
-                    {
-                        label: [
-                            0,
-                            fixLabel.length
-                        ]
-                    },
-                    {
-                        label: [
-                            fixLabel.length,
-                            fixLabel.length + current.length
-                        ]
-                    },
-                    {
-                        label: [
-                            fixLabel.length + current.length,
-                            fixLabel.length + current.length + option.length
-                        ]
-                    }
-                ]
-            })
+            const label = `${fixLabel}${current} ${option}`
+            if (label !== ' ') {
+                signatures.push({
+                    label: `${fixLabel}${current} ${option}`,
+                    parameters: [
+                        {
+                            label: [
+                                0,
+                                fixLabel.length
+                            ]
+                        },
+                        {
+                            label: [
+                                fixLabel.length,
+                                fixLabel.length + current.length
+                            ]
+                        },
+                        {
+                            label: [
+                                fixLabel.length + current.length,
+                                fixLabel.length + current.length + option.length
+                            ]
+                        }
+                    ]
+                })
+            }
         }
     }
 
