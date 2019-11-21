@@ -404,8 +404,7 @@ If sets to `false`, the decimal place will still be kept to avoid center-correct
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+<!-- prettier-ignore -->
 <table>
   <tr>
     <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt="SPGoding"/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Tests">⚠️</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Documentation">📖</a></td>
@@ -413,7 +412,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Levertion"><img src="https://avatars1.githubusercontent.com/u/26185209?v=4" width="100px;" alt="Levertion"/><br /><sub><b>Levertion</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Levertion" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Bassab03"><img src="https://avatars3.githubusercontent.com/u/21043977?v=4" width="100px;" alt="Bassab03"/><br /><sub><b>Bassab03</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Bassab03" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt="switefaster"/><br /><sub><b>switefaster</b></sub></a><br /><a href="#financial-switefaster" title="Financial">💵</a></td>
-    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="#financial-MarsCloud" title="Financial">💵</a></td>
+    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="#financial-MarsCloud" title="Financial">💵</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMarsCloud" title="Bug reports">🐛</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=MarsCloud" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt="Heyu"/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
   </tr>
   <tr>
@@ -430,8 +429,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 And to those who haven't told me a GitHub account:
