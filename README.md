@@ -34,7 +34,7 @@ You can get hints about the arguments of commands while typing.
 
 ## Completions
 
-The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
+The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
 
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
@@ -412,8 +412,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/MrYurihi"><img src="https://avatars3.githubusercontent.com/u/17830663?v=4" width="100px;" alt="MrYurihi"/><br /><sub><b>MrYurihi</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MrYurihi" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Levertion"><img src="https://avatars1.githubusercontent.com/u/26185209?v=4" width="100px;" alt="Levertion"/><br /><sub><b>Levertion</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Levertion" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Bassab03"><img src="https://avatars3.githubusercontent.com/u/21043977?v=4" width="100px;" alt="Bassab03"/><br /><sub><b>Bassab03</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Bassab03" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MarsCloud" title="Code">💻</a> <a href="#financial-MarsCloud" title="Financial">💵</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMarsCloud" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt="switefaster"/><br /><sub><b>switefaster</b></sub></a><br /><a href="#financial-switefaster" title="Financial">💵</a></td>
-    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt="MarsCloud"/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="#financial-MarsCloud" title="Financial">💵</a></td>
     <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt="Heyu"/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
   </tr>
   <tr>
