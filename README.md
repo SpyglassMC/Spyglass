@@ -423,13 +423,16 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/RicoloveFeng"><img src="https://avatars1.githubusercontent.com/u/44725122?v=4" width="100px;" alt="RicoloveFeng"/><br /><sub><b>RicoloveFeng</b></sub></a><br /><a href="#financial-RicoloveFeng" title="Financial">💵</a></td>
     <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?v=4" width="100px;" alt="pca006132"/><br /><sub><b>pca006132</b></sub></a><br /><a href="#ideas-pca006132" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://arcensoth.github.io"><img src="https://avatars3.githubusercontent.com/u/1885643?v=4" width="100px;" alt="Arcensoth"/><br /><sub><b>Arcensoth</b></sub></a><br /><a href="#ideas-Arcensoth" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://mulverinex.github.io/home"><img src="https://avatars2.githubusercontent.com/u/12068027?v=4" width="100px;" alt="MulverineX"/><br /><sub><b>MulverineX</b></sub></a><br /><a href="#ideas-MulverineX" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/fedpol1"><img src="https://avatars3.githubusercontent.com/u/54010140?v=4" width="100px;" alt="fedpol1"/><br /><sub><b>fedpol1</b></sub></a><br /><a href="#ideas-fedpol1" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/YijunYuan"><img src="https://avatars0.githubusercontent.com/u/7012463?v=4" width="100px;" alt="Yijun Yuan"/><br /><sub><b>Yijun Yuan</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AYijunYuan" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/MinecraftPeace"><img src="https://avatars2.githubusercontent.com/u/57551211?v=4" width="100px;" alt="MinecraftPeace"/><br /><sub><b>MinecraftPeace</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMinecraftPeace" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/K-bai"><img src="https://avatars2.githubusercontent.com/u/31344344?v=4" width="100px;" alt="K-bai"/><br /><sub><b>K-bai</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AK-bai" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/ruhuasiyu"><img src="https://avatars2.githubusercontent.com/u/31852729?v=4" width="100px;" alt="ruhuasiyu"/><br /><sub><b>ruhuasiyu</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Aruhuasiyu" title="Bug reports">🐛</a> <a href="#ideas-ruhuasiyu" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?v=4" width="100px;" alt="??"/><br /><sub><b>??</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" title="Bug reports">🐛</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/TouchFisha"><img src="https://avatars0.githubusercontent.com/u/48653079?v=4" width="100px;" alt="TouchFisha"/><br /><sub><b>TouchFisha</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3ATouchFisha" title="Bug reports">🐛</a></td>
   </tr>
 </table>
