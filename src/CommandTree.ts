@@ -197,7 +197,7 @@ export const VanillaTree: CommandTree = {
                                     parser: new LiteralArgumentParser('color'),
                                     children: {
                                         colors: {
-                                            parser: new LiteralArgumentParser('bule', 'green', 'pink', 'purple', 'red', 'white', 'yellow'),
+                                            parser: new LiteralArgumentParser('blue', 'green', 'pink', 'purple', 'red', 'white', 'yellow'),
                                             executable: true
                                         }
                                     }
