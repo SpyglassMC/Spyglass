@@ -27,6 +27,7 @@ let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders }) => {
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
+    const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
         workspaceFolder = workspaceFolders[0]
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
@@ -53,7 +54,8 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         return {
             capabilities: {
                 completionProvider: {
-                    triggerCharacters: completionTriggerCharacters
+                    triggerCharacters: completionTriggerCharacters,
+                    allCommitCharacters: completionCommitCharacters
                 },
                 definitionProvider: true,
                 didChangeWatchedFiles: true,
@@ -84,7 +86,8 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     return {
         capabilities: {
             completionProvider: {
-                triggerCharacters: completionTriggerCharacters
+                triggerCharacters: completionTriggerCharacters,
+                allCommitCharacters: completionCommitCharacters
             },
             foldingRangeProvider: true,
             colorProvider: true,
