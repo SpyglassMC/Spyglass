@@ -3,7 +3,6 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
-import { TextEdit } from 'vscode-languageserver'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'

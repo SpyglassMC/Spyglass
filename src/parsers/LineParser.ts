@@ -5,8 +5,9 @@ import Manager from '../types/Manager'
 import Parser from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import VanillaTree, { CommandTree, CommandTreeNode, CommandTreeNodeChildren, getChildren, fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
+import VanillaTree, { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { ClientCache } from '../types/ClientCache'
+import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
 
 export default class LineParser implements Parser<Line> {
     // istanbul ignore next
@@ -41,6 +42,7 @@ export default class LineParser implements Parser<Line> {
         const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
         reader.skipWhiteSpace()
         const backupReader = reader.clone()
+        //#region Check leading slash.
         if (reader.peek() === '/') {
             // Find a leading slash...
             if (this.beginningSlash === false) {
@@ -66,6 +68,8 @@ export default class LineParser implements Parser<Line> {
                 }
             }
         }
+        //#endregion
+
         if (line.errors.length === 0) {
             this.parseChildren(reader, manager, this.tree[this.entryPoint], line, cursor)
         }
@@ -119,7 +123,7 @@ export default class LineParser implements Parser<Line> {
             }
 
             // Handle trailing data or absent data.
-            if (!reader.canRead(2)) {
+            if (!reader.canRead(2) && (reader.peek() === '' || reader.peek() === ' ')) {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(

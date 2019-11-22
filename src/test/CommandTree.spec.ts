@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { CommandTree, CommandTreeNode, getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
+import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
 import { NbtSchemaNode, ValueList } from '../types/VanillaNbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
@@ -12,6 +12,7 @@ import NbtPath from '../types/NbtPath'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
+import CommandTree, { CommandTreeNode } from '../types/CommandTree'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {

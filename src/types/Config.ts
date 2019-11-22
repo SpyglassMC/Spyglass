@@ -279,6 +279,10 @@ export type LintConfig = {
     // vectorKeepDecimalPlace: boolean
 }
 
+export interface SnippetsConfig {
+    [label: string]: string
+}
+
 export default interface Config {
     /**
      * Runtime environment.  
@@ -287,7 +291,11 @@ export default interface Config {
     /**
      * Lint rules.  
      */
-    lint: LintConfig
+    lint: LintConfig,
+    /**
+     * Code snippets.
+     */
+    snippets: SnippetsConfig
 }
 
 /**
@@ -372,22 +380,31 @@ export const VanillaConfig: Config = {
         strictItemTagCheck: false,
         omitDefaultNamespace: false,
         // vectorKeepDecimalPlace: true
+    },
+    snippets: {
+        executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective}',
+        scoreboardPlayersOperation: 'scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}',
+        scoreboardPlayersSet: 'scoreboard players operation ${1:score_holder} ${2:objective} ${3:0}',
+        tagAdd: 'tag ${1:target} add ${2:tag}',
+        tagRemove: 'tag ${1:target} remove ${2:tag}',
+        dataModifyStorageFromSelf: 'data modify storage ${1:id} ${2:path} set from entity @s ${3:path}',
+        summonAec: 'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}'
     }
 }
 
 export function constructConfig(custom: { [key: string]: any }) {
-    if (!custom.env) {
-        custom.env = {}
-    }
-    if (!custom.lint) {
-        custom.lint = {}
-    }
+    custom.env = custom.env || {}
+    custom.lint = custom.lint || {}
+    custom.snippets = custom.snippets || {}
     return {
         env: {
             ...VanillaConfig.env, ...custom.env
         },
         lint: {
             ...VanillaConfig.lint, ...custom.lint
+        },
+        snippets: {
+            ...VanillaConfig.snippets, ...custom.snippets
         }
     } as Config
 }

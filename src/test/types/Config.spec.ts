@@ -14,5 +14,10 @@ describe('Config Tests', () => {
             const actual = constructConfig(custom)
             assert.deepStrictEqual(actual.lint, VanillaConfig.lint)
         })
+        it('Should assign snippets', () => {
+            const custom = { lint: {} }
+            const actual = constructConfig(custom)
+            assert.deepStrictEqual(actual.snippets, VanillaConfig.snippets)
+        })
     })
 })

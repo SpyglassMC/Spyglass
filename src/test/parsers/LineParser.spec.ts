@@ -5,9 +5,9 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import LineParser from '../../parsers/LineParser'
 import { ArgumentParserResult } from '../../types/Parser'
-import { CommandTreeNode, CommandTree, CommandTreeNodeChildren } from '../../CommandTree'
 import { describe, it } from 'mocha'
 import { fail } from 'assert'
+import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
 
 /**
  * Argument parser for testing.
