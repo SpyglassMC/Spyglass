@@ -92,6 +92,7 @@
     ]
   },
   "activationEvents": [
-    "onLanguage:mcfunction"
+    "onLanguage:mcfunction",
+    "onLanguage:mcfunction-snapshot"
   ]
 }
