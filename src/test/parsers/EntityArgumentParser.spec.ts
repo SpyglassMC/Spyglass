@@ -92,7 +92,7 @@ describe('EntityArgumentParser Tests', () => {
                     entities: {
                         foo: {
                             def: [],
-                            ref: [{  start: 0, end: 3  }]
+                            ref: [{ start: 0, end: 3 }]
                         }
                     }
                 })
@@ -209,9 +209,10 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[foo=bar]'), undefined, manager, undefined, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
-                assert.deepStrictEqual(actual.errors, [
+                assert.deepStrictEqual(
+                    actual.errors[0],
                     new ParsingError({ start: 3, end: 6 }, 'expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’ or ‘z’ but got ‘foo’')
-                ])
+                )
             })
             it('Should return completions for argument keys', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')

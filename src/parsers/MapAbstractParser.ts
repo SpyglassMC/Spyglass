@@ -63,9 +63,7 @@ export default class MapAbstractParser<K, R> {
                     reader.skip()
                     continue
                 }
-                if (!(reader.canRead() && reader.peek() !== this.endChar)) {
-                    break
-                }
+                break
             }
 
             reader

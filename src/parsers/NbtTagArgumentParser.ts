@@ -498,11 +498,6 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
-                if (reader.peek() === ',') {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
-                }
                 ans.data.push(result.data)
                 if (!ans.data[NbtContentTagType]) {
                     ans.data[NbtContentTagType] = result.data[NbtTagType]
@@ -515,6 +510,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         )
                     )
                 }
+                if (reader.peek() === ',') {
+                    reader
+                        .skip()
+                        .skipWhiteSpace()
+                    continue
+                }
+                break
             }
             reader
                 .expect(']')
