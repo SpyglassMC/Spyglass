@@ -276,14 +276,13 @@ export default class TextComponentArgumentParser extends ArgumentParser<string> 
         //         ans.errors.push(p)
         //     }
         // }
-
-        // return ans        
         const ans: ArgumentParserResult<string> = {
             data: reader.readRemaining(),
             errors: [],
             cache: {},
             completions: []
         }
+
         return ans
     }
 

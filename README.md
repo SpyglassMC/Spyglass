@@ -45,7 +45,9 @@ For more complex NBT tags, with the help from [mc-nbt-paths](github.com/MrYurihi
 And also NBT paths, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
-FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU, though this shitty feature doesn't always work well:
+The following shitty completion feature is still work-in-progress:
+
+FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
 
 ## Definition Comments

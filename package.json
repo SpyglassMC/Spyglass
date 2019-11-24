@@ -86,7 +86,8 @@
         "id": "mcfunction",
         "extensions": [
           "mcfunction"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
       }
     ]
   },
