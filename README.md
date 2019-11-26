@@ -404,8 +404,7 @@ If sets to `false`, the decimal place will still be kept to avoid center-correct
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+<!-- prettier-ignore -->
 <table>
   <tr>
     <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt="SPGoding"/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Tests">⚠️</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Documentation">📖</a></td>
@@ -427,11 +426,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/TouchFisha"><img src="https://avatars0.githubusercontent.com/u/48653079?v=4" width="100px;" alt="TouchFisha"/><br /><sub><b>TouchFisha</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3ATouchFisha" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/ImBiox"><img src="https://avatars0.githubusercontent.com/u/36117699?v=4" width="100px;" alt="Biox"/><br /><sub><b>Biox</b></sub></a><br /><a href="#ideas-ImBiox" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 And to those who haven't told me a GitHub account:
