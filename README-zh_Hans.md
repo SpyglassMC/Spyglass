@@ -54,6 +54,12 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 **甚至是物品标签里面的 JSON 文本里面的命令里面的 NBT**的自动补全，返回的结果将会自动进行转义：
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
 
+## 代码片段
+
+大憨批提供了一些有用的代码片段。有关代码片段是什么可以参考 [VSCode 的官方文档](https://code.visualstudio.com/docs/editor/userdefinedsnippets)。大憨批与 VSCode 均提供了让你自定义代码片段的功能，并且由于大憨批基于 VSCode，它们定义代码片段的语法也完全一致。对于 mcfunction 函数文件来说，由大憨批添加的代码片段将只会在光标位于命令开头时出现在补全提示的列表中，而由 VSCode 的 `Code/User/snippets/mcfunction.json` 文件添加的代码片段则会在任何情况下都能出现在补全提示中。如果你想用 VSCode 来自定义代码片段，看[他们的官方文档](https://code.visualstudio.com/docs/editor/userdefinedsnippets)；如果你想用大憨批来自定义代码片段，则需要看本文的[配置](#配置)部分.
+
+![code-snippets](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/code-snippets.gif)
+
 ## 定义注释
 
 你可以使用形如 `#define (entity|storage|tag) <标识符: string> [描述: string]` 的格式来定义一个实体、数据储存或记分板标签。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
@@ -129,6 +135,10 @@ execute if score @s test matches 5 run say 5
 ## 格式化与校验
 
 不好意思，没做。
+
+## 配置
+
+使用 Ctrl + `,`（或其他绑定的快捷键）来打开 VSCode 的设置页，并搜索 `datapacklanguageserver` 来查看所有由大憨批提供的配置选项。通过修改这些选项，你可以自行添加代码片段、设置格式化与校验偏好，以及修改运行环境的相关信息。这些选项既可以是为当前用户设置的，也可以是为当前工作空间设置的。有关修改配置选项的具体内容请查看 [VSCode 的官方文档](https://code.visualstudio.com/docs/getstarted/settings)。
 
 # 贡献者
 

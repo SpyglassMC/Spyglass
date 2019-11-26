@@ -45,10 +45,16 @@ For more complex NBT tags, with the help from [mc-nbt-paths](github.com/MrYurihi
 And also NBT paths, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
-The following shitty completion feature is still work-in-progress:
+The following cool completion feature is still work-in-progress:
 
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
+
+## Code Snippets
+
+DHP provides some helpful code snippets. See [VSCode's official docs](https://code.visualstudio.com/docs/editor/userdefinedsnippets) to learn more about code snippets. Both DHP and VSCode allow you to custom your code snippets, and they use exactly the same syntax because DHP is based on VSCode. For mcfunction files, code snippets added by DHP will be shown in the completions list only when the cursor is at the beginning of a command, however snippets added by VSCode's `Code/User/snippets/mcfunction.json` file will be shown everywhere in the file. If you want to custom your code snippets via VSCode, see [their official docs](https://code.visualstudio.com/docs/editor/userdefinedsnippets). If you want to custom snippets via DHP, see the [Configuration Settings section](#Configuration%20Settings).
+
+![code-snippets](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/code-snippets.gif)
 
 ## Definition Comments
 
@@ -132,278 +138,13 @@ This is WIP.
 
 Your command will be formatted after you commit `\n` character. Alternatively, you can trigger it manually by pressing Alt + Shift + F or other configured hotkey.
 
-There are several linting rules you can set in the configuration file.
+There are several linting rules you can set in the configuration settings.
 
-**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default.
+**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the settings.
 
-## Configuration File
+## Configuration Settings
 
-
-
-### blockStateAppendSpaceAfterComma: `boolean`
-
-Whether to append spaces after commas in block states or not.  
-@default `false`
-
-### blockStatePutSpacesAroundEqualSign: `boolean`
-
-Whether to put spaces around equal signs in block states or not.  
-@default `false`
-
-### blockStateSortKeys: `boolean`
-
-Whether to sort the keys in block states or not.  
-@default `false`
-
-### entitySelectorAppendSpaceAfterComma: `boolean`
-
-Whether to append spaces after commas in entity selectors or not.  
-@default `false`
-
-### entitySelectorPutSpacesAroundEqualSign: `boolean`
-
-Whether to put spaces around equal signs in entity selectors or not.  
-@default `false`
-
-### entitySelectorKeyOrder: `(keyof SelectorParsedArgument)[]`
-
-In which order the arguments in entity selectors should be. The default order is based on the research
-by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
-@default
-```json
-[
-    "sort",
-    "limit",
-    "type",
-    "gamemode",
-    "gamemodeNeg",
-    "level",
-    "team",
-    "teamNeg",
-    "typeNeg",
-    "tag",
-    "tagNeg",
-    "name",
-    "nameNeg",
-    "predicate",
-    "predicateNeg",
-    "scores",
-    "advancements",
-    "nbt",
-    "nbtNeg",
-    "x",
-    "y",
-    "z",
-    "dx",
-    "dy",
-    "dz",
-    "distance",
-    "x_rotation",
-    "y_rotation"
-]
-```
-
-### quoteType: `'always single' | 'always double' | 'prefer single' | 'prefer double'`
-
-Quotes used in NBT strings and phrase strings.  
-`'always single'`: Always use single quotes.  
-`'always double'`: Always use double quotes.  
-`'prefer single'`: Always use single quotes, unless there are single quotes in the string.  
-`'prefer double'`: Always use double quotes, unless there are double quotes in the string.  
-@default `'prefer double'`  
-
-### quoteEntitySelectorKeys: `boolean`
-
-When the keys in entity selectors should be quoted.  
-`true`: Always.  
-`false`: Never.  
-@default `false`
-
-### quoteSnbtStringKeys: `boolean`
-
-When the string keys in SNBTs should be quoted.  
-`true`: Always.  
-`false`: Only when there are special characters in the string.  
-@default `false`
-
-### quoteNbtStringValues: `boolean`
-
-When the string values in SNBTs should be quoted.  
-`true`: Always.  
-`false`: Only when there are special characters in the string.  
-@default `true`
-
-### snbtAppendSpaceAfterColon: `boolean`
-
-Whether to append spaces after colons in SNBTs or not.  
-@default `true`
-
-### snbtAppendSpaceAfterComma: `boolean`
-
-Whether to append spaces after commas in SNBT or not.  
-@default `true`
-
-### snbtAppendSpaceAfterSemicolon: `boolean`
-
-Whether to append spaces after semicolons in SNBTs or not.  
-@default `true`
-
-### snbtByteSuffix: `'b' | 'B'`
-
-The suffix used for TAG_Byte in SNBTs.  
-@default `'b'`
-
-### snbtUseBooleans: `boolean`
-
-Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.  
-@default `false`
-
-### snbtShortSuffix: `'s' | 'S'`
-
-The suffix used for TAG_Short in SNBTs.  
-@default `'s'`
-
-### snbtLongSuffix: `'l' | 'L'`
-
-The suffix used for TAG_Long in SNBTs.  
-@default `'L'`
-
-### snbtFloatSuffix: `'f' | 'F'`
-
-The suffix used for TAG_Float in SNBTs.  
-@default `'f'`
-
-### snbtDoubleSuffix: `'d' | 'D'`
-
-The suffix used for TAG_Double in SNBTs.  
-@default `'d'`
-
-### snbtOmitDoubleSuffix: `boolean`
-
-Whether to omit the suffix of double numbers when possible in SNBTs or not.  
-@default `false`
-
-### snbtKeepDecimalPlace: `boolean`
-
-Whether to keep at least one decimal place in SNBTs or not.  
-@default `true`
-
-### snbtSortKeys: `boolean`
-
-Whether to sort keys in compound tags in SNBTs or not.  
-@default `false`
-
-### timeOmitTickUnit: boolean
-
-Whether to omit the unit of tick (`t`) in time arguments.  
-@default `false`
-
-### nameOfObjectives: `NamingConventionConfig`
-
-The naming convension for scoreboard objectives.  
-@default `'whatever'`
-
-### nameOfSnbtCompoundTagKeys: `NamingConventionConfig`
-
-The naming convension for compound tag keys in SNBTs.  
-@default `'whatever'`
-
-### nameOfTags: `NamingConventionConfig`
-
-The naming convension for scoreboard tags.  
-@default `'whatever'`
-
-### nameOfTeams: `NamingConventionConfig`
-
-The naming convension for teams.  
-@default `'whatever'`
-
-### strictBossbarCheck: boolean
-
-Whether to throw warnings for undefined bossbars.  
-@default `false`
-
-### strictStorageCheck: boolean
-
-Whether to throw warnings for undefined data storages.  
-@default `false`
-
-### strictObjectiveCheck: boolean
-
-Whether to throw warnings for undefined objectives.  
-@default `false`
-
-### strictTagCheck: boolean
-
-Whether to throw warnings for undefined tags.  
-@default `false`
-
-### strictTeamCheck: boolean
-
-Whether to throw warnings for undefined teams.  
-@default `false`
-
-### strictAdvancementCheck: boolean
-
-Whether to throw warnings for advancements which don't exist in your workspace.  
-@default `false`
-
-### strictFunctionCheck: boolean
-
-Whether to throw warnings for functions which don't exist in your workspace.  
-@default `false`
-
-### strictLootTableCheck: boolean
-
-Whether to throw warnings for loot tables which don't exist in your workspace.  
-@default `false`
-
-### strictPredicateCheck: boolean
-
-Whether to throw warnings for predicates which don't exist in your workspace.  
-@default `false`
-
-### strictRecipeCheck: boolean
-
-Whether to throw warnings for recipes which don't exist in your workspace.  
-@default `false`
-
-### strictBlockTagCheck: boolean
-
-Whether to throw warnings for block tags which don't exist in your workspace.  
-@default `false`
-
-### strictEntityTypeTagCheck: boolean
-
-Whether to throw warnings for entity type tags which don't exist in your workspace.  
-@default `false`
-
-### strictFluidTagCheck: boolean
-
-Whether to throw warnings for fluid tags which don't exist in your workspace.  
-@default `false`
-
-### strictFunctionTagCheck: boolean
-
-Whether to throw warnings for function tags which don't exist in your workspace.  
-@default `false`
-
-### strictItemTagCheck: boolean
-
-Whether to throw warnings for item tags which don't exist in your workspace.  
-@default `false`
-
-### omitDefaultNamespace: boolean
-
-Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-Does NOT affect namespaced IDs in NBT strings.  
-@default `false`
-
-<!-- ### vectorKeepDecimalPlace: boolean
-
-Whether to keep at least one decimal place in vectors or not.  
-If sets to `false`, the decimal place will still be kept to avoid center-correcting when necessary.  
-@default `true` -->
+Press Ctrl + `,` (or other configured hotkey) to open the Settings page of VSCode, and search `datapackLanguageServer` to see all the configuration settings contributed by DHP. You can add your own code snippets, set the lint preferences and environment information to meet your needs. These config can be changed for the current user or the workspace. See [VSCode's official docs](https://code.visualstudio.com/docs/getstarted/settings) to learn more about configuring settings.
 
 # Contributors
 
@@ -466,4 +207,4 @@ And to those who haven't told me a GitHub account:
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
