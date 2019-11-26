@@ -264,14 +264,14 @@ describe('CommandTree Tests', () => {
         })
         it('advancement (grant|revoke) <targets> only <advancement>', () => {
             const parser = new LineParser(false, undefined, undefined, cache)
-            const reader = new StringReader('advancement grant @s only test')
+            const reader = new StringReader('advancement grant @s only minecraft:test')
             const { data } = parser.parse(reader, -1, manager)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new Identity(undefined, ['test']), parser: 'namespacedID' }
+                { data: new Identity('minecraft', ['test']), parser: 'namespacedID' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>'],
@@ -279,7 +279,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, {
                 advancements: {
-                    'minecraft:test': { def: [], ref: [{ start: 26, end: 30 }] }
+                    'minecraft:test': { def: [], ref: [{ start: 26, end: 40 }] }
                 }
             })
             assert.deepEqual(data.errors, undefined)
@@ -287,14 +287,14 @@ describe('CommandTree Tests', () => {
         })
         it('advancement (grant|revoke) <targets> only <advancement> <criterion>', () => {
             const parser = new LineParser(false, undefined, undefined, cache)
-            const reader = new StringReader('advancement grant @s only test aaa')
+            const reader = new StringReader('advancement grant @s only minecraft:test aaa')
             const { data } = parser.parse(reader, -1, manager)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new Identity(undefined, ['test']), parser: 'namespacedID' },
+                { data: new Identity('minecraft', ['test']), parser: 'namespacedID' },
                 { data: 'aaa', parser: 'string' }
             ])
             assert.deepEqual(data.hint, {
@@ -303,7 +303,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, {
                 advancements: {
-                    'minecraft:test': { def: [], ref: [{ start: 26, end: 30 }] }
+                    'minecraft:test': { def: [], ref: [{ start: 26, end: 40 }] }
                 }
             })
             assert.deepEqual(data.errors, undefined)

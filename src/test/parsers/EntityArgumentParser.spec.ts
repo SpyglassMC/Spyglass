@@ -9,6 +9,7 @@ import NumberRange from '../../types/NumberRange'
 import Identity from '../../types/Identity'
 import Entity from '../../types/Entity'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { constructConfig } from '../../types/Config'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -372,8 +373,9 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return non-player error for @e[type=zombie]', () => {
+                const config = constructConfig({ lint: { omitDefaultNamespace: true } })
                 const parser = new EntityArgumentParser('multiple', 'players')
-                const actual = parser.parse(new StringReader('@e[type=zombie]'), undefined, manager, undefined, cache)
+                const actual = parser.parse(new StringReader('@e[type=zombie]'), undefined, manager, config, cache)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'e', { type: [new Identity(undefined, ['zombie'])] }))
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError({ start: 0, end: 15 }, 'the selector contains non-player entities')

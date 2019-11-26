@@ -272,7 +272,7 @@ export const VanillaTree: CommandTree = {
                     executable: true,
                     children: {
                         item: {
-                            parser: new ItemArgumentParser(),
+                            parser: new ItemArgumentParser(true, undefined, undefined, true),
                             executable: true,
                             children: {
                                 maxCount: {
@@ -712,7 +712,7 @@ export const VanillaTree: CommandTree = {
                                             parser: new LiteralArgumentParser('replace'),
                                             children: {
                                                 replacedBlock: {
-                                                    parser: new BlockArgumentParser(true),
+                                                    parser: new BlockArgumentParser(true, undefined, undefined, undefined, true),
                                                     executable: true
                                                 }
                                             }
@@ -2393,7 +2393,7 @@ export const VanillaTree: CommandTree = {
                             parser: new VectorArgumentParser(3),
                             children: {
                                 block: {
-                                    parser: new BlockArgumentParser(true),
+                                    parser: new BlockArgumentParser(true, undefined, undefined, undefined, true),
                                     executable: true,
                                     children: {
                                         subcommand: {

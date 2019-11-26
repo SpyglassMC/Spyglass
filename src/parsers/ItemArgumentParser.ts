@@ -17,7 +17,8 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
     constructor(
         private readonly allowTag = false,
         private readonly registries = VanillaRegistries,
-        private readonly nbtSchema = VanillaNbtSchema
+        private readonly nbtSchema = VanillaNbtSchema,
+        private readonly isPredicate = false
     ) {
         super()
     }
@@ -50,7 +51,7 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
     private parseTag(reader: StringReader, cursor: number, ans: ArgumentParserResult<Item>, id: Identity): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for item tags.
-            const tagResult = this.manager.get('NbtTag', ['compound', 'items', id.toString(), this.nbtSchema]).parse(reader, cursor, this.manager, this.config, this.cache)
+            const tagResult = this.manager.get('NbtTag', ['compound', 'items', id.toString(), this.nbtSchema, this.isPredicate]).parse(reader, cursor, this.manager, this.config, this.cache)
             const tag = tagResult.data as NbtCompoundTag
             combineArgumentParserResult(ans, tagResult)
             ans.data.nbt = tag

@@ -181,7 +181,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
     private parseCompoundFilter(ans: ArgumentParserResult<NbtPath>, reader: StringReader, walker: NbtSchemaWalker | undefined) {
         const result = this.manager
-            .get('NbtTag', ['compound', this.category, walker ? walker.anchorPath.full : undefined, this.nbtSchema])
+            .get('NbtTag', ['compound', this.category, walker ? walker.anchorPath.full : undefined, this.nbtSchema, true])
             .parse(reader, this.cursor, this.manager, this.config, this.cache)
         ans.data.value.push(result.data as NbtCompoundTag)
         combineArgumentParserResult(ans, result)

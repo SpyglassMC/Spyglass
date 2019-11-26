@@ -142,9 +142,7 @@ execute if score @s test matches 5 run say 5
 
 # 贡献者
 
-感谢这些可爱的人们对本项目的各种帮助。为更新及时，请查看 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 中的相应部分。下方仅放置截图作为预览。
-
-[attachimg]1411491[/attachimg]
+感谢这些可爱的人们对本项目的各种帮助。为更新及时，请查看 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 中的相应部分。
 
 # Q：大憨批就是个垃圾！
 

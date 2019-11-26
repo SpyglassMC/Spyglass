@@ -197,7 +197,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         dealWithNegativableArray(manager.get('String'), key)
                     } else if (key === 'nbt') {
                         dealWithNegativableArray(manager.get('NbtTag', [
-                            'compound', 'entities', 'base'
+                            'compound', 'entities', 'base', this.schema, true
                         ]), key)
                     } else if (key === 'predicate') {
                         dealWithNegativableArray(manager.get('NamespacedID', ['$predicates']), key)

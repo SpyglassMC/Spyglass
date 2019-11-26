@@ -21,7 +21,8 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
         private readonly allowTag = false,
         private readonly blockDefinitions = VanillaBlockDefinitions,
         private readonly registries = VanillaRegistries,
-        private readonly nbtSchema = VanillaNbtSchema
+        private readonly nbtSchema = VanillaNbtSchema,
+        private readonly isPredicate = false
     ) {
         super()
     }
@@ -88,7 +89,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
     private parseTag(reader: StringReader, cursor: number, ans: ArgumentParserResult<Block>, id: Identity): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
-            const tagResult = this.manager.get('NbtTag', ['compound', 'blocks', id.toString(), this.nbtSchema]).parse(reader, cursor, this.manager, this.config, this.cache)
+            const tagResult = this.manager.get('NbtTag', ['compound', 'blocks', id.toString(), this.nbtSchema, this.isPredicate]).parse(reader, cursor, this.manager, this.config, this.cache)
             const tag = tagResult.data as NbtCompoundTag
             combineArgumentParserResult(ans, tagResult)
             ans.data.nbt = tag

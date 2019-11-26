@@ -15,6 +15,7 @@ type SuggestionNode =
     | ParserSuggestionNode
 type DocedSuggestionNode = { description?: string, value?: string }
 type ParserSuggestionNode = { parser: string, params?: any }
+type Variables = { isPredicate: boolean }
 
 export default class NbtSchemaWalker {
     constructor(private readonly nbtSchema: NbtSchema) { }
@@ -226,7 +227,11 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): CompletionItem[] {
+    getCompletions(
+        reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>,
+        config = VanillaConfig, cache: ClientCache = {},
+        variables: Variables = { isPredicate: false }
+    ): CompletionItem[] {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: CompletionItem[] = []
@@ -240,6 +245,26 @@ export default class NbtSchemaWalker {
                 } else if (isParserNode(v)) {
                     const out = { cursor }
                     const subReader = new StringReader(reader.readString(out))
+
+                    // Replace variables in v.params.
+                    /* istanbul ignore next */
+                    if (v.params) {
+                        const bakParams = [...v.params]
+                        v.params = []
+                        for (const variable in variables) {
+                            /* istanbul ignore next */
+                            if (variables.hasOwnProperty(variable)) {
+                                for (const param of bakParams) {
+                                    if (param === `%${variable}%`) {
+                                        v.params.push(variables[variable as keyof Variables])
+                                    } else {
+                                        v.params.push(param)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)

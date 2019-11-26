@@ -10,6 +10,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import Vector from '../../types/Vector'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { constructConfig } from '../../types/Config'
 
 describe('ParticleArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -86,7 +87,7 @@ describe('ParticleArgumentParser Tests', () => {
         })
         it('Should return data for ‘block’ particle', () => {
             const parser = new ParticleArgumentParser(blockDefinitions, registries)
-            const actual = parser.parse(new StringReader('minecraft:block stone'), undefined, manager)
+            const actual = parser.parse(new StringReader('minecraft:block minecraft:stone'), undefined, manager)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Particle(
                 new Identity('minecraft', ['block']),
@@ -97,7 +98,7 @@ describe('ParticleArgumentParser Tests', () => {
         })
         it('Should return data for ‘item’ particle', () => {
             const parser = new ParticleArgumentParser(blockDefinitions, registries)
-            const actual = parser.parse(new StringReader('item minecraft:diamond'), undefined, manager)
+            const actual = parser.parse(new StringReader('minecraft:item minecraft:diamond'), undefined, manager)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Particle(
                 new Identity('minecraft', ['item']),
@@ -107,8 +108,9 @@ describe('ParticleArgumentParser Tests', () => {
             ))
         })
         it('Should return completions at the beginning of input', () => {
+            const config = constructConfig({ lint: { omitDefaultNamespace: true } })
             const parser = new ParticleArgumentParser(blockDefinitions, registries)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const actual = parser.parse(new StringReader(''), 0, manager, config)
             assert.deepEqual(actual.data, new Particle(
                 new Identity()
             ))

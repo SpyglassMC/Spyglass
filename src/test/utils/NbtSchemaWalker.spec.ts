@@ -7,6 +7,7 @@ import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/Vanilla
 import StringReader from '../../utils/StringReader'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { VanillaConfig } from '../../types/Config'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
@@ -144,6 +145,10 @@ describe('NbtSchemaWalker Tests', () => {
                 argumentParser: {
                     type: 'no-nbt',
                     suggestions: [{ parser: 'Literal', params: ['baz', 'qux'] }]
+                },
+                argumentParserWithVariables: {
+                    type: 'no-nbt',
+                    suggestions: [{ parser: 'NamespacedID', params: ['$bossbars', undefined, undefined, '%isPredicate%'] }]
                 },
                 lineParser: {
                     type: 'no-nbt',
@@ -377,6 +382,28 @@ describe('NbtSchemaWalker Tests', () => {
             assert.deepStrictEqual(actual, [
                 { label: 'baz' },
                 { label: 'qux' }
+            ])
+        })
+        it('Should return completions for argument parser suggestions with variables', () => {
+            const cache = {
+                bossbars: {
+                    'minecraft:foo': {
+                        def: [],
+                        ref: []
+                    }
+                }
+            }
+            const actual = walker
+                .go('suggestionsTest.json#argumentParserWithVariables')
+                .getCompletions(new StringReader(''), 0, manager, undefined, cache, { isPredicate: true })
+            assert.deepStrictEqual(actual, [
+                {
+                    label: 'minecraft',
+                    kind: CompletionItemKind.Module,
+                    commitCharacters: [
+                        ':'
+                    ]
+                }
             ])
         })
         it('Should return completions for line parser suggestions', () => {

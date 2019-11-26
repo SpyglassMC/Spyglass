@@ -8,6 +8,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { constructConfig } from '../../types/Config'
 
 describe('BlockArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -100,8 +101,9 @@ describe('BlockArgumentParser Tests', () => {
             ))
         })
         it('Should return completions at the beginning of input', () => {
-            const parser = new BlockArgumentParser(false, blockDefinitions, registries)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+                const config = constructConfig({ lint: { omitDefaultNamespace: true } })
+                const parser = new BlockArgumentParser(false, blockDefinitions, registries)
+            const actual = parser.parse(new StringReader(''), 0, manager, config)
             assert.deepEqual(actual.data, new Block(
                 new Identity()
             ))

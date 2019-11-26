@@ -365,6 +365,8 @@ export const VanillaConfig: Config = {
         snbtKeepDecimalPlace: true,
         snbtSortKeys: false,
         timeOmitTickUnit: false,
+        omitDefaultNamespace: false,
+        // TRUE LINT BEGINS
         nameOfObjectives: 'whatever',
         nameOfSnbtCompoundTagKeys: 'whatever',
         nameOfTags: 'whatever',
@@ -383,9 +385,7 @@ export const VanillaConfig: Config = {
         strictEntityTypeTagCheck: false,
         strictFluidTagCheck: false,
         strictFunctionTagCheck: false,
-        strictItemTagCheck: false,
-        omitDefaultNamespace: false,
-        // vectorKeepDecimalPlace: true
+        strictItemTagCheck: false
     },
     snippets: {
         executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',

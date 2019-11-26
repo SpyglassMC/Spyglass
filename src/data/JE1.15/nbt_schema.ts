@@ -779,7 +779,10 @@ export default {
 					{
 						"parser": "NamespacedID",
 						"params": [
-							"minecraft:potion"
+							"minecraft:potion",
+							undefined,
+							undefined,
+							'%isPredicate%'
 						]
 					}
 				]
@@ -1070,7 +1073,10 @@ export default {
 							{
 								"parser": "NamespacedID",
 								"params": [
-									"minecraft:block"
+									"minecraft:block",
+									undefined,
+									undefined,
+									'%isPredicate%'
 								]
 							}
 						]
@@ -1145,7 +1151,10 @@ export default {
 							{
 								"parser": "NamespacedID",
 								"params": [
-									"minecraft:block"
+									"minecraft:block",
+									undefined,
+									undefined,
+									'%isPredicate%'
 								]
 							}
 						]
@@ -3396,7 +3405,10 @@ export default {
 					{
 						"parser": "NamespacedID",
 						"params": [
-							"minecraft:block"
+							"minecraft:block",
+							undefined,
+							undefined,
+							'%isPredicate%'
 						]
 					}
 				]
@@ -3456,7 +3468,10 @@ export default {
 					{
 						"parser": "NamespacedID",
 						"params": [
-							"minecraft:entity_type"
+							"minecraft:entity_type",
+							undefined,
+							undefined,
+							'%isPredicate%'
 						]
 					}
 				]
@@ -3690,7 +3705,18 @@ export default {
 			},
 			"LootTable": {
 				"type": "string",
-				"description": "Loot table that generates the contents"
+				"description": "Loot table that generates the contents",
+				"suggestions": [
+					{
+						"parser": "NamespacedID",
+						"params": [
+							"$lootTables",
+							undefined,
+							undefined,
+							'%isPredicate%'
+						]
+					}
+				]
 			},
 			"LootTableSeed": {
 				"type": "long",
@@ -3736,7 +3762,10 @@ export default {
 					{
 						"parser": "NamespacedID",
 						"params": [
-							"minecraft:item"
+							"minecraft:item",
+							undefined,
+							undefined,
+							'%isPredicate%'
 						]
 					}
 				]
@@ -3865,7 +3894,10 @@ export default {
 								{
 									"parser": "NamespacedID",
 									"params": [
-										"minecraft:enchantment"
+										"minecraft:enchantment",
+										undefined,
+										undefined,
+										'%isPredicate%'
 									]
 								}
 							]
@@ -4049,7 +4081,18 @@ export default {
 			},
 			"DeathLootTable": {
 				"type": "string",
-				"description": "Loot table to drop upon death"
+				"description": "Loot table to drop upon death",
+				"suggestions": [
+					{
+						"parser": "NamespacedID",
+						"params": [
+							"$lootTables",
+							undefined,
+							undefined,
+							'%isPredicate%'
+						]
+					}
+				]
 			},
 			"DeathLootTableSeed": {
 				"type": "long",

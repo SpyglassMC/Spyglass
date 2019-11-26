@@ -22,7 +22,8 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     constructor(
         private readonly type: string,
         private readonly registries = VanillaRegistries,
-        private readonly allowTag = false
+        private readonly allowTag = false,
+        private readonly isPredicate = false
     ) {
         super()
     }
@@ -71,15 +72,15 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
 
         //#region Completions
         const namespaces = new Set<string>()
-        const folders= new Set<string>()
-        const files= new Set<string>()
+        const folders = new Set<string>()
+        const files = new Set<string>()
         if (cursor === reader.cursor) {
             for (const candidate of tagCandidates) {
                 const namespace = candidate.split(':')[0]
                 const paths = candidate.split(':')[1].split('/')
 
                 namespaces.add(`${Identity.TagSymbol}${namespace}`)
-                if (namespace === Identity.DefaultNamespace) {
+                if (namespace === Identity.DefaultNamespace && !this.isPredicate) {
                     if (paths.length >= 2) {
                         folders.add(paths[0])
                     } else {
@@ -92,7 +93,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 const paths = candidate.split(':')[1].split('/')
 
                 namespaces.add(namespace)
-                if (namespace === Identity.DefaultNamespace) {
+                if (namespace === Identity.DefaultNamespace && !this.isPredicate) {
                     if (paths.length >= 2) {
                         folders.add(paths[0])
                     } else {
@@ -128,6 +129,14 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             if (reader.peek() === ':') {
                 reader.skip()
                 namespace = path0
+                // if (namespace === Identity.DefaultNamespace && config.lint.omitDefaultNamespace) {
+                //     ans.errors.push(new ParsingError(
+                //         { start, end: reader.cursor },
+                //         'default namespace is preferred to be omitted',
+                //         true,
+                //         DiagnosticSeverity.Warning
+                //     ))
+                // }
                 //#region Completions
                 candidates = candidates
                     .filter(v => v.startsWith(`${namespace}:`))
@@ -137,7 +146,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                         const paths = candidate.split(Identity.Sep)
 
                         if (paths.length >= 2) {
-                            folders.add(paths[0]) 
+                            folders.add(paths[0])
                         } else {
                             files.add(paths[0])
                         }
@@ -149,6 +158,20 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 candidates = candidates
                     .filter(v => v.startsWith(`${Identity.DefaultNamespace}:`))
                     .map(v => v.slice(Identity.DefaultNamespace.length + 1))
+                if (this.isPredicate) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        'default namespace cannot be omitted here'
+                    ))
+                }
+                // if (!config.lint.omitDefaultNamespace) {
+                //     ans.errors.push(new ParsingError(
+                //         { start, end: reader.cursor },
+                //         'default namespace is preferred to be kept',
+                //         true,
+                //         DiagnosticSeverity.Warning
+                //     ))
+                // }
             }
             paths.push(path0)
 
@@ -280,7 +303,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: CacheKey, { lint }: Config) {
+    private shouldStrictCheck(key: CacheKey, { lint: lint }: Config) {
         switch (key) {
             case 'advancements':
                 return lint.strictAdvancementCheck

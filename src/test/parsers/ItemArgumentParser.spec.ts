@@ -7,6 +7,7 @@ import Item from '../../types/Item'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import StringReader from '../../utils/StringReader'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { constructConfig } from '../../types/Config'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -45,8 +46,9 @@ describe('ItemArgumentParser Tests', () => {
             ))
         })
         it('Should return completions at the beginning of input', () => {
-            const parser = new ItemArgumentParser(false, registries)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const config = constructConfig({ lint: { omitDefaultNamespace: true } })
+            const parser = new ItemArgumentParser(false, registries)            
+            const actual = parser.parse(new StringReader(''), 0, manager, config)
             assert.deepEqual(actual.data, new Item(
                 new Identity()
             ))

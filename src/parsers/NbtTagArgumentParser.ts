@@ -113,7 +113,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     readonly identity = 'nbtTag'
 
-    //istanbul ignore next
+    /* istanbul ignore next */
     constructor(
         type: NbtTagTypeName | NbtTagTypeName[] = [
             'compound', 'list', 'byte_array', 'int_array', 'long_array',
@@ -121,7 +121,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ],
         private readonly category: 'blocks' | 'entities' | 'items',
         private readonly id: string | undefined = undefined,
-        private readonly nbtSchema = VanillaNbtSchema
+        private readonly nbtSchema = VanillaNbtSchema,
+        private readonly isPredicate = false
     ) {
         super()
         if (type instanceof Array) {
@@ -218,7 +219,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             }
                             ans.completions.push(
                                 ...walker
-                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache)
+                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
                                     .map(v => ({
                                         ...v,
                                         label: getLabel(v.label)
@@ -543,7 +544,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const value = reader.readQuotedString()
                 ans.data = getNbtStringTag(value)
                 ans.completions = walker ?
-                    walker.getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache)
+                    walker.getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
                         .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
                     []
             } catch (p) {
