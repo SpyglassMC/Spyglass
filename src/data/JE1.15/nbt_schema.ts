@@ -181,7 +181,7 @@ export default {
 				"description": "Items in the brewing stand"
 			},
 			"BrewTime": {
-				"type": "int",
+				"type": "short",
 				"description": "The number of ticks left in brewing"
 			},
 			"Fuel": {
