@@ -1,98 +1,582 @@
 {
-  "name": "datapack-language-server",
-  "version": "1.9.4",
-  "preview": true,
-  "main": "lib/client.js",
-  "author": "SPGoding",
-  "publisher": "SPGoding",
-  "license": "MIT",
-  "directories": {
-    "test": "src/test/"
-  },
-  "scripts": {
-    "build": "tsc",
-    "codecov": "codecov -f coverage/*.json",
-    "commit": "gitmoji -c",
-    "contributors:add": "all-contributors add",
-    "contributors:generate": "all-contributors generate",
-    "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
-    "postinstall": "vscode-install",
-    "release": "semantic-release",
-    "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register src/test/**/*.ts",
-    "posttest": "nyc report --reporter=json",
-    "watch": "tsc -w"
-  },
-  "dependencies": {
-    "bignumber.js": "^9.0.0",
-    "datapack-json": "^2.0.0",
-    "fs-extra": "^8.1.0",
-    "minecraft-id": "^0.1.5",
-    "python-range": "^1.0.4",
-    "vscode-languageclient": "^5.2.1",
-    "vscode-languageserver": "^5.2.1",
-    "vscode-uri": "^2.1.1"
-  },
-  "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^0.1.3",
-    "@semantic-release/changelog": "^3.0.4",
-    "@semantic-release/git": "^7.0.16",
-    "@types/fs-extra": "^8.0.1",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.12.0",
-    "@types/power-assert": "^1.5.0",
-    "all-contributors-cli": "^6.10.0",
-    "codecov": "^3.6.1",
-    "espower-typescript": "^9.0.2",
-    "gitmoji-cli": "^3.0.0",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
-    "power-assert": "^1.5.0",
-    "semantic-release": "^15.13.24",
-    "semantic-release-gitmoji": "^1.3.0",
-    "semantic-release-vsce": "^2.2.8",
-    "source-map-support": "^0.5.13",
-    "ts-node": "^8.4.1",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.4",
-    "vscode": "^1.1.36"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/SPGoding/datapack-language-server.git"
-  },
-  "homepage": "https://github.com/SPGoding/datapack-language-server",
-  "bugs": {
-    "url": "https://github.com/SPGoding/datapack-language-server/issues"
-  },
-  "engines": {
-    "vscode": "^1.39.0"
-  },
-  "displayName": "Datapack Helper Plus (MCF)",
-  "description": "Heavy language features for MCFunction files",
-  "icon": "icon.png",
-  "categories": [
-    "Formatters",
-    "Linters",
-    "Programming Languages"
-  ],
-  "keywords": [
-    "minecraft",
-    "datapack",
-    "mcfunction"
-  ],
-  "contributes": {
-    "languages": [
-      {
-        "id": "mcfunction",
-        "extensions": [
-          "mcfunction"
+    "name": "datapack-language-server",
+    "version": "1.9.4",
+    "preview": true,
+    "main": "lib/client.js",
+    "author": "SPGoding",
+    "publisher": "SPGoding",
+    "license": "MIT",
+    "directories": {
+        "test": "src/test/"
+    },
+    "scripts": {
+        "build": "tsc",
+        "codecov": "codecov -f coverage/*.json",
+        "commit": "gitmoji -c",
+        "contributors:add": "all-contributors add",
+        "contributors:generate": "all-contributors generate",
+        "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
+        "postinstall": "vscode-install",
+        "release": "semantic-release",
+        "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register src/test/**/*.ts",
+        "posttest": "nyc report --reporter=json",
+        "watch": "tsc -w"
+    },
+    "dependencies": {
+        "bignumber.js": "^9.0.0",
+        "datapack-json": "^2.0.0",
+        "fs-extra": "^8.1.0",
+        "minecraft-id": "^0.1.5",
+        "python-range": "^1.0.4",
+        "vscode-languageclient": "^5.2.1",
+        "vscode-languageserver": "^5.2.1",
+        "vscode-uri": "^2.1.1"
+    },
+    "devDependencies": {
+        "@istanbuljs/nyc-config-typescript": "^0.1.3",
+        "@semantic-release/changelog": "^3.0.4",
+        "@semantic-release/git": "^7.0.16",
+        "@types/fs-extra": "^8.0.1",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.12.0",
+        "@types/power-assert": "^1.5.0",
+        "all-contributors-cli": "^6.10.0",
+        "codecov": "^3.6.1",
+        "espower-typescript": "^9.0.2",
+        "gitmoji-cli": "^3.0.0",
+        "mocha": "^6.2.2",
+        "nyc": "^14.1.1",
+        "power-assert": "^1.5.0",
+        "semantic-release": "^15.13.24",
+        "semantic-release-gitmoji": "^1.3.0",
+        "semantic-release-vsce": "^2.2.8",
+        "source-map-support": "^0.5.13",
+        "ts-node": "^8.4.1",
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.4",
+        "vscode": "^1.1.36"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SPGoding/datapackLanguageServer.git"
+    },
+    "homepage": "https://github.com/SPGoding/datapack-language-server",
+    "bugs": {
+        "url": "https://github.com/SPGoding/datapack-language-server/issues"
+    },
+    "engines": {
+        "vscode": "^1.39.0"
+    },
+    "displayName": "Datapack Helper Plus (MCF)",
+    "description": "Heavy language features for MCFunction files",
+    "icon": "icon.png",
+    "categories": [
+        "Formatters",
+        "Linters",
+        "Programming Languages"
+    ],
+    "keywords": [
+        "minecraft",
+        "datapack",
+        "mcfunction"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "mcfunction",
+                "extensions": [
+                    "mcfunction"
+                ],
+                "configuration": "./language-configuration.json"
+            }
         ],
-        "configuration": "./language-configuration.json"
-      }
+        "configuration": {
+            "title": "Datapack Language Server",
+            "properties": {
+                "datapackLanguageServer.env.permissionLevel": {
+                    "type": "number",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "markdownDescription": "`op-permission-level` defined in `server.properties`.",
+                    "default": 2
+                },
+                "datapackLanguageServer.env.version": {
+                    "type": "string",
+                    "enum": [
+                        "JE1.15"
+                    ],
+                    "markdownDescription": "Game version.",
+                    "default": "JE1.15"
+                },
+                "datapackLanguageServer.snippets": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "markdownDescription": "Code snippets.",
+                    "default": {
+                        "executeIfScoreSet": "execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0",
+                        "scoreboardPlayersOperation": "scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}",
+                        "scoreboardPlayersSet": "scoreboard players operation ${1:score_holder} ${2:objective} ${3:0}",
+                        "tagAdd": "tag ${1:target} add ${2:tag}",
+                        "tagRemove": "tag ${1:target} remove ${2:tag}",
+                        "dataModifyStorageFromSelf": "data modify storage ${1:id} ${2:path} set from entity @s ${3:path}",
+                        "summonAec": "summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: [\"${1:tag}\"]}"
+                    }
+                },
+                "datapackLanguageServer.lint.enableFormatting": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to enable the formatting feature. **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.blockStateAppendSpaceAfterComma": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to append spaces after commas in block states or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.blockStatePutSpacesAroundEqualSign": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to put spaces around equal signs in block states or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.blockStateSortKeys": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to sort the keys in block states or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.entitySelectorAppendSpaceAfterComma": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to append spaces after commas in entity selectors or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.entitySelectorPutSpacesAroundEqualSign": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to put spaces around equal signs in entity selectors or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.entitySelectorKeyOrder": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "sort",
+                            "limit",
+                            "type",
+                            "gamemode",
+                            "gamemodeNeg",
+                            "level",
+                            "team",
+                            "teamNeg",
+                            "typeNeg",
+                            "tag",
+                            "tagNeg",
+                            "name",
+                            "nameNeg",
+                            "predicate",
+                            "predicateNeg",
+                            "scores",
+                            "advancements",
+                            "nbt",
+                            "nbtNeg",
+                            "x",
+                            "y",
+                            "z",
+                            "dx",
+                            "dy",
+                            "dz",
+                            "distance",
+                            "x_rotation",
+                            "y_rotation"
+                        ]
+                    },
+                    "uniqueItems": true,
+                    "markdownDescription": "In which order the arguments in entity selectors should be. The default order is based on the research by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.",
+                    "default": [
+                        "sort",
+                        "limit",
+                        "type",
+                        "gamemode",
+                        "gamemodeNeg",
+                        "level",
+                        "team",
+                        "teamNeg",
+                        "typeNeg",
+                        "tag",
+                        "tagNeg",
+                        "name",
+                        "nameNeg",
+                        "predicate",
+                        "predicateNeg",
+                        "scores",
+                        "advancements",
+                        "nbt",
+                        "nbtNeg",
+                        "x",
+                        "y",
+                        "z",
+                        "dx",
+                        "dy",
+                        "dz",
+                        "distance",
+                        "x_rotation",
+                        "y_rotation"
+                    ]
+                },
+                "datapackLanguageServer.lint.quoteType": {
+                    "type": "string",
+                    "enum": [
+                        "always single",
+                        "always double",
+                        "prefer single",
+                        "prefer double"
+                    ],
+                    "markdownDescription": "Quotes used in NBT strings and phrase strings.",
+                    "markdownEnumDescription": [
+                        "Always use single quotes.",
+                        "Always use double quotes.",
+                        "Always use single quotes, unless there are single quotes in the string.",
+                        "Always use double quotes, unless there are double quotes in the string."
+                    ],
+                    "default": "prefer double"
+                },
+                "datapackLanguageServer.lint.quoteEntitySelectorKeys": {
+                    "type": "boolean",
+                    "enum": [
+                        true,
+                        false
+                    ],
+                    "markdownDescription": "When the keys in entity selectors should be quoted.",
+                    "markdownEnumDescription": [
+                        "Always.",
+                        "Never."
+                    ],
+                    "default": false
+                },
+                "datapackLanguageServer.lint.quoteSnbtStringKeys": {
+                    "type": "boolean",
+                    "enum": [
+                        true,
+                        false
+                    ],
+                    "markdownDescription": "When the string keys in SNBTs should be quoted.",
+                    "markdownEnumDescription": [
+                        "Always.",
+                        "Only when there are special characters in the string."
+                    ],
+                    "default": false
+                },
+                "datapackLanguageServer.lint.quoteNbtStringValues": {
+                    "type": "boolean",
+                    "enum": [
+                        true,
+                        false
+                    ],
+                    "markdownDescription": "When the string values in SNBTs should be quoted.",
+                    "markdownEnumDescription": [
+                        "Always.",
+                        "Only when there are special characters in the string."
+                    ],
+                    "default": true
+                },
+                "datapackLanguageServer.lint.snbtAppendSpaceAfterColon": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to append spaces after colons in SNBTs or not.",
+                    "default": true
+                },
+                "datapackLanguageServer.lint.snbtAppendSpaceAfterComma": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to append spaces after commas in SNBT or not.",
+                    "default": true
+                },
+                "datapackLanguageServer.lint.snbtAppendSpaceAfterSemicolon": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to append spaces after semicolons in SNBTs or not.",
+                    "default": true
+                },
+                "datapackLanguageServer.lint.snbtByteSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "b",
+                        "B"
+                    ],
+                    "markdownDescription": "The suffix used for TAG_Byte in SNBTs.",
+                    "default": "b"
+                },
+                "datapackLanguageServer.lint.snbtUseBooleans": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.snbtShortSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "s",
+                        "S"
+                    ],
+                    "markdownDescription": "The suffix used for TAG_Short in SNBTs.",
+                    "default": "s"
+                },
+                "datapackLanguageServer.lint.snbtLongSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "l",
+                        "L"
+                    ],
+                    "markdownDescription": "The suffix used for TAG_Long in SNBTs.",
+                    "default": "L"
+                },
+                "datapackLanguageServer.lint.snbtFloatSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "f",
+                        "F"
+                    ],
+                    "markdownDescription": "The suffix used for TAG_Float in SNBTs.",
+                    "default": "f"
+                },
+                "datapackLanguageServer.lint.snbtDoubleSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "d",
+                        "D"
+                    ],
+                    "markdownDescription": "The suffix used for TAG_Double in SNBTs.",
+                    "default": "d"
+                },
+                "datapackLanguageServer.lint.snbtOmitDoubleSuffix": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to omit the suffix of double numbers when possible in SNBTs or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.snbtKeepDecimalPlace": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to keep at least one decimal place in SNBTs or not.",
+                    "default": true
+                },
+                "datapackLanguageServer.lint.snbtSortKeys": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to sort keys in compound tags in SNBTs or not.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.timeOmitTickUnit": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to omit the unit of tick (`t`) in time arguments.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.nameOfObjectives": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "camelCase",
+                                "PascalCase",
+                                "snake_case",
+                                "SCREAMING_SNAKE_CASE",
+                                "kebab-case",
+                                "whatever"
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "camelCase",
+                                    "PascalCase",
+                                    "snake_case",
+                                    "SCREAMING_SNAKE_CASE",
+                                    "kebab-case",
+                                    "whatever"
+                                ]
+                            }
+                        }
+                    ],
+                    "markdownDescription": "The naming convension for scoreboard objectives.",
+                    "default": "whatever"
+                },
+                "datapackLanguageServer.lint.nameOfSnbtCompoundTagKeys": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "camelCase",
+                                "PascalCase",
+                                "snake_case",
+                                "SCREAMING_SNAKE_CASE",
+                                "kebab-case",
+                                "whatever"
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "camelCase",
+                                    "PascalCase",
+                                    "snake_case",
+                                    "SCREAMING_SNAKE_CASE",
+                                    "kebab-case",
+                                    "whatever"
+                                ]
+                            }
+                        }
+                    ],
+                    "markdownDescription": "The naming convension for compound tag keys in SNBTs.",
+                    "default": "whatever"
+                },
+                "datapackLanguageServer.lint.nameOfTags": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "camelCase",
+                                "PascalCase",
+                                "snake_case",
+                                "SCREAMING_SNAKE_CASE",
+                                "kebab-case",
+                                "whatever"
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "camelCase",
+                                    "PascalCase",
+                                    "snake_case",
+                                    "SCREAMING_SNAKE_CASE",
+                                    "kebab-case",
+                                    "whatever"
+                                ]
+                            }
+                        }
+                    ],
+                    "markdownDescription": "The naming convension for scoreboard tags.",
+                    "default": "whatever"
+                },
+                "datapackLanguageServer.lint.nameOfTeams": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "camelCase",
+                                "PascalCase",
+                                "snake_case",
+                                "SCREAMING_SNAKE_CASE",
+                                "kebab-case",
+                                "whatever"
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "camelCase",
+                                    "PascalCase",
+                                    "snake_case",
+                                    "SCREAMING_SNAKE_CASE",
+                                    "kebab-case",
+                                    "whatever"
+                                ]
+                            }
+                        }
+                    ],
+                    "markdownDescription": "The naming convension for teams.",
+                    "default": "whatever"
+                },
+                "datapackLanguageServer.lint.strictBossbarCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for undefined bossbars.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictStorageCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for undefined data storages.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictObjectiveCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for undefined objectives.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for undefined tags.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictTeamCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for undefined teams.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictAdvancementCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for advancements which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictFunctionCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for functions which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictLootTableCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for loot tables which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictPredicateCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for predicates which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictRecipeCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for recipes which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictBlockTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for block tags which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictEntityTypeTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for entity type tags which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictFluidTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for fluid tags which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictFunctionTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for function tags which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.strictItemTagCheck": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to throw warnings for item tags which don't exist in your workspace.",
+                    "default": false
+                },
+                "datapackLanguageServer.lint.omitDefaultNamespace": {
+                    "type": "boolean",
+                    "markdownDescription": "Whether to omit default namespace (`minecraft`) in namespaced IDs. No matter what the setting is, namespaces in SNBT predicates will always be kept.",
+                    "default": false
+                }
+            }
+        }
+    },
+    "activationEvents": [
+        "onLanguage:mcfunction",
+        "onLanguage:mcfunction-snapshot"
     ]
-  },
-  "activationEvents": [
-    "onLanguage:mcfunction",
-    "onLanguage:mcfunction-snapshot"
-  ]
 }

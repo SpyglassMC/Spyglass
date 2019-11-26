@@ -16,6 +16,11 @@ export type EnvConfig = {
 
 export type LintConfig = {
     /**
+     * Whether to enable the formatting feature. **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk.  
+     * @default false
+     */
+    enableFormatting: boolean,
+    /**
      * Whether to append spaces after commas in block states or not.  
      * @default false
      */
@@ -267,7 +272,7 @@ export type LintConfig = {
     strictItemTagCheck: boolean,
     /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-     * Does NOT affect namespaced IDs in NBT strings.  
+     * No matter what the setting is, namespaces in SNBT predicates will always be kept.  
      * @default false
      */
     omitDefaultNamespace: boolean,
@@ -307,6 +312,7 @@ export const VanillaConfig: Config = {
         version: 'JE1.15'
     },
     lint: {
+        enableFormatting: false,
         blockStateAppendSpaceAfterComma: false,
         blockStatePutSpacesAroundEqualSign: false,
         blockStateSortKeys: false,
@@ -382,7 +388,7 @@ export const VanillaConfig: Config = {
         // vectorKeepDecimalPlace: true
     },
     snippets: {
-        executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective}',
+        executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
         scoreboardPlayersOperation: 'scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}',
         scoreboardPlayersSet: 'scoreboard players operation ${1:score_holder} ${2:objective} ${3:0}',
         tagAdd: 'tag ${1:target} add ${2:tag}',
