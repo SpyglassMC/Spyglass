@@ -217,13 +217,18 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                     return value
                                 }
                             }
+                            const result = walker
+                                .getCompletionsAndWarnings(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
                             ans.completions.push(
-                                ...walker
-                                    .getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
+                                ...result
+                                    .completions
                                     .map(v => ({
                                         ...v,
                                         label: getLabel(v.label)
                                     }))
+                            )
+                            ans.errors.push(
+                                ...result.warnings
                             )
                         }
                     }
@@ -543,10 +548,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const clonedReader = reader.clone()
                 const value = reader.readQuotedString()
                 ans.data = getNbtStringTag(value)
-                ans.completions = walker ?
-                    walker.getCompletions(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
-                        .map(v => ({ ...v, label: escapeString(v.label, quote as any) })) :
-                    []
+                const result = walker ?
+                    walker.getCompletionsAndWarnings(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate }) :
+                    { completions: [], warnings: [] }
+                ans.completions = result.completions.map(v => ({ ...v, label: escapeString(v.label, quote as any) }))
+                ans.errors.push(...result.warnings)
             } catch (p) {
                 ans.data = getNbtStringTag('')
                 ans.errors.push(p)

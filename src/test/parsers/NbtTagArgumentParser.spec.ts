@@ -934,7 +934,7 @@ describe('NbtTagArgumentParser Tests', () => {
             it('Should return empty completions when the cursor is not at the point for compound tag brackets', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ compound: }')
-                const { data, errors, cache, completions } = parser.parse(reader,undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         compound: getNbtCompoundTag({})
@@ -950,7 +950,7 @@ describe('NbtTagArgumentParser Tests', () => {
             it('Should return empty completions when the cursor is not at the point for list tag brackets', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ list: }')
-                const { data, errors, cache, completions } = parser.parse(reader,undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         list: getNbtListTag([])
@@ -966,7 +966,7 @@ describe('NbtTagArgumentParser Tests', () => {
             it('Should return empty completions when the cursor is not at the point for primitve array tag brackets', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ byteArray: }')
-                const { data, errors, cache, completions } = parser.parse(reader,undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         byteArray: getNbtByteArrayTag([])
@@ -982,7 +982,7 @@ describe('NbtTagArgumentParser Tests', () => {
             it('Should return empty completions when the cursor is not at the point for string tag quotes', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
                 const reader = new StringReader('{ string: }')
-                const { data, errors, cache, completions } = parser.parse(reader,undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         string: getNbtStringTag('')
@@ -1034,10 +1034,18 @@ describe('NbtTagArgumentParser Tests', () => {
                         string: getNbtStringTag('')
                     }
                 ))
-                assert.deepStrictEqual(errors, [new ParsingError(
-                    { start: 10, end: 11 },
-                    'expected a tag but got nothing'
-                )])
+                assert.deepStrictEqual(errors, [
+                    new ParsingError(
+                        { start: 10, end: 11 },
+                        'expected a tag but got nothing'
+                    ),
+                    new ParsingError(
+                        { start: 10, end: 11 },
+                        'expected ‘foo’ or ‘\"bar\"’ but got nothing',
+                        true,
+                        DiagnosticSeverity.Hint
+                    )
+                ])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
                     { label: '"foo"' },
@@ -1053,7 +1061,14 @@ describe('NbtTagArgumentParser Tests', () => {
                         string: getNbtStringTag('')
                     }
                 ))
-                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(errors, [
+                    new ParsingError(
+                        { start: 11, end: 12 },
+                        'expected ‘foo’ or ‘\"bar\"’ but got nothing',
+                        true,
+                        DiagnosticSeverity.Hint
+                    )
+                ])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
                     { label: 'foo' },
@@ -1072,6 +1087,12 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 8, end: 9 }, 'expected a tag but got nothing'
+                    ),                    
+                    new ParsingError(
+                        { start: 8, end: 9 },
+                        'expected a number but got nothing',
+                        true,
+                        DiagnosticSeverity.Hint
                     ),
                     new ParsingError(
                         { start: 8, end: 8 }, 'expected a byte tag instead of a string tag',

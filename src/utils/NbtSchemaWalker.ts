@@ -1,4 +1,4 @@
-import { CompletionItem } from 'vscode-languageserver'
+import { CompletionItem, DiagnosticSeverity } from 'vscode-languageserver'
 import { ClientCache } from '../types/ClientCache'
 import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchema, ValueList } from '../types/VanillaNbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
@@ -8,6 +8,7 @@ import LineParser from '../parsers/LineParser'
 import StringReader from './StringReader'
 import Manager from '../types/Manager'
 import ArgumentParser from '../parsers/ArgumentParser'
+import ParsingError from '../types/ParsingError'
 
 type SuggestionNode =
     | string
@@ -227,20 +228,20 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletions(
+    getCompletionsAndWarnings(
         reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>,
         config = VanillaConfig, cache: ClientCache = {},
         variables: Variables = { isPredicate: false }
-    ): CompletionItem[] {
+    ): { completions: CompletionItem[], warnings: ParsingError[] } {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
-        const ans: CompletionItem[] = []
+        const ans: { completions: CompletionItem[], warnings: ParsingError[] } = { completions: [], warnings: [] }
         const suggestions: SuggestionNode[] = this.read().suggestions ? this.read().suggestions as SuggestionNode[] : []
         suggestions.forEach(
             v => {
                 if (typeof v === 'string') {
                     if (reader.cursor === cursor) {
-                        ans.push({ label: v })
+                        ans.completions.push({ label: v })
                     }
                 } else if (isParserNode(v)) {
                     const out = { cursor }
@@ -268,19 +269,34 @@ export default class NbtSchemaWalker {
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)
-                        const { completions } = parser.parse(subReader, out.cursor, manager).data
+                        const { completions, errors } = parser.parse(subReader, out.cursor, manager).data
                         if (completions) {
-                            ans.push(...completions)
+                            ans.completions.push(...completions)
+                        }
+                        // istanbul ignore next
+                        if (errors) {
+                            ans.warnings.push(...errors.map(
+                                v => new ParsingError({
+                                    start: v.range.start + cursor - out.cursor,
+                                    end: v.range.end + cursor - out.cursor
+                                }, v.message, true, DiagnosticSeverity.Hint)
+                            ))
                         }
                     } else {
                         // Regular ArgumentParser
                         const parser = manager.get(v.parser, v.params)
-                        const { completions } = parser.parse(subReader, out.cursor, manager, config, cache)
-                        ans.push(...completions)
+                        const { completions, errors } = parser.parse(subReader, out.cursor, manager, config, cache)
+                        ans.completions.push(...completions)
+                        ans.warnings.push(...errors.map(
+                            v => new ParsingError({
+                                start: v.range.start + cursor - out.cursor,
+                                end: v.range.end + cursor - out.cursor
+                            }, v.message, true, DiagnosticSeverity.Hint)
+                        ))
                     }
                 } else {
                     if (reader.cursor === cursor) {
-                        ans.push({ label: v.value as string, documentation: v.description })
+                        ans.completions.push({ label: v.value as string, documentation: v.description })
                     }
                 }
             }
