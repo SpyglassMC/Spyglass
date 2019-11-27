@@ -39,10 +39,10 @@ The extension can compute completions as you typing commands. Completions will a
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-For more complex NBT tags, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
+For more complex NBT tags, with the help from [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
 ![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
-And also NBT paths, with the help from [mc-nbt-paths](github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
+And also NBT paths:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
 The following cool completion feature is still work-in-progress:

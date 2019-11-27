@@ -43,7 +43,7 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 大憨批能够提供简单命令的自动补全：
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-复杂的 NBT 标签的自动补全：
+复杂的 NBT 标签的自动补全（感谢 MrYurihi、Levertion 与 Bassab03 贡献的 [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths)）：
 ![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
 以及 NBT 路径的自动补全：
