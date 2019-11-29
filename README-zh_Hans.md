@@ -92,7 +92,7 @@ execute if score @s test matches 5 run say 5
 
 大憨批能够为 `dust` 粒子以及一些 NBT 标签提供颜色信息，这是真正的憨批行为。你可以把光标悬浮在颜色上几秒钟，这样就能直接更改颜色了。
 
-![color-particle](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-particle.gif)
+![color-information](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-information.gif)
 
 ## 悬浮信息
 
