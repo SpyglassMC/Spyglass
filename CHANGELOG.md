@@ -1,3 +1,12 @@
+# [v1.10.1](https://github.com/SPGoding/datapack-language-server/compare/v1.10.0...v1.10.1) (2019-11-29)
+
+## 🐛 Bug Fixes
+- [`7fcd246`](https://github.com/SPGoding/datapack-language-server/commit/7fcd246)  Fix not formatting when hints or warnings exist 
+- [`c56d320`](https://github.com/SPGoding/datapack-language-server/commit/c56d320)  Fix parsing some namespaced IDs in SNBTs 
+
+## 🔒 Security Issues
+- [`832dee8`](https://github.com/SPGoding/datapack-language-server/commit/832dee8)  Fix 9 vulnerabilities
+
 # [v1.10.0](https://github.com/SPGoding/datapack-language-server/compare/v1.9.4...v1.10.0) (2019-11-29)
 
 ## ✨ New Features
