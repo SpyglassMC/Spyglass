@@ -9,6 +9,7 @@ import StringReader from './StringReader'
 import Manager from '../types/Manager'
 import ArgumentParser from '../parsers/ArgumentParser'
 import ParsingError from '../types/ParsingError'
+import clone = require('clone')
 
 type SuggestionNode =
     | string
@@ -138,7 +139,7 @@ export default class NbtSchemaWalker {
                     )
                 } else if (NbtSchemaWalker.isCompoundNode(node)) {
                     if (node.child_ref) {
-                        const ansNode = JSON.parse(JSON.stringify(node))
+                        const ansNode = clone(node)
                         delete ansNode.child_ref
                         for (const refPath of node.child_ref) {
                             const subWalker = walker

@@ -23,7 +23,9 @@
         "watch": "tsc -w"
     },
     "dependencies": {
+        "@types/clone": "^0.1.30",
         "bignumber.js": "^9.0.0",
+        "clone": "^2.1.2",
         "datapack-json": "^2.0.0",
         "fs-extra": "^8.1.0",
         "minecraft-id": "^0.1.5",

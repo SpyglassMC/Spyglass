@@ -30,24 +30,24 @@ export interface NbtNoPropertySchemaNode extends NodeBase {
 }
 
 export interface NbtRefSchemaNode extends NodeBase {
-    readonly ref: string
+    ref: string
 }
 
 export interface NbtListSchemaNode extends NodeBase {
-    readonly item: NbtSchemaNode,
-    readonly type: 'list'
+    item: NbtSchemaNode,
+    type: 'list'
 }
 
 export interface NbtCompoundSchemaNode extends NodeBase {
-    readonly child_ref?: string[],
-    readonly children?: { [key: string]: NbtSchemaNode },
-    readonly type: 'compound',
-    readonly additionalChildren?: boolean
+    child_ref?: string[],
+    children?: { [key: string]: NbtSchemaNode },
+    type: 'compound',
+    additionalChildren?: boolean
 }
 
 export interface NbtRootSchemaNode extends NodeBase {
-    readonly children: { [key: string]: NbtSchemaNode },
-    readonly type: 'root'
+    children: { [key: string]: NbtSchemaNode },
+    type: 'root'
 }
 
 export type ValueList = Array<string | { description: string; value: string }>

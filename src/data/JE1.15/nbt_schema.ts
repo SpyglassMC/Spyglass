@@ -11,10 +11,6 @@ export default {
 			"../ref/nameable.json"
 		],
 		"children": {
-			"Base": {
-				"type": "int",
-				"description": "The base color of the banner"
-			},
 			"Patterns": {
 				"type": "compound",
 				"children": {
@@ -629,13 +625,12 @@ export default {
 			},
 			"Particle": {
 				"type": "string",
-				"description": "Particle id displayed"
-			},
-			"ParticleParam1": {
-				"type": "int"
-			},
-			"ParticleParam2": {
-				"type": "int"
+				"description": "Particle id displayed",
+				"suggestions": [
+					{
+						"parser": "Particle"
+					}
+				]
 			},
 			"Effects": {
 				"type": "list",
@@ -1578,31 +1573,15 @@ export default {
 				"type": "string",
 				"description": "Name of painting",
 				"suggestions": [
-					"minecraft:kebab",
-					"minecraft:aztec",
-					"minecraft:alban",
-					"minecraft:aztec2",
-					"minecraft:bomb",
-					"minecraft:plant",
-					"minecraft:wasteland",
-					"minecraft:wanderer",
-					"minecraft:graham",
-					"minecraft:pool",
-					"minecraft:courbet",
-					"minecraft:sunset",
-					"minecraft:sea",
-					"minecraft:match",
-					"minecraft:bust",
-					"minecraft:stage",
-					"minecraft:void",
-					"minecraft:skull_and_roses",
-					"minecraft:wither",
-					"minecraft:fighters",
-					"minecraft:skeleton",
-					"minecraft:donkey_kong",
-					"minecraft:pointer",
-					"minecraft:pigscene",
-					"minecraft:burning_skull"
+					{
+						"parser": "NamespacedID",
+						"params": [
+							"minecraft:motive",
+							undefined,
+							undefined,
+							'%isPredicate%'
+						]
+					}
 				]
 			}
 		}
@@ -2562,7 +2541,7 @@ export default {
 		],
 		"children": {
 			"Damage": {
-				"type": "short",
+				"type": "int",
 				"description": "How much damage this item has had"
 			},
 			"Unbreakable": {
@@ -2948,6 +2927,9 @@ export default {
 						"isColor": true
 					}
 				}
+			},
+			"map": {
+				"type": "int"
 			},
 			"Decorations": {
 				"description": "List of map decorations",

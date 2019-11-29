@@ -153,7 +153,8 @@ describe('NbtSchemaWalker Tests', () => {
                 lineParser: {
                     type: 'no-nbt',
                     suggestions: [{
-                        parser: '#', params: [
+                        parser: '#',
+                        params: [
                             true,
                             'commands',
                             {
