@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { constructConfig, VanillaConfig, getConfigFromVSCode } from '../../types/Config'
+import { constructConfig, VanillaConfig } from '../../types/Config'
 
 describe('Config Tests', () => {
     describe('constructConfig() Tests', () => {
