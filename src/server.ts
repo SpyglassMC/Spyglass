@@ -3,7 +3,7 @@ import * as path from 'path'
 import { URI } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
-import { VanillaConfig } from './types/Config'
+import Config from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line from './types/Line'
 import LineParser from './parsers/LineParser'
@@ -15,9 +15,9 @@ const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
 const stringsOfRel = new Map<string, string[]>()
 const versionOfRel = new Map<string, number | null>()
+const configOfRel = new Map<string, Config>()
 
 const manager = new ArgumentParserManager()
-const config = VanillaConfig
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 let workspaceFolder: WorkspaceFolder | undefined
 let workspaceFolderPath: string | undefined
@@ -25,31 +25,13 @@ let dotPath: string | undefined
 let cachePath: string | undefined
 let dataPath: string | undefined
 
-connection.onInitialize(async ({ workspaceFolders }) => {
+connection.onInitialize(async ({ workspaceFolders, capabilities }) => {
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
         workspaceFolder = workspaceFolders[0]
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
-        dotPath = path.join(workspaceFolderPath, '.datapack')
-        cachePath = path.join(dotPath, 'cache.json')
-        dataPath = path.join(workspaceFolderPath, 'data')
-
         connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
-        connection.console.info(`dotPath = ${dotPath}`)
-        connection.console.info(`cachePath = ${cachePath}`)
-        connection.console.info(`dataPath = ${dataPath}`)
-        if (!fs.pathExistsSync(dotPath)) {
-            fs.mkdirpSync(dotPath)
-        }
-        if (fs.existsSync(cachePath)) {
-            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
-            if (cacheFile.version !== LatestCacheFileVersion) {
-                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
-            }
-        }
-        await updateCacheFile(cacheFile, workspaceFolderPath)
-        saveCacheFile()
 
         return {
             capabilities: {
@@ -102,6 +84,27 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     } as InitializeResult
 })
 
+connection.onInitialized(async () => {
+    dotPath = path.join(workspaceFolderPath as string, '.datapack')
+    cachePath = path.join(dotPath, 'cache.json')
+    dataPath = path.join(workspaceFolderPath as string, 'data')
+
+    connection.console.info(`dotPath = ${dotPath}`)
+    connection.console.info(`cachePath = ${cachePath}`)
+    connection.console.info(`dataPath = ${dataPath}`)
+    if (!fs.pathExistsSync(dotPath)) {
+        fs.mkdirpSync(dotPath)
+    }
+    if (fs.existsSync(cachePath)) {
+        cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+        if (cacheFile.version !== LatestCacheFileVersion) {
+            cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+        }
+    }
+    await updateCacheFile(cacheFile, workspaceFolderPath as string)
+    saveCacheFile()
+})
+
 setInterval(saveCacheFile, 30000)
 
 async function saveCacheFile() {
@@ -142,8 +145,9 @@ const cacheFileOperations = {
         if (!lines) {
             lines = []
             const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split('\n')
+            const config = await getConfigFromRel(rel)
             for (const string of strings) {
-                parseString(string, lines)
+                parseString(string, lines, config)
             }
         }
         let cacheOfLines: ClientCache = {}
@@ -261,7 +265,7 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
     trimCache(cacheFile.cache)
 }
 
-function parseString(string: string, lines: Line[]) {
+function parseString(string: string, lines: Line[], config: Config) {
     if (string.match(/^\s*$/)) {
         lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
@@ -272,8 +276,8 @@ function parseString(string: string, lines: Line[]) {
     }
 }
 
-function updateDiagnostics(rel: string, uri: string) {
-    const lines = linesOfRel.get(rel) as Line[]
+async function updateDiagnostics(rel: string, uri: string) {
+    const lines = await getLinesFromRel(rel)
     const diagnostics = []
     let lineNumber = 0
     for (const line of lines) {
@@ -285,21 +289,42 @@ function updateDiagnostics(rel: string, uri: string) {
     connection.sendDiagnostics({ uri, diagnostics })
 }
 
+async function getConfigFromRel(rel: string): Promise<Config> {
+    let ans = configOfRel.get(rel)
+    if (!ans) {
+        ans = await connection.workspace.getConfiguration({
+            scopeUri: getUriFromRel(rel),
+            section: 'datapackLanguageServer'
+        }) as Config
+        configOfRel.set(rel, ans)
+    }
+    return ans
+}
+
+async function getLinesFromRel(rel: string): Promise<Line[]> {
+    let ans = linesOfRel.get(rel)
+    if (!ans) {
+        ans = []
+        const config = await getConfigFromRel(rel)
+        const strings = stringsOfRel.get(rel) as string[]
+        for (const string of strings) {
+            parseString(string, ans, config)
+        }
+        linesOfRel.set(rel, ans)
+    }
+    return ans
+}
+
 connection.onDidOpenTextDocument(({ textDocument: { text, uri, version } }) => {
     const rel = getRelFromUri(uri)
-    const lines: Line[] = []
-    const strings = text.split('\n')
-    for (const string of strings) {
-        parseString(string, lines)
-    }
-    linesOfRel.set(rel, lines)
-    stringsOfRel.set(rel, strings)
+    stringsOfRel.set(rel, text.split('\n'))
     versionOfRel.set(rel, version)
     updateDiagnostics(rel, uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
     // connection.console.log(`BC: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
+    const config = await getConfigFromRel(rel)
     versionOfRel.set(rel, version)
 
     for (const change of contentChanges) {
@@ -309,7 +334,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
             end: { line: endLine, character: endChar }
         } = change.range as Range
         const strings = stringsOfRel.get(rel) as string[]
-        const lines = linesOfRel.get(rel) as Line[]
+        const lines = await getLinesFromRel(rel)
 
         const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
             }${changeText
@@ -321,7 +346,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 
         lines.splice(startLine)
         for (const string of stringsAfterStartLine) {
-            parseString(string, lines)
+            parseString(string, lines, config)
         }
     }
 
@@ -336,6 +361,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     linesOfRel.delete(rel)
     stringsOfRel.delete(rel)
     versionOfRel.delete(rel)
+    configOfRel.delete(rel)
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
@@ -366,8 +392,9 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`AW: ${JSON.stringify(cacheFile)}`)
 })
 
-connection.onCompletion(({ textDocument: { uri }, position: { line, character } }) => {
+connection.onCompletion(async ({ textDocument: { uri }, position: { line, character } }) => {
     const rel = getRelFromUri(uri)
+    const config = await getConfigFromRel(rel)
     const strings = stringsOfRel.get(rel) as string[]
     const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
     const reader = new StringReader(strings[line])
@@ -375,8 +402,9 @@ connection.onCompletion(({ textDocument: { uri }, position: { line, character } 
     return data.completions
 })
 
-connection.onSignatureHelp(({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
+connection.onSignatureHelp(async ({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
+    const config = await getConfigFromRel(rel)
     const strings = stringsOfRel.get(rel) as string[]
     const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
     const reader = new StringReader(strings[lineNumber])
@@ -494,7 +522,7 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
     const rel = getRelFromUri(uri)
-    const line = (linesOfRel.get(rel) as Line[])[number]
+    const line = (await getLinesFromRel(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
@@ -516,9 +544,9 @@ connection.onDefinition(async ({ textDocument: { uri }, position: { character: c
 connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     return await getReferencesOrDefinition(uri, number, char, 'ref')
 })
-connection.onDocumentHighlight(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+connection.onDocumentHighlight(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     const rel = getRelFromUri(uri)
-    const lines = linesOfRel.get(rel) as Line[]
+    const lines = await getLinesFromRel(rel)
     const line = lines[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
@@ -544,9 +572,9 @@ connection.onDocumentHighlight(({ textDocument: { uri }, position: { character: 
     return null
 })
 
-connection.onPrepareRename(({ textDocument: { uri }, position: { character: char, line: number } }) => {
+connection.onPrepareRename(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     const rel = getRelFromUri(uri)
-    const line = (linesOfRel.get(rel) as Line[])[number]
+    const line = (await getLinesFromRel(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         return {
@@ -556,10 +584,10 @@ connection.onPrepareRename(({ textDocument: { uri }, position: { character: char
     }
     return null
 })
-connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
+connection.onRenameRequest(async ({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
     // connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
-    const line = (linesOfRel.get(rel) as Line[])[number]
+    const line = (await getLinesFromRel(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result && !result.type.startsWith('colors/')) {
         const documentChanges: (TextDocumentEdit | RenameFile)[] = []
@@ -626,47 +654,44 @@ connection.onRenameRequest(({ textDocument: { uri }, position: { line: number, c
     }
 })
 
-connection.onDocumentLinks(({ textDocument: { uri } }) => {
+connection.onDocumentLinks(async ({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    const lines = linesOfRel.get(rel)
-    if (lines) {
-        const ans: DocumentLink[] = []
-        let i = 0
-        for (const { cache } of lines) {
-            for (const type in cache) {
-                if (isFileType(type)) {
-                    const category = cache[type]
-                    for (const id in category) {
-                        if (category.hasOwnProperty(id)) {
-                            try {
-                                const toLink = (v: CachePosition) => ({
-                                    range: {
-                                        start: { line: i, character: v.start },
-                                        end: { line: i, character: v.end }
-                                    },
-                                    target: getUriFromRel(Identity.fromString(id).toRel(type))
-                                })
-                                const unit = category[id] as CacheUnit
-                                ans.push(...unit.def.map(toLink))
-                                ans.push(...unit.ref.map(toLink))
-                            } catch (ignored) {
-                                continue
-                            }
+    const lines = await getLinesFromRel(rel)
+    const ans: DocumentLink[] = []
+    let i = 0
+    for (const { cache } of lines) {
+        for (const type in cache) {
+            if (isFileType(type)) {
+                const category = cache[type]
+                for (const id in category) {
+                    if (category.hasOwnProperty(id)) {
+                        try {
+                            const toLink = (v: CachePosition) => ({
+                                range: {
+                                    start: { line: i, character: v.start },
+                                    end: { line: i, character: v.end }
+                                },
+                                target: getUriFromRel(Identity.fromString(id).toRel(type))
+                            })
+                            const unit = category[id] as CacheUnit
+                            ans.push(...unit.def.map(toLink))
+                            ans.push(...unit.ref.map(toLink))
+                        } catch (ignored) {
+                            continue
                         }
                     }
                 }
             }
-            i++
         }
-        return ans
+        i++
     }
-    return null
+    return ans
 })
 
-connection.onDocumentColor(({ textDocument: { uri } }) => {
+connection.onDocumentColor(async ({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     const ans: ColorInformation[] = []
-    const lines = linesOfRel.get(rel) as Line[]
+    const lines = await getLinesFromRel(rel)
     let i = 0
     for (const line of lines) {
         const dustColors = getSafeCategory(line.cache, 'colors')

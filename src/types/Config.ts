@@ -398,19 +398,20 @@ export const VanillaConfig: Config = {
     }
 }
 
-export function constructConfig(custom: { [key: string]: any }) {
+/* istanbul ignore next */
+export function constructConfig(custom: { [key: string]: any }, base = VanillaConfig) {
     custom.env = custom.env || {}
     custom.lint = custom.lint || {}
     custom.snippets = custom.snippets || {}
     return {
         env: {
-            ...VanillaConfig.env, ...custom.env
+            ...base.env, ...custom.env
         },
         lint: {
-            ...VanillaConfig.lint, ...custom.lint
+            ...base.lint, ...custom.lint
         },
         snippets: {
-            ...VanillaConfig.snippets, ...custom.snippets
+            ...base.snippets, ...custom.snippets
         }
     } as Config
 }
