@@ -484,6 +484,14 @@ describe('NbtTagArgumentParser Tests', () => {
                             references: {
                                 foo: { type: 'no-nbt', description: 'references test' }
                             }
+                        },
+                        colorIntTest: {
+                            type: 'int',
+                            isColor: true
+                        },
+                        colorIntArrayTest: {
+                            type: 'int_array',
+                            isColor: true
                         }
                     }
                 },
@@ -642,6 +650,44 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 }
             }
+            it('Should return color for int numbers', () => {
+                const parser = new NbtTagArgumentParser('int', 'blocks', 'minecraft:banner/colorIntTest', schemas)
+                const reader = new StringReader('255')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                assert.deepEqual(data, getNbtIntTag(255))
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {
+                    colors: {
+                        '0 0 1 1': {
+                            def: [],
+                            ref: [{ start: 0, end: 3 }]
+                        }
+                    }
+                })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should return colors for int arrays', () => {
+                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner/colorIntArrayTest', schemas)
+                const reader = new StringReader('[I; 255, 255]')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                assert.deepEqual(data, getNbtIntArrayTag([
+                    getNbtIntTag(255),
+                    getNbtIntTag(255)
+                ]))
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {
+                    colors: {
+                        '0 0 1 1': {
+                            def: [],
+                            ref: [
+                                { start: 4, end: 7 },
+                                { start: 9, end: 12 }
+                            ]
+                        }
+                    }
+                })
+                assert.deepStrictEqual(completions, [])
+            })
             it('Should return error when current schema is not for compound tag', () => {
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/list', schemas)
                 const reader = new StringReader('{ foo: 1b }')
@@ -1087,7 +1133,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 8, end: 9 }, 'expected a tag but got nothing'
-                    ),                    
+                    ),
                     new ParsingError(
                         { start: 8, end: 9 },
                         'expected a number but got nothing',

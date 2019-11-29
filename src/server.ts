@@ -669,7 +669,7 @@ connection.onDocumentColor(({ textDocument: { uri } }) => {
     const lines = linesOfRel.get(rel) as Line[]
     let i = 0
     for (const line of lines) {
-        const dustColors = getSafeCategory(line.cache, 'colors/dust')
+        const dustColors = getSafeCategory(line.cache, 'colors')
         for (const key in dustColors) {
             if (dustColors.hasOwnProperty(key)) {
                 const numbers = key.split(' ').map(v => parseFloat(v))
@@ -688,7 +688,6 @@ connection.onDocumentColor(({ textDocument: { uri } }) => {
                 }
             }
         }
-        // TODO: For colors in SNBTs.
         i++
     }
     return ans
@@ -708,7 +707,7 @@ connection.onColorPresentation(({
     } else if (string.startsWith('minecraft:dust')) {
         ans.push({ label: `minecraft:dust ${r} ${g} ${b} ${a}` })
     } else {
-        // TODO: For colors in SNBTs.
+        ans.push({ label: `${(Math.round(r * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(b * 255)}` })
     }
 
     return ans

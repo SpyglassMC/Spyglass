@@ -394,7 +394,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, _walker?: NbtSchemaWalker,
+    private parsePrimitiveArray(reader: StringReader, walker?: NbtSchemaWalker,
         specifiedType: 'byte_array' | 'int_array' | 'long_array' | null = null):
         ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
@@ -430,7 +430,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 .skipWhiteSpace()
             while (reader.canRead() && reader.peek() !== ']') {
                 const start = reader.cursor
-                const result = this.parsePrimitiveTag(reader)
+                const result = this.parsePrimitiveTag(
+                    reader,
+                    /* istanbul ignore next */
+                    (walker && NbtSchemaWalker.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined,
+                    (walker && walker.read().isColor)
+                )
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
                 if (reader.peek() === ',') {
@@ -534,13 +539,14 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveTag(reader: StringReader, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
+    private parsePrimitiveTag(reader: StringReader, walker?: NbtSchemaWalker, isColor?: boolean): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtStringTag(''),
             errors: [],
             cache: {},
             completions: []
         }
+        isColor = isColor || (walker && walker.read().isColor)
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             const quote = reader.peek()
@@ -574,6 +580,20 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             const [pattern, func] = NbtTagArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
                                 ans.data = func(value)
+                                if (isColor) {
+                                    const num = Number(value)
+                                    const r = ((num >> 16) & 255) / 255
+                                    const g = ((num >> 8) & 255) / 255
+                                    const b = (num & 255) / 255
+                                    ans.cache = {
+                                        colors: {
+                                            [`${r} ${g} ${b} 1`]: {
+                                                def: [],
+                                                ref: [{ start, end: reader.cursor }]
+                                            }
+                                        }
+                                    }
+                                }
                                 return ans
                             }
                         }

@@ -588,7 +588,8 @@ export default {
 			},
 			"Color": {
 				"type": "int",
-				"description": "Color of the particles"
+				"description": "Color of the particles",
+				"isColor": true
 			},
 			"Duration": {
 				"type": "int",
@@ -1202,7 +1203,7 @@ export default {
 			}
 		}
 	},
-	"entity/fireworks_rocket.json": {
+	"entity/firework_rocket.json": {
 		"type": "compound",
 		"child_ref": [
 			"../ref/entity.json"
@@ -1217,7 +1218,16 @@ export default {
 				"description": "How many ticks until the rocket explodes"
 			},
 			"FireworksItem": {
-				"ref": "../item/firework_rocket.json",
+				"type": "compound",
+				"child_ref": [
+					"../ref/item_ntt.json"
+				],
+				"children": {
+					"tag": {
+						"ref": "../item/firework_rocket.json",
+						"description": "The NBT of the item"
+					}
+				},
 				"description": "The rocket item to use for explosions"
 			}
 		}
@@ -2934,7 +2944,8 @@ export default {
 				"children": {
 					"MapColor": {
 						"type": "int",
-						"description": "Color of the map"
+						"description": "Color of the map",
+						"isColor": true
 					}
 				}
 			},
@@ -3649,11 +3660,13 @@ export default {
 			},
 			"Colors": {
 				"type": "int_array",
-				"description": "Array of colors the explosion shows."
+				"description": "Array of colors the explosion shows.",
+				"isColor": true
 			},
 			"FadeColors": {
 				"type": "int_array",
-				"description": "Array of colors the explosion shows when fading."
+				"description": "Array of colors the explosion shows when fading.",
+				"isColor": true
 			}
 		}
 	},
@@ -3865,7 +3878,8 @@ export default {
 					},
 					"color": {
 						"description": "The color of leather armor. Still exists on other items",
-						"type": "int"
+						"type": "int",
+						"isColor": true
 					},
 					"Lore": {
 						"description": "Lines of lore. Each line is a JSON text component",
@@ -4472,6 +4486,9 @@ export default {
 			"minecraft:armor_stand": {
 				"ref": "../entity/armor_stand.json"
 			},
+			"minecraft:arrow": {
+				"ref": "../entity/arrow.json"
+			},
 			"minecraft:bat": {
 				"ref": "../entity/bat.json"
 			},
@@ -4481,11 +4498,20 @@ export default {
 			"minecraft:boat": {
 				"ref": "../entity/boat.json"
 			},
+			"minecraft:cod_fish": {
+				"ref": "../entity/fish.json"
+			},
+			"minecraft:commandblock_minecart": {
+				"ref": "../entity/commandblock_minecart.json"
+			},
 			"minecraft:creeper": {
 				"ref": "../entity/creeper.json"
 			},
 			"minecraft:donkey": {
 				"ref": "../entity/chest_horse.json"
+			},
+			"minecraft:ender_crystal": {
+				"ref": "../entity/ender_crystal.json"
 			},
 			"minecraft:ender_dragon": {
 				"ref": "../entity/ender_dragon.json"
@@ -4496,8 +4522,29 @@ export default {
 			"minecraft:endermite": {
 				"ref": "../entity/endermite.json"
 			},
+			"minecraft:evocation_fangs": {
+				"ref": "../entity/evocation_fangs.json"
+			},
 			"minecraft:evocation_illager": {
 				"ref": "../entity/spell_illager.json"
+			},
+			"minecraft:eye_of_ender_signal": {
+				"ref": "../ref/entity.json"
+			},
+			"minecraft:falling_block": {
+				"ref": "../entity/falling_block.json"
+			},
+			"minecraft:fireball": {
+				"ref": "../entity/fireball.json"
+			},
+			"minecraft:firework_rocket": {
+				"ref": "../entity/firework_rocket.json"
+			},
+			"minecraft:furnace_minecart": {
+				"ref": "../entity/furnace_minecart.json"
+			},
+			"minecraft:hopper_minecart": {
+				"ref": "../entity/hopper_minecart.json"
 			},
 			"minecraft:horse": {
 				"ref": "../entity/horse.json"
@@ -4511,11 +4558,26 @@ export default {
 			"minecraft:illusion_illager": {
 				"ref": "../entity/spell_illager.json"
 			},
+			"minecraft:item": {
+				"ref": "../entity/item.json"
+			},
+			"minecraft:item_frame": {
+				"ref": "../entity/item_frame.json"
+			},
+			"minecraft:leash_knot": {
+				"ref": "../ref/entity.json"
+			},
 			"minecraft:llama": {
 				"ref": "../entity/llama.json"
 			},
+			"minecraft:llama_spit": {
+				"ref": "../entity/llama_spit.json"
+			},
 			"minecraft:magma_cube": {
 				"ref": "../entity/slime.json"
+			},
+			"minecraft:minecart": {
+				"ref": "../entity/minecart.json"
 			},
 			"minecraft:mule": {
 				"ref": "../entity/chest_horse.json"
@@ -4523,20 +4585,35 @@ export default {
 			"minecraft:ocelot": {
 				"ref": "../entity/ocelot.json"
 			},
+			"minecraft:painting": {
+				"ref": "../entity/painting.json"
+			},
 			"minecraft:parrot": {
 				"ref": "../entity/parrot.json"
+			},
+			"minecraft:phantom": {
+				"ref": "../entity/phantom.json"
 			},
 			"minecraft:pig": {
 				"ref": "../entity/pig.json"
 			},
+			"minecraft:potion": {
+				"ref": "../entity/potion.json"
+			},
 			"minecraft:rabbit": {
 				"ref": "../entity/rabbit.json"
+			},
+			"minecraft:salmon_fish": {
+				"ref": "../entity/fish.json"
 			},
 			"minecraft:sheep": {
 				"ref": "../entity/sheep.json"
 			},
 			"minecraft:shulker": {
 				"ref": "../entity/shulker.json"
+			},
+			"minecraft:shulker_bullet": {
+				"ref": "../entity/shulker_bullet.json"
 			},
 			"minecraft:skeleton_horse": {
 				"ref": "../entity/skeleton_horse.json"
@@ -4546,6 +4623,24 @@ export default {
 			},
 			"minecraft:snowman": {
 				"ref": "../entity/snowman.json"
+			},
+			"minecraft:spawner_minecart": {
+				"ref": "../entity/spawner_minecart.json"
+			},
+			"minecraft:spectral_arrow": {
+				"ref": "../entity/spectral_arrow.json"
+			},
+			"minecraft:tnt": {
+				"ref": "../entity/tnt.json"
+			},
+			"minecraft:tnt_minecart": {
+				"ref": "../entity/tnt_minecart.json"
+			},
+			"minecraft:trident": {
+				"ref": "../entity/trident.json"
+			},
+			"minecraft:turtle": {
+				"ref": "../entity/turtle.json"
 			},
 			"minecraft:vex": {
 				"ref": "../entity/vex.json"
@@ -4565,6 +4660,9 @@ export default {
 			"minecraft:wolf": {
 				"ref": "../entity/wolf.json"
 			},
+			"minecraft:xp_orb": {
+				"ref": "../entity/xp_orb.json"
+			},
 			"minecraft:zombie": {
 				"type": "compound",
 				"child_ref": [
@@ -4579,90 +4677,6 @@ export default {
 			},
 			"minecraft:zombie_villager": {
 				"ref": "../entity/zombie_villager.json"
-			},
-			"minecraft:item": {
-				"ref": "../entity/item.json"
-			},
-			"minecraft:xp_orb": {
-				"ref": "../entity/xp_orb.json"
-			},
-			"minecraft:fireball": {
-				"ref": "../entity/fireball.json"
-			},
-			"minecraft:arrow": {
-				"ref": "../entity/arrow.json"
-			},
-			"minecraft:potion": {
-				"ref": "../entity/potion.json"
-			},
-			"minecraft:spectral_arrow": {
-				"ref": "../entity/spectral_arrow.json"
-			},
-			"minecraft:minecart": {
-				"ref": "../entity/minecart.json"
-			},
-			"minecraft:commandblock_minecart": {
-				"ref": "../entity/commandblock_minecart.json"
-			},
-			"minecraft:furnace_minecart": {
-				"ref": "../entity/furnace_minecart.json"
-			},
-			"minecraft:hopper_minecart": {
-				"ref": "../entity/hopper_minecart.json"
-			},
-			"minecraft:spawner_minecart": {
-				"ref": "../entity/spawner_minecart.json"
-			},
-			"minecraft:tnt_minecart": {
-				"ref": "../entity/tnt_minecart.json"
-			},
-			"minecraft:falling_block": {
-				"ref": "../entity/falling_block.json"
-			},
-			"minecraft:tnt": {
-				"ref": "../entity/tnt.json"
-			},
-			"minecraft:ender_crystal": {
-				"ref": "../entity/ender_crystal.json"
-			},
-			"minecraft:evocation_fangs": {
-				"ref": "../entity/evocation_fangs.json"
-			},
-			"minecraft:eye_of_ender_signal": {
-				"ref": "../ref/entity.json"
-			},
-			"minecraft:fireworks_rocket": {
-				"ref": "../entity/fireworks_rocket.json"
-			},
-			"minecraft:item_frame": {
-				"ref": "../entity/item_frame.json"
-			},
-			"minecraft:leash_knot": {
-				"ref": "../ref/entity.json"
-			},
-			"minecraft:llama_spit": {
-				"ref": "../entity/llama_spit.json"
-			},
-			"minecraft:painting": {
-				"ref": "../entity/painting.json"
-			},
-			"minecraft:shulker_bullet": {
-				"ref": "../entity/shulker_bullet.json"
-			},
-			"minecraft:turtle": {
-				"ref": "../entity/turtle.json"
-			},
-			"minecraft:phantom": {
-				"ref": "../entity/phantom.json"
-			},
-			"minecraft:trident": {
-				"ref": "../entity/trident.json"
-			},
-			"minecraft:cod_fish": {
-				"ref": "../entity/fish.json"
-			},
-			"minecraft:salmon_fish": {
-				"ref": "../entity/fish.json"
 			}
 		}
 	},

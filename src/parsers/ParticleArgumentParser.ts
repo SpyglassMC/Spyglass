@@ -53,7 +53,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                     if (ans.errors.length === 0) {
                         const key = `${parseFloat(color.elements[0].value)} ${parseFloat(color.elements[1].value)} ${parseFloat(color.elements[2].value)} ${parseFloat(color.elements[3].value)}`
                         ans.cache = {
-                            'colors/dust': {
+                            colors: {
                                 [key]: {
                                     def: [],
                                     ref: [{ start, end: reader.cursor }]

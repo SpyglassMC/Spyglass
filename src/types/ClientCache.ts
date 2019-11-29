@@ -1,7 +1,7 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 
-export const LatestCacheFileVersion = 1
+export const LatestCacheFileVersion = 2
 
 export interface CacheFile {
     cache: ClientCache,
@@ -36,7 +36,7 @@ export interface ClientCache {
     storages?: CacheCategory,
     tags?: CacheCategory,
     teams?: CacheCategory,
-    'colors/dust'?: CacheCategory
+    'colors'?: CacheCategory
 }
 
 export type CacheKey = keyof ClientCache
@@ -168,7 +168,7 @@ export function trimCache(cache: ClientCache) {
             type === 'tags' ||
             type === 'teams' ||
             type === 'storages' ||
-            type === 'colors/dust'
+            type === 'colors'
         ) {
             for (const id in category) {
                 const unit = category[id] as CacheUnit

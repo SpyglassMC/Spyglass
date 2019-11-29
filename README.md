@@ -86,9 +86,9 @@ execute if score @s test matches 5 run say 5
 
 ## Color Information
 
-DHP will display colors for `dust` particles. You can change the color by hovering your cursor on it.
+DHP will display colors for `dust` particles and `color` tags in NBTs. You can change the color by hovering your cursor on it.
 
-![color-particle](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-particle.gif)
+![color-information](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-information.gif)
 
 ## Hover Information
 

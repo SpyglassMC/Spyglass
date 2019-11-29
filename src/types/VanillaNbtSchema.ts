@@ -4,17 +4,18 @@ import { NbtTagTypeName } from './NbtTag'
 export type NbtSchema = { [key: string]: NbtSchemaNode | ValueList }
 
 export interface NodeBase {
-    readonly description?: string
-    readonly references?: { [key: string]: any }
-    readonly suggestions?: Array<
+    description?: string,
+    references?: { [key: string]: any },
+    suggestions?: Array<
         | string
         | { description?: string; value?: string }
         | { parser: string; params?: any[] }
-    >
+    >,
+    isColor?: boolean
 }
 
 export interface NbtNoPropertySchemaNode extends NodeBase {
-    readonly type:
+    type:
     | 'no-nbt'
     | 'byte'
     | 'short'
@@ -33,19 +34,19 @@ export interface NbtRefSchemaNode extends NodeBase {
 }
 
 export interface NbtListSchemaNode extends NodeBase {
-    readonly item: NbtSchemaNode
+    readonly item: NbtSchemaNode,
     readonly type: 'list'
 }
 
 export interface NbtCompoundSchemaNode extends NodeBase {
-    readonly child_ref?: string[]
-    readonly children?: { [key: string]: NbtSchemaNode }
-    readonly type: 'compound'
+    readonly child_ref?: string[],
+    readonly children?: { [key: string]: NbtSchemaNode },
+    readonly type: 'compound',
     readonly additionalChildren?: boolean
 }
 
 export interface NbtRootSchemaNode extends NodeBase {
-    readonly children: { [key: string]: NbtSchemaNode }
+    readonly children: { [key: string]: NbtSchemaNode },
     readonly type: 'root'
 }
 
