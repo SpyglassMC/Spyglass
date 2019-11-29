@@ -1,7 +1,8 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine } from '../../types/Line'
+import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine, lineToLintedString } from '../../types/Line'
 import ParsingError from '../../types/ParsingError'
+import { VanillaConfig } from '../../types/Config'
 
 describe('Line Tests', () => {
     describe('combineLine() Tests', () => {
@@ -126,12 +127,22 @@ describe('Line Tests', () => {
         })
     })
     describe('lineToLintedString() Tests', () => {
-        it('Should remove empty cache, errors or completions', () => {
+        it('Should return correctly', () => {
             const line = {
-                args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }
+                args: [
+                    {
+                        data: 'execute',
+                        parser: 'test'
+                    },
+                    {
+                        data: 'if',
+                        parser: 'test'
+                    }
+                ],
+                cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }
             }
-            saturatedLineToLine(line)
-            assert.deepStrictEqual(line, { args: [], hint: { fix: [], options: [] } })
+            const actual = lineToLintedString(line, VanillaConfig.lint)
+            assert(actual === 'execute if')
         })
     })
 })

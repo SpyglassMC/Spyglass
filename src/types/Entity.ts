@@ -76,8 +76,8 @@ export type SelectorParsedArgument = {
             [criterion: string]: boolean
         }
     },
-    gamemode?: GameMode[],
-    gamemodeNeg?: GameMode[],
+    gamemode?: (GameMode | '')[],
+    gamemodeNeg?: (GameMode | '')[],
     name?: string[],
     nameNeg?: string[],
     nbt?: NbtCompoundTag[],

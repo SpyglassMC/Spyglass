@@ -130,6 +130,16 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', expected as any))
                 assert.deepStrictEqual(actual.errors, [])
             })
+            it('Should return data with empty value', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const command = '@a[gamemode=]'
+                const expected = {
+                    gamemode: ['']
+                }
+                const actual = parser.parse(new StringReader(command), undefined, manager, undefined, cache)
+                assert.deepEqual(actual.data, new Entity(undefined, 'a', expected as any))
+                assert.deepStrictEqual(actual.errors, [])
+            })
             it('Should return data with all kinds of negativable array arguments', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const command = '@a[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={Item: {Count: 1b}}]'
@@ -295,7 +305,7 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return completions for ‘gamemode’ argument', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ]'), 15, manager, undefined, cache)
-                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', { gamemode: [''] }))
                 assert.deepStrictEqual(actual.completions, [
                     { label: '!' },
                     { label: 'adventure' },
@@ -307,7 +317,7 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return completions for negative ‘gamemode’ argument', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), 17, manager, undefined, cache)
-                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
+                assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', { gamemodeNeg: [''] }))
                 assert.deepStrictEqual(actual.completions, [
                     { label: 'adventure' },
                     { label: 'creative' },

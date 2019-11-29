@@ -147,19 +147,24 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         .skip()
                         .skipWhiteSpace()
                 }
+                let isValueEmpty = false
+                if (reader.peek() === ',' || reader.peek() === ']') {
+                    isValueEmpty = true
+                }
                 const result = parser.parse(reader, this.cursor, this.manager, this.config, this.cache)
-                if (result.data) {
-                    if (isNegative) {
-                        pushSafely(keyNeg, result)
-                    } else {
-                        pushSafely(key, result)
-                        if (key === 'type') {
-                            const id = (result.data as Identity).toString()
-                            if (id === 'minecraft:player') {
-                                containsNonPlayer = false
-                            } else {
-                                containsNonPlayer = true
-                            }
+                if (isValueEmpty) {
+                    result.errors = []
+                }
+                if (isNegative) {
+                    pushSafely(keyNeg, result)
+                } else {
+                    pushSafely(key, result)
+                    if (key === 'type') {
+                        const id = (result.data as Identity).toString()
+                        if (id === 'minecraft:player') {
+                            containsNonPlayer = false
+                        } else {
+                            containsNonPlayer = true
                         }
                     }
                 }
