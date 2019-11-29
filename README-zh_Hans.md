@@ -90,7 +90,7 @@ execute if score @s test matches 5 run say 5
 
 ## 颜色信息
 
-大憨批能够为 `dust` 粒子提供颜色信息，这是真正的憨批行为。你可以把光标悬浮在颜色上几秒钟，这样就能直接更改颜色了。
+大憨批能够为 `dust` 粒子以及一些 NBT 标签提供颜色信息，这是真正的憨批行为。你可以把光标悬浮在颜色上几秒钟，这样就能直接更改颜色了。
 
 ![color-particle](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/color-particle.gif)
 
@@ -146,7 +146,7 @@ execute if score @s test matches 5 run say 5
 
 # Q：大憨批就是个垃圾！
 
-请把您意见、建议、遇到的问题等发布在 [GitHub issues](https://github.com/SPGoding/datapack-language-server/issues)，或直接回复在论坛发布帖之下。发布在 GitHub 有利于本人对其进行追踪，并便于将您加入到贡献者列表中；发布在论坛有利于我个人给予您相应积分奖励。如果您乐意，当然可以**在两处都进行反馈**。
+请把您的意见、建议、遇到的问题等发布在 [GitHub issues](https://github.com/SPGoding/datapack-language-server/issues)，或直接回复在论坛发布帖之下。发布在 GitHub 有利于本人对其进行追踪，并便于将您加入到贡献者列表中；发布在论坛有利于我个人给予您相应积分奖励。如果您乐意，当然可以**在两处都进行反馈**。
 
 # Q：大憨批真好用！
 
