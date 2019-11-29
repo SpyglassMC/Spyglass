@@ -134,13 +134,13 @@ Additionally, if you rename a namespaced ID with file definition (e.g. the ID fo
 
 ## Formatting and Linting
 
-This is WIP.
-
-Your command will be formatted after you commit `\n` character. Alternatively, you can trigger it manually by pressing Alt + Shift + F or other configured hotkey.
+You can format the current function by pressing Shift + Alt + F or other configured hotkey.
 
 There are several linting rules you can set in the configuration settings.
 
-**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the settings.
+**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the `datapackLanguageServer.lint.enableFormatting` setting.
+
+![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
 ## Configuration Settings
 

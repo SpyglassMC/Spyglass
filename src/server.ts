@@ -5,11 +5,12 @@ import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, Foldin
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
 import Config from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
-import Line from './types/Line'
+import Line, { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
 import { Files } from 'vscode-languageserver'
 import Identity from './types/Identity'
+import { toLintedString } from './utils/utils'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
@@ -43,10 +44,7 @@ connection.onInitialize(async ({ workspaceFolders, capabilities }) => {
                 didChangeWatchedFiles: true,
                 documentLinkProvider: true,
                 documentHighlightProvider: true,
-                // documentFormattingProvider: true,
-                // documentOnTypeFormattingProvider: {
-                //     firstTrigge rCharacter: '\n'
-                // },
+                documentFormattingProvider: true,
                 foldingRangeProvider: true,
                 colorProvider: true,
                 // hoverProvider: true,
@@ -518,6 +516,30 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
         i += 1
     }
     return foldingRanges
+})
+
+connection.onDocumentFormatting(async ({ textDocument: { uri } }) => {
+    const rel = getRelFromUri(uri)
+    const config = await getConfigFromRel(rel)
+    if (config.lint.enableFormatting) {
+        const lines = await getLinesFromRel(rel)
+        const strings = stringsOfRel.get(rel) as string[]
+        const ansStrings = []
+        for (let i = 0; i < lines.length; i++) {
+            const string = strings[i]
+            const line = lines[i]
+            if (line.errors && line.errors.length > 0) {
+                return null
+            }
+            const prefix = string.match(/^[\s\t]*/) ? (string.match(/^[\s\t]*/) as Array<string>)[0] : ''
+            ansStrings.push(prefix + lineToLintedString(line, config.lint))
+        }
+        return [{
+            range: { start: { line: 0, character: 0 }, end: { line: Number.MAX_VALUE, character: Number.MAX_VALUE } },
+            newText: ansStrings.join('\n')
+        }]
+    }
+    return null
 })
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {

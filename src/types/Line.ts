@@ -2,6 +2,8 @@ import { ClientCache, combineCache } from './ClientCache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
 import ArgumentNode from './ArgumentNode'
+import { toLintedString } from '../utils/utils'
+import { LintConfig } from './Config'
 
 /**
  * Represent a parsed line in a function.
@@ -109,4 +111,8 @@ export function saturatedLineToLine(line: SaturatedLine) {
     if (line.completions.length === 0) {
         delete line.completions
     }
+}
+
+export function lineToLintedString(line: Line, lint: LintConfig) {
+    return line.args.map(v => toLintedString(v.data, lint)).join(' ')
 }

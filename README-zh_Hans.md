@@ -134,7 +134,13 @@ execute if score @s test matches 5 run say 5
 
 ## 格式化与校验
 
-不好意思，没做。
+您可以通过按下 Shift + Alt + F 或其他自行设定的快捷键来格式化当前文档。
+
+您可以在配置中设置一些格式化与校验的规则。
+
+**警告**：重命名可能导致您的函数内容损坏，请及时备份。使用风险请自行承担。格式化功能默认是禁用的，如果您要使用，应当在设置界面中勾选 `datapackLanguageServer.lint.enableFormatting`。
+
+![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
 ## 配置
 

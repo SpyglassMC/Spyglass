@@ -125,4 +125,13 @@ describe('Line Tests', () => {
             })
         })
     })
+    describe('lineToLintedString() Tests', () => {
+        it('Should remove empty cache, errors or completions', () => {
+            const line = {
+                args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }
+            }
+            saturatedLineToLine(line)
+            assert.deepStrictEqual(line, { args: [], hint: { fix: [], options: [] } })
+        })
+    })
 })
