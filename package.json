@@ -96,13 +96,12 @@
                 "datapackLanguageServer.env.permissionLevel": {
                     "type": "number",
                     "enum": [
-                        0,
                         1,
                         2,
                         3,
                         4
                     ],
-                    "markdownDescription": "`op-permission-level` defined in `server.properties`.",
+                    "markdownDescription": "`function-permission-level` defined in `server.properties`.",
                     "default": 2
                 },
                 "datapackLanguageServer.env.version": {

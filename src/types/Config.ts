@@ -3,10 +3,10 @@ import NamingConventionConfig from './NamingConventionConfig'
 
 export type EnvConfig = {
     /**
-     * `op-permission-level` defined in `server.properties`.  
+     * `function-permission-level` defined in `server.properties`.  
      * @default 2
      */
-    permissionLevel: 0 | 1 | 2 | 3 | 4,
+    permissionLevel: 1 | 2 | 3 | 4,
     /**
      * Game version.  
      * @default 'JE1.15'
