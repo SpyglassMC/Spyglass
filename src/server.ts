@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, TextDocument } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
 import Config from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
@@ -15,6 +15,7 @@ import { toLintedString } from './utils/utils'
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
 const stringsOfRel = new Map<string, string[]>()
+const lineBreakOfRel = new Map<string, '\n' | '\r\n'>()
 const versionOfRel = new Map<string, number | null>()
 const configOfRel = new Map<string, Config>()
 
@@ -26,7 +27,7 @@ let dotPath: string | undefined
 let cachePath: string | undefined
 let dataPath: string | undefined
 
-connection.onInitialize(async ({ workspaceFolders, capabilities }) => {
+connection.onInitialize(async ({ workspaceFolders }) => {
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
@@ -142,7 +143,7 @@ const cacheFileOperations = {
         let lines = linesOfRel.get(rel)
         if (!lines) {
             lines = []
-            const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split('\n')
+            const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split(/\r?\n/)
             const config = await getConfigFromRel(rel)
             for (const string of strings) {
                 parseString(string, lines, config)
@@ -315,7 +316,12 @@ async function getLinesFromRel(rel: string): Promise<Line[]> {
 
 connection.onDidOpenTextDocument(({ textDocument: { text, uri, version } }) => {
     const rel = getRelFromUri(uri)
-    stringsOfRel.set(rel, text.split('\n'))
+    if (text.indexOf('\r\n') !== -1) {
+        lineBreakOfRel.set(rel, '\r\n')
+    } else {
+        lineBreakOfRel.set(rel, '\n')
+    }
+    stringsOfRel.set(rel, text.split(/\r?\n/))
     versionOfRel.set(rel, version)
     updateDiagnostics(rel, uri)
 })
@@ -334,10 +340,14 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
         const strings = stringsOfRel.get(rel) as string[]
         const lines = await getLinesFromRel(rel)
 
+        if (changeText.indexOf('\r\n') !== -1) {
+            lineBreakOfRel.set(rel, '\r\n')
+        }
+
         const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
             }${changeText
-            }${strings.slice(endLine).join('\n').slice(endChar)}`
-        const stringsAfterStartLine = stringAfterStartLine.split('\n')
+            }${strings.slice(endLine).join(lineBreakOfRel.get(rel)).slice(endChar)}`
+        const stringsAfterStartLine = stringAfterStartLine.split(/\r?\n/)
 
         strings.splice(startLine)
         strings.push(...stringsAfterStartLine)
@@ -358,6 +368,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     linesOfRel.delete(rel)
     stringsOfRel.delete(rel)
+    lineBreakOfRel.delete(rel)
     versionOfRel.delete(rel)
     configOfRel.delete(rel)
 })
@@ -536,7 +547,7 @@ connection.onDocumentFormatting(async ({ textDocument: { uri } }) => {
         }
         return [{
             range: { start: { line: 0, character: 0 }, end: { line: Number.MAX_VALUE, character: Number.MAX_VALUE } },
-            newText: ansStrings.join('\n')
+            newText: ansStrings.join(lineBreakOfRel.get(rel))
         }]
     }
     return null
