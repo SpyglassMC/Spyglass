@@ -1,3 +1,8 @@
+# [v1.10.2](https://github.com/SPGoding/datapack-language-server/compare/v1.10.1...v1.10.2) (2019-11-30)
+
+## 🐛 Bug Fixes
+- [`8a7aaf9`](https://github.com/SPGoding/datapack-language-server/commit/8a7aaf9)  Fix not activating (Issues: [`#189`](https://github.com/SPGoding/datapack-language-server/issues/189))
+
 # [v1.10.1](https://github.com/SPGoding/datapack-language-server/compare/v1.10.0...v1.10.1) (2019-11-29)
 
 ## 🐛 Bug Fixes
