@@ -1,3 +1,8 @@
+# [v1.10.3](https://github.com/SPGoding/datapack-language-server/compare/v1.10.2...v1.10.3) (2019-11-30)
+
+## 🐛 Bug Fixes
+- [`2e5652a`](https://github.com/SPGoding/datapack-language-server/commit/2e5652a)  Fix CRLF (Issues: [`#190`](https://github.com/SPGoding/datapack-language-server/issues/190))
+
 # [v1.10.2](https://github.com/SPGoding/datapack-language-server/compare/v1.10.1...v1.10.2) (2019-11-30)
 
 ## 🐛 Bug Fixes
