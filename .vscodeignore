@@ -3,7 +3,7 @@
 
 !node_modules/**
 !lib/*.js
-!lib/*/**.js
+!lib/**/*.js
 !CHANGELOG.md
 !icon.png
 !LICENSE
