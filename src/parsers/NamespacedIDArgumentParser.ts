@@ -70,11 +70,31 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             regularCandidates.push(...Object.keys(registry.entries))
         }
 
-        //#region Completions
         const namespaces = new Set<string>()
         const folders = new Set<string>()
         const files = new Set<string>()
-        if (cursor === reader.cursor) {
+
+        //#region Data
+        let namespace = Identity.DefaultNamespace
+        const paths: string[] = []
+
+        // Whether this is a tag ID.
+        if (reader.peek() === Identity.TagSymbol) {
+            reader.skip()
+            isTag = true
+            if (!this.allowTag) {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    'tags are not allowed here'
+                ))
+            }
+        }
+        let candidates = isTag ? tagCandidates : regularCandidates
+
+        // Parse the namespace or the first part of path.
+        let path0 = reader.readUnquotedString()
+        //#region Completions
+        if (start <= cursor && cursor <= reader.cursor) {
             for (const candidate of tagCandidates) {
                 const namespace = candidate.split(':')[0]
                 const paths = candidate.split(':')[1].split('/')
@@ -103,45 +123,17 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             }
         }
         //#endregion
-
-        //#region Data
-        let namespace = Identity.DefaultNamespace
-        const paths: string[] = []
-
-        // Whether this is a tag ID.
-        if (reader.peek() === Identity.TagSymbol) {
-            reader.skip()
-            isTag = true
-            if (!this.allowTag) {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    'tags are not allowed here'
-                ))
-            }
-        }
-        let candidates = isTag ? tagCandidates : regularCandidates
-
-        if (!reader.canRead()) {
-            ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false))
-        } else {
-            // Parse the namespace or the first part of path.
-            let path0 = reader.readUnquotedString()
+        if (path0) {
             if (reader.peek() === ':') {
                 reader.skip()
+                const start = reader.cursor
                 namespace = path0
-                // if (namespace === Identity.DefaultNamespace && config.lint.omitDefaultNamespace) {
-                //     ans.errors.push(new ParsingError(
-                //         { start, end: reader.cursor },
-                //         'default namespace is preferred to be omitted',
-                //         true,
-                //         DiagnosticSeverity.Warning
-                //     ))
-                // }
+                path0 = reader.readUnquotedString()
                 //#region Completions
                 candidates = candidates
                     .filter(v => v.startsWith(`${namespace}:`))
                     .map(v => v.slice(namespace.length + 1))
-                if (cursor === reader.cursor) {
+                if (start <= cursor && cursor <= reader.cursor) {
                     for (const candidate of candidates) {
                         const paths = candidate.split(Identity.Sep)
 
@@ -153,7 +145,6 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     }
                 }
                 //#endregion
-                path0 = reader.readUnquotedString()
             } else {
                 candidates = candidates
                     .filter(v => v.startsWith(`${Identity.DefaultNamespace}:`))
@@ -164,23 +155,17 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                         'default namespace cannot be omitted here'
                     ))
                 }
-                // if (!config.lint.omitDefaultNamespace) {
-                //     ans.errors.push(new ParsingError(
-                //         { start, end: reader.cursor },
-                //         'default namespace is preferred to be kept',
-                //         true,
-                //         DiagnosticSeverity.Warning
-                //     ))
-                // }
             }
             paths.push(path0)
 
             // Parse the following paths.
             while (reader.peek() === Identity.Sep) {
                 reader.skip()
+                const start = reader.cursor
+                const part = reader.readUnquotedString()
                 //#region Completions
                 candidates = candidates.filter(v => v.startsWith(paths.join(Identity.Sep)))
-                if (cursor === reader.cursor) {
+                if (start <= cursor && cursor <= reader.cursor) {
                     for (const candidate of candidates) {
                         const candidatePaths = candidate.split(Identity.Sep)
 
@@ -192,13 +177,13 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     }
                 }
                 //#endregion
-                paths.push(
-                    reader.readUnquotedString()
-                )
+                paths.push(part)
             }
 
             ans.data = new Identity(namespace, paths, isTag)
             stringID = ans.data.toString()
+        } else {
+            ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false))
         }
         //#endregion
 
