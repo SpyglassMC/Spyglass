@@ -698,20 +698,16 @@ connection.onDocumentLinks(async ({ textDocument: { uri } }) => {
                 const category = cache[type]
                 for (const id in category) {
                     if (category.hasOwnProperty(id)) {
-                        try {
-                            const toLink = (v: CachePosition) => ({
-                                range: {
-                                    start: { line: i, character: v.start },
-                                    end: { line: i, character: v.end }
-                                },
-                                target: getUriFromRel(Identity.fromString(id).toRel(type))
-                            })
-                            const unit = category[id] as CacheUnit
-                            ans.push(...unit.def.map(toLink))
-                            ans.push(...unit.ref.map(toLink))
-                        } catch (ignored) {
-                            continue
-                        }
+                        const toLink = (v: CachePosition) => ({
+                            range: {
+                                start: { line: i, character: v.start },
+                                end: { line: i, character: v.end }
+                            },
+                            target: getUriFromRel(Identity.fromString(id).toRel(type))
+                        })
+                        const unit = category[id] as CacheUnit
+                        ans.push(...unit.def.map(toLink))
+                        ans.push(...unit.ref.map(toLink))
                     }
                 }
             }
