@@ -62,8 +62,8 @@ export default class Identity implements Lintable {
      * datapack category.
      */
     /* istanbul ignore next */
-    static async fromRel(rel: string):
-        Promise<{ id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' }> {
+    static fromRel(rel: string):
+        { id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } {
         rel = path.normalize(rel)
         const segs = rel.split(path.sep)
         const ext = path.extname(rel)

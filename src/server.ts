@@ -3,23 +3,24 @@ import * as path from 'path'
 import { URI } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, TextDocument } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
-import Config from './types/Config'
+import Config, { VanillaConfig } from './types/Config'
 import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line, { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
 import { Files } from 'vscode-languageserver'
 import Identity from './types/Identity'
-import { toLintedString } from './utils/utils'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
 const stringsOfRel = new Map<string, string[]>()
 const lineBreakOfRel = new Map<string, '\n' | '\r\n'>()
 const versionOfRel = new Map<string, number | null>()
+const hasParsedInRealConfigOfRel = new Map<string, boolean | undefined>()
 const configOfRel = new Map<string, Config>()
 
 const manager = new ArgumentParserManager()
+let hasRealConfig = false
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 let workspaceFolder: WorkspaceFolder | undefined
 let workspaceFolderPath: string | undefined
@@ -35,6 +36,26 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
         connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
 
+        dotPath = path.join(workspaceFolderPath as string, '.datapack')
+        cachePath = path.join(dotPath, 'cache.json')
+        dataPath = path.join(workspaceFolderPath as string, 'data')
+
+        connection.console.info(`dotPath = ${dotPath}`)
+        connection.console.info(`cachePath = ${cachePath}`)
+        connection.console.info(`dataPath = ${dataPath}`)
+        if (!fs.pathExistsSync(dotPath)) {
+            fs.mkdirpSync(dotPath)
+        }
+        if (fs.existsSync(cachePath)) {
+            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+            if (cacheFile.version !== LatestCacheFileVersion) {
+                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+            }
+        }
+        await updateCacheFile(cacheFile, workspaceFolderPath as string)
+        saveCacheFile()
+
+        hasRealConfig = true
         return {
             capabilities: {
                 completionProvider: {
@@ -64,6 +85,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         } as InitializeResult
     }
 
+    hasRealConfig = true
     return {
         capabilities: {
             completionProvider: {
@@ -81,27 +103,6 @@ connection.onInitialize(async ({ workspaceFolders }) => {
             }
         }
     } as InitializeResult
-})
-
-connection.onInitialized(async () => {
-    dotPath = path.join(workspaceFolderPath as string, '.datapack')
-    cachePath = path.join(dotPath, 'cache.json')
-    dataPath = path.join(workspaceFolderPath as string, 'data')
-
-    connection.console.info(`dotPath = ${dotPath}`)
-    connection.console.info(`cachePath = ${cachePath}`)
-    connection.console.info(`dataPath = ${dataPath}`)
-    if (!fs.pathExistsSync(dotPath)) {
-        fs.mkdirpSync(dotPath)
-    }
-    if (fs.existsSync(cachePath)) {
-        cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
-        if (cacheFile.version !== LatestCacheFileVersion) {
-            cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
-        }
-    }
-    await updateCacheFile(cacheFile, workspaceFolderPath as string)
-    saveCacheFile()
 })
 
 setInterval(saveCacheFile, 30000)
@@ -193,7 +194,7 @@ const cacheFileOperations = {
 async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string) {
     for (const rel in cacheFile.files) {
         const abs = path.join(workspaceFolderPath, rel)
-        const { id, category: key } = await Identity.fromRel(rel)
+        const { id, category: key } = Identity.fromRel(rel)
         if (!(await fs.pathExists(abs))) {
             cacheFileOperations.fileDeleted(rel, key, id)
             delete cacheFile.files[rel]
@@ -220,7 +221,7 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
                     await walk(dir)
                 } else {
                     const rel = path.relative(workspaceFolderPath, dir)
-                    const { id, category: key } = await Identity.fromRel(rel)
+                    const { id, category: key } = Identity.fromRel(rel)
                     if (!cacheFile.files[rel]) {
                         cacheFileOperations.fileAdded(key, id)
                         cacheFile.files[rel] = stat.mtimeMs
@@ -262,10 +263,11 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
     )
 
     trimCache(cacheFile.cache)
+    hasRealConfig = true
 }
 
 function parseString(string: string, lines: Line[], config: Config) {
-    if (string.match(/^\s*$/)) {
+    if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
         const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
@@ -291,18 +293,24 @@ async function updateDiagnostics(rel: string, uri: string) {
 async function getConfigFromRel(rel: string): Promise<Config> {
     let ans = configOfRel.get(rel)
     if (!ans) {
-        ans = await connection.workspace.getConfiguration({
-            scopeUri: getUriFromRel(rel),
-            section: 'datapackLanguageServer'
-        }) as Config
-        configOfRel.set(rel, ans)
+        if (hasRealConfig) {
+            ans = await connection.workspace.getConfiguration({
+                scopeUri: getUriFromRel(rel),
+                section: 'datapackLanguageServer'
+            }) as Config
+            hasParsedInRealConfigOfRel.set(rel, hasRealConfig)
+            configOfRel.set(rel, ans)
+        } else {
+            return VanillaConfig
+        }
     }
     return ans
 }
 
 async function getLinesFromRel(rel: string): Promise<Line[]> {
     let ans = linesOfRel.get(rel)
-    if (!ans) {
+    if (!ans || (!hasParsedInRealConfigOfRel.get(rel) && hasRealConfig)) {
+        hasParsedInRealConfigOfRel.set(rel, hasRealConfig)
         ans = []
         const config = await getConfigFromRel(rel)
         const strings = stringsOfRel.get(rel) as string[]
@@ -379,7 +387,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     for (const { uri, type } of changes) {
         const rel = getRelFromUri(uri)
         const abs = getAbsFromRel(rel)
-        const { category, id } = await Identity.fromRel(rel)
+        const { category, id } = Identity.fromRel(rel)
 
         switch (type) {
             case FileChangeType.Created:
