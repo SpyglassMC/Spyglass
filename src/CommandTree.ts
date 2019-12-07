@@ -2309,7 +2309,7 @@ export const VanillaTree: CommandTree = {
                             parser: new LiteralArgumentParser('score'),
                             children: {
                                 score: {
-                                    template: 'templates.single_score',
+                                    template: 'templates.multiple_score',
                                     children: {
                                         subcommand: {
                                             redirect: 'execute_subcommand'

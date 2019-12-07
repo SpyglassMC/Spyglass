@@ -385,6 +385,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`BW: ${JSON.stringify(cacheFile)}`)
     // connection.console.log(`WC: ${JSON.stringify(changes)}`)
     for (const { uri, type } of changes) {
+        // connection.console.log(JSON.stringify({ uri, type }))
         const rel = getRelFromUri(uri)
         const abs = getAbsFromRel(rel)
         const { category, id } = Identity.fromRel(rel)
