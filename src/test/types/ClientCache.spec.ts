@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, getFromCachedFileTree, setForCachedFileTree, delFromCachedFileTree, walkInCachedFileTree } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 
 describe('ClientCache Tests', () => {
@@ -19,7 +19,7 @@ describe('ClientCache Tests', () => {
     describe('removeCacheUnit() Tests', () => {
         it('Should remove the unit', () => {
             const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
-            const actual = removeCacheUnit(cache, 'entities', 'foo')
+            removeCacheUnit(cache, 'entities', 'foo')
             assert.deepEqual(cache, {
                 entities: {}
             })
@@ -28,7 +28,7 @@ describe('ClientCache Tests', () => {
     describe('removeCachePosition() Tests', () => {
         it('Should remove the pos', () => {
             const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, rel: 'data/minecraft/functions/a.mcfunction' }], ref: [] } } }
-            const actual = removeCachePosition(cache, 'data/minecraft/functions/a.mcfunction')
+            removeCachePosition(cache, 'data/minecraft/functions/a.mcfunction')
             assert.deepEqual(cache, {
                 entities: { foo: { def: [], ref: [] } }
             })
@@ -344,6 +344,89 @@ describe('ClientCache Tests', () => {
         it('Should return false', () => {
             const actual = isNamespacedType('entities')
             assert(actual === false)
+        })
+    })
+    describe('getFromCachedFileTree() Tests', () => {
+        it('Should return the timestamp', () => {
+            const cacheFile: any = {
+                foo: {
+                    bar: {
+                        'baz.json': 123
+                    }
+                }
+            }
+            const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')
+            assert.deepEqual(actual, 123)
+        })
+        it('Should return undefined', () => {
+            const cacheFile: any = {}
+            const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')
+            assert.deepEqual(actual, undefined)
+        })
+    })
+    describe('setForCachedFileTree() Tests', () => {
+        it('Should set the timestamp', () => {
+            const cacheFile: any = {
+                foo: {}
+            }
+            setForCachedFileTree(cacheFile, 'foo/bar/baz.json', 233)
+            assert.deepEqual(cacheFile, {
+                foo: {
+                    bar: {
+                        'baz.json': 233
+                    }
+                }
+            })
+        })
+    })
+    describe('delFromCachedFileTree() Tests', () => {
+        it('Should del the timestamp', () => {
+            const cacheFile: any = {
+                foo: {
+                    bar: {
+                        baz: {
+                            abc: {
+                                'qux.json': 114
+                            }
+                        },
+                        'qux.json': 514
+                    }
+                }
+            }
+            delFromCachedFileTree(cacheFile, 'foo/bar/baz/abc/qux.json')
+            assert.deepEqual(cacheFile, {
+                foo: {
+                    bar: {
+                        'qux.json': 514
+                    }
+                }
+            })
+        })
+    })
+    describe('walkInCachedFileTree() Tests', () => {
+        it('Should get the relative paths', () => {
+            const cacheFile: any = {
+                foo: {
+                    bar: {
+                        baz: {
+                            abc: {
+                                'qux.json': 114
+                            }
+                        },
+                        'qux.json': 514
+                    }
+                },
+                'foo.json': 123
+            }
+            const actual: string[] = []
+            walkInCachedFileTree(cacheFile, rel => {
+                actual.push(rel)
+            }, '/')
+            assert.deepEqual(actual, [
+                'foo/bar/baz/abc/qux.json',
+                'foo/bar/qux.json',
+                'foo.json'
+            ])
         })
     })
 })
