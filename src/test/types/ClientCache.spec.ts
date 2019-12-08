@@ -358,6 +358,19 @@ describe('ClientCache Tests', () => {
             const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')
             assert.deepEqual(actual, 123)
         })
+        it('Should return the object', () => {
+            const cacheFile: any = {
+                foo: {
+                    bar: {
+                        'baz.json': 123
+                    }
+                }
+            }
+            const actual = getFromCachedFileTree(cacheFile, 'foo/bar')
+            assert.deepEqual(actual, {
+                'baz.json': 123
+            })
+        })
         it('Should return undefined', () => {
             const cacheFile: any = {}
             const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')

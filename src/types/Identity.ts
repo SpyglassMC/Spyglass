@@ -1,6 +1,6 @@
 import * as path from 'path'
 import Lintable, { ToLintedString } from './Lintable'
-import { ClientCache } from './ClientCache'
+import { ClientCache, CacheKey, isFileType } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 
@@ -58,38 +58,54 @@ export default class Identity implements Lintable {
 
     /**
      * 
-     * @param rel The relative path from the workspace. You should guarantee that the path is in a valid
+     * @param rel The relative path from the workspace. Returns `undefined` if the path is in an invalid
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string):
-        { id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } {
+    static fromRel(rel: string): { id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
         rel = path.normalize(rel)
-        const segs = rel.split(path.sep)
+        const segs = rel.split(/[/\\]/)
         const ext = path.extname(rel)
-        const side = segs[0] as 'assets' | 'data'
-        const namespace = segs[1]
-        const datapackCategory = segs[2]
-        const paths = segs.slice(3)
-        paths[paths.length - 1] = path.basename(paths[paths.length - 1], ext)
-        const id = new Identity(namespace, paths)
-        let category: keyof ClientCache
-        if (datapackCategory === 'tags') {
-            switch (paths[0]) {
-                case 'entity_types':
-                    category = 'tags/entityTypes'
-                    break
-                default:
-                    category = `tags/${paths[0]}` as keyof ClientCache
-                    break
+        if (segs[0] === 'assets' || segs[0] === 'data') {
+            const side = segs[0]
+            const namespace = segs[1]
+            const datapackCategory = segs[2]
+            const paths = segs.slice(3)
+            if (side && namespace && datapackCategory && paths.length > 0) {
+                paths[paths.length - 1] = path.basename(paths[paths.length - 1], ext)
+                const id = new Identity(namespace, paths)
+                let category: keyof ClientCache
+                if (datapackCategory === 'tags') {
+                    switch (paths[0]) {
+                        case 'entity_types':
+                            category = 'tags/entityTypes'
+                            break
+                        case 'blocks':
+                        case 'fluids':
+                        case 'functions':
+                        case 'items':
+                            category = `tags/${paths[0]}` as CacheKey
+                            break
+                        default:
+                            return undefined
+                    }
+                    paths.splice(0, 1)
+                } else if (datapackCategory === 'loot_tables') {
+                    category = 'lootTables'
+                } else if (
+                    datapackCategory === 'advancements' ||
+                    datapackCategory === 'functions' ||
+                    datapackCategory === 'predicates' ||
+                    datapackCategory === 'recipes'
+                ) {
+                    category = datapackCategory
+                } else {
+                    return undefined
+                }
+                return { id, category, ext, side }
             }
-            paths.splice(0, 1)
-        } else if (datapackCategory === 'loot_tables') {
-                category = 'lootTables'
-        } else {
-            category = datapackCategory as keyof ClientCache
         }
-        return { id, category, ext, side }
+        return undefined
     }
 
     static fromString(str: string) {
@@ -102,5 +118,12 @@ export default class Identity implements Lintable {
         } else {
             return new Identity(parts[0], parts[1].split(Identity.Sep))
         }
+    }
+
+    static isExtValid(ext: string, category: CacheKey) {
+        return (
+            (category === 'functions' && ext === '.mcfunction') ||
+            (category !== 'functions' && ext === '.json')
+        )
     }
 }

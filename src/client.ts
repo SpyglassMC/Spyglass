@@ -50,13 +50,7 @@ export function activate(context: ExtensionContext) {
     if (workspace.workspaceFolders) {
         (clientOptions.synchronize as any).fileEvents.push(
             workspace.createFileSystemWatcher(
-                new RelativePattern(workspace.workspaceFolders[0], 'data/*/{advancements,loot_tables,predicates,recipes}/**/*.json')
-            ),
-            workspace.createFileSystemWatcher(
-                new RelativePattern(workspace.workspaceFolders[0], 'data/*/tags/{blocks,entity_types,fluids,functions,items}/**/*.json')
-            ),
-            workspace.createFileSystemWatcher(
-                new RelativePattern(workspace.workspaceFolders[0], 'data/*/functions/**/*.mcfunction')
+                new RelativePattern(workspace.workspaceFolders[0], 'data/**/*')
             ))
     }
 

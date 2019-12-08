@@ -66,7 +66,7 @@ describe('Identity Tests', () => {
     })
     describe('static fromRel() Tests', () => {
         it('Should return correctly', async () => {
-            const { id, ext, side, category } = await Identity.fromRel('data/spgoding/functions/foo/bar.mcfunction')
+            const { id, ext, side, category } = Identity.fromRel('data/spgoding/functions/foo/bar.mcfunction') as any
             assert(id.toString() === 'spgoding:foo/bar')
             assert(ext === '.mcfunction')
             assert(side === 'data')
@@ -85,6 +85,24 @@ describe('Identity Tests', () => {
         it('Should convert from id which begins with a tag symbol', () => {
             const id = Identity.fromString('#spgoding:foo/bar')
             assert(`${id}` === 'spgoding:foo/bar')
+        })
+    })
+    describe('static isExtValid() Tests', () => {
+        it('Should return true for mcfunction', async () => {
+            const actual = Identity.isExtValid('.mcfunction', 'functions')
+            assert(actual === true)
+        })
+        it('Should return false for mcfunction', async () => {
+            const actual = Identity.isExtValid('.json', 'functions')
+            assert(actual === false)
+        })
+        it('Should return true for other files', async () => {
+            const actual = Identity.isExtValid('.json', 'advancements')
+            assert(actual === true)
+        })
+        it('Should return false for other files', async () => {
+            const actual = Identity.isExtValid('.mcfunction', 'advancements')
+            assert(actual === false)
         })
     })
 })
