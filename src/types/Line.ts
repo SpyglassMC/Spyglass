@@ -63,7 +63,7 @@ export function combineLine(base: Line, override: Line): Line {
     }
     // Cache.
     if (base.cache || override.cache) {
-        base.cache = combineCache(base.cache, override.cache)
+        combineCache(base.cache, override.cache)
     }
     // Completions.
     if ((base.completions && base.completions.length !== 0) || (override.completions && override.completions.length !== 0)) {
@@ -93,7 +93,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     base.hint.fix = [...base.hint.fix, ...override.hint.fix]
     base.hint.options = [...base.hint.options, ...override.hint.options]
     // Cache.
-    base.cache = combineCache(base.cache, override.cache)
+    combineCache(base.cache, override.cache)
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.

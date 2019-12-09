@@ -192,7 +192,7 @@ export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) 
  * @param override Overriding cache.
  */
 export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { rel: string, line: number }) {
-    const ans: ClientCache = JSON.parse(JSON.stringify(base))
+    const ans: ClientCache = base
     function initUnit(type: CacheKey, id: string) {
         ans[type] = getSafeCategory(ans, type)
         const ansCategory = ans[type] as CacheCategory

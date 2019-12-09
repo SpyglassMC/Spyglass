@@ -28,7 +28,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, cursor = -1, _manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             errors: [],

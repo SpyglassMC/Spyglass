@@ -49,7 +49,7 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
 
 export function combineArgumentParserResult(base: ArgumentParserResult<any>, override: ArgumentParserResult<any>): void {
     // Cache.
-    base.cache = combineCache(base.cache, override.cache)
+    combineCache(base.cache, override.cache)
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.

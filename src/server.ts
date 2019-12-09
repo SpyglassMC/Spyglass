@@ -150,13 +150,13 @@ const cacheFileOperations = {
                 parseString(string, lines, config)
             }
         }
-        let cacheOfLines: ClientCache = {}
+        const cacheOfLines: ClientCache = {}
         let i = 0
         for (const line of lines) {
-            cacheOfLines = combineCache(cacheOfLines, line.cache, { rel, line: i })
+            combineCache(cacheOfLines, line.cache, { rel, line: i })
             i++
         }
-        cacheFile.cache = combineCache(cacheFile.cache, cacheOfLines)
+        combineCache(cacheFile.cache, cacheOfLines)
     },
     //#endregion
 
@@ -175,15 +175,18 @@ const cacheFileOperations = {
 
     // Hooks.
     fileAdded: async (type: CacheKey, id: Identity) => {
+        // console.log(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
     },
     fileModified: async (rel: string, abs: string, type: CacheKey) => {
+        // console.log(`Modified ${rel} ${type}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
             await cacheFileOperations.combineCacheOfLines(rel, abs)
         }
     },
     fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
+        // console.log(`Deleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
         }
@@ -209,6 +212,7 @@ async function walk(workspaceFolderPath: string, abs: string, cb: (dir: string, 
 
 async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string) {
     await walkInCachedFileTree(cacheFile.files, async rel => {
+        // console.log(`Walked ${rel}`)
         const abs = path.join(workspaceFolderPath, rel)
         const result = Identity.fromRel(rel)
         if (result) {
@@ -221,13 +225,12 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
                 const lastModified = stat.mtimeMs
                 const lastUpdated = getFromCachedFileTree(cacheFile.files, rel) as number
                 if (lastModified > lastUpdated) {
-                    cacheFileOperations.fileModified(rel, abs, key)
+                    await cacheFileOperations.fileModified(rel, abs, key)
                     setForCachedFileTree(cacheFile.files, rel, lastModified)
                 }
             }
         }
-    }, path.sep
-    )
+    }, path.sep)
 
     const promises: Promise<void>[] = []
     const addedFiles: [string, string, CacheKey][] = []
