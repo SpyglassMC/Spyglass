@@ -22,7 +22,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     constructor(
         private readonly amount: 'single' | 'multiple',
         private readonly type: 'players' | 'entities',
-        private readonly greedy = false,
+        private readonly isScoreHolder = false,
         private readonly schema = VanillaNbtSchema
     ) { super() }
 
@@ -62,7 +62,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
         // Data
         let plain
-        if (this.greedy) {
+        if (this.isScoreHolder) {
             plain = reader.readUntilOrEnd(' ')
         } else {
             plain = reader.readUnquotedString()
@@ -74,6 +74,21 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         // Errors
         if (!plain) {
             ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected an entity but got nothing', false))
+        }
+        if (this.isScoreHolder && plain.length > 40) {
+            ans.errors.push(
+                new ParsingError(
+                    { start, end: start + plain.length },
+                    `‘${plain}’ exceeds the max length of a score holder name, which is 40`
+                )
+            )
+        } else if (!this.isScoreHolder && plain.length > 16) {
+            ans.errors.push(
+                new ParsingError(
+                    { start, end: start + plain.length },
+                    `‘${plain}’ exceeds the max length of an entity name, which is 16`
+                )
+            )
         }
 
         // Cache

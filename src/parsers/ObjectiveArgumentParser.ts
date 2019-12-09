@@ -72,7 +72,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + value.length },
-                    `‘${value}’ exceeds the max length of objective name`
+                    `‘${value}’ exceeds the max length of an objective name, which is 16`
                 ))
             }
         }
