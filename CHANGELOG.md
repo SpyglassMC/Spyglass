@@ -1,3 +1,11 @@
+# [v1.10.4](https://github.com/SPGoding/datapack-language-server/compare/v1.10.3...v1.10.4) (2019-12-09)
+
+## 🐛 Bug Fixes
+- [`761b6db`](https://github.com/SPGoding/datapack-language-server/commit/761b6db)  Fix not providing completions for namespaced IDs (Issues: [`#192`](https://github.com/SPGoding/datapack-language-server/issues/192))
+- [`2a5babc`](https://github.com/SPGoding/datapack-language-server/commit/2a5babc)  Fix not always showing document links (Issues: [`#191`](https://github.com/SPGoding/datapack-language-server/issues/191))
+- [`cbce65b`](https://github.com/SPGoding/datapack-language-server/commit/cbce65b)  Fix multiple entities in /execute store (Issues: [`#198`](https://github.com/SPGoding/datapack-language-server/issues/198))
+- [`0495806`](https://github.com/SPGoding/datapack-language-server/commit/0495806)  Fix cache not updating for folder operations (Issues: [`#137`](https://github.com/SPGoding/datapack-language-server/issues/137) [`#197`](https://github.com/SPGoding/datapack-language-server/issues/197))
+
 # [v1.10.3](https://github.com/SPGoding/datapack-language-server/compare/v1.10.2...v1.10.3) (2019-11-30)
 
 ## 🐛 Bug Fixes
