@@ -222,6 +222,7 @@ export const VanillaTree: CommandTree = {
                                 },
                                 players: {
                                     parser: new LiteralArgumentParser('players'),
+                                    executable: true,
                                     children: {
                                         targets: {
                                             parser: new EntityArgumentParser('multiple', 'players'),
