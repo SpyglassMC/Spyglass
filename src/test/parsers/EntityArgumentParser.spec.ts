@@ -51,7 +51,7 @@ describe('EntityArgumentParser Tests', () => {
             ])
         })
         describe('For plain entities', () => {
-            it('Should return greedy data', () => {
+            it('Should be greedy for score holders', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader('$ASDASD'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity('$ASDASD'))
@@ -62,6 +62,28 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('foo'), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity('foo'))
                 assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should errors when the entity is too long', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities', false)
+                const actual = parser.parse(new StringReader('12345678901234567'), undefined, manager)
+                assert.deepStrictEqual(actual.data, new Entity('12345678901234567'))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError(
+                        { start: 0, end: 17 },
+                        '‘12345678901234567’ exceeds the max length of an entity name, which is 16'
+                    )
+                ])
+            })
+            it('Should errors when the score holder is too long', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities', true)
+                const actual = parser.parse(new StringReader('12345678901234567890123456789012345678901'), undefined, manager)
+                assert.deepStrictEqual(actual.data, new Entity('12345678901234567890123456789012345678901'))
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError(
+                        { start: 0, end: 41 },
+                        '‘12345678901234567890123456789012345678901’ exceeds the max length of a score holder name, which is 40'
+                    )
+                ])
             })
             it('Should return completions', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')

@@ -56,7 +56,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('123456789012345678'))
             assert.deepStrictEqual(actual.data, '123456789012345678')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 18 }, '‘123456789012345678’ exceeds the max length of objective name')
+                new ParsingError({ start: 0, end: 18 }, '‘123456789012345678’ exceeds the max length of an objective name, which is 16')
             ])
         })
         it('Should not return warning when the strict objective check pass', () => {
