@@ -34,7 +34,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), 0)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '^' }
+                    { label: '^', sortText: '2' }
                 ]
             )
         })
@@ -43,7 +43,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('~ '), 2)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '~' }
+                    { label: '~', sortText: '1' }
                 ]
             )
         })

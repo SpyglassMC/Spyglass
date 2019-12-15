@@ -7,6 +7,8 @@ import Vector, { VectorElement } from '../types/Vector'
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static readonly LocalSymbol = '^'
     static readonly RelativeSymbol = '~'
+    static readonly LocalSortText = '2'
+    static readonly RelativeSortText = '1'
     static readonly Sep = ' '
 
     identity = 'vector'
@@ -146,10 +148,16 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
 
     private getCompletionsForSymbols(ans: ArgumentParserResult<any>) {
         if (this.allowRelative) {
-            ans.completions.push({ label: VectorArgumentParser.RelativeSymbol })
+            ans.completions.push({
+                label: VectorArgumentParser.RelativeSymbol,
+                sortText: VectorArgumentParser.RelativeSortText
+            })
         }
         if (this.allowLocal) {
-            ans.completions.push({ label: VectorArgumentParser.LocalSymbol })
+            ans.completions.push({
+                label: VectorArgumentParser.LocalSymbol,
+                sortText: VectorArgumentParser.LocalSortText
+            })
         }
     }
 

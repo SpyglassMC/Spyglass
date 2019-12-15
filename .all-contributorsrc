@@ -132,6 +132,16 @@
       ]
     },
     {
+      "login": "mathaym25",
+      "name": "mathaym25",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/35702771?v=4",
+      "profile": "https://github.com/mathaym25",
+      "contributions": [
+        "bug",
+        "ideas"
+      ]
+    },
+    {
       "login": "YijunYuan",
       "name": "Yijun Yuan",
       "avatar_url": "https://avatars0.githubusercontent.com/u/7012463?v=4",
@@ -187,5 +197,6 @@
       ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
