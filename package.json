@@ -235,7 +235,7 @@
                         "prefer double"
                     ],
                     "markdownDescription": "Quotes used in NBT strings and phrase strings.",
-                    "markdownEnumDescription": [
+                    "markdownEnumDescriptions": [
                         "Always use single quotes.",
                         "Always use double quotes.",
                         "Always use single quotes, unless there are single quotes in the string.",
@@ -250,7 +250,7 @@
                         false
                     ],
                     "markdownDescription": "When the keys in entity selectors should be quoted.",
-                    "markdownEnumDescription": [
+                    "markdownEnumDescriptions": [
                         "Always.",
                         "Never."
                     ],
@@ -263,7 +263,7 @@
                         false
                     ],
                     "markdownDescription": "When the string keys in SNBTs should be quoted.",
-                    "markdownEnumDescription": [
+                    "markdownEnumDescriptions": [
                         "Always.",
                         "Only when there are special characters in the string."
                     ],
@@ -276,7 +276,7 @@
                         false
                     ],
                     "markdownDescription": "When the string values in SNBTs should be quoted.",
-                    "markdownEnumDescription": [
+                    "markdownEnumDescriptions": [
                         "Always.",
                         "Only when there are special characters in the string."
                     ],
@@ -565,6 +565,171 @@
                     "type": "boolean",
                     "markdownDescription": "Whether to throw warnings for item tags which don't exist in your workspace.",
                     "default": false
+                },
+                "datapackLanguageServer.lint.strictMobEffectCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown mob effects.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictEnchantmentCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown enchantments.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictSoundEventCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown sound events.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictEntityTypeCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown entity types.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictDimensionTypeCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown dimension types.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictBlockCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown blocks.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictItemCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown items.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictPotionCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown potions.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictMotiveCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown motives.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictFluidCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown fluids.",
+                    "default": "only-default-namespace"
+                },
+                "datapackLanguageServer.lint.strictParticleTypeCheck": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "only-default-namespace",
+                        "never"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Check all IDs.",
+                        "Only check IDs belonging to the default namespace (`minecraft`).",
+                        "Never check those IDs."
+                    ],
+                    "markdownDescription": "Whether to throw warnings for unknown particle types.",
+                    "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.omitDefaultNamespace": {
                     "type": "boolean",

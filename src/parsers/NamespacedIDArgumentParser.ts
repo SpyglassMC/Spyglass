@@ -9,6 +9,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import Manager from '../types/Manager'
+import StrictCheckConfig from '../types/StrictCheckConfig'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -194,7 +195,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 const tagType = getCacheTagType()
                 const category = getSafeCategory(cache, tagType)
                 //#region Errors
-                if (this.shouldStrictCheck(tagType, config) && !Object.keys(category).includes(stringID)) {
+                if (this.shouldStrictCheck(`$${tagType}`, config, namespace) && !Object.keys(category).includes(stringID)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${tagType}’`,
@@ -223,7 +224,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     const type = this.type.slice(1)
                     const category = getSafeCategory(cache, type as any)
                     //#region Errors
-                    if (this.shouldStrictCheck(type as CacheKey, config) && !Object.keys(category).includes(stringID)) {
+                    if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(category).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
@@ -250,7 +251,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     // For registry IDs.
                     const registry = this.registries[this.type]
                     //#region Errors
-                    if (!Object.keys(registry.entries).includes(stringID)) {
+                    if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
                             `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`,
@@ -288,32 +289,65 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: CacheKey, { lint: lint }: Config) {
+    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string) {
+        const checkStickCheckConfig = (config: StrictCheckConfig) => {
+            switch (config) {
+                case 'always':
+                    return true
+                case 'only-default-namespace':
+                    return namespace === Identity.DefaultNamespace
+                case 'never':
+                default:
+                    return false
+            }
+        }
         switch (key) {
-            case 'advancements':
+            case '$advancements':
                 return lint.strictAdvancementCheck
-            case 'functions':
+            case '$functions':
                 return lint.strictFunctionCheck
-            case 'lootTables':
+            case '$lootTables':
                 return lint.strictLootTableCheck
-            case 'predicates':
+            case '$predicates':
                 return lint.strictPredicateCheck
-            case 'recipes':
+            case '$recipes':
                 return lint.strictRecipeCheck
-            case 'tags/blocks':
+            case '$tags/blocks':
                 return lint.strictBlockTagCheck
-            case 'tags/entityTypes':
+            case '$tags/entityTypes':
                 return lint.strictEntityTypeTagCheck
-            case 'tags/fluids':
+            case '$tags/fluids':
                 return lint.strictFluidTagCheck
-            case 'tags/functions':
+            case '$tags/functions':
                 return lint.strictFunctionTagCheck
-            case 'tags/items':
+            case '$tags/items':
                 return lint.strictItemTagCheck
-            case 'bossbars':
+            case '$bossbars':
                 return lint.strictBossbarCheck
-            case 'storages':
+            case '$storages':
                 return lint.strictStorageCheck
+            case 'minecraft:mob_effect':
+                return checkStickCheckConfig(lint.strictMobEffectCheck)
+            case 'minecraft:enchantment':
+                return checkStickCheckConfig(lint.strictEnchantmentCheck)
+            case 'minecraft:sound_event':
+                return checkStickCheckConfig(lint.strictSoundEventCheck)
+            case 'minecraft:entity_type':
+                return checkStickCheckConfig(lint.strictEntityTypeCheck)
+            case 'minecraft:dimension_type':
+                return checkStickCheckConfig(lint.strictDimensionTypeCheck)
+            case 'minecraft:block':
+                return checkStickCheckConfig(lint.strictBlockCheck)
+            case 'minecraft:item':
+                return checkStickCheckConfig(lint.strictItemCheck)
+            case 'minecraft:potion':
+                return checkStickCheckConfig(lint.strictPotionCheck)
+            case 'minecraft:motive':
+                return checkStickCheckConfig(lint.strictMotiveCheck)
+            case 'minecraft:fluid':
+                return checkStickCheckConfig(lint.strictFluidCheck)
+            case 'minecraft:particle_type':
+                return checkStickCheckConfig(lint.strictParticleTypeCheck)
             default:
                 return false
         }

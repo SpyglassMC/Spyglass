@@ -1,5 +1,6 @@
 import { SelectorParsedArgument } from './Entity'
 import NamingConventionConfig from './NamingConventionConfig'
+import StrictCheckConfig from './StrictCheckConfig'
 
 export type EnvConfig = {
     /**
@@ -271,6 +272,94 @@ export type LintConfig = {
      */
     strictItemTagCheck: boolean,
     /**
+     * Whether to throw warnings for unknown mob effects.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictMobEffectCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown enchantments.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictEnchantmentCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown sound events.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictSoundEventCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown entity types.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictEntityTypeCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown dimension types.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictDimensionTypeCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown blocks.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictBlockCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown items.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictItemCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown potions.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictPotionCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown motives.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictMotiveCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown fluids.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictFluidCheck: StrictCheckConfig,
+    /**
+     * Whether to throw warnings for unknown particle types.  
+     * `always`: Check all IDs.  
+     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
+     * `never`: Never check those IDs.
+     * @default 'only-default-namespace'
+     */
+    strictParticleTypeCheck: StrictCheckConfig,
+    /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
      * No matter what the setting is, namespaces in SNBT predicates will always be kept.  
      * @default false
@@ -385,7 +474,18 @@ export const VanillaConfig: Config = {
         strictEntityTypeTagCheck: false,
         strictFluidTagCheck: false,
         strictFunctionTagCheck: false,
-        strictItemTagCheck: false
+        strictItemTagCheck: false,
+        strictBlockCheck: 'only-default-namespace',
+        strictDimensionTypeCheck: 'only-default-namespace',
+        strictEnchantmentCheck: 'only-default-namespace',
+        strictEntityTypeCheck: 'only-default-namespace',
+        strictFluidCheck: 'only-default-namespace',
+        strictItemCheck: 'only-default-namespace',
+        strictMobEffectCheck: 'only-default-namespace',
+        strictMotiveCheck: 'only-default-namespace',
+        strictParticleTypeCheck: 'only-default-namespace',
+        strictPotionCheck: 'only-default-namespace',
+        strictSoundEventCheck: 'only-default-namespace'
     },
     snippets: {
         executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',

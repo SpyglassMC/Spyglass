@@ -426,30 +426,14 @@ describe('NamespacedIDArgumentParser Tests', () => {
             ])
         })
         it('Should return warning when the id cannot be resolved in registry', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
+            const config = constructConfig({ lint: { strictBlockCheck: true, omitDefaultNamespace: true } })
+            const parser = new NamespacedIDArgumentParser('minecraft:block', registries)
             const actual = parser.parse(new StringReader('qux'), undefined, manager, config)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['qux']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:qux’ in registry ‘spgoding:test’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
             ])
         })
-        // it('Should return warning when the default namespace are preferred to be omitted', () => {
-        //     const parser = new NamespacedIDArgumentParser('minecraft:block', registries)
-        //     const actual = parser.parse(new StringReader('minecraft:stone'), undefined, manager, config)
-        //     assert.deepStrictEqual(actual.data, new Identity('minecraft', ['stone']))
-        //     assert.deepStrictEqual(actual.errors, [
-        //         new ParsingError({ start: 0, end: 10 }, 'default namespace is preferred to be omitted', undefined, DiagnosticSeverity.Warning)
-        //     ])
-        // })
-        // it('Should return warning when the default namespace are preferred to be kept', () => {
-        //     const config = constructConfig({ lint: { omitDefaultNamespace: false } })
-        //     const parser = new NamespacedIDArgumentParser('minecraft:block', registries)
-        //     const actual = parser.parse(new StringReader('stone'), undefined, manager, config)
-        //     assert.deepStrictEqual(actual.data, new Identity(undefined, ['stone']))
-        //     assert.deepStrictEqual(actual.errors, [
-        //         new ParsingError({ start: 0, end: 5 }, 'default namespace is preferred to be kept', undefined, DiagnosticSeverity.Warning)
-        //     ])
-        // })
         it('Should return cache when the id is already defined', () => {
             const parser = new NamespacedIDArgumentParser('$bossbars', registries)
             const actual = parser.parse(new StringReader('spgoding:bossbar/a'), undefined, manager, undefined, cache)
