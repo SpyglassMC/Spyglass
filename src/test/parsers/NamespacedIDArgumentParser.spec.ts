@@ -426,7 +426,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             ])
         })
         it('Should return warning when the id cannot be resolved in registry', () => {
-            const config = constructConfig({ lint: { strictBlockCheck: true, omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { strictBlockCheck: 'always', omitDefaultNamespace: true } })
             const parser = new NamespacedIDArgumentParser('minecraft:block', registries)
             const actual = parser.parse(new StringReader('qux'), undefined, manager, config)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['qux']))
