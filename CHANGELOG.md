@@ -1,3 +1,9 @@
+# [v1.10.5](https://github.com/SPGoding/datapack-language-server/compare/v1.10.4...v1.10.5) (2019-12-15)
+
+## 🐛 Bug Fixes
+- [`b044635`](https://github.com/SPGoding/datapack-language-server/commit/b044635)  Not returning error for long entity names (Issues: [`#199`](https://github.com/SPGoding/datapack-language-server/issues/199))
+- [`fc97c75`](https://github.com/SPGoding/datapack-language-server/commit/fc97c75)  Fix bossbar set player not executable (Issues: [`#200`](https://github.com/SPGoding/datapack-language-server/issues/200))
+
 # [v1.10.4](https://github.com/SPGoding/datapack-language-server/compare/v1.10.3...v1.10.4) (2019-12-09)
 
 ## 🐛 Bug Fixes
