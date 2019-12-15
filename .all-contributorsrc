@@ -185,7 +185,18 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "mathaym25",
+      "name": "mathaym25",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/35702771?v=4",
+      "profile": "https://github.com/mathaym25",
+      "contributions": [
+        "bug",
+        "ideas"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
