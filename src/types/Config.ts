@@ -490,7 +490,7 @@ export const VanillaConfig: Config = {
     snippets: {
         executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
         scoreboardPlayersOperation: 'scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}',
-        scoreboardPlayersSet: 'scoreboard players operation ${1:score_holder} ${2:objective} ${3:0}',
+        scoreboardPlayersSet: 'scoreboard players set ${1:score_holder} ${2:objective} ${3:0}',
         tagAdd: 'tag ${1:target} add ${2:tag}',
         tagRemove: 'tag ${1:target} remove ${2:tag}',
         dataModifyStorageFromSelf: 'data modify storage ${1:id} ${2:path} set from entity @s ${3:path}',
