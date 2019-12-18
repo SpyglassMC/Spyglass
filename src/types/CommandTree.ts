@@ -49,7 +49,7 @@ export interface CommandTreeNode<T> {
      */
     template?: string,
     /**
-     * An optional function which will be called when the parser finished parsing.  
+     * An optional function which will be called after the parser finished parsing.  
      * Can be used to validate the parsed arguments.
      * @param parsedLine Parsed line.
      */

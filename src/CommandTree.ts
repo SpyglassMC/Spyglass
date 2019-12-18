@@ -1937,6 +1937,11 @@ export const VanillaTree: CommandTree = {
                 type: {
                     parser: new LiteralArgumentParser('entity', 'storage', 'tag'),
                     description: 'Type of the definition',
+                    run: parsedLine => {
+                        if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
+                            parsedLine.completions = []
+                        }
+                    },
                     children: {
                         id: {
                             parser: ({ args }) => new DefinitionIDArgumentParser(
