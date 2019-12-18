@@ -185,7 +185,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "yulongjiuqiu",
+      "name": "御龙九秋",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/49058621?v=4",
+      "profile": "https://github.com/yulongjiuqiu",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
