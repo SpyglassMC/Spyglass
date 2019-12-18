@@ -13,6 +13,7 @@ import VanillaNbtSchema from '../types/VanillaNbtSchema'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
+    private static UuidPattern = /^[A-F0-9]{1,8}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,12}$/i
 
     private cursor: number
     private manager: Manager<ArgumentParser<any>>
@@ -35,11 +36,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         if (reader.peek() === '@') {
             return this.parseSelector(reader)
         } else {
-            return this.parsePlain(reader)
+            return this.parsePlainOrUuid(reader)
         }
     }
 
-    private parsePlain(reader: StringReader) {
+    private parsePlainOrUuid(reader: StringReader) {
         const ans: ArgumentParserResult<Entity> = {
             data: new Entity(),
             errors: [],
@@ -82,7 +83,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     `‘${plain}’ exceeds the max length of a score holder name, which is 40`
                 )
             )
-        } else if (!this.isScoreHolder && plain.length > 16) {
+        } else if (!this.isScoreHolder && plain.length > 16 && !EntityArgumentParser.UuidPattern.test(plain)) {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },

@@ -50,7 +50,16 @@ describe('EntityArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'expected an entity but got nothing', false)
             ])
         })
-        describe('For plain entities', () => {
+        
+        describe('For UUIDs', () => {
+            it('Should return normal data', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities', true)
+                const actual = parser.parse(new StringReader('12345678-1234-1234-1234-1234567890AB'), undefined, manager)
+                assert.deepStrictEqual(actual.data, new Entity('12345678-1234-1234-1234-1234567890AB'))
+                assert.deepStrictEqual(actual.errors, [])
+            })
+        })
+        describe('For plain entity names', () => {
             it('Should be greedy for score holders', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader('$ASDASD'), undefined, manager)
