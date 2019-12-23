@@ -45,9 +45,7 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
                 tags: {
                     debug: {
                         doc: 'for debug',
-                        def: [{
-                            start: 12, end: 17
-                        }],
+                        def: [],
                         ref: []
                     }
                 }

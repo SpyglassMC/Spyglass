@@ -31,10 +31,7 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
                     const category = ans.cache[key] as CacheCategory
                     category[this.id] = {
                         doc: description,
-                        def: [{
-                            start: start - 1 - this.id.length,
-                            end: start - 1,
-                        }],
+                        def: [],
                         ref: []
                     }
                 }
