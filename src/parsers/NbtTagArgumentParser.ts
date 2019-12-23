@@ -218,7 +218,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 }
                             }
                             const result = walker
-                                .getCompletionsAndWarnings(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
+                                .getParserResult(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate })
                             ans.completions.push(
                                 ...result
                                     .completions
@@ -228,8 +228,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                     }))
                             )
                             ans.errors.push(
-                                ...result.warnings
+                                ...result.errors
                             )
+                            ans.cache = result.cache
                         }
                     }
                 } else {
@@ -555,10 +556,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const value = reader.readQuotedString()
                 ans.data = getNbtStringTag(value)
                 const result = walker ?
-                    walker.getCompletionsAndWarnings(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate }) :
-                    { completions: [], warnings: [] }
+                    walker.getParserResult(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate }) :
+                    { completions: [], errors: [], cache: {} }
                 ans.completions = result.completions.map(v => ({ ...v, label: escapeString(v.label, quote as any) }))
-                ans.errors.push(...result.warnings)
+                ans.errors.push(...result.errors)
+                ans.cache = result.cache
             } catch (p) {
                 ans.data = getNbtStringTag('')
                 ans.errors.push(p)

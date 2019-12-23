@@ -340,24 +340,24 @@ describe('NbtSchemaWalker Tests', () => {
             }
         })
     })
-    describe('getCompletionsAndWarnings() Tests', () => {
+    describe('getParserResult() Tests', () => {
         const manager = new ArgumentParserManager()
         it('Should return empty completions when there are not any suggestions', () => {
             const actual = walker
                 .go('block/banner.json')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager, VanillaConfig, {})
+                .getParserResult(new StringReader(''), 0, manager, VanillaConfig, {})
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return empty completions for raw suggestions when the cursor is not at the point', () => {
             const actual = walker
                 .go('suggestionsTest.json#raw')
-                .getCompletionsAndWarnings(new StringReader(''), -1, manager)
+                .getParserResult(new StringReader(''), -1, manager)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return completions for raw suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#raw')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'foo' }
             ])
@@ -365,13 +365,13 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return empty completions for detailed suggestions when the cursor is not at the point', () => {
             const actual = walker
                 .go('suggestionsTest.json#detailed')
-                .getCompletionsAndWarnings(new StringReader(''), -1, manager)
+                .getParserResult(new StringReader(''), -1, manager)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return completions for detailed suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#detailed')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'bar', documentation: 'The Bar' }
             ])
@@ -379,7 +379,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return completions for argument parser suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#argumentParser')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager, undefined, undefined)
+                .getParserResult(new StringReader(''), 0, manager, undefined, undefined)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'baz' },
                 { label: 'qux' }
@@ -396,7 +396,7 @@ describe('NbtSchemaWalker Tests', () => {
             }
             const actual = walker
                 .go('suggestionsTest.json#argumentParserWithVariables')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager, undefined, cache, { isPredicate: true })
+                .getParserResult(new StringReader(''), 0, manager, undefined, cache, { isPredicate: true })
             assert.deepStrictEqual(actual.completions, [
                 {
                     label: 'minecraft',
@@ -410,7 +410,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return completions for line parser suggestions', () => {
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getCompletionsAndWarnings(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), 0, manager)
             assert.deepStrictEqual(actual.completions, [
                 { label: '/' }
             ])
@@ -418,7 +418,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return empty completions when the result completions of line parser is undefined', () => {
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getCompletionsAndWarnings(new StringReader(''), undefined, manager)
+                .getParserResult(new StringReader(''), undefined, manager)
             assert.deepStrictEqual(actual.completions, [])
         })
     })

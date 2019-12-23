@@ -1,5 +1,5 @@
 import { CompletionItem, DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache } from '../types/ClientCache'
+import { ClientCache, offsetCachePosition } from '../types/ClientCache'
 import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchema, ValueList } from '../types/VanillaNbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
@@ -229,14 +229,14 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getCompletionsAndWarnings(
+    getParserResult(
         reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>,
         config = VanillaConfig, cache: ClientCache = {},
         variables: Variables = { isPredicate: false }
-    ): { completions: CompletionItem[], warnings: ParsingError[] } {
+    ): { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
-        const ans: { completions: CompletionItem[], warnings: ParsingError[] } = { completions: [], warnings: [] }
+        const ans: { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } = { completions: [], errors: [], cache: {} }
         const suggestions: SuggestionNode[] = this.read().suggestions ? this.read().suggestions as SuggestionNode[] : []
         suggestions.forEach(
             v => {
@@ -247,6 +247,7 @@ export default class NbtSchemaWalker {
                 } else if (isParserNode(v)) {
                     const out = { cursor }
                     const subReader = new StringReader(reader.readString(out))
+                    const offset = cursor - out.cursor
 
                     // Replace variables in v.params.
                     /* istanbul ignore next */
@@ -270,30 +271,37 @@ export default class NbtSchemaWalker {
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)
-                        const { completions, errors } = parser.parse(subReader, out.cursor, manager).data
+                        const { completions, errors, cache } = parser.parse(subReader, out.cursor, manager).data
                         if (completions) {
                             ans.completions.push(...completions)
                         }
                         // istanbul ignore next
                         if (errors) {
-                            ans.warnings.push(...errors.map(
+                            ans.errors.push(...errors.map(
                                 v => new ParsingError({
-                                    start: v.range.start + cursor - out.cursor,
-                                    end: v.range.end + cursor - out.cursor
+                                    start: v.range.start + offset,
+                                    end: v.range.end + offset
                                 }, v.message, true, DiagnosticSeverity.Hint)
                             ))
+                        }
+                        /* istanbul ignore next */
+                        if (cache) {
+                            offsetCachePosition(cache, offset)
+                            ans.cache = cache
                         }
                     } else {
                         // Regular ArgumentParser
                         const parser = manager.get(v.parser, v.params)
-                        const { completions, errors } = parser.parse(subReader, out.cursor, manager, config, cache)
+                        const { completions, errors, cache: resultCache } = parser.parse(subReader, out.cursor, manager, config, cache)
                         ans.completions.push(...completions)
-                        ans.warnings.push(...errors.map(
+                        ans.errors.push(...errors.map(
                             v => new ParsingError({
-                                start: v.range.start + cursor - out.cursor,
-                                end: v.range.end + cursor - out.cursor
+                                start: v.range.start + offset,
+                                end: v.range.end + offset
                             }, v.message, true, DiagnosticSeverity.Hint)
                         ))
+                        offsetCachePosition(resultCache, offset)
+                        ans.cache = resultCache
                     }
                 } else {
                     if (reader.cursor === cursor) {

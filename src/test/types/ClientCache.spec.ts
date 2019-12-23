@@ -1,6 +1,6 @@
 import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, getFromCachedFileTree, setForCachedFileTree, delFromCachedFileTree, walkInCachedFileTree } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, getFromCachedFileTree, setForCachedFileTree, delFromCachedFileTree, walkInCachedFileTree, offsetCachePosition } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 
 describe('ClientCache Tests', () => {
@@ -22,6 +22,27 @@ describe('ClientCache Tests', () => {
             removeCacheUnit(cache, 'entities', 'foo')
             assert.deepEqual(cache, {
                 entities: {}
+            })
+        })
+    })
+    describe('offsetCachePosition() Tests', () => {
+        it('Should offset the pos', () => {
+            const cache: ClientCache = {
+                entities: {
+                    foo: {
+                        def: [{ start: 0, end: 3, rel: 'data/minecraft/functions/a.mcfunction' }],
+                        ref: [{ start: 3, end: 6, rel: 'data/minecraft/functions/b.mcfunction' }],
+                    }
+                }
+            }
+            offsetCachePosition(cache, 5)
+            assert.deepEqual(cache, {
+                entities: {
+                    foo: {
+                        def: [{ start: 5, end: 8, rel: 'data/minecraft/functions/a.mcfunction' }],
+                        ref: [{ start: 8, end: 11, rel: 'data/minecraft/functions/b.mcfunction' }],
+                    }
+                }
             })
         })
     })

@@ -170,6 +170,25 @@ export function getCacheFromChar(cache: ClientCache, char: number) {
     return undefined
 }
 
+export function offsetCachePosition(cache: ClientCache, offset: number) {
+    for (const type in cache) {
+        const category = cache[type as CacheKey] as CacheCategory
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            unit.def = unit.def.map(ele => ({
+                ...ele,
+                start: ele.start + offset,
+                end: ele.end + offset
+            }))
+            unit.ref = unit.ref.map(ele => ({
+                ...ele,
+                start: ele.start + offset,
+                end: ele.end + offset
+            }))
+        }
+    }
+}
+
 export function removeCachePosition(cache: ClientCache, rel: string) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
