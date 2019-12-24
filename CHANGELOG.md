@@ -1,3 +1,17 @@
+# [v1.11.0](https://github.com/SPGoding/datapack-language-server/compare/v1.10.5...v1.11.0) (2019-12-24)
+
+## ✨ New Features
+- [`8a8154b`](https://github.com/SPGoding/datapack-language-server/commit/8a8154b)  Add strictBlockCheck and many other configs (Issues: [`#170`](https://github.com/SPGoding/datapack-language-server/issues/170))
+
+## 🐛 Bug Fixes
+- [`24e88de`](https://github.com/SPGoding/datapack-language-server/commit/24e88de)  Fix the completion order of ‘~’ and ‘^’ (Issues: [`#203`](https://github.com/SPGoding/datapack-language-server/issues/203))
+- [`6444117`](https://github.com/SPGoding/datapack-language-server/commit/6444117)  Fix the code snippet for scoreboard players set (Issues: [`#206`](https://github.com/SPGoding/datapack-language-server/issues/206))
+- [`0206330`](https://github.com/SPGoding/datapack-language-server/commit/0206330)  Fix not recognizing UUIDs (Issues: [`#208`](https://github.com/SPGoding/datapack-language-server/issues/208))
+- [`c089af8`](https://github.com/SPGoding/datapack-language-server/commit/c089af8)  Fix the completions for non-definition comments (Issues: [`#207`](https://github.com/SPGoding/datapack-language-server/issues/207))
+- [`a4c675b`](https://github.com/SPGoding/datapack-language-server/commit/a4c675b)  Fix duplicated definition cache (Issues: [`#218`](https://github.com/SPGoding/datapack-language-server/issues/218))
+- [`b9659c4`](https://github.com/SPGoding/datapack-language-server/commit/b9659c4)  Fix not renaming tags in SNBTs (Issues: [`#194`](https://github.com/SPGoding/datapack-language-server/issues/194))
+- [`93b462c`](https://github.com/SPGoding/datapack-language-server/commit/93b462c)  Fix errors with text components (Issues: [`#170`](https://github.com/SPGoding/datapack-language-server/issues/170))
+
 # [v1.10.5](https://github.com/SPGoding/datapack-language-server/compare/v1.10.4...v1.10.5) (2019-12-15)
 
 ## 🐛 Bug Fixes
