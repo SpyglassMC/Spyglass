@@ -56,7 +56,7 @@ DHP provides some helpful code snippets. See [VSCode's official docs](https://co
 
 ## Definition Comments
 
-You can use `#define (entity|storage|tag) <id: string> [description: string]` to define an entity, a data storage or a scoreboard tag. Definition comments will be used to compute completions, rename symbols and find references/definitions. The game will treat definition comments as normal comments and simply ignore them.
+You can use `#define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]` to define a bossbar, an entity, an objective, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions. The game will treat definition comments as normal comments and simply ignore them.
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 
@@ -98,25 +98,25 @@ DHP shows user-defined documentation when you hover on specific arguments, e.g. 
 
 ## Resolving Namespaced IDs
 
-You can navigate to advancements, loot tables, functions, predicates and all kinds of tags by Ctrl-clicking on their namespaced IDs.
+You can navigate to advancements, loot tables, functions, predicates, and all kinds of tags by Ctrl-clicking on their namespaced IDs.
 
 ![document-link](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/document-link.gif)
 
 ## Goto Definitions
 
-You can goto the definitions of objectives, entities, tags, teams, bossbars and data storages in the workspace by Ctrl-clicking on their names.
+You can goto the definitions of objectives, entities, tags, teams, bossbars, and data storages in the workspace by Ctrl-clicking on their names.
 
 ![goto-definition](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/goto-definition.gif)
 
 ## Finding References
 
-You can find all the references of objectives, entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes and all kinds of datapack tags in the workspace by pressing Shift + F12 or other configured key.
+You can find all the references of objectives, entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes, and all kinds of datapack tags in the workspace by pressing Shift + F12 or other configured key.
 
 ![peek-references](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/peek-references.gif)
 
 ## Renaming
 
-You can rename entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes and all kinds of datapack tags by pressing F2 or other configured key on their names.
+You can rename entities, tags, teams, bossbars, data storages, advancements, functions, loot tables, predicates, recipes, and all kinds of datapack tags by pressing F2 or other configured key on their names.
 
 All the references of the same symbol in the whole workspace will be renamed.
 

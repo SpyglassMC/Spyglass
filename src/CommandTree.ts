@@ -1929,13 +1929,13 @@ export const VanillaTree: CommandTree = {
         }
     },
     comments: {
-        // #define (entity|storage|tag) <id: string> [description: string]
+        // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
         '#define': {
             parser: new LiteralArgumentParser('#define'),
-            description: 'Defines an entity name (like fake player), a data storage or an entity tag. Will be used for completions.',
+            description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('entity', 'storage', 'tag'),
+                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'storage', 'tag', 'team'),
                     description: 'Type of the definition',
                     run: parsedLine => {
                         if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
