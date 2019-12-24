@@ -1,3 +1,10 @@
+# [v1.11.1](https://github.com/SPGoding/datapack-language-server/compare/v1.11.0...v1.11.1) (2019-12-24)
+
+## 🐛 Bug Fixes
+- [`978419e`](https://github.com/SPGoding/datapack-language-server/commit/978419e)  Fix wrong item in the Passengers tag (Issues: [`#220`](https://github.com/SPGoding/datapack-language-server/issues/220))
+- [`ce79926`](https://github.com/SPGoding/datapack-language-server/commit/ce79926)  Fix missing Color tag for arrow entities (Issues: [`#221`](https://github.com/SPGoding/datapack-language-server/issues/221))
+- [`61595a0`](https://github.com/SPGoding/datapack-language-server/commit/61595a0)  Fix not able to define an objective via comments (Issues: [`#222`](https://github.com/SPGoding/datapack-language-server/issues/222))
+
 # [v1.11.0](https://github.com/SPGoding/datapack-language-server/compare/v1.10.5...v1.11.0) (2019-12-24)
 
 ## ✨ New Features
