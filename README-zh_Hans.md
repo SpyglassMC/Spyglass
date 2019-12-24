@@ -11,7 +11,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20%F0%9F%98%9C%20%F0%9F%98%8D-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一个能够为 Minecraft Java版 1.15 的数据包提供补全、签名信息、重命名、查找定义或引用、错误提示、折叠、颜色信息、悬浮信息与文档链接的重型语言服务器。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。大憨批目前仍在制作当中，因此有些功能还未完成，均在下文有所标注。
+Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一个能够为 Minecraft Java版 1.15 的数据包提供补全、签名信息、重命名、查找定义或引用、错误提示、折叠、颜色信息、悬浮信息与文档链接的重型语言服务器。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。
 
 # 安装
 
@@ -48,8 +48,6 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 以及 NBT 路径的自动补全：
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
-
-以下特性还在制作中，很帅，但没做好：
 
 **甚至是物品标签里面的 JSON 文本里面的命令里面的 NBT**的自动补全，返回的结果将会自动进行转义：
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)

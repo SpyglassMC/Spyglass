@@ -11,7 +11,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-A really heavy language server providing completions, signatures, renaming, definitions, references, diagnostics, folding ranges, color information, hover information and document links for data packs in JE 1.15. THIS IS STILL WIP SO MANY FEATURES DO NOT WORK.
+A really heavy language server providing completions, signatures, renaming, definitions, references, diagnostics, folding ranges, color information, hover information and document links for data packs in JE 1.15.
 
 # Note
 
@@ -44,8 +44,6 @@ For more complex NBT tags, with the help from [mc-nbt-paths](https://github.com/
 
 And also NBT paths:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
-
-The following cool completion feature is still work-in-progress:
 
 FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
@@ -199,11 +197,12 @@ And to those who haven't told me a GitHub account:
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2176760"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2176760&size=middle" width="100px;" alt="MCSugar_cane"/><br /><sub><b>MCSugar_cane</b></sub></a><br /><a href="#financial-MCSugar_cane" title="Financial">💵</a></td>
     <td align="center"><a href="https://afdian.net/@ChongXG"><img src="https://pic.afdiancdn.com/user/80487c58bfa911e8856452540025c377/avatar/c71ebb2c5c792b45d6f5b5bf087b0625_w1536_h1536_s1404.jpg" width="100px;" alt="虫小哥"/><br /><sub><b>虫小哥</b></sub></a><br /><a href="#financial-虫小哥" title="Financial">💵</a></td>
     <td align="center"><a href="https://afdian.net/@dhwpcs"><img src="https://pic.afdiancdn.com/user/470992469a5c11e881aa52540025c377/avatar/407310e7b07629c97d42949e4522f1c8_w395_h395_s71.jpg" width="100px;" alt="Craft_Kevin"/><br /><sub><b>Craft_Kevin</b></sub></a><br /><a href="#financial-Craft_Kevin" title="Financial">💵</a></td>
+    <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt="陌余Oucher"/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#financial-陌余Oucher" title="Financial">💵</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt="陌余Oucher"/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#financial-陌余Oucher" title="Financial">💵</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=145106"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle" width="100px;" alt="龙腾猫跃"/><br /><sub><b>龙腾猫跃</b></sub></a><br /><a href="#financial-龙腾猫跃" title="Financial">💵</a></td>
-    <td align="center"><a href="https://search.mcbbs.net/home.php?mod=space&uid=641356"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=641356&size=middle" width="100px;" alt="雪颜の顾"/><br /><sub><b>雪颜の顾</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3A雪颜の顾" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=641356"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=641356&size=middle" width="100px;" alt="雪颜の顾"/><br /><sub><b>雪颜の顾</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3A雪颜の顾" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=702915"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=702915&size=middle" width="100px;" alt="Jokey_钥匙"/><br /><sub><b>Jokey_钥匙</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AJokey_钥匙" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 <!-- markdownlint-enable -->
