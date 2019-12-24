@@ -789,6 +789,10 @@ export default {
 					"ref": "../ref/potion_effect.json"
 				},
 				"description": "List of potion effects to give to the entity who got hit"
+			},
+			"Color": {
+				"type": "int",
+				"isColor": true
 			}
 		}
 	},
