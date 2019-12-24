@@ -3556,7 +3556,7 @@ export default {
 				"description": "A list of entities riding this entity",
 				"type": "list",
 				"item": {
-					"ref": "./mob.json"
+					"ref": "../roots/entities.json#base"
 				}
 			},
 			"Glowing": {
