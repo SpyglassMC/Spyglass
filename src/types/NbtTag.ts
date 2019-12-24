@@ -1,5 +1,5 @@
 import { LintConfig } from './Config'
-import { quoteString } from '../utils/utils'
+import { quoteString, toLintedString } from '../utils/utils'
 import BigNumber from 'bignumber.js'
 import Lintable, { ToLintedString } from './Lintable'
 
@@ -90,7 +90,7 @@ export function getNbtListTag(val: NbtTag[]): NbtListTag {
     return Object.assign(val, {
         [NbtTagType]: 'list',
         [ToLintedString]: (lint: LintConfig) => {
-            const body = val.map(v => v[ToLintedString](lint)).join(getComma(lint))
+            const body = val.map(v => toLintedString(v, lint)).join(getComma(lint))
             return `[${body}]`
         }
     }) as NbtListTag
@@ -175,7 +175,7 @@ export function getNbtCompoundTag(val: { [key: string]: NbtTag }) {
         [ToLintedString]: (lint: LintConfig) => {
             const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
                 .map(v => `${quoteString(v, lint.quoteType, lint.quoteSnbtStringKeys)}${
-                    getColon(lint)}${val[v][ToLintedString](lint)}`)
+                    getColon(lint)}${toLintedString(val[v], lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         }
