@@ -60,7 +60,7 @@ export function delFromCachedFileTree(tree: CachedFileTree, rel: string) {
     del(files[segments.shift() as string])
 }
 
-export async function walkInCachedFileTree(tree: CachedFileTree, cb: (rel: string) => any, sep: '/' | '\\') {
+export async function walkInCachedFileTree(tree: CachedFileTree, cb: (rel: string) => any, sep: string) {
     const files = tree
     const walk = async (former: string, tree: CachedFileTree) => {
         for (const seg in tree) {
