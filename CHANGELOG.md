@@ -1,3 +1,10 @@
+# [v1.11.3](https://github.com/SPGoding/datapack-language-server/compare/v1.11.2...v1.11.3) (2019-12-25)
+
+## 🐛 Bug Fixes
+- [`eac8363`](https://github.com/SPGoding/datapack-language-server/commit/eac8363)  Fix not recognizing JSON escape characters (Issues: [`#219`](https://github.com/SPGoding/datapack-language-server/issues/219))
+- [`deea9a8`](https://github.com/SPGoding/datapack-language-server/commit/deea9a8)  Fix formatting JSON components 
+- [`04caab3`](https://github.com/SPGoding/datapack-language-server/commit/04caab3)  Fix formatting JSONs
+
 # [v1.11.2](https://github.com/SPGoding/datapack-language-server/compare/v1.11.1...v1.11.2) (2019-12-25)
 
 ## 🐛 Bug Fixes
