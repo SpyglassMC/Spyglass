@@ -1,3 +1,11 @@
+# [v1.11.2](https://github.com/SPGoding/datapack-language-server/compare/v1.11.1...v1.11.2) (2019-12-25)
+
+## 🐛 Bug Fixes
+- [`f43106a`](https://github.com/SPGoding/datapack-language-server/commit/f43106a)  Fix missing RadiusPerTick tag for AECs (Issues: [`#224`](https://github.com/SPGoding/datapack-language-server/issues/224))
+- [`29a269e`](https://github.com/SPGoding/datapack-language-server/commit/29a269e)  Fix the base schema for entities (Issues: [`#225`](https://github.com/SPGoding/datapack-language-server/issues/225))
+- [`f410d11`](https://github.com/SPGoding/datapack-language-server/commit/f410d11)  Fix quoted strings for name in entity selectors (Issues: [`#226`](https://github.com/SPGoding/datapack-language-server/issues/226))
+- [`c28d46c`](https://github.com/SPGoding/datapack-language-server/commit/c28d46c)  Fix ranges of the forth element in dust particle (Issues: [`#223`](https://github.com/SPGoding/datapack-language-server/issues/223))
+
 # [v1.11.1](https://github.com/SPGoding/datapack-language-server/compare/v1.11.0...v1.11.1) (2019-12-24)
 
 ## 🐛 Bug Fixes
