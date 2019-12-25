@@ -215,7 +215,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'gamemode') {
                         dealWithNegativableArray(manager.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
                     } else if (key === 'name') {
-                        dealWithNegativableArray(manager.get('String'), key)
+                        dealWithNegativableArray(manager.get('QuotableLiteral', [[], false, true]), key)
                     } else if (key === 'nbt') {
                         dealWithNegativableArray(manager.get('NbtTag', [
                             'compound', 'entities', 'base', this.schema, true

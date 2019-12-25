@@ -15,7 +15,7 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
         private readonly diagnosticSeverity = DiagnosticSeverity.Error
     ) { super() }
 
-    parse(reader: StringReader, cursor: number = -1, manager = undefined, config: Config = VanillaConfig): ArgumentParserResult<string> {
+    parse(reader: StringReader, cursor: number = -1, _manager = undefined, config: Config = VanillaConfig): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
