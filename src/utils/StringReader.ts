@@ -145,31 +145,38 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a cursor which will be transformed to a cursor in the string. 
+     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readQuotedString(out: { cursor: number } = { cursor: -1 }) {
+    readQuotedString(out: { cursor: number } = { cursor: -1 }, isReadingJson = false) {
+        let ans = ''
         out.cursor -= this.cursor
         if (!this.canRead()) {
             return ''
         }
         const quote = this.peek()
         if (StringReader.isQuote(quote)) {
+            if (isReadingJson) {
+                ans += quote
+            }
             out.cursor -= 1
             this.skip()
-            return this.readUntilQuote(quote, out)
+            ans += this.readUntilQuote(quote, out, isReadingJson)
         } else {
             const start = this.cursor
             const end = this.cursor + 1
             throw new ParsingError({ start, end }, `expected a quote (‘'’ or ‘"’) but got ‘${quote}’`, false)
         }
+        return ans
     }
 
     /**
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
-     * @param out Stores a cursor which will be transformed to a cursor in the string. 
+     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    private readUntilQuote(terminator: '"' | "'", out: { cursor: number }) {
+    private readUntilQuote(terminator: '"' | "'", out: { cursor: number }, isReadingJson: boolean) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -177,7 +184,7 @@ export default class StringReader {
         while (this.canRead()) {
             const c = this.read()
             if (escaped) {
-                if (c === escapeChar || c === terminator) {
+                if (isReadingJson || c === escapeChar || c === terminator) {
                     ans += c
                     escaped = false
                 } else {
@@ -187,11 +194,17 @@ export default class StringReader {
                 }
             } else {
                 if (c === escapeChar) {
+                    if (isReadingJson) {
+                        ans += c
+                    }
                     if (out.cursor + start + 1 >= this.cursor) {
                         out.cursor -= 1
                     }
                     escaped = true
                 } else if (c === terminator) {
+                    if (isReadingJson) {
+                        ans += c
+                    }
                     return ans
                 } else {
                     ans += c
@@ -222,15 +235,16 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a cursor which will be transformed to a cursor in the string. 
+     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readString(out: { cursor: number } = { cursor: -1 }) {
+    readString(out: { cursor: number } = { cursor: -1 }, isReadingJson = false) {
         if (!this.canRead()) {
             return ''
         }
         const c = this.peek()
         if (StringReader.isQuote(c)) {
-            return this.readQuotedString(out)
+            return this.readQuotedString(out, isReadingJson)
         } else {
             return this.readUnquotedString(out)
         }

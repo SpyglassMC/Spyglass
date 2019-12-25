@@ -2,12 +2,12 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import Manager from '../types/Manager'
-import Config, { constructConfig } from '../types/Config'
+import Config from '../types/Config'
 import { ClientCache } from '../types/ClientCache'
 import { NbtSchema } from '../types/VanillaNbtSchema'
-import { NbtTag, getNbtListTag, NbtListTag } from '../types/NbtTag'
+import TextComponent, { getJsonConfig, TextComponentType } from '../types/TextComponent'
 
-export default class TextComponentArgumentParser extends ArgumentParser<NbtTag | string> {
+export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     readonly identity = 'textComponent'
 
     private static readonly TextComponentSchema: NbtSchema = {
@@ -231,19 +231,10 @@ export default class TextComponentArgumentParser extends ArgumentParser<NbtTag |
     constructor() { super() }
 
     /* istanbul ignore next */
-    parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<NbtTag | string> {
-        const jsonConfig = constructConfig({
-            lint: {
-                ...config.lint,
-                quoteType: 'always double',
-                quoteSnbtStringKeys: true,
-                quoteSnbtStringValues: true,
-                snbtUseBooleans: true,
-                snbtOmitDoubleSuffix: true
-            }
-        })
-        const ans: ArgumentParserResult<NbtTag | string> = {
-            data: getNbtListTag([]),
+    parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
+        const jsonConfig = getJsonConfig(config.lint)
+        const ans: ArgumentParserResult<TextComponent> = {
+            data: new TextComponent([]),
             errors: [],
             cache: {},
             completions: []
@@ -251,11 +242,15 @@ export default class TextComponentArgumentParser extends ArgumentParser<NbtTag |
         if (reader.peek() === '{') {
             const result = manager
                 .get('NbtTag', [
-                    ['compound'], 'blocks', 'spgoding:json_object',
-                    TextComponentArgumentParser.TextComponentSchema
+                    ['compound'],
+                    'blocks',
+                    'spgoding:json_object',
+                    TextComponentArgumentParser.TextComponentSchema,
+                    false,
+                    true
                 ])
                 .parse(reader, cursor, manager, jsonConfig, cache)
-            ans.data = result.data
+            ans.data.value = result.data
             combineArgumentParserResult(ans, result)
         } else if (reader.peek() === '[') {
             try {
@@ -266,7 +261,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<NbtTag |
                     const result = this.parse(
                         reader, cursor, manager, config, cache
                     ) as any;
-                    (ans.data as NbtListTag).push(result.data)
+                    (ans.data.value as TextComponentType[]).push(result.data)
                     combineArgumentParserResult(ans, result)
                     reader.skipWhiteSpace()
                     if (reader.peek() === ',') {
@@ -285,7 +280,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<NbtTag |
             }
         } else {
             try {
-                ans.data = reader.readString()
+                ans.data.value = reader.readString(undefined, true)
             } catch (p) {
                 ans.errors.push(p)
             }

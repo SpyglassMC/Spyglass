@@ -42,16 +42,16 @@ function getArrayPrefix(type: 'byte_array' | 'int_array' | 'long_array', lint: L
     return `[${prefix}${getSemicolon(lint)}`
 }
 
-function getSemicolon(lint: LintConfig) {
-    return `;${lint.snbtAppendSpaceAfterSemicolon ? ' ' : ''}`
+function getSemicolon({ snbtAppendSpaceAfterSemicolon }: LintConfig) {
+    return `;${snbtAppendSpaceAfterSemicolon ? ' ' : ''}`
 }
 
-function getComma(lint: LintConfig) {
-    return `,${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
+export function getComma({ snbtAppendSpaceAfterComma }: LintConfig) {
+    return `,${snbtAppendSpaceAfterComma ? ' ' : ''}`
 }
 
-function getColon(lint: LintConfig) {
-    return `:${lint.snbtAppendSpaceAfterComma ? ' ' : ''}`
+function getColon({ snbtAppendSpaceAfterComma }: LintConfig) {
+    return `:${snbtAppendSpaceAfterComma ? ' ' : ''}`
 }
 
 function getNbtPrimitiveArrayTag(

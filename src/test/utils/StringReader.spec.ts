@@ -4,7 +4,6 @@ import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import BigNumber from 'bignumber.js'
-import Identity from '../../types/Identity'
 
 describe('StringReader Tests', () => {
     describe('passedString Tests', () => {
@@ -322,6 +321,20 @@ describe('StringReader Tests', () => {
             const actualCursor = reader.cursor
             assert(actualResult === 'foobar')
             assert(actualCursor === 6)
+        })
+        it('Should read unquoted JSON string', () => {
+            const reader = new StringReader('foobar')
+            const actualResult = reader.readString(undefined, true)
+            const actualCursor = reader.cursor
+            assert(actualResult === 'foobar')
+            assert(actualCursor === 6)
+        })
+        it('Should read quoted JSON string', () => {
+            const reader = new StringReader('"foo\\"bar\\n"')
+            const actualResult = reader.readString(undefined, true)
+            const actualCursor = reader.cursor
+            assert(actualResult === '"foo\\"bar\\n"')
+            assert(actualCursor === 12)
         })
     })
     describe('readBoolean() Tests', () => {
