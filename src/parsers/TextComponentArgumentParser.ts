@@ -260,8 +260,8 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                 while (reader.canRead() && reader.peek() !== ']') {
                     const result = this.parse(
                         reader, cursor, manager, config, cache
-                    ) as any;
-                    (ans.data.value as TextComponentType[]).push(result.data)
+                    );
+                    (ans.data.value as TextComponentType[]).push(result.data.value)
                     combineArgumentParserResult(ans, result)
                     reader.skipWhiteSpace()
                     if (reader.peek() === ',') {
