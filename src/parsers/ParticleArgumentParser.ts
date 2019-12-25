@@ -45,7 +45,11 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                     reader
                         .expect(' ')
                         .skip()
-                    const colorResult = manager.get('Vector', [4, false, false, 0, 1]).parse(reader, cursor, manager, config, cache)
+                    const colorResult = manager.get('Vector', [
+                        4, false, false,
+                        [0, 0, 0, undefined],
+                        [1, 1, 1, undefined]
+                    ]).parse(reader, cursor, manager, config, cache)
                     const color = colorResult.data as Vector
                     combineArgumentParserResult(ans, colorResult)
                     ans.data.param = color

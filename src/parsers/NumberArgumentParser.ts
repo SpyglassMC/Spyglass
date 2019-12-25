@@ -28,16 +28,16 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         } catch (p) {
             ans.errors.push(p)
         }
-        if (this.min !== undefined && ans.data < this.min) {
+        if (this.min !== undefined && !(ans.data >= this.min)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a number larger than ${this.min} but got ${ans.data}`
+                `expected a number larger than or equal to ${this.min} but got ${ans.data}`
             ))
         }
-        if (this.max !== undefined && ans.data > this.max) {
+        if (this.max !== undefined && !(ans.data <= this.max)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a number smaller than ${this.max} but got ${ans.data}`
+                `expected a number smaller than or equal to ${this.max} but got ${ans.data}`
             ))
         }
         return ans

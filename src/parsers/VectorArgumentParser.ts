@@ -17,8 +17,8 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         private readonly dimension: 2 | 3 | 4,
         private readonly allowLocal = true,
         private readonly allowRelative = true,
-        private readonly min: undefined | number = undefined,
-        private readonly max: undefined | number = undefined,
+        private readonly min: undefined | number | (undefined | number)[] = undefined,
+        private readonly max: undefined | number | (undefined | number)[] = undefined,
     ) {
         super()
         this.identity = `vector${dimension}D`
@@ -44,7 +44,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 let hasNonLocal = false
                 try {
                     while (dimension) {
-                        const result = this.parseElement(reader, cursor)
+                        const result = this.parseElement(reader, cursor, this.dimension - dimension)
                         ans.data.elements.push(result.data)
                         combineArgumentParserResult(ans, result)
 
@@ -88,7 +88,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         return ans
     }
 
-    private parseElement(reader: StringReader, cursor: number) {
+    private parseElement(reader: StringReader, cursor: number, index: number) {
         const ans: ArgumentParserResult<VectorElement> = {
             data: { value: '', type: 'absolute' },
             completions: [],
@@ -114,16 +114,18 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 const str = reader.readNumber()
                 ans.data.value = str
                 const num = parseFloat(str)
-                if (this.min !== undefined && num < this.min) {
+                const min = this.min instanceof Array ? this.min[index] : this.min
+                const max = this.max instanceof Array ? this.max[index] : this.max
+                if (min !== undefined && !(num >= min)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        `expected a number larger than ${this.min} but got ${num}`
+                        `expected a number larger than or equal to ${min} but got ${num}`
                     ))
                 }
-                if (this.max !== undefined && num > this.max) {
+                if (max !== undefined && !(num <= max)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        `expected a number smaller than ${this.max} but got ${num}`
+                        `expected a number smaller than or equal to ${max} but got ${num}`
                     ))
                 }
             } catch (p) {

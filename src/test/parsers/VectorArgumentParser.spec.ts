@@ -114,7 +114,16 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'expected a number larger than 0 but got -0.1')
+                new ParsingError({ start: 0, end: 3 }, 'expected a number larger than or equal to 0 but got -0.1')
+            ])
+        })
+        it('Should return error when the number is smaller than min in an array', () => {
+            const parser = new VectorArgumentParser(2, undefined, false, [0, undefined])
+            const actual = parser.parse(new StringReader('-.1 .5'))
+            assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError({ start: 0, end: 3 }, 'expected a number larger than or equal to 0 but got -0.1')
             ])
         })
         it('Should return error when the number is larger than max', () => {
@@ -123,7 +132,16 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 4, end: 6 }, 'expected a number smaller than 0 but got 0.5')
+                new ParsingError({ start: 4, end: 6 }, 'expected a number smaller than or equal to 0 but got 0.5')
+            ])
+        })
+        it('Should return error when the number is larger than max in an array', () => {
+            const parser = new VectorArgumentParser(2, undefined, false, undefined, [undefined, 0])
+            const actual = parser.parse(new StringReader('-.1 .5'))
+            assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
+            assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError({ start: 4, end: 6 }, 'expected a number smaller than or equal to 0 but got 0.5')
             ])
         })
     })

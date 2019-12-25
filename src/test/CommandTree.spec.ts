@@ -378,7 +378,7 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepEqual(data.hint, {
-                fix: ['#define', '(entity|storage|tag)', '<id: string>'],
+                fix: ['#define', '(bossbar|entity|objective|storage|tag|team)', '<id: string>'],
                 options: []
             })
             assert.deepEqual(data.cache, {
