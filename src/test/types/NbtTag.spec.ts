@@ -111,11 +111,13 @@ describe('NbtTag Tests', () => {
             assert(actual2 === '12.0')
         })
         it('Should convert to a JSON', () => {
-            const { lint } = constructConfig({})
+            const { lint } = constructConfig({
+                snbtKeepDecimalPlace: true
+            })
             const tag = getNbtDoubleTag(42)
             const actual = tag[ToJsonString](lint)
             assert(isNbtDoubleTag(tag))
-            assert(actual === '42')
+            assert(actual === '42.0')
         })
     })
     describe('getNbtByteArrayTag() Tests', () => {
