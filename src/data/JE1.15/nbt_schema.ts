@@ -4361,9 +4361,6 @@ export default {
 	"roots/blocks.json": {
 		"type": "root",
 		"children": {
-			"none": {
-				"type": "no-nbt"
-			},
 			"base": {
 				"type": "compound",
 				"additionalChildren": true,
@@ -4448,14 +4445,11 @@ export default {
 	"roots/entities.json": {
 		"type": "root",
 		"children": {
-			"none": {
-				"ref": "../ref/entity.json"
-			},
 			"base": {
 				"type": "compound",
 				"additionalChildren": true,
 				"child_ref": [
-					"../ref/mob.json"
+					"../ref/entity.json"
 				]
 			},
 			"$../entity/group/mob.json": {
@@ -4673,9 +4667,6 @@ export default {
 	"roots/items.json": {
 		"type": "root",
 		"children": {
-			"none": {
-				"ref": "../ref/item_tag.json"
-			},
 			"base": {
 				"type": "compound",
 				"additionalChildren": true,
