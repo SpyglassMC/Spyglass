@@ -1,22 +1,9 @@
-import { LintConfig, constructConfig } from './Config'
+import { LintConfig } from './Config'
 import Lintable, { ToLintedString } from './Lintable'
 import { NbtCompoundTag, isNbtCompoundTag, getComma } from './NbtTag'
+import { toJsonString } from '../utils/utils'
 
 export type TextComponentType = NbtCompoundTag | string | TextComponentType[]
-
-/* istanbul ignore next */
-export function getJsonConfig(lint: LintConfig) {
-    return constructConfig({
-        lint: {
-            ...lint,
-            quoteType: 'always double',
-            quoteSnbtStringKeys: true,
-            quoteSnbtStringValues: true,
-            snbtUseBooleans: true,
-            snbtOmitDoubleSuffix: true
-        }
-    })
-}
 
 export default class TextComponent implements Lintable {
     constructor(
@@ -24,16 +11,15 @@ export default class TextComponent implements Lintable {
     ) { }
 
     [ToLintedString](lint: LintConfig): string {
-        const { lint: jsonLint } = getJsonConfig(lint)
         if (typeof this.value === 'string') {
             return this.value
         } else if (isNbtCompoundTag(this.value)) {
-            return this.value[ToLintedString](jsonLint)
+            return toJsonString(this.value, lint)
         } else {
             return `[${
                 this.value
-                    .map(v => new TextComponent(v)[ToLintedString](jsonLint))
-                    .join(getComma(jsonLint))
+                    .map(v => toJsonString(new TextComponent(v), lint))
+                    .join(getComma(lint))
             }]`
         }
     }

@@ -1,7 +1,8 @@
 import { LintConfig } from './Config'
-import { quoteString, toLintedString } from '../utils/utils'
+import { quoteString, toLintedString, toJsonString } from '../utils/utils'
 import BigNumber from 'bignumber.js'
 import Lintable, { ToLintedString } from './Lintable'
+import JsonConvertible, { ToJsonString } from './JsonConvertible'
 
 export const NbtTagType = Symbol()
 export const NbtContentTagType = Symbol()
@@ -10,19 +11,19 @@ export type NbtTagTypeName =
     'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
     'byte' | 'short' | 'int' | 'long' | 'string' | 'float' | 'double'
 
-export type NbtTag = (number | BigNumber | string | object | any[]) & Lintable & { [NbtTagType]: NbtTagTypeName }
-export type NbtByteTag = number & Lintable & { [NbtTagType]: 'byte' }
-export type NbtShortTag = number & Lintable & { [NbtTagType]: 'short' }
-export type NbtIntTag = number & Lintable & { [NbtTagType]: 'int' }
-export type NbtLongTag = BigNumber & Lintable & { [NbtTagType]: 'long' }
-export type NbtFloatTag = number & Lintable & { [NbtTagType]: 'float' }
-export type NbtDoubleTag = number & Lintable & { [NbtTagType]: 'double' }
-export type NbtStringTag = string & Lintable & { [NbtTagType]: 'string' }
-export type NbtListTag = NbtTag[] & Lintable & { [NbtTagType]: 'list', [NbtContentTagType]: NbtTagTypeName }
-export type NbtByteArrayTag = NbtByteTag[] & Lintable & { [NbtTagType]: 'byte_array' }
-export type NbtIntArrayTag = NbtIntTag[] & Lintable & { [NbtTagType]: 'int_array' }
-export type NbtLongArrayTag = NbtLongTag[] & Lintable & { [NbtTagType]: 'long_array' }
-export type NbtCompoundTag = { [key: string]: NbtTag } & Lintable & { [NbtTagType]: 'compound' }
+export type NbtTag = (number | BigNumber | string | object | any[]) & { [NbtTagType]: NbtTagTypeName } & Lintable
+export type NbtByteTag = number & { [NbtTagType]: 'byte' } & Lintable & JsonConvertible
+export type NbtShortTag = number & { [NbtTagType]: 'short' } & Lintable
+export type NbtIntTag = number & { [NbtTagType]: 'int' } & Lintable
+export type NbtLongTag = BigNumber & { [NbtTagType]: 'long' } & Lintable
+export type NbtFloatTag = number & { [NbtTagType]: 'float' } & Lintable
+export type NbtDoubleTag = number & { [NbtTagType]: 'double' } & Lintable & JsonConvertible
+export type NbtStringTag = string & { [NbtTagType]: 'string' } & Lintable & JsonConvertible
+export type NbtListTag = NbtTag[] & { [NbtTagType]: 'list', [NbtContentTagType]: NbtTagTypeName } & Lintable
+export type NbtByteArrayTag = NbtByteTag[] & { [NbtTagType]: 'byte_array' } & Lintable
+export type NbtIntArrayTag = NbtIntTag[] & { [NbtTagType]: 'int_array' } & Lintable
+export type NbtLongArrayTag = NbtLongTag[] & { [NbtTagType]: 'long_array' } & Lintable
+export type NbtCompoundTag = { [key: string]: NbtTag } & { [NbtTagType]: 'compound' } & Lintable & JsonConvertible
 
 export const isNbtByteTag = (val: any): val is NbtByteTag => val[NbtTagType] === 'byte'
 export const isNbtShortTag = (val: any): val is NbtShortTag => val[NbtTagType] === 'short'
@@ -121,7 +122,8 @@ export function getNbtByteTag(val: number) {
                 }
             }
             return `${val}${lint.snbtByteSuffix}`
-        }
+        },
+        [ToJsonString]: (_lint: LintConfig) => val === 0 ? 'false' : 'true'
     })
 }
 
@@ -156,6 +158,10 @@ export function getNbtDoubleTag(val: number) {
             } else {
                 return `${strValue}${lint.snbtDoubleSuffix}`
             }
+        },
+        [ToJsonString]: (lint: LintConfig) => {
+            const strValue = getStringFromFloat(val, lint)
+            return strValue
         }
     }) as NbtDoubleTag
 }
@@ -164,7 +170,8 @@ export function getNbtStringTag(val: string) {
     // tslint:disable-next-line: prefer-object-spread
     return Object.assign(val, {
         [NbtTagType]: 'string',
-        [ToLintedString]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.quoteSnbtStringValues)
+        [ToLintedString]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.quoteSnbtStringValues),
+        [ToJsonString]: (_lint: LintConfig) => val
     }) as NbtStringTag
 }
 
@@ -176,6 +183,13 @@ export function getNbtCompoundTag(val: { [key: string]: NbtTag }) {
             const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
                 .map(v => `${quoteString(v, lint.quoteType, lint.quoteSnbtStringKeys)}${
                     getColon(lint)}${toLintedString(val[v], lint)}`)
+                .join(getComma(lint))
+            return `{${body}}`
+        },
+        [ToJsonString]: (lint: LintConfig) => {
+            /* istanbul ignore next */
+            const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
+                .map(v => `${v}${getColon(lint)}${toJsonString(val[v], lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         }

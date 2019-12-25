@@ -4,6 +4,7 @@ import { getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloat
 import { constructConfig } from '../../types/Config'
 import BigNumber from 'bignumber.js'
 import { ToLintedString } from '../../types/Lintable'
+import { ToJsonString } from '../../types/JsonConvertible'
 
 describe('NbtTag Tests', () => {
     describe('getNbtByteTag() Tests', () => {
@@ -34,6 +35,20 @@ describe('NbtTag Tests', () => {
             const actual = tag[ToLintedString](lint)
             assert(isNbtByteTag(tag))
             assert(actual === '2b')
+        })
+        it('Should convert to a JSON for true', () => {
+            const { lint } = constructConfig({})
+            const tag = getNbtByteTag(1)
+            const actual = tag[ToJsonString](lint)
+            assert(isNbtByteTag(tag))
+            assert(actual === 'true')
+        })
+        it('Should convert to a JSON for false', () => {
+            const { lint } = constructConfig({})
+            const tag = getNbtByteTag(0)
+            const actual = tag[ToJsonString](lint)
+            assert(isNbtByteTag(tag))
+            assert(actual === 'false')
         })
     })
     describe('getNbtShortTag() Tests', () => {
@@ -94,6 +109,13 @@ describe('NbtTag Tests', () => {
             const actual2 = tag2[ToLintedString](lint)
             assert(actual1 === '12.34')
             assert(actual2 === '12.0')
+        })
+        it('Should convert to a JSON', () => {
+            const { lint } = constructConfig({})
+            const tag = getNbtDoubleTag(42)
+            const actual = tag[ToJsonString](lint)
+            assert(isNbtDoubleTag(tag))
+            assert(actual === '42')
         })
     })
     describe('getNbtByteArrayTag() Tests', () => {
@@ -191,6 +213,13 @@ describe('NbtTag Tests', () => {
             assert(isNbtStringTag(tag))
             assert(actual === '"foo"')
         })
+        it('Should convert to a JSON', () => {
+            const { lint } = constructConfig({})
+            const tag = getNbtStringTag('"foo"')
+            const actual = tag[ToJsonString](lint)
+            assert(isNbtStringTag(tag))
+            assert(actual === '"foo"')
+        })
     })
     describe('getCompoundTag() Tests', () => {
         it('Should convert to a string with spaces', () => {
@@ -272,6 +301,24 @@ describe('NbtTag Tests', () => {
             })
             const actual = tag[ToLintedString](lintWithoutSpaces)
             assert(actual === '{"foo": 1s, "baz": {"qux": 2s}}')
+        })
+        it('Should convert to a JSON', () => {
+            const { lint } = constructConfig({
+                lint: {
+                    snbtAppendSpaceAfterComma: true,
+                    snbtAppendSpaceAfterColon: true,
+                    snbtSortKeys: false
+                }
+            })
+            const tag = getNbtCompoundTag({
+                '"foo"': getNbtByteTag(1),
+                '"baz"': getNbtCompoundTag({
+                    '"qux"': getNbtByteTag(0)
+                })
+            })
+            const actual = tag[ToJsonString](lint)
+            assert(isNbtCompoundTag(tag))
+            assert(actual === '{"foo": true, "baz": {"qux": false}}')
         })
     })
 })

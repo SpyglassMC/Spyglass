@@ -5,7 +5,7 @@ import Manager from '../types/Manager'
 import Config from '../types/Config'
 import { ClientCache } from '../types/ClientCache'
 import { NbtSchema } from '../types/VanillaNbtSchema'
-import TextComponent, { getJsonConfig, TextComponentType } from '../types/TextComponent'
+import TextComponent, { TextComponentType } from '../types/TextComponent'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     readonly identity = 'textComponent'
@@ -232,7 +232,6 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
 
     /* istanbul ignore next */
     parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
-        const jsonConfig = getJsonConfig(config.lint)
         const ans: ArgumentParserResult<TextComponent> = {
             data: new TextComponent([]),
             errors: [],
@@ -249,7 +248,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                     false,
                     true
                 ])
-                .parse(reader, cursor, manager, jsonConfig, cache)
+                .parse(reader, cursor, manager, config, cache)
             ans.data.value = result.data
             combineArgumentParserResult(ans, result)
         } else if (reader.peek() === '[') {

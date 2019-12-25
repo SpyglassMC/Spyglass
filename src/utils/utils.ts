@@ -2,6 +2,7 @@ import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
 import { ToLintedString } from '../types/Lintable'
 import { LintConfig } from '../types/Config'
+import { ToJsonString } from '../types/JsonConvertible'
 
 /**
  * Format input message.
@@ -113,7 +114,7 @@ export function arrayToCompletions(array: any[]): CompletionItem[] {
 }
 
 /**
- * Convert specific value to linted string.
+ * Convert specific value to a linted string.
  * @param value Any value.
  */
 export function toLintedString(value: any, lint: LintConfig): string {
@@ -121,5 +122,18 @@ export function toLintedString(value: any, lint: LintConfig): string {
         return value[ToLintedString](lint)
     } else {
         return `${value}`
+    }
+}
+
+/**
+ * Convert specific value to a JSON string.
+ * @param value Any value.
+ */
+/* istanbul ignore next */
+export function toJsonString(value: any, lint: LintConfig): string {
+    if (value && value[ToJsonString]) {
+        return value[ToJsonString](lint)
+    } else {
+        return toLintedString(value, lint)
     }
 }
