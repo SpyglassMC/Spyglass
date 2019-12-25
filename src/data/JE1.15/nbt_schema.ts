@@ -623,6 +623,10 @@ export default {
 				"type": "float",
 				"description": "How much the radius should decrease when the effect gets applied"
 			},
+			"RadiusPerTick": {
+				"type": "float",
+				"description": "How much the radius should decrease every tick"
+			},
 			"Particle": {
 				"type": "string",
 				"description": "Particle id displayed",
