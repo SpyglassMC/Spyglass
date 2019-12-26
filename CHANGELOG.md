@@ -1,3 +1,9 @@
+# [v1.11.4](https://github.com/SPGoding/datapack-language-server/compare/v1.11.3...v1.11.4) (2019-12-26)
+
+## 🐛 Bug Fixes
+- [`f39bf1b`](https://github.com/SPGoding/datapack-language-server/commit/f39bf1b)  Fix completions for text components (Issues: [`#227`](https://github.com/SPGoding/datapack-language-server/issues/227))
+- [`0dcab65`](https://github.com/SPGoding/datapack-language-server/commit/0dcab65)  Fix not escaping code snippets (Issues: [`#228`](https://github.com/SPGoding/datapack-language-server/issues/228))
+
 # [v1.11.3](https://github.com/SPGoding/datapack-language-server/compare/v1.11.2...v1.11.3) (2019-12-25)
 
 ## 🐛 Bug Fixes
