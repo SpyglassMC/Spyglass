@@ -123,7 +123,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         private readonly id: string | undefined = undefined,
         private readonly nbtSchema = VanillaNbtSchema,
         private readonly isPredicate = false,
-        private readonly isReadingJson = false
+        private readonly isJson = false
     ) {
         super()
         if (type instanceof Array) {
@@ -273,9 +273,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 }
                 const start = reader.cursor
                 try {
-                    const key = reader.readString(undefined, this.isReadingJson)
+                    const key = reader.readString()
                     result.data = key
-                    //#region Completions                    
+                    //#region Completions
                     if (walker && isSchemaAvailable && cursor === reader.cursor) {
                         const { children } = walker.read() as NbtCompoundSchemaNode
                         const safeChildren = children ? children : {}
@@ -554,7 +554,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             const quote = reader.peek()
             try {
                 const clonedReader = reader.clone()
-                const value = reader.readQuotedString(undefined, this.isReadingJson)
+                const value = reader.readQuotedString(undefined, this.isJson)
                 ans.data = getNbtStringTag(value)
                 const result = walker ?
                     walker.getParserResult(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate }) :

@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import Manager from '../types/Manager'
-import Config from '../types/Config'
+import Config, { constructConfig } from '../types/Config'
 import { ClientCache } from '../types/ClientCache'
 import { NbtSchema } from '../types/VanillaNbtSchema'
 import TextComponent, { TextComponentType } from '../types/TextComponent'
@@ -232,6 +232,16 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
 
     /* istanbul ignore next */
     parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
+        const jsonConfig = constructConfig({
+            lint: {
+                ...config.lint,
+                quoteType: 'always double',
+                quoteSnbtStringKeys: true,
+                quoteSnbtStringValues: true,
+                snbtUseBooleans: true,
+                snbtOmitDoubleSuffix: true
+            }
+        })
         const ans: ArgumentParserResult<TextComponent> = {
             data: new TextComponent([]),
             errors: [],
@@ -248,7 +258,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                     false,
                     true
                 ])
-                .parse(reader, cursor, manager, config, cache)
+                .parse(reader, cursor, manager, jsonConfig, cache)
             ans.data.value = result.data
             combineArgumentParserResult(ans, result)
         } else if (reader.peek() === '[') {
@@ -257,9 +267,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                     .skip()
                     .skipWhiteSpace()
                 while (reader.canRead() && reader.peek() !== ']') {
-                    const result = this.parse(
-                        reader, cursor, manager, config, cache
-                    );
+                    const result = this.parse(reader, cursor, manager, config, cache);
                     (ans.data.value as TextComponentType[]).push(result.data.value)
                     combineArgumentParserResult(ans, result)
                     reader.skipWhiteSpace()
