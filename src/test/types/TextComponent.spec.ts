@@ -15,7 +15,7 @@ describe('TextComponent Tests', () => {
         })
         it('Should return an object', () => {
             const { lint } = constructConfig({})
-            const text = new TextComponent(getNbtCompoundTag({'"text"': getNbtStringTag('"foo"')}))
+            const text = new TextComponent(getNbtCompoundTag({text: getNbtStringTag('"foo"')}))
             const actual = text[ToLintedString](lint)
             assert(actual === '{"text": "foo"}')
         })

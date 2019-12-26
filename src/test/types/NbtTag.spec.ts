@@ -313,9 +313,9 @@ describe('NbtTag Tests', () => {
                 }
             })
             const tag = getNbtCompoundTag({
-                '"foo"': getNbtByteTag(1),
-                '"baz"': getNbtCompoundTag({
-                    '"qux"': getNbtByteTag(0)
+                foo: getNbtByteTag(1),
+                baz: getNbtCompoundTag({
+                    qux: getNbtByteTag(0)
                 })
             })
             const actual = tag[ToJsonString](lint)

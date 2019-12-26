@@ -190,7 +190,7 @@ export function getNbtCompoundTag(val: { [key: string]: NbtTag }) {
             /* istanbul ignore next */
             const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
                 .map(v => `${quoteString(v, 'always double', true)}${
-                    getColon(lint)}${toLintedString(val[v], lint)}`)
+                    getColon(lint)}${toJsonString(val[v], lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         }

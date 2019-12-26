@@ -223,10 +223,20 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             ans.completions.push(
                                 ...result
                                     .completions
-                                    .map(v => ({
-                                        ...v,
-                                        label: getLabel(v.label)
-                                    }))
+                                    .map(v => {
+                                        /* istanbul ignore next */
+                                        if (v.insertText) {
+                                            return {
+                                                ...v,
+                                                insertText: getLabel(v.insertText)
+                                            }
+                                        } else {
+                                            return {
+                                                ...v,
+                                                label: getLabel(v.label)
+                                            }
+                                        }
+                                    })
                             )
                             ans.errors.push(
                                 ...result.errors
@@ -559,7 +569,20 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const result = walker ?
                     walker.getParserResult(clonedReader, this.cursor, this.manager, this.config, this.cache, { isPredicate: this.isPredicate }) :
                     { completions: [], errors: [], cache: {} }
-                ans.completions = result.completions.map(v => ({ ...v, label: escapeString(v.label, quote as any) }))
+                ans.completions = result.completions.map(v => {
+                    /* istanbul ignore next */
+                    if (v.insertText) {
+                        return {
+                            ...v,
+                            insertText: escapeString(v.insertText, quote as any)
+                        }
+                    } else {
+                        return {
+                            ...v,
+                            label: escapeString(v.label, quote as any)
+                        }
+                    }
+                })
                 ans.errors.push(...result.errors)
                 ans.cache = result.cache
             } catch (p) {
