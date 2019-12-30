@@ -186,7 +186,7 @@ const cacheFileOperations = {
         }
     },
     fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
-        // console.log(`Deleted ${rel} ${type} ${id}`)
+        // console.log(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(rel)
         }
@@ -260,7 +260,7 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
                         datapackCategoryPath,
                         (dir, rel, stat) => {
                             const result = Identity.fromRel(rel)
-                            if (result) {
+                            if (result && Identity.isExtValid(result.ext, result.category)) {
                                 const { id, category: key } = result
                                 if (getFromCachedFileTree(cacheFile.files, rel) === undefined) {
                                     cacheFileOperations.fileAdded(key, id)
@@ -456,16 +456,21 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
             }
             case FileChangeType.Deleted:
             default: {
+                // console.log(`FileChangeType.Deleted ${rel}`)
                 await walkInCachedFileTree(
-                    getFromCachedFileTree(cacheFile.files, rel) as CachedFileTree,
-                    subRel => {
-                        subRel = `${rel}${path.sep}${subRel}`
-                        const result = Identity.fromRel(subRel)
-                        if (result) {
-                            const { category, id, ext } = result
-                            if (Identity.isExtValid(ext, category)) {
-                                cacheFileOperations.fileDeleted(subRel, category, id)
-                                delFromCachedFileTree(cacheFile.files, subRel)
+                    cacheFile.files,
+                    walkedRel => {
+                        // console.log(`walkedRel = ${walkedRel}`)
+                        // console.log(`rel = ${rel}`)
+                        if (walkedRel === rel || walkedRel.startsWith(`${rel}${path.sep}`)) {
+                            const result = Identity.fromRel(walkedRel)
+                            // console.log(`result = ${JSON.stringify(result)}`)
+                            if (result) {
+                                const { category, id, ext } = result
+                                if (Identity.isExtValid(ext, category)) {
+                                    cacheFileOperations.fileDeleted(walkedRel, category, id)
+                                    delFromCachedFileTree(cacheFile.files, walkedRel)
+                                }
                             }
                         }
                     },
