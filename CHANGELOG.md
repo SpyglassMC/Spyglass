@@ -1,3 +1,8 @@
+# [v1.11.5](https://github.com/SPGoding/datapack-language-server/compare/v1.11.4...v1.11.5) (2019-12-30)
+
+## 🐛 Bug Fixes
+- [`f27f2d8`](https://github.com/SPGoding/datapack-language-server/commit/f27f2d8)  Fix deleting files doesn&#x27;t update the cache (Issues: [`#231`](https://github.com/SPGoding/datapack-language-server/issues/231))
+
 # [v1.11.4](https://github.com/SPGoding/datapack-language-server/compare/v1.11.3...v1.11.4) (2019-12-26)
 
 ## 🐛 Bug Fixes
