@@ -1,7 +1,7 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 
-export const LatestCacheFileVersion = 3
+export const LatestCacheFileVersion = 4
 
 export interface CacheFile {
     cache: ClientCache,
