@@ -114,15 +114,6 @@
       ]
     },
     {
-      "login": "MulverineX",
-      "name": "MulverineX",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
-      "profile": "http://mulverinex.github.io/home",
-      "contributions": [
-        "ideas"
-      ]
-    },
-    {
       "login": "fedpol1",
       "name": "fedpol1",
       "avatar_url": "https://avatars3.githubusercontent.com/u/54010140?v=4",
@@ -146,6 +137,16 @@
       "name": "mathaym25",
       "avatar_url": "https://avatars0.githubusercontent.com/u/35702771?v=4",
       "profile": "https://github.com/mathaym25",
+      "contributions": [
+        "bug",
+        "ideas"
+      ]
+    },
+    {
+      "login": "MulverineX",
+      "name": "MulverineX",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
+      "profile": "http://mulverinex.github.io/home",
       "contributions": [
         "bug",
         "ideas"
