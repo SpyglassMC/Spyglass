@@ -18,7 +18,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         private readonly allowLocal = true,
         private readonly allowRelative = true,
         private readonly min: undefined | number | (undefined | number)[] = undefined,
-        private readonly max: undefined | number | (undefined | number)[] = undefined,
+        private readonly max: undefined | number | (undefined | number)[] = undefined
     ) {
         super()
         this.identity = `vector${dimension}D`

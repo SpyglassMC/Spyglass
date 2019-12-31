@@ -711,8 +711,9 @@ export const VanillaTree: CommandTree = {
                                         },
                                         replace: {
                                             parser: new LiteralArgumentParser('replace'),
+                                            executable: true,
                                             children: {
-                                                replacedBlock: {
+                                                filter: {
                                                     parser: new BlockArgumentParser(true, undefined, undefined, undefined, true),
                                                     executable: true
                                                 }
