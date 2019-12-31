@@ -1,3 +1,9 @@
+# [v1.11.6](https://github.com/SPGoding/datapack-language-server/compare/v1.11.5...v1.11.6) (2019-12-31)
+
+## 🐛 Bug Fixes
+- [`b58ad8e`](https://github.com/SPGoding/datapack-language-server/commit/b58ad8e)  Fix fill &lt;vec3&gt; &lt;vec3&gt; &lt;block&gt; replace not executable (Issues: [`#234`](https://github.com/SPGoding/datapack-language-server/issues/234))
+- [`e183e6e`](https://github.com/SPGoding/datapack-language-server/commit/e183e6e)  Fix reporting errors for x_rotation (Issues: [`#232`](https://github.com/SPGoding/datapack-language-server/issues/232))
+
 # [v1.11.5](https://github.com/SPGoding/datapack-language-server/compare/v1.11.4...v1.11.5) (2019-12-30)
 
 ## 🐛 Bug Fixes
