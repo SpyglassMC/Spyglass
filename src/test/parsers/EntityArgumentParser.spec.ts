@@ -151,11 +151,12 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return data with simple arguments', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5]'
+                const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5,x_rotation=135..-135]'
                 const expected = {
                     sort: 'random', x: 1, dx: 2.5, limit: 1,
                     level: new NumberRange('integer', 1),
-                    distance: new NumberRange('float', undefined, 5)
+                    distance: new NumberRange('float', undefined, 5),
+                    rotation: new NumberRange('float', 135, -135)
                 }
                 const actual = parser.parse(new StringReader(command), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', expected as any))

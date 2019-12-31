@@ -231,7 +231,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
     constructor() { super() }
 
     /* istanbul ignore next */
-    parse(reader: StringReader, cursor: number, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
+    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
         const jsonConfig = constructConfig({
             lint: {
                 ...config.lint,
@@ -283,12 +283,14 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                     .expect(']')
                     .skip()
             } catch (p) {
+                /* istanbul ignore next */
                 ans.errors.push(p)
             }
         } else {
             try {
                 ans.data.value = reader.readString(undefined, true)
             } catch (p) {
+                /* istanbul ignore next */
                 ans.errors.push(p)
             }
         }

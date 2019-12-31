@@ -13,7 +13,7 @@ import VanillaNbtSchema from '../types/VanillaNbtSchema'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
-    private static UuidPattern = /^[A-F0-9]{1,8}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,12}$/i
+    private static readonly UuidPattern = /^[A-F0-9]{1,8}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,12}$/i
 
     private cursor: number
     private manager: Manager<ArgumentParser<any>>
