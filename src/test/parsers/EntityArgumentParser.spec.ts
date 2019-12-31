@@ -156,7 +156,7 @@ describe('EntityArgumentParser Tests', () => {
                     sort: 'random', x: 1, dx: 2.5, limit: 1,
                     level: new NumberRange('integer', 1),
                     distance: new NumberRange('float', undefined, 5),
-                    rotation: new NumberRange('float', 135, -135)
+                    x_rotation: new NumberRange('float', 135, -135)
                 }
                 const actual = parser.parse(new StringReader(command), undefined, manager)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a', expected as any))
