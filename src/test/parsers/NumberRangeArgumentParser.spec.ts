@@ -56,6 +56,14 @@ describe('NumberRangeArgumentParser Tests', () => {
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
         })
+        it('Should return data for cycle float range', () => {
+            const parser = new NumberRangeArgumentParser('float', true)
+            const { data, completions, errors, cache } = parser.parse(new StringReader('135..-135'), undefined, manager)
+            assert.deepStrictEqual(data, new NumberRange('float', 135, -135))
+            assert.deepStrictEqual(completions, [])
+            assert.deepStrictEqual(errors, [])
+            assert.deepStrictEqual(cache, {})
+        })
         it('Should return completions for integer range', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions } = parser.parse(new StringReader(''), 0, manager)

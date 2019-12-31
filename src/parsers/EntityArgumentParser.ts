@@ -228,8 +228,12 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         dealWithNegativableArray(manager.get('Team'), key)
                     } else if (key === 'type') {
                         dealWithNegativableArray(manager.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
-                    } else if (key === 'distance' || key === 'x_rotation' || key === 'y_rotation') {
+                    } else if (key === 'distance') {
                         const result = manager.get('NumberRange', ['float']).parse(reader, cursor, manager, config, cache)
+                        ans.data.argument[key] = result.data
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'x_rotation' || key === 'y_rotation') {
+                        const result = manager.get('NumberRange', ['float', true]).parse(reader, cursor, manager, config, cache)
                         ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'level') {

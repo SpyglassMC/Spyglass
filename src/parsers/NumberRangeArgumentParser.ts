@@ -8,7 +8,10 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
     identity = 'numberRange'
 
-    constructor(private readonly type: 'integer' | 'float') {
+    constructor(
+        private readonly type: 'integer' | 'float',
+        private readonly isCycle = false
+    ) {
         super()
         this.identity = `${type}Range`
     }
@@ -51,7 +54,8 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             } else {
                 max = min
             }
-            if (min !== undefined && max !== undefined && min > max) {
+            // Check values.
+            if (!this.isCycle && min !== undefined && max !== undefined && min > max) {
                 ans.errors.push(
                     new ParsingError({ start, end: reader.cursor }, `the minimum value ${min} is larger than the maximum value ${max}`)
                 )
