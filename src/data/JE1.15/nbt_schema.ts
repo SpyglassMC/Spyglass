@@ -3021,6 +3021,7 @@ export default {
 			"SkullOwner": {
 				"description": "The player whose head this is",
 				"type": "compound",
+				"canAlsoBe": ["string"],
 				"children": {
 					"Id": {
 						"description": "UUID of the player",

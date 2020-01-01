@@ -252,7 +252,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 ans = this.parsePrimitiveTag(reader, walker)
                 break
         }
-        if (walker && walker.read().type !== ans.data[NbtTagType]) {
+        if (
+            walker && walker.read().type !== ans.data[NbtTagType] &&
+            !(walker.read().canAlsoBe && (walker.read().canAlsoBe as string[]).includes(ans.data[NbtTagType]))
+        ) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 `expected ${NbtSchemaWalker.getString(walker.read().type)} instead of ${

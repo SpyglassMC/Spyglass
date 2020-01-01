@@ -5,9 +5,8 @@ import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { CompletionItemKind, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
-import { constructConfig, VanillaConfig } from '../../types/Config'
+import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
 import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
 
@@ -492,6 +491,10 @@ describe('NbtTagArgumentParser Tests', () => {
                         colorIntArrayTest: {
                             type: 'int_array',
                             isColor: true
+                        },
+                        canAlsoBeTest: {
+                            type: 'string',
+                            canAlsoBe: ['compound']
                         }
                     }
                 },
@@ -686,6 +689,19 @@ describe('NbtTagArgumentParser Tests', () => {
                         }
                     }
                 })
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should not return error when current schema can also be a compound tag', () => {
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/canAlsoBeTest', schemas)
+                const reader = new StringReader('{ foo: 1b }')
+                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                assert.deepEqual(data, getNbtCompoundTag(
+                    {
+                        foo: getNbtByteTag(1)
+                    }
+                ))
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for compound tag', () => {

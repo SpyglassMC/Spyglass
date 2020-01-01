@@ -11,7 +11,8 @@ export interface NodeBase {
         | { description?: string; value?: string }
         | { parser: string; params?: any[] }
     >,
-    isColor?: boolean
+    isColor?: boolean,
+    canAlsoBe?: string[]
 }
 
 export interface NbtNoPropertySchemaNode extends NodeBase {
