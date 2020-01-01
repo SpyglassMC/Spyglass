@@ -1,3 +1,8 @@
+# [v1.11.7](https://github.com/SPGoding/datapack-language-server/compare/v1.11.6...v1.11.7) (2020-01-01)
+
+## 🐛 Bug Fixes
+- [`1a3f89e`](https://github.com/SPGoding/datapack-language-server/commit/1a3f89e)  Fix type of SkullOwner (Issues: [`#235`](https://github.com/SPGoding/datapack-language-server/issues/235))
+
 # [v1.11.6](https://github.com/SPGoding/datapack-language-server/compare/v1.11.5...v1.11.6) (2019-12-31)
 
 ## 🐛 Bug Fixes
