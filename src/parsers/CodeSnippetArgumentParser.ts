@@ -3,13 +3,13 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { InsertTextFormat, CompletionItemKind } from 'vscode-languageserver'
-import { VanillaConfig } from '../types/Config'
+import ParsingContext from '../types/ParsingContext'
 
 export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
     readonly identity = 'codeSnippet'
 
-    // istanbul ignore next
-    parse(reader: StringReader, cursor: number = -1, _manager = undefined, { snippets } = VanillaConfig): ArgumentParserResult<string> {
+    /* istanbul ignore next */
+    parse(reader: StringReader, { cursor, config: { snippets } }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -22,7 +22,7 @@ export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
         const endCursor = reader.cursor
         if (startCursor <= cursor && cursor <= endCursor) {
             for (const label in snippets) {
-                // istanbul ignore next
+                /* istanbul ignore next */
                 if (snippets.hasOwnProperty(label)) {
                     const insertText = snippets[label]
                     ans.completions.push({

@@ -1,11 +1,10 @@
 import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import Manager from '../types/Manager'
-import Config, { constructConfig } from '../types/Config'
-import { ClientCache } from '../types/ClientCache'
-import { NbtSchema } from '../types/VanillaNbtSchema'
 import TextComponent, { TextComponentType } from '../types/TextComponent'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { constructConfig } from '../types/Config'
+import { NbtSchema } from '../types/VanillaNbtSchema'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     readonly identity = 'textComponent'
@@ -231,10 +230,10 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
     constructor() { super() }
 
     /* istanbul ignore next */
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config: Config, cache: ClientCache): ArgumentParserResult<TextComponent> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponent> {
         const jsonConfig = constructConfig({
             lint: {
-                ...config.lint,
+                ...ctx.config.lint,
                 quoteType: 'always double',
                 quoteSnbtStringKeys: true,
                 quoteSnbtStringValues: true,
@@ -249,16 +248,19 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
             completions: []
         }
         if (reader.peek() === '{') {
-            const result = manager
+            const result = ctx.parsers
                 .get('NbtTag', [
                     ['compound'],
                     'blocks',
                     'spgoding:json_object',
-                    TextComponentArgumentParser.TextComponentSchema,
                     false,
                     true
                 ])
-                .parse(reader, cursor, manager, jsonConfig, cache)
+                .parse(reader, {
+                    ...ctx,
+                    nbt: TextComponentArgumentParser.TextComponentSchema,
+                    config: jsonConfig
+                })
             ans.data.value = result.data
             combineArgumentParserResult(ans, result)
         } else if (reader.peek() === '[') {
@@ -267,7 +269,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                     .skip()
                     .skipWhiteSpace()
                 while (reader.canRead() && reader.peek() !== ']') {
-                    const result = this.parse(reader, cursor, manager, config, cache);
+                    const result = this.parse(reader, ctx);
                     (ans.data.value as TextComponentType[]).push(result.data.value)
                     combineArgumentParserResult(ans, result)
                     reader.skipWhiteSpace()
@@ -298,7 +300,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
         return ans
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next */
     getExamples(): string[] {
         return ['"hello world"', '""', '{"text":"hello world"}', '[""]']
     }

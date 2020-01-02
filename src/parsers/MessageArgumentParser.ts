@@ -1,19 +1,13 @@
-import ArgumentParser from './ArgumentParser'
-import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import Manager from '../types/Manager'
-import { VanillaConfig } from '../types/Config'
-import { ClientCache } from '../types/ClientCache'
+import ArgumentParser from './ArgumentParser'
 import Message from '../types/Message'
+import ParsingContext from '../types/ParsingContext'
+import StringReader from '../utils/StringReader'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {
     readonly identity = 'message'
 
-    constructor() {
-        super()
-    }
-
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Message> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Message> {
         const ans: ArgumentParserResult<Message> = {
             data: new Message([]),
             errors: [],
@@ -26,7 +20,7 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
             if (reader.peek() === '@' &&
                 (reader.peek(1) === 'p' || reader.peek(1) === 'a' || reader.peek(1) === 'r' || reader.peek(1) === 's' || reader.peek(1) === 'e')
             ) {
-                const entityResult = manager.get('Entity').parse(reader, cursor, manager, config, cache)
+                const entityResult = ctx.parsers.get('Entity').parse(reader, ctx)
                 value.push(entityResult.data)
                 combineArgumentParserResult(ans, entityResult)
             } else {

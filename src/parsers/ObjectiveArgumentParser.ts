@@ -1,10 +1,10 @@
 import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache, getCompletions, getSafeCategory, CacheCategory, CachePosition, CacheUnit } from '../types/ClientCache'
-import { VanillaConfig } from '../types/Config'
+import { getCompletions, getSafeCategory } from '../types/ClientCache'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
     readonly identity = 'objective'
@@ -15,7 +15,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -23,11 +23,11 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions
-        if (reader.cursor === cursor) {
-            ans.completions.push(...getCompletions(cache, 'objectives'))
+        if (reader.cursor === ctx.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'objectives'))
         }
         //#endregion
-        const category = getSafeCategory(cache, 'objectives')
+        const category = getSafeCategory(ctx.cache, 'objectives')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -60,7 +60,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                             }
                         }
                     }
-                } else if (config.lint.strictObjectiveCheck) {
+                } else if (ctx.config.lint.strictObjectiveCheck) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + value.length },
                         `undefined objective ‘${value}’`,

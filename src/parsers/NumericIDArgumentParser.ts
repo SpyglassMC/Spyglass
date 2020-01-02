@@ -1,28 +1,26 @@
 import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
 import { ArgumentParserResult } from '../types/Parser'
-import { ClientCache } from '../types/ClientCache'
-import { VanillaConfig } from '../types/Config'
+import { Registry } from '../types/VanillaRegistries'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
-    private readonly registry: Registry
+    private registry: Registry
     readonly identity = 'numericID'
 
-    constructor(type: string, registries = VanillaRegistries) {
-        super()
-        this.registry = registries[type]
-    }
+    constructor(private readonly type: string) { super() }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<number> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<number> {
+        this.registry = ctx.registries[this.type]
         const ans: ArgumentParserResult<number> = {
             data: NaN,
             errors: [],
             cache: {},
             completions: []
         }
+
         //#region Completions
-        if (reader.cursor === cursor) {
+        if (reader.cursor === ctx.cursor) {
             const getCompletions = (registry: Registry) => Object
                 .keys(registry.entries)
                 .map(v => ({ label: registry.entries[v].protocol_id.toString(), detail: v }))
@@ -33,18 +31,13 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
         //#region Data
         let value: undefined | number
         try {
-             value = reader.readInt()
-             ans.data = value
+            value = reader.readInt()
+            ans.data = value
         } catch (p) {
             ans.errors.push(p)
         }
         //#endregion
 
-        //#region Errors
-        //#endregion
-
-        //#region Cache
-        //#endregion
         return ans
     }
 

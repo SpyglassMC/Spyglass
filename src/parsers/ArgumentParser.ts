@@ -1,8 +1,6 @@
-import Config from '../types/Config'
-import Manager from '../types/Manager'
 import Parser, { ArgumentParserResult } from '../types/Parser'
+import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import { ClientCache } from '../types/ClientCache'
 
 /**
  * Base class of argument parsers.
@@ -16,11 +14,9 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
     /**
      * Parse.
      * @param reader Input reader.
-     * @param cursor The index where the cursor is. Used to compute completions.
-     * @param config A config of the language server.
-     * @param cache A global cache of the current workspace.
+     * @param ctx A ParsingContext.
      */
-    abstract parse(reader: StringReader, cursor: number, manager?: Manager<ArgumentParser<any>>, config?: Config, cache?: ClientCache): ArgumentParserResult<T>
+    abstract parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<T>
 
     /**
      * Default implements to return something like `<id: string>`

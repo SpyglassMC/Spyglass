@@ -3,13 +3,11 @@ import { ClientCache, offsetCachePosition } from '../types/ClientCache'
 import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchema, ValueList } from '../types/VanillaNbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
-import { VanillaConfig } from '../types/Config'
-import LineParser from '../parsers/LineParser'
-import StringReader from './StringReader'
-import Manager from '../types/Manager'
-import ArgumentParser from '../parsers/ArgumentParser'
-import ParsingError from '../types/ParsingError'
 import clone = require('clone')
+import LineParser from '../parsers/LineParser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import StringReader from './StringReader'
 
 type SuggestionNode =
     | string
@@ -148,7 +146,7 @@ export default class NbtSchemaWalker {
                             const refNode = subWalker.read() as NbtCompoundSchemaNode
                             ansNode.additionalChildren = ansNode.additionalChildren || refNode.additionalChildren
                             ansNode.children = { ...ansNode.children, ...refNode.children }
-                            // istanbul ignore next
+                            /* istanbul ignore next */
                             if (paths.length > 0) {
                                 try {
                                     return findNodeInChildren(
@@ -229,11 +227,7 @@ export default class NbtSchemaWalker {
         return ans
     }
 
-    getParserResult(
-        reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>,
-        config = VanillaConfig, cache: ClientCache = {},
-        variables: Variables = { isPredicate: false }
-    ): { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } {
+    getParserResult(reader: StringReader, ctx: ParsingContext, variables: Variables = { isPredicate: false }): { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } {
         const isParserNode =
             (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
         const ans: { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } = { completions: [], errors: [], cache: {} }
@@ -241,13 +235,13 @@ export default class NbtSchemaWalker {
         suggestions.forEach(
             v => {
                 if (typeof v === 'string') {
-                    if (reader.cursor === cursor) {
+                    if (reader.cursor === ctx.cursor) {
                         ans.completions.push({ label: v })
                     }
                 } else if (isParserNode(v)) {
-                    const out = { cursor }
+                    const out = { cursor: ctx.cursor }
                     const subReader = new StringReader(reader.readString(out))
-                    const offset = cursor - out.cursor
+                    const offset = ctx.cursor - out.cursor
 
                     // Replace variables in v.params.
                     /* istanbul ignore next */
@@ -271,11 +265,11 @@ export default class NbtSchemaWalker {
                     if (v.parser === '#') {
                         // LineParser
                         const parser = new LineParser(...v.params)
-                        const { completions, errors, cache } = parser.parse(subReader, out.cursor, manager).data
+                        const { completions, errors, cache } = parser.parse(subReader, { ...ctx, cursor: out.cursor }).data
                         if (completions) {
                             ans.completions.push(...completions)
                         }
-                        // istanbul ignore next
+                        /* istanbul ignore next */
                         if (errors) {
                             ans.errors.push(...errors.map(
                                 v => new ParsingError({
@@ -291,8 +285,8 @@ export default class NbtSchemaWalker {
                         }
                     } else {
                         // Regular ArgumentParser
-                        const parser = manager.get(v.parser, v.params)
-                        const { completions, errors, cache: resultCache } = parser.parse(subReader, out.cursor, manager, config, cache)
+                        const parser = ctx.parsers.get(v.parser, v.params)
+                        const { completions, errors, cache: resultCache } = parser.parse(subReader, { ...ctx, cursor: out.cursor })
                         ans.completions.push(...completions)
                         ans.errors.push(...errors.map(
                             v => new ParsingError({
@@ -304,7 +298,7 @@ export default class NbtSchemaWalker {
                         ans.cache = resultCache
                     }
                 } else {
-                    if (reader.cursor === cursor) {
+                    if (reader.cursor === ctx.cursor) {
                         ans.completions.push({ label: v.value as string, documentation: v.description })
                     }
                 }

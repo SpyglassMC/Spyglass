@@ -1,10 +1,10 @@
-import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
-import { VanillaConfig } from '../types/Config'
+import { getCompletions, getSafeCategory } from '../types/ClientCache'
+import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class TeamArgumentParser extends ArgumentParser<string> {
     readonly identity = 'team'
@@ -15,7 +15,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -23,11 +23,11 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions
-        if (reader.cursor === cursor) {
-            ans.completions.push(...getCompletions(cache, 'teams'))
+        if (reader.cursor === ctx.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'teams'))
         }
         //#endregion
-        const category = getSafeCategory(cache, 'teams')
+        const category = getSafeCategory(ctx.cache, 'teams')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -60,7 +60,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
                             }
                         }
                     }
-                } else if (config.lint.strictTeamCheck) {
+                } else if (ctx.config.lint.strictTeamCheck) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + value.length },
                         `undefined team ‘${value}’`,

@@ -1,6 +1,6 @@
 import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
 import NumberRange from '../types/NumberRange'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
@@ -16,7 +16,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         this.identity = `${type}Range`
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<NumberRange> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRange> {
         const ans: ArgumentParserResult<NumberRange> = {
             data: new NumberRange(this.type),
             completions: [],
@@ -26,7 +26,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         const isDoublePeriods = () => reader.peek() === '.' && reader.peek(1) === '.'
         const start = reader.cursor
 
-        if (cursor === start && this.type === 'integer') {
+        if (ctx.cursor === start && this.type === 'integer') {
             ans.completions.push({ label: '-2147483648..2147483647' })
         }
 
@@ -40,14 +40,14 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             let min: number | undefined
             let max: number | undefined
             if (!isDoublePeriods()) {
-                const result = manager.get('Number', [this.type]).parse(reader, cursor)
+                const result = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
                 min = result.data
                 combineArgumentParserResult(ans, result)
             }
             if (isDoublePeriods()) {
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
-                    const result = manager.get('Number', [this.type]).parse(reader, cursor)
+                    const result = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
                     max = result.data
                     combineArgumentParserResult(ans, result)
                 }

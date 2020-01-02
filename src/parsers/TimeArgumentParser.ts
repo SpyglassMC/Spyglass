@@ -1,10 +1,10 @@
-import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
-import StringReader from '../utils/StringReader'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ParsingError from '../types/ParsingError'
-import Time from '../types/Time'
 import { arrayToCompletions } from '../utils/utils'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
+import Time from '../types/Time'
 
 export default class TimeArgumentParser extends ArgumentParser<Time> {
     static readonly Units = ['d', 's', 't']
@@ -15,7 +15,7 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<Time> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Time> {
         const ans: ArgumentParserResult<Time> = {
             data: new Time(NaN, 't'),
             errors: [],
@@ -23,12 +23,12 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
             completions: []
         }
 
-        const numberResult = manager.get('Number', ['float', 0]).parse(reader, cursor)
+        const numberResult = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
         const number = numberResult.data as number
         combineArgumentParserResult(ans, numberResult)
         ans.data.value = number
 
-        if (cursor === reader.cursor) {
+        if (ctx.cursor === reader.cursor) {
             ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
         }
 

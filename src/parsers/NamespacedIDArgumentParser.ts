@@ -1,14 +1,11 @@
-import { arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
-import { ClientCache, getCompletions, getSafeCategory, CacheKey } from '../types/ClientCache'
-import Config, { VanillaConfig } from '../types/Config'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import ArgumentParser from './ArgumentParser'
+import Config from '../types/Config'
 import Identity from '../types/Identity'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import VanillaRegistries, { Registry } from '../types/VanillaRegistries'
-import Manager from '../types/Manager'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
@@ -19,17 +16,16 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
      * @param type A type in registries, or a type in cache if beginning with hash (`$`).
      * @param registries The registries.
      */
-    // istanbul ignore next
+    /* istanbul ignore next */
     constructor(
         private readonly type: string,
-        private readonly registries = VanillaRegistries,
         private readonly allowTag = false,
         private readonly isPredicate = false
     ) {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager: Manager<ArgumentParser<any>>, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, { cache, config, cursor, registries }: ParsingContext): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             errors: [],
@@ -67,7 +63,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             const type = this.type.slice(1)
             regularCandidates.push(...Object.keys(getSafeCategory(cache, type as any)))
         } else {
-            const registry = this.registries[this.type]
+            const registry = registries[this.type]
             regularCandidates.push(...Object.keys(registry.entries))
         }
 
@@ -249,7 +245,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     //#endregion
                 } else {
                     // For registry IDs.
-                    const registry = this.registries[this.type]
+                    const registry = registries[this.type]
                     //#region Errors
                     if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
@@ -290,7 +286,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
 
     /* istanbul ignore next: tired of writing tests */
     private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string) {
-        const checkStickCheckConfig = (config: StrictCheckConfig) => {
+        const shouldStrictCheck = (config: StrictCheckConfig) => {
             switch (config) {
                 case 'always':
                     return true
@@ -327,27 +323,27 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             case '$storages':
                 return lint.strictStorageCheck
             case 'minecraft:mob_effect':
-                return checkStickCheckConfig(lint.strictMobEffectCheck)
+                return shouldStrictCheck(lint.strictMobEffectCheck)
             case 'minecraft:enchantment':
-                return checkStickCheckConfig(lint.strictEnchantmentCheck)
+                return shouldStrictCheck(lint.strictEnchantmentCheck)
             case 'minecraft:sound_event':
-                return checkStickCheckConfig(lint.strictSoundEventCheck)
+                return shouldStrictCheck(lint.strictSoundEventCheck)
             case 'minecraft:entity_type':
-                return checkStickCheckConfig(lint.strictEntityTypeCheck)
+                return shouldStrictCheck(lint.strictEntityTypeCheck)
             case 'minecraft:dimension_type':
-                return checkStickCheckConfig(lint.strictDimensionTypeCheck)
+                return shouldStrictCheck(lint.strictDimensionTypeCheck)
             case 'minecraft:block':
-                return checkStickCheckConfig(lint.strictBlockCheck)
+                return shouldStrictCheck(lint.strictBlockCheck)
             case 'minecraft:item':
-                return checkStickCheckConfig(lint.strictItemCheck)
+                return shouldStrictCheck(lint.strictItemCheck)
             case 'minecraft:potion':
-                return checkStickCheckConfig(lint.strictPotionCheck)
+                return shouldStrictCheck(lint.strictPotionCheck)
             case 'minecraft:motive':
-                return checkStickCheckConfig(lint.strictMotiveCheck)
+                return shouldStrictCheck(lint.strictMotiveCheck)
             case 'minecraft:fluid':
-                return checkStickCheckConfig(lint.strictFluidCheck)
+                return shouldStrictCheck(lint.strictFluidCheck)
             case 'minecraft:particle_type':
-                return checkStickCheckConfig(lint.strictParticleTypeCheck)
+                return shouldStrictCheck(lint.strictParticleTypeCheck)
             default:
                 return false
         }

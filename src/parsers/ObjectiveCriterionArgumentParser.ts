@@ -1,9 +1,8 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
+import ParsingContext from '../types/ParsingContext'
 import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringReader from '../utils/StringReader'
-import VanillaRegistries from '../types/VanillaRegistries'
 
 export default class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     static readonly Category: { [type: string]: null | string | string[] } = {
@@ -34,11 +33,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
 
     readonly identity = 'objectiveCriterion'
 
-    constructor(private readonly registries = VanillaRegistries) {
-        super()
-    }
-
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -46,7 +41,9 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
             completions: []
         }
 
-        const categoryResult = manager.get('Literal', Object.keys(ObjectiveCriterionArgumentParser.Category)).parse(reader, cursor)
+        const categoryResult = ctx.parsers
+            .get('Literal', Object.keys(ObjectiveCriterionArgumentParser.Category))
+            .parse(reader, ctx)
         const category = categoryResult.data as string
         let subCriteria = ObjectiveCriterionArgumentParser.Category[category]
         combineArgumentParserResult(ans, categoryResult)
@@ -54,7 +51,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
         if (!subCriteria) {
             subCriteria = []
         } else if (typeof subCriteria === 'string') {
-            subCriteria = Object.keys(this.registries[subCriteria].entries).map(v => v.slice(10))
+            subCriteria = Object.keys(ctx.registries[subCriteria].entries).map(v => v.slice(10))
         }
 
         if (subCriteria.length > 0) {
@@ -62,7 +59,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
                 reader
                     .expect(ObjectiveCriterionArgumentParser.Sep)
                     .skip()
-                const subResult = manager.get('Literal', subCriteria).parse(reader, cursor)
+                const subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
                 const sub: string = subResult.data
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ObjectiveCriterionArgumentParser.Sep}${sub}`

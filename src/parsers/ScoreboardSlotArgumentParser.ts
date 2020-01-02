@@ -1,8 +1,8 @@
-import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
-import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static readonly Category = ['belowName', 'list', 'sidebar']
@@ -15,7 +15,7 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -23,7 +23,7 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
             completions: []
         }
 
-        const categoryResult = manager.get('Literal', ScoreboardSlotArgumentParser.Category).parse(reader, cursor)
+        const categoryResult = ctx.parsers.get('Literal', ScoreboardSlotArgumentParser.Category).parse(reader, ctx)
         const category = categoryResult.data as 'list' | 'sidebar' | 'belowName' | ''
         combineArgumentParserResult(ans, categoryResult)
 
@@ -36,7 +36,9 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
                 ans.data = category
             } else {
                 reader.skip()
-                const teamResult = manager.get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`)).parse(reader, cursor)
+                const teamResult = ctx.parsers
+                    .get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`))
+                    .parse(reader, ctx)
                 const team = teamResult.data as string
                 combineArgumentParserResult(ans, teamResult)
                 ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}`

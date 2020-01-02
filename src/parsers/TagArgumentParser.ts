@@ -1,10 +1,10 @@
-import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache, getCompletions, getSafeCategory } from '../types/ClientCache'
-import { VanillaConfig } from '../types/Config'
+import { getCompletions, getSafeCategory } from '../types/ClientCache'
+import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class TagArgumentParser extends ArgumentParser<string> {
     readonly identity = 'tag'
@@ -13,7 +13,7 @@ export default class TagArgumentParser extends ArgumentParser<string> {
         super()
     }
 
-    parse(reader: StringReader, cursor = -1, _manager = undefined, config = VanillaConfig, cache: ClientCache = {}): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -21,11 +21,11 @@ export default class TagArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions
-        if (reader.cursor === cursor) {
-            ans.completions.push(...getCompletions(cache, 'tags'))
+        if (reader.cursor === ctx.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'tags'))
         }
         //#endregion
-        const category = getSafeCategory(cache, 'tags')
+        const category = getSafeCategory(ctx.cache, 'tags')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -38,7 +38,7 @@ export default class TagArgumentParser extends ArgumentParser<string> {
                 'expected a tag but got nothing',
                 false
             ))
-        } else if (config.lint.strictTagCheck && !Object.keys(category).includes(value)) {
+        } else if (ctx.config.lint.strictTagCheck && !Object.keys(category).includes(value)) {
             ans.errors.push(new ParsingError(
                 { start, end: start + value.length },
                 `undefined tag ‘${value}’`,

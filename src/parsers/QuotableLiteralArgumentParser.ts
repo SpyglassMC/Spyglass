@@ -1,11 +1,10 @@
-import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions, quoteString } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
-import Config, { VanillaConfig } from '../types/Config'
-import LiteralArgumentParser from './LiteralArgumentParser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import LiteralArgumentParser from './LiteralArgumentParser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import StringReader from '../utils/StringReader'
 
 export default class QuotableLiteralArgumentParser extends LiteralArgumentParser {
     constructor(
@@ -15,7 +14,7 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
         private readonly diagnosticSeverity = DiagnosticSeverity.Error
     ) { super() }
 
-    parse(reader: StringReader, cursor: number = -1, _manager = undefined, config: Config = VanillaConfig): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -23,14 +22,14 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
             completions: []
         }
         //#region Get completions.
-        if (cursor === reader.cursor) {
+        if (ctx.cursor === reader.cursor) {
             ans.completions.push(
                 ...arrayToCompletions(
-                    this.literals.map(v => quoteString(v, config.lint.quoteType, this.shouldQuote))
+                    this.literals.map(v => quoteString(v, ctx.config.lint.quoteType, this.shouldQuote))
                 )
             )
         }
-        if (StringReader.isQuote(reader.peek()) && cursor === reader.cursor + 1) {
+        if (StringReader.isQuote(reader.peek()) && ctx.cursor === reader.cursor + 1) {
             ans.completions.push(
                 ...arrayToCompletions(this.literals)
             )

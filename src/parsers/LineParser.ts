@@ -1,16 +1,14 @@
+import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
+import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import ArgumentParser from './ArgumentParser'
-import Config, { VanillaConfig } from '../types/Config'
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
-import Manager from '../types/Manager'
 import Parser from '../types/Parser'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import VanillaTree, { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
-import { ClientCache } from '../types/ClientCache'
-import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
 
 export default class LineParser implements Parser<Line> {
-    // istanbul ignore next
+    /* istanbul ignore next */
     constructor(
         /**
          * Whether the line should begin with a slash (`/`).  
@@ -22,10 +20,7 @@ export default class LineParser implements Parser<Line> {
         /**
          * The entry point will be used to access `tree`.
          */
-        private readonly entryPoint: 'line' | 'commands' = 'line',
-        private readonly tree: CommandTree = VanillaTree,
-        private readonly cache: ClientCache = {},
-        private readonly config: Config = VanillaConfig
+        private readonly entryPoint: 'line' | 'commands' = 'line'
     ) { }
 
     private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLine) => ArgumentParser<any>), parsedLine: SaturatedLine) {
@@ -38,7 +33,7 @@ export default class LineParser implements Parser<Line> {
         return ans
     }
 
-    parse(reader: StringReader, cursor: number = -1, manager: Manager<ArgumentParser<any>>): ParserResult {
+    parse(reader: StringReader, ctx: ParsingContext): ParserResult {
         const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
         reader.skipWhiteSpace()
         const backupReader = reader.clone()
@@ -63,7 +58,7 @@ export default class LineParser implements Parser<Line> {
                     `expected a leading slash ‘/’ but got ‘${reader.peek()}’`,
                     false
                 ))
-                if (cursor === reader.cursor) {
+                if (ctx.cursor === reader.cursor) {
                     line.completions.push({ label: '/' })
                 }
             }
@@ -71,52 +66,52 @@ export default class LineParser implements Parser<Line> {
         //#endregion
 
         if (line.errors.length === 0) {
-            this.parseChildren(reader, manager, this.tree[this.entryPoint], line, cursor)
+            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line)
         }
         saturatedLineToLine(line)
-        // istanbul ignore next
+        /* istanbul ignore next */
         if (backupReader.peek() === '#' && line.errors && line.errors.length > 0) {
             return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], hint: { fix: [], options: [] }, completions: line.completions } }
         }
         return { data: line }
     }
 
-    parseSingle(reader: StringReader, manager: Manager<ArgumentParser<any>>, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, cursor: number = -1, isTheLastElement: boolean = false, optional = false) {
+    parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, isTheLastElement: boolean = false, optional = false) {
         if (node.redirect) {
             if (node.redirect.indexOf('.') === -1) {
                 // Redirect to children.
-                const redirect = this.tree[node.redirect]
-                this.parseChildren(reader, manager, redirect, parsedLine, cursor, optional)
+                const redirect = ctx.tree[node.redirect]
+                this.parseChildren(reader, ctx, redirect, parsedLine, optional)
             } else {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
-                const redirect = this.tree[seg[0]][seg[1]]
-                this.parseSingle(reader, manager, seg[1], redirect, parsedLine, cursor, isTheLastElement, optional)
+                const redirect = ctx.tree[seg[0]][seg[1]]
+                this.parseSingle(reader, ctx, seg[1], redirect, parsedLine, isTheLastElement, optional)
             }
         } else if (node.template) {
             if (!node.template.includes('.')) {
                 // Use `children` as the template.
-                const template = fillChildrenTemplate(node, this.tree[node.template])
-                this.parseChildren(reader, manager, template, parsedLine, cursor, optional)
+                const template = fillChildrenTemplate(node, ctx.tree[node.template])
+                this.parseChildren(reader, ctx, template, parsedLine, optional)
             } else {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
-                const template = fillSingleTemplate(node, this.tree[seg[0]][seg[1]])
-                this.parseSingle(reader, manager, seg[1], template, parsedLine, cursor, isTheLastElement, optional)
+                const template = fillSingleTemplate(node, ctx.tree[seg[0]][seg[1]])
+                this.parseSingle(reader, ctx, seg[1], template, parsedLine, isTheLastElement, optional)
             }
         } else if (node.parser) {
             const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine)
-            const { cache, completions, data, errors } = parser.parse(reader, cursor, manager, this.config, this.cache)
+            const { cache, completions, data, errors } = parser.parse(reader, ctx)
             combineSaturatedLine(parsedLine, {
                 args: [{ data, parser: parser.identity }],
                 hint: { fix: [], options: [] },
                 cache, completions, errors
             })
-            if (start <= cursor && cursor <= reader.cursor) {
+            if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                 parsedLine.hint.options.push([
                     parser.toHint(key, optional),
-                    this.getHintsInChildren(manager, node)
+                    this.getHintsInChildren(ctx, node)
                 ])
             } else {
                 parsedLine.hint.fix.push(parser.toHint(key, optional))
@@ -134,13 +129,13 @@ export default class LineParser implements Parser<Line> {
                     reader.skip()
                     // The input line is end with a space.
                     /* istanbul ignore else */
-                    if (node.children && cursor === reader.cursor) {
+                    if (node.children && ctx.cursor === reader.cursor) {
                         // Compute completions.
                         const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
                             const result = { args: parsedLine.args, cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
-                            this.parseChildren(reader, manager, node.children, result, cursor, optional)
+                            this.parseChildren(reader, ctx, node.children, result,  optional)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
                                 parsedLine.completions.push(...result.completions)
@@ -161,7 +156,7 @@ export default class LineParser implements Parser<Line> {
                     if (shouldParseChildren) {
                         if (reader.peek() === ' ') {
                             reader.skip()
-                            this.parseChildren(reader, manager, node.children, parsedLine, cursor, optional)
+                            this.parseChildren(reader, ctx, node.children, parsedLine, optional)
                             // Downgrade errors.
                             parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                         } else {
@@ -174,7 +169,7 @@ export default class LineParser implements Parser<Line> {
             }
             // Check permission level.
             const level = node.permission !== undefined ? node.permission : 2
-            const levelMax = this.config.env.permissionLevel
+            const levelMax = ctx.config.env.permissionLevel
             if (level > levelMax) {
                 parsedLine.errors.push(
                     new ParsingError(
@@ -191,7 +186,7 @@ export default class LineParser implements Parser<Line> {
         }
     }
 
-    parseChildren(reader: StringReader, manager: Manager<ArgumentParser<any>>, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, cursor: number = -1, optional = false) {
+    parseChildren(reader: StringReader, ctx:ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false) {
         let i = -1
         for (const key in children) {
             i += 1
@@ -201,7 +196,7 @@ export default class LineParser implements Parser<Line> {
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
                 const isTheLastElement = i === Object.keys(children).length - 1
-                this.parseSingle(newReader, manager, key, node, parsedLine, cursor, isTheLastElement, optional)
+                this.parseSingle(newReader, ctx, key, node, parsedLine, isTheLastElement, optional)
                 if (
                     !isTheLastElement && /* Has untolerable errors */
                     parsedLine.errors.filter(v => !v.tolerable).length > 0
@@ -218,7 +213,7 @@ export default class LineParser implements Parser<Line> {
         throw new Error('unreachable error. Maybe there is an empty children in the command tree')
     }
 
-    getHintsInChildren(manager: Manager<ArgumentParser<any>>, node: CommandTreeNode<any>) {
+    getHintsInChildren(ctx: ParsingContext, node: CommandTreeNode<any>) {
         const ans: string[] = []
         const children = node.children || {}
         for (const key in children) {
@@ -232,7 +227,7 @@ export default class LineParser implements Parser<Line> {
                     errors: []
                 }
                 const subNode = children[key]
-                this.parseSingle(new StringReader(''), manager, key, subNode, line, -1, undefined, node.executable)
+                this.parseSingle(new StringReader(''), ctx, key, subNode, line, undefined, node.executable)
                 const option = line.hint.fix[0]
                 ans.push(option)
             }

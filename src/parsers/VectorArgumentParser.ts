@@ -1,5 +1,6 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
+import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector, { VectorElement } from '../types/Vector'
@@ -24,7 +25,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         this.identity = `vector${dimension}D`
     }
 
-    parse(reader: StringReader, cursor = -1): ArgumentParserResult<Vector> {
+    parse(reader: StringReader, { cursor }: ParsingContext): ArgumentParserResult<Vector> {
         const ans: ArgumentParserResult<Vector> = {
             // tslint:disable-next-line: prefer-object-spread
             data: new Vector([]),

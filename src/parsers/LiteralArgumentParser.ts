@@ -3,6 +3,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
+import ParsingContext from '../types/ParsingContext'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
@@ -24,7 +25,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
         }
     }
 
-    parse(reader: StringReader, cursor: number = -1): ArgumentParserResult<string> {
+    parse(reader: StringReader, { cursor }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],

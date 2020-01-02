@@ -1,10 +1,10 @@
 ///<reference path="../typings/range.d.ts" />
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
-import Manager from '../types/Manager'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
 import range from 'python-range'
 import StringReader from '../utils/StringReader'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ParsingError from '../types/ParsingError'
 
 export default class ItemSlotArgumentParser extends ArgumentParser<string> {
     static readonly Category = {
@@ -21,11 +21,7 @@ export default class ItemSlotArgumentParser extends ArgumentParser<string> {
 
     readonly identity = 'itemSlot'
 
-    constructor() {
-        super()
-    }
-
-    parse(reader: StringReader, cursor = -1, manager: Manager<ArgumentParser<any>>): ArgumentParserResult<string> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             errors: [],
@@ -36,14 +32,14 @@ export default class ItemSlotArgumentParser extends ArgumentParser<string> {
         if (StringReader.canInNumber(reader.peek())) {
             ans.data = reader.readInt().toString()
         } else {
-            const categoryResult = manager.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, cursor)
+            const categoryResult = ctx.parsers.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
             const category = categoryResult.data as 'armor' | 'container' | 'enderchest' | 'horse' | 'hotbar' | 'inventory' | 'villager' | 'weapon'
             combineArgumentParserResult(ans, categoryResult)
 
             if (category && reader.peek() === ItemSlotArgumentParser.Sep) {
                 reader.skip()
 
-                const subResult = manager.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, cursor)
+                const subResult = ctx.parsers.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
                 const sub: string = subResult.data
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ItemSlotArgumentParser.Sep}${sub}`
