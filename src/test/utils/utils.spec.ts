@@ -47,7 +47,7 @@ describe('utils.ts Tests', () => {
         it('Should not quote when specified', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr, false)
-            assert(actual === 'bar, baz and foo')
+            assert(actual === 'bar, baz, and foo')
         })
     })
     describe('escapeString() Tests', () => {

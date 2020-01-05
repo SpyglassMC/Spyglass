@@ -5,6 +5,7 @@ import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import Time from '../../types/Time'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('TimeArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,22 +16,24 @@ describe('TimeArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return data for time without unit', () => {
             const parser = new TimeArgumentParser()
-            const actual = parser.parse(new StringReader('0'), undefined, manager)
+            const actual = parser.parse(new StringReader('0'), ctx)
             assert.deepEqual(actual.data, new Time(0, 't'))
             assert.deepEqual(actual.errors, [])
         })
         it('Should return data for time with unit', () => {
             const parser = new TimeArgumentParser()
-            const actual = parser.parse(new StringReader('0.5d'), undefined, manager)
+            const actual = parser.parse(new StringReader('0.5d'), ctx)
             assert.deepEqual(actual.data, new Time(0.5, 'd'))
             assert.deepEqual(actual.errors, [])
         })
         it('Should return completions for units', () => {
+            const ctx = constructContext({ parsers, cursor: 4 })
             const parser = new TimeArgumentParser()
-            const actual = parser.parse(new StringReader('2.33'), 4, manager)
+            const actual = parser.parse(new StringReader('2.33'), ctx)
             assert.deepEqual(actual.data, new Time(2.33, 't'))
             assert.deepEqual(actual.completions,
                 [
@@ -42,7 +45,7 @@ describe('TimeArgumentParser Tests', () => {
         })
         it('Should return error when the unit is unexpected', () => {
             const parser = new TimeArgumentParser()
-            const actual = parser.parse(new StringReader('2.33q'), undefined, manager)
+            const actual = parser.parse(new StringReader('2.33q'), ctx)
             assert.deepStrictEqual(actual.data, new Time(2.33, 't'))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(

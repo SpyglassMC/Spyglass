@@ -334,12 +334,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 let isUnexpectedKey = false
                 // Check whether the schema for the key is available.
                 let isSchemaForKeyAvailable = false
+                let clonedWalker: undefined | NbtSchemaWalker
                 if (walker && isSchemaAvailable) {
+                    clonedWalker = walker
+                        .clone()
+                        .goAnchor(key)
                     try {
-                        walker
-                            .clone()
-                            .goAnchor(key)
-                            .read()
+                        clonedWalker.read()
                         isSchemaForKeyAvailable = true
                     } catch (ignored) {
                         if (!(walker.read() as NbtCompoundSchemaNode).additionalChildren) {
@@ -350,7 +351,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const result = this.parseTag(
                     reader,
                     ctx,
-                    (walker && isSchemaForKeyAvailable) ? walker.clone().goAnchor(key) : undefined
+                    (clonedWalker && isSchemaForKeyAvailable) ? clonedWalker : undefined
                 )
                 if (isUnexpectedKey) {
                     result.errors.push(

@@ -6,8 +6,8 @@ import { fail } from 'power-assert'
 import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/VanillaNbtSchema'
 import StringReader from '../../utils/StringReader'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
-import { VanillaConfig } from '../../types/Config'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
@@ -341,23 +341,26 @@ describe('NbtSchemaWalker Tests', () => {
         })
     })
     describe('getParserResult() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return empty completions when there are not any suggestions', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const actual = walker
                 .go('block/banner.json')
-                .getParserResult(new StringReader(''), 0, manager, VanillaConfig, {})
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return empty completions for raw suggestions when the cursor is not at the point', () => {
             const actual = walker
                 .go('suggestionsTest.json#raw')
-                .getParserResult(new StringReader(''), -1, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return completions for raw suggestions', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const actual = walker
                 .go('suggestionsTest.json#raw')
-                .getParserResult(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'foo' }
             ])
@@ -365,21 +368,23 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return empty completions for detailed suggestions when the cursor is not at the point', () => {
             const actual = walker
                 .go('suggestionsTest.json#detailed')
-                .getParserResult(new StringReader(''), -1, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return completions for detailed suggestions', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const actual = walker
                 .go('suggestionsTest.json#detailed')
-                .getParserResult(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'bar', documentation: 'The Bar' }
             ])
         })
         it('Should return completions for argument parser suggestions', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const actual = walker
                 .go('suggestionsTest.json#argumentParser')
-                .getParserResult(new StringReader(''), 0, manager, undefined, undefined)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'baz' },
                 { label: 'qux' }
@@ -394,9 +399,10 @@ describe('NbtSchemaWalker Tests', () => {
                     }
                 }
             }
+            const ctx = constructContext({ parsers, cache, cursor: 0 })
             const actual = walker
                 .go('suggestionsTest.json#argumentParserWithVariables')
-                .getParserResult(new StringReader(''), 0, manager, undefined, cache, { isPredicate: true })
+                .getParserResult(new StringReader(''), ctx, { isPredicate: true })
             assert.deepStrictEqual(actual.completions, [
                 {
                     label: 'minecraft',
@@ -408,9 +414,10 @@ describe('NbtSchemaWalker Tests', () => {
             ])
         })
         it('Should return completions for line parser suggestions', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getParserResult(new StringReader(''), 0, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: '/' }
             ])
@@ -418,7 +425,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should return empty completions when the result completions of line parser is undefined', () => {
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
-                .getParserResult(new StringReader(''), undefined, manager)
+                .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
     })

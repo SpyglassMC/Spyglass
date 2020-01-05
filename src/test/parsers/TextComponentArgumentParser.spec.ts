@@ -8,6 +8,7 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import TextComponent from '../../types/TextComponent'
 import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('TextComponentArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -18,22 +19,23 @@ describe('TextComponentArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return primitive data', () => {
             const parser = new TextComponentArgumentParser()
-            const actual = parser.parse(new StringReader('"bar"'), undefined, manager, VanillaConfig, {})
+            const actual = parser.parse(new StringReader('"bar"'), ctx)
             assert.deepEqual(actual.data, new TextComponent('"bar"'))
         })
         it('Should return object data', () => {
             const parser = new TextComponentArgumentParser()
-            const actual = parser.parse(new StringReader('{ "text": "\\u00a7cFoo" }'), undefined, manager, VanillaConfig, {})
+            const actual = parser.parse(new StringReader('{ "text": "\\u00a7cFoo" }'), ctx)
             assert.deepEqual(actual.data, new TextComponent(getNbtCompoundTag({
                 text: getNbtStringTag('"\\u00a7cFoo"')
             })))
         })
         it('Should return array data', () => {
             const parser = new TextComponentArgumentParser()
-            const actual = parser.parse(new StringReader('[{ "text": "\\u00a7cFoo" }, "bar"]'), undefined, manager, VanillaConfig, {})
+            const actual = parser.parse(new StringReader('[{ "text": "\\u00a7cFoo" }, "bar"]'), ctx)
             assert.deepEqual(actual.data, new TextComponent([
                 getNbtCompoundTag({
                     text: getNbtStringTag('"\\u00a7cFoo"')

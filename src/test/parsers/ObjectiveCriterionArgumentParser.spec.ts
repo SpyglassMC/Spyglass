@@ -4,6 +4,7 @@ import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ObjectiveCriterionArgumentParser from '../../parsers/ObjectiveCriterionArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('ObjectiveCriterionArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -14,7 +15,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const testRegistries = {
+        const registries = {
             'minecraft:custom_stat': {
                 protocol_id: 0,
                 entries: {
@@ -24,28 +25,30 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 }
             }
         }
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ registries, parsers })
         it('Should return data for normal literal slots', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('dummy'), undefined, manager)
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('dummy'), ctx)
             assert(actual.data === 'dummy')
             assert.deepEqual(actual.errors, [])
         })
         it('Should return data for ‘teamkill.*’', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('teamkill.red'), undefined, manager)
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('teamkill.red'), ctx)
             assert(actual.data === 'teamkill.red')
             assert.deepEqual(actual.errors, [])
         })
         it('Should return data for ‘minecraft.custom:minecraft.*’', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('minecraft.custom:minecraft.custom_stat_1'), undefined, manager)
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('minecraft.custom:minecraft.custom_stat_1'), ctx)
             assert(actual.data === 'minecraft.custom:minecraft.custom_stat_1')
             assert.deepEqual(actual.errors, [])
         })
         it('Should return completions for categories', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const ctx = constructContext({ registries, parsers, cursor: 0 })
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -75,8 +78,9 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘teamkill’', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('teamkill.'), 9, manager)
+            const ctx = constructContext({ registries, parsers, cursor: 9 })
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('teamkill.'), ctx)
             assert.deepStrictEqual(actual.data, 'teamkill.')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -100,8 +104,9 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘minecraft.custom:minecraft’', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('minecraft.custom:minecraft.'), 27, manager)
+            const ctx = constructContext({ registries, parsers, cursor: 27 })
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('minecraft.custom:minecraft.'), ctx)
             assert.deepStrictEqual(actual.data, 'minecraft.custom:minecraft.')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -112,8 +117,8 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             )
         })
         it('Should return error when the sep symbol is missing', () => {
-            const parser = new ObjectiveCriterionArgumentParser(testRegistries)
-            const actual = parser.parse(new StringReader('teamkill'), undefined, manager)
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('teamkill'), ctx)
             assert.deepStrictEqual(actual.data, 'teamkill')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(

@@ -17,6 +17,7 @@ export default class StringReader {
 
     tokenEnd(scope: TokenScope) {
         for (const preToken of this.preTokens) {
+            /* istanbul ignore next */
             if (preToken.scope === scope) {
                 // this.tokens = this.tokens.filter(
                 //     ({ range: { start, end } }) => !(start === preToken.start && end === this.cursor)

@@ -5,6 +5,7 @@ import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('TagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -21,14 +22,16 @@ describe('TagArgumentParser Tests', () => {
                 bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
             }
         }
+        const ctx = constructContext({ cache })
         it('Should return data', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader('expected'))
+            const actual = parser.parse(new StringReader('expected'), ctx)
             assert(actual.data === 'expected')
         })
         it('Should return completions', () => {
+            const ctx = constructContext({ cache, cursor: 0 })
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader(''), 0, undefined, undefined, cache)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -45,23 +48,25 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return untolerable error when the input is empty', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader(''))
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'expected a tag but got nothing', false)
             ])
         })
         it('Should not return warning when the strict tag check pass', () => {
-            const parser = new TagArgumentParser()
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const actual = parser.parse(new StringReader('foo'), undefined, undefined, config, cache)
+            const ctx = constructContext({ cache, config })
+            const parser = new TagArgumentParser()
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warning when the strict tag check fail', () => {
-            const parser = new TagArgumentParser()
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, config, cache)
+            const ctx = constructContext({ cache, config })
+            const parser = new TagArgumentParser()
+            const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'undefined tag ‘qux’', undefined, DiagnosticSeverity.Warning)
@@ -69,7 +74,7 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return cache', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader('foo'), undefined, undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
                 tags: {
@@ -82,7 +87,7 @@ describe('TagArgumentParser Tests', () => {
         })
         it('Should return empty cache when the tag is undefined', () => {
             const parser = new TagArgumentParser()
-            const actual = parser.parse(new StringReader('qux'), undefined, undefined, undefined, cache)
+            const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.cache, {})
         })

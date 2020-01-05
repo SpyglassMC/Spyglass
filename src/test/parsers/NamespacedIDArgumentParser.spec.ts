@@ -9,6 +9,7 @@ import { Registries } from '../../types/VanillaRegistries'
 import Identity from '../../types/Identity'
 import { fail } from 'assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('NamespacedIDArgumentParser Tests', () => {
     const registries: Registries = {
@@ -57,10 +58,10 @@ describe('NamespacedIDArgumentParser Tests', () => {
             }
         }
     }
-    const manager = new ArgumentParserManager()
+    const parsers = new ArgumentParserManager()
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
             const actual = parser.getExamples()
             assert.deepStrictEqual(actual, ['example:foo/bar'])
         })
@@ -98,29 +99,31 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 omitDefaultNamespace: true
             }
         })
+        const ctx = constructContext({ registries, parsers, cache, config })
         it('Should return data with single path', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
-            const actual = parser.parse(new StringReader('spgoding:a'), undefined, manager)
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader('spgoding:a'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['a']))
         })
         it('Should return data with multiple paths', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
-            const actual = parser.parse(new StringReader('spgoding:a/b/c'), undefined, manager)
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader('spgoding:a/b/c'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['a', 'b', 'c']))
         })
         it('Should return data without namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
-            const actual = parser.parse(new StringReader('a/b'), undefined, manager, config)
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader('a/b'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('minecraft', ['a', 'b']))
         })
         it('Should return data with tag ID', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:fluid', registries, true)
-            const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), undefined, manager)
+            const parser = new NamespacedIDArgumentParser('minecraft:fluid', true)
+            const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('minecraft', ['fluid_tag'], true))
         })
         it('Should return completions for registry entries', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const ctx = constructContext({ registries, parsers, cache, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -133,8 +136,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for cache units', () => {
-            const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
+            const ctx = constructContext({ registries, parsers, cache, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('$bossbars')
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -147,8 +151,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for fluid and fluid tags', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:fluid', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('minecraft:fluid', true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -181,8 +186,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for functions and function tags', () => {
-            const parser = new NamespacedIDArgumentParser('$functions', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, undefined, cache)
+            const ctx = constructContext({ registries, parsers, cache, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('$functions', true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -195,8 +201,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for items and item tags', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:item', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('minecraft:item', true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -219,8 +226,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for blocks and block tags', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:block', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('minecraft:block', true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -248,8 +256,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for entity types and entity type tags', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('minecraft:entity_type', true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -272,8 +281,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for namespaces and the first path in default namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -301,8 +311,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should only return completions for namespaces when cannot omit namespaces', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries, undefined, true)
-            const actual = parser.parse(new StringReader(''), 0, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 0 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', undefined, true)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.completions,
                 [
@@ -320,8 +331,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for the first path in non-default namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
-            const actual = parser.parse(new StringReader('spgoding:'), 9, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 9 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader('spgoding:'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['']))
             assert.deepStrictEqual(actual.completions,
                 [
@@ -339,8 +351,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for the second path in non-default namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
-            const actual = parser.parse(new StringReader('spgoding:foo/'), 13, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 13 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader('spgoding:foo/'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo', '']))
             assert.deepStrictEqual(actual.completions,
                 [
@@ -358,8 +371,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for the third path in non-default namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
-            const actual = parser.parse(new StringReader('spgoding:foo/bar/'), 17, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 17 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader('spgoding:foo/bar/'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['foo', 'bar', '']))
             assert.deepStrictEqual(actual.completions,
                 [
@@ -372,8 +386,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return completions for the second path in default namespace', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test', registries)
-            const actual = parser.parse(new StringReader('foo/'), 4, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 4 })
+            const parser = new NamespacedIDArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader('foo/'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo', '']))
             assert.deepStrictEqual(actual.completions,
                 [
@@ -391,8 +406,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
             )
         })
         it('Should return untolerable error when the input is empty', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries)
-            const actual = parser.parse(new StringReader(''), undefined, manager)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'expected a namespaced ID but got nothing', false)
@@ -400,8 +416,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return warning when the id cannot be resolved in cache category', () => {
             const config = constructConfig({ lint: { strictBossbarCheck: true, omitDefaultNamespace: true } })
-            const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('foo'), undefined, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$bossbars')
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
@@ -409,8 +426,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return warning when the id cannot be resolved in loot table cache', () => {
             const config = constructConfig({ lint: { strictLootTableCheck: true, omitDefaultNamespace: true } })
-            const parser = new NamespacedIDArgumentParser('$lootTables', registries)
-            const actual = parser.parse(new StringReader('foo'), undefined, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$lootTables')
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
@@ -418,8 +436,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return warning when the id cannot be resolved in tag cache category', () => {
             const config = constructConfig({ lint: { strictFunctionTagCheck: true, omitDefaultNamespace: true } })
-            const parser = new NamespacedIDArgumentParser('$functions', registries, true)
-            const actual = parser.parse(new StringReader('#spgoding:function/114514'), undefined, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$functions', true)
+            const actual = parser.parse(new StringReader('#spgoding:function/114514'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['function', '114514'], true))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 25 }, 'faild to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
@@ -427,16 +446,18 @@ describe('NamespacedIDArgumentParser Tests', () => {
         })
         it('Should return warning when the id cannot be resolved in registry', () => {
             const config = constructConfig({ lint: { strictBlockCheck: 'always', omitDefaultNamespace: true } })
-            const parser = new NamespacedIDArgumentParser('minecraft:block', registries)
-            const actual = parser.parse(new StringReader('qux'), undefined, manager, config)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('minecraft:block')
+            const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['qux']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache when the id is already defined', () => {
-            const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('spgoding:bossbar/a'), undefined, manager, undefined, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$bossbars')
+            const actual = parser.parse(new StringReader('spgoding:bossbar/a'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['bossbar', 'a']))
             assert.deepStrictEqual(actual.cache, {
                 bossbars: {
@@ -448,31 +469,35 @@ describe('NamespacedIDArgumentParser Tests', () => {
             })
         })
         it('Should return empty cache when the id is undefined', () => {
-            const parser = new NamespacedIDArgumentParser('$bossbars', registries)
-            const actual = parser.parse(new StringReader('spgoding:bossbar/c'), undefined, manager, undefined, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$bossbars')
+            const actual = parser.parse(new StringReader('spgoding:bossbar/c'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['bossbar', 'c']))
             assert.deepStrictEqual(actual.cache, {})
         })
         it('Should throw error when the type does not have a corresponding tag type', () => {
-            const parser = new NamespacedIDArgumentParser('spgoding:test', registries, true)
+            const ctx = constructContext({ registries, parsers, cache, config, cursor: 1 })
+            const parser = new NamespacedIDArgumentParser('spgoding:test', true)
             try {
-                parser.parse(new StringReader('#'), 1, manager)
+            parser.parse(new StringReader('#'), ctx)
                 fail()
             } catch (e) {
                 assert(e.message === 'faild to find a tag type for ‘spgoding:test’')
             }
         })
         it('Should throw error when tags are not allowed here', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:entity_type', registries)
-            const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), undefined, manager, undefined, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('minecraft:entity_type')
+            const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['entity_type', '1'], true))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'tags are not allowed here')
             ])
         })
         it('Should throw error when namespace cannot be omitted here', () => {
-            const parser = new NamespacedIDArgumentParser('minecraft:block', registries, undefined, true)
-            const actual = parser.parse(new StringReader('stone'), undefined, manager, config, cache)
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('minecraft:block', undefined, true)
+            const actual = parser.parse(new StringReader('stone'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['stone']))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 5 }, 'default namespace cannot be omitted here')

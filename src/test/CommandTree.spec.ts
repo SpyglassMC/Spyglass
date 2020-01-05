@@ -13,6 +13,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
 import CommandTree, { CommandTreeNode } from '../types/CommandTree'
+import { constructContext } from '../types/ParsingContext'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -197,38 +198,40 @@ describe('CommandTree Tests', () => {
         it('Should return base when type does not exist', () => {
             const entity = new Entity('foo')
             const actual = getSchemaAnchor(entity, schema)
-            assert(actual=== 'base')
+            assert(actual === 'base')
         })
         it('Should return base when the first type is a tag', () => {
             const id = new Identity('minecraft', ['spgoding'], true)
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
-            assert(actual=== 'base')
+            assert(actual === 'base')
         })
         it('Should return base when the first type cannot be interpreted as an anchor', () => {
             const id = new Identity('minecraft', ['qwertyuiop'])
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
-            assert(actual=== 'base')
+            assert(actual === 'base')
         })
         it('Should return the respective schema', () => {
             const id = new Identity('minecraft', ['spgoding'])
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
-            assert(actual=== 'minecraft:spgoding')
+            assert(actual === 'minecraft:spgoding')
         })
     })
     describe('Just Fucking Parse', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
         const cache = {
             advancements: {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
+        const ctx = constructContext({ parsers, cache })
         it('advancement g', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const ctx = constructContext({ parsers, cursor: 13 })
+            const parser = new LineParser(false)
             const reader = new StringReader('advancement g')
-            const { data } = parser.parse(reader, 13, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'g', parser: 'literal' }
@@ -245,9 +248,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, [{ label: 'grant' }])
         })
         it('advancement (grant|revoke) <targets> everything', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s everything')
-            const { data } = parser.parse(reader, -1, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
@@ -263,9 +266,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('advancement (grant|revoke) <targets> only <advancement>', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test')
-            const { data } = parser.parse(reader, -1, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
@@ -286,9 +289,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('advancement (grant|revoke) <targets> only <advancement> <criterion>', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test aaa')
-            const { data } = parser.parse(reader, -1, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
@@ -310,9 +313,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('advancement (grant|revoke) <targets> (from|through|until) <advancement>', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('advancement revoke @s through minecraft:test')
-            const { data } = parser.parse(reader, -1, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'revoke', parser: 'literal' },
@@ -333,9 +336,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('data get block <targetPos> <path>', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('data get block ~ ~ ~ CustomName')
-            const { data } = parser.parse(reader, -1, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'data', parser: 'literal' },
                 { data: 'get', parser: 'literal' },
@@ -352,9 +355,10 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('setblock ~ ~ ~ minecraft:grass_block[]', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const ctx = constructContext({ parsers, cursor: 37 })
+            const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
-            const { data } = parser.parse(reader, 37, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
@@ -369,9 +373,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, [{ label: 'snowy' }])
         })
         it('#define entity SPGoding', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('#define entity SPGoding')
-            const { data } = parser.parse(reader, undefined, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: '#define', parser: 'literal' },
                 { data: 'entity', parser: 'literal' },
@@ -393,9 +397,9 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.completions, undefined)
         })
         it('# This is a comment.', () => {
-            const parser = new LineParser(false, undefined, undefined, cache)
+            const parser = new LineParser(false)
             const reader = new StringReader('# This is a comment.')
-            const { data } = parser.parse(reader, undefined, manager)
+            const { data } = parser.parse(reader, ctx)
             assert.deepEqual(data.args, [
                 { data: '# This is a comment.', parser: 'string' }
             ])

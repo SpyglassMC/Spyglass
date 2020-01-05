@@ -4,6 +4,7 @@ import ParsingError from '../../types/ParsingError'
 import ScoreboardSlotArgumentParser from '../../parsers/ScoreboardSlotArgumentParser'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('ScoreboardSlotArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -14,22 +15,24 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return data for normal literal slots', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('belowName'), undefined, manager)
+            const actual = parser.parse(new StringReader('belowName'), ctx)
             assert(actual.data === 'belowName')
             assert.deepEqual(actual.errors, [])
         })
         it('Should return data for team sidebars', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('sidebar.team.red'), undefined, manager)
+            const actual = parser.parse(new StringReader('sidebar.team.red'), ctx)
             assert(actual.data === 'sidebar.team.red')
             assert.deepEqual(actual.errors, [])
         })
         it('Should return completions for slots', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -40,8 +43,9 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for teams under ‘sidebar’', () => {
+            const ctx = constructContext({ parsers, cursor: 8 })
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('sidebar.team.'), 8, manager)
+            const actual = parser.parse(new StringReader('sidebar.team.'), ctx)
             assert.deepStrictEqual(actual.data, 'sidebar.team.')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -66,7 +70,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
         })
         it('Should return error when the category does not exist', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('foo'), undefined, manager)
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
@@ -77,7 +81,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
         })
         it('Should return error when the category does not support sub slots', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('list.'), undefined, manager)
+            const actual = parser.parse(new StringReader('list.'), ctx)
             assert.deepStrictEqual(actual.data, 'list')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(

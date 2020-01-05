@@ -467,16 +467,16 @@ describe('StringReader Tests', () => {
                 .token('string.quoted.double.mcfunction')
                 .readUntilOrEnd(' ')
             reader
-                .skip()
                 .tokenEnd('string.quoted.double.mcfunction')
+                .skip()
                 .token('comment.line.number-sign.mcfunction')
                 .readUntilOrEnd(' ')
             reader
                 .tokenEnd('comment.line.number-sign.mcfunction')
                 .tokenEnd('string.quoted.double.mcfunction')
             assert.deepEqual(reader.tokens, [
-                { range: { start: 0, end: 3 }, name: 'string.quoted.double.mcfunction' },
-                { range: { start: 4, end: 7 }, name: 'comment.line.number-sign.mcfunction' }
+                { range: { start: 0, end: 3 }, scope: 'string.quoted.double.mcfunction' },
+                { range: { start: 4, end: 7 }, scope: 'comment.line.number-sign.mcfunction' }
             ])
         })
     })

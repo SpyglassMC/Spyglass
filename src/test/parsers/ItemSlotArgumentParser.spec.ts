@@ -6,6 +6,7 @@ import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('ItemSlotArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -16,25 +17,27 @@ describe('ItemSlotArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return data for number slot', () => {
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('12'), undefined, manager)
+            const actual = parser.parse(new StringReader('12'), ctx)
             assert(actual.data === '12')
         })
         it('Should return data for normal literal slots', () => {
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('weapon.mainhand'), undefined, manager)
+            const actual = parser.parse(new StringReader('weapon.mainhand'), ctx)
             assert(actual.data === 'weapon.mainhand')
         })
         it('Should return data for ‘weapon’', () => {
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('weapon'), undefined, manager)
+            const actual = parser.parse(new StringReader('weapon'), ctx)
             assert(actual.data === 'weapon')
         })
         it('Should return completions for categories', () => {
+            const ctx = constructContext({ parsers, cursor: 0 })
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader(''), 0, manager)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -50,8 +53,9 @@ describe('ItemSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘armor’', () => {
+            const ctx = constructContext({ parsers, cursor: 6 })
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('armor.'), 6, manager)
+            const actual = parser.parse(new StringReader('armor.'), ctx)
             assert.deepStrictEqual(actual.data, 'armor.')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -63,8 +67,9 @@ describe('ItemSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘hotbar’', () => {
+            const ctx = constructContext({ parsers, cursor: 7 })
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('hotbar.'), 7, manager)
+            const actual = parser.parse(new StringReader('hotbar.'), ctx)
             assert.deepStrictEqual(actual.data, 'hotbar.')
             assert.deepStrictEqual(actual.completions,
                 [
@@ -82,7 +87,7 @@ describe('ItemSlotArgumentParser Tests', () => {
         })
         it('Should return error when the category does not exist', () => {
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('foo'), undefined, manager)
+            const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(

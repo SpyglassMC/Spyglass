@@ -5,6 +5,7 @@ import Entity from '../../types/Entity'
 import Message from '../../types/Message'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import StringReader from '../../utils/StringReader'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('MessageArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,22 +16,23 @@ describe('MessageArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should return data without selectors', () => {
             const parser = new MessageArgumentParser()
-            const actual = parser.parse(new StringReader('aaaa!@#$'), undefined, manager)
+            const actual = parser.parse(new StringReader('aaaa!@#$'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Message(['aaaa!@#$']))
         })
         it('Should return data with only one selector', () => {
             const parser = new MessageArgumentParser()
-            const actual = parser.parse(new StringReader('@a'), undefined, manager)
+            const actual = parser.parse(new StringReader('@a'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Message([new Entity(undefined, 'a')]))
         })
         it('Should return data with mixed selectors and strings', () => {
             const parser = new MessageArgumentParser()
-            const actual = parser.parse(new StringReader('Hello@A@aWORLD'), undefined, manager)
+            const actual = parser.parse(new StringReader('Hello@A@aWORLD'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Message(['Hello@A', new Entity(undefined, 'a'), 'WORLD']))
         })

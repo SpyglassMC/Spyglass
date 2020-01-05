@@ -1,13 +1,14 @@
 import * as assert from 'power-assert'
-import { describe, it } from 'mocha'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import Identity from '../../types/Identity'
 import Item from '../../types/Item'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import StringReader from '../../utils/StringReader'
+import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
+import { constructContext } from '../../types/ParsingContext'
+import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -27,18 +28,19 @@ describe('ItemArgumentParser Tests', () => {
                 }
             }
         }
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const context = constructContext({ registries, parsers })
         it('Should return data without tag', () => {
-            const parser = new ItemArgumentParser(false, registries)
-            const actual = parser.parse(new StringReader('minecraft:stick'), undefined, manager)
+            const parser = new ItemArgumentParser(false)
+            const actual = parser.parse(new StringReader('minecraft:stick'), context)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Item(
                 new Identity('minecraft', ['stick'])
             ))
         })
         it('Should return data with tag', () => {
-            const parser = new ItemArgumentParser(false, registries)
-            const actual = parser.parse(new StringReader('minecraft:stick{ foo : "bar" }'), undefined, manager)
+            const parser = new ItemArgumentParser(false)
+            const actual = parser.parse(new StringReader('minecraft:stick{ foo : "bar" }'), context)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Item(
                 new Identity('minecraft', ['stick']),
@@ -47,8 +49,9 @@ describe('ItemArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', () => {
             const config = constructConfig({ lint: { omitDefaultNamespace: true } })
-            const parser = new ItemArgumentParser(false, registries)            
-            const actual = parser.parse(new StringReader(''), 0, manager, config)
+            const context = constructContext({ registries, parsers, config, cursor: 0 })
+            const parser = new ItemArgumentParser(false)
+            const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.data, new Item(
                 new Identity()
             ))

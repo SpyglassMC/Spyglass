@@ -3,28 +3,30 @@ import QuotableLiteralArgumentParser from '../../parsers/QuotableLiteralArgument
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
+import { constructContext } from '../../types/ParsingContext'
 
 describe('QuotableLiteralArgumentParser Tests', () => {
     describe('parse() Tests', () => {
+        const ctx = constructContext({})
         it('Should return data if matching', () => {
             const parser = new QuotableLiteralArgumentParser(['expected'], false)
-            const actual = parser.parse(new StringReader('expected'))
+            const actual = parser.parse(new StringReader('expected'), ctx)
             assert(actual.data === 'expected')
         })
         it('Should return data even if not matching', () => {
             const parser = new QuotableLiteralArgumentParser(['expected'], false)
-            const actual = parser.parse(new StringReader('actual'))
+            const actual = parser.parse(new StringReader('actual'), ctx)
             assert(actual.data === 'actual')
         })
         it('Should return data for quoted input', () => {
             const parser = new QuotableLiteralArgumentParser(['expected'], false)
-            const actual = parser.parse(new StringReader('"expected"'))
+            const actual = parser.parse(new StringReader('"expected"'), ctx)
             assert(actual.data === 'expected')
         })
         it('Should return completions at the beginning of input', () => {
+            const ctx = constructContext({ cursor: 0 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
-            const actual = parser.parse(new StringReader(''), 0)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'foo' },
@@ -33,8 +35,9 @@ describe('QuotableLiteralArgumentParser Tests', () => {
             )
         })
         it('Should return quoted completions at the beginning of input', () => {
+            const ctx = constructContext({ cursor: 0 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], true)
-            const actual = parser.parse(new StringReader(''), 0)
+            const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: '"foo"' },
@@ -43,8 +46,9 @@ describe('QuotableLiteralArgumentParser Tests', () => {
             )
         })
         it('Should return unquoted completions after a quote', () => {
+            const ctx = constructContext({ cursor: 1 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], true)
-            const actual = parser.parse(new StringReader('""'), 1)
+            const actual = parser.parse(new StringReader('""'), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'foo' },
@@ -54,7 +58,7 @@ describe('QuotableLiteralArgumentParser Tests', () => {
         })
         it('Should return untolerable error when input is empty', () => {
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
-            const { errors } = parser.parse(new StringReader(''))
+            const { errors } = parser.parse(new StringReader(''), ctx)
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
@@ -63,7 +67,7 @@ describe('QuotableLiteralArgumentParser Tests', () => {
         })
         it('Should return untolerable errors when partial matching', () => {
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
-            const { errors } = parser.parse(new StringReader('F'))
+            const { errors } = parser.parse(new StringReader('F'), ctx)
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
@@ -72,7 +76,7 @@ describe('QuotableLiteralArgumentParser Tests', () => {
         })
         it('Should return untolerable error when nothing matches', () => {
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
-            const { errors } = parser.parse(new StringReader('spg'))
+            const { errors } = parser.parse(new StringReader('spg'), ctx)
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
@@ -81,7 +85,7 @@ describe('QuotableLiteralArgumentParser Tests', () => {
         })
         it('Should return error occurred during StringReader#readString', () => {
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
-            const { errors } = parser.parse(new StringReader('"a'))
+            const { errors } = parser.parse(new StringReader('"a'), ctx)
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 2)
             assert(pe.range.end === 3)

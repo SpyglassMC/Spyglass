@@ -4,8 +4,9 @@ import BigNumber from 'bignumber.js'
 import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { CompletionItemKind, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
+import { constructContext } from '../../types/ParsingContext'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
 import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
@@ -19,11 +20,12 @@ describe('NbtTagArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const manager = new ArgumentParserManager()
+        const parsers = new ArgumentParserManager()
+        const ctx = constructContext({ parsers })
         it('Should parse quoted string tags', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('"bar\\""}')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             // Use `deepEqual` instead of `deepStrictEqual`, because each tag has a unique function depending on `val`.
             assert.deepEqual(data, getNbtStringTag('bar"'))
             assert.deepStrictEqual(errors, [])
@@ -33,7 +35,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should handle errors for quoted string tags', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader("'bar")
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag(''))
             assert.deepStrictEqual(errors, [new ParsingError({ start: 4, end: 5 }, "expected an ending quote ‘'’ but got nothing")])
             assert.deepStrictEqual(cache, {})
@@ -42,7 +44,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should handle errors for empty input', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag(''))
             assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 1 }, 'expected a tag but got nothing')])
             assert.deepStrictEqual(cache, {})
@@ -51,7 +53,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return regular unquoted string', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('foo:')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag('foo'))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -60,7 +62,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return byte', () => {
             const parser = new NbtTagArgumentParser('byte', 'blocks')
             const reader = new StringReader('1b}')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -69,7 +71,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat false as byte', () => {
             const parser = new NbtTagArgumentParser('byte', 'blocks')
             const reader = new StringReader('false')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteTag(0))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -78,7 +80,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat true as byte', () => {
             const parser = new NbtTagArgumentParser('byte', 'blocks')
             const reader = new StringReader('true')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -87,7 +89,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return short', () => {
             const parser = new NbtTagArgumentParser('short', 'blocks')
             const reader = new StringReader('32767s')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtShortTag(32767))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -96,7 +98,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return int', () => {
             const parser = new NbtTagArgumentParser('int', 'blocks')
             const reader = new StringReader('1234567')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtIntTag(1234567))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -105,7 +107,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return long', () => {
             const parser = new NbtTagArgumentParser('long', 'blocks')
             const reader = new StringReader('-1234567890L')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtLongTag(new BigNumber('-1234567890')))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -114,7 +116,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return float', () => {
             const parser = new NbtTagArgumentParser('float', 'blocks')
             const reader = new StringReader('1.23f')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtFloatTag(1.23))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -123,7 +125,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return double', () => {
             const parser = new NbtTagArgumentParser('double', 'blocks')
             const reader = new StringReader('1.23d')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtDoubleTag(1.23))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -132,7 +134,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return double from a string using scientific notation', () => {
             const parser = new NbtTagArgumentParser('double', 'blocks')
             const reader = new StringReader('123E-2d')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtDoubleTag(1.23))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -141,7 +143,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should recognize double implicited by decimal place', () => {
             const parser = new NbtTagArgumentParser('double', 'blocks')
             const reader = new StringReader('1.23')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtDoubleTag(1.23))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -150,7 +152,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat an out-of-range byte as unquoted string', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('233b')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag('233b'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 4 },
@@ -164,7 +166,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat an out-of-range short as unquoted string', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('32768s')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag('32768s'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 6 },
@@ -178,7 +180,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat an out-of-range int as unquoted string', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('12345678901234')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag('12345678901234'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 14 },
@@ -192,7 +194,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should treat an out-of-range long as unquoted string', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('-9223372036854775809L')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag('-9223372036854775809L'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 21 },
@@ -206,7 +208,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return a byte array', () => {
             const parser = new NbtTagArgumentParser('byte_array', 'blocks')
             const reader = new StringReader('[B; 1b, 2b]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtByteArrayTag([
                 getNbtByteTag(1),
                 getNbtByteTag(2)
@@ -219,7 +221,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return an int array', () => {
             const parser = new NbtTagArgumentParser('int_array', 'blocks')
             const reader = new StringReader('[I; 1, 2]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtIntArrayTag([
                 getNbtIntTag(1),
                 getNbtIntTag(2)
@@ -232,7 +234,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return a long array', () => {
             const parser = new NbtTagArgumentParser('long_array', 'blocks')
             const reader = new StringReader('[L; 1L, 2L]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtLongArrayTag([
                 getNbtLongTag(new BigNumber(1)),
                 getNbtLongTag(new BigNumber(2))
@@ -245,7 +247,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return a list', () => {
             const parser = new NbtTagArgumentParser('list', 'blocks')
             const reader = new StringReader('[1b, 2b]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtListTag([
                 getNbtByteTag(1),
                 getNbtByteTag(2)
@@ -258,7 +260,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return a compound', () => {
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{ foo: "bar", baz: {qux: 1b} }')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtCompoundTag({
                 foo: getNbtStringTag('bar'),
                 baz: getNbtCompoundTag({
@@ -273,7 +275,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return an empty compound', () => {
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{}')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtCompoundTag({})
             assert.deepEqual(data, expected)
             assert.deepStrictEqual(errors, [])
@@ -283,7 +285,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for duplicate keys in a compound tag', () => {
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{foo: 1b, foo: 2b}')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtCompoundTag({
                 foo: getNbtByteTag(2)
             })
@@ -298,14 +300,15 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(completions, [])
         })
         it('Should return errors for missing keys in a compound tag', () => {
-            const parser = new NbtTagArgumentParser('compound', 'blocks')
-            const reader = new StringReader('{: 1b}')
             const config = constructConfig({
                 lint: {
                     nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager, config, {})
+            const ctx = constructContext({ parsers, config })
+            const parser = new NbtTagArgumentParser('compound', 'blocks')
+            const reader = new StringReader('{: 1b}')
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtCompoundTag({}))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
@@ -317,7 +320,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for unexpected type', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('1b')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 2 },
@@ -327,14 +330,15 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(completions, [])
         })
         it('Should return warnings for invalid keys in a compound tag', () => {
-            const parser = new NbtTagArgumentParser('compound', 'blocks')
-            const reader = new StringReader('{snake_case: 1b}')
             const config = constructConfig({
                 lint: {
                     nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager, config, {})
+            const ctx = constructContext({ parsers, config })
+            const parser = new NbtTagArgumentParser('compound', 'blocks')
+            const reader = new StringReader('{snake_case: 1b}')
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtCompoundTag({
                 snake_case: getNbtByteTag(1)
             }))
@@ -350,7 +354,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for an unclosed compound tag', () => {
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtCompoundTag(
                 {}
             ))
@@ -364,7 +368,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for an unclosed list tag', () => {
             const parser = new NbtTagArgumentParser('list', 'blocks')
             const reader = new StringReader('[')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtListTag(
                 []
             ))
@@ -378,7 +382,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for an unclosed byte array tag', () => {
             const parser = new NbtTagArgumentParser('byte_array', 'blocks')
             const reader = new StringReader('[B;')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtListTag(
                 []
             ))
@@ -392,7 +396,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for unexpected tags in a list tag', () => {
             const parser = new NbtTagArgumentParser('list', 'blocks')
             const reader = new StringReader('[1b,1s]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtListTag(
                 [getNbtByteTag(1), getNbtShortTag(1)]
             ))
@@ -406,7 +410,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for unexpected tags in a byte array tag', () => {
             const parser = new NbtTagArgumentParser('byte_array', 'blocks')
             const reader = new StringReader('[B; 1b, 1s]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteArrayTag(
                 [getNbtByteTag(1)]
             ))
@@ -420,7 +424,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for unexpected tags in an int array tag', () => {
             const parser = new NbtTagArgumentParser('int_array', 'blocks')
             const reader = new StringReader('[I; 1, 1s]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtIntArrayTag(
                 [getNbtIntTag(1)]
             ))
@@ -434,7 +438,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for unexpected tags in a long array tag', () => {
             const parser = new NbtTagArgumentParser('long_array', 'blocks')
             const reader = new StringReader('[L; 1L, 1s]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtLongArrayTag(
                 [getNbtLongTag(new BigNumber(1))]
             ))
@@ -448,7 +452,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for invalid types in an array tag', () => {
             const parser = new NbtTagArgumentParser('byte_array', 'blocks')
             const reader = new StringReader('[A; 1s]')
-            const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtByteArrayTag(
                 []
             ))
@@ -460,7 +464,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(completions, [])
         })
         describe('Tests for Schemas', () => {
-            const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
+            const nbt: { [key: string]: NbtSchemaNode | ValueList } = {
                 'block/banner.json': {
                     type: 'compound',
                     children: {
@@ -604,16 +608,7 @@ describe('NbtTagArgumentParser Tests', () => {
                         byte: {
                             type: 'byte',
                             suggestions: [{
-                                parser: 'NumericID', params: ['spgoding:test', {
-                                    'spgoding:test': {
-                                        protocol_id: 0,
-                                        entries: {
-                                            'spgoding:test/a': { protocol_id: 0 },
-                                            'spgoding:test/b': { protocol_id: 1 },
-                                            'spgoding:test/c': { protocol_id: 2 }
-                                        }
-                                    }
-                                }]
+                                parser: 'NumericID', params: ['spgoding:test']
                             }]
                         }
                     }
@@ -653,10 +648,11 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 }
             }
+            const ctx = constructContext({ parsers, nbt })
             it('Should return color for int numbers', () => {
-                const parser = new NbtTagArgumentParser('int', 'blocks', 'minecraft:banner/colorIntTest', schemas)
+                const parser = new NbtTagArgumentParser('int', 'blocks', 'minecraft:banner/colorIntTest')
                 const reader = new StringReader('255')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtIntTag(255))
                 assert.deepStrictEqual(errors, [])
                 assert.deepStrictEqual(cache, {
@@ -670,9 +666,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return colors for int arrays', () => {
-                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner/colorIntArrayTest', schemas)
+                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner/colorIntArrayTest')
                 const reader = new StringReader('[I; 255, 255]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtIntArrayTag([
                     getNbtIntTag(255),
                     getNbtIntTag(255)
@@ -692,9 +688,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should not return error when current schema can also be a compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/canAlsoBeTest', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/canAlsoBeTest')
                 const reader = new StringReader('{ foo: 1b }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         foo: getNbtByteTag(1)
@@ -705,9 +701,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/list', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner/list')
                 const reader = new StringReader('{ foo: 1b }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         foo: getNbtByteTag(1)
@@ -723,9 +719,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error for unexpected keys in a compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('{ foo: 1b }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         foo: getNbtByteTag(1)
@@ -741,9 +737,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should allow additional keys in a compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:beacon', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:beacon')
                 const reader = new StringReader('{ foo: 1b }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         foo: getNbtByteTag(1)
@@ -754,9 +750,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should validate values in a compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('{ Base: 1b }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         Base: getNbtByteTag(1)
@@ -772,9 +768,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for list tag', () => {
-                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('[]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtListTag(
                     []
                 ))
@@ -788,9 +784,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should validate values in a list tag', () => {
-                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner/listOfInts', schemas)
+                const parser = new NbtTagArgumentParser('list', 'blocks', 'minecraft:banner/listOfInts')
                 const reader = new StringReader('[1b]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtListTag(
                     [
                         getNbtByteTag(1)
@@ -806,9 +802,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for byte array tag', () => {
-                const parser = new NbtTagArgumentParser('byte_array', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('byte_array', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('[B;]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtByteArrayTag(
                     []
                 ))
@@ -822,9 +818,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for int array tag', () => {
-                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('int_array', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('[I;]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtIntArrayTag(
                     []
                 ))
@@ -838,9 +834,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return error when current schema is not for long array tag', () => {
-                const parser = new NbtTagArgumentParser('long_array', 'blocks', 'minecraft:banner', schemas)
+                const parser = new NbtTagArgumentParser('long_array', 'blocks', 'minecraft:banner')
                 const reader = new StringReader('[L;]')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtLongArrayTag(
                     []
                 ))
@@ -854,9 +850,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return empty completions when the walker is undefined', () => {
+                const ctx = constructContext({ parsers, nbt, cursor: 7 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', undefined)
                 const reader = new StringReader('{ foo: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 7, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         foo: getNbtStringTag('')
@@ -870,9 +867,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return empty completions when the schema is a non-string primitive type', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ primitive: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 13, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         primitive: getNbtStringTag('')
@@ -886,9 +884,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return completions for compound tag brackets at the end of input', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 11 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound:')
-                const { data, errors, cache, completions } = parser.parse(reader, 11, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         compound: getNbtCompoundTag({})
@@ -904,9 +903,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for compound tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 12 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 12, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         compound: getNbtCompoundTag({})
@@ -922,9 +922,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for list tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 8 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ list: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 8, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         list: getNbtListTag([])
@@ -940,9 +941,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for byte array tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byteArray: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 13, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         byteArray: getNbtByteArrayTag([])
@@ -958,9 +960,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for int array tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 12 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ intArray: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 12, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         intArray: getNbtIntArrayTag([])
@@ -976,9 +979,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for long array tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ longArray: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 13, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         longArray: getNbtLongArrayTag([])
@@ -994,9 +998,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return empty completions when the cursor is not at the point for compound tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound: }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         compound: getNbtCompoundTag({})
@@ -1010,9 +1014,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return empty completions when the cursor is not at the point for list tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ list: }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         list: getNbtListTag([])
@@ -1026,9 +1030,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return empty completions when the cursor is not at the point for primitve array tag brackets', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byteArray: }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         byteArray: getNbtByteArrayTag([])
@@ -1042,9 +1046,9 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return empty completions when the cursor is not at the point for string tag quotes', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ string: }')
-                const { data, errors, cache, completions } = parser.parse(reader, undefined, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         string: getNbtStringTag('')
@@ -1058,9 +1062,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return completions for compound tag keys', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound: {} }')
-                const { data, errors, cache, completions } = parser.parse(reader, 13, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         compound: getNbtCompoundTag({})
@@ -1075,9 +1080,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return empty completions for empty compound tag', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 18 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ emptyCompound: {} }')
-                const { data, errors, cache, completions } = parser.parse(reader, 18, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         emptyCompound: getNbtCompoundTag({})
@@ -1088,9 +1094,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return completions for empty string tags', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 10 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ string: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 10, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         string: getNbtStringTag('')
@@ -1115,9 +1122,10 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions inside quoted string tags', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const ctx = constructContext({ parsers, nbt, cursor: 11 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ string: "" }')
-                const { data, errors, cache, completions } = parser.parse(reader, 11, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         string: getNbtStringTag('')
@@ -1138,9 +1146,20 @@ describe('NbtTagArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for byte tags', () => {
-                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test', schemas)
+                const registries = {
+                    'spgoding:test': {
+                        protocol_id: 0,
+                        entries: {
+                            'spgoding:test/a': { protocol_id: 0 },
+                            'spgoding:test/b': { protocol_id: 1 },
+                            'spgoding:test/c': { protocol_id: 2 }
+                        }
+                    }
+                }
+                const ctx = constructContext({ parsers, registries, nbt, cursor: 8 })
+                const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byte: }')
-                const { data, errors, cache, completions } = parser.parse(reader, 8, manager)
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepEqual(data, getNbtCompoundTag(
                     {
                         byte: getNbtStringTag('')
