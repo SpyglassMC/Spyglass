@@ -90,13 +90,13 @@ describe('VectorArgumentParser Tests', () => {
                 new ParsingError({ start: 2, end: 3 }, 'relative coordinate ‘~’ is not allowed')
             ])
         })
-        it('Should return error when failed to find sep', () => {
+        it('Should return untolerable error when failed to find sep', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('1 ~'))
             assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 4 }, 'expected ‘ ’ but got nothing')
+                new ParsingError({ start: 3, end: 4 }, 'expected ‘ ’ but got nothing', false)
             ])
         })
         it('Should return error for illegal number', () => {

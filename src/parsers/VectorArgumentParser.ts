@@ -59,7 +59,11 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                         }
                     }
                 } catch (p) {
-                    ans.errors.push(p)
+                    ans.errors.push(new ParsingError(
+                        p.range,
+                        p.message,
+                        false
+                    ))
                 }
 
                 if (hasLocal && hasNonLocal) {
