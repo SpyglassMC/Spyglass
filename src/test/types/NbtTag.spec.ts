@@ -71,7 +71,7 @@ describe('NbtTag Tests', () => {
     describe('getNbtLongTag() Tests', () => {
         it('Should convert to a string correctly', () => {
             const { lint } = constructConfig({ lint: { snbtLongSuffix: 'L' } })
-            const tag = getNbtLongTag(100_000_000n)
+            const tag = getNbtLongTag(BigInt(100_000_000))
             const actual = tag[ToLintedString](lint)
             assert(isNbtLongTag(tag))
             assert(actual === '100000000L')
@@ -181,7 +181,7 @@ describe('NbtTag Tests', () => {
                     snbtAppendSpaceAfterSemicolon: true
                 }
             })
-            const tag = getNbtLongArrayTag([getNbtLongTag(1n), getNbtLongTag(2n)])
+            const tag = getNbtLongArrayTag([getNbtLongTag(BigInt(1)), getNbtLongTag(BigInt(2))])
             const actual = tag[ToLintedString](lint)
             assert(isNbtLongArrayTag(tag))
             assert(actual === '[L; 1L, 2L]')
@@ -195,7 +195,7 @@ describe('NbtTag Tests', () => {
                     snbtAppendSpaceAfterComma: true
                 }
             })
-            const tag = getNbtListTag([getNbtLongTag(1n), getNbtLongTag(2n)])
+            const tag = getNbtListTag([getNbtLongTag(BigInt(1)), getNbtLongTag(BigInt(2))])
             const actual = tag[ToLintedString](lint)
             assert(isNbtListTag(tag))
             assert(actual === '[1L, 2L]')

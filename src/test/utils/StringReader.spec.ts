@@ -165,7 +165,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('2333foo')
             const actualResult = reader.readLong()
             const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult, 2_333n)
+            assert.deepStrictEqual(actualResult, BigInt(2_333))
             assert(actualCursor === 4)
         })
         it('Should throw error for float numbers', () => {

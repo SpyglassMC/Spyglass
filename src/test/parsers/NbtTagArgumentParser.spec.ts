@@ -235,8 +235,8 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader('[L; 1L, 2L]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtLongArrayTag([
-                getNbtLongTag(1n),
-                getNbtLongTag(2n)
+                getNbtLongTag(BigInt(1)),
+                getNbtLongTag(BigInt(2))
             ])
             assert.deepEqual(data, expected)
             assert.deepStrictEqual(errors, [])
@@ -439,7 +439,7 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader('[L; 1L, 1s]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtLongArrayTag(
-                [getNbtLongTag(1n)]
+                [getNbtLongTag(BigInt(1))]
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
