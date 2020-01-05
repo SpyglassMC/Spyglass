@@ -37,12 +37,12 @@ describe('utils.ts Tests', () => {
         it('Should return message for a multi-element array', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘bar’, ‘baz’ and ‘foo’')
+            assert(actual === '‘bar’, ‘baz’, and ‘foo’')
         })
         it('Should use another conjuction when specified', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr, undefined, 'or')
-            assert(actual === '‘bar’, ‘baz’ or ‘foo’')
+            assert(actual === '‘bar’, ‘baz’, or ‘foo’')
         })
         it('Should not quote when specified', () => {
             const arr = ['bar', 'baz', 'foo']

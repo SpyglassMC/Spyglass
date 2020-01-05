@@ -426,7 +426,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = getNbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’ and ‘L’`)
+                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’, and ‘L’`)
             }
             reader
                 .expect(';')

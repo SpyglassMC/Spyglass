@@ -454,7 +454,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
-                'invalid array type ‘A’. should be one of ‘B’, ‘I’ and ‘L’'
+                'invalid array type ‘A’. should be one of ‘B’, ‘I’, and ‘L’'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])

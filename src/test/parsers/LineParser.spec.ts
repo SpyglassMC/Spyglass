@@ -69,7 +69,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
 describe('LineParser Tests', () => {
     const manager = new ArgumentParserManager()
     describe('parseSinge() Tests', () => {
-        it('Should throw error when Got none of ‘parser’, ‘redirect’ and ‘template’ were specified in node', () => {
+        it('Should throw error when Got none of ‘parser’, ‘redirect’, and ‘template’ were specified in node', () => {
             const input = 'foo'
             const parser = new LineParser(undefined, undefined, {})
             const node: CommandTreeNode<string> = {}
@@ -79,7 +79,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node')
+                assert(message === 'unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
             }
         })
         it('Should parse when parser specified', () => {

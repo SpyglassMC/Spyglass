@@ -179,7 +179,7 @@ export default class LineParser implements Parser<Line> {
                 )
             }
         } else {
-            throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’ and ‘template’ in node')
+            throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
         }
         if (node.run) {
             node.run(parsedLine)

@@ -24,7 +24,7 @@ export function formatMessage(msg: string) {
  * arrayToMessage('foo') // "‘foo’"
  * arrayToMessage(['foo']) // "‘foo’"
  * arrayToMessage(['bar', 'foo']) // "‘bar’ and ‘foo’"
- * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’ and ‘foo’"
+ * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’, and ‘foo’"
  */
 export function arrayToMessage(arr: string | string[], quoted = true, conjunction: 'and' | 'or' = 'and') {
     if (typeof arr === 'string') {
@@ -40,7 +40,7 @@ export function arrayToMessage(arr: string | string[], quoted = true, conjunctio
         case 2:
             return `${prefix}${arr[0]}${suffix} ${conjunction} ${prefix}${arr[1]}${suffix}`
         default:
-            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix} ${conjunction} ${prefix}${arr.slice(-1)[0]}${suffix}`
+            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix}, ${conjunction} ${prefix}${arr.slice(-1)[0]}${suffix}`
     }
 }
 
