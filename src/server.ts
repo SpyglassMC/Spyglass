@@ -106,7 +106,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
     } as InitializeResult
 })
 
-setInterval(saveCacheFile, 30000)
+setInterval(saveCacheFile, 30_000)
 
 async function saveCacheFile() {
     if (cachePath) {

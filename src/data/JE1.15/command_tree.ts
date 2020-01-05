@@ -607,7 +607,7 @@ export const VanillaCommandTree: CommandTree = {
                                     executable: true,
                                     children: {
                                         seconds: {
-                                            parser: new NumberArgumentParser('integer', 0, 1000000),
+                                            parser: new NumberArgumentParser('integer', 0, 1_000_000),
                                             executable: true,
                                             children: {
                                                 amplifier: {
@@ -1381,7 +1381,7 @@ export const VanillaCommandTree: CommandTree = {
             permission: 3,
             children: {
                 minutes: {
-                    parser: new NumberArgumentParser('integer', 0, 35000),
+                    parser: new NumberArgumentParser('integer', 0, 35_000),
                     executable: true
                 }
             }
@@ -1827,7 +1827,7 @@ export const VanillaCommandTree: CommandTree = {
                     executable: true,
                     children: {
                         duration: {
-                            parser: new NumberArgumentParser('integer', 1, 1000000),
+                            parser: new NumberArgumentParser('integer', 1, 1_000_000),
                             executable: true
                         }
                     }
@@ -1860,7 +1860,7 @@ export const VanillaCommandTree: CommandTree = {
                     parser: new LiteralArgumentParser('add', 'set'),
                     children: {
                         distance: {
-                            parser: new NumberArgumentParser('float', 1, 60000000),
+                            parser: new NumberArgumentParser('float', 1, 60_000_000),
                             executable: true,
                             children: {
                                 time: {
