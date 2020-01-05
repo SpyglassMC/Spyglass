@@ -135,7 +135,7 @@ export default class LineParser implements Parser<Line> {
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
                             const result = { args: parsedLine.args, cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
-                            this.parseChildren(reader, ctx, node.children, result,  optional)
+                            this.parseChildren(reader, ctx, node.children, result, optional)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
                                 parsedLine.completions.push(...result.completions)
@@ -186,7 +186,7 @@ export default class LineParser implements Parser<Line> {
         }
     }
 
-    parseChildren(reader: StringReader, ctx:ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false) {
+    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false) {
         let i = -1
         for (const key in children) {
             i += 1
@@ -227,7 +227,7 @@ export default class LineParser implements Parser<Line> {
                     errors: []
                 }
                 const subNode = children[key]
-                this.parseSingle(new StringReader(''), ctx, key, subNode, line, undefined, node.executable)
+                this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, undefined, node.executable)
                 const option = line.hint.fix[0]
                 ans.push(option)
             }
