@@ -3,7 +3,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:12
     steps:
       - checkout
       # Restore dependencies from cache
@@ -24,7 +24,7 @@ jobs:
       - run: npm run codecov
   release:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:12
     steps:
       - checkout
       # Restore dependencies from cache
