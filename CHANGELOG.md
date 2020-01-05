@@ -1,3 +1,8 @@
+# [v1.11.8](https://github.com/SPGoding/datapack-language-server/compare/v1.11.7...v1.11.8) (2020-01-05)
+
+## 🐛 Bug Fixes
+- [`4fcf7f2`](https://github.com/SPGoding/datapack-language-server/commit/4fcf7f2)  Fix teleport commands (Issues: [`#241`](https://github.com/SPGoding/datapack-language-server/issues/241))
+
 # [v1.11.7](https://github.com/SPGoding/datapack-language-server/compare/v1.11.6...v1.11.7) (2020-01-01)
 
 ## 🐛 Bug Fixes
