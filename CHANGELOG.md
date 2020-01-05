@@ -1,3 +1,8 @@
+# [v1.11.9](https://github.com/SPGoding/datapack-language-server/compare/v1.11.8...v1.11.9) (2020-01-05)
+
+## 🐛 Bug Fixes
+- [`7c5bf14`](https://github.com/SPGoding/datapack-language-server/commit/7c5bf14)  Fix showing errors when parsing empty lines
+
 # [v1.11.8](https://github.com/SPGoding/datapack-language-server/compare/v1.11.7...v1.11.8) (2020-01-05)
 
 ## 🐛 Bug Fixes
