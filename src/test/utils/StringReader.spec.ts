@@ -3,7 +3,6 @@ import StringReader from '../../utils/StringReader'
 import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import BigNumber from 'bignumber.js'
 
 describe('StringReader Tests', () => {
     describe('passedString Tests', () => {
@@ -166,7 +165,7 @@ describe('StringReader Tests', () => {
             const reader = new StringReader('2333foo')
             const actualResult = reader.readLong()
             const actualCursor = reader.cursor
-            assert.deepStrictEqual(actualResult, new BigNumber(2333))
+            assert.deepStrictEqual(actualResult, 2_333n)
             assert(actualCursor === 4)
         })
         it('Should throw error for float numbers', () => {

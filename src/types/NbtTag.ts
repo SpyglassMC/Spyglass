@@ -1,6 +1,5 @@
 import { LintConfig } from './Config'
 import { quoteString, toLintedString, toJsonString } from '../utils/utils'
-import BigNumber from 'bignumber.js'
 import Lintable, { ToLintedString } from './Lintable'
 import JsonConvertible, { ToJsonString } from './JsonConvertible'
 
@@ -11,11 +10,11 @@ export type NbtTagTypeName =
     'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
     'byte' | 'short' | 'int' | 'long' | 'string' | 'float' | 'double'
 
-export type NbtTag = (number | BigNumber | string | object | any[]) & { [NbtTagType]: NbtTagTypeName } & Lintable
+export type NbtTag = (number | BigInt | string | object | any[]) & { [NbtTagType]: NbtTagTypeName } & Lintable
 export type NbtByteTag = number & { [NbtTagType]: 'byte' } & Lintable & JsonConvertible
 export type NbtShortTag = number & { [NbtTagType]: 'short' } & Lintable
 export type NbtIntTag = number & { [NbtTagType]: 'int' } & Lintable
-export type NbtLongTag = BigNumber & { [NbtTagType]: 'long' } & Lintable
+export type NbtLongTag = BigInt & { [NbtTagType]: 'long' } & Lintable
 export type NbtFloatTag = number & { [NbtTagType]: 'float' } & Lintable
 export type NbtDoubleTag = number & { [NbtTagType]: 'double' } & Lintable & JsonConvertible
 export type NbtStringTag = string & { [NbtTagType]: 'string' } & Lintable & JsonConvertible
@@ -135,7 +134,7 @@ export function getNbtIntTag(val: number) {
     return getNbtNumberTag(val, 'int') as NbtIntTag
 }
 
-export function getNbtLongTag(val: BigNumber) {
+export function getNbtLongTag(val: BigInt) {
     return getNbtNumberTag(val, 'long', 'snbtLongSuffix') as NbtLongTag
 }
 

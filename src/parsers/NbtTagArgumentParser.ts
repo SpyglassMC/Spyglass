@@ -1,5 +1,4 @@
 import ArgumentParser from './ArgumentParser'
-import BigNumber from 'bignumber.js'
 import MapAbstractParser from './MapAbstractParser'
 import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import ParsingContext from '../types/ParsingContext'
@@ -60,13 +59,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ],
         long: [
             /^[-+]?(?:0|[1-9][0-9]*)l$/i,
-            value => getNbtLongTag(NbtTagArgumentParser.parseNumber<BigNumber>(
+            value => getNbtLongTag(NbtTagArgumentParser.parseNumber<BigInt>(
                 value.slice(0, -1),
                 ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
-                (str: string) => new BigNumber(str),
-                (value: BigNumber) =>
-                    value.isGreaterThanOrEqualTo(new BigNumber('-9223372036854775808')) &&
-                    value.isLessThanOrEqualTo(new BigNumber('9223372036854775807'))
+                (str: string) =>  BigInt(str),
+                (value: BigInt) =>
+                    value >= -9_223_372_036_854_775_808n &&
+                    value <= 9_223_372_036_854_775_807n
             ))
         ],
         float: [
@@ -197,7 +196,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 } else if (walker.read().type === 'int') {
                                     return getNbtIntTag(parseFloat(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'long') {
-                                    return getNbtLongTag(new BigNumber(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtLongTag( BigInt(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'float') {
                                     return getNbtFloatTag(parseFloat(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'double') {

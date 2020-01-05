@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import ParsingError from '../types/ParsingError'
 import Token from '../types/Token'
 import { TokenScope } from '../types/TokenScope'
@@ -143,7 +142,7 @@ export default class StringReader {
             this.cursor = start
             throw new ParsingError({ start, end }, `expected a long but got ${str}`)
         }
-        return new BigNumber(str)
+        return BigInt(str)
     }
 
     readFloat() {

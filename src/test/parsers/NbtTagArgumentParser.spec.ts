@@ -1,6 +1,5 @@
 import * as assert from 'power-assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import BigNumber from 'bignumber.js'
 import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
@@ -108,7 +107,7 @@ describe('NbtTagArgumentParser Tests', () => {
             const parser = new NbtTagArgumentParser('long', 'blocks')
             const reader = new StringReader('-1234567890L')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, getNbtLongTag(new BigNumber('-1234567890')))
+            assert.deepEqual(data, getNbtLongTag(BigInt('-1234567890')))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -236,8 +235,8 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader('[L; 1L, 2L]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             const expected = getNbtLongArrayTag([
-                getNbtLongTag(new BigNumber(1)),
-                getNbtLongTag(new BigNumber(2))
+                getNbtLongTag(1n),
+                getNbtLongTag(2n)
             ])
             assert.deepEqual(data, expected)
             assert.deepStrictEqual(errors, [])
@@ -440,7 +439,7 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader('[L; 1L, 1s]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtLongArrayTag(
-                [getNbtLongTag(new BigNumber(1))]
+                [getNbtLongTag(1n)]
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
