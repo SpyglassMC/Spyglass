@@ -45,6 +45,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
             new MapAbstractParser<string, Block>(
                 Block.StatesBeginSymbol, '=', ',', Block.StatesEndSymbol,
+                // '','','','',
                 (ans, reader, ctx) => {
                     const existingKeys = Object.keys(ans.data.states)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))

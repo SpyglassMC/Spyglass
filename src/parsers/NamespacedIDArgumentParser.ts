@@ -1,5 +1,6 @@
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
+import { getSafeCategory } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import Identity from '../types/Identity'

@@ -781,7 +781,6 @@ export default {
 						"params": [
 							"minecraft:potion",
 							undefined,
-							undefined,
 							'%isPredicate%'
 						]
 					}
@@ -1079,7 +1078,6 @@ export default {
 								"params": [
 									"minecraft:block",
 									undefined,
-									undefined,
 									'%isPredicate%'
 								]
 							}
@@ -1156,7 +1154,6 @@ export default {
 								"parser": "NamespacedID",
 								"params": [
 									"minecraft:block",
-									undefined,
 									undefined,
 									'%isPredicate%'
 								]
@@ -1585,7 +1582,6 @@ export default {
 						"parser": "NamespacedID",
 						"params": [
 							"minecraft:motive",
-							undefined,
 							undefined,
 							'%isPredicate%'
 						]
@@ -3409,7 +3405,6 @@ export default {
 						"params": [
 							"minecraft:block",
 							undefined,
-							undefined,
 							'%isPredicate%'
 						]
 					}
@@ -3471,7 +3466,6 @@ export default {
 						"parser": "NamespacedID",
 						"params": [
 							"minecraft:entity_type",
-							undefined,
 							undefined,
 							'%isPredicate%'
 						]
@@ -3716,7 +3710,6 @@ export default {
 						"params": [
 							"$lootTables",
 							undefined,
-							undefined,
 							'%isPredicate%'
 						]
 					}
@@ -3767,7 +3760,6 @@ export default {
 						"parser": "NamespacedID",
 						"params": [
 							"minecraft:item",
-							undefined,
 							undefined,
 							'%isPredicate%'
 						]
@@ -3900,7 +3892,6 @@ export default {
 									"parser": "NamespacedID",
 									"params": [
 										"minecraft:enchantment",
-										undefined,
 										undefined,
 										'%isPredicate%'
 									]
@@ -4092,7 +4083,6 @@ export default {
 						"parser": "NamespacedID",
 						"params": [
 							"$lootTables",
-							undefined,
 							undefined,
 							'%isPredicate%'
 						]

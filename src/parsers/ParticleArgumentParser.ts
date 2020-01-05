@@ -20,7 +20,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
         }
         const start = reader.cursor
 
-        const typeResult = ctx.parsers.get('NamespacedID', ['minecraft:particle_type', ctx.registries]).parse(reader, ctx)
+        const typeResult = ctx.parsers.get('NamespacedID', ['minecraft:particle_type']).parse(reader, ctx)
         const type = typeResult.data as Identity
         combineArgumentParserResult(ans, typeResult)
         ans.data.id = type

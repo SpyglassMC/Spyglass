@@ -2,6 +2,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
+import { TokenScope } from '../types/TokenScope'
 
 export default class MapAbstractParser<K, R> {
     readonly identity = 'mapAbstractParser'
@@ -11,6 +12,10 @@ export default class MapAbstractParser<K, R> {
         private readonly keyValueSep: string,
         private readonly keyValuePairSep: string,
         private readonly endChar: string,
+        // private readonly beginCharTokenScope: TokenScope,
+        // private readonly keyValueSepTokenScope: TokenScope,
+        // private readonly keyValuePairSepTokenScope: TokenScope,
+        // private readonly endCharTokenScope: TokenScope,
         private readonly parseKeyResult: (ans: ArgumentParserResult<R>, reader: StringReader, ctx: ParsingContext) => ArgumentParserResult<K>,
         private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, ctx: ParsingContext, key: K, keyRange: TextRange) => void
     ) { }
@@ -31,8 +36,10 @@ export default class MapAbstractParser<K, R> {
         }
         try {
             reader
+                // .token(this.beginCharTokenScope)
                 .expect(this.beginChar)
                 .skip()
+                // .tokenEnd(this.beginCharTokenScope)
 
             while (true) {
                 skipWhiteSpaceForCursor()

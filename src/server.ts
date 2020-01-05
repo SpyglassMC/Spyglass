@@ -10,6 +10,7 @@ import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
 import { Files } from 'vscode-languageserver'
 import Identity from './types/Identity'
+import { constructContext } from './types/ParsingContext'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
@@ -289,9 +290,12 @@ function parseString(string: string, lines: Line[], config: Config) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
-        const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
+        const parser = new LineParser(false, 'line')
         const reader = new StringReader(string)
-        const { data } = parser.parse(reader, undefined, manager)
+        const { data } = parser.parse(reader, constructContext({
+            cache: cacheFile.cache,
+            config
+        }))
         lines.push(data)
     }
 }
@@ -485,13 +489,17 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.log(`AW: ${JSON.stringify(cacheFile)}`)
 })
 
-connection.onCompletion(async ({ textDocument: { uri }, position: { line, character } }) => {
+connection.onCompletion(async ({ textDocument: { uri }, position: { line, character: char } }) => {
     const rel = getRelFromUri(uri)
     const config = await getConfigFromRel(rel)
     const strings = stringsOfRel.get(rel) as string[]
-    const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
+    const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[line])
-    const { data } = parser.parse(reader, character, manager)
+    const { data } = parser.parse(reader, constructContext({
+        cursor: char,
+        cache: cacheFile.cache,
+        config
+    }))
     return data.completions
 })
 
@@ -499,9 +507,13 @@ connection.onSignatureHelp(async ({ position: { character: char, line: lineNumbe
     const rel = getRelFromUri(uri)
     const config = await getConfigFromRel(rel)
     const strings = stringsOfRel.get(rel) as string[]
-    const parser = new LineParser(false, 'line', undefined, cacheFile.cache, config)
+    const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[lineNumber])
-    const { data: { hint: { fix, options } } } = parser.parse(reader, char, manager)
+    const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
+        cursor: char,
+        cache: cacheFile.cache,
+        config
+    }))
     const signatures: SignatureInformation[] = []
 
     const fixLabel = fix.length > 0 ? fix.join(' ') + ' ' : ''

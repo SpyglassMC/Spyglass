@@ -1,7 +1,8 @@
-import ParsingError from './ParsingError'
-import { CompletionItem } from 'vscode-languageserver'
-import StringReader from '../utils/StringReader'
 import { ClientCache, combineCache } from './ClientCache'
+import { CompletionItem } from 'vscode-languageserver'
+import ParsingError from './ParsingError'
+import StringReader from '../utils/StringReader'
+import Token from './Token'
 
 /**
  * Represent an argument parser.
@@ -34,15 +35,14 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
     data: T,
     /**
      * All errors occurred while the process of parsing.
-     * Exist in the result of argument parsers.
      */
-    errors: ParsingError[]
+    errors: ParsingError[],
     /**
-     * Local cache. Exist in the result of argument parsers.
+     * Local cache.
      */
-    cache: ClientCache
+    cache: ClientCache,
     /**
-     * Completions. Exist in the result of argument parsers.
+     * Completions.
      */
     completions: CompletionItem[]
 }

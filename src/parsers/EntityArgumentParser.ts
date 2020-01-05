@@ -214,7 +214,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'team') {
                         dealWithNegativableArray(ctx.parsers.get('Team'), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(ctx.parsers.get('NamespacedID', ['minecraft:entity_type', undefined, true]), key)
+                        dealWithNegativableArray(ctx.parsers.get('NamespacedID', ['minecraft:entity_type', true]), key)
                     } else if (key === 'distance') {
                         const result = ctx.parsers.get('NumberRange', ['float']).parse(reader, ctx)
                         ans.data.argument[key] = result.data
