@@ -1231,7 +1231,7 @@ export const VanillaCommandTree: CommandTree = {
                                             }
                                         },
                                         rendertype: {
-                                            parser: new LiteralArgumentParser('displayname'),
+                                            parser: new LiteralArgumentParser('rendertype'),
                                             children: {
                                                 displayName: {
                                                     parser: new LiteralArgumentParser('hearts', 'integer'),
