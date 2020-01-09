@@ -1,3 +1,9 @@
+# [v1.11.10](https://github.com/SPGoding/datapack-language-server/compare/v1.11.9...v1.11.10) (2020-01-09)
+
+## 🐛 Bug Fixes
+- [`189566d`](https://github.com/SPGoding/datapack-language-server/commit/189566d)  Fix missing ‘rendertype’ (Issues: [`#245`](https://github.com/SPGoding/datapack-language-server/issues/245))
+- [`dc708e1`](https://github.com/SPGoding/datapack-language-server/commit/dc708e1)  Fix not allowing amount larger than 64 in give command (Issues: [`#244`](https://github.com/SPGoding/datapack-language-server/issues/244))
+
 # [v1.11.9](https://github.com/SPGoding/datapack-language-server/compare/v1.11.8...v1.11.9) (2020-01-05)
 
 ## 🐛 Bug Fixes
