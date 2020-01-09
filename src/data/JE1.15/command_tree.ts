@@ -841,7 +841,7 @@ export const VanillaCommandTree: CommandTree = {
                             executable: true,
                             children: {
                                 count: {
-                                    parser: new NumberArgumentParser('integer', 0, 64),
+                                    parser: new NumberArgumentParser('integer', 0),
                                     executable: true
                                 }
                             }
