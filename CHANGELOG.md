@@ -1,3 +1,8 @@
+# [v1.11.11](https://github.com/SPGoding/datapack-language-server/compare/v1.11.10...v1.11.11) (2020-01-10)
+
+## 🐛 Bug Fixes
+- [`9ee46fe`](https://github.com/SPGoding/datapack-language-server/commit/9ee46fe)  Fix outdated registries file (Issues: [`#250`](https://github.com/SPGoding/datapack-language-server/issues/250))
+
 # [v1.11.10](https://github.com/SPGoding/datapack-language-server/compare/v1.11.9...v1.11.10) (2020-01-09)
 
 ## 🐛 Bug Fixes
