@@ -26,7 +26,7 @@
         "clone": "^2.1.2",
         "fs-extra": "^8.1.0",
         "python-range": "^1.0.4",
-        "vscode-languageclient": "^5.2.1",
+        "vscode-languageclient": "^6.0.0",
         "vscode-languageserver": "^6.0.0",
         "vscode-uri": "^2.1.1"
     },
