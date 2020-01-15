@@ -1572,7 +1572,8 @@ export const VanillaCommandTree: CommandTree = {
                             executable: true,
                             children: {
                                 members: {
-                                    redirect: 'templates.members'
+                                    parser: new EntityArgumentParser('multiple', 'entities', true),
+                                    executable: true
                                 }
                             }
                         }
@@ -1582,7 +1583,8 @@ export const VanillaCommandTree: CommandTree = {
                     parser: new LiteralArgumentParser('leave'),
                     children: {
                         members: {
-                            redirect: 'templates.members'
+                            parser: new EntityArgumentParser('multiple', 'entities', true),
+                            executable: true
                         }
                     }
                 },
@@ -1988,15 +1990,6 @@ export const VanillaCommandTree: CommandTree = {
         },
         color: {
             parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
-        },
-        members: {
-            parser: new EntityArgumentParser('multiple', 'entities', true),
-            executable: true,
-            children: {
-                'a member': {
-                    redirect: 'templates.members'
-                }
-            }
         }
     },
     data_modification: {
