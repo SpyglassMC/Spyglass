@@ -1,3 +1,10 @@
+# [v1.11.12](https://github.com/SPGoding/datapack-language-server/compare/v1.11.11...v1.11.12) (2020-01-15)
+
+## 🐛 Bug Fixes
+- [`7e42944`](https://github.com/SPGoding/datapack-language-server/commit/7e42944)  Fix allowing multiple entities in /team join (Issues: [`#255`](https://github.com/SPGoding/datapack-language-server/issues/255))
+- [`84391b8`](https://github.com/SPGoding/datapack-language-server/commit/84391b8)  Fix not allowing function tags in /schedule (Issues: [`#258`](https://github.com/SPGoding/datapack-language-server/issues/258))
+- [`eeae5bd`](https://github.com/SPGoding/datapack-language-server/commit/eeae5bd)  Fix ‘&gt;&lt;’ in /scoreboard players operation (Issues: [`#261`](https://github.com/SPGoding/datapack-language-server/issues/261))
+
 # [v1.11.11](https://github.com/SPGoding/datapack-language-server/compare/v1.11.10...v1.11.11) (2020-01-10)
 
 ## 🐛 Bug Fixes
