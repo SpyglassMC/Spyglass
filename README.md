@@ -234,3 +234,7 @@ And to those who haven't told me a GitHub account:
 <!-- prettier-ignore-end -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+
+# References
+
+- [https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-multi-server-sample/client/src/extension.ts](Multi Language Server Example)

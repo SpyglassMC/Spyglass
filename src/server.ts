@@ -17,11 +17,9 @@ const linesOfRel = new Map<string, Line[]>()
 const stringsOfRel = new Map<string, string[]>()
 const lineBreakOfRel = new Map<string, '\n' | '\r\n'>()
 const versionOfRel = new Map<string, number | null>()
-const hasParsedInRealConfigOfRel = new Map<string, boolean | undefined>()
 const configOfRel = new Map<string, Config>()
 
-const manager = new ArgumentParserManager()
-let hasRealConfig = false
+let isInitialized = false
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 let workspaceFolder: WorkspaceFolder | undefined
 let workspaceFolderPath: string | undefined
@@ -56,7 +54,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         await updateCacheFile(cacheFile, workspaceFolderPath as string)
         saveCacheFile()
 
-        hasRealConfig = true
+        isInitialized = true
         return {
             capabilities: {
                 completionProvider: {
@@ -86,7 +84,7 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         } as InitializeResult
     }
 
-    hasRealConfig = true
+    isInitialized = true
     return {
         capabilities: {
             completionProvider: {
@@ -283,7 +281,7 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
     )
 
     trimCache(cacheFile.cache)
-    hasRealConfig = true
+    isInitialized = true
 }
 
 function parseString(string: string, lines: Line[], config: Config) {
@@ -316,12 +314,11 @@ async function updateDiagnostics(rel: string, uri: string) {
 async function getConfigFromRel(rel: string): Promise<Config> {
     let ans = configOfRel.get(rel)
     if (!ans) {
-        if (hasRealConfig) {
+        if (isInitialized) {
             ans = await connection.workspace.getConfiguration({
                 scopeUri: getUriFromRel(rel),
                 section: 'datapackLanguageServer'
             }) as Config
-            hasParsedInRealConfigOfRel.set(rel, hasRealConfig)
             configOfRel.set(rel, ans)
         } else {
             return VanillaConfig
@@ -332,8 +329,7 @@ async function getConfigFromRel(rel: string): Promise<Config> {
 
 async function getLinesFromRel(rel: string): Promise<Line[]> {
     let ans = linesOfRel.get(rel)
-    if (!ans || (!hasParsedInRealConfigOfRel.get(rel) && hasRealConfig)) {
-        hasParsedInRealConfigOfRel.set(rel, hasRealConfig)
+    if (!ans) {
         ans = []
         const config = await getConfigFromRel(rel)
         const strings = stringsOfRel.get(rel) as string[]
