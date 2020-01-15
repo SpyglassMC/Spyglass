@@ -1321,7 +1321,7 @@ export const VanillaCommandTree: CommandTree = {
                                     template: 'templates.multiple_score',
                                     children: {
                                         operation: {
-                                            parser: new LiteralArgumentParser('+=', '-=', '*=', '/=', '%=', '=', '>', '<', '<>'),
+                                            parser: new LiteralArgumentParser('+=', '-=', '*=', '/=', '%=', '=', '>', '<', '><'),
                                             children: {
                                                 source: {
                                                     template: 'templates.multiple_score',
