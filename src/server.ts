@@ -364,28 +364,38 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 
     for (const change of contentChanges) {
         const { text: changeText } = change
-        const {
-            start: { line: startLine, character: startChar },
-            end: { line: endLine, character: endChar }
-        } = change.range as Range
-        const strings = stringsOfRel.get(rel) as string[]
-        const lines = await getLinesFromRel(rel)
+        if ((change as any).range) {
+            const {
+                start: { line: startLine, character: startChar },
+                end: { line: endLine, character: endChar }
+            } = (change as any).range as Range
+            const strings = stringsOfRel.get(rel) as string[]
+            const lines = await getLinesFromRel(rel)
+    
+            if (changeText.indexOf('\r\n') !== -1) {
+                lineBreakOfRel.set(rel, '\r\n')
+            }
+    
+            const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
+                }${changeText
+                }${strings.slice(endLine).join(lineBreakOfRel.get(rel)).slice(endChar)}`
+            const stringsAfterStartLine = stringAfterStartLine.split(/\r?\n/)
+    
+            strings.splice(startLine)
+            strings.push(...stringsAfterStartLine)
+    
+            lines.splice(startLine)
+            for (const string of stringsAfterStartLine) {
+                parseString(string, lines, config)
+            }
+        } else {
+            const strings = stringsOfRel.get(rel) as string[]
+            const lines = await getLinesFromRel(rel)
 
-        if (changeText.indexOf('\r\n') !== -1) {
-            lineBreakOfRel.set(rel, '\r\n')
-        }
-
-        const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
-            }${changeText
-            }${strings.slice(endLine).join(lineBreakOfRel.get(rel)).slice(endChar)}`
-        const stringsAfterStartLine = stringAfterStartLine.split(/\r?\n/)
-
-        strings.splice(startLine)
-        strings.push(...stringsAfterStartLine)
-
-        lines.splice(startLine)
-        for (const string of stringsAfterStartLine) {
-            parseString(string, lines, config)
+            lines.splice(0)
+            for (const string of strings) {
+                parseString(string, lines, config)
+            }
         }
     }
 
