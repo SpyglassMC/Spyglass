@@ -14,7 +14,7 @@ jobs:
       # Install project dependencies
       - run: 
           name: Install dependencies
-          command: npm i
+          command: npm ci
       # Cache local dependencies if they don't exist
       - save_cache:
           key: v3-dependencies-{{ checksum "package-lock.json" }}
@@ -35,7 +35,7 @@ jobs:
       # Install project dependencies
       - run: 
           name: Install dependencies
-          command: npm i
+          command: npm ci
       # Cache local dependencies if they don't exist
       - save_cache:
           key: v3-dependencies-{{ checksum "package-lock.json" }}
