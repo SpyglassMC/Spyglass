@@ -201,6 +201,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/RevonZev"><img src="https://avatars2.githubusercontent.com/u/39231292?v=4" width="100px;" alt=""/><br /><sub><b>RevonZev</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3ARevonZev" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/OctupusTea"><img src="https://avatars0.githubusercontent.com/u/22555936?v=4" width="100px;" alt=""/><br /><sub><b>OctupusTea</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AOctupusTea" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/00ll00"><img src="https://avatars0.githubusercontent.com/u/40747228?v=4" width="100px;" alt=""/><br /><sub><b>00ll00</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3A00ll00" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
