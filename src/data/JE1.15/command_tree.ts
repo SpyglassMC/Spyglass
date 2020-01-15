@@ -1178,7 +1178,7 @@ export const VanillaCommandTree: CommandTree = {
                     parser: new LiteralArgumentParser('clear'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$functions'),
+                            parser: new NamespacedIDArgumentParser('$functions', true),
                             executable: true
                         }
                     }
