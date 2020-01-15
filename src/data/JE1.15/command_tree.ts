@@ -1158,7 +1158,7 @@ export const VanillaCommandTree: CommandTree = {
                     parser: new LiteralArgumentParser('function'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$functions'),
+                            parser: new NamespacedIDArgumentParser('$functions', true),
                             children: {
                                 time: {
                                     parser: new TimeArgumentParser(),
