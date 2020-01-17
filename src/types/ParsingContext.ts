@@ -1,45 +1,45 @@
 import ArgumentParser from '../parsers/ArgumentParser'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import CommandTree from './CommandTree'
+import CommandTreeType from './CommandTree'
 import Config, { VanillaConfig } from './Config'
 import Manager from './Manager'
-import VanillaBlockDefinitions, { BlockDefinitions } from './VanillaBlockDefinitions'
-import VanillaCommandTree from '../data/JE1.15/command_tree'
-import VanillaNbtSchema, { NbtSchema } from './VanillaNbtSchema'
-import VanillaRegistries, { Registries } from './VanillaRegistries'
+import BlockDefinitions, { BlockDefinitionsType } from './BlockDefinitions'
+import CommandTree from '../data/JE1.15/command_tree'
+import NbtSchema, { NbtSchemaType } from './NbtSchema'
+import Registries, { RegistriesType } from './Registries'
 import { ClientCache } from './ClientCache'
 
 export default interface ParsingContext {
-    blocks: BlockDefinitions,
+    blocks: BlockDefinitionsType,
     cache: ClientCache,
     config: Config,
     cursor: number,
     parsers: Manager<ArgumentParser<any>>,
-    nbt: NbtSchema,
-    registries: Registries,
-    tree: CommandTree
+    nbt: NbtSchemaType,
+    registries: RegistriesType,
+    tree: CommandTreeType
 }
 
 interface ParsingContextLike {
-    blocks?: BlockDefinitions,
+    blocks?: BlockDefinitionsType,
     cache?: ClientCache,
     config?: Config,
     cursor?: number,
     parsers?: Manager<ArgumentParser<any>>,
-    nbt?: NbtSchema,
-    registries?: Registries,
-    tree?: CommandTree
+    nbt?: NbtSchemaType,
+    registries?: RegistriesType,
+    tree?: CommandTreeType
 }
 
 export const VanillaParsingContext: ParsingContext = {
-    blocks: VanillaBlockDefinitions,
+    blocks: BlockDefinitions,
     cache: {},
     config: VanillaConfig,
     cursor: -1,
     parsers: new ArgumentParserManager(),
-    nbt: VanillaNbtSchema,
-    registries: VanillaRegistries,
-    tree: VanillaCommandTree
+    nbt: NbtSchema,
+    registries: Registries,
+    tree: CommandTree
 }
 
 /**

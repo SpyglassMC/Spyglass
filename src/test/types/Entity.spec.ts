@@ -4,7 +4,7 @@ import { describe, it } from 'mocha'
 import { ToLintedString } from '../../types/Lintable'
 import Entity from '../../types/Entity'
 import Identity from '../../types/Identity'
-import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
+import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
 
 describe('Entity Tests', () => {
     describe('[ToLintedString]() Tests', () => {

@@ -8,7 +8,7 @@ import { constructContext } from '../../types/ParsingContext'
 import { describe, it } from 'mocha'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getNbtByteTag, getNbtCompoundTag } from '../../types/NbtTag'
-import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
+import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -132,7 +132,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     type: 'root',
                     children: {
                         'minecraft:banner': {
-                            ref: '../block/banner.json'
+                            ref: 'block/banner.json'
                         }
                     }
                 }

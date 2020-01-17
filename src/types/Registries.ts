@@ -1,4 +1,4 @@
-import VanillaRegistries from '../data/JE1.15/registries'
+import Registries from '../data/JE1.15/registries'
 
 export type Registry = {
     default?: string
@@ -10,8 +10,8 @@ export type Registry = {
     }
 }
 
-export interface Registries {
+export interface RegistriesType {
     [type: string]: Registry
 }
 
-export default VanillaRegistries as Registries
+export default Registries as RegistriesType

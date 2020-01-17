@@ -1,20 +1,20 @@
-import VanillaBlockDefinitions from '../data/JE1.15/blocks'
+import BlockDefinitions from '../data/JE1.15/blocks'
 
 export type BlockDefinition = {
     properties?: {
         [key: string]: string[]
     }
-    states: Array<{
+    states: {
         id: number
         default?: boolean
         properties?: {
             [key: string]: string
         }
-    }>
+    }[]
 }
 
-export interface BlockDefinitions {
+export interface BlockDefinitionsType {
     [id: string]: BlockDefinition | undefined
 }
 
-export default VanillaBlockDefinitions as BlockDefinitions
+export default BlockDefinitions as BlockDefinitionsType

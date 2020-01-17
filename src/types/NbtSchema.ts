@@ -1,7 +1,7 @@
-import VanillaNbtSchema from '../data/JE1.15/nbt_schema'
+import NbtSchema from '../data/JE1.15/nbt_schema'
 import { NbtTagTypeName } from './NbtTag'
 
-export type NbtSchema = { [key: string]: NbtSchemaNode | ValueList }
+export type NbtSchemaType = { [key: string]: NbtSchemaNode | ValueList }
 
 export interface NodeBase {
     description?: string,
@@ -62,4 +62,4 @@ export type NbtSchemaNode =
 
 export type NbtSchemaNodeWithType = NbtSchemaNode & { type: 'no-nbt' | NbtTagTypeName }
 
-export default VanillaNbtSchema as NbtSchema
+export default NbtSchema as NbtSchemaType

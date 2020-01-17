@@ -5,14 +5,14 @@ import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
-import { Registries } from '../../types/VanillaRegistries'
+import { RegistriesType } from '../../types/Registries'
 import Identity from '../../types/Identity'
 import { fail } from 'assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import { constructContext } from '../../types/ParsingContext'
 
 describe('NamespacedIDArgumentParser Tests', () => {
-    const registries: Registries = {
+    const registries: RegistriesType = {
         'spgoding:test': {
             protocol_id: 0,
             entries: {

@@ -1,6 +1,6 @@
 import { CompletionItem, DiagnosticSeverity } from 'vscode-languageserver'
 import { ClientCache, offsetCachePosition } from '../types/ClientCache'
-import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchema, ValueList } from '../types/VanillaNbtSchema'
+import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchemaType, ValueList } from '../types/NbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
 import clone = require('clone')
@@ -18,18 +18,9 @@ type ParserSuggestionNode = { parser: string, params?: any }
 type Variables = { isPredicate: boolean }
 
 export default class NbtSchemaWalker {
-    constructor(private readonly nbtSchema: NbtSchema) { }
+    constructor(private readonly nbtSchema: NbtSchemaType) { }
 
-    readonly filePath: ParsedPath & { full: string } = {
-        root: '',
-        dir: '',
-        base: '',
-        ext: '',
-        name: '',
-        get full(): string {
-            return posix.format(this)
-        }
-    }
+    filePath: string = ''
     readonly anchorPath: ParsedPath & { full: string } = {
         root: '',
         dir: '',
@@ -41,7 +32,7 @@ export default class NbtSchemaWalker {
         }
     }
     get path(): string {
-        return `${this.filePath.full}#${this.anchorPath.full}`
+        return `${this.filePath}#${this.anchorPath.full}`
     }
 
     private cache: undefined | NbtSchemaNodeWithType
@@ -55,23 +46,27 @@ export default class NbtSchemaWalker {
     }
 
     private goEither(type: 'filePath' | 'anchorPath', rel: string) {
-        let ans: string = this[type].full
-        if (rel) {
-            this.cache = undefined
-            if (type === 'filePath') {
-                ans = posix.join(this.filePath.dir, rel)
-            } else {
+        if (type === 'filePath') {
+            // if (rel.startsWith('./')) {
+            //     rel = rel.slice(2)
+            // }
+            if (rel !== this.filePath) {
+                this.cache = undefined
+            }
+            if (!this.nbtSchema.hasOwnProperty(rel)) {
+                throw new Error(`path not found: ‘${rel}’`)
+            }
+            this.filePath = rel
+            this.cloneParsedPath(posix.parse(''), this.anchorPath)
+        } else {
+            let ans: string = this.anchorPath.full
+            if (rel) {
+                this.cache = undefined
                 ans = posix.join(this.anchorPath.full, rel)
             }
+            // Apply change.
+            this.cloneParsedPath(posix.parse(ans), this[type])
         }
-        if (type === 'filePath') {
-            if (!this.nbtSchema.hasOwnProperty(ans)) {
-                throw new Error(`path not found: join(‘${this[type].full}’, ‘${rel}’) => ‘${ans}’`)
-            }
-            this.cloneParsedPath(posix.parse(''), this.anchorPath)
-        }
-        // Apply change.
-        this.cloneParsedPath(posix.parse(ans), this[type])
         return this
     }
 
@@ -110,7 +105,7 @@ export default class NbtSchemaWalker {
     clone() {
         const ans = new NbtSchemaWalker(this.nbtSchema)
         this.cloneParsedPath(this.anchorPath, ans.anchorPath)
-        this.cloneParsedPath(this.filePath, ans.filePath)
+        ans.filePath = this.filePath
         return ans
     }
 
@@ -122,7 +117,7 @@ export default class NbtSchemaWalker {
         if (this.cache) {
             return this.cache
         }
-        const file = this.nbtSchema[this.filePath.full]
+        const file = this.nbtSchema[this.filePath]
         const findNodeInChildren =
             (node: NbtSchemaNode, paths: string[], walker: NbtSchemaWalker): NbtSchemaNodeWithType => {
                 // Handle the node before recurse its children.
@@ -144,18 +139,21 @@ export default class NbtSchemaWalker {
                                 .clone()
                                 .go(refPath)
                             const refNode = subWalker.read() as NbtCompoundSchemaNode
-                            ansNode.additionalChildren = ansNode.additionalChildren || refNode.additionalChildren
-                            ansNode.children = { ...ansNode.children, ...refNode.children }
-                            /* istanbul ignore next */
-                            if (paths.length > 0) {
-                                try {
-                                    return findNodeInChildren(
-                                        refNode,
-                                        JSON.parse(JSON.stringify(paths)),
-                                        subWalker
-                                    )
-                                } catch (ignored) { }
+                            if (refNode.additionalChildren) {
+                                ansNode.additionalChildren = true
                             }
+                            for (const key in refNode.children) {
+                                /* istanbul ignore next */
+                                if (refNode.children.hasOwnProperty(key)) {
+                                    const child = refNode.children[key]
+                                    refNode.children[key] = findNodeInChildren(
+                                        child,
+                                        [],
+                                        subWalker.clone()
+                                    )
+                                }
+                            }
+                            ansNode.children = { ...ansNode.children, ...refNode.children }
                         }
                         return findNodeInChildren(
                             ansNode,
@@ -211,7 +209,7 @@ export default class NbtSchemaWalker {
                         }
                     }
                     throw new Error(
-                        `path not found: ‘${this.filePath.full}#${this.anchorPath.full}’ [‘${paths.join('’, ‘')}’]`
+                        `path not found: ‘${this.filePath}#${this.anchorPath.full}’ [‘${paths.join('’, ‘')}’]`
                     )
                 } else {
                     return node as NbtSchemaNodeWithType

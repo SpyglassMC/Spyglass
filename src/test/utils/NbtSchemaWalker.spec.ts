@@ -3,7 +3,7 @@ import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/VanillaNbtSchema'
+import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/NbtSchema'
 import StringReader from '../../utils/StringReader'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { CompletionItemKind } from 'vscode-languageserver'
@@ -33,8 +33,8 @@ describe('NbtSchemaWalker Tests', () => {
         'block/beacon.json': {
             type: 'compound',
             child_ref: [
-                '../ref/lockable.json',
-                '../ref/test.json'
+                'ref/lockable.json',
+                'ref/test.json'
             ],
             children: {
                 Primary: {
@@ -120,14 +120,14 @@ describe('NbtSchemaWalker Tests', () => {
                 none: {
                     type: 'no-nbt'
                 },
-                '$../block/group/command_block.json': {
-                    ref: '../block/command_block.json'
+                '$block/group/command_block.json': {
+                    ref: 'block/command_block.json'
                 },
                 'minecraft:banner': {
-                    ref: '../block/banner.json'
+                    ref: 'block/banner.json'
                 },
                 'minecraft:beacon': {
-                    ref: '../block/beacon.json'
+                    ref: 'block/beacon.json'
                 }
             }
         },
@@ -174,15 +174,8 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should go to file correctly', () => {
             walker
                 .goFile('roots/blocks.json')
-                .goFile('../block/banner.json')
-            const actual = walker.filePath.full
-            assert(actual === 'block/banner.json')
-        })
-        it('Should stay with empty relative path', () => {
-            walker
                 .goFile('block/banner.json')
-                .goFile('')
-            const actual = walker.filePath.full
+            const actual = walker.filePath
             assert(actual === 'block/banner.json')
         })
         it("Should throw error when the path does't exist", () => {
@@ -191,7 +184,7 @@ describe('NbtSchemaWalker Tests', () => {
                     goFile('parent')
                 fail()
             } catch ({ message }) {
-                assert(message === 'path not found: join(‘’, ‘parent’) => ‘parent’')
+                assert(message === 'path not found: ‘parent’')
             }
         })
     })
@@ -217,7 +210,7 @@ describe('NbtSchemaWalker Tests', () => {
         it('Should go correctly', () => {
             walker.go('roots/blocks.json#minecraft:banner')
             const actualAnchorPath = walker.anchorPath.full
-            const actualFilePath = walker.filePath.full
+            const actualFilePath = walker.filePath
             assert(actualAnchorPath === 'minecraft:banner')
             assert(actualFilePath === 'roots/blocks.json')
         })
@@ -227,7 +220,9 @@ describe('NbtSchemaWalker Tests', () => {
             const actual1 = walker
                 .go('block/group/command_block.json')
                 .read()
-            const actual2 = walker.read()
+            const actual2 = walker
+                .go('block/group/command_block.json')
+                .read()
             assert(actual1 === actual2)
         })
         it('Should return a ValueList', () => {

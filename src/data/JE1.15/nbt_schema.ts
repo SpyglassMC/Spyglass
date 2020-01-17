@@ -7,8 +7,8 @@ export default {
 	"block/banner.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/nameable.json"
+			"ref/block_entity.json",
+			"ref/nameable.json"
 		],
 		"children": {
 			"Patterns": {
@@ -83,8 +83,8 @@ export default {
 	"block/beacon.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/lockable.json"
+			"ref/block_entity.json",
+			"ref/lockable.json"
 		],
 		"children": {
 			"Levels": {
@@ -125,7 +125,7 @@ export default {
 	"block/beehive.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"FlowerPos": {
@@ -148,7 +148,7 @@ export default {
 					"type": "compound",
 					"children": {
 						"EntityData": {
-							"ref": "../entity/bee.json"
+							"ref": "entity/bee.json"
 						},
 						"MinOccupationTicks": {
 							"type": "int"
@@ -164,15 +164,15 @@ export default {
 	"block/brewing_stand.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/nameable.json",
-			"../ref/lockable.json"
+			"ref/block_entity.json",
+			"ref/nameable.json",
+			"ref/lockable.json"
 		],
 		"children": {
 			"Items": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in the brewing stand"
 			},
@@ -189,17 +189,17 @@ export default {
 	"block/chest.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/inventory_holder.json",
-			"../ref/nameable.json",
-			"../ref/lockable.json"
+			"ref/block_entity.json",
+			"ref/inventory_holder.json",
+			"ref/nameable.json",
+			"ref/lockable.json"
 		]
 	},
 	"block/command_block.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/nameable.json"
+			"ref/block_entity.json",
+			"ref/nameable.json"
 		],
 		"children": {
 			"auto": {
@@ -252,7 +252,7 @@ export default {
 	"block/comparator.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"OutputSignal": {
@@ -264,14 +264,14 @@ export default {
 	"block/enchanting_table.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/nameable.json"
+			"ref/block_entity.json",
+			"ref/nameable.json"
 		]
 	},
 	"block/end_gateway.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"Age": {
@@ -305,9 +305,9 @@ export default {
 	"block/furnace.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/nameable.json",
-			"../ref/lockable.json"
+			"ref/block_entity.json",
+			"ref/nameable.json",
+			"ref/lockable.json"
 		],
 		"children": {
 			"BurnTime": {
@@ -325,7 +325,7 @@ export default {
 			"Items": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in the furnace"
 			}
@@ -358,9 +358,9 @@ export default {
 	"block/hopper.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/inventory_holder.json",
-			"../block/chest.json"
+			"ref/block_entity.json",
+			"ref/inventory_holder.json",
+			"block/chest.json"
 		],
 		"children": {
 			"TransferCooldown": {
@@ -372,25 +372,25 @@ export default {
 	"block/jukebox.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"RecordItem": {
-				"ref": "../ref/item.json"
+				"ref": "ref/item.json"
 			}
 		}
 	},
 	"block/mob_spawner.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json",
-			"../ref/spawner.json"
+			"ref/block_entity.json",
+			"ref/spawner.json"
 		]
 	},
 	"block/player_head.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"Owner": {
@@ -435,7 +435,7 @@ export default {
 	"block/sign.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"Text1": {
@@ -479,7 +479,7 @@ export default {
 	"block/structure_block.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/block_entity.json"
+			"ref/block_entity.json"
 		],
 		"children": {
 			"author": {
@@ -575,7 +575,7 @@ export default {
 	"entity/area_effect_cloud.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Age": {
@@ -639,7 +639,7 @@ export default {
 			"Effects": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/potion_effect.json"
+					"ref": "ref/potion_effect.json"
 				}
 			}
 		}
@@ -647,7 +647,7 @@ export default {
 	"entity/armor_stand.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"DisabledSlots": {
@@ -663,14 +663,14 @@ export default {
 			"HandItems": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in main and offhand"
 			},
 			"ArmorItems": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Armor in armor slots"
 			},
@@ -745,7 +745,7 @@ export default {
 	"entity/arrow.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/projectile.json"
+			"ref/projectile.json"
 		],
 		"children": {
 			"pickup": {
@@ -789,7 +789,7 @@ export default {
 			"CustomPotionEffects": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/potion_effect.json"
+					"ref": "ref/potion_effect.json"
 				},
 				"description": "List of potion effects to give to the entity who got hit"
 			},
@@ -802,7 +802,7 @@ export default {
 	"entity/bat.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"BatFlags": {
@@ -814,7 +814,7 @@ export default {
 	"entity/bee.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"HivePos": {
@@ -871,7 +871,7 @@ export default {
 	"entity/boat.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Type": {
@@ -891,7 +891,7 @@ export default {
 	"entity/chest_horse.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/horse.json"
+			"ref/horse.json"
 		],
 		"children": {
 			"ChestedHorse": {
@@ -901,7 +901,7 @@ export default {
 			"Items": {
 				"type": "list",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in the horse chest"
 			}
@@ -910,14 +910,14 @@ export default {
 	"entity/chest_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"./minecart.json",
-			"../ref/inventory_holder.json"
+			"entity/minecart.json",
+			"ref/inventory_holder.json"
 		]
 	},
 	"entity/commandblock_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"./minecart.json"
+			"entity/minecart.json"
 		],
 		"children": {
 			"Command": {
@@ -950,7 +950,7 @@ export default {
 	"entity/creeper.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"powered": {
@@ -974,7 +974,7 @@ export default {
 	"entity/ender_crystal.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"ShowBottom": {
@@ -1004,7 +1004,7 @@ export default {
 	"entity/ender_dragon.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"DragonPhase": {
@@ -1062,7 +1062,7 @@ export default {
 	"entity/enderman.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"carriedBlockState": {
@@ -1094,7 +1094,7 @@ export default {
 	"entity/endermite.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Lifetime": {
@@ -1110,7 +1110,7 @@ export default {
 	"entity/evocation_fangs.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Warmup": {
@@ -1136,7 +1136,7 @@ export default {
 	"entity/falling_block.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"TileEntityData": {
@@ -1194,7 +1194,7 @@ export default {
 	"entity/fireball.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/fireball_base.json"
+			"ref/fireball_base.json"
 		],
 		"children": {
 			"ExplosionPower": {
@@ -1206,7 +1206,7 @@ export default {
 	"entity/firework_rocket.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Life": {
@@ -1220,11 +1220,11 @@ export default {
 			"FireworksItem": {
 				"type": "compound",
 				"child_ref": [
-					"../ref/item_ntt.json"
+					"ref/item_ntt.json"
 				],
 				"children": {
 					"tag": {
-						"ref": "../item/firework_rocket.json",
+						"ref": "item/firework_rocket.json",
 						"description": "The NBT of the item"
 					}
 				},
@@ -1235,7 +1235,7 @@ export default {
 	"entity/fish.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"FromBucket": {
@@ -1247,7 +1247,7 @@ export default {
 	"entity/furnace_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"./minecart.json"
+			"entity/minecart.json"
 		],
 		"children": {
 			"PushX": {
@@ -1267,7 +1267,7 @@ export default {
 	"entity/ghast.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"ExplosionPower": {
@@ -1310,8 +1310,8 @@ export default {
 	"entity/hopper_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"./minecart.json",
-			"../ref/inventory_holder.json"
+			"entity/minecart.json",
+			"ref/inventory_holder.json"
 		],
 		"children": {
 			"TransferCooldown": {
@@ -1327,7 +1327,7 @@ export default {
 	"entity/horse.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/horse.json"
+			"ref/horse.json"
 		],
 		"children": {
 			"Variant": {
@@ -1339,7 +1339,7 @@ export default {
 	"entity/illager_beast.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"AttackTick": {
@@ -1359,7 +1359,7 @@ export default {
 	"entity/item.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Age": {
@@ -1403,7 +1403,7 @@ export default {
 				}
 			},
 			"Item": {
-				"ref": "../ref/item.json",
+				"ref": "ref/item.json",
 				"description": "The item that this item entity represents"
 			}
 		}
@@ -1411,7 +1411,7 @@ export default {
 	"entity/item_frame.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"TileX": {
@@ -1431,7 +1431,7 @@ export default {
 				"description": "The facing direction of the item frame"
 			},
 			"Item": {
-				"ref": "../ref/inventory_item.json",
+				"ref": "ref/inventory_item.json",
 				"description": "The item in the item frame"
 			},
 			"ItemDropChance": {
@@ -1447,7 +1447,7 @@ export default {
 	"entity/llama.json": {
 		"type": "compound",
 		"child_ref": [
-			"./breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"Bred": {
@@ -1475,7 +1475,7 @@ export default {
 				"description": "1/3 of the number of items a llama can carry."
 			},
 			"DecorItem": {
-				"ref": "../ref/inventory_item.json",
+				"ref": "ref/inventory_item.json",
 				"description": "Item (usually carpet) on the llama"
 			},
 			"OwnerUUID": {
@@ -1486,7 +1486,7 @@ export default {
 				"type": "list",
 				"description": "Items carried by the llama",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				}
 			}
 		}
@@ -1494,7 +1494,7 @@ export default {
 	"entity/llama_spit.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Owner": {
@@ -1516,7 +1516,7 @@ export default {
 	"entity/minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"./entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"DisplayState": {
@@ -1542,8 +1542,8 @@ export default {
 	"entity/ocelot.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json",
-			"../ref/tameable.json"
+			"ref/breedable.json",
+			"ref/tameable.json"
 		],
 		"children": {
 			"CatType": {
@@ -1555,7 +1555,7 @@ export default {
 	"entity/painting.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"TileX": {
@@ -1593,7 +1593,7 @@ export default {
 	"entity/panda.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"MainGene": {
@@ -1644,7 +1644,7 @@ export default {
 	"entity/parrot.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/tameable.json"
+			"ref/tameable.json"
 		],
 		"children": {
 			"Variant": {
@@ -1656,7 +1656,7 @@ export default {
 	"entity/phantom.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Size": {
@@ -1680,7 +1680,7 @@ export default {
 	"entity/pig.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"Saddle": {
@@ -1692,18 +1692,18 @@ export default {
 	"entity/potion.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/throwable.json"
+			"ref/throwable.json"
 		],
 		"children": {
 			"Potion": {
 				"description": "The potion this thrown potion represents",
 				"type": "compound",
 				"child_ref": [
-					"../ref/item_ntt.json"
+					"ref/item_ntt.json"
 				],
 				"children": {
 					"tag": {
-						"ref": "../item/potion_base.json"
+						"ref": "item/potion_base.json"
 					}
 				}
 			}
@@ -1712,7 +1712,7 @@ export default {
 	"entity/pufferfish_mob.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"PuffState": {
@@ -1738,7 +1738,7 @@ export default {
 	"entity/rabbit.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"RabbitType": {
@@ -1754,7 +1754,7 @@ export default {
 	"entity/sheep.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"Sheared": {
@@ -1770,7 +1770,7 @@ export default {
 	"entity/shulker.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Peek": {
@@ -1802,7 +1802,7 @@ export default {
 	"entity/shulker_bullet.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Owner": {
@@ -1878,7 +1878,7 @@ export default {
 	"entity/skeleton_horse.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/horse.json"
+			"ref/horse.json"
 		],
 		"children": {
 			"SkeletonTrap": {
@@ -1894,7 +1894,7 @@ export default {
 	"entity/slime.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Size": {
@@ -1910,7 +1910,7 @@ export default {
 	"entity/snowman.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Pumpkin": {
@@ -1922,14 +1922,14 @@ export default {
 	"entity/spawner_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/spawner.json",
-			"../ref/minecart.json"
+			"ref/spawner.json",
+			"ref/minecart.json"
 		]
 	},
 	"entity/spectral_arrow.json": {
 		"type": "compound",
 		"child_ref": [
-			"./arrow.json"
+			"entity/arrow.json"
 		],
 		"children": {
 			"Duration": {
@@ -1941,7 +1941,7 @@ export default {
 	"entity/spell_illager.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"SpellTicks": {
@@ -1953,7 +1953,7 @@ export default {
 	"entity/tnt.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Fuse": {
@@ -1965,7 +1965,7 @@ export default {
 	"entity/tnt_minecart.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/minecart.json"
+			"ref/minecart.json"
 		],
 		"children": {
 			"TNTFuse": {
@@ -1977,7 +1977,7 @@ export default {
 	"entity/trident.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/projectile.json"
+			"ref/projectile.json"
 		],
 		"children": {
 			"pickup": {
@@ -2003,7 +2003,7 @@ export default {
 			"Trident": {
 				"type": "compound",
 				"child_ref": [
-					"../roots/items.json#minecraft:trident"
+					"entity/trident.json"
 				]
 			}
 		}
@@ -2011,7 +2011,7 @@ export default {
 	"entity/tropical_fish.json": {
 		"type": "compound",
 		"child_ref": [
-			"./fish.json"
+			"entity/fish.json"
 		],
 		"children": {
 			"Variant": {
@@ -2023,7 +2023,7 @@ export default {
 	"entity/turtle.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"HomePosX": {
@@ -2059,7 +2059,7 @@ export default {
 	"entity/vex.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"BoundX": {
@@ -2083,7 +2083,7 @@ export default {
 	"entity/villager.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"VillagerData": {
@@ -2173,7 +2173,7 @@ export default {
 			"Inventory": {
 				"type": "list",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "The items a villager has in their inventory"
 			},
@@ -2201,15 +2201,15 @@ export default {
 									"description": "How many times this trade has been used"
 								},
 								"buy": {
-									"ref": "../ref/inventory_item.json",
+									"ref": "ref/inventory_item.json",
 									"description": "The first item the villager is buying"
 								},
 								"buyB": {
-									"ref": "../ref/inventory_item.json",
+									"ref": "ref/inventory_item.json",
 									"description": "The second item the villager is buying"
 								},
 								"sell": {
-									"ref": "../ref/inventory_item.json",
+									"ref": "ref/inventory_item.json",
 									"description": "The item the villager is selling"
 								},
 								"xp": {
@@ -2411,7 +2411,7 @@ export default {
 	"entity/villager_golem.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"PlayerCreated": {
@@ -2423,7 +2423,7 @@ export default {
 	"entity/vindication_illager.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Johnny": {
@@ -2435,7 +2435,7 @@ export default {
 	"entity/wither.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"Invul": {
@@ -2447,8 +2447,8 @@ export default {
 	"entity/wolf.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/breedable.json",
-			"../ref/tameable.json"
+			"ref/breedable.json",
+			"ref/tameable.json"
 		],
 		"children": {
 			"Angry": {
@@ -2464,7 +2464,7 @@ export default {
 	"entity/xp_orb.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Age": {
@@ -2484,7 +2484,7 @@ export default {
 	"entity/zombie_pigman.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/zombie.json"
+			"ref/zombie.json"
 		],
 		"children": {
 			"Anger": {
@@ -2500,7 +2500,7 @@ export default {
 	"entity/zombie_villager.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/zombie.json"
+			"ref/zombie.json"
 		],
 		"children": {
 			"Profession": {
@@ -2524,11 +2524,11 @@ export default {
 	"item/block_item.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"BlockEntityTag": {
-				"ref": "../ref/block_entity.json",
+				"ref": "ref/block_entity.json",
 				"description": "NBT data when placed"
 			},
 			"BlockStateTag": {
@@ -2541,7 +2541,7 @@ export default {
 	"item/breakable.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"Damage": {
@@ -2561,14 +2561,14 @@ export default {
 	"item/crossbow.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json",
-			"./breakable.json"
+			"ref/item_tag.json",
+			"item/breakable.json"
 		],
 		"children": {
 			"ChargedProjectiles": {
 				"type": "list",
 				"item": {
-					"ref": "../ref/item.json",
+					"ref": "ref/item.json",
 					"description": "An item that has been charged"
 				},
 				"description": "A list of items that have been charged"
@@ -2582,7 +2582,7 @@ export default {
 	"item/firework_rocket.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"Fireworks": {
@@ -2596,7 +2596,7 @@ export default {
 						"description": "List of various explosions this firework will cause",
 						"type": "list",
 						"item": {
-							"ref": "../ref/firework_explosion.json"
+							"ref": "ref/firework_explosion.json"
 						}
 					}
 				}
@@ -2606,12 +2606,12 @@ export default {
 	"item/firework_star.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"Explosion": {
 				"description": "Explosion to add to the firework rocket on creation",
-				"ref": "../ref/firework_explosion"
+				"ref": "ref/firework_explosion"
 			}
 		}
 	},
@@ -2913,7 +2913,7 @@ export default {
 	"item/map.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"map_scale_direction": {
@@ -3011,7 +3011,7 @@ export default {
 	"item/player_head.json": {
 		"type": "compound",
 		"child_ref": [
-			"./block_item.json"
+			"item/block_item.json"
 		],
 		"children": {
 			"SkullOwner": {
@@ -3058,26 +3058,26 @@ export default {
 	"item/potion_base.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json",
-			"../ref/potion_effect.json"
+			"ref/item_tag.json",
+			"ref/potion_effect.json"
 		]
 	},
 	"item/spawn_item.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"EntityTag": {
 				"description": "The NBT of the spawned entity",
-				"ref": "../ref/mob.json"
+				"ref": "ref/mob.json"
 			}
 		}
 	},
 	"item/writable_book.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json"
+			"ref/item_tag.json"
 		],
 		"children": {
 			"pages": {
@@ -3093,8 +3093,8 @@ export default {
 	"item/written_book.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/item_tag.json",
-			"./writable_book.json"
+			"ref/item_tag.json",
+			"item/writable_book.json"
 		],
 		"children": {
 			"author": {
@@ -3427,7 +3427,7 @@ export default {
 	"ref/breedable.json": {
 		"type": "compound",
 		"child_ref": [
-			"./mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"InLove": {
@@ -3455,7 +3455,7 @@ export default {
 	"ref/entity.json": {
 		"type": "compound",
 		"child_ref": [
-			"./nameable.json"
+			"ref/nameable.json"
 		],
 		"children": {
 			"id": {
@@ -3559,7 +3559,7 @@ export default {
 				"description": "A list of entities riding this entity",
 				"type": "list",
 				"item": {
-					"ref": "../roots/entities.json#base"
+					"ref": "roots/entities.json#base"
 				}
 			},
 			"Glowing": {
@@ -3583,7 +3583,7 @@ export default {
 	"ref/fireball_base.json": {
 		"type": "compound",
 		"child_ref": [
-			"../ref/entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"direction": {
@@ -3658,7 +3658,7 @@ export default {
 	"ref/horse.json": {
 		"type": "compound",
 		"child_ref": [
-			"./breedable.json"
+			"ref/breedable.json"
 		],
 		"children": {
 			"Bred": {
@@ -3682,11 +3682,11 @@ export default {
 				"description": "UUID of the owner"
 			},
 			"ArmorItem": {
-				"ref": "./inventory_item.json",
+				"ref": "ref/inventory_item.json",
 				"description": "Horse armor item"
 			},
 			"SaddleItem": {
-				"ref": "./inventory_item.json",
+				"ref": "ref/inventory_item.json",
 				"description": "Saddle item"
 			}
 		}
@@ -3697,7 +3697,7 @@ export default {
 			"Items": {
 				"type": "list",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in this container"
 			},
@@ -3724,7 +3724,7 @@ export default {
 	"ref/inventory_item.json": {
 		"type": "compound",
 		"child_ref": [
-			"./item.json"
+			"ref/item.json"
 		],
 		"children": {
 			"Slot": {
@@ -3736,11 +3736,11 @@ export default {
 	"ref/item.json": {
 		"type": "compound",
 		"child_ref": [
-			"./item_ntt.json"
+			"ref/item_ntt.json"
 		],
 		"children": {
 			"tag": {
-				"ref": "./item_tag.json",
+				"ref": "ref/item_tag.json",
 				"description": "The NBT of the item"
 			}
 		}
@@ -3940,7 +3940,7 @@ export default {
 	"ref/mob.json": {
 		"type": "compound",
 		"child_ref": [
-			"./entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"Health": {
@@ -4043,21 +4043,21 @@ export default {
 			"ActiveEffects": {
 				"type": "list",
 				"item": {
-					"ref": "./potion_effect.json"
+					"ref": "ref/potion_effect.json"
 				},
 				"description": "A list of effects on the mob"
 			},
 			"HandItems": {
 				"type": "list",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Items in the main and off hand"
 			},
 			"ArmorItems": {
 				"type": "list",
 				"item": {
-					"ref": "./inventory_item.json"
+					"ref": "ref/inventory_item.json"
 				},
 				"description": "Armor items"
 			},
@@ -4195,7 +4195,7 @@ export default {
 	"ref/projectile.json": {
 		"type": "compound",
 		"child_ref": [
-			"./entity.json"
+			"ref/entity.json"
 		],
 		"children": {
 			"xTile": {
@@ -4239,7 +4239,7 @@ export default {
 					"type": "compound",
 					"children": {
 						"Entity": {
-							"ref": "./mob.json"
+							"ref": "ref/mob.json"
 						},
 						"Weight": {
 							"type": "int",
@@ -4281,7 +4281,7 @@ export default {
 	"ref/tameable.json": {
 		"type": "compound",
 		"child_ref": [
-			"./mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"OwnerUUID": {
@@ -4297,7 +4297,7 @@ export default {
 	"ref/throwable.json": {
 		"type": "compound",
 		"child_ref": [
-			"./projectile.json"
+			"ref/projectile.json"
 		],
 		"children": {
 			"owner": {
@@ -4315,14 +4315,14 @@ export default {
 				}
 			},
 			"Item": {
-				"ref": "./item.json"
+				"ref": "ref/item.json"
 			}
 		}
 	},
 	"ref/zombie.json": {
 		"type": "compound",
 		"child_ref": [
-			"./mob.json"
+			"ref/mob.json"
 		],
 		"children": {
 			"IsBaby": {
@@ -4339,13 +4339,13 @@ export default {
 		"type": "root",
 		"children": {
 			"entity": {
-				"ref": "./roots/entities.json"
+				"ref": "ref/roots/entities.json"
 			},
 			"block": {
-				"ref": "./roots/blocks.json"
+				"ref": "ref/roots/blocks.json"
 			},
 			"item": {
-				"ref": "./roots/items.json"
+				"ref": "ref/roots/items.json"
 			}
 		}
 	},
@@ -4356,80 +4356,80 @@ export default {
 				"type": "compound",
 				"additionalChildren": true,
 				"child_ref": [
-					"../ref/block_entity.json"
+					"ref/block_entity.json"
 				]
 			},
-			"$../block/group/shulker_box.json": {
-				"ref": "../block/chest.json"
+			"$block/group/shulker_box.json": {
+				"ref": "block/chest.json"
 			},
-			"$../block/group/command_block.json": {
-				"ref": "../block/command_block.json"
+			"$block/group/command_block.json": {
+				"ref": "block/command_block.json"
 			},
 			"minecraft:banner": {
-				"ref": "../block/banner.json"
+				"ref": "block/banner.json"
 			},
 			"minecraft:beacon": {
-				"ref": "../block/beacon.json"
+				"ref": "block/beacon.json"
 			},
 			"minecraft:bed": {
-				"ref": "../ref/block_entity.json"
+				"ref": "ref/block_entity.json"
 			},
 			"minecraft:beehive": {
-				"ref": "../block/beehive.json"
+				"ref": "block/beehive.json"
 			},
 			"minecraft:brewing_stand": {
-				"ref": "../block/brewing_stand.json"
+				"ref": "block/brewing_stand.json"
 			},
 			"minecraft:chest": {
-				"ref": "../block/chest.json"
+				"ref": "block/chest.json"
 			},
 			"minecraft:comparator": {
-				"ref": "../block/comparator.json"
+				"ref": "block/comparator.json"
 			},
 			"minecraft:daylight_detector": {
-				"ref": "../ref/block_entity.json"
+				"ref": "ref/block_entity.json"
 			},
 			"minecraft:dispenser": {
-				"ref": "../block/chest.json"
+				"ref": "block/chest.json"
 			},
 			"minecraft:dropper": {
-				"ref": "../block/chest.json"
+				"ref": "block/chest.json"
 			},
 			"minecraft:enchanting_table": {
-				"ref": "../block/enchanting_table.json"
+				"ref": "block/enchanting_table.json"
 			},
 			"minecraft:end_gateway": {
-				"ref": "../block/end_gateway.json"
+				"ref": "block/end_gateway.json"
 			},
 			"minecraft:end_portal": {
-				"ref": "../ref/block_entity.json"
+				"ref": "ref/block_entity.json"
 			},
 			"minecraft:ender_chest": {
-				"ref": "../ref/block_entity.json"
+				"ref": "ref/block_entity.json"
 			},
 			"minecraft:furnace": {
-				"ref": "../block/furnace.json"
+				"ref": "block/furnace.json"
 			},
 			"minecraft:hopper": {
-				"ref": "../block/hopper.json"
+				"ref": "block/hopper.json"
 			},
 			"minecraft:jukebox": {
-				"ref": "../block/jukebox.json"
+				"ref": "block/jukebox.json"
 			},
 			"minecraft:mob_spawner": {
-				"ref": "../block/mob_spawner.json"
+				"ref": "block/mob_spawner.json"
 			},
 			"minecraft:player_head": {
-				"ref": "../block/player_head.json"
+				"ref": "block/player_head.json"
 			},
 			"minecraft:sign": {
-				"ref": "../block/sign.json"
+				"ref": "block/sign.json"
 			},
 			"minecraft:structure_block": {
-				"ref": "../block/structure_block.json"
+				"ref": "block/structure_block.json"
 			},
 			"minecraft:trapped_chest": {
-				"ref": "../block/chest.json"
+				"ref": "block/chest.json"
 			}
 		}
 	},
@@ -4440,218 +4440,218 @@ export default {
 				"type": "compound",
 				"additionalChildren": true,
 				"child_ref": [
-					"../ref/entity.json"
+					"ref/entity.json"
 				]
 			},
-			"$../entity/group/mob.json": {
-				"ref": "../ref/mob.json"
+			"$entity/group/mob.json": {
+				"ref": "ref/mob.json"
 			},
-			"$../entity/group/breedable.json": {
-				"ref": "../ref/breedable.json"
+			"$entity/group/breedable.json": {
+				"ref": "ref/breedable.json"
 			},
-			"$../entity/group/fireball.json": {
-				"ref": "../ref/fireball_base.json"
+			"$entity/group/fireball.json": {
+				"ref": "ref/fireball_base.json"
 			},
-			"$../entity/group/throwable.json": {
-				"ref": "../ref/throwable.json"
+			"$entity/group/throwable.json": {
+				"ref": "ref/throwable.json"
 			},
 			"minecraft:area_effect_cloud": {
-				"ref": "../entity/area_effect_cloud.json"
+				"ref": "entity/area_effect_cloud.json"
 			},
 			"minecraft:armor_stand": {
-				"ref": "../entity/armor_stand.json"
+				"ref": "entity/armor_stand.json"
 			},
 			"minecraft:arrow": {
-				"ref": "../entity/arrow.json"
+				"ref": "entity/arrow.json"
 			},
 			"minecraft:bat": {
-				"ref": "../entity/bat.json"
+				"ref": "entity/bat.json"
 			},
 			"minecraft:bee": {
-				"ref": "../entity/bee.json"
+				"ref": "entity/bee.json"
 			},
 			"minecraft:boat": {
-				"ref": "../entity/boat.json"
+				"ref": "entity/boat.json"
 			},
 			"minecraft:cod_fish": {
-				"ref": "../entity/fish.json"
+				"ref": "entity/fish.json"
 			},
 			"minecraft:commandblock_minecart": {
-				"ref": "../entity/commandblock_minecart.json"
+				"ref": "entity/commandblock_minecart.json"
 			},
 			"minecraft:creeper": {
-				"ref": "../entity/creeper.json"
+				"ref": "entity/creeper.json"
 			},
 			"minecraft:donkey": {
-				"ref": "../entity/chest_horse.json"
+				"ref": "entity/chest_horse.json"
 			},
 			"minecraft:ender_crystal": {
-				"ref": "../entity/ender_crystal.json"
+				"ref": "entity/ender_crystal.json"
 			},
 			"minecraft:ender_dragon": {
-				"ref": "../entity/ender_dragon.json"
+				"ref": "entity/ender_dragon.json"
 			},
 			"minecraft:enderman": {
-				"ref": "../entity/enderman.json"
+				"ref": "entity/enderman.json"
 			},
 			"minecraft:endermite": {
-				"ref": "../entity/endermite.json"
+				"ref": "entity/endermite.json"
 			},
 			"minecraft:evocation_fangs": {
-				"ref": "../entity/evocation_fangs.json"
+				"ref": "entity/evocation_fangs.json"
 			},
 			"minecraft:evocation_illager": {
-				"ref": "../entity/spell_illager.json"
+				"ref": "entity/spell_illager.json"
 			},
 			"minecraft:eye_of_ender_signal": {
-				"ref": "../ref/entity.json"
+				"ref": "ref/entity.json"
 			},
 			"minecraft:falling_block": {
-				"ref": "../entity/falling_block.json"
+				"ref": "entity/falling_block.json"
 			},
 			"minecraft:fireball": {
-				"ref": "../entity/fireball.json"
+				"ref": "entity/fireball.json"
 			},
 			"minecraft:firework_rocket": {
-				"ref": "../entity/firework_rocket.json"
+				"ref": "entity/firework_rocket.json"
 			},
 			"minecraft:furnace_minecart": {
-				"ref": "../entity/furnace_minecart.json"
+				"ref": "entity/furnace_minecart.json"
 			},
 			"minecraft:hopper_minecart": {
-				"ref": "../entity/hopper_minecart.json"
+				"ref": "entity/hopper_minecart.json"
 			},
 			"minecraft:horse": {
-				"ref": "../entity/horse.json"
+				"ref": "entity/horse.json"
 			},
 			"minecraft:husk": {
 				"type": "compound",
 				"child_ref": [
-					"../ref/zombie.json"
+					"ref/zombie.json"
 				]
 			},
 			"minecraft:illusion_illager": {
-				"ref": "../entity/spell_illager.json"
+				"ref": "entity/spell_illager.json"
 			},
 			"minecraft:item": {
-				"ref": "../entity/item.json"
+				"ref": "entity/item.json"
 			},
 			"minecraft:item_frame": {
-				"ref": "../entity/item_frame.json"
+				"ref": "entity/item_frame.json"
 			},
 			"minecraft:leash_knot": {
-				"ref": "../ref/entity.json"
+				"ref": "ref/entity.json"
 			},
 			"minecraft:llama": {
-				"ref": "../entity/llama.json"
+				"ref": "entity/llama.json"
 			},
 			"minecraft:llama_spit": {
-				"ref": "../entity/llama_spit.json"
+				"ref": "entity/llama_spit.json"
 			},
 			"minecraft:magma_cube": {
-				"ref": "../entity/slime.json"
+				"ref": "entity/slime.json"
 			},
 			"minecraft:minecart": {
-				"ref": "../entity/minecart.json"
+				"ref": "entity/minecart.json"
 			},
 			"minecraft:mule": {
-				"ref": "../entity/chest_horse.json"
+				"ref": "entity/chest_horse.json"
 			},
 			"minecraft:ocelot": {
-				"ref": "../entity/ocelot.json"
+				"ref": "entity/ocelot.json"
 			},
 			"minecraft:painting": {
-				"ref": "../entity/painting.json"
+				"ref": "entity/painting.json"
 			},
 			"minecraft:parrot": {
-				"ref": "../entity/parrot.json"
+				"ref": "entity/parrot.json"
 			},
 			"minecraft:phantom": {
-				"ref": "../entity/phantom.json"
+				"ref": "entity/phantom.json"
 			},
 			"minecraft:pig": {
-				"ref": "../entity/pig.json"
+				"ref": "entity/pig.json"
 			},
 			"minecraft:potion": {
-				"ref": "../entity/potion.json"
+				"ref": "entity/potion.json"
 			},
 			"minecraft:rabbit": {
-				"ref": "../entity/rabbit.json"
+				"ref": "entity/rabbit.json"
 			},
 			"minecraft:salmon_fish": {
-				"ref": "../entity/fish.json"
+				"ref": "entity/fish.json"
 			},
 			"minecraft:sheep": {
-				"ref": "../entity/sheep.json"
+				"ref": "entity/sheep.json"
 			},
 			"minecraft:shulker": {
-				"ref": "../entity/shulker.json"
+				"ref": "entity/shulker.json"
 			},
 			"minecraft:shulker_bullet": {
-				"ref": "../entity/shulker_bullet.json"
+				"ref": "entity/shulker_bullet.json"
 			},
 			"minecraft:skeleton_horse": {
-				"ref": "../entity/skeleton_horse.json"
+				"ref": "entity/skeleton_horse.json"
 			},
 			"minecraft:slime": {
-				"ref": "../entity/slime.json"
+				"ref": "entity/slime.json"
 			},
 			"minecraft:snowman": {
-				"ref": "../entity/snowman.json"
+				"ref": "entity/snowman.json"
 			},
 			"minecraft:spawner_minecart": {
-				"ref": "../entity/spawner_minecart.json"
+				"ref": "entity/spawner_minecart.json"
 			},
 			"minecraft:spectral_arrow": {
-				"ref": "../entity/spectral_arrow.json"
+				"ref": "entity/spectral_arrow.json"
 			},
 			"minecraft:tnt": {
-				"ref": "../entity/tnt.json"
+				"ref": "entity/tnt.json"
 			},
 			"minecraft:tnt_minecart": {
-				"ref": "../entity/tnt_minecart.json"
+				"ref": "entity/tnt_minecart.json"
 			},
 			"minecraft:trident": {
-				"ref": "../entity/trident.json"
+				"ref": "entity/trident.json"
 			},
 			"minecraft:turtle": {
-				"ref": "../entity/turtle.json"
+				"ref": "entity/turtle.json"
 			},
 			"minecraft:vex": {
-				"ref": "../entity/vex.json"
+				"ref": "entity/vex.json"
 			},
 			"minecraft:villager": {
-				"ref": "../entity/villager.json"
+				"ref": "entity/villager.json"
 			},
 			"minecraft:villager_golem": {
-				"ref": "../entity/villager_golem.json"
+				"ref": "entity/villager_golem.json"
 			},
 			"minecraft:vindication_illager": {
-				"ref": "../entity/vindication_illager.json"
+				"ref": "entity/vindication_illager.json"
 			},
 			"minecraft:wither": {
-				"ref": "../entity/wither.json"
+				"ref": "entity/wither.json"
 			},
 			"minecraft:wolf": {
-				"ref": "../entity/wolf.json"
+				"ref": "entity/wolf.json"
 			},
 			"minecraft:xp_orb": {
-				"ref": "../entity/xp_orb.json"
+				"ref": "entity/xp_orb.json"
 			},
 			"minecraft:zombie": {
 				"type": "compound",
 				"child_ref": [
-					"../ref/zombie.json"
+					"ref/zombie.json"
 				]
 			},
 			"minecraft:zombie_horse": {
-				"ref": "../entity/horse.json"
+				"ref": "entity/horse.json"
 			},
 			"minecraft:zombie_pigman": {
-				"ref": "../entity/zombie_pigman.json"
+				"ref": "entity/zombie_pigman.json"
 			},
 			"minecraft:zombie_villager": {
-				"ref": "../entity/zombie_villager.json"
+				"ref": "entity/zombie_villager.json"
 			}
 		}
 	},
@@ -4662,44 +4662,44 @@ export default {
 				"type": "compound",
 				"additionalChildren": true,
 				"child_ref": [
-					"../ref/item_tag.json"
+					"ref/item_tag.json"
 				]
 			},
-			"$../item/group/generic.json": {
-				"ref": "../ref/item_tag.json"
+			"$item/group/generic.json": {
+				"ref": "ref/item_tag.json"
 			},
-			"$../item/group/breakable.json": {
-				"ref": "../item/breakable.json"
+			"$item/group/breakable.json": {
+				"ref": "item/breakable.json"
 			},
-			"$../item/group/block_item.json": {
-				"ref": "../item/block_item.json"
+			"$item/group/block_item.json": {
+				"ref": "item/block_item.json"
 			},
-			"$../item/group/potion.json": {
-				"ref": "../item/potion_base.json"
+			"$item/group/potion.json": {
+				"ref": "item/potion_base.json"
 			},
 			"minecraft:writable_book": {
-				"ref": "../item/writable_book.json"
+				"ref": "item/writable_book.json"
 			},
 			"minecraft:written_book": {
-				"ref": "../item/written_book.json"
+				"ref": "item/written_book.json"
 			},
 			"minecraft:player_head": {
-				"ref": "../item/player_head.json"
+				"ref": "item/player_head.json"
 			},
 			"minecraft:firework_rocket": {
-				"ref": "../item/firework_rocket.json"
+				"ref": "item/firework_rocket.json"
 			},
 			"minecraft:firework_star": {
-				"ref": "../item/firework_star.json"
+				"ref": "item/firework_star.json"
 			},
 			"minecraft:armor_stand": {
-				"ref": "../item/spawn_item.json"
+				"ref": "item/spawn_item.json"
 			},
 			"minecraft:spawn_egg": {
-				"ref": "../item/spawn_item.json"
+				"ref": "item/spawn_item.json"
 			},
 			"minecraft:map": {
-				"ref": "../item/map.json"
+				"ref": "item/map.json"
 			}
 		}
 	}

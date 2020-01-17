@@ -8,7 +8,7 @@ import { constructContext } from '../../types/ParsingContext'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
-import { NbtSchemaNode, ValueList } from '../../types/VanillaNbtSchema'
+import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
 
 describe('NbtTagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -504,8 +504,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 'block/beacon.json': {
                     type: 'compound',
                     child_ref: [
-                        '../ref/lockable.json',
-                        '../ref/additional.json'
+                        'ref/lockable.json',
+                        'ref/additional.json'
                     ],
                     children: {
                         Primary: {
@@ -632,17 +632,17 @@ describe('NbtTagArgumentParser Tests', () => {
                         none: {
                             type: 'no-nbt'
                         },
-                        '$../block/group/command_block.json': {
-                            ref: '../block/command_block.json'
+                        '$block/group/command_block.json': {
+                            ref: 'block/command_block.json'
                         },
                         'minecraft:banner': {
-                            ref: '../block/banner.json'
+                            ref: 'block/banner.json'
                         },
                         'minecraft:beacon': {
-                            ref: '../block/beacon.json'
+                            ref: 'block/beacon.json'
                         },
                         'spgoding:suggestions_test': {
-                            ref: '../block/suggestions_test.json'
+                            ref: 'block/suggestions_test.json'
                         }
                     }
                 }

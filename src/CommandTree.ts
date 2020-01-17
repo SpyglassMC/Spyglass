@@ -1,10 +1,10 @@
 import ArgumentNode from './types/ArgumentNode'
 import Entity from './types/Entity'
 import NbtSchemaWalker from './utils/NbtSchemaWalker'
-import { NbtSchema } from './types/VanillaNbtSchema'
-import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
+import { NbtSchemaType } from './types/NbtSchema'
+import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 
-export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
+export function getSchemaAnchor(entity: Entity, schema: NbtSchemaType) {
     if (entity.argument && entity.argument.type) {
         const firstID = entity.argument.type[0]
         if (!firstID.isTag) {
@@ -28,7 +28,7 @@ export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, f
 /**
  * Get the `children` of specific `CommandTreeNode`.
  */
-export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
+export function getChildren(tree: CommandTreeType, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
     let children: CommandTreeNodeChildren | undefined
     if (node && node.children) {
         children = node.children

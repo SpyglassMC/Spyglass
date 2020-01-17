@@ -2,7 +2,7 @@ import * as assert from 'power-assert'
 import { describe, it } from 'mocha'
 import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
-import { NbtSchemaNode, ValueList } from '../types/VanillaNbtSchema'
+import { NbtSchemaNode, ValueList } from '../types/NbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import Block from '../types/Block'
 import Entity from '../types/Entity'
@@ -190,7 +190,7 @@ describe('CommandTree Tests', () => {
                         type: 'no-nbt'
                     },
                     'minecraft:spgoding': {
-                        ref: '../entity/spgoding.json'
+                        ref: 'entity/spgoding.json'
                     }
                 }
             }

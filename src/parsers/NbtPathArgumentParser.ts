@@ -1,7 +1,7 @@
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { NbtCompoundSchemaNode } from '../types/VanillaNbtSchema'
+import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import NbtPath, { NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../types/NbtPath'

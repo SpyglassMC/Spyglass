@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
-import { Registry } from '../types/VanillaRegistries'
+import { Registry } from '../types/Registries'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
     private registry: Registry
