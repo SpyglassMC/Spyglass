@@ -13,7 +13,7 @@
             "@semantic-release/github",
             {
                 "assets": "datapack-language-server.vsix",
-                "releasedLabels": [":ok_hand: resolved", ":rocket: released"]
+                "releasedLabels": [":rocket: released"]
             }
         ],
         [
@@ -22,6 +22,7 @@
                 "message": ":bookmark: v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPGoding/datapack-language-server/releases/tag/${nextRelease.gitTag}"
             }
         ]
-    ]
+    ],
+    "branches": "released"
 }
 
