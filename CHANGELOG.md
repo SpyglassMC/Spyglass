@@ -1,3 +1,9 @@
+# [v1.11.13](https://github.com/SPGoding/datapack-language-server/compare/v1.11.12...v1.11.13) (2020-01-17)
+
+## 🐛 Bug Fixes
+- [`f2ff95a`](https://github.com/SPGoding/datapack-language-server/commit/f2ff95a)  Fix not allowing tags in /schedule clear (Issues: [`#258`](https://github.com/SPGoding/datapack-language-server/issues/258))
+- [`fc5186b`](https://github.com/SPGoding/datapack-language-server/commit/fc5186b)  Fix relative file paths in the nbt schema (Issues: [`#260`](https://github.com/SPGoding/datapack-language-server/issues/260))
+
 # [v1.11.12](https://github.com/SPGoding/datapack-language-server/compare/v1.11.11...v1.11.12) (2020-01-15)
 
 ## 🐛 Bug Fixes
