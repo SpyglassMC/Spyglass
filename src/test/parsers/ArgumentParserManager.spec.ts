@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'

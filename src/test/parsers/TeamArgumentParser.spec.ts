@@ -1,9 +1,9 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import TeamArgumentParser from '../../parsers/TeamArgumentParser'
 import { constructConfig } from '../../types/Config'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { describe, it } from 'mocha'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 
@@ -15,21 +15,25 @@ describe('TeamArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['foo'])
         })
     })
-    describe('parse() Tests', () => {
-        const cache = {
-            teams: {
-                foo: { def: [], ref: [] },
-                bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
-            }
+
+    const cache = {
+        teams: {
+            foo: { def: [], ref: [] },
+            bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
-        const ctx = constructContext({ cache })
+    }
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ cache })
+    })
+    describe('parse() Tests', () => {
         it('Should return data', () => {
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('expected'), ctx)
             assert(actual.data === 'expected')
         })
-        it('Should return completions', () => {
-            const ctx = constructContext({ cache, cursor: 0 })
+        it('Should return completions', async () => {
+            const ctx = await constructContext({ cache, cursor: 0 })
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -54,18 +58,18 @@ describe('TeamArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'expected a team but got nothing', false)
             ])
         })
-        it('Should not return warning when the strict team check pass', () => {
+        it('Should not return warning when the strict team check pass', async () => {
             const config = constructConfig({ lint: { strictTeamheck: true } })
-            const ctx = constructContext({ cache, config, cursor: 0 })
+            const ctx = await constructContext({ cache, config, cursor: 0 })
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
-        it('Should return warning when the strict team check fail', () => {
+        it('Should return warning when the strict team check fail', async () => {
             const parser = new TeamArgumentParser()
             const config = constructConfig({ lint: { strictTeamCheck: true } })
-            const ctx = constructContext({ cache, config })
+            const ctx = await constructContext({ cache, config })
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [

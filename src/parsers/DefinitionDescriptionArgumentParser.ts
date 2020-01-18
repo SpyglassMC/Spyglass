@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
-import { isDefinitionType, getCategoryKey, CacheCategory, ClientCache } from '../types/ClientCache'
+import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     readonly identity = 'string'

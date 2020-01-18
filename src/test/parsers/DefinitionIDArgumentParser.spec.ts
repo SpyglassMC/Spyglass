@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'

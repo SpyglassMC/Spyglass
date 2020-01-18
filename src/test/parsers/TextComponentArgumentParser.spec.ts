@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import TextComponentArgumentParser from '../../parsers/TextComponentArgumentParser'
 import ParsingError from '../../types/ParsingError'
@@ -8,7 +8,7 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import TextComponent from '../../types/TextComponent'
 import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('TextComponentArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -18,9 +18,13 @@ describe('TextComponentArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['"hello world"', '""', '{"text":"hello world"}', '[""]'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should return primitive data', () => {
             const parser = new TextComponentArgumentParser()
             const actual = parser.parse(new StringReader('"bar"'), ctx)

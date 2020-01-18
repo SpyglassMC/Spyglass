@@ -1,13 +1,15 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
+let ctx: ParsingContext
+before(async () => {
+    ctx = await constructContext({})
+})
 describe('LiteralArgumentParser Tests', () => {
-    const ctx = constructContext({})
     describe('constructor() Tests', () => {
         it('Should push extraChars', () => {
             const parser = new LiteralArgumentParser('foo', 'b!!$')
@@ -65,8 +67,8 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('fooB'), ctx)
             assert(actual.data === 'fooB')
         })
-        it('Should return completions', () => {
-            const ctx = constructContext({ cursor: 0 })
+        it('Should return completions', async () => {
+            const ctx = await constructContext({ cursor: 0 })
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -76,8 +78,8 @@ describe('LiteralArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return partial completions', () => {
-            const ctx = constructContext({ cursor: 1 })
+        it('Should return partial completions', async () => {
+            const ctx = await constructContext({ cursor: 1 })
             const parser = new LiteralArgumentParser('foo', 'bar', 'baz')
             const actual = parser.parse(new StringReader('b'), ctx)
             assert.deepStrictEqual(actual.completions,

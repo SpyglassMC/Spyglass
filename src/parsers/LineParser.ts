@@ -23,10 +23,10 @@ export default class LineParser implements Parser<Line> {
         private readonly entryPoint: 'line' | 'commands' = 'line'
     ) { }
 
-    private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLine) => ArgumentParser<any>), parsedLine: SaturatedLine) {
+    private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLine, ctx: ParsingContext) => ArgumentParser<any>), parsedLine: SaturatedLine, ctx: ParsingContext) {
         let ans: ArgumentParser<any>
         if (parserInNode instanceof Function) {
-            ans = parserInNode(parsedLine)
+            ans = parserInNode(parsedLine, ctx)
         } else {
             ans = parserInNode
         }
@@ -101,7 +101,7 @@ export default class LineParser implements Parser<Line> {
             }
         } else if (node.parser) {
             const start = reader.cursor
-            const parser = LineParser.getParser(node.parser, parsedLine)
+            const parser = LineParser.getParser(node.parser, parsedLine, ctx)
             const { cache, completions, data, errors } = parser.parse(reader, ctx)
             combineSaturatedLine(parsedLine, {
                 args: [{ data, parser: parser.identity }],

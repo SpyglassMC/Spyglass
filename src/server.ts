@@ -1,10 +1,9 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, Position, ColorInformation, Color, ColorPresentation, WorkspaceFolder, TextDocumentEdit, TextEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, TextDocument } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, getFromCachedFileTree, setForCachedFileTree, walkInCachedFileTree, delFromCachedFileTree, CachedFileTree } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, WorkspaceFolder, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, getFromCachedFileTree, setForCachedFileTree, walkInCachedFileTree, delFromCachedFileTree } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
-import ArgumentParserManager from './parsers/ArgumentParserManager'
 import Line, { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
@@ -146,7 +145,7 @@ const cacheFileOperations = {
             const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split(/\r?\n/)
             const config = await getConfigFromRel(rel)
             for (const string of strings) {
-                parseString(string, lines, config)
+                await parseString(string, lines, config)
             }
         }
         const cacheOfLines: ClientCache = {}
@@ -284,13 +283,13 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
     isInitialized = true
 }
 
-function parseString(string: string, lines: Line[], config: Config) {
+async function parseString(string: string, lines: Line[], config: Config) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], hint: { fix: [], options: [] } })
     } else {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(string)
-        const { data } = parser.parse(reader, constructContext({
+        const { data } = parser.parse(reader, await constructContext({
             cache: cacheFile.cache,
             config
         }))
@@ -334,7 +333,7 @@ async function getLinesFromRel(rel: string): Promise<Line[]> {
         const config = await getConfigFromRel(rel)
         const strings = stringsOfRel.get(rel) as string[]
         for (const string of strings) {
-            parseString(string, ans, config)
+            await parseString(string, ans, config)
         }
         linesOfRel.set(rel, ans)
     }
@@ -382,7 +381,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
     
             lines.splice(startLine)
             for (const string of stringsAfterStartLine) {
-                parseString(string, lines, config)
+                await parseString(string, lines, config)
             }
         } else {
             const strings = stringsOfRel.get(rel) as string[]
@@ -390,7 +389,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 
             lines.splice(0)
             for (const string of strings) {
-                parseString(string, lines, config)
+               await parseString(string, lines, config)
             }
         }
     }
@@ -501,7 +500,7 @@ connection.onCompletion(async ({ textDocument: { uri }, position: { line, charac
     const strings = stringsOfRel.get(rel) as string[]
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[line])
-    const { data } = parser.parse(reader, constructContext({
+    const { data } = parser.parse(reader, await constructContext({
         cursor: char,
         cache: cacheFile.cache,
         config
@@ -515,7 +514,7 @@ connection.onSignatureHelp(async ({ position: { character: char, line: lineNumbe
     const strings = stringsOfRel.get(rel) as string[]
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[lineNumber])
-    const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
+    const { data: { hint: { fix, options } } } = parser.parse(reader,await constructContext({
         cursor: char,
         cache: cacheFile.cache,
         config

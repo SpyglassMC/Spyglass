@@ -1,11 +1,11 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import TagArgumentParser from '../../parsers/TagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('TagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,21 +15,25 @@ describe('TagArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['foo'])
         })
     })
-    describe('parse() Tests', () => {
-        const cache = {
-            tags: {
-                foo: { def: [], ref: [] },
-                bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
-            }
+
+    const cache = {
+        tags: {
+            foo: { def: [], ref: [] },
+            bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
-        const ctx = constructContext({ cache })
+    }
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ cache })
+    })
+    describe('parse() Tests', () => {
         it('Should return data', () => {
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('expected'), ctx)
             assert(actual.data === 'expected')
         })
-        it('Should return completions', () => {
-            const ctx = constructContext({ cache, cursor: 0 })
+        it('Should return completions', async () => {
+            const ctx = await constructContext({ cache, cursor: 0 })
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -54,17 +58,17 @@ describe('TagArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'expected a tag but got nothing', false)
             ])
         })
-        it('Should not return warning when the strict tag check pass', () => {
+        it('Should not return warning when the strict tag check pass', async () => {
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const ctx = constructContext({ cache, config })
+            const ctx = await constructContext({ cache, config })
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
-        it('Should return warning when the strict tag check fail', () => {
+        it('Should return warning when the strict tag check fail', async () => {
             const config = constructConfig({ lint: { strictTagCheck: true } })
-            const ctx = constructContext({ cache, config })
+            const ctx = await constructContext({ cache, config })
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')

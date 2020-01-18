@@ -1,10 +1,10 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ObjectiveCriterionArgumentParser from '../../parsers/ObjectiveCriterionArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('ObjectiveCriterionArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -14,19 +14,23 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['dummy', 'minecraft.used:minecraft.carrot_on_a_stick'])
         })
     })
-    describe('parse() Tests', () => {
-        const registries = {
-            'minecraft:custom_stat': {
-                protocol_id: 0,
-                entries: {
-                    'minecraft:custom_stat_1': { protocol_id: 0 },
-                    'minecraft:custom_stat_2': { protocol_id: 1 },
-                    'minecraft:custom_stat_3': { protocol_id: 2 }
-                }
+
+    const registries = {
+        'minecraft:custom_stat': {
+            protocol_id: 0,
+            entries: {
+                'minecraft:custom_stat_1': { protocol_id: 0 },
+                'minecraft:custom_stat_2': { protocol_id: 1 },
+                'minecraft:custom_stat_3': { protocol_id: 2 }
             }
         }
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ registries, parsers })
+    }
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ registries, parsers })
+    })
+    describe('parse() Tests', () => {
         it('Should return data for normal literal slots', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('dummy'), ctx)
@@ -45,8 +49,8 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert(actual.data === 'minecraft.custom:minecraft.custom_stat_1')
             assert.deepEqual(actual.errors, [])
         })
-        it('Should return completions for categories', () => {
-            const ctx = constructContext({ registries, parsers, cursor: 0 })
+        it('Should return completions for categories', async () => {
+            const ctx = await constructContext({ registries, parsers, cursor: 0 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -77,8 +81,8 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘teamkill’', () => {
-            const ctx = constructContext({ registries, parsers, cursor: 9 })
+        it('Should return completions for sub values of ‘teamkill’', async () => {
+            const ctx = await constructContext({ registries, parsers, cursor: 9 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('teamkill.'), ctx)
             assert.deepStrictEqual(actual.data, 'teamkill.')
@@ -103,8 +107,8 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘minecraft.custom:minecraft’', () => {
-            const ctx = constructContext({ registries, parsers, cursor: 27 })
+        it('Should return completions for sub values of ‘minecraft.custom:minecraft’', async () => {
+            const ctx = await constructContext({ registries, parsers, cursor: 27 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('minecraft.custom:minecraft.'), ctx)
             assert.deepStrictEqual(actual.data, 'minecraft.custom:minecraft.')

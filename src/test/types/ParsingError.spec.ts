@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ParsingError from '../../types/ParsingError'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'

@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import TextComponent from '../../types/TextComponent'
 import { constructConfig } from '../../types/Config'
