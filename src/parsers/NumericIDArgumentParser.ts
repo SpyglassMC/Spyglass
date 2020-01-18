@@ -2,10 +2,10 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
-import { Registry } from '../types/Registries'
+import { SingleRegistry } from '../types/Registry'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
-    private registry: Registry
+    private registry: SingleRegistry
     readonly identity = 'numericID'
 
     constructor(private readonly type: string) { super() }
@@ -21,7 +21,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
 
         //#region Completions
         if (reader.cursor === ctx.cursor) {
-            const getCompletions = (registry: Registry) => Object
+            const getCompletions = (registry: SingleRegistry) => Object
                 .keys(registry.entries)
                 .map(v => ({ label: registry.entries[v].protocol_id.toString(), detail: v }))
             ans.completions.push(...getCompletions(this.registry))

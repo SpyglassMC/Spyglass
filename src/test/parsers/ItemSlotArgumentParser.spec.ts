@@ -1,12 +1,10 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ItemSlotArgumentParser from '../../parsers/ItemSlotArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { constructConfig } from '../../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('ItemSlotArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -16,9 +14,13 @@ describe('ItemSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['container.5', '12', 'weapon'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should return data for number slot', () => {
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('12'), ctx)
@@ -34,8 +36,8 @@ describe('ItemSlotArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('weapon'), ctx)
             assert(actual.data === 'weapon')
         })
-        it('Should return completions for categories', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for categories', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -52,8 +54,8 @@ describe('ItemSlotArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘armor’', () => {
-            const ctx = constructContext({ parsers, cursor: 6 })
+        it('Should return completions for sub values of ‘armor’', async () => {
+            const ctx = await constructContext({ parsers, cursor: 6 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('armor.'), ctx)
             assert.deepStrictEqual(actual.data, 'armor.')
@@ -66,8 +68,8 @@ describe('ItemSlotArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘hotbar’', () => {
-            const ctx = constructContext({ parsers, cursor: 7 })
+        it('Should return completions for sub values of ‘hotbar’', async () => {
+            const ctx = await constructContext({ parsers, cursor: 7 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('hotbar.'), ctx)
             assert.deepStrictEqual(actual.data, 'hotbar.')

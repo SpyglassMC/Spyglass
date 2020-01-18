@@ -1,4 +1,5 @@
 import ArgumentParser from '../parsers/ArgumentParser'
+import ParsingContext from './ParsingContext'
 import { SaturatedLine } from './Line'
 
 /**
@@ -15,7 +16,7 @@ export interface CommandTreeNode<T> {
     /**
      * An argument parser to parse this argument, or a function which constructs an argument parser.
      */
-    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLine) => ArgumentParser<T>),
+    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLine, ctx: ParsingContext) => ArgumentParser<T>),
     /**
      * The permission level required to perform this node.
      * @default 2

@@ -2,7 +2,6 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
-import { TokenScope } from '../types/TokenScope'
 
 export default class MapAbstractParser<K, R> {
     readonly identity = 'mapAbstractParser'

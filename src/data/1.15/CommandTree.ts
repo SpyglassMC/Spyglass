@@ -32,7 +32,7 @@ import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
  * Command tree of Minecraft Java Edition 19w41a commands.
  */
 /* istanbul ignore next */
-export const CommandTree: CommandTreeType = {
+const CommandTree: CommandTreeType = {
     line: {
         command: {
             redirect: 'commands'
@@ -391,11 +391,11 @@ export const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtPathArgumentParser('entities', anchor)
                                         }
                                         else {
@@ -421,11 +421,11 @@ export const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtTagArgumentParser('compound', 'entities', anchor)
                                         }
                                         else {
@@ -445,11 +445,11 @@ export const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 targetPath: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtPathArgumentParser('entities', anchor)
                                         }
                                         else {
@@ -467,11 +467,11 @@ export const CommandTree: CommandTreeType = {
                                                             template: 'nbt_holder',
                                                             children: {
                                                                 sourcePath: {
-                                                                    parser: ({ args }) => {
+                                                                    parser: ({ args }, { nbt }) => {
                                                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                         if (type === 'entity') {
                                                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                                                            const anchor = getSchemaAnchor(entity, nbt)
                                                                             return new NbtPathArgumentParser('entities', anchor)
                                                                         }
                                                                         else {
@@ -488,11 +488,11 @@ export const CommandTree: CommandTreeType = {
                                                     parser: new LiteralArgumentParser('value'),
                                                     children: {
                                                         nbt: {
-                                                            parser: ({ args }) => {
+                                                            parser: ({ args }, { nbt }) => {
                                                                 const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
                                                                     const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                                                    const anchor = getSchemaAnchor(entity, NbtSchema)
+                                                                    const anchor = getSchemaAnchor(entity, nbt)
                                                                     return new NbtTagArgumentParser(undefined, 'entities', anchor)
                                                                 }
                                                                 else {
@@ -519,14 +519,14 @@ export const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
                                         if (type === 'block') {
                                             return new NbtPathArgumentParser('blocks')
                                         }
                                         else {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtPathArgumentParser('entities', anchor)
                                         }
                                     },
@@ -2322,11 +2322,11 @@ export const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtPathArgumentParser('entities', anchor)
                                         }
                                         else {
@@ -2413,11 +2413,11 @@ export const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
+                                    parser: ({ args }, { nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, NbtSchema)
+                                            const anchor = getSchemaAnchor(entity, nbt)
                                             return new NbtPathArgumentParser('entities', anchor)
                                         }
                                         else {
@@ -2513,4 +2513,5 @@ export const CommandTree: CommandTreeType = {
         }
     }
 }
+
 export default CommandTree

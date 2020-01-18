@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtSchemaWalker from '../../utils/NbtSchemaWalker'
 import { describe, it } from 'mocha'
@@ -7,7 +7,7 @@ import { NbtSchemaNode, ValueList, NbtRootSchemaNode } from '../../types/NbtSche
 import StringReader from '../../utils/StringReader'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { CompletionItemKind } from 'vscode-languageserver'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('NbtSchemaWalker Tests', () => {
     const schemas: { [key: string]: NbtSchemaNode | ValueList } = {
@@ -166,12 +166,9 @@ describe('NbtSchemaWalker Tests', () => {
             }
         }
     }
-    let walker: NbtSchemaWalker
-    beforeEach(() => {
-        walker = new NbtSchemaWalker(schemas)
-    })
     describe('goFile() Tests', () => {
         it('Should go to file correctly', () => {
+            const walker = new NbtSchemaWalker(schemas)
             walker
                 .goFile('roots/blocks.json')
                 .goFile('block/banner.json')
@@ -179,6 +176,7 @@ describe('NbtSchemaWalker Tests', () => {
             assert(actual === 'block/banner.json')
         })
         it("Should throw error when the path does't exist", () => {
+            const walker = new NbtSchemaWalker(schemas)
             try {
                 walker.
                     goFile('parent')
@@ -190,6 +188,7 @@ describe('NbtSchemaWalker Tests', () => {
     })
     describe('goAnchor() Tests', () => {
         it('Should go to anchor correctly', () => {
+            const walker = new NbtSchemaWalker(schemas)
             walker
                 .goAnchor('minecraft:banner')
                 .goAnchor('test')
@@ -199,6 +198,7 @@ describe('NbtSchemaWalker Tests', () => {
     })
     describe('get path() Tests', () => {
         it('Should return correctly', () => {
+            const walker = new NbtSchemaWalker(schemas)
             walker
                 .goAnchor('minecraft:banner')
                 .goAnchor('test')
@@ -208,6 +208,7 @@ describe('NbtSchemaWalker Tests', () => {
     })
     describe('go() Tests', () => {
         it('Should go correctly', () => {
+            const walker = new NbtSchemaWalker(schemas)
             walker.go('roots/blocks.json#minecraft:banner')
             const actualAnchorPath = walker.anchorPath.full
             const actualFilePath = walker.filePath
@@ -217,6 +218,7 @@ describe('NbtSchemaWalker Tests', () => {
     })
     describe('read() Tests', () => {
         it('Should return the cache to improve performance', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual1 = walker
                 .go('block/group/command_block.json')
                 .read()
@@ -226,30 +228,35 @@ describe('NbtSchemaWalker Tests', () => {
             assert(actual1 === actual2)
         })
         it('Should return a ValueList', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('block/group/command_block.json')
                 .read()
             assert(actual === schemas['block/group/command_block.json'])
         })
         it('Should return NbtRootSchemaNode', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('roots/blocks.json')
                 .read()
             assert(actual === schemas['roots/blocks.json'])
         })
         it('Should handle regular anchors for NbtRootSchemaNode', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('roots/blocks.json#minecraft:banner')
                 .read()
             assert(actual === schemas['block/banner.json'])
         })
         it('Should handle anchors beginning with $ for NbtRootSchemaNode', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('roots/blocks.json#minecraft:repeating_command_block')
                 .read()
             assert(actual === schemas['block/command_block.json'])
         })
         it('Should handle child_ref in a CompoundNode', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('block/beacon.json')
                 .read()
@@ -283,18 +290,21 @@ describe('NbtSchemaWalker Tests', () => {
             )
         })
         it('Should handle [] anchor for a ListNode', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('roots/blocks.json#minecraft:banner/list/[]')
                 .read()
             assert.deepStrictEqual(actual, { type: 'no-nbt' })
         })
         it('Should handle anchors to references', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('roots/blocks.json#minecraft:banner/refTest/foo')
                 .read()
             assert.deepStrictEqual(actual, { type: 'no-nbt', description: 'references test' })
         })
         it("Should throw error when the anchor doen't exist for a CompoundNode", () => {
+            const walker = new NbtSchemaWalker(schemas)
             try {
                 walker
                     .go('roots/blocks.json#minecraft:banner/non-existent')
@@ -305,6 +315,7 @@ describe('NbtSchemaWalker Tests', () => {
             }
         })
         it("Should throw error when the anchor doen't exist for a NbtRootSchemaNode", () => {
+            const walker = new NbtSchemaWalker(schemas)
             try {
                 walker
                     .go('roots/blocks.json#non-existent')
@@ -315,6 +326,7 @@ describe('NbtSchemaWalker Tests', () => {
             }
         })
         it("Should throw error when the anchor doen't exist for a ListNode", () => {
+            const walker = new NbtSchemaWalker(schemas)
             try {
                 walker
                     .go('roots/blocks.json#minecraft:banner/list/oops')
@@ -325,6 +337,7 @@ describe('NbtSchemaWalker Tests', () => {
             }
         })
         it("Should throw error when the anchor doen't exist in the references", () => {
+            const walker = new NbtSchemaWalker(schemas)
             try {
                 walker
                     .go('roots/blocks.json#minecraft:banner/refTest/non-existent')
@@ -335,24 +348,31 @@ describe('NbtSchemaWalker Tests', () => {
             }
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('getParserResult() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
-        it('Should return empty completions when there are not any suggestions', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return empty completions when there are not any suggestions', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('block/banner.json')
                 .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
         it('Should return empty completions for raw suggestions when the cursor is not at the point', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#raw')
                 .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
-        it('Should return completions for raw suggestions', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for raw suggestions', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#raw')
                 .getParserResult(new StringReader(''), ctx)
@@ -361,13 +381,15 @@ describe('NbtSchemaWalker Tests', () => {
             ])
         })
         it('Should return empty completions for detailed suggestions when the cursor is not at the point', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#detailed')
                 .getParserResult(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [])
         })
-        it('Should return completions for detailed suggestions', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for detailed suggestions', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#detailed')
                 .getParserResult(new StringReader(''), ctx)
@@ -375,8 +397,9 @@ describe('NbtSchemaWalker Tests', () => {
                 { label: 'bar', documentation: 'The Bar' }
             ])
         })
-        it('Should return completions for argument parser suggestions', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for argument parser suggestions', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#argumentParser')
                 .getParserResult(new StringReader(''), ctx)
@@ -385,7 +408,7 @@ describe('NbtSchemaWalker Tests', () => {
                 { label: 'qux' }
             ])
         })
-        it('Should return completions for argument parser suggestions with variables', () => {
+        it('Should return completions for argument parser suggestions with variables', async () => {
             const cache = {
                 bossbars: {
                     'minecraft:foo': {
@@ -394,7 +417,8 @@ describe('NbtSchemaWalker Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, cache, cursor: 0 })
+            const ctx = await constructContext({ parsers, cache, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#argumentParserWithVariables')
                 .getParserResult(new StringReader(''), ctx, { isPredicate: true })
@@ -408,8 +432,9 @@ describe('NbtSchemaWalker Tests', () => {
                 }
             ])
         })
-        it('Should return completions for line parser suggestions', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for line parser suggestions', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
                 .getParserResult(new StringReader(''), ctx)
@@ -418,6 +443,7 @@ describe('NbtSchemaWalker Tests', () => {
             ])
         })
         it('Should return empty completions when the result completions of line parser is undefined', () => {
+            const walker = new NbtSchemaWalker(schemas)
             const actual = walker
                 .go('suggestionsTest.json#lineParser')
                 .getParserResult(new StringReader(''), ctx)

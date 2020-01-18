@@ -1,7 +1,7 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
-import Config from '../../types/Config'
+import Config, { constructConfig } from '../../types/Config'
 import CodeSnippetArgumentParser from '../../parsers/CodeSnippetArgumentParser'
 import StringReader from '../../utils/StringReader'
 import ParsingError from '../../types/ParsingError'
@@ -16,13 +16,13 @@ describe('CodeSnippetArgumentParser Tests', () => {
         })
     })
     describe('parse() Tests', () => {
-        const config = {
+        const config = constructConfig({
             snippets: {
                 test: 'say test'
             }
-        } as any as Config
-        it('Should always return errors', () => {
-            const context = constructContext({ config })
+        })
+        it('Should always return errors', async () => {
+            const context = await constructContext({ config })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.errors, [new ParsingError(
@@ -31,8 +31,8 @@ describe('CodeSnippetArgumentParser Tests', () => {
                 false
             )])
         })
-        it('Should return completions', () => {
-            const context = constructContext({ config, cursor: 0 })
+        it('Should return completions', async () => {
+            const context = await constructContext({ config, cursor: 0 })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.completions, [{
@@ -42,8 +42,8 @@ describe('CodeSnippetArgumentParser Tests', () => {
                 kind: CompletionItemKind.Snippet,
             }])
         })
-        it('Should not return completions', () => {
-            const context = constructContext({ config, cursor: -1 })
+        it('Should not return completions', async () => {
+            const context = await constructContext({ config, cursor: -1 })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.completions, [])

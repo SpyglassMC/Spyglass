@@ -17,7 +17,7 @@
         "lint": "tslint --project tsconfig.json --config tslint.json --fix src/**/*.ts",
         "postinstall": "vscode-install",
         "release": "semantic-release",
-        "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register src/test/**/*.ts",
+        "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/**/*.ts",
         "posttest": "nyc report --reporter=json",
         "watch": "tsc -w"
     },
@@ -106,10 +106,10 @@
                 "datapackLanguageServer.env.version": {
                     "type": "string",
                     "enum": [
-                        "JE1.15"
+                        "1.15"
                     ],
                     "markdownDescription": "Game version.",
-                    "default": "JE1.15"
+                    "default": "1.15"
                 },
                 "datapackLanguageServer.snippets": {
                     "type": "object",

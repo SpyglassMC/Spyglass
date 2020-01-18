@@ -1,10 +1,10 @@
 import ArgumentNode from './types/ArgumentNode'
 import Entity from './types/Entity'
 import NbtSchemaWalker from './utils/NbtSchemaWalker'
-import { NbtSchemaType } from './types/NbtSchema'
+import NbtSchema from './types/NbtSchema'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 
-export function getSchemaAnchor(entity: Entity, schema: NbtSchemaType) {
+export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
     if (entity.argument && entity.argument.type) {
         const firstID = entity.argument.type[0]
         if (!firstID.isTag) {

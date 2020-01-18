@@ -1,11 +1,11 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import Entity from '../../types/Entity'
 import Message from '../../types/Message'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import StringReader from '../../utils/StringReader'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('MessageArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,9 +15,13 @@ describe('MessageArgumentParser Tests', () => {
             assert.deepEqual(actual, ['Hello world!', 'foo', '@e', 'Hello @p :)'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should return data without selectors', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('aaaa!@#$'), ctx)

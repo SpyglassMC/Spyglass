@@ -38,12 +38,6 @@
         "prefer-object-spread": true,
         "prefer-readonly": true,
         "prefer-while": true,
-        "no-unused-variable": true,
         "no-switch-case-fall-through": true
-    },
-    "linterOptions": {
-        "exclude": [
-            "src/data/**/*.ts"
-        ]
     }
 }

@@ -1,6 +1,6 @@
 import { CompletionItem, DiagnosticSeverity } from 'vscode-languageserver'
 import { ClientCache, offsetCachePosition } from '../types/ClientCache'
-import { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, NbtSchemaType, ValueList } from '../types/NbtSchema'
+import NbtSchema, { NbtNoPropertySchemaNode, NbtCompoundSchemaNode, NbtRootSchemaNode, NbtListSchemaNode, NbtRefSchemaNode, NbtSchemaNode, NbtSchemaNodeWithType, ValueList } from '../types/NbtSchema'
 import { NbtTagTypeName } from '../types/NbtTag'
 import { posix, ParsedPath } from 'path'
 import clone = require('clone')
@@ -18,7 +18,7 @@ type ParserSuggestionNode = { parser: string, params?: any }
 type Variables = { isPredicate: boolean }
 
 export default class NbtSchemaWalker {
-    constructor(private readonly nbtSchema: NbtSchemaType) { }
+    constructor(private readonly nbtSchema: NbtSchema) { }
 
     filePath: string = ''
     readonly anchorPath: ParsedPath & { full: string } = {

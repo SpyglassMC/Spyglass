@@ -2,7 +2,6 @@ import { ClientCache, combineCache } from './ClientCache'
 import { CompletionItem } from 'vscode-languageserver'
 import ParsingError from './ParsingError'
 import StringReader from '../utils/StringReader'
-import Token from './Token'
 
 /**
  * Represent an argument parser.

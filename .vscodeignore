@@ -4,6 +4,8 @@
 !node_modules/**
 !lib/*.js
 !lib/**/*.js
+!lib/*.json
+!lib/**/*.json
 !CHANGELOG.md
 !icon.png
 !LICENSE

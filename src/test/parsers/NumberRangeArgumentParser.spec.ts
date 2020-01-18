@@ -1,11 +1,11 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NumberRange from '../../types/NumberRange'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('NumberRangeArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,9 +15,13 @@ describe('NumberRangeArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['0..5', '0', '-5', '-100..', '..100'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should return data for int range without double periods', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions, errors, cache } = parser.parse(new StringReader('114514'), ctx)
@@ -66,15 +70,15 @@ describe('NumberRangeArgumentParser Tests', () => {
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
         })
-        it('Should return completions for integer range', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return completions for integer range', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions } = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(data, new NumberRange('integer'))
             assert.deepStrictEqual(completions, [{ label: '-2147483648..2147483647' }])
         })
-        it('Should return empty completions for float range', () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+        it('Should return empty completions for float range', async () => {
+            const ctx = await constructContext({ parsers, cursor: 0 })
             const parser = new NumberRangeArgumentParser('float')
             const { data, completions } = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(data, new NumberRange('float'))

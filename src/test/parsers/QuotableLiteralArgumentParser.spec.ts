@@ -1,13 +1,17 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import QuotableLiteralArgumentParser from '../../parsers/QuotableLiteralArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('QuotableLiteralArgumentParser Tests', () => {
+
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({})
+    })
     describe('parse() Tests', () => {
-        const ctx = constructContext({})
         it('Should return data if matching', () => {
             const parser = new QuotableLiteralArgumentParser(['expected'], false)
             const actual = parser.parse(new StringReader('expected'), ctx)
@@ -23,8 +27,8 @@ describe('QuotableLiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('"expected"'), ctx)
             assert(actual.data === 'expected')
         })
-        it('Should return completions at the beginning of input', () => {
-            const ctx = constructContext({ cursor: 0 })
+        it('Should return completions at the beginning of input', async () => {
+            const ctx = await constructContext({ cursor: 0 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], false)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -34,8 +38,8 @@ describe('QuotableLiteralArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return quoted completions at the beginning of input', () => {
-            const ctx = constructContext({ cursor: 0 })
+        it('Should return quoted completions at the beginning of input', async () => {
+            const ctx = await constructContext({ cursor: 0 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], true)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -45,8 +49,8 @@ describe('QuotableLiteralArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return unquoted completions after a quote', () => {
-            const ctx = constructContext({ cursor: 1 })
+        it('Should return unquoted completions after a quote', async () => {
+            const ctx = await constructContext({ cursor: 1 })
             const parser = new QuotableLiteralArgumentParser(['foo', 'bar'], true)
             const actual = parser.parse(new StringReader('""'), ctx)
             assert.deepStrictEqual(actual.completions,
