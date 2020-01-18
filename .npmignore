@@ -3,7 +3,7 @@
 /.vscode
 /coverage
 /img
-/lib/**/*.js.map
+/dist/**/*.js.map
 /node_modules
 /src
 /.gitattributes

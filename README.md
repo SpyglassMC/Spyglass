@@ -235,6 +235,12 @@ And to those who haven't told me a GitHub account:
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
+# Repository Structure
+
+- `dist`: Bundled files. These files are included in both the NPM package and the VSCode extension.
+- `lib`: TypeScript Declaration (`.d.ts`) files. These files are only included in the NPM package.
+- `src`: TypeScript source code.
+
 # References
 
 - [https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-multi-server-sample/client/src/extension.ts](Multi Language Server Example)

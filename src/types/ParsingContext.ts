@@ -7,7 +7,7 @@ import Manager from './Manager'
 import NbtSchema from './NbtSchema'
 import Registry from './Registry'
 import { ClientCache } from './ClientCache'
-import { getBlocksDefinition } from '../data/BlockDefinition'
+import { getBlockDefinition } from '../data/BlockDefinition'
 import { getCommandTree } from '../data/CommandTree'
 import { getNbtSchema } from '../data/NbtSchema'
 import { getRegistry } from '../data/Registry'
@@ -47,7 +47,7 @@ export async function constructContext(custom: ParsingContextLike): Promise<Pars
         ...custom
     } as ParsingContext
 
-    ans.blocks = ans.blocks || await getBlocksDefinition(ans.config.env.version)
+    ans.blocks = ans.blocks || await getBlockDefinition(ans.config.env.version)
     ans.nbt = ans.nbt || await getNbtSchema(ans.config.env.version)
     ans.registries = ans.registries || await getRegistry(ans.config.env.version)
     ans.tree = ans.tree || await getCommandTree(ans.config.env.version)
