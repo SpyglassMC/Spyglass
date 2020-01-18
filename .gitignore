@@ -2,5 +2,4 @@
 /dist
 /lib
 /node_modules
-/.datapack
 /.nyc_output

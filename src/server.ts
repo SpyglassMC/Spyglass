@@ -22,11 +22,10 @@ let isInitialized = false
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 let workspaceFolder: WorkspaceFolder | undefined
 let workspaceFolderPath: string | undefined
-let dotPath: string | undefined
 let cachePath: string | undefined
 let dataPath: string | undefined
 
-connection.onInitialize(async ({ workspaceFolders }) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
@@ -34,15 +33,14 @@ connection.onInitialize(async ({ workspaceFolders }) => {
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
         connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
 
-        dotPath = path.join(workspaceFolderPath as string, '.datapack')
-        cachePath = path.join(dotPath, 'cache.json')
+        cachePath = path.join(storagePath, 'cache.json')
         dataPath = path.join(workspaceFolderPath as string, 'data')
 
-        connection.console.info(`dotPath = ${dotPath}`)
+        connection.console.info(`storagePath = ${storagePath}`)
         connection.console.info(`cachePath = ${cachePath}`)
         connection.console.info(`dataPath = ${dataPath}`)
-        if (!fs.pathExistsSync(dotPath)) {
-            fs.mkdirpSync(dotPath)
+        if (!fs.pathExistsSync(storagePath)) {
+            fs.mkdirpSync(storagePath)
         }
         if (fs.existsSync(cachePath)) {
             cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
@@ -366,19 +364,19 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
             } = (change as any).range as Range
             const strings = stringsOfRel.get(rel) as string[]
             const lines = await getLinesFromRel(rel)
-    
+
             if (changeText.indexOf('\r\n') !== -1) {
                 lineBreakOfRel.set(rel, '\r\n')
             }
-    
+
             const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
                 }${changeText
                 }${strings.slice(endLine).join(lineBreakOfRel.get(rel)).slice(endChar)}`
             const stringsAfterStartLine = stringAfterStartLine.split(/\r?\n/)
-    
+
             strings.splice(startLine)
             strings.push(...stringsAfterStartLine)
-    
+
             lines.splice(startLine)
             for (const string of stringsAfterStartLine) {
                 await parseString(string, lines, config)
@@ -389,7 +387,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 
             lines.splice(0)
             for (const string of strings) {
-               await parseString(string, lines, config)
+                await parseString(string, lines, config)
             }
         }
     }
@@ -514,7 +512,7 @@ connection.onSignatureHelp(async ({ position: { character: char, line: lineNumbe
     const strings = stringsOfRel.get(rel) as string[]
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[lineNumber])
-    const { data: { hint: { fix, options } } } = parser.parse(reader,await constructContext({
+    const { data: { hint: { fix, options } } } = parser.parse(reader, await constructContext({
         cursor: char,
         cache: cacheFile.cache,
         config

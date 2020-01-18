@@ -44,6 +44,9 @@ export function activate(context: ExtensionContext) {
         ],
         synchronize: {
             fileEvents: []
+        },
+        initializationOptions: {
+            storagePath: context.storagePath
         }
     }
 
