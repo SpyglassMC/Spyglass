@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtByteArrayTag, getNbtIntArrayTag, getNbtLongArrayTag, getNbtListTag, getNbtCompoundTag, getNbtStringTag, isNbtByteTag, isNbtShortTag, isNbtIntTag, isNbtLongTag, isNbtFloatTag, isNbtDoubleTag, isNbtByteArrayTag, isNbtIntArrayTag, isNbtLongArrayTag, isNbtListTag, isNbtStringTag, isNbtCompoundTag } from '../../types/NbtTag'
 import { constructConfig } from '../../types/Config'

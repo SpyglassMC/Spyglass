@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
@@ -13,7 +13,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
 import CommandTree, { CommandTreeNode } from '../types/CommandTree'
-import { constructContext } from '../types/ParsingContext'
+import ParsingContext, { constructContext } from '../types/ParsingContext'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -219,16 +219,20 @@ describe('CommandTree Tests', () => {
             assert(actual === 'minecraft:spgoding')
         })
     })
-    describe('Just Fucking Parse', () => {
-        const parsers = new ArgumentParserManager()
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
         const cache = {
             advancements: {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
-        const ctx = constructContext({ parsers, cache })
-        it('advancement g', () => {
-            const ctx = constructContext({ parsers, cursor: 13 })
+        ctx = await constructContext({ parsers, cache })
+    })
+    describe('Just Fucking Parse', () => {
+        const parsers = new ArgumentParserManager()
+        it('advancement g', async () => {
+            const ctx = await constructContext({ parsers, cursor: 13 })
             const parser = new LineParser(false)
             const reader = new StringReader('advancement g')
             const { data } = parser.parse(reader, ctx)
@@ -354,8 +358,8 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.errors, undefined)
             assert.deepEqual(data.completions, undefined)
         })
-        it('setblock ~ ~ ~ minecraft:grass_block[]', () => {
-            const ctx = constructContext({ parsers, cursor: 37 })
+        it('setblock ~ ~ ~ minecraft:grass_block[]', async () => {
+            const ctx = await constructContext({ parsers, cursor: 37 })
             const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
             const { data } = parser.parse(reader, ctx)

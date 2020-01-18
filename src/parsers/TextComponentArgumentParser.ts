@@ -4,12 +4,12 @@ import StringReader from '../utils/StringReader'
 import TextComponent, { TextComponentType } from '../types/TextComponent'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { constructConfig } from '../types/Config'
-import { NbtSchemaType } from '../types/NbtSchema'
+import NbtSchema from '../types/NbtSchema'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     readonly identity = 'textComponent'
 
-    private static readonly TextComponentSchema: NbtSchemaType = {
+    private static readonly TextComponentSchema: NbtSchema = {
         'roots/blocks.json': {
             type: 'root',
             children: {

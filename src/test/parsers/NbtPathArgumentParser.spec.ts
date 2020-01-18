@@ -1,10 +1,10 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtPath, { NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep } from '../../types/NbtPath'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { describe, it } from 'mocha'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getNbtByteTag, getNbtCompoundTag } from '../../types/NbtTag'
@@ -18,9 +18,13 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepEqual(examples, ['foo', 'foo.bar', 'foo[0]', '[0]', '[]', '{foo:bar}'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should parse a simple key', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('foo')
@@ -107,37 +111,41 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepEqual(cache, {})
             assert.deepEqual(completions, [])
         })
-        describe('schema Tests', () => {
-            const nbt: { [key: string]: NbtSchemaNode | ValueList } = {
-                'block/banner.json': {
-                    type: 'compound',
-                    children: {
-                        list: {
-                            type: 'list',
-                            item: {
-                                type: 'compound',
-                                additionalChildren: true,
-                                children: {
-                                    foo: { type: 'no-nbt' },
-                                    bar: { type: 'no-nbt' }
-                                }
+
+        const nbt: { [key: string]: NbtSchemaNode | ValueList } = {
+            'block/banner.json': {
+                type: 'compound',
+                children: {
+                    list: {
+                        type: 'list',
+                        item: {
+                            type: 'compound',
+                            additionalChildren: true,
+                            children: {
+                                foo: { type: 'no-nbt' },
+                                bar: { type: 'no-nbt' }
                             }
-                        },
-                        byteArray: {
-                            type: 'byte_array'
                         }
+                    },
+                    byteArray: {
+                        type: 'byte_array'
                     }
-                },
-                'roots/blocks.json': {
-                    type: 'root',
-                    children: {
-                        'minecraft:banner': {
-                            ref: 'block/banner.json'
-                        }
+                }
+            },
+            'roots/blocks.json': {
+                type: 'root',
+                children: {
+                    'minecraft:banner': {
+                        ref: 'block/banner.json'
                     }
                 }
             }
-            const ctx = constructContext({ parsers, nbt })
+        }
+        let ctx: ParsingContext
+        before(async () => {
+            ctx = await constructContext({ parsers, nbt })
+        })
+        describe('schema Tests', () => {
             it('Should return warning when the key is not in compound tags', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner/list')
                 const reader = new StringReader('foo')
@@ -205,8 +213,8 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(cache, {})
                 assert.deepEqual(completions, [])
             })
-            it('Should return completions for key', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 0 })
+            it('Should return completions for key', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 0 })
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -225,8 +233,8 @@ describe('NbtPathArgumentParser Tests', () => {
                     { label: 'byteArray' }
                 ])
             })
-            it('Should return completions for sub keys under list tag', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 14 })
+            it('Should return completions for sub keys under list tag', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 14 })
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('{ }.list[ 1 ].')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)

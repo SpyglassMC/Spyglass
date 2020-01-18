@@ -1,53 +1,56 @@
 import ArgumentParser from '../parsers/ArgumentParser'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import CommandTreeType from './CommandTree'
+import BlockDefinitions from './BlockDefinition'
+import CommandTree from './CommandTree'
 import Config, { VanillaConfig } from './Config'
 import Manager from './Manager'
-import BlockDefinitions, { BlockDefinitionsType } from './BlockDefinitions'
-import CommandTree from '../data/JE1.15/command_tree'
-import NbtSchema, { NbtSchemaType } from './NbtSchema'
-import Registries, { RegistriesType } from './Registries'
+import NbtSchema from './NbtSchema'
+import Registry from './Registry'
 import { ClientCache } from './ClientCache'
+import { getBlocksDefinition } from '../data/BlockDefinition'
+import { getCommandTree } from '../data/CommandTree'
+import { getNbtSchema } from '../data/NbtSchema'
+import { getRegistry } from '../data/Registry'
 
 export default interface ParsingContext {
-    blocks: BlockDefinitionsType,
+    blocks: BlockDefinitions,
     cache: ClientCache,
     config: Config,
     cursor: number,
-    parsers: Manager<ArgumentParser<any>>,
-    nbt: NbtSchemaType,
-    registries: RegistriesType,
-    tree: CommandTreeType
-}
-
-interface ParsingContextLike {
-    blocks?: BlockDefinitionsType,
-    cache?: ClientCache,
-    config?: Config,
-    cursor?: number,
-    parsers?: Manager<ArgumentParser<any>>,
-    nbt?: NbtSchemaType,
-    registries?: RegistriesType,
-    tree?: CommandTreeType
-}
-
-export const VanillaParsingContext: ParsingContext = {
-    blocks: BlockDefinitions,
-    cache: {},
-    config: VanillaConfig,
-    cursor: -1,
-    parsers: new ArgumentParserManager(),
     nbt: NbtSchema,
-    registries: Registries,
+    parsers: Manager<ArgumentParser<any>>,
+    registries: Registry,
     tree: CommandTree
 }
 
+interface ParsingContextLike {
+    blocks?: BlockDefinitions,
+    cache?: ClientCache,
+    config?: Config,
+    cursor?: number,
+    nbt?: NbtSchema,
+    parsers?: Manager<ArgumentParser<any>>,
+    registries?: Registry,
+    tree?: CommandTree
+}
+
 /**
- * Construct a ParsingContext.
+ * Construct a `ParsingContext`.
  */
-export function constructContext(custom: ParsingContextLike): ParsingContext {
-    return {
-        ...VanillaParsingContext,
+/* istanbul ignore next */
+export async function constructContext(custom: ParsingContextLike): Promise<ParsingContext> {
+    const ans = {
+        cache: {},
+        config: VanillaConfig,
+        cursor: -1,
+        parsers: new ArgumentParserManager(),
         ...custom
-    }
+    } as ParsingContext
+
+    ans.blocks = ans.blocks || await getBlocksDefinition(ans.config.env.version)
+    ans.nbt = ans.nbt || await getNbtSchema(ans.config.env.version)
+    ans.registries = ans.registries || await getRegistry(ans.config.env.version)
+    ans.tree = ans.tree || await getCommandTree(ans.config.env.version)
+
+    return ans
 }

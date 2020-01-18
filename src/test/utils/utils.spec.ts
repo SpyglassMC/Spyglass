@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import Lintable, { ToLintedString } from '../../types/Lintable'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'

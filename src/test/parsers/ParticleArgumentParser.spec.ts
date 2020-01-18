@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import Block from '../../types/Block'
@@ -11,7 +11,7 @@ import StringReader from '../../utils/StringReader'
 import Vector from '../../types/Vector'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('ParticleArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -21,42 +21,46 @@ describe('ParticleArgumentParser Tests', () => {
             assert.deepEqual(actual, ['minecraft:cloud', 'minecraft:dust 1.0 1.0 1.0 1.0'])
         })
     })
+
+    const blocks = {
+        'minecraft:stone': {
+            properties: {
+                snowy: ['true', 'false'],
+                age: ['0', '1', '2', '3']
+            },
+            states: []
+        }
+    }
+    const registries = {
+        'minecraft:particle_type': {
+            protocol_id: 0,
+            entries: {
+                'minecraft:cloud': { protocol_id: 0 },
+                'minecraft:dust': { protocol_id: 1 },
+                'minecraft:block': { protocol_id: 2 },
+                'minecraft:item': { protocol_id: 3 }
+            }
+        },
+        'minecraft:item': {
+            protocol_id: 0,
+            entries: {
+                'minecraft:stick': { protocol_id: 0 },
+                'minecraft:diamond': { protocol_id: 1 }
+            }
+        },
+        'minecraft:block': {
+            protocol_id: 0,
+            entries: {
+                'minecraft:stone': { protocol_id: 0 }
+            }
+        }
+    }
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ blocks, registries, parsers })
+    })
     describe('parse() Tests', () => {
-        const blocks = {
-            'minecraft:stone': {
-                properties: {
-                    snowy: ['true', 'false'],
-                    age: ['0', '1', '2', '3']
-                },
-                states: []
-            }
-        }
-        const registries = {
-            'minecraft:particle_type': {
-                protocol_id: 0,
-                entries: {
-                    'minecraft:cloud': { protocol_id: 0 },
-                    'minecraft:dust': { protocol_id: 1 },
-                    'minecraft:block': { protocol_id: 2 },
-                    'minecraft:item': { protocol_id: 3 }
-                }
-            },
-            'minecraft:item': {
-                protocol_id: 0,
-                entries: {
-                    'minecraft:stick': { protocol_id: 0 },
-                    'minecraft:diamond': { protocol_id: 1 }
-                }
-            },
-            'minecraft:block': {
-                protocol_id: 0,
-                entries: {
-                    'minecraft:stone': { protocol_id: 0 }
-                }
-            }
-        }
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ blocks, registries, parsers })
         it('Should return data without extra params', () => {
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader('minecraft:cloud'), ctx)
@@ -109,9 +113,9 @@ describe('ParticleArgumentParser Tests', () => {
                 )
             ))
         })
-        it('Should return completions at the beginning of input', () => {
+        it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { omitDefaultNamespace: true } })
-            const ctx = constructContext({ parsers, config, registries, cursor: 0 })
+            const ctx = await constructContext({ parsers, config, registries, cursor: 0 })
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepEqual(actual.data, new Particle(

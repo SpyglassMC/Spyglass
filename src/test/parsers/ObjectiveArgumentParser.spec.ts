@@ -1,11 +1,11 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('ObjectiveArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -15,21 +15,25 @@ describe('ObjectiveArgumentParser Tests', () => {
             assert.deepStrictEqual(actual, ['objective'])
         })
     })
-    describe('parse() Tests', () => {
-        const cache = {
-            objectives: {
-                foo: { def: [], ref: [] },
-                bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
-            }
+
+    const cache = {
+        objectives: {
+            foo: { def: [], ref: [] },
+            bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
-        const ctx = constructContext({ cache })
+    }
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ cache })
+    })
+    describe('parse() Tests', () => {
         it('Should return data', () => {
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('expected'), ctx)
             assert(actual.data === 'expected')
         })
-        it('Should return completions', () => {
-            const ctx = constructContext({ cache, cursor: 0 })
+        it('Should return completions', async () => {
+            const ctx = await constructContext({ cache, cursor: 0 })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -56,23 +60,23 @@ describe('ObjectiveArgumentParser Tests', () => {
         })
         it('Should return error when the input is too long', () => {
             const parser = new ObjectiveArgumentParser()
-            const actual = parser.parse(new StringReader('123456789012345678'),ctx)
+            const actual = parser.parse(new StringReader('123456789012345678'), ctx)
             assert.deepStrictEqual(actual.data, '123456789012345678')
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 18 }, '‘123456789012345678’ exceeds the max length of an objective name, which is 16')
             ])
         })
-        it('Should not return warning when the strict objective check pass', () => {
+        it('Should not return warning when the strict objective check pass', async () => {
             const config = constructConfig({ lint: { strictObjectiveCheck: true } })
-            const ctx = constructContext({ cache, config })
+            const ctx = await constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.errors, [])
         })
-        it('Should return warning when the strict objective check fail', () => {
+        it('Should return warning when the strict objective check fail', async () => {
             const config = constructConfig({ lint: { strictObjectiveCheck: true } })
-            const ctx = constructContext({ cache, config })
+            const ctx = await constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')

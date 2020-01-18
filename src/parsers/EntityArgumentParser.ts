@@ -1,5 +1,5 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { getCompletions, getSafeCategory, ClientCache } from '../types/ClientCache'
+import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
 import Identity from '../types/Identity'

@@ -1,10 +1,10 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { constructConfig } from '../../types/Config'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
@@ -18,9 +18,13 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(examples, ['0b', '{}', '{foo: bar}', '[L; 0L]'])
         })
     })
+
+    const parsers = new ArgumentParserManager()
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers })
+    })
     describe('parse() Tests', () => {
-        const parsers = new ArgumentParserManager()
-        const ctx = constructContext({ parsers })
         it('Should parse quoted string tags', () => {
             const parser = new NbtTagArgumentParser('string', 'blocks')
             const reader = new StringReader('"bar\\""}')
@@ -298,13 +302,13 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
         })
-        it('Should return errors for missing keys in a compound tag', () => {
+        it('Should return errors for missing keys in a compound tag', async () => {
             const config = constructConfig({
                 lint: {
                     nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
-            const ctx = constructContext({ parsers, config })
+            const ctx = await constructContext({ parsers, config })
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{: 1b}')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -328,13 +332,13 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
         })
-        it('Should return warnings for invalid keys in a compound tag', () => {
+        it('Should return warnings for invalid keys in a compound tag', async () => {
             const config = constructConfig({
                 lint: {
                     nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
-            const ctx = constructContext({ parsers, config })
+            const ctx = await constructContext({ parsers, config })
             const parser = new NbtTagArgumentParser('compound', 'blocks')
             const reader = new StringReader('{snake_case: 1b}')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -462,192 +466,195 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
         })
-        describe('Tests for Schemas', () => {
-            const nbt: { [key: string]: NbtSchemaNode | ValueList } = {
-                'block/banner.json': {
-                    type: 'compound',
-                    children: {
-                        Base: {
-                            type: 'int',
-                            description: 'The base color of the banner'
-                        },
-                        list: {
-                            type: 'list',
-                            item: { type: 'no-nbt' }
-                        },
-                        listOfInts: {
-                            type: 'list',
-                            item: {
-                                type: 'int'
-                            }
-                        },
-                        refTest: {
-                            type: 'no-nbt',
-                            references: {
-                                foo: { type: 'no-nbt', description: 'references test' }
-                            }
-                        },
-                        colorIntTest: {
-                            type: 'int',
-                            isColor: true
-                        },
-                        colorIntArrayTest: {
-                            type: 'int_array',
-                            isColor: true
-                        },
-                        canAlsoBeTest: {
-                            type: 'string',
-                            canAlsoBe: ['compound']
+        const nbt: { [key: string]: NbtSchemaNode | ValueList } = {
+            'block/banner.json': {
+                type: 'compound',
+                children: {
+                    Base: {
+                        type: 'int',
+                        description: 'The base color of the banner'
+                    },
+                    list: {
+                        type: 'list',
+                        item: { type: 'no-nbt' }
+                    },
+                    listOfInts: {
+                        type: 'list',
+                        item: {
+                            type: 'int'
                         }
-                    }
-                },
-                'block/beacon.json': {
-                    type: 'compound',
-                    child_ref: [
-                        'ref/lockable.json',
-                        'ref/additional.json'
-                    ],
-                    children: {
-                        Primary: {
-                            type: 'int',
-                            suggestions: [
-                                {
-                                    parser: 'NumericID',
-                                    params: [
-                                        'minecraft:mob_effect'
-                                    ]
-                                }
-                            ]
-                        },
-                        Secondary: {
-                            type: 'int',
-                            suggestions: [
-                                {
-                                    parser: 'NumericID',
-                                    params: [
-                                        'minecraft:mob_effect'
-                                    ]
-                                }
-                            ]
+                    },
+                    refTest: {
+                        type: 'no-nbt',
+                        references: {
+                            foo: { type: 'no-nbt', description: 'references test' }
                         }
+                    },
+                    colorIntTest: {
+                        type: 'int',
+                        isColor: true
+                    },
+                    colorIntArrayTest: {
+                        type: 'int_array',
+                        isColor: true
+                    },
+                    canAlsoBeTest: {
+                        type: 'string',
+                        canAlsoBe: ['compound']
                     }
-                },
-                'block/command_block.json': {
-                    type: 'compound',
-                    children: {
-                        auto: {
-                            type: 'byte',
-                            description: 'Whether the command block should be automatically powered'
-                        },
-                        conditionMet: {
-                            type: 'byte',
-                            description: 'If the command block executed last time it was powered (True if not conditional)'
-                        },
-                        LastExecution: {
-                            type: 'long',
-                            description: 'Tick the chain command block last executed'
-                        },
-                        LastOutput: {
-                            type: 'string',
-                            description: 'The description of the last output'
-                        },
-                        powered: {
-                            type: 'byte',
-                            description: 'If the command block is powered by redstone'
-                        },
-                        SuccessCount: {
-                            type: 'int',
-                            description: 'The success count of the command run'
-                        },
-                        TrackOutput: {
-                            type: 'byte',
-                            description: 'Should the command block should write to LastOutput'
-                        },
-                        UpdateLastExecution: {
-                            type: 'byte',
-                            description: 'Should the command block only execute once a tick'
-                        }
-                    }
-                },
-                'block/group/command_block.json': [
-                    'minecraft:command_block',
-                    'minecraft:chain_command_block',
-                    {
-                        description: 'A purple command block',
-                        value: 'minecraft:repeating_command_block'
-                    }
+                }
+            },
+            'block/beacon.json': {
+                type: 'compound',
+                child_ref: [
+                    'ref/lockable.json',
+                    'ref/additional.json'
                 ],
-                'block/suggestions_test.json': {
-                    type: 'compound',
-                    children: {
-                        compound: {
-                            type: 'compound',
-                            children: {
-                                fooKey: { type: 'no-nbt', description: 'Description for the `fooKey`.' },
-                                barKey: { type: 'no-nbt' },
-                                quxKey: { type: 'no-nbt' }
+                children: {
+                    Primary: {
+                        type: 'int',
+                        suggestions: [
+                            {
+                                parser: 'NumericID',
+                                params: [
+                                    'minecraft:mob_effect'
+                                ]
                             }
-                        },
-                        emptyCompound: {
-                            type: 'compound',
-                            additionalChildren: true
-                        },
-                        list: {
-                            type: 'list',
-                            item: { type: 'compound' }
-                        },
-                        byteArray: { type: 'byte_array' },
-                        intArray: { type: 'int_array' },
-                        longArray: { type: 'long_array' },
-                        primitive: { type: 'byte' },
-                        string: {
-                            type: 'string',
-                            suggestions: [{ parser: 'Literal', params: ['foo', '"bar"'] }]
-                        },
-                        byte: {
-                            type: 'byte',
-                            suggestions: [{
-                                parser: 'NumericID', params: ['spgoding:test']
-                            }]
-                        }
+                        ]
+                    },
+                    Secondary: {
+                        type: 'int',
+                        suggestions: [
+                            {
+                                parser: 'NumericID',
+                                params: [
+                                    'minecraft:mob_effect'
+                                ]
+                            }
+                        ]
                     }
-                },
-                'ref/lockable.json': {
-                    type: 'compound',
-                    children: {
-                        Lock: {
-                            type: 'string',
-                            description: 'The name of the item a player has to be holding to open this container'
-                        }
+                }
+            },
+            'block/command_block.json': {
+                type: 'compound',
+                children: {
+                    auto: {
+                        type: 'byte',
+                        description: 'Whether the command block should be automatically powered'
+                    },
+                    conditionMet: {
+                        type: 'byte',
+                        description: 'If the command block executed last time it was powered (True if not conditional)'
+                    },
+                    LastExecution: {
+                        type: 'long',
+                        description: 'Tick the chain command block last executed'
+                    },
+                    LastOutput: {
+                        type: 'string',
+                        description: 'The description of the last output'
+                    },
+                    powered: {
+                        type: 'byte',
+                        description: 'If the command block is powered by redstone'
+                    },
+                    SuccessCount: {
+                        type: 'int',
+                        description: 'The success count of the command run'
+                    },
+                    TrackOutput: {
+                        type: 'byte',
+                        description: 'Should the command block should write to LastOutput'
+                    },
+                    UpdateLastExecution: {
+                        type: 'byte',
+                        description: 'Should the command block only execute once a tick'
                     }
-                },
-                'ref/additional.json': {
-                    type: 'compound',
-                    additionalChildren: true,
-                    children: {}
-                },
-                'roots/blocks.json': {
-                    type: 'root',
-                    children: {
-                        none: {
-                            type: 'no-nbt'
-                        },
-                        '$block/group/command_block.json': {
-                            ref: 'block/command_block.json'
-                        },
-                        'minecraft:banner': {
-                            ref: 'block/banner.json'
-                        },
-                        'minecraft:beacon': {
-                            ref: 'block/beacon.json'
-                        },
-                        'spgoding:suggestions_test': {
-                            ref: 'block/suggestions_test.json'
+                }
+            },
+            'block/group/command_block.json': [
+                'minecraft:command_block',
+                'minecraft:chain_command_block',
+                {
+                    description: 'A purple command block',
+                    value: 'minecraft:repeating_command_block'
+                }
+            ],
+            'block/suggestions_test.json': {
+                type: 'compound',
+                children: {
+                    compound: {
+                        type: 'compound',
+                        children: {
+                            fooKey: { type: 'no-nbt', description: 'Description for the `fooKey`.' },
+                            barKey: { type: 'no-nbt' },
+                            quxKey: { type: 'no-nbt' }
                         }
+                    },
+                    emptyCompound: {
+                        type: 'compound',
+                        additionalChildren: true
+                    },
+                    list: {
+                        type: 'list',
+                        item: { type: 'compound' }
+                    },
+                    byteArray: { type: 'byte_array' },
+                    intArray: { type: 'int_array' },
+                    longArray: { type: 'long_array' },
+                    primitive: { type: 'byte' },
+                    string: {
+                        type: 'string',
+                        suggestions: [{ parser: 'Literal', params: ['foo', '"bar"'] }]
+                    },
+                    byte: {
+                        type: 'byte',
+                        suggestions: [{
+                            parser: 'NumericID', params: ['spgoding:test']
+                        }]
+                    }
+                }
+            },
+            'ref/lockable.json': {
+                type: 'compound',
+                children: {
+                    Lock: {
+                        type: 'string',
+                        description: 'The name of the item a player has to be holding to open this container'
+                    }
+                }
+            },
+            'ref/additional.json': {
+                type: 'compound',
+                additionalChildren: true,
+                children: {}
+            },
+            'roots/blocks.json': {
+                type: 'root',
+                children: {
+                    none: {
+                        type: 'no-nbt'
+                    },
+                    '$block/group/command_block.json': {
+                        ref: 'block/command_block.json'
+                    },
+                    'minecraft:banner': {
+                        ref: 'block/banner.json'
+                    },
+                    'minecraft:beacon': {
+                        ref: 'block/beacon.json'
+                    },
+                    'spgoding:suggestions_test': {
+                        ref: 'block/suggestions_test.json'
                     }
                 }
             }
-            const ctx = constructContext({ parsers, nbt })
+        }
+        let ctx: ParsingContext
+        before(async () => {
+            ctx = await constructContext({ parsers, nbt })
+        })
+        describe('Tests for Schemas', () => {
             it('Should return color for int numbers', () => {
                 const parser = new NbtTagArgumentParser('int', 'blocks', 'minecraft:banner/colorIntTest')
                 const reader = new StringReader('255')
@@ -848,8 +855,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return empty completions when the walker is undefined', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 7 })
+            it('Should return empty completions when the walker is undefined', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 7 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', undefined)
                 const reader = new StringReader('{ foo: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -865,8 +872,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return empty completions when the schema is a non-string primitive type', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+            it('Should return empty completions when the schema is a non-string primitive type', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 13 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ primitive: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -882,8 +889,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return completions for compound tag brackets at the end of input', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 11 })
+            it('Should return completions for compound tag brackets at the end of input', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 11 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound:')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -901,8 +908,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '{}' }
                 ])
             })
-            it('Should return completions for compound tag brackets', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 12 })
+            it('Should return completions for compound tag brackets', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 12 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -920,8 +927,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '{}' }
                 ])
             })
-            it('Should return completions for list tag brackets', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 8 })
+            it('Should return completions for list tag brackets', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 8 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ list: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -939,8 +946,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '[]' }
                 ])
             })
-            it('Should return completions for byte array tag brackets', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+            it('Should return completions for byte array tag brackets', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 13 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byteArray: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -958,8 +965,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '[B;]' }
                 ])
             })
-            it('Should return completions for int array tag brackets', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 12 })
+            it('Should return completions for int array tag brackets', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 12 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ intArray: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -977,8 +984,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '[I;]' }
                 ])
             })
-            it('Should return completions for long array tag brackets', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+            it('Should return completions for long array tag brackets', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 13 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ longArray: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -1060,8 +1067,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return completions for compound tag keys', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 13 })
+            it('Should return completions for compound tag keys', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 13 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ compound: {} }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -1078,8 +1085,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: 'quxKey', kind: CompletionItemKind.Property }
                 ])
             })
-            it('Should return empty completions for empty compound tag', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 18 })
+            it('Should return empty completions for empty compound tag', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 18 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ emptyCompound: {} }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -1092,8 +1099,8 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return completions for empty string tags', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 10 })
+            it('Should return completions for empty string tags', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 10 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ string: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -1120,8 +1127,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: `'"bar"'` }
                 ])
             })
-            it('Should return completions inside quoted string tags', () => {
-                const ctx = constructContext({ parsers, nbt, cursor: 11 })
+            it('Should return completions inside quoted string tags', async () => {
+                const ctx = await constructContext({ parsers, nbt, cursor: 11 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ string: "" }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -1144,7 +1151,7 @@ describe('NbtTagArgumentParser Tests', () => {
                     { label: '\\"bar\\"' }
                 ])
             })
-            it('Should return completions for byte tags', () => {
+            it('Should return completions for byte tags', async () => {
                 const registries = {
                     'spgoding:test': {
                         protocol_id: 0,
@@ -1155,7 +1162,7 @@ describe('NbtTagArgumentParser Tests', () => {
                         }
                     }
                 }
-                const ctx = constructContext({ parsers, registries, nbt, cursor: 8 })
+                const ctx = await constructContext({ parsers, registries, nbt, cursor: 8 })
                 const parser = new NbtTagArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byte: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)

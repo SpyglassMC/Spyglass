@@ -1,6 +1,6 @@
 import * as path from 'path'
 import Lintable, { ToLintedString } from './Lintable'
-import { ClientCache, CacheKey, isFileType } from './ClientCache'
+import { ClientCache, CacheKey } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 

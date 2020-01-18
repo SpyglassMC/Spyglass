@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine, lineToLintedString } from '../../types/Line'
 import ParsingError from '../../types/ParsingError'

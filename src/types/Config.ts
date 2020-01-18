@@ -1,4 +1,5 @@
 import { SelectorParsedArgument } from './Entity'
+import GameVersion from './GameVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 
@@ -10,9 +11,9 @@ export type EnvConfig = {
     permissionLevel: 1 | 2 | 3 | 4,
     /**
      * Game version.  
-     * @default 'JE1.15'
+     * @default '1.15'
      */
-    version: 'JE1.15'
+    version: GameVersion
 }
 
 export type LintConfig = {
@@ -398,7 +399,7 @@ export default interface Config {
 export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
-        version: 'JE1.15'
+        version: '1.15'
     },
     lint: {
         enableFormatting: false,
@@ -502,7 +503,6 @@ export const VanillaConfig: Config = {
 export function constructConfig(custom: { [key: string]: any }, base = VanillaConfig) {
     custom.env = custom.env || {}
     custom.lint = custom.lint || {}
-    custom.snippets = custom.snippets || {}
     return {
         env: {
             ...base.env, ...custom.env
@@ -510,8 +510,6 @@ export function constructConfig(custom: { [key: string]: any }, base = VanillaCo
         lint: {
             ...base.lint, ...custom.lint
         },
-        snippets: {
-            ...base.snippets, ...custom.snippets
-        }
+        snippets: custom.snippets || base.snippets
     } as Config
 }

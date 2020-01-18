@@ -1,4 +1,4 @@
-import * as assert from 'power-assert'
+import assert = require('power-assert')
 import ArgumentParser from '../../parsers/ArgumentParser'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ParsingError from '../../types/ParsingError'
@@ -8,7 +8,7 @@ import { ArgumentParserResult } from '../../types/Parser'
 import { describe, it } from 'mocha'
 import { fail } from 'assert'
 import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
-import { constructContext } from '../../types/ParsingContext'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 /**
  * Argument parser for testing.
@@ -67,9 +67,12 @@ export class TestArgumentParser extends ArgumentParser<string> {
     getExamples = () => []
 }
 
+const parsers = new ArgumentParserManager()
+let ctx: ParsingContext
+before(async () => {
+    ctx = await constructContext({ parsers })
+})
 describe('LineParser Tests', () => {
-    const parsers = new ArgumentParserManager()
-    const ctx = constructContext({ parsers })
     describe('parseSinge() Tests', () => {
         it('Should throw error when Got none of ‘parser’, ‘redirect’, and ‘template’ were specified in node', () => {
             const input = 'foo'
@@ -92,7 +95,7 @@ describe('LineParser Tests', () => {
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
-        it('Should handle redirect to children', () => {
+        it('Should handle redirect to children', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 redirect: {
@@ -102,14 +105,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect' }
             const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
-        it('Should handle redirect to single', () => {
+        it('Should handle redirect to single', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 redirect: {
@@ -119,14 +122,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
-            const parser = new LineParser(undefined, undefined)
+            const ctx = await constructContext({ parsers, tree })
+            const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
             const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
-        it('Should handle children template', () => {
+        it('Should handle children template', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 template: {
@@ -135,14 +138,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template', executable: true }
             const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
-        it('Should handle single template', () => {
+        it('Should handle single template', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 template: {
@@ -151,14 +154,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
             const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
-        it('Should return error when not executable', () => {
+        it('Should return error when not executable', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 commands: {
@@ -167,14 +170,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'expected more arguments but got nothing')])
         })
-        it('Should parse children when there are trailing data', () => {
+        it('Should parse children when there are trailing data', async () => {
             const input = 'foo bar'
             const tree: CommandTree = {
                 commands: {
@@ -189,7 +192,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -197,7 +200,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }]
             )
         })
-        it('Should return errors when arguments are not seperated by space', () => {
+        it('Should return errors when arguments are not seperated by space', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 commands: {
@@ -212,14 +215,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'f', parser: 'test' }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'expected a space to seperate two arguments')])
         })
-        it('Should downgrade untolerable errors of children', () => {
+        it('Should downgrade untolerable errors of children', async () => {
             const input = 'foo bar'
             const tree: CommandTree = {
                 commands: {
@@ -234,7 +237,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
@@ -243,7 +246,7 @@ describe('LineParser Tests', () => {
                 [new ParsingError({ start: 4, end: 7 }, 'expected ‘ERROR’ and did get ‘ERROR’')]
             )
         })
-        it('Should return error when there are trailing data but no children', () => {
+        it('Should return error when there are trailing data but no children', async () => {
             const input = 'foo bar'
             const tree: CommandTree = {
                 commands: {
@@ -253,7 +256,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -264,7 +267,7 @@ describe('LineParser Tests', () => {
                 [new ParsingError({ start: 3, end: 7 }, 'expected nothing but got ‘ bar’')]
             )
         })
-        it('Should return completions for empty argument', () => {
+        it('Should return completions for empty argument', async () => {
             const input = 'foo '
             const tree: CommandTree = {
                 commands: {
@@ -280,7 +283,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree, cursor: 4 })
+            const ctx = await constructContext({ parsers, tree, cursor: 4 })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -291,7 +294,7 @@ describe('LineParser Tests', () => {
                 [{ label: 'completion' }]
             )
         })
-        it('Should return error when the permission level is too high', () => {
+        it('Should return error when the permission level is too high', async () => {
             const input = 'foo'
             const tree: CommandTree = {
                 commands: {
@@ -302,7 +305,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -316,7 +319,7 @@ describe('LineParser Tests', () => {
                 )]
             )
         })
-        it('Should handle run function', () => {
+        it('Should handle run function', async () => {
             const input = 'foo bar'
             const tree: CommandTree = {
                 commands: {
@@ -334,13 +337,13 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }, { data: 'baz', parser: 'test' }])
         })
-        it('Should handle parser function', () => {
+        it('Should handle parser function', async () => {
             const input = 'foo bar'
             const tree: CommandTree = {
                 commands: {
@@ -354,7 +357,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
@@ -362,9 +365,9 @@ describe('LineParser Tests', () => {
         })
     })
     describe('parseChildren() Tests', () => {
-        it('Should throw error when the children is empty', () => {
+        it('Should throw error when the children is empty', async () => {
             const tree: CommandTree = {}
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const children: CommandTreeNodeChildren = {}
@@ -377,7 +380,7 @@ describe('LineParser Tests', () => {
                 assert(message === 'unreachable error. Maybe there is an empty children in the command tree')
             }
         })
-        it('Should return the first child if no error occurrs', () => {
+        it('Should return the first child if no error occurrs', async () => {
             const tree: CommandTree = {
                 children: {
                     first: {
@@ -390,14 +393,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, ctx, tree.children, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
-        it('Should return the first child if only tolerable error occurrs', () => {
+        it('Should return the first child if only tolerable error occurrs', async () => {
             const tree: CommandTree = {
                 children: {
                     first: {
@@ -410,7 +413,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -422,7 +425,7 @@ describe('LineParser Tests', () => {
                 [new ParsingError({ start: 0, end: 3 }, 'expected ‘error’ and did get ‘error’')]
             )
         })
-        it('Should return the last child if untolerable error occurrs', () => {
+        it('Should return the last child if untolerable error occurrs', async () => {
             const tree: CommandTree = {
                 children: {
                     first: {
@@ -435,14 +438,14 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseChildren(reader, ctx, tree.children, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
         })
-        it('Should restore the errors of the parsedLine if untolerable error occurrs', () => {
+        it('Should restore the errors of the parsedLine if untolerable error occurrs', async () => {
             const tree: CommandTree = {
                 children: {
                     first: {
@@ -455,7 +458,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'old error')], cache: {}, completions: [] }
@@ -467,7 +470,7 @@ describe('LineParser Tests', () => {
                 [new ParsingError({ start: 0, end: 1 }, 'old error')]
             )
         })
-        it('Should combine with parsed line', () => {
+        it('Should combine with parsed line', async () => {
             const tree: CommandTree = {
                 children: {
                     first: {
@@ -480,7 +483,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree })
+            const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [{ data: 'parsed', parser: 'test' }], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -488,40 +491,44 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.args, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
         })
     })
-    describe('parse() Test', () => {
-        const tree: CommandTree = {
-            line: {
-                command: {
-                    redirect: 'commands'
-                }
+
+    const tree: CommandTree = {
+        line: {
+            command: {
+                redirect: 'commands'
+            }
+        },
+        commands: {
+            first: {
+                parser: new TestArgumentParser('ERROR'),
+                executable: true
             },
-            commands: {
-                first: {
-                    parser: new TestArgumentParser('ERROR'),
-                    executable: true
-                },
-                second: {
-                    parser: new TestArgumentParser(),
-                    children: {
-                        first: {
-                            parser: new TestArgumentParser('error'),
-                            children: {
-                                only: {
-                                    parser: new TestArgumentParser('ERROR'),
-                                    executable: true
-                                }
+            second: {
+                parser: new TestArgumentParser(),
+                children: {
+                    first: {
+                        parser: new TestArgumentParser('error'),
+                        children: {
+                            only: {
+                                parser: new TestArgumentParser('ERROR'),
+                                executable: true
                             }
-                        },
-                        last: {
-                            parser: new TestArgumentParser(),
-                            executable: true
                         }
                     },
-                    executable: true
-                }
+                    last: {
+                        parser: new TestArgumentParser(),
+                        executable: true
+                    }
+                },
+                executable: true
             }
         }
-        const ctx = constructContext({ parsers, tree })
+    }
+    let ctx: ParsingContext
+    before(async () => {
+        ctx = await constructContext({ parsers, tree })
+    })
+    describe('parse() Test', () => {
         it('Should parse a line', () => {
             const reader = new StringReader('a b c')
             const parser = new LineParser()
@@ -540,7 +547,7 @@ describe('LineParser Tests', () => {
                 }
             })
         })
-        it('Should return hint.options correctly', () => {
+        it('Should return hint.options correctly', async () => {
             const tree: CommandTree = {
                 line: {
                     command: {
@@ -569,7 +576,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, tree, cursor: 9 })
+            const ctx = await constructContext({ parsers, tree, cursor: 9 })
             const reader = new StringReader('first second')
             const parser = new LineParser()
             const actual = parser.parse(reader, ctx)
@@ -629,8 +636,8 @@ describe('LineParser Tests', () => {
                 }
             })
         })
-        it('Should return completions for the leading slash', () => {
-            const ctx = constructContext({ parsers, tree, cursor: 0 })
+        it('Should return completions for the leading slash', async () => {
+            const ctx = await constructContext({ parsers, tree, cursor: 0 })
             const parser = new LineParser(true)
             const reader = new StringReader('')
             const actual = parser.parse(reader, ctx)
