@@ -5,7 +5,7 @@ const BlockDefinitions: {
     [version: string]: BlockDefinition | undefined
 } = {}
 
-export async function getBlocksDefinition(version: GameVersion) {
+export async function getBlockDefinition(version: GameVersion) {
     if (!BlockDefinitions[version]) {
         BlockDefinitions[version] = await import(`./${version}/BlockDefinition.json`)
     }

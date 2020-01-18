@@ -7,7 +7,6 @@
         "target": "ESNext",
         "rootDir": "src",
         "outDir": "lib",
-        "sourceMap": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
@@ -21,6 +20,7 @@
     },
     "exclude": [
         "src/test",
-        "lib"
+        "lib",
+        "dist"
     ]
 }
