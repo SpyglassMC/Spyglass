@@ -1,5 +1,6 @@
-/node_modules
-/lib
 /coverage
-/.nyc_output
+/dist
+/lib
+/node_modules
 /.datapack
+/.nyc_output

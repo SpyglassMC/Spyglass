@@ -1,7 +1,7 @@
 {
     "name": "datapack-language-server",
     "version": "1.11.14",
-    "main": "lib/client.js",
+    "main": "dist/client.js",
     "author": "SPGoding",
     "publisher": "SPGoding",
     "license": "MIT",
@@ -9,7 +9,9 @@
         "test": "src/test/"
     },
     "scripts": {
-        "build": "tsc",
+        "build": "webpack",
+        "build:dev": "webpack --mode=\"development\"",
+        "build:profile": "webpack --profile --json > dist/stats.json",
         "codecov": "codecov -f coverage/*.json",
         "commit": "gitmoji -c",
         "contributors:add": "all-contributors add",
@@ -19,7 +21,7 @@
         "release": "semantic-release",
         "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/**/*.ts",
         "posttest": "nyc report --reporter=json",
-        "watch": "tsc -w"
+        "watch": "webpack --watch --mode=\"development\""
     },
     "dependencies": {
         "@types/clone": "^0.1.30",
@@ -38,6 +40,7 @@
         "@types/mocha": "^5.2.7",
         "@types/node": "^13.0.0",
         "@types/power-assert": "^1.5.2",
+        "@types/webpack": "^4.41.2",
         "all-contributors-cli": "^6.11.2",
         "codecov": "^3.6.1",
         "espower-typescript": "^9.0.2",
@@ -49,10 +52,13 @@
         "semantic-release-gitmoji": "^1.3.0",
         "semantic-release-vsce": "^2.2.8",
         "source-map-support": "^0.5.16",
+        "ts-loader": "^6.2.1",
         "ts-node": "^8.5.4",
         "tslint": "^5.20.1",
         "typescript": "^3.7.4",
-        "vscode": "^1.1.36"
+        "vscode": "^1.1.36",
+        "webpack": "^4.41.5",
+        "webpack-cli": "^3.3.10"
     },
     "repository": {
         "type": "git",
