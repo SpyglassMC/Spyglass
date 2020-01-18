@@ -32,11 +32,6 @@ You can install DHP (MCF) from the VSCode Marketplace: [![VSCode Marketplace](ht
 
 Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-language-server` in your VSCode.
 
-# Note
-
-0. DHP (MCF) uses cache to speed up renaming, finding definitions/references. The cache will be stored in `.datapack/cache.json` in your workspace. You should never edit the cache file manually. It shoud be added in `.gitignore` if you are using Git as your preferred version control tool.
-1. Please use the root directory of your data pack as the workspace. Otherwise you can't use all features depending on the cache file. 
-
 # Features
 
 ## Semantic Highlighting
