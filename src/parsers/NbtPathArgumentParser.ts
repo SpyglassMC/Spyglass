@@ -216,7 +216,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         if (this.canParseSep(reader)) {
             checkSchema()
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['a key'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['a key', 'an index'], false)
+        } else {
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['an index'], true)
         }
     }
 

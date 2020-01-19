@@ -236,7 +236,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 14, end: 15 },
-                        'expected a key but got nothing'
+                        'expected a key or an index but got nothing'
                     )
                 ])
                 assert.deepEqual(cache, {})
