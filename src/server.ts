@@ -10,6 +10,7 @@ import StringReader from './utils/StringReader'
 import { Files } from 'vscode-languageserver'
 import Identity from './types/Identity'
 import { constructContext } from './types/ParsingContext'
+import { loadLocale, locale } from './locales/Locales'
 
 const connection = createConnection(ProposedFeatures.all)
 const linesOfRel = new Map<string, Line[]>()
@@ -26,6 +27,8 @@ let cachePath: string | undefined
 let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
+    await loadLocale()
+
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
@@ -33,7 +36,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             const abs = Files.uriToFilePath(uri) as string
             const legacyDotPath = path.join(abs, '.datapack')
             if (await fs.pathExists(legacyDotPath)) {
-                connection.window.showInformationMessage('The principle of DHP has been changed. You can safely delete the ugly ‘.datapack’ folder in your workspace root.')
+                connection.window.showInformationMessage(locale('server.remove-cache-file'))
             }
         }
 

@@ -1,0 +1,3 @@
+{
+    "server.remove-cache-file": "大憨批的缓存文件被移动到了一个由 VSCode 提供的缓存位置。您现在可以放心地删除工作区根文件夹中的 ‘.datapack’ 文件夹。"
+}
