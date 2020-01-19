@@ -414,6 +414,16 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'expected a namespaced ID but got nothing', false)
             ])
         })
+        it('Should return errors for non [a-z0-9/._-] characters', () => {
+            const config = constructConfig({ lint: { strictBossbarCheck: false, omitDefaultNamespace: false } })
+            const ctx = constructContext({ registries, parsers, cache, config })
+            const parser = new NamespacedIDArgumentParser('$bossbars')
+            const actual = parser.parse(new StringReader('spgoding:QwQ'), ctx)
+            assert.deepStrictEqual(actual.data, new Identity('spgoding', ['QwQ']))
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError({ start: 9, end: 12 }, 'found non [a-z0-9/._-] character(s)')
+            ])
+        })
         it('Should return warning when the id cannot be resolved in cache category', () => {
             const config = constructConfig({ lint: { strictBossbarCheck: true, omitDefaultNamespace: true } })
             const ctx = constructContext({ registries, parsers, cache, config })

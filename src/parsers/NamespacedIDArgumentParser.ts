@@ -1,6 +1,6 @@
 import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
-import { getSafeCategory } from '../types/ClientCache'
+import { getSafeCategory, CacheKey, ClientCache } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import Identity from '../types/Identity'
@@ -13,7 +13,6 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     readonly identity = 'namespacedID'
 
     /**
-     * 
      * @param type A type in registries, or a type in cache if beginning with hash (`$`).
      * @param registries The registries.
      */
@@ -53,24 +52,28 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         let stringID: string = ''
         let isTag = false
 
-        const tagCandidates: string[] = []
-        const regularCandidates: string[] = []
+        //#region Completions
+        const tagPool: string[] = []
+        const idPool: string[] = []
+        // Set `tagPool`.
         if (this.allowTag) {
             const type = getCacheTagType()
             const category = getSafeCategory(cache, type)
-            tagCandidates.push(...Object.keys(category))
+            tagPool.push(...Object.keys(category))
         }
+        // Set `idPool`.
         if (this.type.startsWith('$')) {
             const type = this.type.slice(1)
-            regularCandidates.push(...Object.keys(getSafeCategory(cache, type as any)))
+            idPool.push(...Object.keys(getSafeCategory(cache, type as any)))
         } else {
             const registry = registries[this.type]
-            regularCandidates.push(...Object.keys(registry.entries))
+            idPool.push(...Object.keys(registry.entries))
         }
 
-        const namespaces = new Set<string>()
-        const folders = new Set<string>()
-        const files = new Set<string>()
+        const complNamespaces = new Set<string>()
+        const complFolders = new Set<string>()
+        const complFiles = new Set<string>()
+        //#endregion
 
         //#region Data
         let namespace = Identity.DefaultNamespace
@@ -87,64 +90,58 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 ))
             }
         }
-        let candidates = isTag ? tagCandidates : regularCandidates
+        let pool = isTag ? tagPool : idPool
 
-        // Parse the namespace or the first part of path.
-        let path0 = reader.readUnquotedString()
-        //#region Completions
+        /**
+         * The namespace or the first part of path.
+         */
+        let path0 = this.readValidString(reader, ans)
+
+        //#region Completions at the Beginning
         if (start <= cursor && cursor <= reader.cursor) {
-            for (const candidate of tagCandidates) {
-                const namespace = candidate.split(':')[0]
-                const paths = candidate.split(':')[1].split('/')
-
-                namespaces.add(`${Identity.TagSymbol}${namespace}`)
-                if (namespace === Identity.DefaultNamespace && !this.isPredicate) {
-                    if (paths.length >= 2) {
-                        folders.add(paths[0])
-                    } else {
-                        files.add(paths[0])
+            if (!isTag && this.allowTag) {
+                // If this ID is not a tag but could be a tag, then provide completions for tags.
+                for (const id of tagPool) {
+                    const complNamespace = id.split(':')[0]
+                    const complPaths = id.split(':')[1].split('/')
+                    complNamespaces.add(`${Identity.TagSymbol}${complNamespace}`)
+                    if (!this.isPredicate && complNamespace === Identity.DefaultNamespace) {
+                        this.completeFolderOrFile(complPaths, complFolders, complFiles)
                     }
                 }
             }
-            for (const candidate of regularCandidates) {
-                const namespace = candidate.split(':')[0]
-                const paths = candidate.split(':')[1].split('/')
-
-                namespaces.add(namespace)
-                if (namespace === Identity.DefaultNamespace && !this.isPredicate) {
-                    if (paths.length >= 2) {
-                        folders.add(paths[0])
-                    } else {
-                        files.add(paths[0])
-                    }
+            for (const id of pool) {
+                const namespace = id.split(':')[0]
+                const paths = id.split(':')[1].split('/')
+                complNamespaces.add(namespace)
+                if (!this.isPredicate && namespace === Identity.DefaultNamespace) {
+                    this.completeFolderOrFile(paths, complFolders, complFiles)
                 }
             }
         }
         //#endregion
+
         if (path0) {
             if (reader.peek() === ':') {
+                // `path0` is the namespace.
                 reader.skip()
                 const start = reader.cursor
                 namespace = path0
-                path0 = reader.readUnquotedString()
+                path0 = this.readValidString(reader, ans)
                 //#region Completions
-                candidates = candidates
+                pool = pool
                     .filter(v => v.startsWith(`${namespace}:`))
                     .map(v => v.slice(namespace.length + 1))
                 if (start <= cursor && cursor <= reader.cursor) {
-                    for (const candidate of candidates) {
-                        const paths = candidate.split(Identity.Sep)
-
-                        if (paths.length >= 2) {
-                            folders.add(paths[0])
-                        } else {
-                            files.add(paths[0])
-                        }
+                    for (const id of pool) {
+                        const complPaths = id.split(Identity.Sep)
+                        this.completeFolderOrFile(complPaths, complFolders, complFiles)
                     }
                 }
                 //#endregion
             } else {
-                candidates = candidates
+                // `path0` is the first element of the paths.
+                pool = pool
                     .filter(v => v.startsWith(`${Identity.DefaultNamespace}:`))
                     .map(v => v.slice(Identity.DefaultNamespace.length + 1))
                 if (this.isPredicate) {
@@ -156,26 +153,21 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             }
             paths.push(path0)
 
-            // Parse the following paths.
+            // Parse the remaning paths.
             while (reader.peek() === Identity.Sep) {
                 reader.skip()
                 const start = reader.cursor
-                const part = reader.readUnquotedString()
+                const path = this.readValidString(reader, ans)
                 //#region Completions
-                candidates = candidates.filter(v => v.startsWith(paths.join(Identity.Sep)))
+                pool = pool.filter(v => v.startsWith(paths.join(Identity.Sep)))
                 if (start <= cursor && cursor <= reader.cursor) {
-                    for (const candidate of candidates) {
-                        const candidatePaths = candidate.split(Identity.Sep)
-
-                        if (candidatePaths.length - paths.length >= 2) {
-                            folders.add(candidatePaths[paths.length])
-                        } else if (candidatePaths.length - paths.length === 1) {
-                            files.add(candidatePaths[paths.length])
-                        }
+                    for (const id of pool) {
+                        const complPaths = id.split(Identity.Sep)
+                        this.completeFolderOrFile(complPaths, complFolders, complFiles, paths.length)
                     }
                 }
                 //#endregion
-                paths.push(part)
+                paths.push(path)
             }
 
             ans.data = new Identity(namespace, paths, isTag)
@@ -190,60 +182,13 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             if (isTag) {
                 // For tags.
                 const tagType = getCacheTagType()
-                const category = getSafeCategory(cache, tagType)
-                //#region Errors
-                if (this.shouldStrictCheck(`$${tagType}`, config, namespace) && !Object.keys(category).includes(stringID)) {
-                    ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
-                        `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${tagType}’`,
-                        undefined,
-                        DiagnosticSeverity.Warning
-                    ))
-                }
-                //#endregion
-
-                //#region Cache
-                if (Object.keys(category).includes(stringID)) {
-                    ans.cache = {
-                        [tagType]: {
-                            [stringID]: {
-                                def: [],
-                                ref: [{ start, end: reader.cursor }]
-                            }
-                        }
-                    }
-                }
-                //#endregion
+                this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
             } else {
                 // For normal IDs.
                 if (this.type.startsWith('$')) {
                     // For cache IDs.
-                    const type = this.type.slice(1)
-                    const category = getSafeCategory(cache, type as any)
-                    //#region Errors
-                    if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(category).includes(stringID)) {
-                        ans.errors.push(new ParsingError(
-                            { start, end: reader.cursor },
-                            `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
-                            undefined,
-                            DiagnosticSeverity.Warning
-                        ))
-                    }
-                    //#endregion
-
-                    //#region Cache
-                    if (Object.keys(category).includes(stringID)) {
-                        const type = this.type.slice(1)
-                        ans.cache = {
-                            [type]: {
-                                [stringID]: {
-                                    def: [],
-                                    ref: [{ start, end: reader.cursor }]
-                                }
-                            }
-                        }
-                    }
-                    //#endregion
+                    const type = this.type.slice(1) as CacheKey
+                    this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache)
                 } else {
                     // For registry IDs.
                     const registry = registries[this.type]
@@ -265,17 +210,17 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
-        namespaces.forEach(k => void ans.completions.push({
+        complNamespaces.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Module,
             commitCharacters: [':']
         }))
-        folders.forEach(k => void ans.completions.push({
+        complFolders.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Folder,
             commitCharacters: ['/']
         }))
-        files.forEach(k => void ans.completions.push({
+        complFiles.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Field,
             commitCharacters: [' ']
@@ -348,6 +293,72 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             default:
                 return false
         }
+    }
+
+    /**
+     * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
+     */
+    private readValidString(reader: StringReader, ans: ArgumentParserResult<Identity>) {
+        const start = reader.cursor
+        const value = reader.readUnquotedString()
+        const end = reader.cursor
+        if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
+            ans.errors.push(new ParsingError(
+                { start, end },
+                'found non [a-z0-9/._-] character(s)'
+            ))
+        }
+        return value
+    }
+
+    /**
+     * Add the first element of the `paths` to `complFolders` or `complFiles`, accordingly.
+     * @param comlPaths The paths of the ID completion.
+     * @param complFolders Ans completion folders.
+     * @param complFiles Ans completion files.
+     */
+    private completeFolderOrFile(comlPaths: string[], complFolders: Set<string>, complFiles: Set<string>, parsedPathCount = 0) {
+        const diff = comlPaths.length - parsedPathCount
+        if (diff > 1) {
+            complFolders.add(comlPaths[parsedPathCount])
+        } else if (diff === 1) {
+            complFiles.add(comlPaths[parsedPathCount])
+        }
+    }
+
+    /**
+     * Check if a parsed ID is valid in the specific cache unit.
+     * @param type The type of the cache unit.
+     * @param stringID The stringified ID.
+     * @param start The start of the whole parsing process of this ID.
+     */
+    private checkIDInCache(ans: ArgumentParserResult<Identity>, reader: StringReader, type: CacheKey, namespace: string, stringID: string, start: number, config: Config, cache: ClientCache) {
+        const category = getSafeCategory(cache, type)
+        const canResolve = Object.keys(category).includes(stringID)
+
+        //#region Errors
+        if (this.shouldStrictCheck(`$${type}`, config, namespace) && !canResolve) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
+                undefined,
+                DiagnosticSeverity.Warning
+            ))
+        }
+        //#endregion
+
+        //#region Cache
+        if (canResolve) {
+            ans.cache = {
+                [type]: {
+                    [stringID]: {
+                        def: [],
+                        ref: [{ start, end: reader.cursor }]
+                    }
+                }
+            }
+        }
+        //#endregion
     }
 
     getExamples(): string[] {
