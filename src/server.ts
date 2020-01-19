@@ -29,6 +29,14 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
+        for (const { uri } of workspaceFolders) {
+            const abs = Files.uriToFilePath(uri) as string
+            const legacyDotPath = path.join(abs, '.datapack')
+            if (await fs.pathExists(legacyDotPath)) {
+                connection.window.showInformationMessage('The principle of DHP has been changed. You can safely delete the ugly ‘.datapack’ folder in your workspace root.')
+            }
+        }
+
         workspaceFolder = workspaceFolders[0]
         workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
         connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
