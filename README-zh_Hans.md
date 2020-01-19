@@ -26,10 +26,11 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 或者，您也可以直接打开 VSCode，按 Ctrl + P，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
 
-# 注意
+# 工作区支持
 
-0. 大憨批使用缓存文件来加速重命名、查找引用或定义。缓存文件存储在工作空间的 `.datapack/cache.json` 文件当中。该文件不应当手动编辑。如果你用了 Git 一类的版本控制工具，记得把它加到 `.gitignore` 里面。
-1. 请使用数据包的根目录（即和 `data`、`pack.mcmeta` 的同目录）作为你的工作空间（右键文件夹空白处，选择「在此处打开 VSCode」即可）。否则一切涉及到缓存的功能（例如重命名、查找引用或定义、部分自动补全等）将不能正常运作。
+请使用数据包的根文件夹（也就是 `data` 文件夹与 `pack.mcmeta` 文件所处的文件夹）作为你的工作区的根文件夹，以获得最佳的体验。
+
+此外，大憨批完全支持多个根文件夹的工作区，只需要确保在使用「文件」→「将文件夹添加到工作区…」功能添加数据包时添加的都是数据包的根文件夹即可。然而，有关 VSCode 的工作区的优质中文资料十分匮乏，不想花时间了解怎么使用多根文件夹的工作区的用户可以忽略掉大憨批的这个特性。
 
 # 特性
 
@@ -117,7 +118,7 @@ execute if score @s test matches 5 run say 5
 
 ## 查找引用
 
-您可以通过 Shift + F12 快捷键或其他自行设定的按键来查找所有该进度、战利品表、函数、断言、数据包标签、实体、标签、计分项、队伍、bossbar 或数据储存在当前工作空间中的所有引用。
+您可以通过 Shift + F12 快捷键或其他自行设定的按键来查找所有该进度、战利品表、函数、断言、数据包标签、实体、标签、计分项、队伍、bossbar 或数据储存在当前工作区中的所有引用。
 
 ![peek-references](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/peek-references.gif)
 
@@ -125,17 +126,17 @@ execute if score @s test matches 5 run say 5
 
 您可以通过 F2 或其他自行设定的按键来重命名进度、战利品表、函数、断言、数据包标签、实体、标签、队伍、bossbar 或数据储存。
 
-在整个工作空间中相应的引用都会被重命名。
+在整个工作区中相应的引用都会被重命名。
 
 **警告**：重命名可能导致您的函数内容损坏，请及时备份。使用风险请自行承担。
 
 ![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
 
-此外，如果您重命名了一个有着文件定义的命名空间 ID（例如进度、战利品表、函数、断言以及各种标签的命名空间 ID），在工作空间当中的对应文件也将会被移动或重命名。
+此外，如果您重命名了一个有着文件定义的命名空间 ID（例如进度、战利品表、函数、断言以及各种标签的命名空间 ID），在工作区当中的对应文件也将会被移动或重命名。
 
 ![rename-function](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-function.gif)
 
-*然而*，直接手动重命名工作空间中的一个文件并*不会*更新它的命名空间 ID，并且可能会导致缓存错误。
+*然而*，直接手动重命名工作区中的一个文件并*不会*更新它的命名空间 ID，并且可能会导致缓存错误。
 
 ## 格式化与校验
 
@@ -149,7 +150,7 @@ execute if score @s test matches 5 run say 5
 
 ## 配置
 
-使用 Ctrl + `,`（或其他绑定的快捷键）来打开 VSCode 的设置页，并搜索 `datapacklanguageserver` 来查看所有由大憨批提供的配置选项。通过修改这些选项，你可以自行添加代码片段、设置格式化与校验偏好，以及修改运行环境的相关信息。这些选项既可以是为当前用户设置的，也可以是为当前工作空间设置的。有关修改配置选项的具体内容请查看 [VSCode 的官方文档](https://code.visualstudio.com/docs/getstarted/settings)。
+使用 Ctrl + `,`（或其他绑定的快捷键）来打开 VSCode 的设置页，并搜索 `datapacklanguageserver` 来查看所有由大憨批提供的配置选项。通过修改这些选项，你可以自行添加代码片段、设置格式化与校验偏好，以及修改运行环境的相关信息。这些选项既可以是为当前用户设置的，也可以是为当前工作区设置的。有关修改配置选项的具体内容请查看 [VSCode 的官方文档](https://code.visualstudio.com/docs/getstarted/settings)。
 
 # 贡献者
 
