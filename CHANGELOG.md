@@ -1,3 +1,9 @@
+# [v1.11.14](https://github.com/SPGoding/datapack-language-server/compare/v1.11.13...v1.11.14) (2020-01-19)
+
+## 🐛 Bug Fixes
+- [`f336e05`](https://github.com/SPGoding/datapack-language-server/commit/f336e05)  Fix allowing uppercased letters in IDs (Issues: [`#270`](https://github.com/SPGoding/datapack-language-server/issues/270))
+- [`cb53a1f`](https://github.com/SPGoding/datapack-language-server/commit/cb53a1f)  Fix not allowing indexes after indexes (Issues: [`#271`](https://github.com/SPGoding/datapack-language-server/issues/271))
+
 # [v1.11.13](https://github.com/SPGoding/datapack-language-server/compare/v1.11.12...v1.11.13) (2020-01-17)
 
 ## 🐛 Bug Fixes
