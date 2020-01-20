@@ -75,5 +75,5 @@
   "unexpected-scoreboard-sub-slot": "サブスロットは 'sidebar' でのみ使用できます",
   "unexpected-selector-variable": "予期しないセレクター引数 %0%",
   "unknown-key": "%0% は不明なキー",
-  "vector": "ベクトル"
+  "vector": "座標の値"
 }
