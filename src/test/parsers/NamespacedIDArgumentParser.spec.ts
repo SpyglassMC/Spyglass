@@ -435,7 +435,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in loot table cache', async () => {
@@ -445,7 +445,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', async () => {
@@ -455,7 +455,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('#spgoding:function/114514'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['function', '114514'], true))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 25 }, 'faild to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 25 }, 'failed to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in registry', async () => {
@@ -465,7 +465,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['qux']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'faild to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache when the id is already defined', async () => {
