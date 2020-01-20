@@ -8,6 +8,7 @@ import NumberRange from '../types/NumberRange'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     readonly identity = 'entity'
@@ -61,20 +62,26 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
 
         // Errors
         if (!plain) {
-            ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected an entity but got nothing', false))
+            ans.errors.push(new ParsingError({ start, end: start + 1 },
+                locale('expected-got',
+                    locale('entity'),
+                    locale('nothing')
+                ),
+                false
+            ))
         }
         if (this.isScoreHolder && plain.length > 40) {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },
-                    `‘${plain}’ exceeds the max length of a score holder name, which is 40`
+                    locale('too-long', locale('meta.quote', plain), locale('score-holder'), 40)
                 )
             )
         } else if (!this.isScoreHolder && plain.length > 16 && !EntityArgumentParser.UuidPattern.test(plain)) {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },
-                    `‘${plain}’ exceeds the max length of an entity name, which is 16`
+                    locale('too-long', locale('meta.quote', plain), locale('entity'), 16)
                 )
             )
         }
@@ -131,7 +138,10 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 containsNonPlayer = true
             }
         } else {
-            ans.errors.push(new ParsingError({ start: start + 1, end: start + 2 }, `unexpected selector variable ‘${variable}’`))
+            ans.errors.push(new ParsingError(
+                { start: start + 1, end: start + 2 },
+                locale('unexpected-selector-variable', variable)
+            ))
         }
         /// Arguments
         if (reader.peek() === '[') {
@@ -288,14 +298,14 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         if (this.amount === 'single' && isMultiple) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                'the selector contains multiple entities'
+                locale('unexpected-multiple-selector')
             ))
         }
 
         if (this.type === 'players' && containsNonPlayer) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                'the selector contains non-player entities'
+                locale('unexpected-non-player-selector')
             ))
         }
 

@@ -41,7 +41,11 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                     ans.data.param = color
                     /* istanbul ignore else */
                     if (ans.errors.length === 0) {
-                        const key = `${parseFloat(color.elements[0].value)} ${parseFloat(color.elements[1].value)} ${parseFloat(color.elements[2].value)} ${parseFloat(color.elements[3].value)}`
+                        const key = `${
+                            parseFloat(color.elements[0].value)} ${
+                            parseFloat(color.elements[1].value)} ${
+                            parseFloat(color.elements[2].value)} ${
+                            parseFloat(color.elements[3].value)}`
                         ans.cache = {
                             colors: {
                                 [key]: {

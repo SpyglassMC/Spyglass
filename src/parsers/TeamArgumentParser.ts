@@ -5,6 +5,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class TeamArgumentParser extends ArgumentParser<string> {
     readonly identity = 'team'
@@ -37,7 +38,10 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
         if (!value) {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
-                'expected a team but got nothing',
+                locale('expected-got',
+                    locale('team'),
+                    locale('nothing')
+                ),
                 false
             ))
         } else {
@@ -63,7 +67,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
                 } else if (ctx.config.lint.strictTeamCheck) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + value.length },
-                        `undefined team ‘${value}’`,
+                        locale('undefined-team', locale('meta.quote', value)),
                         undefined,
                         DiagnosticSeverity.Warning
                     ))

@@ -11,6 +11,7 @@ import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-l
 import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
+import { locale } from '../locales/Locales'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     /**
@@ -24,7 +25,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     ) {
         const value = getter(str)
         if (!checker(value)) {
-            throw `expected a number between ${range[0]} and ${range[1]} but got ‘${value}’`
+            throw locale('expected-got',
+                locale('number.between', range[0], range[1]),
+                locale('meta.quote', value)
+            )
         }
         return value
     }
@@ -62,7 +66,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             value => getNbtLongTag(NbtTagArgumentParser.parseNumber<BigInt>(
                 value.slice(0, -1),
                 ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
-                (str: string) =>  BigInt(str),
+                (str: string) => BigInt(str),
                 (value: BigInt) =>
                     value >= -9_223_372_036_854_775_808n &&
                     value <= 9_223_372_036_854_775_807n
@@ -124,6 +128,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
+    private getLocaleName(name: NbtTagTypeName) {
+        return locale(`nbt-tag.${name}`)
+    }
+
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtTag> {
         let walker: NbtSchemaWalker | undefined
         if (this.id) {
@@ -142,8 +150,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (this.expectedTypes.indexOf(ans.data[NbtTagType]) === -1) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected ${arrayToMessage(this.expectedTypes.map(NbtSchemaWalker.getString), false, 'or')
-                } instead of ${NbtSchemaWalker.getString(ans.data[NbtTagType])}`
+                locale('expected-got',
+                    arrayToMessage(this.expectedTypes.map(this.getLocaleName), false, 'or'),
+                    this.getLocaleName(ans.data[NbtTagType])
+                )
             ))
         }
         return ans
@@ -196,7 +206,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 } else if (walker.read().type === 'int') {
                                     return getNbtIntTag(parseFloat(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'long') {
-                                    return getNbtLongTag( BigInt(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtLongTag(BigInt(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'float') {
                                     return getNbtFloatTag(parseFloat(value))[ToLintedString](ctx.config.lint)
                                 } else if (walker.read().type === 'double') {
@@ -245,8 +255,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected ${NbtSchemaWalker.getString(walker.read().type)} instead of ${
-                NbtSchemaWalker.getString(ans.data[NbtTagType])}`,
+                locale('expected-got',
+                    this.getLocaleName(walker.read().type as NbtTagTypeName),
+                    this.getLocaleName(ans.data[NbtTagType])
+                ),
                 true,
                 DiagnosticSeverity.Warning
             ))
@@ -298,15 +310,21 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     if (!key) {
                         result.errors.push(new ParsingError(
                             { start, end: start + 1 },
-                            'expected a key but got nothing'
+                            locale('expected-got',
+                                locale('key'),
+                                locale('nothing')
+                            )
                         ))
                     } else {
                         // Check whether the current key follows the naming convention.
                         if (!checkNamingConvention(key, ctx.config.lint.nameOfSnbtCompoundTagKeys)) {
                             result.errors.push(new ParsingError(
                                 { start, end: start + key.length },
-                                `invalid key ‘${key}’ which doesn't follow ${
-                                arrayToMessage(ctx.config.lint.nameOfSnbtCompoundTagKeys)} convention`,
+                                locale(
+                                    'key-not-following-convention',
+                                    locale('meta.quote', key),
+                                    arrayToMessage(ctx.config.lint.nameOfSnbtCompoundTagKeys)
+                                ),
                                 true,
                                 DiagnosticSeverity.Warning
                             ))
@@ -316,7 +334,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             result.errors.push(
                                 new ParsingError(
                                     { start, end: start + key.length },
-                                    `duplicate compound key ‘${key}’`,
+                                    locale('duplicate-key', key),
                                     true,
                                     DiagnosticSeverity.Warning
                                 )
@@ -356,7 +374,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     result.errors.push(
                         new ParsingError(
                             keyRange,
-                            `unexpected key ‘${key}’`,
+                            locale('unknown-key', locale('meta.quote', key)),
                             true,
                             DiagnosticSeverity.Warning
                         )
@@ -426,7 +444,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = getNbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, `invalid array type ‘${type}’. should be one of ‘B’, ‘I’, and ‘L’`)
+                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, locale('unexpected-nbt-array-type', type))
             }
             reader
                 .expect(';')
@@ -455,7 +473,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected a byte tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
+                                locale('expected-got',
+                                    locale('nbt-tag.byte'),
+                                    this.getLocaleName(result.data[NbtTagType])
+                                )
                             )
                         )
                     }
@@ -466,7 +487,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected an int tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
+                                locale('expected-got',
+                                    locale('nbt-tag.int'),
+                                    this.getLocaleName(result.data[NbtTagType])
+                                )
                             )
                         )
                     }
@@ -477,7 +501,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
-                                `expected a long tag instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
+                                locale('expected-got',
+                                    locale('nbt-tag.long'),
+                                    this.getLocaleName(result.data[NbtTagType])
+                                )
                             )
                         )
                     }
@@ -522,8 +549,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
-                            `expected ${NbtSchemaWalker.getString(ans.data[NbtContentTagType])
-                            } instead of ${NbtSchemaWalker.getString(result.data[NbtTagType])}`
+                            locale('expected-got',
+                                this.getLocaleName(ans.data[NbtContentTagType]),
+                                this.getLocaleName(result.data[NbtTagType])
+                            )
                         )
                     )
                 }
@@ -589,7 +618,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             const value = reader.readUnquotedString()
             if (value.length === 0) {
                 ans.data = getNbtStringTag('')
-                ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a tag but got nothing'))
+                ans.errors.push(new ParsingError({ start, end: start + 1 }, locale('expected-got',
+                    locale('nbt-tag'),
+                    locale('nothing')
+                )))
             } else {
                 const failedToMatchAllPatterns = Symbol('failed to match all patterns')
                 try {

@@ -6,6 +6,7 @@ import Parser from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -44,7 +45,7 @@ export default class LineParser implements Parser<Line> {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
-                    'unexpected leading slash ‘/’',
+                    locale('unexpected-leading-slash'),
                     false
                 ))
             }
@@ -55,7 +56,10 @@ export default class LineParser implements Parser<Line> {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
-                    `expected a leading slash ‘/’ but got ‘${reader.peek()}’`,
+                    locale('expected-got',
+                        locale('leading-slash'),
+                        locale('meta.quote', reader.peek())
+                    ),
                     false
                 ))
                 if (ctx.cursor === reader.cursor) {
@@ -122,7 +126,10 @@ export default class LineParser implements Parser<Line> {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, 'expected more arguments but got nothing')
+                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, locale('expected-got',
+                            locale('more-arguments'),
+                            locale('nothing')
+                        ))
                     )
                 }
                 if (reader.peek() === ' ') {
@@ -149,7 +156,10 @@ export default class LineParser implements Parser<Line> {
                 // There are trailing data.
                 if (!node.children) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.string.length }, `expected nothing but got ‘${reader.remainingString}’`)
+                        new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('expected-got',
+                            locale('nothing'),
+                            locale('meta.quote', reader.remainingString)
+                        ))
                     )
                 } else {
                     const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
@@ -161,7 +171,7 @@ export default class LineParser implements Parser<Line> {
                             parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                         } else {
                             parsedLine.errors.push(
-                                new ParsingError({ start: reader.cursor, end: reader.string.length }, 'expected a space to seperate two arguments')
+                                new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('space-seperating-arguments'))
                             )
                         }
                     }
@@ -174,7 +184,7 @@ export default class LineParser implements Parser<Line> {
                 parsedLine.errors.push(
                     new ParsingError(
                         { start, end: reader.cursor },
-                        `permission level ${level} is required, which is higher than ${levelMax} defined in config`
+                        locale('no-permission', level, levelMax)
                     )
                 )
             }

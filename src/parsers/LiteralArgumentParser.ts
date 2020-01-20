@@ -4,6 +4,7 @@ import StringReader from '../utils/StringReader'
 import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
+import { locale } from '../locales/Locales'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     readonly identity = 'literal'
@@ -61,13 +62,19 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             if (value.length > 0) {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + value.length },
-                    `expected ${arrayToMessage(this.literals, true, 'or')} but got ‘${value}’`,
+                    locale('expected-got',
+                        arrayToMessage(this.literals, true, 'or'),
+                        locale('meta.quote', value)
+                    ),
                     false
                 )]
             } else {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + 1 },
-                    `expected ${arrayToMessage(this.literals, true, 'or')} but got nothing`,
+                    locale('expected-got',
+                        arrayToMessage(this.literals, true, 'or'),
+                        locale('nothing')
+                    ),
                     false
                 )]
             }

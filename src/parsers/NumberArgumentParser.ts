@@ -2,6 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
+import { locale } from '../locales/Locales'
 
 export default class NumberArgumentParser extends ArgumentParser<number> {
     identity = 'number'
@@ -31,13 +32,19 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         if (this.min !== undefined && !(ans.data >= this.min)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a number larger than or equal to ${this.min} but got ${ans.data}`
+                locale('expected-got',
+                    locale('number.>=', this.min),
+                    ans.data
+                )
             ))
         }
         if (this.max !== undefined && !(ans.data <= this.max)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `expected a number smaller than or equal to ${this.max} but got ${ans.data}`
+                locale('expected-got',
+                    locale('number.<=', this.max),
+                    ans.data
+                )
             ))
         }
         return ans

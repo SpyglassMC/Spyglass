@@ -1,6 +1,7 @@
 import ParsingError from '../types/ParsingError'
 import Token from '../types/Token'
 import { TokenScope } from '../types/TokenScope'
+import { locale } from '../locales/Locales'
 
 export default class StringReader {
     public cursor = 0
@@ -95,16 +96,25 @@ export default class StringReader {
             if (isNaN(num)) {
                 const end = this.cursor
                 this.cursor = start
-                throw new ParsingError({ start, end }, `expected a number but got ‘${str}’`)
+                throw new ParsingError({ start, end }, locale('expected-got',
+                    locale('number'),
+                    locale('meta.quote', str)
+                ))
             }
             return str
         } else {
             const end = this.cursor + 1
             const value = this.peek()
             if (value) {
-                throw new ParsingError({ start, end }, `expected a number but got ‘${this.peek()}’ at beginning`, false)
+                throw new ParsingError({ start, end }, locale('expected-got',
+                    locale('number'),
+                    locale('meta.quote', this.peek())
+                ), false)
             } else {
-                throw new ParsingError({ start, end }, 'expected a number but got nothing', false)
+                throw new ParsingError({ start, end }, locale('expected-got',
+                    locale('number'),
+                    locale('nothing')
+                ), false)
             }
         }
     }
@@ -120,12 +130,18 @@ export default class StringReader {
             // num is float.
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer but got ${str}`)
+            throw new ParsingError({ start, end }, locale('expected-got',
+                locale('integer'),
+                str)
+            )
         }
         if (num < -2147483648 || num > 2147483647) {
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected an integer between -2147483648..2147483647 but got ${str}`)
+            throw new ParsingError({ start, end }, locale('expected-got',
+                locale('integer.between', -2147483648, 2147483647),
+                str
+            ))
         }
         return num
     }
@@ -140,7 +156,10 @@ export default class StringReader {
             // num is float
             const end = this.cursor
             this.cursor = start
-            throw new ParsingError({ start, end }, `expected a long but got ${str}`)
+            throw new ParsingError({ start, end }, locale('expected-got',
+                locale('long'),
+                str
+            ))
         }
         return BigInt(str)
     }
@@ -189,7 +208,10 @@ export default class StringReader {
         } else {
             const start = this.cursor
             const end = this.cursor + 1
-            throw new ParsingError({ start, end }, `expected a quote (‘'’ or ‘"’) but got ‘${quote}’`, false)
+            throw new ParsingError({ start, end }, locale('expected-got',
+                locale('quote'),
+                locale('meta.quote', quote)
+            ), false)
         }
         return ans
     }
@@ -214,7 +236,10 @@ export default class StringReader {
                 } else {
                     const errStart = this.cursor - 1
                     this.cursor = start
-                    throw new ParsingError({ start: errStart, end: errStart + 1 }, `unexpected escape character ‘${c}’`)
+                    throw new ParsingError(
+                        { start: errStart, end: errStart + 1 },
+                        locale('unexpected-escape', c)
+                    )
                 }
             } else {
                 if (c === escapeChar) {
@@ -237,7 +262,13 @@ export default class StringReader {
         }
         const errStart = this.cursor
         this.cursor = start
-        throw new ParsingError({ start: errStart, end: errStart + 1 }, `expected an ending quote ‘${terminator}’ but got nothing`)
+        throw new ParsingError(
+            { start: errStart, end: errStart + 1 },
+            locale('expected-got',
+                locale('ending-quote', terminator),
+                locale('nothing')
+            )
+        )
     }
 
     /**
@@ -288,7 +319,14 @@ export default class StringReader {
             const end = this.cursor
             this.cursor = start
             const toleratable = 'true'.startsWith(string.toLowerCase()) || 'false'.startsWith(string.toLowerCase())
-            throw new ParsingError({ start, end }, `expected a boolean but got ‘${string}’`, toleratable)
+            throw new ParsingError(
+                { start, end },
+                locale('expected-got',
+                    locale('boolean'),
+                    locale('meta.quote', string)
+                ),
+                toleratable
+            )
         }
     }
 
@@ -299,9 +337,21 @@ export default class StringReader {
         const start = this.cursor
         const end = this.cursor + 1
         if (!this.canRead()) {
-            throw new ParsingError({ start, end }, `expected ‘${c}’ but got nothing`)
+            throw new ParsingError(
+                { start, end },
+                locale('expected-got',
+                    locale('meta.quote', c),
+                    locale('nothing')
+                )
+            )
         } else if (this.peek() !== c) {
-            throw new ParsingError({ start, end }, `expected ‘${c}’ but got ‘${this.peek()}’`)
+            throw new ParsingError(
+                { start, end },
+                locale('expected-got',
+                    locale('meta.quote', c),
+                    locale('meta.quote', this.peek())
+                )
+            )
         }
         return this
     }

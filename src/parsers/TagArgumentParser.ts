@@ -5,6 +5,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class TagArgumentParser extends ArgumentParser<string> {
     readonly identity = 'tag'
@@ -35,13 +36,16 @@ export default class TagArgumentParser extends ArgumentParser<string> {
         if (!value) {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
-                'expected a tag but got nothing',
+                locale('expected-got',
+                    locale('tag'),
+                    locale('nothing')
+                ),
                 false
             ))
         } else if (ctx.config.lint.strictTagCheck && !Object.keys(category).includes(value)) {
             ans.errors.push(new ParsingError(
                 { start, end: start + value.length },
-                `undefined tag ‘${value}’`,
+                locale('undefined-tag', locale('meta.quote', value)),
                 undefined,
                 DiagnosticSeverity.Warning
             ))

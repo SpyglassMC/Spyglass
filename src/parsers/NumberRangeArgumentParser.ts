@@ -4,6 +4,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { locale } from '../locales/Locales'
 
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
     identity = 'numberRange'
@@ -33,7 +34,10 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         if (!reader.canRead()) {
             ans.errors.push(new ParsingError(
                 { start: reader.cursor, end: reader.cursor + 1 },
-                'expected a number range but got nothing',
+                locale('expected-got',
+                    locale('number-range'),
+                    locale('nothing')
+                ),
                 false
             ))
         } else {
@@ -57,11 +61,11 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             // Check values.
             if (!this.isCycle && min !== undefined && max !== undefined && min > max) {
                 ans.errors.push(
-                    new ParsingError({ start, end: reader.cursor }, `the minimum value ${min} is larger than the maximum value ${max}`)
+                    new ParsingError({ start, end: reader.cursor }, locale('number-range.min>max', min, max))
                 )
             } else if (min === undefined && max === undefined) {
                 ans.errors.push(
-                    new ParsingError({ start, end: reader.cursor }, 'expected either a minimum value or a maximum value')
+                    new ParsingError({ start, end: reader.cursor }, locale('number-range.missing-min-and-max'))
                 )
             }
             ans.data = new NumberRange(this.type, min, max)

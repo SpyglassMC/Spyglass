@@ -5,6 +5,7 @@ import LiteralArgumentParser from './LiteralArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class QuotableLiteralArgumentParser extends LiteralArgumentParser {
     constructor(
@@ -44,13 +45,19 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
             if (value.length === 0) {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + 1 },
-                    `expected ${arrayToMessage(this.literals, true, 'or')} but got nothing`,
+                    locale('expected-got',
+                        arrayToMessage(this.literals, true, 'or'),
+                        locale('nothing')
+                    ),
                     false
                 )]
             } else if (!this.additionalLiterals && !this.literals.includes(value)) {
                 ans.errors = [new ParsingError(
                     { start: start, end: start + value.length },
-                    `expected ${arrayToMessage(this.literals, true, 'or')} but got ‘${value}’`,
+                    locale('expected-got',
+                        arrayToMessage(this.literals, true, 'or'),
+                        locale('meta.quote', value)
+                    ),
                     false,
                     this.diagnosticSeverity
                 )]

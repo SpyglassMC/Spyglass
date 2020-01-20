@@ -9,6 +9,7 @@ import NbtSchemaWalker from '../utils/NbtSchemaWalker'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     readonly identity = 'nbtPath'
@@ -40,7 +41,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             }
         }
 
-        this.parseSpecifiedTypes(ans, reader, ctx, walker, ['a compound filter', 'a key', 'an index'], false)
+        this.parseSpecifiedTypes(ans, reader, ctx, walker, ['filter', 'key', 'index'], false)
         return ans
     }
 
@@ -49,15 +50,12 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
      */
     private parseSpecifiedTypes(
         ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtSchemaWalker | undefined,
-        types: ('a key' | 'a compound filter' | 'an index')[], allowEmpty: boolean
+        types: ('key' | 'filter' | 'index')[], allowEmpty: boolean
     ) {
         let subWalker: NbtSchemaWalker | undefined = undefined
 
         //#region Completions
-        // console.log(types)
-        // console.log(walker && NbtSchemaWalker.isCompoundNode(walker.read()))
-        // console.log(walker && NbtSchemaWalker.isCompoundNode(walker.read()))
-        if (types.includes('a key') && walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
+        if (types.includes('key') && walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
             if (reader.cursor === ctx.cursor) {
                 const node = walker.read() as NbtCompoundSchemaNode
                 const children = node.children /* istanbul ignore next */ || {}
@@ -67,33 +65,33 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         }
         //#endregion
 
-        if (types.includes('a key') && this.canParseKey(reader)) {
+        if (types.includes('key') && this.canParseKey(reader)) {
             if (walker) {
                 if (NbtSchemaWalker.isCompoundNode(walker.read())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
                         { start: reader.cursor, end: reader.cursor + 1 },
-                        'keys are only used for compound tags',
+                        locale('unexpected-nbt-path-key'),
                         true, DiagnosticSeverity.Warning
                     ))
                 }
             }
             this.parseKey(ans, reader, ctx, subWalker)
-        } else if (types.includes('a compound filter') && this.canParseCompoundFilter(reader)) {
+        } else if (types.includes('filter') && this.canParseCompoundFilter(reader)) {
             if (walker) {
                 if (NbtSchemaWalker.isCompoundNode(walker.read())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
                         { start: reader.cursor, end: reader.cursor + 1 },
-                        'compound filters are only used for compound tags',
+                        locale('unexpected-nbt-path-filter'),
                         true, DiagnosticSeverity.Warning
                     ))
                 }
             }
             this.parseCompoundFilter(ans, reader, ctx, subWalker)
-        } else if (types.includes('an index') && this.canParseIndex(reader)) {
+        } else if (types.includes('index') && this.canParseIndex(reader)) {
             if (walker) {
                 if ((
                     NbtSchemaWalker.isListNode(walker.read()) ||
@@ -105,7 +103,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 } else {
                     ans.errors.push(new ParsingError(
                         { start: reader.cursor, end: reader.cursor + 1 },
-                        'indexes are only used for lists/arrays tags',
+                        locale('unexpected-nbt-path-index'),
                         true, DiagnosticSeverity.Warning
                     ))
                 }
@@ -115,7 +113,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             if (!allowEmpty) {
                 ans.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
-                    `expected ${arrayToMessage(types, false, 'or')} but got nothing`
+                    locale('expected-got',
+                        arrayToMessage(types.map(v => locale(`nbt-path.${v}`)), false, 'or'),
+                        locale('nothing')
+                    )
                 ))
             }
         }
@@ -152,7 +153,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 if (!node.additionalChildren) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        `unknown key ‘${key}’`,
+                        locale('unknown-key', locale('meta.quote', key)),
                         true, DiagnosticSeverity.Warning
                     ))
                 }
@@ -161,9 +162,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['a key', 'an index'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['key', 'index'], false)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['a compound filter', 'an index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['filter', 'index'], true)
         }
     }
 
@@ -176,7 +177,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, walker, ['a key'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, walker, ['key'], false)
         }
     }
 
@@ -196,7 +197,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                     subWalker = undefined
                     ans.errors.push(new ParsingError(
                         { start: reader.cursor, end: reader.cursor + 1 },
-                        "the current tag doesn't have extra items",
+                        locale('unexpected-nbt-path-sub'),
                         true, DiagnosticSeverity.Warning
                     ))
                 }
@@ -216,9 +217,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         if (this.canParseSep(reader)) {
             checkSchema()
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['a key', 'an index'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['key', 'index'], false)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['an index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, subWalker, ['index'], true)
         }
     }
 

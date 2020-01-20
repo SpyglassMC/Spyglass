@@ -47,9 +47,6 @@ export default class NbtSchemaWalker {
 
     private goEither(type: 'filePath' | 'anchorPath', rel: string) {
         if (type === 'filePath') {
-            // if (rel.startsWith('./')) {
-            //     rel = rel.slice(2)
-            // }
             if (rel !== this.filePath) {
                 this.cache = undefined
             }
@@ -339,21 +336,6 @@ export default class NbtSchemaWalker {
             (node as NbtNoPropertySchemaNode).type === 'int_array' ||
             (node as NbtNoPropertySchemaNode).type === 'long_array'
         )
-    }
-
-    /**
-     * Get a human-readable name for a NBT tag type.
-     * @example
-     * getString('byte') => 'a byte tag'
-     * getString('int_array') => 'an int array tag'
-     * @param type The type of the NBT tag.
-     */
-    public static getString(type: 'no-nbt' | NbtTagTypeName) {
-        let article: 'a' | 'an' = 'a'
-        if (type[0] === 'i') {
-            article = 'an'
-        }
-        return `${article} ${type.replace(/_/g, ' ')} tag`
     }
 }
 
