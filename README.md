@@ -27,13 +27,25 @@ You can install DHP (MCF) from the VSCode Marketplace: [![VSCode Marketplace](ht
 
 Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-language-server` in your VSCode.
 
-# Workspace Support
+# Features
+
+## Workspace Support
 
 Please use the root folder of your datapack (where the `data` folder and the `pack.mcmeta` file are) as a root folder of your workspace, so that DHP can provide you with the best functionalities.
 
-Moreover, DHP fully supports VSCode's [multi-root workspace feature](https://code.visualstudio.com/docs/editor/multi-root-workspaces).
+Moreover, DHP fully supports VSCode's [multi-root workspace feature](https://code.visualstudio.com/docs/editor/multi-root-workspaces). Every root which contains a `data` folder and `pack.mcmeta` file will be considered as a datapack and will be used for computing completions.
 
-# Features
+## Multiple Language Support
+
+DHP supports multiple languages. Currently these languages are available:
+
+| Language | VSCode Language ID | Contributor |
+| ---- | ---- | ----------- |
+| English | `en` | [SPGoding](https://github.com/SPGoding) |
+| Japanese | `ja` | [ChenCMD](https://github.com/ChenCMD) |
+| Chinese (Simplified) | `zh-cn` | [SPGoding](https://github.com/SPGoding) |
+
+If you'd like to help us translate this project into other languages, it would be really appreciated! See [CONTRIBUTING.md](https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md) for more information!
 
 ## Semantic Highlighting
 
