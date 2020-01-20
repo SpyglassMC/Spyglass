@@ -11,7 +11,7 @@ import { locale } from '../locales/Locales'
  * @returns Formatted message.
  */
 export function formatMessage(msg: string) {
-    return `${msg[0].toUpperCase()}${msg.slice(1)}.`
+    return `${msg[0].toUpperCase()}${msg.slice(1)}${locale('meta.period')}`
 }
 
 /**
