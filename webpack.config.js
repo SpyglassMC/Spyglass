@@ -2,8 +2,6 @@
 
 'use strict'
 
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-
 const path = require('path')
 
 /**
@@ -35,11 +33,12 @@ module.exports = {
             {
                 test: /\.ts$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader'
+                use: [
+                    {
+                        loader: 'ts-loader'
+                    }
+                ]
             }
         ]
-    },
-    plugins: [
-        new ForkTsCheckerWebpackPlugin(),
-    ]
+    }
 }
