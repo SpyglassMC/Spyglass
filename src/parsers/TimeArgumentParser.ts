@@ -5,6 +5,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Time from '../types/Time'
+import { locale } from '../locales/Locales'
 
 export default class TimeArgumentParser extends ArgumentParser<Time> {
     static readonly Units = ['d', 's', 't']
@@ -39,7 +40,10 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
             } else {
                 ans.errors.push(new ParsingError(
                     { start: reader.cursor - 1, end: reader.cursor },
-                    `expected a time unit but got ‘${unit}’`
+                    locale('expected-got',
+                        locale('time-unit'),
+                        locale('meta.quote', unit)
+                    )
                 ))
             }
         }

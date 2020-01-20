@@ -491,11 +491,5 @@ describe('NbtSchemaWalker Tests', () => {
             assert(actualF === false)
             assert(actualT === true)
         })
-        it('getString() should return correctly', () => {
-            const actual1 = NbtSchemaWalker.getString('byte')
-            const actual2 = NbtSchemaWalker.getString('int_array')
-            assert(actual1 === 'a byte tag')
-            assert(actual2 === 'an int array tag')
-        })
     })
 })

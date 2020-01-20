@@ -3,6 +3,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
+import { locale } from '../locales/Locales'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     readonly identity = 'string'
@@ -38,7 +39,10 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
             }
         } else {
             ans.errors = [
-                new ParsingError({ start, end: start + 1 }, 'expected a string but got nothing')
+                new ParsingError({ start, end: start + 1 }, locale('expected-got',
+                    locale('string'),
+                    locale('nothing')
+                ))
             ]
         }
         return ans

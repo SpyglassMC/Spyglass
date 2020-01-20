@@ -5,6 +5,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import range from 'python-range'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class ItemSlotArgumentParser extends ArgumentParser<string> {
     static readonly Category = {
@@ -47,8 +48,11 @@ export default class ItemSlotArgumentParser extends ArgumentParser<string> {
                 ans.data = category
                 if (category !== 'weapon') {
                     ans.errors.push(new ParsingError(
-                        { start: reader.cursor, end: reader.cursor + 1 }, 
-                        `expected ‘${ItemSlotArgumentParser.Sep}’ but got ‘${reader.peek()}’`
+                        { start: reader.cursor, end: reader.cursor + 1 },
+                        locale('expected-got',
+                            locale('meta.quote', ItemSlotArgumentParser.Sep),
+                            locale('meta.quote', reader.peek())
+                        )
                     ))
                 }
             }

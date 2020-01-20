@@ -7,6 +7,7 @@ import StringReader from '../utils/StringReader'
 import MapAbstractParser from './MapAbstractParser'
 import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
+import { locale } from '../locales/Locales'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {
     readonly identity = 'block'
@@ -59,7 +60,10 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                 },
                 (ans, reader, ctx, key, range) => {
                     if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
-                        ans.errors.push(new ParsingError(range, `duplicate key ‘${key}’`))
+                        ans.errors.push(new ParsingError(
+                            range,
+                            locale('duplicate-key', key)
+                        ))
                     }
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
                     ans.data.states[key] = result.data

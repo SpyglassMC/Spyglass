@@ -4,6 +4,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { InsertTextFormat, CompletionItemKind } from 'vscode-languageserver'
 import ParsingContext from '../types/ParsingContext'
+import { locale } from '../locales/Locales'
 
 export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
     readonly identity = 'codeSnippet'
@@ -39,7 +40,7 @@ export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
         //#region Errors.
         ans.errors = [new ParsingError(
             { start: reader.cursor, end: reader.cursor + 1 },
-            'code snippets are invalid for the game',
+            locale('code-snippets-invalid-for-game'),
             false
         )]
         //#endregion

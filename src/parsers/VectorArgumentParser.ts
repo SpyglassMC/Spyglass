@@ -4,6 +4,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector, { VectorElement } from '../types/Vector'
+import { locale } from '../locales/Locales'
 
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static readonly LocalSymbol = '^'
@@ -69,20 +70,26 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 if (hasLocal && hasNonLocal) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        'cannot mix local coordinates and non-local coordinates together'
+                        locale('mixed-coordinates')
                     ))
                 }
             } else {
                 ans.errors.push(new ParsingError(
                     { start, end: start + 1 },
-                    `expected a vector but got ‘${reader.peek()}’`,
+                    locale('expected-got',
+                        locale('vector'),
+                        locale('meta.quote', reader.peek())
+                    ),
                     false
                 ))
             }
         } else {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
-                'expected a vector but got nothing',
+                locale('expected-got',
+                    locale('vector'),
+                    locale('nothing')
+                ),
                 false
             ))
             if (cursor === start) {
@@ -124,13 +131,19 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 if (min !== undefined && !(num >= min)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        `expected a number larger than or equal to ${min} but got ${num}`
+                        locale('expected-got',
+                            locale('number.>=', min),
+                            num
+                        )
                     ))
                 }
                 if (max !== undefined && !(num <= max)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        `expected a number smaller than or equal to ${max} but got ${num}`
+                        locale('expected-got',
+                            locale('number.<=', max),
+                            num
+                        )
                     ))
                 }
             } catch (p) {
@@ -141,12 +154,16 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         if (!this.allowLocal && ans.data.type === 'local') {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `local coordinate ‘${VectorArgumentParser.LocalSymbol}${ans.data.value}’ is not allowed`
+                locale('unexpected-local-coordinate',
+                    locale('meta.quote', `${VectorArgumentParser.LocalSymbol}${ans.data.value}`)
+                )
             ))
         } else if (!this.allowRelative && ans.data.type === 'relative') {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `relative coordinate ‘${VectorArgumentParser.RelativeSymbol}${ans.data.value}’ is not allowed`
+                locale('unexpected-relative-coordinate',
+                    locale('meta.quote', `${VectorArgumentParser.RelativeSymbol}${ans.data.value}`)
+                )
             ))
         }
 

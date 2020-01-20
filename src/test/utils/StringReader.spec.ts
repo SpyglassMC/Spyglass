@@ -127,7 +127,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/expected a number but got ‘f’ at beginning/))
+                assert(message.match(/expected a number but got ‘f’/))
                 assert(range.start === 0)
                 assert(range.end === 1)
                 assert(tolerable === false)

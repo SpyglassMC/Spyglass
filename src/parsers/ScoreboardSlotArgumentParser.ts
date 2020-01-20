@@ -3,6 +3,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 export default class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static readonly Category = ['belowName', 'list', 'sidebar']
@@ -31,7 +32,7 @@ export default class ScoreboardSlotArgumentParser extends ArgumentParser<string>
             if (category !== 'sidebar') {
                 ans.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
-                    'only ‘sidebar’ has sub slots'
+                    locale('unexpected-scoreboard-sub-slot')
                 ))
                 ans.data = category
             } else {

@@ -8,19 +8,26 @@ const Locales: {
     en: AmericanEnglish
 }
 
-let language: string
+let language = 'en'
 
+/* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
     let value = Locales[language][key] || Locales.en[key]
+    
+    if (!value) {
+        console.error(`Unknown locale key ‘${key}’`)
+        value = ''
+    }
 
-    value = value.replace(/%\d+%/, match => {
+    value = value.replace(/%\d+%/g, match => {
         const index = parseInt(match.slice(1, -1))
-        return params[index] || match
+        return params[index] !== undefined ? params[index] : match
     })
 
     return value
 }
 
+/* istanbul ignore next */
 export async function loadLocale() {
     if (!language) {
         language = 'en'

@@ -8,6 +8,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
+import { locale } from '../locales/Locales'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     readonly identity = 'namespacedID'
@@ -86,7 +87,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             if (!this.allowTag) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
-                    'tags are not allowed here'
+                    locale('unexpected-datapack-tag')
                 ))
             }
         }
@@ -147,7 +148,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 if (this.isPredicate) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        'default namespace cannot be omitted here'
+                        locale('unexpected-omitted-default-namespace')
                     ))
                 }
             }
@@ -173,7 +174,13 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             ans.data = new Identity(namespace, paths, isTag)
             stringID = ans.data.toString()
         } else {
-            ans.errors.push(new ParsingError({ start, end: start + 1 }, 'expected a namespaced ID but got nothing', false))
+            ans.errors.push(new ParsingError({ start, end: start + 1 },
+                locale('expected-got',
+                    locale('id'),
+                    locale('nothing')
+                ),
+                false
+            ))
         }
         //#endregion
 
@@ -196,7 +203,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
-                            `faild to resolve namespaced ID ‘${stringID}’ in registry ‘${this.type}’`,
+                            locale('failed-to-resolve-registry-id', this.type, stringID),
                             undefined,
                             DiagnosticSeverity.Warning
                         ))
@@ -305,7 +312,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
             ans.errors.push(new ParsingError(
                 { start, end },
-                'found non [a-z0-9/._-] character(s)'
+                locale('unexpected-character')
             ))
         }
         return value
@@ -340,7 +347,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         if (this.shouldStrictCheck(`$${type}`, config, namespace) && !canResolve) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                `faild to resolve namespaced ID ‘${stringID}’ in cache category ‘${type}’`,
+                locale('failed-to-resolve-cache-id', type, stringID),
                 undefined,
                 DiagnosticSeverity.Warning
             ))

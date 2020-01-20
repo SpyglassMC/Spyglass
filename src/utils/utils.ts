@@ -3,6 +3,7 @@ import { CompletionItem } from 'vscode-languageserver'
 import { ToLintedString } from '../types/Lintable'
 import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
+import { locale } from '../locales/Locales'
 
 /**
  * Format input message.
@@ -34,13 +35,13 @@ export function arrayToMessage(arr: string | string[], quoted = true, conjunctio
     const suffix = quoted ? '’' : ''
     switch (arr.length) {
         case 0:
-            return 'nothing'
+            return locale('nothing')
         case 1:
             return `${prefix}${arr[0]}${suffix}`
         case 2:
-            return `${prefix}${arr[0]}${suffix} ${conjunction} ${prefix}${arr[1]}${suffix}`
+            return `${prefix}${arr[0]}${suffix} ${locale(conjunction)} ${prefix}${arr[1]}${suffix}`
         default:
-            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix}, ${conjunction} ${prefix}${arr.slice(-1)[0]}${suffix}`
+            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix}, ${locale(conjunction)} ${prefix}${arr.slice(-1)[0]}${suffix}`
     }
 }
 

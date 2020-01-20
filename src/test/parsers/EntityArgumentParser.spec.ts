@@ -85,7 +85,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 0, end: 17 },
-                        '‘12345678901234567’ exceeds the max length of an entity name, which is 16'
+                        '‘12345678901234567’ exceeds the max length of an entity, which is 16'
                     )
                 ])
             })
@@ -96,7 +96,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 0, end: 41 },
-                        '‘12345678901234567890123456789012345678901’ exceeds the max length of a score holder name, which is 40'
+                        '‘12345678901234567890123456789012345678901’ exceeds the max length of a score holder, which is 40'
                     )
                 ])
             })
