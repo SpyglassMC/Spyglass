@@ -62,7 +62,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                     if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
                         ans.errors.push(new ParsingError(
                             range,
-                            locale('duplicate-key', key)
+                            locale('duplicate-key', locale('meta.quote', key))
                         ))
                     }
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)

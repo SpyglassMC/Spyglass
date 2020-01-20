@@ -334,7 +334,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             result.errors.push(
                                 new ParsingError(
                                     { start, end: start + key.length },
-                                    locale('duplicate-key', key),
+                                    locale('duplicate-key', locale('meta.quote', key)),
                                     true,
                                     DiagnosticSeverity.Warning
                                 )
@@ -444,7 +444,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = getNbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, locale('unexpected-nbt-array-type', type))
+                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, locale('unexpected-nbt-array-type', locale('meta.quote', type)))
             }
             reader
                 .expect(';')
