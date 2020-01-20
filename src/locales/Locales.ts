@@ -5,15 +5,16 @@ const Locales: {
     en: Locale,
     [key: string]: Locale
 } = {
+    '': AmericanEnglish,
     en: AmericanEnglish
 }
 
-let language = 'en'
+let language = ''
 
 /* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
     let value = Locales[language][key] || Locales.en[key]
-    
+
     if (!value) {
         console.error(`Unknown locale key ‘${key}’`)
         value = ''
