@@ -140,7 +140,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         } else {
             ans.errors.push(new ParsingError(
                 { start: start + 1, end: start + 2 },
-                locale('unexpected-selector-variable', variable)
+                locale('unexpected-selector-variable', locale('meta.quote', variable))
             ))
         }
         /// Arguments

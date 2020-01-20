@@ -238,7 +238,7 @@ export default class StringReader {
                     this.cursor = start
                     throw new ParsingError(
                         { start: errStart, end: errStart + 1 },
-                        locale('unexpected-escape', c)
+                        locale('unexpected-escape', locale('meta.quote', c))
                     )
                 }
             } else {
@@ -265,7 +265,7 @@ export default class StringReader {
         throw new ParsingError(
             { start: errStart, end: errStart + 1 },
             locale('expected-got',
-                locale('ending-quote', terminator),
+                locale('ending-quote', locale('meta.quote', terminator)),
                 locale('nothing')
             )
         )
