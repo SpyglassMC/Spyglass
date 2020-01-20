@@ -4,18 +4,13 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment, FileSystemWatcher } from 'vscode'
 
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, SynchronizeOptions } from 'vscode-languageclient'
 
 let client: LanguageClient
-const item = window.createStatusBarItem(StatusBarAlignment.Left)
 
 export function activate(context: ExtensionContext) {
-    item.text = '$(sync) Initializing DHP features...'
-    item.tooltip = 'This may take longer for large projects.'
-    item.show()
-
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(
         join('dist', 'server.js')
@@ -27,7 +22,10 @@ export function activate(context: ExtensionContext) {
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        run: { module: serverModule, transport: TransportKind.ipc },
+        run: {
+            module: serverModule,
+            transport: TransportKind.ipc
+        },
         debug: {
             module: serverModule,
             transport: TransportKind.ipc,
@@ -39,8 +37,8 @@ export function activate(context: ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         // Register the server for mcfunction documents
         documentSelector: [
-            { scheme: 'file', language: 'mcfunction' },
-            { scheme: 'file', language: 'mcfunction-snapshot' }
+            { language: 'mcfunction' },
+            { language: 'mcfunction-snapshot' }
         ],
         synchronize: {
             fileEvents: []
@@ -51,10 +49,13 @@ export function activate(context: ExtensionContext) {
     }
 
     if (workspace.workspaceFolders) {
-        (clientOptions.synchronize as any).fileEvents.push(
+        ((clientOptions.synchronize as SynchronizeOptions)
+            .fileEvents as FileSystemWatcher[]
+        ).push(
             workspace.createFileSystemWatcher(
                 new RelativePattern(workspace.workspaceFolders[0], 'data/**/*')
-            ))
+            )
+        )
     }
 
     // Create the language client and start the client.
@@ -67,15 +68,9 @@ export function activate(context: ExtensionContext) {
 
     // Start the client. This will also launch the server
     client.start()
-
-    client.onReady().then(() => {
-        item.text = '$(check) Initialized DHP features.'
-        item.tooltip = 'Enjoy!'
-    })
 }
 
 export function deactivate(): Thenable<void> | undefined {
-    item.dispose()
     if (!client) {
         return undefined
     }

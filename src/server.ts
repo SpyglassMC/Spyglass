@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
-import { URI } from 'vscode-uri'
+import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, WorkspaceFolder, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, getFromCachedFileTree, setForCachedFileTree, walkInCachedFileTree, delFromCachedFileTree } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
@@ -11,20 +11,17 @@ import { Files } from 'vscode-languageserver'
 import Identity from './types/Identity'
 import { constructContext } from './types/ParsingContext'
 import { loadLocale, locale } from './locales/Locales'
+import FunctionInfo from './types/FunctionInfo'
 
 const connection = createConnection(ProposedFeatures.all)
-const linesOfRel = new Map<string, Line[]>()
-const stringsOfRel = new Map<string, string[]>()
-const lineBreakOfRel = new Map<string, '\n' | '\r\n'>()
-const versionOfRel = new Map<string, number | null>()
-const configOfRel = new Map<string, Config>()
+const uris = new Map<string, Uri>()
+const uriInformation = new Map<Uri, FunctionInfo>()
+const roots: Uri[] = []
 
 let isInitialized = false
+
+let cacheUri: Uri | undefined
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
-let workspaceFolder: WorkspaceFolder | undefined
-let workspaceFolderPath: string | undefined
-let cachePath: string | undefined
-let dataPath: string | undefined
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
     await loadLocale()
@@ -32,34 +29,31 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     const completionTriggerCharacters = [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']
     const completionCommitCharacters = [...completionTriggerCharacters, '}', ']']
     if (workspaceFolders) {
-        for (const { uri } of workspaceFolders) {
-            const abs = Files.uriToFilePath(uri) as string
-            const legacyDotPath = path.join(abs, '.datapack')
+        for (const { uri: uriString } of workspaceFolders) {
+            const uri = getUri(uriString)
+            roots.push(uri)
+            connection.console.info(`WorkspaceFolderUri = ${uri.toString()}`)
+            // Show messages for legacy cache file which was saved in the root of your workspace. 
+            const legacyDotPath = path.join(uri.fsPath, '.datapack')
             if (await fs.pathExists(legacyDotPath)) {
                 connection.window.showInformationMessage(locale('server.remove-cache-file'))
             }
         }
 
-        workspaceFolder = workspaceFolders[0]
-        workspaceFolderPath = Files.uriToFilePath(workspaceFolder.uri) as string
-        connection.console.info(`workspaceFolderPath = ${workspaceFolderPath}`)
-
-        cachePath = path.join(storagePath, 'cache.json')
-        dataPath = path.join(workspaceFolderPath as string, 'data')
+        cacheUri = getUri(path.join(storagePath, './cache.json'))
 
         connection.console.info(`storagePath = ${storagePath}`)
-        connection.console.info(`cachePath = ${cachePath}`)
-        connection.console.info(`dataPath = ${dataPath}`)
+        connection.console.info(`cacheUri = ${cacheUri}`)
         if (!fs.pathExistsSync(storagePath)) {
             fs.mkdirpSync(storagePath)
         }
-        if (fs.existsSync(cachePath)) {
-            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+        if (fs.existsSync(cacheUri.fsPath)) {
+            cacheFile = await fs.readJson(cacheUri.fsPath, { encoding: 'utf8' })
             if (cacheFile.version !== LatestCacheFileVersion) {
                 cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
             }
         }
-        await updateCacheFile(cacheFile, workspaceFolderPath as string)
+        await updateCacheFile(cacheFile, roots)
         saveCacheFile()
 
         isInitialized = true
@@ -115,44 +109,56 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 setInterval(saveCacheFile, 30_000)
 
 async function saveCacheFile() {
-    if (cachePath) {
-        await fs.writeFile(cachePath as string, JSON.stringify(cacheFile), { encoding: 'utf8' })
+    if (cacheUri) {
+        await fs.writeFile(cacheUri.fsPath, JSON.stringify(cacheFile), { encoding: 'utf8' })
     }
 }
 
-function getRelFromUri(uri: string) {
-    const abs = Files.uriToFilePath(uri) as string
-    if (workspaceFolderPath) {
-        return path.relative(workspaceFolderPath, abs)
+function getUri(str: string) {
+    const value = uris.get(str)
+    if (value) {
+        return value
+    } else {
+        const ans = Uri.parse(str)
+        uris.set(str, ans)
+        return ans
     }
-    return abs
 }
 
-function getAbsFromRel(rel: string) {
-    if (workspaceFolderPath) {
-        return path.join(workspaceFolderPath, rel)
-    }
-    return rel
-}
+// function getRelFromUri(uri: string) {
+//     const abs = Files.uriToFilePath(uri) as string
+//     if (workspaceFolderPath) {
+//         return path.relative(workspaceFolderPath, abs)
+//     }
+//     return abs
+// }
 
-function getUriFromRel(rel: string) {
-    return URI.file(getAbsFromRel(rel)).toString()
-}
+// function getAbsFromRel(rel: string) {
+//     if (workspaceFolderPath) {
+//         return path.join(workspaceFolderPath, rel)
+//     }
+//     return rel
+// }
+
+// function getUriFromRel(rel: string) {
+//     return URI.file(getAbsFromRel(rel)).toString()
+// }
 
 const cacheFileOperations = {
     //#region functions
     // MODIFIED & DELETED: Remove all cache positions with the specific rel.
     // MODIFIED: Combine all caches of all lines.
     // DELETED: Remove from functions cache category.
-    removeCachePositionsWith: (rel: string) => {
-        removeCachePosition(cacheFile.cache, rel)
+    removeCachePositionsWith: (uri: Uri) => {
+        removeCachePosition(cacheFile.cache, uri)
     },
-    combineCacheOfLines: async (rel: string, abs: string) => {
-        let lines = linesOfRel.get(rel)
+    combineCacheOfLines: async (uri: Uri) => {
+        const info = uriInformation.get(uri)
+        let lines = info ? info.lines : undefined
         if (!lines) {
             lines = []
-            const strings = (await fs.readFile(abs, { encoding: 'utf8' })).split(/\r?\n/)
-            const config = await getConfigFromRel(rel)
+            const strings = (await fs.readFile(uri.fsPath, { encoding: 'utf8' })).split(/\r?\n/)
+            const config = await getConfig(uri)
             for (const string of strings) {
                 await parseString(string, lines, config)
             }
@@ -160,7 +166,7 @@ const cacheFileOperations = {
         const cacheOfLines: ClientCache = {}
         let i = 0
         for (const line of lines) {
-            combineCache(cacheOfLines, line.cache, { rel, line: i })
+            combineCache(cacheOfLines, line.cache, { uri: uri.toString(), line: i })
             i++
         }
         combineCache(cacheFile.cache, cacheOfLines)
@@ -185,17 +191,17 @@ const cacheFileOperations = {
         // console.log(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
     },
-    fileModified: async (rel: string, abs: string, type: CacheKey) => {
+    fileModified: async (uri: Uri, type: CacheKey) => {
         // console.log(`Modified ${rel} ${type}`)
         if (type === 'functions') {
-            cacheFileOperations.removeCachePositionsWith(rel)
-            await cacheFileOperations.combineCacheOfLines(rel, abs)
+            cacheFileOperations.removeCachePositionsWith(uri)
+            await cacheFileOperations.combineCacheOfLines(uri)
         }
     },
-    fileDeleted: (rel: string, type: CacheKey, id: Identity) => {
+    fileDeleted: (uri: Uri, type: CacheKey, id: Identity) => {
         // console.log(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
-            cacheFileOperations.removeCachePositionsWith(rel)
+            cacheFileOperations.removeCachePositionsWith(uri)
         }
         cacheFileOperations.removeDefault(id.toString(), type)
     }
@@ -217,7 +223,7 @@ async function walk(workspaceFolderPath: string, abs: string, cb: (dir: string, 
     )
 }
 
-async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string) {
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[]) {
     await walkInCachedFileTree(cacheFile.files, async rel => {
         // console.log(`Walked ${rel}`)
         const abs = path.join(workspaceFolderPath, rel)
@@ -241,9 +247,9 @@ async function updateCacheFile(cacheFile: CacheFile, workspaceFolderPath: string
 
     const promises: Promise<void>[] = []
     const addedFiles: [string, string, CacheKey][] = []
-    const namespaces = fs.pathExistsSync(dataPath as string) ? await fs.readdir(dataPath as string) : []
+    const namespaces = fs.pathExistsSync(dataUri as string) ? await fs.readdir(dataUri as string) : []
     for (const namespace of namespaces) {
-        const namespacePath = path.join(dataPath as string, namespace)
+        const namespacePath = path.join(dataUri as string, namespace)
         const advancementsPath = path.join(namespacePath, 'advancements')
         const functionsPath = path.join(namespacePath, 'functions')
         const lootTablesPath = path.join(namespacePath, 'loot_tables')
@@ -306,8 +312,8 @@ async function parseString(string: string, lines: Line[], config: Config) {
     }
 }
 
-async function updateDiagnostics(rel: string, uri: string) {
-    const lines = await getLinesFromRel(rel)
+async function updateDiagnostics(uri: Uri) {
+    const lines = (uriInformation.get(uri) as FunctionInfo).lines
     const diagnostics = []
     let lineNumber = 0
     for (const line of lines) {
@@ -316,18 +322,19 @@ async function updateDiagnostics(rel: string, uri: string) {
         }
         lineNumber++
     }
-    connection.sendDiagnostics({ uri, diagnostics })
+    connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
 }
 
-async function getConfigFromRel(rel: string): Promise<Config> {
-    let ans = configOfRel.get(rel)
+async function getConfig(uri: Uri): Promise<Config> {
+    const info = uriInformation.get(uri) as FunctionInfo
+    let ans = info.config
     if (!ans) {
         if (isInitialized) {
             ans = await connection.workspace.getConfiguration({
-                scopeUri: getUriFromRel(rel),
+                scopeUri: uri.toString(),
                 section: 'datapackLanguageServer'
             }) as Config
-            configOfRel.set(rel, ans)
+            info.config = ans
         } else {
             return VanillaConfig
         }
@@ -335,36 +342,36 @@ async function getConfigFromRel(rel: string): Promise<Config> {
     return ans
 }
 
-async function getLinesFromRel(rel: string): Promise<Line[]> {
-    let ans = linesOfRel.get(rel)
+async function getLines(uri: Uri): Promise<Line[]> {
+    const info = uriInformation.get(uri) as FunctionInfo
+    let ans = info.lines
     if (!ans) {
         ans = []
-        const config = await getConfigFromRel(rel)
-        const strings = stringsOfRel.get(rel) as string[]
+        const config = await getConfig(uri)
+        const strings = info.strings
         for (const string of strings) {
             await parseString(string, ans, config)
         }
-        linesOfRel.set(rel, ans)
+        info.lines = ans
     }
     return ans
 }
 
 connection.onDidOpenTextDocument(({ textDocument: { text, uri, version } }) => {
-    const rel = getRelFromUri(uri)
     if (text.indexOf('\r\n') !== -1) {
-        lineBreakOfRel.set(rel, '\r\n')
+        lineBreakOfUri.set(uri, '\r\n')
     } else {
-        lineBreakOfRel.set(rel, '\n')
+        lineBreakOfUri.set(uri, '\n')
     }
-    stringsOfRel.set(rel, text.split(/\r?\n/))
-    versionOfRel.set(rel, version)
-    updateDiagnostics(rel, uri)
+    stringsOfUri.set(uri, text.split(/\r?\n/))
+    versionOfUri.set(uri, version)
+    updateDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
     // connection.console.log(`BC: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
-    const config = await getConfigFromRel(rel)
-    versionOfRel.set(rel, version)
+    const config = await getConfig(rel)
+    versionOfUri.set(rel, version)
 
     for (const change of contentChanges) {
         const { text: changeText } = change
@@ -373,16 +380,16 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
                 start: { line: startLine, character: startChar },
                 end: { line: endLine, character: endChar }
             } = (change as any).range as Range
-            const strings = stringsOfRel.get(rel) as string[]
-            const lines = await getLinesFromRel(rel)
+            const strings = stringsOfUri.get(rel) as string[]
+            const lines = await getLines(rel)
 
             if (changeText.indexOf('\r\n') !== -1) {
-                lineBreakOfRel.set(rel, '\r\n')
+                lineBreakOfUri.set(rel, '\r\n')
             }
 
             const stringAfterStartLine = `${strings[startLine].slice(0, startChar)
                 }${changeText
-                }${strings.slice(endLine).join(lineBreakOfRel.get(rel)).slice(endChar)}`
+                }${strings.slice(endLine).join(lineBreakOfUri.get(rel)).slice(endChar)}`
             const stringsAfterStartLine = stringAfterStartLine.split(/\r?\n/)
 
             strings.splice(startLine)
@@ -393,8 +400,8 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
                 await parseString(string, lines, config)
             }
         } else {
-            const strings = stringsOfRel.get(rel) as string[]
-            const lines = await getLinesFromRel(rel)
+            const strings = stringsOfUri.get(rel) as string[]
+            const lines = await getLines(rel)
 
             lines.splice(0)
             for (const string of strings) {
@@ -411,11 +418,11 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    linesOfRel.delete(rel)
-    stringsOfRel.delete(rel)
-    lineBreakOfRel.delete(rel)
-    versionOfRel.delete(rel)
-    configOfRel.delete(rel)
+    linesOfUri.delete(rel)
+    stringsOfUri.delete(rel)
+    lineBreakOfUri.delete(rel)
+    versionOfUri.delete(rel)
+    configOfUri.delete(rel)
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
@@ -505,8 +512,8 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
 
 connection.onCompletion(async ({ textDocument: { uri }, position: { line, character: char } }) => {
     const rel = getRelFromUri(uri)
-    const config = await getConfigFromRel(rel)
-    const strings = stringsOfRel.get(rel) as string[]
+    const config = await getConfig(rel)
+    const strings = stringsOfUri.get(rel) as string[]
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[line])
     const { data } = parser.parse(reader, await constructContext({
@@ -519,8 +526,8 @@ connection.onCompletion(async ({ textDocument: { uri }, position: { line, charac
 
 connection.onSignatureHelp(async ({ position: { character: char, line: lineNumber }, textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    const config = await getConfigFromRel(rel)
-    const strings = stringsOfRel.get(rel) as string[]
+    const config = await getConfig(rel)
+    const strings = stringsOfUri.get(rel) as string[]
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(strings[lineNumber])
     const { data: { hint: { fix, options } } } = parser.parse(reader, await constructContext({
@@ -570,7 +577,7 @@ connection.onSignatureHelp(async ({ position: { character: char, line: lineNumbe
 
 connection.onFoldingRanges(({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    const strings = stringsOfRel.get(rel) as string[]
+    const strings = stringsOfUri.get(rel) as string[]
     const regionStartLineNumbers: number[] = []
     const foldingRanges: FoldingRange[] = []
     const commentStartLineNumers: {
@@ -641,10 +648,10 @@ connection.onFoldingRanges(({ textDocument: { uri } }) => {
 
 connection.onDocumentFormatting(async ({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    const config = await getConfigFromRel(rel)
+    const config = await getConfig(rel)
     if (config.lint.enableFormatting) {
-        const lines = await getLinesFromRel(rel)
-        const strings = stringsOfRel.get(rel) as string[]
+        const lines = await getLines(rel)
+        const strings = stringsOfUri.get(rel) as string[]
         const ansStrings = []
         for (let i = 0; i < lines.length; i++) {
             const string = strings[i]
@@ -657,7 +664,7 @@ connection.onDocumentFormatting(async ({ textDocument: { uri } }) => {
         }
         return [{
             range: { start: { line: 0, character: 0 }, end: { line: Number.MAX_VALUE, character: Number.MAX_VALUE } },
-            newText: ansStrings.join(lineBreakOfRel.get(rel))
+            newText: ansStrings.join(lineBreakOfUri.get(rel))
         }]
     }
     return null
@@ -665,7 +672,7 @@ connection.onDocumentFormatting(async ({ textDocument: { uri } }) => {
 
 async function getReferencesOrDefinition(uri: string, number: number, char: number, key: 'def' | 'ref') {
     const rel = getRelFromUri(uri)
-    const line = (await getLinesFromRel(rel))[number]
+    const line = (await getLines(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
@@ -689,7 +696,7 @@ connection.onReferences(async ({ textDocument: { uri }, position: { character: c
 })
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     const rel = getRelFromUri(uri)
-    const lines = await getLinesFromRel(rel)
+    const lines = await getLines(rel)
     const line = lines[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
@@ -717,7 +724,7 @@ connection.onDocumentHighlight(async ({ textDocument: { uri }, position: { chara
 
 connection.onPrepareRename(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
     const rel = getRelFromUri(uri)
-    const line = (await getLinesFromRel(rel))[number]
+    const line = (await getLines(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         return {
@@ -730,7 +737,7 @@ connection.onPrepareRename(async ({ textDocument: { uri }, position: { character
 connection.onRenameRequest(async ({ textDocument: { uri }, position: { line: number, character: char }, newName }) => {
     // connection.console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const rel = getRelFromUri(uri)
-    const line = (await getLinesFromRel(rel))[number]
+    const line = (await getLines(rel))[number]
     const result = getCacheFromChar(line.cache || {}, char)
     if (result && !result.type.startsWith('colors/')) {
         const documentChanges: (TextDocumentEdit | RenameFile)[] = []
@@ -747,7 +754,7 @@ connection.onRenameRequest(async ({ textDocument: { uri }, position: { line: num
                     if (key === 'def' || key === 'ref') {
                         for (const pos of unit[key]) {
                             documentChanges.push({
-                                textDocument: { uri: getUriFromRel(pos.rel as string), version: versionOfRel.get(rel) || null },
+                                textDocument: { uri: getUriFromRel(pos.uri as string), version: versionOfUri.get(rel) || null },
                                 edits: [{
                                     newText: newName,
                                     range: {
@@ -800,7 +807,7 @@ connection.onRenameRequest(async ({ textDocument: { uri }, position: { line: num
 
 connection.onDocumentLinks(async ({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
-    const lines = await getLinesFromRel(rel)
+    const lines = await getLines(rel)
     const ans: DocumentLink[] = []
     let i = 0
     for (const { cache } of lines) {
@@ -831,7 +838,7 @@ connection.onDocumentLinks(async ({ textDocument: { uri } }) => {
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
     const rel = getRelFromUri(uri)
     const ans: ColorInformation[] = []
-    const lines = await getLinesFromRel(rel)
+    const lines = await getLines(rel)
     let i = 0
     for (const line of lines) {
         const dustColors = getSafeCategory(line.cache, 'colors')
@@ -865,7 +872,7 @@ connection.onColorPresentation(({
 }) => {
     const rel = getRelFromUri(uri)
     const ans: ColorPresentation[] = []
-    const strings = stringsOfRel.get(rel) as string[]
+    const strings = stringsOfUri.get(rel) as string[]
     const string = strings[line].slice(startChar, endChar)
     if (string.startsWith('dust')) {
         ans.push({ label: `dust ${r} ${g} ${b} ${a}` })
