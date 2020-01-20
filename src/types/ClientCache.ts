@@ -1,5 +1,6 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
+import { URI as Uri } from 'vscode-uri'
 
 export const LatestCacheFileVersion = 4
 
@@ -146,7 +147,7 @@ export type CacheUnit = {
  * An element in `CacheUnit`.
  */
 export interface CachePosition extends TextRange {
-    rel?: string,
+    uri?: string,
     line?: number
 }
 
@@ -189,13 +190,13 @@ export function offsetCachePosition(cache: ClientCache, offset: number) {
     }
 }
 
-export function removeCachePosition(cache: ClientCache, rel: string) {
+export function removeCachePosition(cache: ClientCache, uri: Uri) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            unit.def = unit.def.filter(ele => ele.rel !== rel)
-            unit.ref = unit.ref.filter(ele => ele.rel !== rel)
+            unit.def = unit.def.filter(ele => ele.uri !== uri.fsPath)
+            unit.ref = unit.ref.filter(ele => ele.uri !== uri.fsPath)
         }
     }
 }
@@ -210,7 +211,7 @@ export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) 
  * @param base Base cache.
  * @param override Overriding cache.
  */
-export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { rel: string, line: number }) {
+export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: string, line: number }) {
     const ans: ClientCache = base
     function initUnit(type: CacheKey, id: string) {
         ans[type] = getSafeCategory(ans, type)
@@ -219,9 +220,9 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         const ansUnit = ansCategory[id] as CacheUnit
         return ansUnit
     }
-    function addPos(id: string, pos: CachePosition, poses: CachePosition[]) {
+    function addPos(pos: CachePosition, poses: CachePosition[]) {
         if (addition) {
-            pos.rel = addition.rel
+            pos.uri = addition.uri
             pos.line = addition.line
         }
         poses.push(pos)
@@ -233,10 +234,10 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
             if (overrideUnit.def.length > 0 || overrideUnit.ref.length > 0 || overrideUnit.doc) {
                 const ansUnit = initUnit(type as CacheKey, id)
                 for (const overridePos of overrideUnit.def) {
-                    addPos(id, overridePos, ansUnit.def)
+                    addPos(overridePos, ansUnit.def)
                 }
                 for (const overridePos of overrideUnit.ref) {
-                    addPos(id, overridePos, ansUnit.ref)
+                    addPos(overridePos, ansUnit.ref)
                 }
                 if (overrideUnit.doc) {
                     ansUnit.doc = overrideUnit.doc
