@@ -583,16 +583,26 @@ function registerHandlers() {
                     const category = cache[type]
                     for (const id in category) {
                         if (category.hasOwnProperty(id)) {
-                            const toLink = (v: CachePosition) => ({
+                            const toLink = async (v: CachePosition) => ({
                                 range: {
                                     start: { line: i, character: v.start },
                                     end: { line: i, character: v.end }
                                 },
-                                target: path.join(Identity.fromString(id).toRel(type))
+                                target: await getUriFromId(Identity.fromString(id), type)
                             })
                             const unit = category[id] as CacheUnit
-                            ans.push(...unit.def.map(toLink))
-                            ans.push(...unit.ref.map(toLink))
+                            for (const def of unit.def) {
+                                const link = await toLink(def)
+                                if (link.target) {
+                                    ans.push({ range: link.range, target: link.target.toString() })
+                                }
+                            }
+                            for (const ref of unit.ref) {
+                                const link = await toLink(ref)
+                                if (link.target) {
+                                    ans.push({ range: link.range, target: link.target.toString() })
+                                }
+                            }
                         }
                     }
                 }

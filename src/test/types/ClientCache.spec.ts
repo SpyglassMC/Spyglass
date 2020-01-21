@@ -1,7 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, getFromCachedFileTree, setForCachedFileTree, delFromCachedFileTree, walkInCachedFileTree, offsetCachePosition } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, offsetCachePosition } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
+import { URI as Uri } from 'vscode-uri'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -30,8 +31,8 @@ describe('ClientCache Tests', () => {
             const cache: ClientCache = {
                 entities: {
                     foo: {
-                        def: [{ start: 0, end: 3, rel: 'data/minecraft/functions/a.mcfunction' }],
-                        ref: [{ start: 3, end: 6, rel: 'data/minecraft/functions/b.mcfunction' }],
+                        def: [{ start: 0, end: 3, uri: 'file:///data/minecraft/functions/a.mcfunction' }],
+                        ref: [{ start: 3, end: 6, uri: 'file:///data/minecraft/functions/b.mcfunction' }],
                     }
                 }
             }
@@ -39,8 +40,8 @@ describe('ClientCache Tests', () => {
             assert.deepEqual(cache, {
                 entities: {
                     foo: {
-                        def: [{ start: 5, end: 8, rel: 'data/minecraft/functions/a.mcfunction' }],
-                        ref: [{ start: 8, end: 11, rel: 'data/minecraft/functions/b.mcfunction' }],
+                        def: [{ start: 5, end: 8, uri: 'file:///data/minecraft/functions/a.mcfunction' }],
+                        ref: [{ start: 8, end: 11, uri: 'file:///data/minecraft/functions/b.mcfunction' }],
                     }
                 }
             })
@@ -48,8 +49,8 @@ describe('ClientCache Tests', () => {
     })
     describe('removeCachePosition() Tests', () => {
         it('Should remove the pos', () => {
-            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, rel: 'data/minecraft/functions/a.mcfunction' }], ref: [] } } }
-            removeCachePosition(cache, 'data/minecraft/functions/a.mcfunction')
+            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, uri: 'file:///data/minecraft/functions/a.mcfunction' }], ref: [] } } }
+            removeCachePosition(cache, Uri.parse('file:///data/minecraft/functions/a.mcfunction'))
             assert.deepEqual(cache, {
                 entities: { foo: { def: [], ref: [] } }
             })
@@ -106,11 +107,11 @@ describe('ClientCache Tests', () => {
                     }
                 }
             }
-            const actual = combineCache(base, override, { rel: 'blabla', line: 0 })
+            const actual = combineCache(base, override, { uri: Uri.parse('file:///blabla'), line: 0 })
             assert.deepStrictEqual(actual, {
                 entities: {
                     foo: {
-                        def: [{ start: 0, end: 3, rel: 'blabla', line: 0 }],
+                        def: [{ start: 0, end: 3, uri: 'file:///blabla', line: 0 }],
                         ref: []
                     }
                 }
@@ -182,7 +183,7 @@ describe('ClientCache Tests', () => {
                     foo: { def: [], ref: [] },
                     bar: {
                         doc: 'Documentation for **bar**',
-                        def: [{ rel: '', line: 0, start: 0, end: 0 }],
+                        def: [{ uri: '', line: 0, start: 0, end: 0 }],
                         ref: []
                     }
                 }
@@ -365,102 +366,6 @@ describe('ClientCache Tests', () => {
         it('Should return false', () => {
             const actual = isNamespacedType('entities')
             assert(actual === false)
-        })
-    })
-    describe('getFromCachedFileTree() Tests', () => {
-        it('Should return the timestamp', () => {
-            const cacheFile: any = {
-                foo: {
-                    bar: {
-                        'baz.json': 123
-                    }
-                }
-            }
-            const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')
-            assert.deepEqual(actual, 123)
-        })
-        it('Should return the object', () => {
-            const cacheFile: any = {
-                foo: {
-                    bar: {
-                        'baz.json': 123
-                    }
-                }
-            }
-            const actual = getFromCachedFileTree(cacheFile, 'foo/bar')
-            assert.deepEqual(actual, {
-                'baz.json': 123
-            })
-        })
-        it('Should return undefined', () => {
-            const cacheFile: any = {}
-            const actual = getFromCachedFileTree(cacheFile, 'foo/bar/baz.json')
-            assert.deepEqual(actual, undefined)
-        })
-    })
-    describe('setForCachedFileTree() Tests', () => {
-        it('Should set the timestamp', () => {
-            const cacheFile: any = {
-                foo: {}
-            }
-            setForCachedFileTree(cacheFile, 'foo/bar/baz.json', 233)
-            assert.deepEqual(cacheFile, {
-                foo: {
-                    bar: {
-                        'baz.json': 233
-                    }
-                }
-            })
-        })
-    })
-    describe('delFromCachedFileTree() Tests', () => {
-        it('Should del the timestamp', () => {
-            const cacheFile: any = {
-                foo: {
-                    bar: {
-                        baz: {
-                            abc: {
-                                'qux.json': 114
-                            }
-                        },
-                        'qux.json': 514
-                    }
-                }
-            }
-            delFromCachedFileTree(cacheFile, 'foo/bar/baz/abc/qux.json')
-            assert.deepEqual(cacheFile, {
-                foo: {
-                    bar: {
-                        'qux.json': 514
-                    }
-                }
-            })
-        })
-    })
-    describe('walkInCachedFileTree() Tests', () => {
-        it('Should get the relative paths', () => {
-            const cacheFile: any = {
-                foo: {
-                    bar: {
-                        baz: {
-                            abc: {
-                                'qux.json': 114
-                            }
-                        },
-                        'qux.json': 514
-                    }
-                },
-                'foo.json': 123
-            }
-            const actual: string[] = []
-            walkInCachedFileTree(cacheFile, rel => {
-                actual.push(rel)
-            }, '/')
-            assert.deepEqual(actual, [
-                'foo/bar/baz/abc/qux.json',
-                'foo/bar/qux.json',
-                'foo.json'
-            ])
         })
     })
 })
