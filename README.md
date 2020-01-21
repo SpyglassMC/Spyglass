@@ -33,7 +33,37 @@ Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-languag
 
 Please use the root folder of your datapack (where the `data` folder and the `pack.mcmeta` file are) as a root folder of your workspace, so that DHP can provide you with the best functionalities.
 
-Moreover, DHP fully supports VSCode's [multi-root workspace feature](https://code.visualstudio.com/docs/editor/multi-root-workspaces). Every root which contains a `data` folder and `pack.mcmeta` file will be considered as a datapack and will be used for computing completions.
+Moreover, DHP fully supports VSCode's [multi-root workspace feature](https://code.visualstudio.com/docs/editor/multi-root-workspaces). Every root which contains a `data` folder and `pack.mcmeta` file will be considered as a datapack and will be used for computing completions. Other root folders will not be affected by DHP.
+
+The older of the roots in your workspace will affect the priority of these datapacks in DHP. The root at the beginning will be loaded at first, and the root at the end will be loaded at last, which means that the **earlier** the root is, the **lower** priority in DHP it has. This is exactly how Minecraft loads datapacks and decide which one overrides another one if a file has the same namespaced ID and is in the same category. For example, if your multi-root workspace looks like this:
+
+```
+─── (Root) Datapack A
+   ├── data
+   |   └── spgoding
+   |       └── functions
+   |           └── foo.mcfunction
+   └── pack.mcmeta
+─── (Root) Datapack B
+   ├── data
+   |   └── spgoding
+   |       └── functions
+   |           └── foo.mcfunction
+   └── pack.mcmeta
+```
+
+And then you use `F2` in a mcfunction file to renamed the mcfunction `spgoding:foo` to `wtf:foo`, only the file in Datapack B (`Datapack B/data/spgoding/functions/foo.mcfunction`) will be moved to `Datapack B/data/wtf/functions/foo.mcfunction`, even if there's a function with the same namespaced ID in Datapack A (`Datapack A/data/spgoding/functions/foo.mcfunction`).
+
+If you try to execute these commands in Minecraft, you can also noticed that the function in Datapack B is executed.
+```mcfunction
+datapack enable "file/Datapack A" first
+datapack enable "file/Datapack B" last
+function spgoding:foo
+```
+
+By acting like this, DHP ensures that the order it handling datapacks is consistent with Minecraft.
+
+**Note**: you can drag and put the root folders in VSCode to sort them, and DHP will update the priority of them in DHP accordingly, which is really handy.
 
 ## Multiple Language Support
 

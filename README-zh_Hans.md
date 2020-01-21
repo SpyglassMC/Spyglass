@@ -27,13 +27,55 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 或者，您也可以直接打开 VSCode，按 Ctrl + P，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
 
-# 工作区支持
+# 特性
+
+## 工作区支持
 
 请使用数据包的根文件夹（也就是 `data` 文件夹与 `pack.mcmeta` 文件所处的文件夹）作为你的工作区的根文件夹，以获得最佳的体验。
 
-此外，大憨批完全支持多个根文件夹的工作区，只需要确保在使用「文件」→「将文件夹添加到工作区…」功能添加数据包时添加的都是数据包的根文件夹即可。然而，有关 VSCode 的工作区的优质中文资料十分匮乏，不想花时间了解怎么使用多根文件夹的工作区的用户可以忽略掉大憨批的这个特性。
+此外，大憨批完全支持多个根文件夹的工作区，只需要确保在使用「文件」→「将文件夹添加到工作区…」功能添加数据包时添加的都是数据包的根文件夹即可。然而，有关 VSCode 的工作区的优质中文资料十分匮乏，不想花时间了解怎么使用多根文件夹的工作区的用户可以忽略掉大憨批的这个特性。工作区中其他的非数据包根文件夹不会受到大憨批影响。
 
-# 特性
+工作区中根文件夹的顺序将会影响它们在大憨批当中的优先级。最开始的根文件夹会第一个被加载，最后的根文件夹会在最后加载，也就是说根文件夹出现得**越早**，它在大憨批中的的优先级**越低**。这和游戏在加载数据包时决定用哪个数据包中的文件覆盖另一个文件的逻辑是完全一致的。举个例子，如果你的多根文件夹工作区的文件结构是这个样子：
+
+```
+─── （根文件夹）数据包A
+   ├── data
+   |   └── spgoding
+   |       └── functions
+   |           └── foo.mcfunction
+   └── pack.mcmeta
+─── （根文件夹）数据包B
+   ├── data
+   |   └── spgoding
+   |       └── functions
+   |           └── foo.mcfunction
+   └── pack.mcmeta
+```
+
+然后你使用 `F2` 功能在一个函数文件中把函数 `spgoding:foo` 重命名为了 `wtf:foo`，只有在数据包 B 中的文件（`数据包B/data/spgoding/functions/foo.mcfunction`）会被移动到 `Datapack B/data/wtf/functions/foo.mcfunction`，即使在数据包A中也有一个具有同样命名空间 ID 的函数文件（`Datapack A/data/spgoding/functions/foo.mcfunction`）。
+
+如果你尝试在 Minecraft 中执行以下命令，你也会发现被执行的函数是数据包B中的。
+```mcfunction
+datapack enable "file/Datapack A" first
+datapack enable "file/Datapack B" last
+function spgoding:foo
+```
+
+通过这样的逻辑，大憨批确保了它处理数据包的行为是和 Minecraft 一致的。
+
+**提示**：你可以在 VSCode 中拖放根文件夹来排序它们，大憨批会自动更新它们在大憨批中的优先级，十分方便。
+
+## 多语言支持
+
+DHP支持多种语言。目前以下语言已经完全支持：
+
+| 语言 | VSCode 语言 ID | 贡献者 |
+| ---- | ---- | ----------- |
+| 英语 | `en` | [SPGoding](https://github.com/SPGoding) |
+| 日语 | `ja` | [ChenCMD](https://github.com/ChenCMD) |
+| 简体中文 | `zh-cn` | [SPGoding](https://github.com/SPGoding) |
+
+如果您愿意帮助翻译大憨批至其他语言，我们将不胜感激！请查看 [CONTRIBUTING.md](https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md) 了解更多信息。
 
 ## 语义化高亮
 
@@ -155,7 +197,7 @@ execute if score @s test matches 5 run say 5
 
 # 贡献者
 
-感谢这些可爱的人们对本项目的各种帮助。为更新及时，请查看 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 中的相应部分。
+大憨批目前已有 36 名直接贡献者，没有他们就没有大憨批的今天。完整的贡献者列表请在 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 查看。
 
 # Q：大憨批就是个垃圾！
 
