@@ -98,7 +98,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
          */
         let path0 = this.readValidString(reader, ans)
 
-        //#region Completions at the Beginning
+        //#region Completions at the beginning
         if (start <= cursor && cursor <= reader.cursor) {
             if (!isTag && this.allowTag) {
                 // If this ID is not a tag but could be a tag, then provide completions for tags.
@@ -107,7 +107,13 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     const complPaths = id.split(':')[1].split('/')
                     complNamespaces.add(`${Identity.TagSymbol}${complNamespace}`)
                     if (!this.isPredicate && complNamespace === Identity.DefaultNamespace) {
-                        this.completeFolderOrFile(complPaths, complFolders, complFiles)
+                        this.completeFolderOrFile(
+                            // Only the first element and the length matter. We don't care
+                            // if other elements are also prefixed by `Identity.TagSymbol`.
+                            complPaths.map(v => `${Identity.TagSymbol}${v}`),
+                            complFolders,
+                            complFiles
+                        )
                     }
                 }
             }
