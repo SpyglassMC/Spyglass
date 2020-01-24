@@ -55,6 +55,8 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         VectorArgumentParser
     ]
 
+    private static readonly parsers = new Map<string, new (...params: any) => ArgumentParser<any>>()
+
     /**
      * Get an argument parser from specific ID and params.
      * @param id The name of the class without the suffix (`ArgumentParser`). e.g. `Block`, `NamespacedID`, etc.
@@ -62,8 +64,15 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
      */
     get(id: string, params: any[] = []) {
         try {
+            const parser = ArgumentParserManager.parsers.get(id)
+            /* istanbul ignore next */
+            if (parser) {
+                return new parser(...params)
+            }
+
             for (const parser of ArgumentParserManager.ArgumentParsers) {
-                if (parser.name === `${id}ArgumentParser`) {
+                if ((parser as any).identity === id) {
+                    ArgumentParserManager.parsers.set(id, parser)
                     return new parser(...params)
                 }
             }

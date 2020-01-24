@@ -8,6 +8,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class TagArgumentParser extends ArgumentParser<string> {
+    static identity = 'Tag'
     readonly identity = 'tag'
 
     constructor() {
@@ -45,7 +46,7 @@ export default class TagArgumentParser extends ArgumentParser<string> {
         } else if (ctx.config.lint.strictTagCheck && !Object.keys(category).includes(value)) {
             ans.errors.push(new ParsingError(
                 { start, end: start + value.length },
-                locale('undefined-tag', locale('meta.quote', value)),
+                locale('undefined-tag', locale('punc.quote', value)),
                 undefined,
                 DiagnosticSeverity.Warning
             ))

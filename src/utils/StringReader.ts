@@ -98,7 +98,7 @@ export default class StringReader {
                 this.cursor = start
                 throw new ParsingError({ start, end }, locale('expected-got',
                     locale('number'),
-                    locale('meta.quote', str)
+                    locale('punc.quote', str)
                 ))
             }
             return str
@@ -108,7 +108,7 @@ export default class StringReader {
             if (value) {
                 throw new ParsingError({ start, end }, locale('expected-got',
                     locale('number'),
-                    locale('meta.quote', this.peek())
+                    locale('punc.quote', this.peek())
                 ), false)
             } else {
                 throw new ParsingError({ start, end }, locale('expected-got',
@@ -210,7 +210,7 @@ export default class StringReader {
             const end = this.cursor + 1
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('quote'),
-                locale('meta.quote', quote)
+                locale('punc.quote', quote)
             ), false)
         }
         return ans
@@ -238,7 +238,7 @@ export default class StringReader {
                     this.cursor = start
                     throw new ParsingError(
                         { start: errStart, end: errStart + 1 },
-                        locale('unexpected-escape', locale('meta.quote', c))
+                        locale('unexpected-escape', locale('punc.quote', c))
                     )
                 }
             } else {
@@ -265,7 +265,7 @@ export default class StringReader {
         throw new ParsingError(
             { start: errStart, end: errStart + 1 },
             locale('expected-got',
-                locale('ending-quote', locale('meta.quote', terminator)),
+                locale('ending-quote', locale('punc.quote', terminator)),
                 locale('nothing')
             )
         )
@@ -323,7 +323,7 @@ export default class StringReader {
                 { start, end },
                 locale('expected-got',
                     locale('boolean'),
-                    locale('meta.quote', string)
+                    locale('punc.quote', string)
                 ),
                 toleratable
             )
@@ -340,7 +340,7 @@ export default class StringReader {
             throw new ParsingError(
                 { start, end },
                 locale('expected-got',
-                    locale('meta.quote', c),
+                    locale('punc.quote', c),
                     locale('nothing')
                 )
             )
@@ -348,8 +348,8 @@ export default class StringReader {
             throw new ParsingError(
                 { start, end },
                 locale('expected-got',
-                    locale('meta.quote', c),
-                    locale('meta.quote', this.peek())
+                    locale('punc.quote', c),
+                    locale('punc.quote', this.peek())
                 )
             )
         }

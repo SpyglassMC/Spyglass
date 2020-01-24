@@ -5,6 +5,7 @@ import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
 
 export default class NumberArgumentParser extends ArgumentParser<number> {
+    static identity = 'Number'
     identity = 'number'
 
     constructor(

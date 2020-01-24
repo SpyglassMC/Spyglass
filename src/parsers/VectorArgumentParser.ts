@@ -7,6 +7,7 @@ import Vector, { VectorElement } from '../types/Vector'
 import { locale } from '../locales/Locales'
 
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
+    static identity = 'Vector'
     static readonly LocalSymbol = '^'
     static readonly RelativeSymbol = '~'
     static readonly LocalSortText = '2'
@@ -78,7 +79,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                     { start, end: start + 1 },
                     locale('expected-got',
                         locale('vector'),
-                        locale('meta.quote', reader.peek())
+                        locale('punc.quote', reader.peek())
                     ),
                     false
                 ))
@@ -155,14 +156,14 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('unexpected-local-coordinate',
-                    locale('meta.quote', `${VectorArgumentParser.LocalSymbol}${ans.data.value}`)
+                    locale('punc.quote', `${VectorArgumentParser.LocalSymbol}${ans.data.value}`)
                 )
             ))
         } else if (!this.allowRelative && ans.data.type === 'relative') {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('unexpected-relative-coordinate',
-                    locale('meta.quote', `${VectorArgumentParser.RelativeSymbol}${ans.data.value}`)
+                    locale('punc.quote', `${VectorArgumentParser.RelativeSymbol}${ans.data.value}`)
                 )
             ))
         }

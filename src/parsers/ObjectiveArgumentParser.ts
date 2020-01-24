@@ -8,6 +8,7 @@ import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
+    static identity = 'Objective'
     readonly identity = 'objective'
 
     constructor(
@@ -67,7 +68,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
                 } else if (ctx.config.lint.strictObjectiveCheck) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + value.length },
-                        locale('undefined-objective', locale('meta.quote', value)),
+                        locale('undefined-objective', locale('punc.quote', value)),
                         undefined,
                         DiagnosticSeverity.Warning
                     ))
@@ -76,7 +77,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + value.length },
-                    locale('too-long', locale('meta.quote', value), locale('objective'), 16)
+                    locale('too-long', locale('punc.quote', value), locale('objective'), 16)
                 ))
             }
         }

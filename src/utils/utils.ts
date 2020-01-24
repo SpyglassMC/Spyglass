@@ -11,7 +11,7 @@ import { locale } from '../locales/Locales'
  * @returns Formatted message.
  */
 export function formatMessage(msg: string) {
-    return `${msg[0].toUpperCase()}${msg.slice(1)}${locale('meta.period')}`
+    return `${msg[0].toUpperCase()}${msg.slice(1)}${locale('punc.period')}`
 }
 
 /**
@@ -20,28 +20,33 @@ export function formatMessage(msg: string) {
  * @param quoted Whether or not to quote the result. Defaults to `true`
  * @param conjunction The conjunction to use. Defaults to `and`.
  * @returns Human-readable message.
- * @example
+ * @example // Using English
  * arrayToMessage([]) // "nothing"
  * arrayToMessage('foo') // "‘foo’"
  * arrayToMessage(['foo']) // "‘foo’"
  * arrayToMessage(['bar', 'foo']) // "‘bar’ and ‘foo’"
  * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’, and ‘foo’"
+ * @example // Using Locale
+ * arrayToMessage([], false) // "nothing"
+ * arrayToMessage(['A'], false) // "A"
+ * arrayToMessage(['A', 'B'], false) // "A{conjunction.and_2}B"
+ * arrayToMessage(['A', 'B', 'C'], false) // "A{conjunction.and_3+_1}B{conjunction.and_3+_2}C"
  */
 export function arrayToMessage(arr: string | string[], quoted = true, conjunction: 'and' | 'or' = 'and') {
     if (typeof arr === 'string') {
         arr = [arr]
     }
-    const prefix = quoted ? '‘' : ''
-    const suffix = quoted ? '’' : ''
+    const getPart = (str: string) => quoted ? locale('punc.quote', str) : str
     switch (arr.length) {
         case 0:
             return locale('nothing')
         case 1:
-            return `${prefix}${arr[0]}${suffix}`
+            return getPart(arr[0])
         case 2:
-            return `${prefix}${arr[0]}${suffix} ${locale(conjunction)} ${prefix}${arr[1]}${suffix}`
+            return getPart(arr[0]) + locale(`conjunction.${conjunction}_2`) + getPart(arr[1])
         default:
-            return `${prefix}${arr.slice(0, -1).join(`${suffix}, ${prefix}`)}${suffix}, ${locale(conjunction)} ${prefix}${arr.slice(-1)[0]}${suffix}`
+            arr = arr.map(v => getPart(v))
+            return `${arr.slice(0, -1).join(locale(`conjunction.${conjunction}_3+_1`))}${locale(`conjunction.${conjunction}_3+_2`)}${arr[arr.length - 1]}`
     }
 }
 

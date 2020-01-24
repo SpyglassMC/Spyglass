@@ -6,8 +6,9 @@ import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/Client
 import { locale } from '../locales/Locales'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
+    static identity = 'DefinitionDescription'
     readonly identity = 'string'
-
+    
     constructor(
         private readonly type: string,
         private readonly id: string

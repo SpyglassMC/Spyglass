@@ -12,6 +12,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
+    static identity = 'NbtPath'
     readonly identity = 'nbtPath'
 
     constructor(
@@ -153,7 +154,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 if (!node.additionalChildren) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        locale('unknown-key', locale('meta.quote', key)),
+                        locale('unknown-key', locale('punc.quote', key)),
                         true, DiagnosticSeverity.Warning
                     ))
                 }

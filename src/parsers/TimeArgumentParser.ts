@@ -8,6 +8,7 @@ import Time from '../types/Time'
 import { locale } from '../locales/Locales'
 
 export default class TimeArgumentParser extends ArgumentParser<Time> {
+    static identity = 'Time'
     static readonly Units = ['d', 's', 't']
 
     readonly identity = 'time'
@@ -42,7 +43,7 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
                     { start: reader.cursor - 1, end: reader.cursor },
                     locale('expected-got',
                         locale('time-unit'),
-                        locale('meta.quote', unit)
+                        locale('punc.quote', unit)
                     )
                 ))
             }

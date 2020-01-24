@@ -6,6 +6,7 @@ import StringReader from '../utils/StringReader'
  * Base class of argument parsers.
  */
 export default abstract class ArgumentParser<T> implements Parser<T> {
+    static identity: string
     /**
      * Human-readable identity of the parser. Will be shown in hints.
      */

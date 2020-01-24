@@ -58,7 +58,7 @@ export default class LineParser implements Parser<Line> {
                     { start: reader.cursor, end: reader.cursor + 1 },
                     locale('expected-got',
                         locale('leading-slash'),
-                        locale('meta.quote', reader.peek())
+                        locale('punc.quote', reader.peek())
                     ),
                     false
                 ))
@@ -158,7 +158,7 @@ export default class LineParser implements Parser<Line> {
                     parsedLine.errors.push(
                         new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('expected-got',
                             locale('nothing'),
-                            locale('meta.quote', reader.remainingString)
+                            locale('punc.quote', reader.remainingString)
                         ))
                     )
                 } else {

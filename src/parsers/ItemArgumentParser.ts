@@ -7,6 +7,7 @@ import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 
 export default class ItemArgumentParser extends ArgumentParser<Item> {
+    static identity = 'Item'
     readonly identity = 'item'
 
     /* istanbul ignore next */

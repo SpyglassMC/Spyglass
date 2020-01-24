@@ -172,7 +172,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
                         commitCharacters: [':']
                     },
                     {
-                        label: 'fluid_tag',
+                        label: '#fluid_tag',
                         kind: CompletionItemKind.Field,
                         commitCharacters: [' ']
                     },
@@ -247,7 +247,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
                         commitCharacters: [':']
                     },
                     {
-                        label: 'block',
+                        label: '#block',
                         kind: CompletionItemKind.Folder,
                         commitCharacters: ['/']
                     },

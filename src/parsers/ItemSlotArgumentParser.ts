@@ -8,6 +8,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class ItemSlotArgumentParser extends ArgumentParser<string> {
+    static identity = 'ItemSlot'
     static readonly Category = {
         armor: ['chest', 'feet', 'head', 'legs'],
         container: [...range(54)].map(String),
@@ -50,8 +51,8 @@ export default class ItemSlotArgumentParser extends ArgumentParser<string> {
                     ans.errors.push(new ParsingError(
                         { start: reader.cursor, end: reader.cursor + 1 },
                         locale('expected-got',
-                            locale('meta.quote', ItemSlotArgumentParser.Sep),
-                            locale('meta.quote', reader.peek())
+                            locale('punc.quote', ItemSlotArgumentParser.Sep),
+                            locale('punc.quote', reader.peek())
                         )
                     ))
                 }

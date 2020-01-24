@@ -7,6 +7,7 @@ import { constructConfig } from '../types/Config'
 import NbtSchema from '../types/NbtSchema'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
+    static identity = 'TextComponent'
     readonly identity = 'textComponent'
 
     private static readonly TextComponentSchema: NbtSchema = {

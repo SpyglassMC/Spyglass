@@ -9,6 +9,7 @@ import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
 
 export default class ParticleArgumentParser extends ArgumentParser<Particle<any>> {
+    static identity = 'Particle'
     readonly identity = 'particle'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Particle<any>> {

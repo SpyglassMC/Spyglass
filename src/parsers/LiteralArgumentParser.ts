@@ -7,6 +7,7 @@ import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
+    static identity = 'Literal'
     readonly identity = 'literal'
 
     protected readonly literals: string[]
@@ -64,7 +65,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
                     { start: start, end: start + value.length },
                     locale('expected-got',
                         arrayToMessage(this.literals, true, 'or'),
-                        locale('meta.quote', value)
+                        locale('punc.quote', value)
                     ),
                     false
                 )]

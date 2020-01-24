@@ -4,6 +4,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 
 export default class StringArgumentParser extends ArgumentParser<string> {
+    static identity = 'String'
     readonly identity = 'string'
 
     constructor(

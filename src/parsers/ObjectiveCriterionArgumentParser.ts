@@ -5,6 +5,7 @@ import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringReader from '../utils/StringReader'
 
 export default class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
+    static identity = 'ObjectiveCriterion'
     static readonly Category: { [type: string]: null | string | string[] } = {
         air: null,
         armor: null,

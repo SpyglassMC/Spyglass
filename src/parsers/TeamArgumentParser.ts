@@ -8,6 +8,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class TeamArgumentParser extends ArgumentParser<string> {
+    static identity = 'Team'
     readonly identity = 'team'
 
     constructor(
@@ -67,7 +68,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
                 } else if (ctx.config.lint.strictTeamCheck) {
                     ans.errors.push(new ParsingError(
                         { start, end: start + value.length },
-                        locale('undefined-team', locale('meta.quote', value)),
+                        locale('undefined-team', locale('punc.quote', value)),
                         undefined,
                         DiagnosticSeverity.Warning
                     ))

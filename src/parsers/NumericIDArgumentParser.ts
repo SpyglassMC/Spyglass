@@ -5,6 +5,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import { SingleRegistry } from '../types/Registry'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
+    static identity = 'NumericID'
     private registry: SingleRegistry
     readonly identity = 'numericID'
 

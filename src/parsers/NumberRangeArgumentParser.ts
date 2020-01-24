@@ -7,6 +7,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import { locale } from '../locales/Locales'
 
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
+    static identity = 'NumberRange'
     identity = 'numberRange'
 
     constructor(

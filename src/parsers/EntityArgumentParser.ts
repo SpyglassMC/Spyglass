@@ -11,6 +11,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
+    static identity = 'Entity'
     readonly identity = 'entity'
     private static readonly UuidPattern = /^[A-F0-9]{1,8}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,4}-[A-F0-9]{1,12}$/i
 
@@ -74,14 +75,14 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },
-                    locale('too-long', locale('meta.quote', plain), locale('score-holder'), 40)
+                    locale('too-long', locale('punc.quote', plain), locale('score-holder'), 40)
                 )
             )
         } else if (!this.isScoreHolder && plain.length > 16 && !EntityArgumentParser.UuidPattern.test(plain)) {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },
-                    locale('too-long', locale('meta.quote', plain), locale('entity'), 16)
+                    locale('too-long', locale('punc.quote', plain), locale('entity'), 16)
                 )
             )
         }
@@ -140,7 +141,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         } else {
             ans.errors.push(new ParsingError(
                 { start: start + 1, end: start + 2 },
-                locale('unexpected-selector-variable', locale('meta.quote', variable))
+                locale('unexpected-selector-variable', locale('punc.quote', variable))
             ))
         }
         /// Arguments

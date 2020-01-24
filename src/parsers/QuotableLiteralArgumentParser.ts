@@ -8,6 +8,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 
 export default class QuotableLiteralArgumentParser extends LiteralArgumentParser {
+    static identity = 'QuotableLiteral'
     constructor(
         protected readonly literals: string[],
         private readonly shouldQuote: boolean,
@@ -56,7 +57,7 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
                     { start: start, end: start + value.length },
                     locale('expected-got',
                         arrayToMessage(this.literals, true, 'or'),
-                        locale('meta.quote', value)
+                        locale('punc.quote', value)
                     ),
                     false,
                     this.diagnosticSeverity

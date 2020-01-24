@@ -10,6 +10,7 @@ import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {
+    static identity = 'Block'
     readonly identity = 'block'
 
     /* istanbul ignore next */
@@ -62,7 +63,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                     if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
                         ans.errors.push(new ParsingError(
                             range,
-                            locale('duplicate-key', locale('meta.quote', key))
+                            locale('duplicate-key', locale('punc.quote', key))
                         ))
                     }
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)

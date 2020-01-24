@@ -14,6 +14,7 @@ import { ToLintedString } from '../types/Lintable'
 import { locale } from '../locales/Locales'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
+    static identity = 'NbtTag'
     /**
      * @throws {string}
      */
@@ -27,7 +28,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         if (!checker(value)) {
             throw locale('expected-got',
                 locale('number.between', range[0], range[1]),
-                locale('meta.quote', value)
+                locale('punc.quote', value)
             )
         }
         return value
@@ -322,7 +323,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 { start, end: start + key.length },
                                 locale(
                                     'key-not-following-convention',
-                                    locale('meta.quote', key),
+                                    locale('punc.quote', key),
                                     arrayToMessage(ctx.config.lint.nameOfSnbtCompoundTagKeys)
                                 ),
                                 true,
@@ -334,7 +335,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             result.errors.push(
                                 new ParsingError(
                                     { start, end: start + key.length },
-                                    locale('duplicate-key', locale('meta.quote', key)),
+                                    locale('duplicate-key', locale('punc.quote', key)),
                                     true,
                                     DiagnosticSeverity.Warning
                                 )
@@ -374,7 +375,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     result.errors.push(
                         new ParsingError(
                             keyRange,
-                            locale('unknown-key', locale('meta.quote', key)),
+                            locale('unknown-key', locale('punc.quote', key)),
                             true,
                             DiagnosticSeverity.Warning
                         )
@@ -444,7 +445,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     ans.data = getNbtLongArrayTag([])
                     break
                 default:
-                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, locale('unexpected-nbt-array-type', locale('meta.quote', type)))
+                    throw new ParsingError({ start: reader.cursor - 1, end: reader.cursor }, locale('unexpected-nbt-array-type', locale('punc.quote', type)))
             }
             reader
                 .expect(';')

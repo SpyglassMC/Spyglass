@@ -5,6 +5,7 @@ import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {
+    static identity = 'Message'
     readonly identity = 'message'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Message> {

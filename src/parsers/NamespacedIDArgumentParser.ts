@@ -11,6 +11,7 @@ import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
+    static identity = 'NamespacedID'
     readonly identity = 'namespacedID'
 
     /**
@@ -209,7 +210,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     if (this.shouldStrictCheck(this.type, config, namespace) && !Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
                             { start, end: reader.cursor },
-                            locale('failed-to-resolve-registry-id', locale('meta.quote', this.type), locale('meta.quote', stringID)),
+                            locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
                             undefined,
                             DiagnosticSeverity.Warning
                         ))
@@ -353,7 +354,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         if (this.shouldStrictCheck(`$${type}`, config, namespace) && !canResolve) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                locale('failed-to-resolve-cache-id', locale('meta.quote', type), locale('meta.quote', stringID)),
+                locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
                 undefined,
                 DiagnosticSeverity.Warning
             ))
