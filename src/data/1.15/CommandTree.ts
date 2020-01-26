@@ -1036,6 +1036,7 @@ const CommandTree: CommandTreeType = {
                                     children: {
                                         pos: {
                                             parser: new VectorArgumentParser(3),
+                                            executable: true,
                                             children: {
                                                 volume: {
                                                     parser: new NumberArgumentParser('float', 0),
