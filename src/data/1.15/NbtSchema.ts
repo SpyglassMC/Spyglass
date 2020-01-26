@@ -2441,7 +2441,7 @@ const NbtSchema: NbtSchema = {
         ],
         children: {
             Invul: {
-                type: 'byte',
+                type: 'int',
                 description: 'How many ticks of invulnerability left'
             }
         }
