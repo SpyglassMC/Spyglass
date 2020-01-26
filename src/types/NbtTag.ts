@@ -78,7 +78,7 @@ function getNbtNumberTag<T = number>(val: T, type: NbtTagTypeName, suffixParam?:
 
 function getStringFromFloat(val: number, { snbtKeepDecimalPlace }: LintConfig) {
     const strValue = val.toString()
-    if (snbtKeepDecimalPlace && strValue.indexOf('.') === -1) {
+    if (snbtKeepDecimalPlace && !strValue.includes('.')) {
         return `${strValue}.0`
     } else {
         return strValue

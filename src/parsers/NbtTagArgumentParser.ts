@@ -148,7 +148,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
         const start = reader.cursor
         const ans = this.parseTag(reader, ctx, walker)
-        if (this.expectedTypes.indexOf(ans.data[NbtTagType]) === -1) {
+        if (!this.expectedTypes.includes(ans.data[NbtTagType])) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',

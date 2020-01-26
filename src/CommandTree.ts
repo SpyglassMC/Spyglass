@@ -33,7 +33,7 @@ export function getChildren(tree: CommandTreeType, node: CommandTreeNode<any>): 
     if (node && node.children) {
         children = node.children
     } else if (node && node.redirect) {
-        if (node.redirect.indexOf('.') === -1) {
+        if (!node.redirect.includes('.')) {
             children = tree[node.redirect]
         } else {
             const seg = node.redirect.split('.')
@@ -41,7 +41,7 @@ export function getChildren(tree: CommandTreeType, node: CommandTreeNode<any>): 
             children = getChildren(tree, childNode)
         }
     } else if (node && node.template) {
-        if (node.template.indexOf('.') === -1) {
+        if (!node.template.includes('.')) {
             children = fillChildrenTemplate(node, tree[node.template])
         } else {
             const seg = node.template.split('.')

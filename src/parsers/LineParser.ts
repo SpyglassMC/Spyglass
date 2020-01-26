@@ -82,7 +82,7 @@ export default class LineParser implements Parser<Line> {
 
     parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, isTheLastElement: boolean = false, optional = false) {
         if (node.redirect) {
-            if (node.redirect.indexOf('.') === -1) {
+            if (!node.redirect.includes('.')) {
                 // Redirect to children.
                 const redirect = ctx.tree[node.redirect]
                 this.parseChildren(reader, ctx, redirect, parsedLine, optional)
