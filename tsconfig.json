@@ -19,7 +19,6 @@
         "resolveJsonModule": true
     },
     "exclude": [
-        "src/test",
         "lib",
         "dist"
     ]
