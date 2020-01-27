@@ -2,6 +2,7 @@ import { ClientCache, combineCache } from './ClientCache'
 import { CompletionItem } from 'vscode-languageserver'
 import ParsingError from './ParsingError'
 import StringReader from '../utils/StringReader'
+import Token from './Token'
 
 /**
  * Represent an argument parser.
@@ -33,6 +34,10 @@ export interface ParserResult<T> {
 export interface ArgumentParserResult<T> extends ParserResult<T> {
     data: T,
     /**
+     * Semantic tokens.
+     */
+    tokens: Token[],
+    /**
      * All errors occurred while the process of parsing.
      */
     errors: ParsingError[],
@@ -49,6 +54,8 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
 export function combineArgumentParserResult(base: ArgumentParserResult<any>, override: ArgumentParserResult<any>): void {
     // Cache.
     combineCache(base.cache, override.cache)
+    // Tokens.
+    base.tokens = [...base.tokens, ...override.tokens]
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.

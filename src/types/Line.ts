@@ -4,6 +4,7 @@ import { CompletionItem } from 'vscode-languageserver'
 import ArgumentNode from './ArgumentNode'
 import { toLintedString } from '../utils/utils'
 import { LintConfig } from './Config'
+import Token from './Token'
 
 /**
  * Represent a parsed line in a function.
@@ -26,6 +27,10 @@ export default interface Line {
          */
         options: [string, string[]][]
     },
+    /**
+     * Semantic tokens of the line.
+     */
+    tokens: Token[],
     /**
      * All cache of the line.
      */

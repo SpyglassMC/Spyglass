@@ -1,7 +1,9 @@
 import TextRange from './TextRange'
-import { TokenScope } from './TokenScope'
 
-export default interface Token {
-    range: TextRange,
-    scope: TokenScope
+export default class Token {
+    constructor(
+        public range: TextRange,
+        public type: string,
+        public modifiers: string[]
+    ) { }
 }

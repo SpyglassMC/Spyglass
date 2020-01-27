@@ -1,33 +1,8 @@
 import ParsingError from '../types/ParsingError'
-import Token from '../types/Token'
-import { TokenScope } from '../types/TokenScope'
 import { locale } from '../locales/Locales'
 
 export default class StringReader {
     public cursor = 0
-    public tokens: Token[] = []
-    private preTokens: { start: number, scope: TokenScope }[] = []
-
-    token(scope: TokenScope) {
-        this.preTokens.push(
-            { start: this.cursor, scope }
-        )
-        return this
-    }
-
-    tokenEnd(scope: TokenScope) {
-        for (const preToken of this.preTokens) {
-            /* istanbul ignore next */
-            if (preToken.scope === scope) {
-                // this.tokens = this.tokens.filter(
-                //     ({ range: { start, end } }) => !(start === preToken.start && end === this.cursor)
-                // )
-                this.tokens.push({ range: { start: preToken.start, end: this.cursor }, scope: scope })
-                this.preTokens = this.preTokens.filter(({ scope: preScope }) => preScope != scope)
-            }
-        }
-        return this
-    }
 
     constructor(
         public readonly string: string

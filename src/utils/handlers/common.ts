@@ -1,6 +1,5 @@
 import * as path from 'path'
 import { URI as Uri } from 'vscode-uri'
-import FunctionInfo from '../../types/FunctionInfo'
 import Line from '../../types/Line'
 import Config from '../../types/Config'
 import LineParser from '../../parsers/LineParser'

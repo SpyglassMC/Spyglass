@@ -459,24 +459,4 @@ describe('StringReader Tests', () => {
             assert(actual === false)
         })
     })
-    describe('token() & tokenEnd() Tests', () => {
-        it('Should return correctly', () => {
-            const reader = new StringReader('foo bar')
-            reader
-                .token('string.quoted.double.mcfunction')
-                .readUntilOrEnd(' ')
-            reader
-                .tokenEnd('string.quoted.double.mcfunction')
-                .skip()
-                .token('comment.line.number-sign.mcfunction')
-                .readUntilOrEnd(' ')
-            reader
-                .tokenEnd('comment.line.number-sign.mcfunction')
-                .tokenEnd('string.quoted.double.mcfunction')
-            assert.deepEqual(reader.tokens, [
-                { range: { start: 0, end: 3 }, scope: 'string.quoted.double.mcfunction' },
-                { range: { start: 4, end: 7 }, scope: 'comment.line.number-sign.mcfunction' }
-            ])
-        })
-    })
 })
