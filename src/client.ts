@@ -4,11 +4,19 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment, FileSystemWatcher } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment, FileSystemWatcher, DocumentSemanticTokensProvider, TextDocument, CancellationToken, SemanticTokens, languages, SemanticTokensLegend } from 'vscode'
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, SynchronizeOptions } from 'vscode-languageclient'
 
 let client: LanguageClient
+
+const TokenTypes = [
+    'comment', 'function', 'keyword', 'namespace', 'number', 'operator',
+    'parameter', 'property', 'string', 'type', 'variable'
+]
+const TokenModifiers = [
+    'declaration', 'deprecated', 'documentation', 'firstArgument'
+]
 
 export function activate(context: ExtensionContext) {
     // The server is implemented in node
@@ -68,6 +76,21 @@ export function activate(context: ExtensionContext) {
 
     // Start the client. This will also launch the server
     client.start()
+
+    client.onReady().then(() => {
+        // Semantic coloring provider test.
+        client.sendNotification('spgoding/semanticColoringLegendTest', { types: TokenTypes, modifiers: TokenModifiers })
+        context.subscriptions.push(
+            languages.registerDocumentSemanticTokensProvider(
+                [
+                    { language: 'mcfunction' },
+                    { language: 'mcfunction-snapshot' }
+                ],
+                new McfunctionSemanticTokensProvider(),
+                new SemanticTokensLegend(TokenTypes, TokenModifiers)
+            )
+        )
+    })
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -75,4 +98,17 @@ export function deactivate(): Thenable<void> | undefined {
         return undefined
     }
     return client.stop()
+}
+
+class McfunctionSemanticTokensProvider implements DocumentSemanticTokensProvider {
+    async provideDocumentSemanticTokens(document: TextDocument) {
+        const response = await client.sendRequest<number[] | null>(
+            'spgoding/semanticColoringTest',
+            { textDocument: { uri: document.uri.toString() } }
+        )
+        if (!response) {
+            return null
+        }
+        return new SemanticTokens(Uint32Array.from(response))
+    }
 }

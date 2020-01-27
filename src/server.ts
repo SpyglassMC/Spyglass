@@ -15,6 +15,7 @@ import { getUri, parseString, getRel } from './utils/handlers/common'
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
+import Token, { TokenType, TokenModifier } from './types/Token'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -128,7 +129,7 @@ connection.onInitialized(() => {
         }
         const config = info.config
 
-        onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile })
+        await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile })
 
         cacheFileOperations.fileModified(uri, 'functions')
         trimCache(cacheFile.cache)
@@ -636,6 +637,45 @@ connection.onInitialized(() => {
 
         return ans
     })
+
+    connection.onNotification('spgoding/semanticColoringLegendTest', ({ types, modifiers }: { types: string[], modifiers: string[] }) => {
+        for (let i = 0; i < types.length; i++) {
+            const type = types[i]
+            Token.Types.set(type as TokenType, i)
+        }
+
+        for (let i = 0; i < modifiers.length; i++) {
+            const modifier = modifiers[i]
+            Token.Modifiers.set(modifier as TokenModifier, i)
+        }
+    })
+    connection.onRequest('spgoding/semanticColoringTest', ({ textDocument: { uri: uriString } }: { textDocument: { uri: string } }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        const ans: number[] = []
+
+        let lastToken: Token | undefined
+        let lastLine = 0
+        for (let i = 0; i < info.lines.length; i++) {
+            const { tokens } = info.lines[i]
+            lastToken = undefined
+            for (const token of tokens) {
+                if (lastToken) {
+                    ans.push(...token.toArray(i, lastLine, lastToken.range.start))
+                } else {
+                    ans.push(...token.toArray(i, lastLine))
+                }
+                lastToken = token
+                lastLine = i
+            }
+        }
+
+        return ans
+    })
 })
 
 async function getReferencesOrDefinition(uriString: string, number: number, char: number, key: 'def' | 'ref') {
@@ -677,7 +717,7 @@ async function getUriFromId(id: Identity, category: CacheKey): Promise<Uri | nul
             return uri
         }
     }
-    console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
+    connection.console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
     urisOfIds.set(key, null)
     return null
 }
@@ -701,13 +741,12 @@ async function updateDiagnostics(uri: Uri) {
 
 async function fetchConfig(uri: Uri): Promise<Config> {
     try {
-        console.log(`Fetching config for ${uri.toString()}`)
         return await connection.workspace.getConfiguration({
             scopeUri: uri.toString(),
             section: 'datapackLanguageServer'
         }) as Config
     } catch (e) {
-        console.error(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
+        connection.console.error(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
         return VanillaConfig
     }
 }

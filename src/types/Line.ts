@@ -103,6 +103,8 @@ export function combineSaturatedLine(base: SaturatedLine, override: Line): Satur
     base.completions = [...base.completions, ...override.completions]
     // Errors.
     base.errors = [...base.errors, ...override.errors]
+    // Tokens.
+    base.tokens = [...base.tokens, ...override.tokens]
     return base
 }
 

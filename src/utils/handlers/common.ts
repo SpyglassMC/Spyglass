@@ -24,7 +24,7 @@ export function getUri(str: string, uris: Map<string, Uri>) {
 
 export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile) {
     if (string.match(/^[\s\t]*$/)) {
-        lines.push({ args: [], hint: { fix: [], options: [] } })
+        lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
     } else {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(string)

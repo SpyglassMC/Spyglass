@@ -129,6 +129,10 @@ export default class LineParser implements Parser<Line> {
                 parsedLine.hint.fix.push(parser.toHint(key, optional))
             }
 
+            if (node.run) {
+                node.run(parsedLine)
+            }
+            
             // Handle trailing data or absent data.
             if (!reader.canRead(2) && (reader.peek() === '' || reader.peek() === ' ')) {
                 // The input line is all parsed.
@@ -199,9 +203,9 @@ export default class LineParser implements Parser<Line> {
         } else {
             throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
         }
-        if (node.run) {
-            node.run(parsedLine)
-        }
+        // if (node.run) {
+        //     node.run(parsedLine)
+        // }
     }
 
     parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false) {

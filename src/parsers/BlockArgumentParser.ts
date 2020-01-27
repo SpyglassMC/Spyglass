@@ -56,7 +56,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
                     const start = reader.cursor
                     const result = ctx.parsers.get('Literal', keys).parse(reader, ctx)
-                    result.tokens.push(Token.from(start, reader, 'property'))
+                    result.tokens = [Token.from(start, reader, 'property')]
 
                     if (id.isTag) {
                         result.errors = []
@@ -73,7 +73,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
                     const start = reader.cursor
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
-                    result.tokens.push(Token.from(start, reader, 'string'))
+                    result.tokens = [Token.from(start, reader, 'string')]
 
                     ans.data.states[key] = result.data
                     if (id.isTag) {

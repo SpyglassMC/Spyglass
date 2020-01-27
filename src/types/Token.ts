@@ -33,4 +33,23 @@ export default class Token {
     static from(start: number, reader: StringReader, type: TokenType, modifiers: TokenModifier[] = []) {
         return new Token({ start, end: reader.cursor }, type, modifiers)
     }
+
+    /**
+     * Get the array form of the semantic token.
+     * @param lastLine The start line of the last token.
+     * @param lastStartChar The start character of the last token.
+     * @returns `[ deltaLine, deltaStartChar, length, tokenType, tokenModifiers ]`
+     */
+    toArray(line: number, lastLine = 0, lastStartChar = 0): [number, number, number, number, number] {
+        const deltaLine = line - lastLine
+        const deltaStartChar = this.range.start - lastStartChar
+        const length = this.range.end - this.range.start
+        const tokenType = Token.Types.get(this.type) as number
+        let tokenModifiers = 0
+        for (const modifier of this.modifiers) {
+            const num = Token.Modifiers.get(modifier) as number
+            tokenModifiers = tokenModifiers | (1 << num)
+        }
+        return [deltaLine, deltaStartChar, length, tokenType, tokenModifiers]
+    }
 }

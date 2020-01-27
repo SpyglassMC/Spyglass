@@ -194,9 +194,12 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             new MapAbstractParser<string, Entity>(
                 '[', '=', ',', ']',
                 (_ans, reader, ctx) => {
-                    return ctx.parsers
+                    const start = reader.cursor
+                    const result = ctx.parsers
                         .get('QuotableLiteral', [SelectorArgumentKeys, ctx.config.lint.quoteEntitySelectorKeys])
                         .parse(reader, ctx)
+                    result.tokens = [Token.from(start, reader, 'property')]
+                    return result
                 },
                 (ans, reader, ctx, key) => {
                     if (key === 'sort') {

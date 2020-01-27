@@ -6,7 +6,6 @@
         "module": "commonjs",
         "target": "ESNext",
         "rootDir": "src",
-        "outDir": "lib",
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
@@ -17,10 +16,5 @@
         "declaration": true,
         "newLine": "LF",
         "resolveJsonModule": true
-    },
-    "exclude": [
-        "src/test",
-        "lib",
-        "dist"
-    ]
+    }
 }
