@@ -269,12 +269,17 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                     new MapAbstractParser<string, Entity>(
                                         '{', '=', ',', '}',
                                         (_ans, reader, ctx) => {
-                                            return ctx.parsers
+                                            const start = reader.cursor
+                                            const result = ctx.parsers
                                                 .get('String', ['$QuotablePhrase'])
                                                 .parse(reader, ctx)
+                                            result.tokens = [Token.from(start, reader, 'property')]
+                                            return result
                                         },
                                         (ans, reader, ctx, crit) => {
+                                            const start = reader.cursor
                                             const boolResult = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
+                                            boolResult.tokens = [Token.from(start, reader, 'string')]
                                             const bool = boolResult.data === 'true'
                                             combineArgumentParserResult(ans, boolResult)
                                             criteriaObject[crit] = bool

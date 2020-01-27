@@ -21,7 +21,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         assert(info.config === VanillaConfig)
         assert(info.version === 2)
         assert.deepEqual(info.strings, [''])
-        assert.deepEqual(info.lines, [{ args: [], hint: { fix: [], options: [] } }])
+        assert.deepEqual(info.lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
     })
     it('Should set the `lineBreak` to CRLF', async () => {
         const text = '0\r\n1\n2'

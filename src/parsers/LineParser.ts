@@ -36,7 +36,7 @@ export default class LineParser implements Parser<Line> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ParserResult {
-        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }, tokens: [] }
+        const line: SaturatedLine = { args: [], tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
         reader.skipWhiteSpace()
         const backupReader = reader.clone()
         //#region Check leading slash.

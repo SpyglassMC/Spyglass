@@ -5,6 +5,7 @@ import { getUri, parseString, getRel } from '../../../utils/handlers/common'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { VanillaConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
+import Token from '../../../types/Token'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -26,7 +27,7 @@ describe('common.ts Tests', () => {
 
             await parseString(string, lines, config, cacheFile)
 
-            assert.deepEqual(lines, [{ args: [], hint: { fix: [], options: [] } }])
+            assert.deepEqual(lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
         })
         it('Should push parsed line for other input', async () => {
             const string = '# test'
@@ -36,7 +37,7 @@ describe('common.ts Tests', () => {
 
             await parseString(string, lines, config, cacheFile)
 
-            assert.deepEqual(lines, [{ args: [{ data: '# test', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }])
+            assert.deepEqual(lines, [{ args: [{ data: '# test', parser: 'string' }], tokens: [new Token({ start: 0, end: 6 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }])
         })
     })
     describe('getRel() Tests', () => {

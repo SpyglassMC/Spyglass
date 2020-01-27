@@ -3,6 +3,7 @@ import { describe, it } from 'mocha'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onDidChangeTextDocument from '../../../utils/handlers/onDidChangeTextDocument'
 import { VanillaConfig } from '../../../types/Config'
+import Token from '../../../types/Token'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, files: {}, version: NaN }
@@ -13,9 +14,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -32,7 +33,7 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Modified', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Modified', parser: 'string' }], tokens: [new Token({ start: 0, end: 10 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Modified'
@@ -45,9 +46,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -72,9 +73,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1-Modified', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1-Modified', parser: 'string' }], tokens: [new Token({ start: 0, end: 17 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -89,9 +90,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -116,10 +117,10 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\r\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1-1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1-1', parser: 'string' }], tokens: [new Token({ start: 0, end: 10 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -135,9 +136,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -162,7 +163,7 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0# Test 2'
@@ -175,9 +176,9 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
@@ -202,11 +203,11 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 1', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 3', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Modified 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Modified 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Modified 3', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, 'comment')], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',

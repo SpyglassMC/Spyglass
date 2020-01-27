@@ -59,6 +59,10 @@ export function combineLine(base: Line, override: Line): Line {
     if (override.args.length !== 0) {
         base.args = [...base.args, ...override.args]
     }
+    // Tokens.
+    if (override.tokens.length !== 0) {
+        base.tokens = [...base.tokens, ...override.tokens]
+    }
     // Hint.
     if (override.hint.fix.length !== 0) {
         base.hint.fix = [...base.hint.fix, ...override.hint.fix]

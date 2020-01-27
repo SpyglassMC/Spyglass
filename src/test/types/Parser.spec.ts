@@ -2,18 +2,21 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { combineArgumentParserResult } from '../../types/Parser'
 import ParsingError from '../../types/ParsingError'
+import Token from '../../types/Token'
 
 describe('Parser Tests', () => {
     describe('combineArgumentParserResult() Tests', () => {
         it('Should combine cache, completions and errors', () => {
             const base = {
                 data: 'base',
+                tokens: [new Token({ start: 0, end: 1 }, 'comment')],
                 cache: { entities: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
                 completions: [{ label: 'a' }]
             }
             const override = {
                 data: 'override',
+                tokens: [new Token({ start: 1, end: 2 }, 'string')],
                 cache: {
                     entities: {
                         foo: {
@@ -32,6 +35,10 @@ describe('Parser Tests', () => {
                     }
                 }
             })
+            assert.deepStrictEqual(base.tokens, [
+                new Token({ start: 0, end: 1 }, 'comment'),
+                new Token({ start: 1, end: 2 }, 'string')
+            ])
             assert.deepStrictEqual(base.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'Old'),
                 new ParsingError({ start: 0, end: 3 }, 'New')
