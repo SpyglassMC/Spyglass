@@ -1,6 +1,6 @@
 import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
-import { formatMessage } from '../utils/utils'
 import TextRange from './TextRange'
+import { locale } from '../locales/Locales'
 
 /**
  * Represent an error occured while parsing.
@@ -34,7 +34,7 @@ export default class ParsingError {
             range: { start: { line, character: this.range.start }, end: { line, character: this.range.end } },
             severity: this.severity,
             source: 'datapack',
-            message: formatMessage(this.message)
+            message: this.message + locale('punc.period')
         }
     }
 }

@@ -95,7 +95,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got nothing/))
+            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got nothing/))
             assert(pe.tolerable === false)
         })
         it('Should return untolerable errors when partial matching', () => {
@@ -104,7 +104,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got ‘F’/))
+            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got ‘F’/))
             assert(pe.tolerable === false)
         })
         it('Should return untolerable error when nothing matches', () => {
@@ -113,7 +113,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/expected ‘foo’ or ‘bar’ but got ‘spg’/))
+            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got ‘spg’/))
             assert(pe.tolerable === false)
         })
     })

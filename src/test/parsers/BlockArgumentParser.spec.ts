@@ -201,10 +201,10 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 27, end: 32 }, 'expected ‘age’ but got ‘snowy’'
+                        { start: 27, end: 32 }, 'Expected ‘age’ but got ‘snowy’'
                     ),
                     new ParsingError(
-                        { start: 27, end: 32 }, 'duplicate key ‘snowy’'
+                        { start: 27, end: 32 }, 'Duplicate key ‘snowy’'
                     )
                 ]
             )
@@ -216,10 +216,10 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 22, end: 23 }, 'expected ‘true’ or ‘false’ but got nothing'
+                        { start: 22, end: 23 }, 'Expected ‘true’ or ‘false’ but got nothing'
                     ),
                     new ParsingError(
-                        { start: 22, end: 23 }, 'expected ‘]’ but got nothing'
+                        { start: 22, end: 23 }, 'Expected ‘]’ but got nothing'
                     )
                 ]
             )

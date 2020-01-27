@@ -79,7 +79,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'expected ‘belowName’, ‘list’, or ‘sidebar’ but got ‘foo’'
+                    'Expected ‘belowName’, ‘list’, or ‘sidebar’ but got ‘foo’'
                 )
             ])
         })
@@ -90,7 +90,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 4, end: 5 },
-                    'only ‘sidebar’ has sub slots'
+                    'Only ‘sidebar’ has sub slots'
                 )
             ])
         })

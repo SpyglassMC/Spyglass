@@ -40,7 +40,7 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader("'bar")
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag(''))
-            assert.deepStrictEqual(errors, [new ParsingError({ start: 4, end: 5 }, "expected an ending quote ‘'’ but got nothing")])
+            assert.deepStrictEqual(errors, [new ParsingError({ start: 4, end: 5 }, "Expected an ending quote ‘'’ but got nothing")])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
         })
@@ -49,7 +49,7 @@ describe('NbtTagArgumentParser Tests', () => {
             const reader = new StringReader('')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepEqual(data, getNbtStringTag(''))
-            assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 1 }, 'expected a tag but got nothing')])
+            assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 1 }, 'Expected a tag but got nothing')])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
         })
@@ -159,7 +159,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtStringTag('233b'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 4 },
-                'expected a number between -128 and 127 but got ‘233’',
+                'Expected a number between -128 and 127 but got ‘233’',
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -173,7 +173,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtStringTag('32768s'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 6 },
-                'expected a number between -32,768 and 32,767 but got ‘32768’',
+                'Expected a number between -32,768 and 32,767 but got ‘32768’',
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -187,7 +187,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtStringTag('12345678901234'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 14 },
-                'expected a number between -2,147,483,648 and 2,147,483,647 but got ‘12345678901234’',
+                'Expected a number between -2,147,483,648 and 2,147,483,647 but got ‘12345678901234’',
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -201,7 +201,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtStringTag('-9223372036854775809L'))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 21 },
-                'expected a number between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807 but got ‘-9223372036854775809’',
+                'Expected a number between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807 but got ‘-9223372036854775809’',
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -295,7 +295,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, expected)
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 10, end: 13 },
-                'duplicate key ‘foo’',
+                'Duplicate key ‘foo’',
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -315,7 +315,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtCompoundTag({}))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
-                'expected a key but got nothing'
+                'Expected a key but got nothing'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -327,7 +327,7 @@ describe('NbtTagArgumentParser Tests', () => {
             assert.deepEqual(data, getNbtByteTag(1))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 0, end: 2 },
-                'expected a string tag but got a byte tag'
+                'Expected a string tag but got a byte tag'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -347,7 +347,7 @@ describe('NbtTagArgumentParser Tests', () => {
             }))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 11 },
-                "invalid key ‘snake_case’ which doesn't follow ‘PascalCase’ and ‘camelCase’ convention",
+                "Invalid key ‘snake_case’ which doesn't follow ‘PascalCase’ and ‘camelCase’ convention",
                 true,
                 DiagnosticSeverity.Warning
             )])
@@ -363,7 +363,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
-                'expected ‘}’ but got nothing'
+                'Expected ‘}’ but got nothing'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -377,7 +377,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
-                'expected ‘]’ but got nothing'
+                'Expected ‘]’ but got nothing'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -391,7 +391,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 3, end: 4 },
-                'expected ‘]’ but got nothing'
+                'Expected ‘]’ but got nothing'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -405,7 +405,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 4, end: 6 },
-                'expected a byte tag but got a short tag'
+                'Expected a byte tag but got a short tag'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -419,7 +419,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a byte tag but got a short tag'
+                'Expected a byte tag but got a short tag'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -433,7 +433,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 7, end: 9 },
-                'expected an int tag but got a short tag'
+                'Expected an int tag but got a short tag'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -447,7 +447,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 8, end: 10 },
-                'expected a long tag but got a short tag'
+                'Expected a long tag but got a short tag'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -461,7 +461,7 @@ describe('NbtTagArgumentParser Tests', () => {
             ))
             assert.deepStrictEqual(errors, [new ParsingError(
                 { start: 1, end: 2 },
-                'invalid array type ‘A’. Should be one of ‘B’, ‘I’, and ‘L’'
+                'Invalid array type ‘A’. Should be one of ‘B’, ‘I’, and ‘L’'
             )])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -717,7 +717,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 11 },
-                    'expected a list tag but got a compound tag',
+                    'Expected a list tag but got a compound tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -735,7 +735,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 2, end: 5 },
-                    'unknown key ‘foo’',
+                    'Unknown key ‘foo’',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -766,7 +766,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 8, end: 10 },
-                    'expected an int tag but got a byte tag',
+                    'Expected an int tag but got a byte tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -782,7 +782,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'expected a compound tag but got a list tag',
+                    'Expected a compound tag but got a list tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -800,7 +800,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 1, end: 3 },
-                    'expected an int tag but got a byte tag',
+                    'Expected an int tag but got a byte tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -816,7 +816,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'expected a compound tag but got a byte array tag',
+                    'Expected a compound tag but got a byte array tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -832,7 +832,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'expected a compound tag but got an int array tag',
+                    'Expected a compound tag but got an int array tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -848,7 +848,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'expected a compound tag but got a long array tag',
+                    'Expected a compound tag but got a long array tag',
                     true,
                     DiagnosticSeverity.Warning
                 )])
@@ -867,7 +867,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 7, end: 8 },
-                    'expected a tag but got nothing'
+                    'Expected a tag but got nothing'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -883,8 +883,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 ))
                 assert.deepStrictEqual(errors, [
-                    new ParsingError({ start: 13, end: 14 }, 'expected a tag but got nothing'),
-                    new ParsingError({ start: 13, end: 13 }, 'expected a byte tag but got a string tag', true, DiagnosticSeverity.Warning),
+                    new ParsingError({ start: 13, end: 14 }, 'Expected a tag but got nothing'),
+                    new ParsingError({ start: 13, end: 13 }, 'Expected a byte tag but got a string tag', true, DiagnosticSeverity.Warning),
                 ])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -900,8 +900,8 @@ describe('NbtTagArgumentParser Tests', () => {
                     }
                 ))
                 assert.deepStrictEqual(errors, [
-                    new ParsingError({ start: 11, end: 12 }, 'expected ‘{’ but got nothing'),
-                    new ParsingError({ start: 11, end: 12 }, 'expected ‘}’ but got nothing')
+                    new ParsingError({ start: 11, end: 12 }, 'Expected ‘{’ but got nothing'),
+                    new ParsingError({ start: 11, end: 12 }, 'Expected ‘}’ but got nothing')
                 ])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -920,7 +920,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 12, end: 13 },
-                    'expected ‘{’ but got ‘}’'
+                    'Expected ‘{’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -939,7 +939,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 8, end: 9 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -958,7 +958,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 13, end: 14 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -977,7 +977,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 12, end: 13 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -996,7 +996,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 13, end: 14 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [
@@ -1014,7 +1014,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 12, end: 13 },
-                    'expected ‘{’ but got ‘}’'
+                    'Expected ‘{’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -1030,7 +1030,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 8, end: 9 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -1046,7 +1046,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 13, end: 14 },
-                    'expected ‘[’ but got ‘}’'
+                    'Expected ‘[’ but got ‘}’'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -1062,7 +1062,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 10, end: 11 },
-                    'expected a tag but got nothing'
+                    'Expected a tag but got nothing'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
@@ -1112,11 +1112,11 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 10, end: 11 },
-                        'expected a tag but got nothing'
+                        'Expected a tag but got nothing'
                     ),
                     new ParsingError(
                         { start: 10, end: 11 },
-                        'expected ‘foo’ or ‘\"bar\"’ but got nothing',
+                        'Expected ‘foo’ or ‘\"bar\"’ but got nothing',
                         true,
                         DiagnosticSeverity.Hint
                     )
@@ -1140,7 +1140,7 @@ describe('NbtTagArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 11, end: 12 },
-                        'expected ‘foo’ or ‘\"bar\"’ but got nothing',
+                        'Expected ‘foo’ or ‘\"bar\"’ but got nothing',
                         true,
                         DiagnosticSeverity.Hint
                     )
@@ -1173,16 +1173,16 @@ describe('NbtTagArgumentParser Tests', () => {
                 ))
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
-                        { start: 8, end: 9 }, 'expected a tag but got nothing'
+                        { start: 8, end: 9 }, 'Expected a tag but got nothing'
                     ),
                     new ParsingError(
                         { start: 8, end: 9 },
-                        'expected a number but got nothing',
+                        'Expected a number but got nothing',
                         true,
                         DiagnosticSeverity.Hint
                     ),
                     new ParsingError(
-                        { start: 8, end: 8 }, 'expected a byte tag but got a string tag',
+                        { start: 8, end: 8 }, 'Expected a byte tag but got a string tag',
                         undefined, DiagnosticSeverity.Warning
                     )
                 ])

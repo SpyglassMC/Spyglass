@@ -34,9 +34,9 @@ export class TestArgumentParser extends ArgumentParser<string> {
         const data = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = { data, cache: {}, completions: [], errors: [] }
         if (this.type === 'error') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected ‘error’ and did get ‘error’')]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘error’ and did get ‘error’')]
         } else if (this.type === 'ERROR') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'expected ‘ERROR’ and did get ‘ERROR’', false)]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘ERROR’ and did get ‘ERROR’', false)]
         } else if (this.type === 'cache') {
             ans.cache = {
                 entities: {
@@ -175,7 +175,7 @@ describe('LineParser Tests', () => {
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }])
-            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'expected more arguments but got nothing')])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'Expected more arguments but got nothing')])
         })
         it('Should parse children when there are trailing data', async () => {
             const input = 'foo bar'
@@ -220,7 +220,7 @@ describe('LineParser Tests', () => {
             const line = { args: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'f', parser: 'test' }])
-            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'expected a space to seperate two arguments')])
+            assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'Expected a space to seperate two arguments')])
         })
         it('Should downgrade untolerable errors of children', async () => {
             const input = 'foo bar'
@@ -243,7 +243,7 @@ describe('LineParser Tests', () => {
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 4, end: 7 }, 'expected ‘ERROR’ and did get ‘ERROR’')]
+                [new ParsingError({ start: 4, end: 7 }, 'Expected ‘ERROR’ and did get ‘ERROR’')]
             )
         })
         it('Should return error when there are trailing data but no children', async () => {
@@ -264,7 +264,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 3, end: 7 }, 'expected nothing but got ‘ bar’')]
+                [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got ‘ bar’')]
             )
         })
         it('Should return completions for empty argument', async () => {
@@ -315,7 +315,7 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.errors,
                 [new ParsingError(
                     { start: 0, end: 3 },
-                    'permission level 3 is required, which is higher than 2 defined in config'
+                    'Permission level 3 is required, which is higher than 2 defined in config'
                 )]
             )
         })
@@ -422,7 +422,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 0, end: 3 }, 'expected ‘error’ and did get ‘error’')]
+                [new ParsingError({ start: 0, end: 3 }, 'Expected ‘error’ and did get ‘error’')]
             )
         })
         it('Should return the last child if untolerable error occurrs', async () => {
@@ -461,13 +461,13 @@ describe('LineParser Tests', () => {
             const ctx = await constructContext({ parsers, tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
-            const line = { args: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'old error')], cache: {}, completions: [] }
+            const line = { args: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'Old error')], cache: {}, completions: [] }
             parser.parseChildren(reader, ctx, tree.children, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 0, end: 1 }, 'old error')]
+                [new ParsingError({ start: 0, end: 1 }, 'Old error')]
             )
         })
         it('Should combine with parsed line', async () => {
@@ -541,8 +541,8 @@ describe('LineParser Tests', () => {
                         options: []
                     },
                     errors: [
-                        new ParsingError({ start: 2, end: 3 }, 'expected ‘error’ and did get ‘error’'),
-                        new ParsingError({ start: 4, end: 5 }, 'expected ‘ERROR’ and did get ‘ERROR’')
+                        new ParsingError({ start: 2, end: 3 }, 'Expected ‘error’ and did get ‘error’'),
+                        new ParsingError({ start: 4, end: 5 }, 'Expected ‘ERROR’ and did get ‘ERROR’')
                     ]
                 }
             })
@@ -614,7 +614,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'unexpected leading slash ‘/’',
+                        'Unexpected leading slash ‘/’',
                         false
                     )]
                 }
@@ -630,7 +630,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'expected a leading slash ‘/’ but got ‘f’',
+                        'Expected a leading slash ‘/’ but got ‘f’',
                         false
                     )]
                 }
@@ -647,7 +647,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'expected a leading slash ‘/’ but got ‘’',
+                        'Expected a leading slash ‘/’ but got ‘’',
                         false
                     )],
                     completions: [

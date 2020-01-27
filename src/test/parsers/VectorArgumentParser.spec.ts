@@ -59,14 +59,14 @@ describe('VectorArgumentParser Tests', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a vector but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a vector but got nothing', false)
             ])
         })
         it('Should return untolerable error when the input is not a vector', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('f'), ctx)
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a vector but got ‘f’', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a vector but got ‘f’', false)
             ])
         })
         it('Should return error when local coordinates are mixed with non-local coordinates', () => {
@@ -76,7 +76,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepEqual(actual.data.elements[2], { value: '-1', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 7 }, 'cannot mix local coordinates and non-local coordinates together')
+                new ParsingError({ start: 0, end: 7 }, 'Cannot mix local coordinates and non-local coordinates together')
             ])
         })
         it('Should return error when local coordinates are not allowed', () => {
@@ -85,8 +85,8 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-1', type: 'local' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'local' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'local coordinate ‘^-1’ is not allowed'),
-                new ParsingError({ start: 4, end: 7 }, 'local coordinate ‘^.5’ is not allowed')
+                new ParsingError({ start: 0, end: 3 }, 'Local coordinate ‘^-1’ is not allowed'),
+                new ParsingError({ start: 4, end: 7 }, 'Local coordinate ‘^.5’ is not allowed')
             ])
         })
         it('Should return error when relative coordinates are not allowed', () => {
@@ -95,7 +95,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 2, end: 3 }, 'relative coordinate ‘~’ is not allowed')
+                new ParsingError({ start: 2, end: 3 }, 'Relative coordinate ‘~’ is not allowed')
             ])
         })
         it('Should return untolerable error when failed to find sep', () => {
@@ -104,7 +104,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 4 }, 'expected ‘ ’ but got nothing', false)
+                new ParsingError({ start: 3, end: 4 }, 'Expected ‘ ’ but got nothing', false)
             ])
         })
         it('Should return error for illegal number', () => {
@@ -113,7 +113,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '', type: 'relative' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 12 }, 'expected a number but got ‘1.4.5.1.4’')
+                new ParsingError({ start: 3, end: 12 }, 'Expected a number but got ‘1.4.5.1.4’')
             ])
         })
         it('Should return error when the number is smaller than min', () => {
@@ -122,7 +122,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'expected a number larger than or equal to 0 but got -0.1')
+                new ParsingError({ start: 0, end: 3 }, 'Expected a number larger than or equal to 0 but got -0.1')
             ])
         })
         it('Should return error when the number is smaller than min in an array', () => {
@@ -131,7 +131,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'expected a number larger than or equal to 0 but got -0.1')
+                new ParsingError({ start: 0, end: 3 }, 'Expected a number larger than or equal to 0 but got -0.1')
             ])
         })
         it('Should return error when the number is larger than max', () => {
@@ -140,7 +140,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 4, end: 6 }, 'expected a number smaller than or equal to 0 but got 0.5')
+                new ParsingError({ start: 4, end: 6 }, 'Expected a number smaller than or equal to 0 but got 0.5')
             ])
         })
         it('Should return error when the number is larger than max in an array', () => {
@@ -149,7 +149,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepEqual(actual.data.elements[0], { value: '-.1', type: 'absolute' })
             assert.deepEqual(actual.data.elements[1], { value: '.5', type: 'absolute' })
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 4, end: 6 }, 'expected a number smaller than or equal to 0 but got 0.5')
+                new ParsingError({ start: 4, end: 6 }, 'Expected a number smaller than or equal to 0 but got 0.5')
             ])
         })
     })

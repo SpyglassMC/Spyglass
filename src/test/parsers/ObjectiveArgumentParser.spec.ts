@@ -55,7 +55,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected an objective but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected an objective but got nothing', false)
             ])
         })
         it('Should return error when the input is too long', () => {
@@ -81,7 +81,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'undefined objective ‘qux’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Undefined objective ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache when the objective is a reference', () => {

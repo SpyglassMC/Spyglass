@@ -157,7 +157,7 @@ describe('ParticleArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 14, end: 15 }, 'expected ‘ ’ but got nothing'
+                        { start: 14, end: 15 }, 'Expected ‘ ’ but got nothing'
                     )
                 ]
             )

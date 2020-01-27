@@ -9,7 +9,7 @@ describe('Parser Tests', () => {
             const base = {
                 data: 'base',
                 cache: { entities: {} },
-                errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
+                errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
                 completions: [{ label: 'a' }]
             }
             const override = {
@@ -21,7 +21,7 @@ describe('Parser Tests', () => {
                         }
                     }
                 },
-                errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
+                errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
                 completions: [{ label: 'b' }]
             }
             combineArgumentParserResult(base, override)
@@ -33,8 +33,8 @@ describe('Parser Tests', () => {
                 }
             })
             assert.deepStrictEqual(base.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'old'),
-                new ParsingError({ start: 0, end: 3 }, 'new')
+                new ParsingError({ start: 0, end: 3 }, 'Old'),
+                new ParsingError({ start: 0, end: 3 }, 'New')
             ])
             assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
         })

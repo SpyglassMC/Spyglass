@@ -24,7 +24,7 @@ describe('NumberArgumentParser Tests', () => {
             const { data, errors } = parser.parse(reader)
             assert(isNaN(data))
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 7 }, 'expected an integer but got 114.514')
+                new ParsingError({ start: 0, end: 7 }, 'Expected an integer but got 114.514')
             ])
         })
         it('Should return error when the number is larger than max', () => {
@@ -33,7 +33,7 @@ describe('NumberArgumentParser Tests', () => {
             const { data, errors } = parser.parse(reader)
             assert(data === 2333)
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 4 }, 'expected a number smaller than or equal to 6 but got 2333')
+                new ParsingError({ start: 0, end: 4 }, 'Expected a number smaller than or equal to 6 but got 2333')
             ])
         })
         it('Should return error when the number is smaller than min', () => {
@@ -42,7 +42,7 @@ describe('NumberArgumentParser Tests', () => {
             const { data, errors } = parser.parse(reader)
             assert(data === 2333)
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 4 }, 'expected a number larger than or equal to 114514 but got 2333')
+                new ParsingError({ start: 0, end: 4 }, 'Expected a number larger than or equal to 114514 but got 2333')
             ])
         })
     })

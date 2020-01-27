@@ -49,22 +49,22 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] } })
         })
         it('Should return parsed errors', () => {
-            const parsedError = new ParsingError({ start: 0, end: 3 }, 'parsed')
+            const parsedError = new ParsingError({ start: 0, end: 3 }, 'Parsed')
             const base = { args: [], errors: [parsedError], hint: { fix: [], options: [] } }
             const override = { args: [], errors: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] }, errors: [parsedError] })
         })
         it('Should return new errors', () => {
-            const newError = new ParsingError({ start: 0, end: 3 }, 'new')
+            const newError = new ParsingError({ start: 0, end: 3 }, 'New')
             const base = { args: [], errors: [], hint: { fix: [], options: [] } }
             const override = { args: [], errors: [newError], hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, { args: [], hint: { fix: [], options: [] }, errors: [newError] })
         })
         it('Should combine parsed errors and new errors', () => {
-            const parsedError = new ParsingError({ start: 0, end: 3 }, 'parsed')
-            const newError = new ParsingError({ start: 0, end: 3 }, 'new')
+            const parsedError = new ParsingError({ start: 0, end: 3 }, 'Parsed')
+            const newError = new ParsingError({ start: 0, end: 3 }, 'New')
             const base = { args: [], errors: [parsedError], hint: { fix: [], options: [] } }
             const override = { args: [], errors: [newError], hint: { fix: [], options: [] } }
             combineLine(base, override)
@@ -76,14 +76,14 @@ describe('Line Tests', () => {
             const base: SaturatedLine = {
                 args: [{ data: 'execute', parser: 'test' }],
                 cache: { entities: {} },
-                errors: [new ParsingError({ start: 0, end: 3 }, 'old')],
+                errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
                 hint: { fix: ['a'], options: [['c', ['c']]] },
                 completions: [{ label: 'a' }]
             }
             const override: Line = {
                 args: [{ data: 'if', parser: 'test' }],
                 cache: { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
-                errors: [new ParsingError({ start: 0, end: 3 }, 'new')],
+                errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
                 hint: { fix: ['b'], options: [['d', ['d']]] },
                 completions: [{ label: 'b' }]
             }
@@ -96,8 +96,8 @@ describe('Line Tests', () => {
                 { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } }
             )
             assert.deepStrictEqual(base.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'old'),
-                new ParsingError({ start: 0, end: 3 }, 'new')
+                new ParsingError({ start: 0, end: 3 }, 'Old'),
+                new ParsingError({ start: 0, end: 3 }, 'New')
             ])
             assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
         })
@@ -114,14 +114,14 @@ describe('Line Tests', () => {
             const line = {
                 args: [], hint: { fix: [], options: [] },
                 cache: { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
-                errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
+                errors: [new ParsingError({ start: 0, end: 1 }, 'Error')],
                 completions: [{ label: 'completion' }]
             }
             saturatedLineToLine(line)
             assert.deepStrictEqual(line, {
                 args: [], hint: { fix: [], options: [] },
                 cache: { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
-                errors: [new ParsingError({ start: 0, end: 1 }, 'error')],
+                errors: [new ParsingError({ start: 0, end: 1 }, 'Error')],
                 completions: [{ label: 'completion' }]
             })
         })

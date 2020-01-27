@@ -55,7 +55,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a team but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a team but got nothing', false)
             ])
         })
         it('Should not return warning when the strict team check pass', async () => {
@@ -73,7 +73,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache if the team is an reference', () => {

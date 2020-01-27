@@ -33,7 +33,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const [actual] = parser.parse(reader).errors as ParsingError[]
             assert(actual.range.start === 0)
             assert(actual.range.end === 1)
-            assert(actual.message === 'expected a string but got nothing')
+            assert(actual.message === 'Expected a string but got nothing')
             assert(actual.tolerable === true)
         })
         it('Should return cache correctly', () => {

@@ -53,7 +53,7 @@ describe('EntityArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Entity())
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected an entity but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected an entity but got nothing', false)
             ])
         })
 
@@ -253,7 +253,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@b'), ctx)
                 assert.deepStrictEqual(actual.data, new Entity())
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 1, end: 2 }, 'unexpected selector variable ‘b’')
+                    new ParsingError({ start: 1, end: 2 }, 'Unexpected selector variable ‘b’')
                 ])
             })
             it('Should return error for unexpected argument key', () => {
@@ -262,7 +262,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(
                     actual.errors[0],
-                    new ParsingError({ start: 3, end: 6 }, 'expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘foo’')
+                    new ParsingError({ start: 3, end: 6 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘foo’')
                 )
             })
             it('Should return completions for argument keys', async () => {
@@ -330,7 +330,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a['), ctx)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 4 }, 'expected ‘]’ but got nothing')
+                    new ParsingError({ start: 3, end: 4 }, 'Expected ‘]’ but got nothing')
                 ])
             })
             it('Should return completions for ‘sort’ argument', async () => {
@@ -398,7 +398,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a'), ctx)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'a'))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 0, end: 2 }, 'the selector contains multiple entities')
+                    new ParsingError({ start: 0, end: 2 }, 'The selector contains multiple entities')
                 ])
             })
             it('Should return multiple-entity error for @r[limit=2]', () => {
@@ -406,7 +406,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@r[limit=2]'), ctx)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'r', { limit: 2 }))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 0, end: 11 }, 'the selector contains multiple entities')
+                    new ParsingError({ start: 0, end: 11 }, 'The selector contains multiple entities')
                 ])
             })
             it('Should not return multiple-entity error for @s', () => {
@@ -426,7 +426,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@e'), ctx)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'e'))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 0, end: 2 }, 'the selector contains non-player entities')
+                    new ParsingError({ start: 0, end: 2 }, 'The selector contains non-player entities')
                 ])
             })
             it('Should return non-player error for @e[type=zombie]', async () => {
@@ -436,7 +436,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@e[type=zombie]'), ctx)
                 assert.deepStrictEqual(actual.data, new Entity(undefined, 'e', { type: [new Identity(undefined, ['zombie'])] }))
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 0, end: 15 }, 'the selector contains non-player entities')
+                    new ParsingError({ start: 0, end: 15 }, 'The selector contains non-player entities')
                 ])
             })
             it('Should not return non-player error for @e[type=player]', () => {

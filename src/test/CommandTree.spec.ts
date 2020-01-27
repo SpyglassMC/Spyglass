@@ -246,8 +246,8 @@ describe('CommandTree Tests', () => {
             })
             assert.deepEqual(data.cache, undefined)
             assert.deepEqual(data.errors, [
-                new ParsingError({ start: 12, end: 13 }, 'expected ‘grant’ or ‘revoke’ but got ‘g’'),
-                new ParsingError({ start: 13, end: 15 }, 'expected more arguments but got nothing')
+                new ParsingError({ start: 12, end: 13 }, 'Expected ‘grant’ or ‘revoke’ but got ‘g’'),
+                new ParsingError({ start: 13, end: 15 }, 'Expected more arguments but got nothing')
             ])
             assert.deepEqual(data.completions, [{ label: 'grant' }])
         })

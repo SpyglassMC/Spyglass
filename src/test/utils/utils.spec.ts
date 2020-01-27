@@ -2,17 +2,10 @@ import assert = require('power-assert')
 import Lintable, { ToLintedString } from '../../types/Lintable'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
-import { formatMessage, arrayToMessage, escapeString, quoteString, arrayToCompletions, toLintedString } from '../../utils/utils'
+import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toLintedString } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
 
 describe('utils.ts Tests', () => {
-    describe('formatMessage() Tests', () => {
-        it('Should capitalize the first letter and append period', () => {
-            const message = 'expected something'
-            const actual = formatMessage(message)
-            assert(actual === 'Expected something.')
-        })
-    })
     describe('arrayToMessage() Tests', () => {
         it('Should return message for an empty array', () => {
             const arr: string[] = []

@@ -127,7 +127,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 8, end: 9 },
-                    'expected ‘.’ but got nothing'
+                    'Expected ‘.’ but got nothing'
                 )
             ])
         })

@@ -51,7 +51,7 @@ describe('NumericIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, NaN)
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a number but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a number but got nothing', false)
             ])
         })
     })

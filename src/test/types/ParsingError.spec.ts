@@ -6,7 +6,7 @@ import { describe, it } from 'mocha'
 describe('ParsingError Tests', () => {
     describe('toDiagnostic() Tests', () => {
         it('Should return diagnostic', () => {
-            const pe = new ParsingError({ start: 0, end: 5 }, 'expected a number but got nothing')
+            const pe = new ParsingError({ start: 0, end: 5 }, 'Expected a number but got nothing')
             const actual = pe.toDiagnostic(1)
             assert(actual.range.start.line === 1)
             assert(actual.range.start.character === 0)

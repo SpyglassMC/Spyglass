@@ -27,7 +27,7 @@ describe('CodeSnippetArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.errors, [new ParsingError(
                 { start: 0, end: 1 },
-                'code snippets are invalid for the game',
+                'Code snippets are invalid for the game',
                 false
             )])
         })

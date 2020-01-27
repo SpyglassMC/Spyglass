@@ -89,7 +89,7 @@ describe('NumberRangeArgumentParser Tests', () => {
             const { data, errors } = parser.parse(new StringReader('3..2'), ctx)
             assert.deepStrictEqual(data, new NumberRange('integer', 3, 2))
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 4 }, 'the minimum value 3 is larger than the maximum value 2')
+                new ParsingError({ start: 0, end: 4 }, 'The minimum value 3 is larger than the maximum value 2')
             ])
         })
         it('Should return error when there is neither a minimum value nor a maximum value', () => {
@@ -97,7 +97,7 @@ describe('NumberRangeArgumentParser Tests', () => {
             const { data, errors } = parser.parse(new StringReader('..'), ctx)
             assert.deepStrictEqual(data, new NumberRange('integer'))
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 2 }, 'expected either a minimum value or a maximum value')
+                new ParsingError({ start: 0, end: 2 }, 'Expected either a minimum value or a maximum value')
             ])
         })
         it('Should return untolerable error when the input is empty', () => {
@@ -105,7 +105,7 @@ describe('NumberRangeArgumentParser Tests', () => {
             const { data, errors } = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(data, new NumberRange('integer'))
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a number range but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a number range but got nothing', false)
             ])
         })
     })

@@ -55,7 +55,7 @@ describe('TagArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a tag but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a tag but got nothing', false)
             ])
         })
         it('Should not return warning when the strict tag check pass', async () => {
@@ -73,7 +73,7 @@ describe('TagArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'undefined tag ‘qux’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Undefined tag ‘qux’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache', () => {

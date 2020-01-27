@@ -156,7 +156,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
-                        'keys are only used for compound tags',
+                        'Keys are only used for compound tags',
                         true, DiagnosticSeverity.Warning
                     )
                 ])
@@ -173,7 +173,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
-                        'compound filters are only used for compound tags',
+                        'Compound filters are only used for compound tags',
                         true, DiagnosticSeverity.Warning
                     )
                 ])
@@ -190,7 +190,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
-                        'indexes are only used for lists/arrays tags',
+                        'Indexes are only used for lists/arrays tags',
                         true, DiagnosticSeverity.Warning
                     )
                 ])
@@ -207,7 +207,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
-                        'expected a compound filter, a key, or an index but got nothing'
+                        'Expected a compound filter, a key, or an index but got nothing'
                     )
                 ])
                 assert.deepEqual(cache, {})
@@ -224,7 +224,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
-                        'expected a compound filter, a key, or an index but got nothing'
+                        'Expected a compound filter, a key, or an index but got nothing'
                     )
                 ])
                 assert.deepEqual(cache, {})
@@ -244,7 +244,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 14, end: 15 },
-                        'expected a key or an index but got nothing'
+                        'Expected a key or an index but got nothing'
                     )
                 ])
                 assert.deepEqual(cache, {})
@@ -263,7 +263,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 3 },
-                        'unknown key ‘foo’',
+                        'Unknown key ‘foo’',
                         true, DiagnosticSeverity.Warning
                     )
                 ])
@@ -291,7 +291,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepEqual(errors, [
                     new ParsingError(
                         { start: 12, end: 13 },
-                        "the current tag doesn't have extra items",
+                        "The current tag doesn't have extra items",
                         true, DiagnosticSeverity.Warning
                     )
                 ])

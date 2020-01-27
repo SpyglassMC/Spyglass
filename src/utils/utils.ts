@@ -6,15 +6,6 @@ import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
 
 /**
- * Format input message.
- * @param msg Message.
- * @returns Formatted message.
- */
-export function formatMessage(msg: string) {
-    return `${msg[0].toUpperCase()}${msg.slice(1)}${locale('punc.period')}`
-}
-
-/**
  * Convert an array to human-readable message.
  * @param arr An array.
  * @param quoted Whether or not to quote the result. Defaults to `true`

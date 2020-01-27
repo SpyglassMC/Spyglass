@@ -415,7 +415,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, new Identity())
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'expected a namespaced ID but got nothing', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a namespaced ID but got nothing', false)
             ])
         })
         it('Should return errors for non [a-z0-9/._-] characters', async () => {
@@ -425,7 +425,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('spgoding:QwQ'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['QwQ']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 9, end: 12 }, 'found non [a-z0-9/._-] character(s)')
+                new ParsingError({ start: 9, end: 12 }, 'Found non [a-z0-9/._-] character(s)')
             ])
         })
         it('Should return warning when the id cannot be resolved in cache category', async () => {
@@ -435,7 +435,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in loot table cache', async () => {
@@ -445,7 +445,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', async () => {
@@ -455,7 +455,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('#spgoding:function/114514'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['function', '114514'], true))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 25 }, 'failed to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 25 }, 'Failed to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in registry', async () => {
@@ -465,7 +465,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['qux']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache when the id is already defined', async () => {
@@ -505,7 +505,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), ctx)
             assert.deepStrictEqual(actual.data, new Identity('spgoding', ['entity_type', '1'], true))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'tags are not allowed here')
+                new ParsingError({ start: 0, end: 1 }, 'Tags are not allowed here')
             ])
         })
         it('Should throw error when namespace cannot be omitted here', async () => {
@@ -514,7 +514,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('stone'), ctx)
             assert.deepStrictEqual(actual.data, new Identity(undefined, ['stone']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 5 }, 'default namespace cannot be omitted here')
+                new ParsingError({ start: 0, end: 5 }, 'Default namespace cannot be omitted here')
             ])
         })
     })
