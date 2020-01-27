@@ -7,6 +7,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -35,7 +36,7 @@ export default class LineParser implements Parser<Line> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ParserResult {
-        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+        const line: SaturatedLine = { args: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] }, tokens: [] }
         reader.skipWhiteSpace()
         const backupReader = reader.clone()
         //#region Check leading slash.
@@ -75,7 +76,14 @@ export default class LineParser implements Parser<Line> {
         saturatedLineToLine(line)
         /* istanbul ignore next */
         if (backupReader.peek() === '#' && line.errors && line.errors.length > 0) {
-            return { data: { args: [{ data: backupReader.remainingString, parser: 'string' }], hint: { fix: [], options: [] }, completions: line.completions } }
+            return {
+                data: {
+                    args: [{ data: backupReader.readRemaining(), parser: 'string' }],
+                    tokens: [Token.from(0, backupReader, 'comment')],
+                    hint: { fix: [], options: [] },
+                    completions: line.completions
+                }
+            }
         }
         return { data: line }
     }
@@ -106,11 +114,11 @@ export default class LineParser implements Parser<Line> {
         } else if (node.parser) {
             const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine, ctx)
-            const { cache, completions, data, errors } = parser.parse(reader, ctx)
+            const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
             combineSaturatedLine(parsedLine, {
                 args: [{ data, parser: parser.identity }],
                 hint: { fix: [], options: [] },
-                cache, completions, errors
+                cache, completions, errors, tokens
             })
             if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                 parsedLine.hint.options.push([
@@ -141,7 +149,7 @@ export default class LineParser implements Parser<Line> {
                         const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
-                            const result = { args: parsedLine.args, cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+                            const result = { args: parsedLine.args, tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
                             this.parseChildren(reader, ctx, node.children, result, optional)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
@@ -231,6 +239,7 @@ export default class LineParser implements Parser<Line> {
             if (children.hasOwnProperty(key)) {
                 const line: SaturatedLine = {
                     args: [],
+                    tokens: [],
                     hint: { fix: [], options: [] },
                     cache: {},
                     completions: [],

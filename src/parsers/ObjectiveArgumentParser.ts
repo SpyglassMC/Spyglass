@@ -6,6 +6,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
     static identity = 'Objective'
@@ -20,6 +21,7 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -34,6 +36,13 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
         const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
+        //#endregion
+        //#region Tokens
+        if (this.isDefinition) {
+            ans.tokens.push(Token.from(start, reader, 'variable', ['declaration']))
+        } else {
+            ans.tokens.push(Token.from(start, reader, 'variable'))
+        }
         //#endregion
         //#region Errors & Cache
         if (!value) {

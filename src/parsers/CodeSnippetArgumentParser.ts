@@ -13,6 +13,7 @@ export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader, { cursor, config: { snippets } }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []

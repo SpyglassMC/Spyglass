@@ -5,6 +5,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
     static identity = 'NumberRange'
@@ -21,6 +22,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRange> {
         const ans: ArgumentParserResult<NumberRange> = {
             data: new NumberRange(this.type),
+            tokens: [],
             completions: [],
             errors: [],
             cache: {}
@@ -50,6 +52,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
                 combineArgumentParserResult(ans, result)
             }
             if (isDoublePeriods()) {
+                ans.tokens.push(new Token({ start: reader.cursor, end: reader.cursor + 2 }, 'keyword'))
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
                     const result = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)

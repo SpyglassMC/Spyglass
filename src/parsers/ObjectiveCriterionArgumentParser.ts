@@ -3,6 +3,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringReader from '../utils/StringReader'
+import Token from '../types/Token'
 
 export default class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     static identity = 'ObjectiveCriterion'
@@ -37,14 +38,17 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
 
+        const start = reader.cursor
         const categoryResult = ctx.parsers
             .get('Literal', Object.keys(ObjectiveCriterionArgumentParser.Category))
             .parse(reader, ctx)
+        categoryResult.tokens = [Token.from(start, reader, 'type')]
         const category = categoryResult.data as string
         let subCriteria = ObjectiveCriterionArgumentParser.Category[category]
         combineArgumentParserResult(ans, categoryResult)
@@ -57,10 +61,12 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
 
         if (subCriteria.length > 0) {
             try {
+                const start = reader.cursor
                 reader
                     .expect(ObjectiveCriterionArgumentParser.Sep)
                     .skip()
                 const subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
+                subResult.tokens = [Token.from(start, reader, 'type')]
                 const sub: string = subResult.data
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ObjectiveCriterionArgumentParser.Sep}${sub}`

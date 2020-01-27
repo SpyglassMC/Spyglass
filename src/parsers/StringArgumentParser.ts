@@ -2,6 +2,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
+import Token from '../types/Token'
 
 export default class StringArgumentParser extends ArgumentParser<string> {
     static identity = 'String'
@@ -14,10 +15,12 @@ export default class StringArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
+        const start = reader.cursor
         try {
             switch (this.type) {
                 case 'GreedyPhrase':
@@ -35,6 +38,7 @@ export default class StringArgumentParser extends ArgumentParser<string> {
             const pe = <ParsingError>e
             ans.errors = [pe]
         }
+        ans.tokens.push(Token.from(start, reader, 'string'))
         return ans
     }
 

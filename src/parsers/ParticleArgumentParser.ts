@@ -15,6 +15,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Particle<any>> {
         const ans: ArgumentParserResult<Particle<any>> = {
             data: new Particle(new Identity()),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []

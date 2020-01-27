@@ -9,6 +9,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     static identity = 'Entity'
@@ -32,6 +33,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     private parsePlainOrUuid(reader: StringReader, ctx: ParsingContext) {
         const ans: ArgumentParserResult<Entity> = {
             data: new Entity(),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -59,6 +61,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
         if (plain) {
             ans.data.plain = plain
+            ans.tokens.push(Token.from(start, reader, 'parameter'))
         }
 
         // Errors
@@ -106,6 +109,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
     private parseSelector(reader: StringReader, ctx: ParsingContext) {
         const ans: ArgumentParserResult<Entity> = {
             data: new Entity(),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -114,6 +118,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         let isMultiple = false
         let containsNonPlayer = false
 
+        //#region Completions
         if (ctx.cursor === start + 1) {
             ans.completions.push(
                 { label: 'a', commitCharacters: ['[', ' '] },
@@ -123,6 +128,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 { label: 's', commitCharacters: ['[', ' '] }
             )
         }
+        //#endregion
 
         //#region Data
         /// Variable
@@ -130,6 +136,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             .expect('@')
             .skip()
         const variable = reader.read()
+        ans.tokens.push(Token.from(start, reader, 'parameter'))
         if (EntityArgumentParser.isVariable(variable)) {
             ans.data.variable = variable
             if (variable === 'a') {
@@ -193,17 +200,23 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 },
                 (ans, reader, ctx, key) => {
                     if (key === 'sort') {
+                        const start = reader.cursor
                         const result = ctx.parsers.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, ctx)
                         if (result.data) {
                             ans.data.argument.sort = result.data as SelectorSortMethod
                         }
+                        result.tokens = [Token.from(start, reader, 'string')]
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
+                        const start = reader.cursor
                         const value = reader.readFloat()
                         ans.data.argument[key] = value
+                        ans.tokens.push(Token.from(start, reader, 'number'))
                     } else if (key === 'limit') {
+                        const start = reader.cursor
                         const result = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
                         ans.data.argument.limit = result.data as number
+                        ans.tokens.push(Token.from(start, reader, 'number'))
                         if (ans.data.argument.limit === 1) {
                             isMultiple = false
                         } else {
@@ -269,6 +282,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                         .get('Literal', ['false', 'true'])
                                         .parse(reader, ctx)
                                     const bool = boolResult.data === 'true'
+                                    boolResult.tokens = [Token.from(start, reader, 'keyword')]
                                     combineArgumentParserResult(ans, boolResult)
 
                                     ans.data.argument.advancements[adv.toString()] = bool

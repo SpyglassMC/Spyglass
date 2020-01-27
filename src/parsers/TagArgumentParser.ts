@@ -6,6 +6,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class TagArgumentParser extends ArgumentParser<string> {
     static identity = 'Tag'
@@ -18,6 +19,7 @@ export default class TagArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -32,6 +34,9 @@ export default class TagArgumentParser extends ArgumentParser<string> {
         const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
+        //#endregion
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, 'variable'))
         //#endregion
         //#region Errors
         if (!value) {

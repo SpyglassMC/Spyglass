@@ -5,6 +5,7 @@ import { arrayToMessage, arrayToCompletions } from '../utils/utils'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class LiteralArgumentParser extends ArgumentParser<string> {
     static identity = 'Literal'
@@ -30,6 +31,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader, { cursor }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -57,6 +59,9 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             remaningLiterals = nextRemaningLiterals
         }
         ans.data = value
+        //#endregion
+        //#region Tokens.
+        ans.tokens.push(Token.from(start, reader, 'keyword'))
         //#endregion
         //#region Get errors.
         if (!this.literals.includes(value)) {

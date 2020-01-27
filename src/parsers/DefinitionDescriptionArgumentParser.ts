@@ -4,11 +4,12 @@ import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionDescription'
     readonly identity = 'string'
-    
+
     constructor(
         private readonly type: string,
         private readonly id: string
@@ -21,6 +22,7 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
         const description = reader.readRemaining()
         const ans: ArgumentParserResult<string> = {
             data: description,
+            tokens: [Token.from(start, reader, 'string', ['documentation'])],
             errors: [],
             cache: {},
             completions: []

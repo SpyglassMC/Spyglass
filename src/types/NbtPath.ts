@@ -12,7 +12,14 @@ type NbtPathKey = string
 
 export default class NbtPath implements Lintable {
     constructor(
-        readonly value: Array<Symbol | NbtPathIndex | NbtPathCompoundFilter | NbtPathKey>
+        readonly value: (
+            | typeof NbtPathIndexBegin
+            | typeof NbtPathIndexEnd
+            | typeof NbtPathSep
+            | NbtPathIndex
+            | NbtPathCompoundFilter
+            | NbtPathKey
+        )[]
     ) { }
 
     [ToLintedString](lint: LintConfig): string {

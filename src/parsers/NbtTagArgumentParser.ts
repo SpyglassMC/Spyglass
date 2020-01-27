@@ -12,6 +12,7 @@ import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     static identity = 'NbtTag'
@@ -270,6 +271,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private parseCompoundTag(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtCompoundTag> {
         const ans: ArgumentParserResult<NbtCompoundTag> = {
             data: getNbtCompoundTag({}),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -280,6 +282,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             (ans, reader, ctx) => {
                 const result: ArgumentParserResult<string> = {
                     data: '',
+                    tokens: [],
                     cache: {},
                     completions: [],
                     errors: []
@@ -288,6 +291,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 try {
                     const key = reader.readString()
                     result.data = key
+                    //#region Tokens
+                    result.tokens.push(Token.from(start, reader, 'property'))
+                    //#endregion
                     //#region Completions
                     if (walker && isSchemaAvailable && ctx.cursor === reader.cursor) {
                         const { children } = walker.read() as NbtCompoundSchemaNode
@@ -394,6 +400,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private parseListOrArray(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtListTag([]),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -422,6 +429,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
             data: getNbtByteArrayTag([]),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -433,7 +441,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             reader
                 .expect('[')
                 .skip()
+            const start = reader.cursor
             const type = reader.read()
+            //#region Tokens
+            ans.tokens.push(Token.from(start, reader, 'keyword'))
+            //#endregion
             switch (type) {
                 case 'B':
                     ans.data = getNbtByteArrayTag([])
@@ -524,6 +536,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private parseList(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtListTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
             data: getNbtListTag([]),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -578,10 +591,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker, isColor?: boolean): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtStringTag(''),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
+        const start = reader.cursor
         isColor = isColor || (walker && walker.read().isColor)
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
@@ -613,9 +628,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 ans.data = getNbtStringTag('')
                 ans.errors.push(p)
             }
+            //#region Tokens
+            ans.tokens.push(Token.from(start, reader, 'string'))
+            //#endregion
         } else {
             // Parse as an unquoted string or a number.
-            const start = reader.cursor
             const value = reader.readUnquotedString()
             if (value.length === 0) {
                 ans.data = getNbtStringTag('')
@@ -633,6 +650,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             const [pattern, func] = NbtTagArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
                                 ans.data = func(value)
+                                //#region Tokens
+                                ans.tokens.push(Token.from(start, reader, 'number'))
+                                //#endregion
                                 if (isColor) {
                                     const num = Number(value)
                                     const r = ((num >> 16) & 255) / 255
@@ -654,6 +674,9 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     throw failedToMatchAllPatterns
                 } catch (s) {
                     // Parse as an unquoted string.
+                    //#region Tokens
+                    ans.tokens.push(Token.from(start, reader, 'string'))
+                    //#endregion
                     if (s === failedToMatchAllPatterns) {
                         // Ignore `s`.
                         ans.data = getNbtStringTag(value)

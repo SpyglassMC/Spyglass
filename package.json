@@ -743,7 +743,27 @@
                     "default": false
                 }
             }
-        }
+        },
+        "tokenModifiers": [
+            {
+                "id": "firstArgument",
+                "description": "The first argument in a command."
+            }
+        ],
+        "tokenStyleDefaults": [
+            {
+                "selector": "*.firstArgument",
+                "dark": {
+                    "fontStyle": "bold"
+                },
+                "light": {
+                    "fontStyle": "bold"
+                },
+                "highContrast": {
+                    "fontStyle": "bold"
+                }
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:mcfunction",

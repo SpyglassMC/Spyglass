@@ -5,6 +5,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector, { VectorElement } from '../types/Vector'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static identity = 'Vector'
@@ -31,6 +32,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
         const ans: ArgumentParserResult<Vector> = {
             // tslint:disable-next-line: prefer-object-spread
             data: new Vector([]),
+            tokens: [],
             completions: [],
             errors: [],
             cache: {}
@@ -104,6 +106,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
     private parseElement(reader: StringReader, cursor: number, index: number) {
         const ans: ArgumentParserResult<VectorElement> = {
             data: { value: '', type: 'absolute' },
+            tokens: [],
             completions: [],
             errors: [],
             cache: {}
@@ -116,16 +119,21 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
 
         if (reader.peek() === VectorArgumentParser.LocalSymbol) {
             reader.skip()
+            ans.tokens.push(Token.from(start, reader, 'keyword'))
             ans.data.type = 'local'
         } else if (reader.peek() === VectorArgumentParser.RelativeSymbol) {
             reader.skip()
+            ans.tokens.push(Token.from(start, reader, 'keyword'))
             ans.data.type = 'relative'
         }
 
         if (StringReader.canInNumber(reader.peek())) {
             try {
+                const start = reader.cursor
                 const str = reader.readNumber()
                 ans.data.value = str
+                ans.tokens.push(Token.from(start, reader, 'number'))
+
                 const num = parseFloat(str)
                 const min = this.min instanceof Array ? this.min[index] : this.min
                 const max = this.max instanceof Array ? this.max[index] : this.max

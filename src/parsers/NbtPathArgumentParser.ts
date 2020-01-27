@@ -10,6 +10,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     static identity = 'NbtPath'
@@ -25,6 +26,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtPath> {
         const ans: ArgumentParserResult<NbtPath> = {
             data: new NbtPath([]),
+            tokens: [],
             cache: {},
             completions: [],
             errors: []
@@ -140,6 +142,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             ans.errors.push(p)
         }
         ans.data.value.push(key)
+        
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, 'property'))
+        //#endregion
 
         if (walker) {
             const node = walker.read() as NbtCompoundSchemaNode

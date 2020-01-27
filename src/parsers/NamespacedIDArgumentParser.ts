@@ -9,6 +9,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     static identity = 'NamespacedID'
@@ -30,6 +31,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     parse(reader: StringReader, { cache, config, cursor, registries }: ParsingContext): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -239,6 +241,14 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             kind: CompletionItemKind.Field,
             commitCharacters: [' ']
         }))
+        //#endregion
+
+        //#region Tokens
+        if (this.type === '$functions' || this.type === '$tags/functions') {
+            ans.tokens.push(Token.from(start, reader, 'function'))
+        } else {
+            ans.tokens.push(Token.from(start, reader, 'namespace'))
+        }
         //#endregion
 
         return ans

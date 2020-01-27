@@ -6,6 +6,7 @@ import ParsingError from '../types/ParsingError'
 import range from 'python-range'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class ItemSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ItemSlot'
@@ -26,23 +27,30 @@ export default class ItemSlotArgumentParser extends ArgumentParser<string> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
 
         if (StringReader.canInNumber(reader.peek())) {
+            const start = reader.cursor
             ans.data = reader.readInt().toString()
+            ans.tokens.push(Token.from(start, reader, 'type'))
         } else {
+            const start = reader.cursor
             const categoryResult = ctx.parsers.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
             const category = categoryResult.data as 'armor' | 'container' | 'enderchest' | 'horse' | 'hotbar' | 'inventory' | 'villager' | 'weapon'
+            categoryResult.tokens = [Token.from(start, reader, 'type')]
             combineArgumentParserResult(ans, categoryResult)
 
             if (category && reader.peek() === ItemSlotArgumentParser.Sep) {
                 reader.skip()
 
+                const start = reader.cursor
                 const subResult = ctx.parsers.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
                 const sub: string = subResult.data
+                subResult.tokens = [Token.from(start, reader, 'type')]
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ItemSlotArgumentParser.Sep}${sub}`
             } else {

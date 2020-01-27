@@ -3,6 +3,7 @@ import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { SingleRegistry } from '../types/Registry'
+import Token from '../types/Token'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
     static identity = 'NumericID'
@@ -15,6 +16,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
         this.registry = ctx.registries[this.type]
         const ans: ArgumentParserResult<number> = {
             data: NaN,
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -32,8 +34,12 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
         //#region Data
         let value: undefined | number
         try {
+            const start = reader.cursor
             value = reader.readInt()
             ans.data = value
+            //#region Tokens
+            ans.tokens.push(Token.from(start, reader, 'number'))
+            //#endregion
         } catch (p) {
             ans.errors.push(p)
         }

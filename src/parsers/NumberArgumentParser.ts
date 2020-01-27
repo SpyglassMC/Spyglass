@@ -3,6 +3,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class NumberArgumentParser extends ArgumentParser<number> {
     static identity = 'Number'
@@ -20,6 +21,7 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
     parse(reader: StringReader): ArgumentParserResult<number> {
         const ans: ArgumentParserResult<number> = {
             data: NaN,
+            tokens: [],
             completions: [],
             errors: [],
             cache: {}
@@ -30,6 +32,9 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         } catch (p) {
             ans.errors.push(p)
         }
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, 'number'))
+        //#endregion
         if (this.min !== undefined && !(ans.data >= this.min)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },

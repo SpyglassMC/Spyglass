@@ -11,10 +11,6 @@ export default class MapAbstractParser<K, R> {
         private readonly keyValueSep: string,
         private readonly keyValuePairSep: string,
         private readonly endChar: string,
-        // private readonly beginCharTokenScope: TokenScope,
-        // private readonly keyValueSepTokenScope: TokenScope,
-        // private readonly keyValuePairSepTokenScope: TokenScope,
-        // private readonly endCharTokenScope: TokenScope,
         private readonly parseKeyResult: (ans: ArgumentParserResult<R>, reader: StringReader, ctx: ParsingContext) => ArgumentParserResult<K>,
         private readonly parseValue: (ans: ArgumentParserResult<R>, reader: StringReader, ctx: ParsingContext, key: K, keyRange: TextRange) => void
     ) { }

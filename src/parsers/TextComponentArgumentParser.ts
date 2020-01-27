@@ -5,6 +5,7 @@ import TextComponent, { TextComponentType } from '../types/TextComponent'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { constructConfig } from '../types/Config'
 import NbtSchema from '../types/NbtSchema'
+import Token from '../types/Token'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     static identity = 'TextComponent'
@@ -244,6 +245,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
         })
         const ans: ArgumentParserResult<TextComponent> = {
             data: new TextComponent([]),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -291,7 +293,9 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
             }
         } else {
             try {
+                const start = reader.cursor
                 ans.data.value = reader.readString(undefined, true)
+                ans.tokens.push(Token.from(start, reader, 'string'))
             } catch (p) {
                 /* istanbul ignore next */
                 ans.errors.push(p)

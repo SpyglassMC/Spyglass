@@ -6,6 +6,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class QuotableLiteralArgumentParser extends LiteralArgumentParser {
     static identity = 'QuotableLiteral'
@@ -19,6 +20,7 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -42,6 +44,9 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
             const start = reader.cursor
             const value = reader.readString()
             ans.data = value
+            //#region Tokens
+            ans.tokens.push(Token.from(start, reader, 'string'))
+            //#endregion
             //#region Get errors.
             if (value.length === 0) {
                 ans.errors = [new ParsingError(

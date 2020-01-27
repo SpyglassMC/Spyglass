@@ -3,6 +3,7 @@ import ArgumentParser from './ArgumentParser'
 import Message from '../types/Message'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
+import Token from '../types/Token'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {
     static identity = 'Message'
@@ -11,6 +12,7 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Message> {
         const ans: ArgumentParserResult<Message> = {
             data: new Message([]),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -25,11 +27,13 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
                 value.push(entityResult.data)
                 combineArgumentParserResult(ans, entityResult)
             } else {
+                const start = reader.cursor
                 if (typeof value[value.length - 1] === 'string') {
                     value[value.length - 1] += reader.read()
                 } else {
                     value.push(reader.read())
                 }
+                ans.tokens.push(Token.from(start, reader, 'string'))
             }
         }
 

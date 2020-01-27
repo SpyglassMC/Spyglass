@@ -8,6 +8,7 @@ import MapAbstractParser from './MapAbstractParser'
 import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
+import Token from '../types/Token'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {
     static identity = 'Block'
@@ -24,6 +25,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Block> {
         const ans: ArgumentParserResult<Block> = {
             data: new Block(new Identity()),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
@@ -51,9 +53,11 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                 (ans, reader, ctx) => {
                     const existingKeys = Object.keys(ans.data.states)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
-                    const result = ctx.parsers
-                        .get('Literal', keys)
-                        .parse(reader, ctx)
+
+                    const start = reader.cursor
+                    const result = ctx.parsers.get('Literal', keys).parse(reader, ctx)
+                    result.tokens.push(Token.from(start, reader, 'property'))
+
                     if (id.isTag) {
                         result.errors = []
                     }
@@ -66,7 +70,11 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
                             locale('duplicate-key', locale('punc.quote', key))
                         ))
                     }
+
+                    const start = reader.cursor
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
+                    result.tokens.push(Token.from(start, reader, 'string'))
+
                     ans.data.states[key] = result.data
                     if (id.isTag) {
                         result.errors = []

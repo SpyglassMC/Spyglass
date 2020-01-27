@@ -21,6 +21,7 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Item> {
         const ans: ArgumentParserResult<Item> = {
             data: new Item(new Identity()),
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
