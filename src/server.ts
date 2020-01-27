@@ -27,7 +27,7 @@ const infos = new Map<Uri, FunctionInfo>()
 const urisOfIds = new Map<string, Uri | null>()
 const roots: Uri[] = []
 
-let cacheUri: Uri | undefined
+let cachePath: string | undefined
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
@@ -58,15 +58,15 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             // }
         }
 
-        cacheUri = getUri(path.join(storagePath, './cache.json'), uris)
+        cachePath = path.join(storagePath, './cache.json')
 
         connection.console.info(`storagePath = ${storagePath}`)
-        connection.console.info(`cacheUri = ${cacheUri}`)
+        connection.console.info(`cachePath = ${cachePath}`)
         if (!await fs.pathExists(storagePath)) {
             await fs.mkdirp(storagePath)
         }
-        if (fs.existsSync(cacheUri.fsPath)) {
-            cacheFile = await fs.readJson(cacheUri.fsPath, { encoding: 'utf8' })
+        if (fs.existsSync(cachePath)) {
+            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
             if (cacheFile.version !== LatestCacheFileVersion) {
                 cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
             }
@@ -75,7 +75,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         saveCacheFile()
     }
 
-    registerHandlers()
     return {
         capabilities: {
             completionProvider: {
@@ -111,9 +110,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     } as InitializeResult
 })
 
-function registerHandlers() {
+connection.onInitialized(() => {
     connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {
-        // TODO: #288.
         const uri = getUri(uriString, uris)
         const config = await fetchConfig(uri)
 
@@ -123,7 +121,6 @@ function registerHandlers() {
     })
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
-        // TODO: #288.
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -140,7 +137,6 @@ function registerHandlers() {
         // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
     })
     connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
-        // TODO: #288.
         const uri = getUri(uriString, uris)
 
         onDidCloseTextDocument({ uri, infos })
@@ -165,7 +161,6 @@ function registerHandlers() {
                                     root.fsPath,
                                     uri.fsPath,
                                     async (abs, rel, stat) => {
-                                        console.log(1)
                                         const result = Identity.fromRel(rel)
                                         if (result) {
                                             const { category, id, ext } = result
@@ -181,7 +176,6 @@ function registerHandlers() {
                             }
                         }
                     } else {
-                        console.log(2)
                         const result = Identity.fromRel(getRel(uri, roots) as string)
                         if (result) {
                             const { category, id, ext } = result
@@ -194,18 +188,17 @@ function registerHandlers() {
                     break
                 }
                 case FileChangeType.Changed: {
-                    const stat = await fs.stat(uri.fsPath)
-                    if (stat.isFile()) {
-                        console.log(3)
-                        const result = Identity.fromRel(getRel(uri, roots) as string)
-                        if (result) {
-                            const { category, ext } = result
-                            if (Identity.isExtValid(ext, category)) {
-                                await cacheFileOperations.fileModified(uri, category)
-                                cacheFile.files[uriString] = stat.mtimeMs
-                            }
-                        }
-                    }
+                    // const stat = await fs.stat(uri.fsPath)
+                    // if (stat.isFile()) {
+                    //     const result = Identity.fromRel(getRel(uri, roots) as string)
+                    //     if (result) {
+                    //         const { category, ext } = result
+                    //         if (Identity.isExtValid(ext, category)) {
+                    //             await cacheFileOperations.fileModified(uri, category)
+                    //             cacheFile.files[uriString] = stat.mtimeMs
+                    //         }
+                    //     }
+                    // }
                     break
                 }
                 case FileChangeType.Deleted:
@@ -213,10 +206,8 @@ function registerHandlers() {
                     // connection.console.info(`FileChangeType.Deleted ${rel}`)
                     for (const fileUriString in cacheFile.files) {
                         if (cacheFile.files.hasOwnProperty(fileUriString)) {
-                            const timestamp = cacheFile.files[fileUriString]
                             if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
                                 const fileUri = getUri(fileUriString, uris)
-                                console.log(4)
                                 const result = Identity.fromRel(getRel(fileUri, roots) as string)
                                 // connection.console.info(`result = ${JSON.stringify(result)}`)
                                 if (result) {
@@ -238,7 +229,7 @@ function registerHandlers() {
         // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
     })
 
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { line, character: char } }) => {
+    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -247,7 +238,7 @@ function registerHandlers() {
         const config = info.config
         const strings = info.strings
         const parser = new LineParser(false, 'line')
-        const reader = new StringReader(strings[line])
+        const reader = new StringReader(strings[lineNumber])
         const { data } = parser.parse(reader, await constructContext({
             cursor: char,
             cache: cacheFile.cache,
@@ -256,7 +247,7 @@ function registerHandlers() {
         return data.completions
     })
 
-    connection.onSignatureHelp(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
+    connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -645,7 +636,7 @@ function registerHandlers() {
 
         return ans
     })
-}
+})
 
 async function getReferencesOrDefinition(uriString: string, number: number, char: number, key: 'def' | 'ref') {
     const uri = getUri(uriString, uris)
@@ -710,19 +701,20 @@ async function updateDiagnostics(uri: Uri) {
 
 async function fetchConfig(uri: Uri): Promise<Config> {
     try {
+        console.log(`Fetching config for ${uri.toString()}`)
         return await connection.workspace.getConfiguration({
             scopeUri: uri.toString(),
             section: 'datapackLanguageServer'
         }) as Config
     } catch (e) {
-        console.error(`Error occurred while fetching config for ‘${uri.toString()}’.`)
+        console.error(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
         return VanillaConfig
     }
 }
 
 async function saveCacheFile() {
-    if (cacheUri) {
-        await fs.writeFile(cacheUri.fsPath, JSON.stringify(cacheFile), { encoding: 'utf8' })
+    if (cachePath) {
+        await fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' })
     }
 }
 
@@ -742,9 +734,8 @@ const cacheFileOperations = {
         if (!lines) {
             lines = []
             const strings = (await fs.readFile(uri.fsPath, { encoding: 'utf8' })).split(/\r?\n/)
-            const config = await fetchConfig(uri)
             for (const string of strings) {
-                await parseString(string, lines, config, cacheFile)
+                await parseString(string, lines, VanillaConfig, cacheFile)
             }
         }
         const cacheOfLines: ClientCache = {}
@@ -777,7 +768,7 @@ const cacheFileOperations = {
     },
     fileModified: async (uri: Uri, type: CacheKey) => {
         // connection.console.info(`Modified ${rel} ${type}`)
-        if (type === 'functions') {
+        if (!uri.toString().startsWith('untitled:') && type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
             await cacheFileOperations.combineCacheOfLines(uri)
         }
@@ -819,13 +810,12 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[]) {
                 delete cacheFile.files[uriString]
                 continue
             }
-            console.log(5)
             const result = Identity.fromRel(rel)
             if (result) {
                 const { id, category: key } = result
                 if (!(await fs.pathExists(uri.fsPath))) {
                     cacheFileOperations.fileDeleted(uri, key, id)
-                    delete cacheFile.files[uri.fsPath]
+                    delete cacheFile.files[uriString]
                 } else {
                     const stat = await fs.stat(uri.fsPath)
                     const lastModified = stat.mtimeMs
@@ -868,9 +858,8 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[]) {
                             root.fsPath,
                             datapackCategoryPath,
                             (abs, rel, stat) => {
-                                console.log(6)
                                 const result = Identity.fromRel(rel)
-                                const uri = getUri(abs, uris)
+                                const uri = getUri(Uri.file(abs).toString(), uris)
                                 const uriString = uri.toString()
                                 if (result && Identity.isExtValid(result.ext, result.category)) {
                                     const { id, category: key } = result
