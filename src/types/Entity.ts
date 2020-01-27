@@ -130,6 +130,14 @@ export default class Entity implements Lintable {
                                 .map((v: any) => `${prefix}${toLintedString(v, lint)}`)
                                 .join(comma)
                         )
+                    } else if (key === 'advancements') {
+                        const advancements = this.argument.advancements as any
+                        ans.push(`${prefix}{${Object.keys(advancements).map(k => `${k}${equalSign}${
+                            typeof advancements[k] === 'boolean' ? toLintedString(advancements[k], lint) : `{${Object.keys(advancements[k]).map(m => `${m}${equalSign}${toLintedString(advancements[k][m], lint)}`).join(comma)}}`
+                            }`).join(comma)}}`)
+                    } else if (key === 'scores') {
+                        const scores = this.argument.scores as any
+                        ans.push(`${prefix}{${Object.keys(scores).map(k => `${k}${equalSign}${toLintedString(scores[k], lint)}`).join(comma)}}`)
                     } else {
                         ans.push(`${prefix}${toLintedString(value, lint)}`)
                     }

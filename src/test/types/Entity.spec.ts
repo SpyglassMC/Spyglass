@@ -4,7 +4,7 @@ import { describe, it } from 'mocha'
 import { ToLintedString } from '../../types/Lintable'
 import Entity from '../../types/Entity'
 import Identity from '../../types/Identity'
-import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
+import NumberRange from '../../types/NumberRange'
 
 describe('Entity Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -106,6 +106,48 @@ describe('Entity Tests', () => {
             )
             const actual = message[ToLintedString](lint)
             assert(actual === '@a[limit = 1, type = !minecraft:a, type = !minecraft:b, tag = a, tag = b, tag = c]')
+        })
+        it('Should return scores', () => {
+            const { lint } = constructConfig({
+                lint: {
+                    entitySelectorAppendSpaceAfterComma: false,
+                    entitySelectorPutSpacesAroundEqualSign: false,
+                    entitySelectorKeyOrder
+                }
+            })
+            const message = new Entity(
+                undefined,
+                'a',
+                {
+                    scores: { foo: new NumberRange('integer', 0) }
+                }
+            )
+            const actual = message[ToLintedString](lint)
+            assert(actual === '@a[scores={foo=0..}]')
+        })
+        it('Should return advancements', () => {
+            const { lint } = constructConfig({
+                lint: {
+                    entitySelectorAppendSpaceAfterComma: false,
+                    entitySelectorPutSpacesAroundEqualSign: false,
+                    entitySelectorKeyOrder
+                }
+            })
+            const message = new Entity(
+                undefined,
+                'a',
+                {
+                    advancements: {
+                        foo: true,
+                        bar: {
+                            baz: true,
+                            qux: false
+                        }
+                    }
+                }
+            )
+            const actual = message[ToLintedString](lint)
+            assert(actual === '@a[advancements={foo=true,bar={baz=true,qux=false}}]')
         })
     })
 })

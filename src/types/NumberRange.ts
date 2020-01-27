@@ -9,10 +9,10 @@ export default class NumberRange implements Lintable {
     ) { }
 
     [ToLintedString](_lint: LintConfig) {
-        if (this.min && this.min === this.max) {
+        if (this.min !== undefined && this.min === this.max) {
             return this.min.toString()
         } else {
-            return `${this.min ? this.min : ''}..${this.max ? this.max : ''}`
+            return `${this.min !== undefined ? this.min : ''}..${this.max !== undefined ? this.max : ''}`
         }
     }
 }
