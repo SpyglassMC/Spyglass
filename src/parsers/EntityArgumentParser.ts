@@ -286,6 +286,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                         }
                                     ).parse(ans, reader, ctx)
                                 } else {
+                                    const start = reader.cursor
                                     const boolResult = ctx.parsers
                                         .get('Literal', ['false', 'true'])
                                         .parse(reader, ctx)

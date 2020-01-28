@@ -119,11 +119,9 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
 
         if (reader.peek() === VectorArgumentParser.LocalSymbol) {
             reader.skip()
-            ans.tokens.push(Token.from(start, reader, 'keyword'))
             ans.data.type = 'local'
         } else if (reader.peek() === VectorArgumentParser.RelativeSymbol) {
             reader.skip()
-            ans.tokens.push(Token.from(start, reader, 'keyword'))
             ans.data.type = 'relative'
         }
 
@@ -132,7 +130,6 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 const start = reader.cursor
                 const str = reader.readNumber()
                 ans.data.value = str
-                ans.tokens.push(Token.from(start, reader, 'number'))
 
                 const num = parseFloat(str)
                 const min = this.min instanceof Array ? this.min[index] : this.min
@@ -175,6 +172,8 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 )
             ))
         }
+
+        ans.tokens.push(Token.from(start, reader, 'number'))
 
         return ans
     }
