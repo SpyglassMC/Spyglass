@@ -97,6 +97,14 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "commands": [
+            {
+                "command": "datapackLanguageServer.regenerageCache",
+                "title": "Regenerate Cache",
+                "category": "Datapack",
+                "enablement": "workspaceFolderCount != 0 && editorLangId == mcfunction"
+            }
+        ],
         "configuration": {
             "title": "Datapack Language Server",
             "properties": {

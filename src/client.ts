@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, window, StatusBarAlignment, FileSystemWatcher, DocumentSemanticTokensProvider, TextDocument, CancellationToken, SemanticTokens, languages, SemanticTokensLegend } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, DocumentSemanticTokensProvider, TextDocument, SemanticTokens, languages, SemanticTokensLegend, commands } from 'vscode'
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, SynchronizeOptions } from 'vscode-languageclient'
 
@@ -44,10 +44,7 @@ export function activate(context: ExtensionContext) {
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for mcfunction documents
-        documentSelector: [
-            { language: 'mcfunction' },
-            { language: 'mcfunction-snapshot' }
-        ],
+        documentSelector: [{ language: 'mcfunction' }],
         synchronize: {
             fileEvents: []
         },
@@ -78,16 +75,22 @@ export function activate(context: ExtensionContext) {
     client.start()
 
     client.onReady().then(() => {
-        // Semantic coloring provider test.
+        // Register semantic coloring legend.
         client.sendNotification('spgoding/semanticColoringLegendTest', { types: TokenTypes, modifiers: TokenModifiers })
         context.subscriptions.push(
             languages.registerDocumentSemanticTokensProvider(
-                [
-                    { language: 'mcfunction' },
-                    { language: 'mcfunction-snapshot' }
-                ],
+                { language: 'mcfunction' },
                 new McfunctionSemanticTokensProvider(),
                 new SemanticTokensLegend(TokenTypes, TokenModifiers)
+            )
+        )
+        // Register 'datapackLanguageServer.regenerageCache' command.
+        context.subscriptions.push(
+            commands.registerCommand(
+                'datapackLanguageServer.regenerageCache',
+                () => {
+                    client.sendNotification('workspace/regenerateCache')
+                }
             )
         )
     })

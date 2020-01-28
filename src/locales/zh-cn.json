@@ -52,6 +52,7 @@
   "punc.quote": "“%0%”",
   "quote": "一个引号（“'”或“\"”）",
   "score-holder": "一个分数持有者",
+  "server.regenerated-cache": "已重新生成缓存文件。",
   "server.remove-cache-file": "大憨批的缓存文件被移动到了一个由 VSCode 提供的缓存位置。您现在可以放心地删除工作区根文件夹中的“.datapack”文件夹。",
   "space-seperating-arguments": "期望一个空格来分开两个参数",
   "string": "一个字符串",

@@ -676,6 +676,12 @@ connection.onInitialized(() => {
 
         return ans
     })
+
+    connection.onNotification('workspace/regenerateCache', async () => {
+        cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+        await updateCacheFile(cacheFile, roots)
+        connection.window.showInformationMessage(locale('server.regenerated-cache'))
+    })
 })
 
 async function getReferencesOrDefinition(uriString: string, number: number, char: number, key: 'def' | 'ref') {

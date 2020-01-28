@@ -42,6 +42,6 @@ export function getRel(uri: Uri, roots: Uri[]) {
             return path.relative(root.fsPath, uri.fsPath)
         }
     }
-    console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots`)
+    console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots (${roots})`)
     return undefined
 }

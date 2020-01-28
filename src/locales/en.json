@@ -52,6 +52,7 @@
   "punc.quote": "‘%0%’",
   "quote": "a quote (‘'’ or ‘\"’)",
   "score-holder": "a score holder",
+  "server.regenerated-cache": "The cache file has been regenerated.",
   "server.remove-cache-file": "The cache file of DHP was moved to a storage location provided by VSCode. You can safely delete the ugly ‘.datapack’ folder in your workspace root.",
   "space-seperating-arguments": "Expected a space to seperate two arguments",
   "string": "a string",
