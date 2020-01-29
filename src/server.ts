@@ -1,10 +1,10 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, Range, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, WorkspaceFolder, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
-import Line, { lineToLintedString } from './types/Line'
+import { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
 import StringReader from './utils/StringReader'
 import Identity from './types/Identity'
@@ -15,7 +15,8 @@ import { getUri, parseString, getRel, getSemanticTokensLegend } from './utils/ha
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
-import Token, { TokenType, TokenModifier } from './types/Token'
+import onSemanticTokens from './utils/handlers/onSemanticTokens'
+import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -31,7 +32,7 @@ const roots: Uri[] = []
 let cachePath: string | undefined
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath }, capabilities }) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
     await loadLocale()
 
     if (workspaceFolders) {
@@ -98,11 +99,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 prepareProvider: true
             },
             semanticTokensProvider: {
-                legend: getSemanticTokensLegend()
-                // documentProvider: {
-                //     edits: true,
-                // },
-                // rangeProvider: true
+                legend: getSemanticTokensLegend(),
+                documentProvider: {
+                    edits: true,
+                }
             },
             signatureHelpProvider: {
                 triggerCharacters: [' ']
@@ -657,33 +657,23 @@ connection.onInitialized(() => {
     })
 
     connection.languages.semanticTokens.on(({ textDocument: { uri: uriString } }) => {
-        const ans: { data: number[] } = { data: [] }
-
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
-            return ans
+            return { data: [] }
         }
 
-        // TODO: Change to use the official builder: https://github.com/microsoft/vscode-languageserver-node/blob/master/server/src/sematicTokens.proposed.ts#L45.
-        // TODO: Pay attention to the token types: microsoft/vscode#89351.
-        let lastToken: Token | undefined
-        let lastLine = 0
-        for (let i = 0; i < info.lines.length; i++) {
-            const { tokens } = info.lines[i]
-            lastToken = undefined
-            for (const token of tokens) {
-                if (lastToken) {
-                    ans.data.push(...token.toArray(i, lastLine, lastToken.range.start))
-                } else {
-                    ans.data.push(...token.toArray(i, lastLine))
-                }
-                lastToken = token
-                lastLine = i
-            }
+        return onSemanticTokens({ info })
+    })
+
+    connection.languages.semanticTokens.onEdits(({ textDocument: { uri: uriString }, previousResultId }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return { edits: [] }
         }
 
-        return ans
+        return onSemanticTokensEdits({ info, previousResultId })
     })
 
     connection.onExecuteCommand(async ({ command }) => {

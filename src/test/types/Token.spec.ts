@@ -6,9 +6,9 @@ import StringReader from '../../utils/StringReader'
 describe('Token Tests', () => {
     describe('toArray() Tests', () => {
         it('Should calculate the deltas', () => {
-            const token = new Token({ start: 3, end: 5 }, 0)
-            const actual = token.toArray(2, 1, 0)
-            assert.deepEqual(actual, [1, 3, 2, 0, 0])
+            const token = new Token({ start: 3, end: 5 }, 0, [0])
+            const actual = token.toArray(2)
+            assert.deepEqual(actual, [2, 3, 2, 0, 1])
         })
     })
     describe('static from() Tests', () => {

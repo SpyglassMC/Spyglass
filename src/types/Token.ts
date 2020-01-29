@@ -46,20 +46,22 @@ export default class Token {
     }
 
     /**
-     * Get the array form of the semantic token.
-     * @param lastLine The start line of the last token.
-     * @param lastStartChar The start character of the last token.
-     * @returns `[ deltaLine, deltaStartChar, length, tokenType, tokenModifiers ]`
+     * Get the array form of the semantic token. The result should be pushed into the
+     * semantic tokens builder.
+     * @returns `[ line, char, length, tokenType, tokenModifiers ]`
      */
-    /* istanbul ignore next */
-    toArray(line: number, lastLine = 0, lastStartChar = 0): [number, number, number, number, number] {
-        const deltaLine = line - lastLine
-        const deltaStartChar = this.range.start - lastStartChar
-        const length = this.range.end - this.range.start
+    toArray(line: number): [number, number, number, number, number] {
+        /* istanbul ignore next */
         let tokenModifiers = 0
         for (const modifier of this.modifiers) {
             tokenModifiers = tokenModifiers | (1 << modifier)
         }
-        return [deltaLine, deltaStartChar, length, this.type, tokenModifiers]
+        return [
+            line,
+            this.range.start,
+            this.range.end - this.range.start,
+            this.type,
+            tokenModifiers
+        ]
     }
 }
