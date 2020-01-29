@@ -39,7 +39,7 @@
         "@semantic-release/git": "^9.0.0",
         "@types/clone": "^0.1.30",
         "@types/fs-extra": "^8.0.1",
-        "@types/mocha": "^5.2.7",
+        "@types/mocha": "^7.0.0",
         "@types/node": "^13.0.0",
         "@types/power-assert": "^1.5.2",
         "@types/webpack": "^4.41.2",
