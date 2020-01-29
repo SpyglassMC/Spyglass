@@ -2,7 +2,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class StringArgumentParser extends ArgumentParser<string> {
     static identity = 'String'
@@ -38,7 +38,7 @@ export default class StringArgumentParser extends ArgumentParser<string> {
             const pe = <ParsingError>e
             ans.errors = [pe]
         }
-        ans.tokens.push(Token.from(start, reader, 'string'))
+        ans.tokens.push(Token.from(start, reader, TokenType.string))
         return ans
     }
 

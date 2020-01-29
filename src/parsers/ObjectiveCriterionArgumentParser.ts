@@ -3,7 +3,7 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
 import StringReader from '../utils/StringReader'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     static identity = 'ObjectiveCriterion'
@@ -66,7 +66,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
                     .expect(ObjectiveCriterionArgumentParser.Sep)
                     .skip()
                 const subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
-                subResult.tokens = [Token.from(start, reader, 'type')]
+                subResult.tokens = [Token.from(start, reader, TokenType.type)]
                 const sub: string = subResult.data
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ObjectiveCriterionArgumentParser.Sep}${sub}`

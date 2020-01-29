@@ -6,7 +6,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Time from '../types/Time'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class TimeArgumentParser extends ArgumentParser<Time> {
     static identity = 'Time'
@@ -39,7 +39,7 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
         if (StringReader.canInUnquotedString(reader.peek())) {
             const start = reader.cursor
             const unit = reader.read()
-            ans.tokens.push(Token.from(start, reader, 'keyword'))
+            ans.tokens.push(Token.from(start, reader, TokenType.keyword))
             if (unit === 'd' || unit === 's' || unit === 't') {
                 ans.data.unit = unit
             } else {

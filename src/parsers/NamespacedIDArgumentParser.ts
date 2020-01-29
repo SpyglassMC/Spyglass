@@ -9,7 +9,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     static identity = 'NamespacedID'
@@ -244,11 +244,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         //#endregion
 
         //#region Tokens
-        if (this.type === '$functions' || this.type === '$tags/functions') {
-            ans.tokens.push(Token.from(start, reader, 'function'))
-        } else {
-            ans.tokens.push(Token.from(start, reader, 'namespace'))
-        }
+        ans.tokens.push(Token.from(start, reader, TokenType.namespacedID))
         //#endregion
 
         return ans

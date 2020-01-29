@@ -5,7 +5,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector, { VectorElement } from '../types/Vector'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class VectorArgumentParser extends ArgumentParser<Vector> {
     static identity = 'Vector'
@@ -173,7 +173,7 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
             ))
         }
 
-        ans.tokens.push(Token.from(start, reader, 'number'))
+        ans.tokens.push(Token.from(start, reader, TokenType.number))
 
         return ans
     }

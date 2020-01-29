@@ -3,7 +3,7 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class NumberArgumentParser extends ArgumentParser<number> {
     static identity = 'Number'
@@ -33,7 +33,7 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
             ans.errors.push(p)
         }
         //#region Tokens
-        ans.tokens.push(Token.from(start, reader, 'number'))
+        ans.tokens.push(Token.from(start, reader, TokenType.number))
         //#endregion
         if (this.min !== undefined && !(ans.data >= this.min)) {
             ans.errors.push(new ParsingError(

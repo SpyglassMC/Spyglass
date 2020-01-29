@@ -71,29 +71,10 @@ export function activate(context: ExtensionContext) {
         clientOptions
     )
 
+    client.registerProposedFeatures()
+
     // Start the client. This will also launch the server
     client.start()
-
-    client.onReady().then(() => {
-        // Register semantic coloring legend.
-        client.sendNotification('spgoding/semanticColoringLegendTest', { types: TokenTypes, modifiers: TokenModifiers })
-        context.subscriptions.push(
-            languages.registerDocumentSemanticTokensProvider(
-                { language: 'mcfunction' },
-                new McfunctionSemanticTokensProvider(),
-                new SemanticTokensLegend(TokenTypes, TokenModifiers)
-            )
-        )
-        // Register 'datapackLanguageServer.regenerageCache' command.
-        context.subscriptions.push(
-            commands.registerCommand(
-                'datapackLanguageServer.regenerageCache',
-                () => {
-                    client.sendNotification('workspace/regenerateCache')
-                }
-            )
-        )
-    })
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -101,17 +82,4 @@ export function deactivate(): Thenable<void> | undefined {
         return undefined
     }
     return client.stop()
-}
-
-class McfunctionSemanticTokensProvider implements DocumentSemanticTokensProvider {
-    async provideDocumentSemanticTokens(document: TextDocument) {
-        const response = await client.sendRequest<number[] | null>(
-            'spgoding/semanticColoringTest',
-            { textDocument: { uri: document.uri.toString() } }
-        )
-        if (!response) {
-            return null
-        }
-        return new SemanticTokens(Uint32Array.from(response))
-    }
 }

@@ -9,7 +9,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class EntityArgumentParser extends ArgumentParser<Entity> {
     static identity = 'Entity'
@@ -61,7 +61,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
         }
         if (plain) {
             ans.data.plain = plain
-            ans.tokens.push(Token.from(start, reader, 'parameter'))
+            ans.tokens.push(Token.from(start, reader, TokenType.entity))
         }
 
         // Errors
@@ -136,7 +136,6 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
             .expect('@')
             .skip()
         const variable = reader.read()
-        ans.tokens.push(Token.from(start, reader, 'parameter'))
         if (EntityArgumentParser.isVariable(variable)) {
             ans.data.variable = variable
             if (variable === 'a') {
@@ -151,6 +150,9 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 locale('unexpected-selector-variable', locale('punc.quote', variable))
             ))
         }
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, TokenType.entity))
+        //#endregion
         /// Arguments
         if (reader.peek() === '[') {
             const pushSafely = (key: any, result: any) => {
@@ -198,7 +200,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     const result = ctx.parsers
                         .get('QuotableLiteral', [SelectorArgumentKeys, ctx.config.lint.quoteEntitySelectorKeys])
                         .parse(reader, ctx)
-                    result.tokens = [Token.from(start, reader, 'property')]
+                    result.tokens = [Token.from(start, reader, TokenType.property)]
                     return result
                 },
                 (ans, reader, ctx, key) => {
@@ -208,18 +210,16 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         if (result.data) {
                             ans.data.argument.sort = result.data as SelectorSortMethod
                         }
-                        result.tokens = [Token.from(start, reader, 'string')]
+                        result.tokens = [Token.from(start, reader, TokenType.string)]
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
                         const start = reader.cursor
                         const value = reader.readFloat()
                         ans.data.argument[key] = value
-                        ans.tokens.push(Token.from(start, reader, 'number'))
+                        ans.tokens.push(Token.from(start, reader, TokenType.number))
                     } else if (key === 'limit') {
-                        const start = reader.cursor
                         const result = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
                         ans.data.argument.limit = result.data as number
-                        ans.tokens.push(Token.from(start, reader, 'number'))
                         if (ans.data.argument.limit === 1) {
                             isMultiple = false
                         } else {
@@ -273,13 +273,13 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                             const result = ctx.parsers
                                                 .get('String', ['$QuotablePhrase'])
                                                 .parse(reader, ctx)
-                                            result.tokens = [Token.from(start, reader, 'property')]
+                                            result.tokens = [Token.from(start, reader, TokenType.property)]
                                             return result
                                         },
                                         (ans, reader, ctx, crit) => {
                                             const start = reader.cursor
                                             const boolResult = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
-                                            boolResult.tokens = [Token.from(start, reader, 'string')]
+                                            boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
                                             const bool = boolResult.data === 'true'
                                             combineArgumentParserResult(ans, boolResult)
                                             criteriaObject[crit] = bool
@@ -291,7 +291,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                         .get('Literal', ['false', 'true'])
                                         .parse(reader, ctx)
                                     const bool = boolResult.data === 'true'
-                                    boolResult.tokens = [Token.from(start, reader, 'keyword')]
+                                    boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
                                     combineArgumentParserResult(ans, boolResult)
 
                                     ans.data.argument.advancements[adv.toString()] = bool

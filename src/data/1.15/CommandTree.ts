@@ -12,7 +12,6 @@ import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import NamespacedIDArgumentParser from '../../parsers/NamespacedIDArgumentParser'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import NbtSchema from '../../types/NbtSchema'
 import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
@@ -27,7 +26,7 @@ import TextComponentArgumentParser from '../../parsers/TextComponentArgumentPars
 import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
-import Token from '../../types/Token'
+import { TokenType, TokenModifier } from '../../types/Token'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1326,7 +1325,7 @@ const CommandTree: CommandTreeType = {
                                         operation: {
                                             parser: new LiteralArgumentParser('+=', '-=', '*=', '/=', '%=', '=', '>', '<', '><'),
                                             run: parsedLine => {
-                                                parsedLine.tokens[parsedLine.tokens.length - 1].type = 'operator'
+                                                parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
                                             },
                                             children: {
                                                 source: {
@@ -1947,7 +1946,7 @@ const CommandTree: CommandTreeType = {
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             run: parsedLine => {
-                parsedLine.tokens[parsedLine.tokens.length - 1].type = 'comment'
+                parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.comment
             },
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
@@ -1958,7 +1957,7 @@ const CommandTree: CommandTreeType = {
                         if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
                             parsedLine.completions = []
                         }
-                        parsedLine.tokens[parsedLine.tokens.length - 1].type = 'type'
+                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.type
                     },
                     children: {
                         id: {
@@ -1980,7 +1979,10 @@ const CommandTree: CommandTreeType = {
     },
     templates: {
         boolean: {
-            parser: new LiteralArgumentParser('false', 'true')
+            parser: new LiteralArgumentParser('false', 'true'),
+            run: ({ tokens }) => {
+                tokens[tokens.length - 1].type = TokenType.boolean
+            }
         },
         single_score: {
             parser: new EntityArgumentParser('single', 'entities', true),
@@ -2482,7 +2484,7 @@ const CommandTree: CommandTreeType = {
                                 operation: {
                                     parser: new LiteralArgumentParser('<', '<=', '=', '>', '>='),
                                     run: parsedLine => {
-                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = 'operator'
+                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
                                     },
                                     children: {
                                         source: {
@@ -2499,7 +2501,7 @@ const CommandTree: CommandTreeType = {
                                 matches: {
                                     parser: new LiteralArgumentParser('matches'),
                                     run: parsedLine => {
-                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = 'operator'
+                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
                                     },
                                     children: {
                                         range: {

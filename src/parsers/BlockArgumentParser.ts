@@ -8,7 +8,7 @@ import MapAbstractParser from './MapAbstractParser'
 import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class BlockArgumentParser extends ArgumentParser<Block> {
     static identity = 'Block'
@@ -56,7 +56,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
                     const start = reader.cursor
                     const result = ctx.parsers.get('Literal', keys).parse(reader, ctx)
-                    result.tokens = [Token.from(start, reader, 'property')]
+                    result.tokens = [Token.from(start, reader, TokenType.property)]
 
                     if (id.isTag) {
                         result.errors = []
@@ -73,7 +73,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
 
                     const start = reader.cursor
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
-                    result.tokens = [Token.from(start, reader, 'string')]
+                    result.tokens = [Token.from(start, reader, TokenType.string)]
 
                     ans.data.states[key] = result.data
                     if (id.isTag) {

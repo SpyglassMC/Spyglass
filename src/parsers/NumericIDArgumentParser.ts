@@ -3,7 +3,7 @@ import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import { ArgumentParserResult } from '../types/Parser'
 import { SingleRegistry } from '../types/Registry'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class NumericIDArgumentParser extends ArgumentParser<number> {
     static identity = 'NumericID'
@@ -38,7 +38,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
             value = reader.readInt()
             ans.data = value
             //#region Tokens
-            ans.tokens.push(Token.from(start, reader, 'number'))
+            ans.tokens.push(Token.from(start, reader, TokenType.number))
             //#endregion
         } catch (p) {
             ans.errors.push(p)

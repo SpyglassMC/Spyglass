@@ -6,7 +6,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType, TokenModifier } from '../types/Token'
 
 export default class TeamArgumentParser extends ArgumentParser<string> {
     static identity = 'Team'
@@ -39,9 +39,9 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Tokens
         if (this.isDefinition) {
-            ans.tokens.push(Token.from(start, reader, 'variable', ['declaration']))
+            ans.tokens.push(Token.from(start, reader, TokenType.variable, [TokenModifier.declaration]))
         } else {
-            ans.tokens.push(Token.from(start, reader, 'variable'))
+            ans.tokens.push(Token.from(start, reader, TokenType.variable))
         }
         //#endregion
         //#region Errors & Cache

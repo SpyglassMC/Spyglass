@@ -3,7 +3,7 @@ import ArgumentParser from './ArgumentParser'
 import Message from '../types/Message'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class MessageArgumentParser extends ArgumentParser<Message> {
     static identity = 'Message'
@@ -33,7 +33,7 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
                 } else {
                     value.push(reader.read())
                 }
-                ans.tokens.push(Token.from(start, reader, 'string'))
+                ans.tokens.push(Token.from(start, reader, TokenType.string))
             }
         }
 

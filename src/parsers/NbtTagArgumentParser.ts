@@ -12,7 +12,7 @@ import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToLintedString } from '../types/Lintable'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     static identity = 'NbtTag'
@@ -292,7 +292,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     const key = reader.readString()
                     result.data = key
                     //#region Tokens
-                    result.tokens.push(Token.from(start, reader, 'property'))
+                    result.tokens.push(Token.from(start, reader, TokenType.property))
                     //#endregion
                     //#region Completions
                     if (walker && isSchemaAvailable && ctx.cursor === reader.cursor) {
@@ -444,7 +444,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             const start = reader.cursor
             const type = reader.read()
             //#region Tokens
-            ans.tokens.push(Token.from(start, reader, 'keyword'))
+            ans.tokens.push(Token.from(start, reader, TokenType.keyword))
             //#endregion
             switch (type) {
                 case 'B':
@@ -629,7 +629,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 ans.errors.push(p)
             }
             //#region Tokens
-            ans.tokens.push(Token.from(start, reader, 'string'))
+            ans.tokens.push(Token.from(start, reader, TokenType.string))
             //#endregion
         } else {
             // Parse as an unquoted string or a number.
@@ -651,7 +651,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             if (pattern.test(value)) {
                                 ans.data = func(value)
                                 //#region Tokens
-                                ans.tokens.push(Token.from(start, reader, 'number'))
+                                ans.tokens.push(Token.from(start, reader, TokenType.number))
                                 //#endregion
                                 if (isColor) {
                                     const num = Number(value)
@@ -675,7 +675,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 } catch (s) {
                     // Parse as an unquoted string.
                     //#region Tokens
-                    ans.tokens.push(Token.from(start, reader, 'string'))
+                    ans.tokens.push(Token.from(start, reader, TokenType.string))
                     //#endregion
                     if (s === failedToMatchAllPatterns) {
                         // Ignore `s`.

@@ -6,7 +6,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class QuotableLiteralArgumentParser extends LiteralArgumentParser {
     static identity = 'QuotableLiteral'
@@ -45,7 +45,7 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
             const value = reader.readString()
             ans.data = value
             //#region Tokens
-            ans.tokens.push(Token.from(start, reader, 'string'))
+            ans.tokens.push(Token.from(start, reader, TokenType.string))
             //#endregion
             //#region Get errors.
             if (value.length === 0) {

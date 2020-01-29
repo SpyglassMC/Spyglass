@@ -7,7 +7,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType, TokenModifier } from '../types/Token'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -74,17 +74,26 @@ export default class LineParser implements Parser<Line> {
             this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line)
         }
         saturatedLineToLine(line)
+
+        // Handle comments.
         /* istanbul ignore next */
         if (backupReader.peek() === '#' && line.errors && line.errors.length > 0) {
             return {
                 data: {
                     args: [{ data: backupReader.readRemaining(), parser: 'string' }],
-                    tokens: [Token.from(0, backupReader, 'comment')],
+                    tokens: [Token.from(0, backupReader, TokenType.comment)],
                     hint: { fix: [], options: [] },
                     completions: line.completions
                 }
             }
         }
+
+        // Handle tokens.
+        /* istanbul ignore next */
+        if (line.tokens.length > 0) {
+            line.tokens[0].modifiers.push(TokenModifier.firstArgument)
+        }
+
         return { data: line }
     }
 
@@ -132,7 +141,7 @@ export default class LineParser implements Parser<Line> {
             if (node.run) {
                 node.run(parsedLine)
             }
-            
+
             // Handle trailing data or absent data.
             if (!reader.canRead(2) && (reader.peek() === '' || reader.peek() === ' ')) {
                 // The input line is all parsed.
@@ -217,6 +226,7 @@ export default class LineParser implements Parser<Line> {
                 const node = children[key]
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
+                const oldTokens = [...parsedLine.tokens]
                 const isTheLastElement = i === Object.keys(children).length - 1
                 this.parseSingle(newReader, ctx, key, node, parsedLine, isTheLastElement, optional)
                 if (
@@ -226,6 +236,7 @@ export default class LineParser implements Parser<Line> {
                     parsedLine.args.pop()
                     parsedLine.hint.fix.pop()
                     parsedLine.errors = oldErrors
+                    parsedLine.tokens = oldTokens
                     continue
                 }
                 reader.cursor = newReader.cursor

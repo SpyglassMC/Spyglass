@@ -6,6 +6,8 @@ import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
 import { constructContext } from '../../types/ParsingContext'
 import { CacheFile } from '../../types/ClientCache'
+import { Proposed } from 'vscode-languageserver'
+import { TokenType, TokenModifier } from '../../types/Token'
 
 export function getUri(str: string, uris: Map<string, Uri>) {
     const value = uris.get(str)
@@ -44,4 +46,26 @@ export function getRel(uri: Uri, roots: Uri[]) {
     }
     console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots (${roots})`)
     return undefined
+}
+
+export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
+    const tokenTypes: string[] = []
+    for (let i = 0; i < TokenType._; i++) {
+        const str = TokenType[i]
+        // if (clientTokenTypes.has(str)) {
+        tokenTypes.push(str)
+        // } else {
+        //     tokenTypes.push('keyword')
+        // }
+    }
+
+    const tokenModifiers: string[] = []
+    for (let i = 0; i < TokenModifier._; i++) {
+        const str = TokenModifier[i]
+        // if (clientTokenModifiers.has(str)) {
+        tokenModifiers.push(str)
+        // }
+    }
+
+    return { tokenTypes, tokenModifiers }
 }

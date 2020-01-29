@@ -11,7 +11,7 @@ import Identity from './types/Identity'
 import { constructContext } from './types/ParsingContext'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import { getUri, parseString, getRel } from './utils/handlers/common'
+import { getUri, parseString, getRel, getSemanticTokensLegend } from './utils/handlers/common'
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
@@ -23,7 +23,7 @@ const uris = new Map<string, Uri>()
 const infos = new Map<Uri, FunctionInfo>()
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
- * TODO: This map will be cleared when the workspace folders are changed.
+ * TODO(#251): This map will be cleared when the workspace folders are changed.
  */
 const urisOfIds = new Map<string, Uri | null>()
 const roots: Uri[] = []
@@ -31,7 +31,7 @@ const roots: Uri[] = []
 let cachePath: string | undefined
 let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath }, capabilities }) => {
     await loadLocale()
 
     if (workspaceFolders) {
@@ -78,21 +78,31 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
     return {
         capabilities: {
+            colorProvider: true,
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@'],
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
             didChangeWatchedFiles: true,
-            documentLinkProvider: true,
-            documentHighlightProvider: true,
             documentFormattingProvider: true,
+            documentHighlightProvider: true,
+            documentLinkProvider: true,
+            executeCommandProvider: {
+                commands: ['datapackLanguageServer.regenerageCache']
+            },
             foldingRangeProvider: true,
-            colorProvider: true,
             // hoverProvider: true,
             referencesProvider: true,
             renameProvider: {
                 prepareProvider: true
+            },
+            semanticTokensProvider: {
+                legend: getSemanticTokensLegend()
+                // documentProvider: {
+                //     edits: true,
+                // },
+                // rangeProvider: true
             },
             signatureHelpProvider: {
                 triggerCharacters: [' ']
@@ -189,6 +199,12 @@ connection.onInitialized(() => {
                     break
                 }
                 case FileChangeType.Changed: {
+                    // TODO(#252): Check if external changes or workspace edits will trigger
+                    // onDidChangeTextDocument for opened ocuments.
+                    // TODO(#252): Only trigger update for non-opened documents.
+
+                    // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
+
                     // const stat = await fs.stat(uri.fsPath)
                     // if (stat.isFile()) {
                     //     const result = Identity.fromRel(getRel(uri, roots) as string)
@@ -231,6 +247,7 @@ connection.onInitialized(() => {
     })
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+        // TODO(#): Use the last index as cursor to cache completions.
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -249,6 +266,7 @@ connection.onInitialized(() => {
     })
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+        // TODO(#): Use the last index as cursor to cache signatures.
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -638,26 +656,17 @@ connection.onInitialized(() => {
         return ans
     })
 
-    connection.onNotification('spgoding/semanticColoringLegendTest', ({ types, modifiers }: { types: string[], modifiers: string[] }) => {
-        for (let i = 0; i < types.length; i++) {
-            const type = types[i]
-            Token.Types.set(type as TokenType, i)
-        }
+    connection.languages.semanticTokens.on(({ textDocument: { uri: uriString } }) => {
+        const ans: { data: number[] } = { data: [] }
 
-        for (let i = 0; i < modifiers.length; i++) {
-            const modifier = modifiers[i]
-            Token.Modifiers.set(modifier as TokenModifier, i)
-        }
-    })
-    connection.onRequest('spgoding/semanticColoringTest', ({ textDocument: { uri: uriString } }: { textDocument: { uri: string } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
-            return null
+            return ans
         }
 
-        const ans: number[] = []
-
+        // TODO: Change to use the official builder: https://github.com/microsoft/vscode-languageserver-node/blob/master/server/src/sematicTokens.proposed.ts#L45.
+        // TODO: Pay attention to the token types: microsoft/vscode#89351.
         let lastToken: Token | undefined
         let lastLine = 0
         for (let i = 0; i < info.lines.length; i++) {
@@ -665,9 +674,9 @@ connection.onInitialized(() => {
             lastToken = undefined
             for (const token of tokens) {
                 if (lastToken) {
-                    ans.push(...token.toArray(i, lastLine, lastToken.range.start))
+                    ans.data.push(...token.toArray(i, lastLine, lastToken.range.start))
                 } else {
-                    ans.push(...token.toArray(i, lastLine))
+                    ans.data.push(...token.toArray(i, lastLine))
                 }
                 lastToken = token
                 lastLine = i
@@ -677,10 +686,17 @@ connection.onInitialized(() => {
         return ans
     })
 
-    connection.onNotification('workspace/regenerateCache', async () => {
-        cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
-        await updateCacheFile(cacheFile, roots)
-        connection.window.showInformationMessage(locale('server.regenerated-cache'))
+    connection.onExecuteCommand(async ({ command }) => {
+        switch (command) {
+            case 'datapackLanguageServer.regenerageCache':
+                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+                await updateCacheFile(cacheFile, roots)
+                connection.window.showInformationMessage(locale('server.regenerated-cache'))
+                break
+            default:
+                connection.console.error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
+                break
+        }
     })
 })
 

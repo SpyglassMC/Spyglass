@@ -4,7 +4,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenModifier, TokenType } from '../types/Token'
 
 export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionID'
@@ -19,7 +19,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
         const id = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: id,
-            tokens: [Token.from(start, reader, 'variable', ['declaration'])],
+            tokens: [Token.from(start, reader, TokenType.variable, [TokenModifier.declaration])],
             errors: [],
             cache: {},
             completions: []

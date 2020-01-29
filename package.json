@@ -29,8 +29,8 @@
         "clone": "^2.1.2",
         "fs-extra": "^8.1.0",
         "python-range": "^1.0.4",
-        "vscode-languageclient": "^6.0.0",
-        "vscode-languageserver": "^6.0.0",
+        "vscode-languageclient": "^6.1.0",
+        "vscode-languageserver": "^6.1.0",
         "vscode-uri": "^2.1.1"
     },
     "devDependencies": {
@@ -753,24 +753,60 @@
                 }
             }
         },
+        "tokenTypes": [
+            {
+                "id": "boolean",
+                "description": "A real boolean value"
+            },
+            {
+                "id": "entity",
+                "description": "An entity or a score holder"
+            },
+            {
+                "id": "literal",
+                "description": "A literal argument"
+            },
+            {
+                "id": "namespacedID",
+                "description": "A namespaced ID"
+            }
+        ],
         "tokenModifiers": [
             {
                 "id": "firstArgument",
-                "description": "The first argument in a command."
+                "description": "The first argument in a command"
             }
         ],
         "tokenStyleDefaults": [
             {
-                "selector": "*.firstArgument",
-                "dark": {
-                    "fontStyle": "bold"
-                },
-                "light": {
-                    "fontStyle": "bold"
-                },
-                "highContrast": {
-                    "fontStyle": "bold"
-                }
+                "selector": "boolean",
+                "scopes": [
+                    "constant.language.boolean.mcfunction"
+                ]
+            },
+            {
+                "selector": "entity",
+                "scopes": [
+                    "support.class.entity.mcfunction"
+                ]
+            },
+            {
+                "selector": "literal",
+                "scopes": [
+                    "keyword.other.mcfunction"
+                ]
+            },
+            {
+                "selector": "literal.firstArgument",
+                "scopes": [
+                    "keyword.control.mcfunction"
+                ]
+            },
+            {
+                "selector": "namespacedID",
+                "scopes": [
+                    "entity.name.function.mcfunction"
+                ]
             }
         ]
     },

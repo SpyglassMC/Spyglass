@@ -1,29 +1,31 @@
 import TextRange from './TextRange'
 import StringReader from '../utils/StringReader'
 
-export type TokenType =
-    | 'comment'
-    | 'function'
-    | 'keyword'
-    | 'namespace'
-    | 'number'
-    | 'operator'
-    | 'parameter'
-    | 'property'
-    | 'string'
-    | 'type'
-    | 'variable'
+export enum TokenType {
+    boolean,
+    comment,
+    entity,
+    keyword,
+    literal,
+    namespacedID,
+    number,
+    operator,
+    property,
+    string,
+    type,
+    variable,
+    _
+}
 
-export type TokenModifier =
-    | 'declaration'
-    | 'deprecated'
-    | 'documentation'
-    | 'firstArgument'
+export enum TokenModifier {
+    declaration,
+    deprecated,
+    documentation,
+    firstArgument,
+    _
+}
 
 export default class Token {
-    static readonly Types = new Map<TokenType, number>()
-    static readonly Modifiers = new Map<TokenModifier, number>()
-
     /* istanbul ignore next */
     constructor(
         public range: TextRange,
@@ -54,12 +56,10 @@ export default class Token {
         const deltaLine = line - lastLine
         const deltaStartChar = this.range.start - lastStartChar
         const length = this.range.end - this.range.start
-        const tokenType = Token.Types.get(this.type) as number
         let tokenModifiers = 0
         for (const modifier of this.modifiers) {
-            const num = Token.Modifiers.get(modifier) as number
-            tokenModifiers = tokenModifiers | (1 << num)
+            tokenModifiers = tokenModifiers | (1 << modifier)
         }
-        return [deltaLine, deltaStartChar, length, tokenType, tokenModifiers]
+        return [deltaLine, deltaStartChar, length, this.type, tokenModifiers]
     }
 }

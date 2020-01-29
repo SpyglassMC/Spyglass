@@ -6,7 +6,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class TagArgumentParser extends ArgumentParser<string> {
     static identity = 'Tag'
@@ -36,7 +36,7 @@ export default class TagArgumentParser extends ArgumentParser<string> {
         ans.data = value
         //#endregion
         //#region Tokens
-        ans.tokens.push(Token.from(start, reader, 'variable'))
+        ans.tokens.push(Token.from(start, reader, TokenType.variable))
         //#endregion
         //#region Errors
         if (!value) {

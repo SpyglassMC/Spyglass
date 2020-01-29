@@ -6,7 +6,7 @@ import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType, TokenModifier } from '../types/Token'
 
 export default class ObjectiveArgumentParser extends ArgumentParser<string> {
     static identity = 'Objective'
@@ -39,9 +39,9 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Tokens
         if (this.isDefinition) {
-            ans.tokens.push(Token.from(start, reader, 'variable', ['declaration']))
+            ans.tokens.push(Token.from(start, reader, TokenType.variable, [TokenModifier.declaration]))
         } else {
-            ans.tokens.push(Token.from(start, reader, 'variable'))
+            ans.tokens.push(Token.from(start, reader, TokenType.variable))
         }
         //#endregion
         //#region Errors & Cache

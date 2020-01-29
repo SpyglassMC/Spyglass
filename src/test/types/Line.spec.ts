@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine, lineToLintedString } from '../../types/Line'
 import ParsingError from '../../types/ParsingError'
 import { VanillaConfig } from '../../types/Config'
-import Token from '../../types/Token'
+import Token, { TokenType } from '../../types/Token'
 
 describe('Line Tests', () => {
     describe('combineLine() Tests', () => {
@@ -72,8 +72,8 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base, { args: [], tokens: [], hint: { fix: [], options: [] }, errors: [parsedError, newError] })
         })
         it('Should combine tokens', () => {
-            const oldToken = new Token({ start: 0, end: 1 }, 'comment')
-            const newToken = new Token({ start: 1, end: 2 }, 'string')
+            const oldToken = new Token({ start: 0, end: 1 }, TokenType.comment)
+            const newToken = new Token({ start: 1, end: 2 }, TokenType.string)
             const base = { args: [], tokens: [oldToken], errors: [], hint: { fix: [], options: [] } }
             const override = { args: [], tokens: [newToken], errors: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
@@ -84,7 +84,7 @@ describe('Line Tests', () => {
         it('Should combine args, hint, cache, completions, tokens, and errors', () => {
             const base: SaturatedLine = {
                 args: [{ data: 'execute', parser: 'test' }],
-                tokens: [new Token({ start: 0, end: 1 }, 'comment')],
+                tokens: [new Token({ start: 0, end: 1 }, TokenType.comment)],
                 cache: { entities: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
                 hint: { fix: ['a'], options: [['c', ['c']]] },
@@ -92,7 +92,7 @@ describe('Line Tests', () => {
             }
             const override: Line = {
                 args: [{ data: 'if', parser: 'test' }],
-                tokens: [new Token({ start: 1, end: 2 }, 'string')],
+                tokens: [new Token({ start: 1, end: 2 }, TokenType.string)],
                 cache: { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
                 hint: { fix: ['b'], options: [['d', ['d']]] },
@@ -100,7 +100,7 @@ describe('Line Tests', () => {
             }
             combineSaturatedLine(base, override)
             assert.deepStrictEqual(base.args, [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }])
-            assert.deepStrictEqual(base.tokens, [new Token({ start: 0, end: 1 }, 'comment'), new Token({ start: 1, end: 2 }, 'string')])
+            assert.deepStrictEqual(base.tokens, [new Token({ start: 0, end: 1 }, TokenType.comment), new Token({ start: 1, end: 2 }, TokenType.string)])
             assert.deepStrictEqual(base.hint.fix, ['a', 'b'])
             assert.deepStrictEqual(base.hint.options, [['c', ['c']], ['d', ['d']]])
             assert.deepStrictEqual(

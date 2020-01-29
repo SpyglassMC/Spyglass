@@ -10,7 +10,7 @@ import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token from '../types/Token'
+import Token, { TokenType } from '../types/Token'
 
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
     static identity = 'NbtPath'
@@ -144,7 +144,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         ans.data.value.push(key)
         
         //#region Tokens
-        ans.tokens.push(Token.from(start, reader, 'property'))
+        ans.tokens.push(Token.from(start, reader, TokenType.property))
         //#endregion
 
         if (walker) {
