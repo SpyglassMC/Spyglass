@@ -48,23 +48,18 @@ export function getRel(uri: Uri, roots: Uri[]) {
     return undefined
 }
 
+/* istanbul ignore next */
 export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
     const tokenTypes: string[] = []
     for (let i = 0; i < TokenType._; i++) {
         const str = TokenType[i]
-        // if (clientTokenTypes.has(str)) {
         tokenTypes.push(str)
-        // } else {
-        //     tokenTypes.push('keyword')
-        // }
     }
 
     const tokenModifiers: string[] = []
     for (let i = 0; i < TokenModifier._; i++) {
         const str = TokenModifier[i]
-        // if (clientTokenModifiers.has(str)) {
         tokenModifiers.push(str)
-        // }
     }
 
     return { tokenTypes, tokenModifiers }

@@ -48,7 +48,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
         const categoryResult = ctx.parsers
             .get('Literal', Object.keys(ObjectiveCriterionArgumentParser.Category))
             .parse(reader, ctx)
-        categoryResult.tokens = [Token.from(start, reader, 'type')]
+        categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
         const category = categoryResult.data as string
         let subCriteria = ObjectiveCriterionArgumentParser.Category[category]
         combineArgumentParserResult(ans, categoryResult)
