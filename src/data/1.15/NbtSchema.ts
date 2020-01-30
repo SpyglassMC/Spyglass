@@ -2530,7 +2530,7 @@ const NbtSchema: NbtSchema = {
         ],
         children: {
             BlockEntityTag: {
-                ref: 'ref/block_entity.json',
+                ref: 'roots/blocks.json#base',
                 description: 'NBT data when placed'
             },
             BlockStateTag: {
