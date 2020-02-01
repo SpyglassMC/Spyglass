@@ -267,6 +267,7 @@ And to those who haven't told me a GitHub account:
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=702915"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=702915&size=middle" width="100px;" alt="Jokey_钥匙"/><br /><sub><b>Jokey_钥匙</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AJokey_钥匙" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2944670"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2944670&size=large" width="100px;" alt="MineCommander"/><br /><sub><b>MineCommander</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMineCommander" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2337994"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2337994&size=large" width="100px;" alt="隐退"/><br /><sub><b>隐退</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3A隐退" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2612019"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2612019&size=large" width="100px;" alt="Chelove_C60"/><br /><sub><b>Chelove_C60</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChelove_C60" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 <!-- markdownlint-enable -->

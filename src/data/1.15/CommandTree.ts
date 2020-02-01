@@ -988,6 +988,7 @@ const CommandTree: CommandTreeType = {
                     children: {
                         pos: {
                             parser: new VectorArgumentParser(3),
+                            executable: true,
                             children: {
                                 delta: {
                                     parser: new VectorArgumentParser(3),
