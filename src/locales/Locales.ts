@@ -43,7 +43,7 @@ export async function loadLocale() {
                 const config = JSON.parse(process.env.VSCODE_NLS_CONFIG)
                 if (typeof config.locale === 'string') {
                     const code: string = config.locale
-                    if (code !== 'en') {
+                    if (code !== 'en' && code !== 'en-us') {
                         try {
                             console.log(`[I18N] Try: ‘${code}’.`)
                             const locale = await import(`./${code}.json`)
