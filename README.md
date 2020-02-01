@@ -276,7 +276,9 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 # Repository Structure
 
-- `dist`: Bundled files. These files are included in both the NPM package and the VSCode extension.
+- `dist`: Bundled files.
+  - `client.js`: Stuff related to the client. Only included in the VSCode extension.
+  - `server.js`: Stuff related to the server. Included in both the VSCode extension and the NPM package.
 - `lib`: TypeScript Declaration (`.d.ts`) files. These files are only included in the NPM package.
 - `src`: TypeScript source code.
 
