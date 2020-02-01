@@ -54,13 +54,13 @@ export function activate(context: ExtensionContext) {
     }
 
     if (workspace.workspaceFolders) {
-        ((clientOptions.synchronize as SynchronizeOptions)
-            .fileEvents as FileSystemWatcher[]
-        ).push(
-            workspace.createFileSystemWatcher(
-                new RelativePattern(workspace.workspaceFolders[0], 'data/**/*')
+        for (const root of workspace.workspaceFolders) {
+            (clientOptions.synchronize!.fileEvents as FileSystemWatcher[]).push(
+                workspace.createFileSystemWatcher(
+                    new RelativePattern(root, 'data/**/*')
+                )
             )
-        )
+        }
     }
 
     // Create the language client and start the client.
