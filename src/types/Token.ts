@@ -3,7 +3,6 @@ import StringReader from '../utils/StringReader'
 
 export enum TokenType {
     annotation,
-    blockComment,
     boolean,
     comment,
     entity,

@@ -79,9 +79,9 @@ If you'd like to help us translate this project into other languages, it would b
 
 ## Semantic Highlighting
 
-Nope. I follow the spirit of [no code](https://github.com/kelseyhightower/nocode) project so I wrote no code about semantic coloring. There won't be any issues about it, yah!
+All command arguments can be colored semantically. You can see #308 for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
 
-Just joking. Semantic highlighting will be implemented whenever https://github.com/microsoft/vscode-languageserver-node/pull/367 is resolved. Before that, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension. All the screenshots below are taken with both mine and Arcensoth's extension enabled.
+All the screenshots below are taken with both DHP and [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension enabled.
 
 ## Signature Information
 

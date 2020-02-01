@@ -759,10 +759,6 @@
                 "description": "An annotation in doc comments"
             },
             {
-                "id": "blockComment",
-                "description": "A block comment"
-            },
-            {
                 "id": "boolean",
                 "description": "A real boolean value"
             },
@@ -793,13 +789,7 @@
             {
                 "selector": "annotation",
                 "scopes": [
-                    "storage.type.class.mcfunction"
-                ]
-            },
-            {
-                "selector": "blockComment",
-                "scopes": [
-                    "comment.block.documentation.mcfunction"
+                    "support.type.doc.annotation.mcfunction"
                 ]
             },
             {
