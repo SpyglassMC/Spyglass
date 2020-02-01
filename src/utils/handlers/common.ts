@@ -8,6 +8,7 @@ import { constructContext } from '../../types/ParsingContext'
 import { CacheFile } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
 import { TokenType, TokenModifier } from '../../types/Token'
+import Identity from '../../types/Identity'
 
 export function getUri(str: string, uris: Map<string, Uri>) {
     const value = uris.get(str)
@@ -20,11 +21,7 @@ export function getUri(str: string, uris: Map<string, Uri>) {
     }
 }
 
-// export function getInfo(uri: Uri, infos: Map<Uri, FunctionInfo>) {
-//     return infos.get(uri)
-// }
-
-export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile) {
+export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
     } else {
@@ -32,7 +29,7 @@ export async function parseString(string: string, lines: Line[], config: Config,
         const reader = new StringReader(string)
         const { data } = parser.parse(reader, await constructContext({
             cache: cacheFile.cache,
-            config
+            config, cursor
         }))
         lines.push(data)
     }
@@ -46,6 +43,14 @@ export function getRel(uri: Uri, roots: Uri[]) {
     }
     console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots (${roots})`)
     return undefined
+}
+
+/**
+ * @throws When the URI does not belong to any roots.
+ * @throws When the URI is not a valid datapack resource.
+ */
+export function getId(uri: Uri, roots: Uri[]) {
+    return Identity.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
 /* istanbul ignore next */

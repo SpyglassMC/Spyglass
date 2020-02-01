@@ -33,6 +33,13 @@ export default class Identity implements Lintable {
     }
 
     /**
+     * Convert the ID to a string in form of `${namespace}:${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
+     */
+    toTagString() {
+        return `${this.isTag ? Identity.TagSymbol : ''}${this.namespace}:${this.path.join(Identity.Sep)}`
+    }
+
+    /**
      * Convert the ID to a file path.
      * @param category The category of this namespaced ID. e.g. `functions`, `advancements`, etc.
      * @param ext The extension of the file. Defaults to `.json`.
@@ -109,14 +116,15 @@ export default class Identity implements Lintable {
     }
 
     static fromString(str: string) {
-        if (str[0] === Identity.TagSymbol) {
+        const isTag = str[0] === Identity.TagSymbol
+        if (isTag) {
             str = str.slice(1)
         }
         const parts = str.split(':')
         if (parts.length === 1) {
-            return new Identity(undefined, parts[0].split(Identity.Sep))
+            return new Identity(undefined, parts[0].split(Identity.Sep), isTag)
         } else {
-            return new Identity(parts[0], parts[1].split(Identity.Sep))
+            return new Identity(parts[0], parts[1].split(Identity.Sep), isTag)
         }
     }
 

@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../../types/Config'
 import Token, { TokenType } from '../../../types/Token'
 
 describe('onDidChangeTextDocument() Tests', () => {
-    const cacheFile = { cache: {}, files: {}, version: NaN }
+    const cacheFile = { cache: {}, files: {}, tags: { functions: {} }, version: NaN }
     const config = VanillaConfig
     const version = 1
     it('Should handle with full update', async () => {
@@ -151,7 +151,7 @@ describe('onDidChangeTextDocument() Tests', () => {
             {
                 text: '',
                 range: {
-                    start: { line: 0, character: 8 },
+                    start: { line: 1, character: 0 },
                     end: { line: 2, character: 0 }
                 }
             }
@@ -163,10 +163,12 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
-                '# Test 0# Test 2'
+                '# Test 0',
+                '# Test 2'
             ],
             version: 1
         })

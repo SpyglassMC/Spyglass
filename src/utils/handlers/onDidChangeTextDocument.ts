@@ -17,11 +17,6 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
 
             const { start, end } = range as Range
 
-            // Update `lineBreak`.
-            if (text.includes('\r\n')) {
-                info.lineBreak = '\r\n'
-            }
-
             // Update `strings`.
             const affectedStrings = (
                 info.strings[start.line].slice(0, start.character) +

@@ -1,8 +1,9 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SymbolKind } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile, CacheCategory } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
@@ -20,7 +21,6 @@ import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 import onCompletion from './utils/handlers/onCompletion'
 import { getCallHierarchyItem } from './utils/handlers/onCallHierarchy'
 import TagInfo from './types/TagInfo'
-import clone = require('clone')
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -219,7 +219,7 @@ connection.onInitialized(() => {
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
                         const result = Identity.fromRel(getRel(uri, roots) as string)
-                        if (result) {
+                        if (result && result.category === 'tags/functions') {
                             const { category, ext } = result
                             if (Identity.isExtValid(ext, category)) {
                                 await cacheFileOperations.fileModified(uri, category)
@@ -501,15 +501,18 @@ connection.onInitialized(() => {
         return null
     })
 
+    /**
+     * A function can be called from:
+     * - A function. We can get this from the said function's `ref`.
+     * - A function tag. We can get this from `cacheFile.tags.functions`.
+     * 
+     * A function tag can be called from:
+     * - A function. We can get this from the said function tag's `ref`.
+     * - Another function tag. We can get this from `cacheFile.tags.functions`.
+     * 
+     * See also #298.
+     */
     connection.languages.callHierarchy.onIncomingCalls(async ({ item }) => {
-        // Return callers of the item.
-        // TODO: show function calls and function tag calls from a function tag.
-        const uri = getUri(item.uri, uris)
-        const info = infos.get(uri)
-        if (!info) {
-            return null
-        }
-
         const ans: Proposed.CallHierarchyIncomingCall[] = []
         let unit: CacheUnit | undefined
         if (item.name[0] === Identity.TagSymbol) {
@@ -539,43 +542,102 @@ connection.onInitialized(() => {
             }
         }
 
-        return ans
-    })
-
-    connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
-        const uri = getUri(item.uri, uris)
-        const info = infos.get(uri)
-        if (!info) {
-            return null
-        }
-
-        const ans: Proposed.CallHierarchyOutgoingCall[] = []
-        if (item.name[0] === Identity.TagSymbol) {
-
-        } else {
-            const category = getSafeCategory(cacheFile.cache, 'functions')
-            for (const id in category) {
-                /* istanbul ignore next */
-                if (category.hasOwnProperty(id)) {
-                    const unit = category[id]
-                    for (const ref of unit!.ref) {
-                        if (id === item.name) {
-                            ans.push(
-                                {
-                                    to: getCallHierarchyItem(id, ref.uri!, ref.line!, ref.start, ref.end),
-                                    fromRanges: [{
-                                        start: { line: ref.line!, character: ref.start },
-                                        end: { line: ref.line!, character: ref.end }
-                                    }]
-                                }
-                            )
-                        }
+        for (const tagIdString in cacheFile.tags.functions) {
+            /* istanbul ignore next */
+            if (cacheFile.tags.functions.hasOwnProperty(tagIdString)) {
+                const { values } = cacheFile.tags.functions[tagIdString]
+                if (values.includes(item.name)) {
+                    const tagId = Identity.fromString(tagIdString)
+                    const tagUri = await getUriFromId(tagId, 'tags/functions')
+                    if (tagUri) {
+                        ans.push(
+                            {
+                                from: getCallHierarchyItem(
+                                    Identity.TagSymbol + tagIdString, tagUri.toString(),
+                                    0, 0, 0
+                                ),
+                                fromRanges: [{
+                                    start: { line: 0, character: 0 },
+                                    end: { line: 0, character: 0 }
+                                }]
+                            }
+                        )
                     }
                 }
             }
         }
 
-        console.log(JSON.stringify(ans, undefined, 4))
+        return ans
+    })
+
+    /**
+     * A function can call:
+     * - A function. We can get this from all functions' `ref` and compare if the `uri` of that cache position is the expected one.
+     * - A function tag. We can get this from all function tags' `ref` and compare if the `uri` of that cache position is the expected one.
+     * 
+     * A function tag can call:
+     * - A function. We can get this from `cacheFile.tags.functions`.
+     * - Another function tag. We can get this from `cacheFile.tags.functions`.
+     * 
+     * See also #298.
+     */
+    connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
+        const ans: Proposed.CallHierarchyOutgoingCall[] = []
+        if (item.name[0] === Identity.TagSymbol) {
+            const tagInfo = cacheFile.tags.functions[item.name.slice(1)]
+            if (!tagInfo) {
+                return null
+            }
+            for (const idString of tagInfo.values) {
+                const id = Identity.fromString(idString)
+                const uri = await getUriFromId(id, id.isTag ? 'tags/functions' : 'functions')
+                if (uri) {
+                    ans.push(
+                        {
+                            to: getCallHierarchyItem(idString, uri.toString(), 0, 0, 0),
+                            fromRanges: [{
+                                start: { line: 0, character: 0 },
+                                end: { line: 0, character: 0 }
+                            }]
+                        }
+                    )
+                }
+            }
+        } else {
+            const pushItems = (category: CacheCategory) => {
+                console.log(JSON.stringify(category))
+                for (const outgoingIdString in category) {
+                    /* istanbul ignore next */
+                    if (category.hasOwnProperty(outgoingIdString)) {
+                        const unit = category[outgoingIdString]
+                        for (const ref of unit!.ref) {
+                            const refId = getId(getUri(ref.uri!, uris), roots)
+                            console.log('refId: ' + refId)
+                            console.log('item.name: ' + item.name)
+                            if (item.name === refId) {
+                                const outgoingId = Identity.fromString(outgoingIdString)
+                                // const uri = getUriFromId(outgoingId, outgoingId.isTag ? 'tags/functions' : 'functions')
+                                ans.push(
+                                    {
+                                        to: getCallHierarchyItem(outgoingIdString, ref.uri!, ref.line!, ref.start, ref.end),
+                                        fromRanges: [{
+                                            start: { line: ref.line!, character: ref.start },
+                                            end: { line: ref.line!, character: ref.end }
+                                        }]
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            console.log('== functions')
+            pushItems(getSafeCategory(cacheFile.cache, 'functions'))
+            console.log('== tags/functions')
+            pushItems(getSafeCategory(cacheFile.cache, 'tags/functions'))
+        }
+
+        // console.log(JSON.stringify(ans, undefined, 4))
         return ans
     })
 
@@ -931,7 +993,7 @@ const cacheFileOperations = {
     },
     updateTagInfo: async (id: Identity, pathExists = fs.pathExists, readJson = fs.readJson) => {
         const idString = id.toString()
-        delete tagInfos[idString]
+        delete cacheFile.tags.functions[idString]
 
         const rel = id.toRel('tags/functions')
         const ans: TagInfo = { values: [] }
@@ -946,10 +1008,21 @@ const cacheFileOperations = {
                     if (!(content && cacheFileOperations.isStringArray(content.values))) {
                         throw new Error(`Function tag ‘${id}’ has a bad format: ‘${JSON.stringify(content)}’`)
                     }
+                    const validValues: string[] = []
+                    for (const value of content.values) {
+                        try {
+                            const id = Identity.fromString(value)
+                            if (await getUriFromId(id, id.isTag ? 'tags/functions' : 'functions')) {
+                                validValues.push(id.toTagString())
+                            }
+                        } catch (ignored) {
+                            // Ignore this bad value.
+                        }
+                    }
                     if (content.replace) {
-                        ans.values = content.values
+                        ans.values = validValues
                     } else {
-                        ans.values.push(...content.values)
+                        ans.values.push(...validValues)
                     }
                 } catch (e) {
                     console.log(`updateTagInfo - ${e.message}`)
@@ -957,7 +1030,7 @@ const cacheFileOperations = {
             }
         }
 
-        tagInfos[idString] = ans
+        cacheFile.tags.functions[idString] = ans
     },
     //#endregion
 
@@ -985,8 +1058,8 @@ const cacheFileOperations = {
     fileModified: async (uri: Uri, type: CacheKey) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         if (!uri.toString().startsWith('untitled:') && type === 'functions') {
-            // cacheFileOperations.removeCachePositionsWith(uri)
-            // await cacheFileOperations.combineCacheOfLines(uri)
+            cacheFileOperations.removeCachePositionsWith(uri)
+            await cacheFileOperations.combineCacheOfLines(uri)
         } else if (type === 'tags/functions') {
             await cacheFileOperations.updateTagInfo(Identity.fromString(getId(uri, roots)))
         }
