@@ -604,40 +604,36 @@ connection.onInitialized(() => {
                 }
             }
         } else {
-            const pushItems = (category: CacheCategory) => {
-                console.log(JSON.stringify(category))
+            const pushItems = async (category: CacheCategory) => {
                 for (const outgoingIdString in category) {
                     /* istanbul ignore next */
                     if (category.hasOwnProperty(outgoingIdString)) {
                         const unit = category[outgoingIdString]
                         for (const ref of unit!.ref) {
                             const refId = getId(getUri(ref.uri!, uris), roots)
-                            console.log('refId: ' + refId)
-                            console.log('item.name: ' + item.name)
                             if (item.name === refId) {
                                 const outgoingId = Identity.fromString(outgoingIdString)
-                                // const uri = getUriFromId(outgoingId, outgoingId.isTag ? 'tags/functions' : 'functions')
-                                ans.push(
-                                    {
-                                        to: getCallHierarchyItem(outgoingIdString, ref.uri!, ref.line!, ref.start, ref.end),
-                                        fromRanges: [{
-                                            start: { line: ref.line!, character: ref.start },
-                                            end: { line: ref.line!, character: ref.end }
-                                        }]
-                                    }
-                                )
+                                const outgoingUri = await getUriFromId(outgoingId, outgoingId.isTag ? 'tags/functions' : 'functions')
+                                if (outgoingUri) {
+                                    ans.push(
+                                        {
+                                            to: getCallHierarchyItem(outgoingIdString, outgoingUri.toString(), 0, 0, 0),
+                                            fromRanges: [{
+                                                start: { line: 0, character: 0 },
+                                                end: { line: 0, character: 0 }
+                                            }]
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-            console.log('== functions')
-            pushItems(getSafeCategory(cacheFile.cache, 'functions'))
-            console.log('== tags/functions')
-            pushItems(getSafeCategory(cacheFile.cache, 'tags/functions'))
+            await pushItems(getSafeCategory(cacheFile.cache, 'functions'))
+            await pushItems(getSafeCategory(cacheFile.cache, 'tags/functions'))
         }
 
-        // console.log(JSON.stringify(ans, undefined, 4))
         return ans
     })
 
@@ -1025,7 +1021,7 @@ const cacheFileOperations = {
                         ans.values.push(...validValues)
                     }
                 } catch (e) {
-                    console.log(`updateTagInfo - ${e.message}`)
+                    connection.console.info(`updateTagInfo - ${e.message}`)
                 }
             }
         }
