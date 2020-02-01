@@ -1,13 +1,21 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
+import TagInfo from './TagInfo'
 
 export const LatestCacheFileVersion = 5
+
+export const DefaultCacheFile = { cache: {}, files: {}, tags: { functions: {} }, version: LatestCacheFileVersion }
 
 export interface CacheFile {
     cache: ClientCache,
     files: {
         [uri: string]: number
+    },
+    tags: {
+        functions: {
+            [id: string]: TagInfo
+        }
     },
     version: number
 }
