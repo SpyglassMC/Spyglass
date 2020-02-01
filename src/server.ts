@@ -1,8 +1,8 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SymbolKind } from 'vscode-languageserver'
+import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import { lineToLintedString } from './types/Line'
 import LineParser from './parsers/LineParser'
@@ -11,12 +11,16 @@ import Identity from './types/Identity'
 import { constructContext } from './types/ParsingContext'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import { getUri, parseString, getRel, getSemanticTokensLegend } from './utils/handlers/common'
+import { getUri, parseString, getRel, getSemanticTokensLegend, getId } from './utils/handlers/common'
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
 import onSemanticTokens from './utils/handlers/onSemanticTokens'
 import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
+import onCompletion from './utils/handlers/onCompletion'
+import { getCallHierarchyItem } from './utils/handlers/onCallHierarchy'
+import TagInfo from './types/TagInfo'
+import clone = require('clone')
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -27,10 +31,14 @@ const infos = new Map<Uri, FunctionInfo>()
  * TODO(#251): This map will be cleared when the workspace folders are changed.
  */
 const urisOfIds = new Map<string, Uri | null>()
+/**
+ * Sorted by priority. If you want to read something in which Minecraft does,
+ * iterate from the last element of this array to the first element.
+ */
 const roots: Uri[] = []
 
 let cachePath: string | undefined
-let cacheFile: CacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+let cacheFile: CacheFile = clone(DefaultCacheFile)
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
     await loadLocale()
@@ -70,25 +78,26 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         if (fs.existsSync(cachePath)) {
             cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
             if (cacheFile.version !== LatestCacheFileVersion) {
-                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+                cacheFile = clone(DefaultCacheFile)
             }
         }
         await updateCacheFile(cacheFile, roots)
         saveCacheFile()
     }
 
-    return {
+    const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
+            callHierarchyProvider: true,
             colorProvider: true,
             completionProvider: {
                 triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@'],
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
-            didChangeWatchedFiles: true,
+            // didChangeWatchedFiles: true,
             documentFormattingProvider: true,
             documentHighlightProvider: true,
-            documentLinkProvider: true,
+            documentLinkProvider: {},
             executeCommandProvider: {
                 commands: ['datapackLanguageServer.regenerageCache']
             },
@@ -118,7 +127,9 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 }
             }
         }
-    } as InitializeResult
+    }
+
+    return result
 })
 
 connection.onInitialized(() => {
@@ -205,17 +216,17 @@ connection.onInitialized(() => {
 
                     // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
 
-                    // const stat = await fs.stat(uri.fsPath)
-                    // if (stat.isFile()) {
-                    //     const result = Identity.fromRel(getRel(uri, roots) as string)
-                    //     if (result) {
-                    //         const { category, ext } = result
-                    //         if (Identity.isExtValid(ext, category)) {
-                    //             await cacheFileOperations.fileModified(uri, category)
-                    //             cacheFile.files[uriString] = stat.mtimeMs
-                    //         }
-                    //     }
-                    // }
+                    const stat = await fs.stat(uri.fsPath)
+                    if (stat.isFile()) {
+                        const result = Identity.fromRel(getRel(uri, roots) as string)
+                        if (result) {
+                            const { category, ext } = result
+                            if (Identity.isExtValid(ext, category)) {
+                                await cacheFileOperations.fileModified(uri, category)
+                                cacheFile.files[uriString] = stat.mtimeMs
+                            }
+                        }
+                    }
                     break
                 }
                 case FileChangeType.Deleted:
@@ -246,27 +257,18 @@ connection.onInitialized(() => {
         // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
     })
 
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
-        // TODO(#): Use the last index as cursor to cache completions.
+    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const config = info.config
-        const strings = info.strings
-        const parser = new LineParser(false, 'line')
-        const reader = new StringReader(strings[lineNumber])
-        const { data } = parser.parse(reader, await constructContext({
-            cursor: char,
-            cache: cacheFile.cache,
-            config
-        }))
-        return data.completions
+        return onCompletion({ cacheFile, line, char, info })
     })
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
-        // TODO(#): Use the last index as cursor to cache signatures.
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -322,6 +324,7 @@ connection.onInitialized(() => {
     })
 
     connection.onFoldingRanges(({ textDocument: { uri: uriString } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -397,6 +400,7 @@ connection.onInitialized(() => {
     })
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -425,13 +429,16 @@ connection.onInitialized(() => {
     })
 
     connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
+        // TODO(#230)
         return await getReferencesOrDefinition(uri, number, char, 'def')
     })
     connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
+        // TODO(#230)
         return await getReferencesOrDefinition(uri, number, char, 'ref')
     })
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position: { character: char, line: number } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -463,7 +470,117 @@ connection.onInitialized(() => {
         return null
     })
 
+    connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        const line = info.lines[lineNumber]
+        const result = getCacheFromChar(line.cache || {}, char)
+        if (result) {
+            if (result.type === 'functions') {
+                const uri = await getUriFromId(Identity.fromString(result.id), result.type)
+                if (!uri) {
+                    return null
+                }
+                return [
+                    getCallHierarchyItem(result.id, uri.toString(), lineNumber, result.start, result.end)
+                ]
+            } else if (result.type === 'tags/functions') {
+                const uri = await getUriFromId(Identity.fromString(result.id), result.type)
+                if (!uri) {
+                    return null
+                }
+                return [
+                    getCallHierarchyItem(Identity.TagSymbol + result.id, uri.toString(), lineNumber, result.start, result.end)
+                ]
+            }
+        }
+        return null
+    })
+
+    connection.languages.callHierarchy.onIncomingCalls(async ({ item }) => {
+        // Return callers of the item.
+        // TODO: show function calls and function tag calls from a function tag.
+        const uri = getUri(item.uri, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        const ans: Proposed.CallHierarchyIncomingCall[] = []
+        let unit: CacheUnit | undefined
+        if (item.name[0] === Identity.TagSymbol) {
+            unit = getSafeCategory(cacheFile.cache, 'tags/functions')[item.name.slice(1)]
+        } else {
+            unit = getSafeCategory(cacheFile.cache, 'functions')[item.name]
+        }
+
+        if (unit && unit.ref.length > 0) {
+            for (const ref of unit.ref) {
+                try {
+                    ans.push(
+                        {
+                            from: getCallHierarchyItem(
+                                getId(getUri(ref.uri!, uris), roots),
+                                ref.uri!, ref.line!, ref.start, ref.end
+                            ),
+                            fromRanges: [{
+                                start: { line: ref.line!, character: ref.start },
+                                end: { line: ref.line!, character: ref.end }
+                            }]
+                        }
+                    )
+                } catch (ignored) {
+                    unit.ref.splice(unit.ref.indexOf(ref), 1)
+                }
+            }
+        }
+
+        return ans
+    })
+
+    connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
+        const uri = getUri(item.uri, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        const ans: Proposed.CallHierarchyOutgoingCall[] = []
+        if (item.name[0] === Identity.TagSymbol) {
+
+        } else {
+            const category = getSafeCategory(cacheFile.cache, 'functions')
+            for (const id in category) {
+                /* istanbul ignore next */
+                if (category.hasOwnProperty(id)) {
+                    const unit = category[id]
+                    for (const ref of unit!.ref) {
+                        if (id === item.name) {
+                            ans.push(
+                                {
+                                    to: getCallHierarchyItem(id, ref.uri!, ref.line!, ref.start, ref.end),
+                                    fromRanges: [{
+                                        start: { line: ref.line!, character: ref.start },
+                                        end: { line: ref.line!, character: ref.end }
+                                    }]
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log(JSON.stringify(ans, undefined, 4))
+        return ans
+    })
+
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { character: char, line: number } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -480,6 +597,8 @@ connection.onInitialized(() => {
         return null
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: number, character: char }, newName }) => {
+        // TODO(#230)
+        // Inject getUriFromId
         // connection.console.info(`BR: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
@@ -555,6 +674,8 @@ connection.onInitialized(() => {
     })
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
+        // TODO(#230)
+        // Inject getUriFromId
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -599,6 +720,7 @@ connection.onInitialized(() => {
     })
 
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
+        // TODO(#230)
         const ans: ColorInformation[] = []
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
@@ -637,6 +759,7 @@ connection.onInitialized(() => {
         range: { start: { character: startChar, line }, end: { character: endChar } },
         textDocument: { uri: uriString }
     }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -679,7 +802,7 @@ connection.onInitialized(() => {
     connection.onExecuteCommand(async ({ command }) => {
         switch (command) {
             case 'datapackLanguageServer.regenerageCache':
-                cacheFile = { cache: {}, files: {}, version: LatestCacheFileVersion }
+                cacheFile = clone(DefaultCacheFile)
                 await updateCacheFile(cacheFile, roots)
                 connection.window.showInformationMessage(locale('server.regenerated-cache'))
                 break
@@ -799,6 +922,45 @@ const cacheFileOperations = {
     },
     //#endregion
 
+    //#region tags/functions
+    // ADDED/MODIFIED?DELETED: update the corresponding tagInfo.
+    isStringArray(obj: any) {
+        return obj &&
+            obj instanceof Array &&
+            obj.map((v: any) => typeof v === 'string').indexOf(false) === -1
+    },
+    updateTagInfo: async (id: Identity, pathExists = fs.pathExists, readJson = fs.readJson) => {
+        const idString = id.toString()
+        delete tagInfos[idString]
+
+        const rel = id.toRel('tags/functions')
+        const ans: TagInfo = { values: [] }
+        for (let i = roots.length - 1; i >= 0; i--) {
+            // We should use the order in which Minecraft loads datapacks to load tags.
+            // So that we can treat `replace` correctly.
+            const root = roots[i]
+            const p = path.join(root.fsPath, rel)
+            if (await pathExists(p)) {
+                try {
+                    const content = await readJson(p)
+                    if (!(content && cacheFileOperations.isStringArray(content.values))) {
+                        throw new Error(`Function tag ‘${id}’ has a bad format: ‘${JSON.stringify(content)}’`)
+                    }
+                    if (content.replace) {
+                        ans.values = content.values
+                    } else {
+                        ans.values.push(...content.values)
+                    }
+                } catch (e) {
+                    console.log(`updateTagInfo - ${e.message}`)
+                }
+            }
+        }
+
+        tagInfos[idString] = ans
+    },
+    //#endregion
+
     //#region advancements, functions, lootTables, predicates, tags/*, recipes:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
@@ -807,7 +969,7 @@ const cacheFileOperations = {
         category[id] = category[id] || { def: [], ref: [] }
         cacheFile.cache[type] = category
     },
-    removeDefault: (id: string, type: CacheKey) => {
+    deleteDefault: (id: string, type: CacheKey) => {
         removeCacheUnit(cacheFile.cache, type, id)
     },
     //#endregion
@@ -816,20 +978,27 @@ const cacheFileOperations = {
     fileAdded: async (type: CacheKey, id: Identity) => {
         // connection.console.info(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
+        if (type === 'tags/functions') {
+            await cacheFileOperations.updateTagInfo(id)
+        }
     },
     fileModified: async (uri: Uri, type: CacheKey) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         if (!uri.toString().startsWith('untitled:') && type === 'functions') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            await cacheFileOperations.combineCacheOfLines(uri)
+            // cacheFileOperations.removeCachePositionsWith(uri)
+            // await cacheFileOperations.combineCacheOfLines(uri)
+        } else if (type === 'tags/functions') {
+            await cacheFileOperations.updateTagInfo(Identity.fromString(getId(uri, roots)))
         }
     },
     fileDeleted: (uri: Uri, type: CacheKey, id: Identity) => {
         // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
+        } else if (type === 'tags/functions') {
+            cacheFileOperations.updateTagInfo(id)
         }
-        cacheFileOperations.removeDefault(id.toString(), type)
+        cacheFileOperations.deleteDefault(id.toString(), type)
     }
 }
 
