@@ -100,6 +100,10 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
             }
         }
 
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, TokenType.vector))
+        //#endregion
+
         return ans
     }
 
@@ -172,8 +176,6 @@ export default class VectorArgumentParser extends ArgumentParser<Vector> {
                 )
             ))
         }
-
-        ans.tokens.push(Token.from(start, reader, TokenType.number))
 
         return ans
     }

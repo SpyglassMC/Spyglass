@@ -2,6 +2,8 @@ import TextRange from './TextRange'
 import StringReader from '../utils/StringReader'
 
 export enum TokenType {
+    annotation,
+    blockComment,
     boolean,
     comment,
     entity,
@@ -14,6 +16,7 @@ export enum TokenType {
     string,
     type,
     variable,
+    vector,
     _
 }
 

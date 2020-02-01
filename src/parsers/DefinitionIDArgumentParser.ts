@@ -19,11 +19,12 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
         const id = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: id,
-            tokens: [Token.from(start, reader, TokenType.variable, [TokenModifier.declaration])],
+            tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
+        let token = TokenType.comment
         if (id) {
             if (isDefinitionType(this.type)) {
                 ans.cache[getCategoryKey(this.type)] = {}
@@ -32,6 +33,20 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                     def: [{ start, end: start + id.length }],
                     ref: []
                 }
+                //#region Tokens
+                switch (this.type) {
+                    case 'bossbar':
+                    case 'storage':
+                        token = TokenType.namespacedID
+                        break
+                    case 'entity':
+                        token = TokenType.entity
+                        break
+                    default:
+                        token = TokenType.variable
+                        break
+                }
+                //#endregion
             }
         } else {
             ans.errors = [
@@ -41,6 +56,10 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                 ))
             ]
         }
+        //#region Tokens
+        ans.tokens.push(Token.from(start, reader, token, [TokenModifier.declaration]))
+        //#endregion
+
         return ans
     }
 

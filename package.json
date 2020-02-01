@@ -755,6 +755,14 @@
         },
         "tokenTypes": [
             {
+                "id": "annotation",
+                "description": "An annotation in doc comments"
+            },
+            {
+                "id": "blockComment",
+                "description": "A block comment"
+            },
+            {
                 "id": "boolean",
                 "description": "A real boolean value"
             },
@@ -769,6 +777,10 @@
             {
                 "id": "namespacedID",
                 "description": "A namespaced ID"
+            },
+            {
+                "id": "vector",
+                "description": "A vector"
             }
         ],
         "tokenModifiers": [
@@ -778,6 +790,18 @@
             }
         ],
         "tokenStyleDefaults": [
+            {
+                "selector": "annotation",
+                "scopes": [
+                    "storage.type.class.mcfunction"
+                ]
+            },
+            {
+                "selector": "blockComment",
+                "scopes": [
+                    "comment.block.documentation.mcfunction"
+                ]
+            },
             {
                 "selector": "boolean",
                 "scopes": [
@@ -806,6 +830,12 @@
                 "selector": "namespacedID",
                 "scopes": [
                     "entity.name.function.mcfunction"
+                ]
+            },
+            {
+                "selector": "vector",
+                "scopes": [
+                    "constant.numeric.vector.mcfunction"
                 ]
             }
         ]
