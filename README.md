@@ -16,9 +16,9 @@ Datapack Helper Plus is the spiritual successor of [pca006132](https://github.co
 
 DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) and [the MCF part](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). While the former provides supports for all JSON files in a datapack (like advancements, recipes, predicates, loot tables, and tags), the latter provides supports for mcfunction files. The introduction you are reading right now is for the MCF part.
 
-| Name | Version | Downloads |
-| - | - | - |
-| [DHP (JSON)](https://github.com/SPGoding/datapack-json) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) |
+| Name                                                              | Version                                                                                                                                                                                                                                            | Downloads                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [DHP (JSON)](https://github.com/SPGoding/datapack-json)           | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       |
 | [DHP (MCF)](https://github.com/SPGoding/datapack-language-server) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
 
 # Installation
@@ -69,19 +69,17 @@ By acting like this, DHP ensures that the order it handling datapacks is consist
 
 DHP supports multiple languages. Currently these languages are available:
 
-| Language | VSCode Language ID | Contributor |
-| ---- | ---- | ----------- |
-| English | `en` | [SPGoding](https://github.com/SPGoding) |
-| Japanese | `ja` | [ChenCMD](https://github.com/ChenCMD) |
-| Chinese (Simplified) | `zh-cn` | [SPGoding](https://github.com/SPGoding) |
+| Language             | VSCode Language ID | Contributor                             |
+| -------------------- | ------------------ | --------------------------------------- |
+| English              | `en`               | [SPGoding](https://github.com/SPGoding) |
+| Japanese             | `ja`               | [ChenCMD](https://github.com/ChenCMD)   |
+| Chinese (Simplified) | `zh-cn`            | [SPGoding](https://github.com/SPGoding) |
 
 If you'd like to help us translate this project into other languages, it would be really appreciated! See [CONTRIBUTING.md](https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md) for more information!
 
 ## Semantic Highlighting
 
-All command arguments can be colored semantically. You can see #308 for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
-
-All the screenshots below are taken with both DHP and [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension enabled.
+All command arguments can be colored semantically. You can see [#308](https://github.com/SPGoding/datapack-language-server/issues/308) for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
 
 ## Signature Information
 
@@ -102,9 +100,6 @@ For more complex NBT tags, with the help from [mc-nbt-paths](https://github.com/
 And also NBT paths:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
-FOR NBTS IN COMMANDS IN JSON TEXT COMPONENTS IN ITEM TAG NBTS, HANDLING THE ANOYYING ESCAPE AUTOMATICALLY FOR YOU:
-![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
-
 ## Code Snippets
 
 DHP provides some helpful code snippets. See [VSCode's official docs](https://code.visualstudio.com/docs/editor/userdefinedsnippets) to learn more about code snippets. Both DHP and VSCode allow you to custom your code snippets, and they use exactly the same syntax because DHP is based on VSCode. For mcfunction files, code snippets added by DHP will be shown in the completions list only when the cursor is at the beginning of a command, however snippets added by VSCode's `Code/User/snippets/mcfunction.json` file will be shown everywhere in the file. If you want to custom your code snippets via VSCode, see [their official docs](https://code.visualstudio.com/docs/editor/userdefinedsnippets). If you want to custom snippets via DHP, see the [Configuration Settings section](#Configuration%20Settings).
@@ -113,7 +108,7 @@ DHP provides some helpful code snippets. See [VSCode's official docs](https://co
 
 ## Definition Comments
 
-You can use `#define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]` to define a bossbar, an entity, an objective, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions. The game will treat definition comments as normal comments and simply ignore them.
+You can use `#define (bossbar|entity|objective|storage|tag|team) <id: string> [<description: string>]` to define a bossbar, an entity, an objective, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions by DHP. The game will treat definition comments as normal comments and simply ignore them.
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 
@@ -125,7 +120,7 @@ DHP provides real-time diagnostics about your commands. It can show syntax error
 
 ## Folding Ranges
 
-You can use comments to create folding ranges, which makes the structure of mcfunction file much clearer. 
+You can use comments (`#region` and `#endregion`) to create folding ranges, which makes the structure of mcfunction file much clearer. 
 
 ```mcfunction
 #region This is a block of commands
@@ -137,7 +132,23 @@ execute if score @s test matches 5 run say 5
 #endregion
 ```
 
-![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.gif)
+Alternatively, you can use different amount of hash symbols followed by at least one white space to create different levels of folding ranges: 
+
+```mcfunction
+#region This is a block of commands
+# One
+## One - 1
+execute if score @s foo matches 1 run say 1
+execute if score @s foo matches 2 run say 2
+## One - 2
+execute if score @s bar matches 1 run say 1
+execute if score @s bar matches 2 run say 2
+# Two
+execute if score @p test matches 1 run say 1
+#endregion
+```
+
+![folding-ranges](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-ranges.gif)
 
 ## Color Information
 

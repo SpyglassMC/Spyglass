@@ -79,7 +79,7 @@ DHP支持多种语言。目前以下语言已经完全支持：
 
 ## 语义化高亮
 
-不存在的。近阶段请使用 [Arcensoth](https://github.com/Arcensoth) 制作的 [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) 插件。下面的截图都是既使用了 Arcensoth 的高亮插件、也使用了我的大憨批来截图的。
+所有命令参数都可以被语义化高亮。如果感兴趣的话，你可以在 [#308](https://github.com/SPGoding/datapack-language-server/issues/308) 查看大憨批使用的所有 Semantic Token Type 与 Semantic Token Modifer。
 
 ## 签名信息
 
@@ -111,7 +111,7 @@ DHP支持多种语言。目前以下语言已经完全支持：
 
 ## 定义注释
 
-你可以使用形如 `#define (bossbar|entity|objective|storage|tag|team) <标识符: string> [描述: string]` 的格式来定义一个实体、数据储存或记分板标签。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
+你可以使用形如 `#define (bossbar|entity|objective|storage|tag|team) <标识符: string> [<描述: string>]` 的格式来定义一个 bossbar、实体、记分项、数据储存、记分板标签或队伍。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 
@@ -123,7 +123,7 @@ DHP支持多种语言。目前以下语言已经完全支持：
 
 ## 折叠区域
 
-您可以使用注释来定义折叠区域，使得 mcfunction 文件结构更加清晰。
+您可以使用 `#region` 与 `#endregion` 注释来定义折叠区域，使得 mcfunction 文件结构更加清晰。
 
 ```mcfunction
 #region 这是一吨穷举命令，不穷举你会变得更强？
@@ -135,7 +135,23 @@ execute if score @s test matches 5 run say 5
 #endregion
 ```
 
-![folding-region](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-region.gif)
+除此之外，您还可以使用不同个数的井号来创建不同层级的折叠区域（不过井号后面需要有至少一个空格）：
+
+```mcfunction
+#region 这是一吨穷举命令，不穷举你会变得更强？
+# 壹
+## 壹・一
+execute if score @s foo matches 1 run say 1
+execute if score @s foo matches 2 run say 2
+## 壹・二
+execute if score @s bar matches 1 run say 1
+execute if score @s bar matches 2 run say 2
+# 贰
+execute if score @p test matches 1 run say 1
+#endregion
+```
+
+![folding-ranges](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-ranges.gif)
 
 ## 颜色信息
 
