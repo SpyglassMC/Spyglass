@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
-import { getUri, parseString, getRel } from '../../../utils/handlers/common'
+import { getUri, parseString, getRel, getId } from '../../../utils/handlers/common'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { VanillaConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
@@ -23,7 +23,7 @@ describe('common.ts Tests', () => {
             const string = '  \t  '
             const lines: Line[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, files: {}, version: NaN }
+            const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
 
             await parseString(string, lines, config, cacheFile)
 
@@ -33,7 +33,7 @@ describe('common.ts Tests', () => {
             const string = '# test'
             const lines: Line[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, files: {}, version: NaN }
+            const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
 
             await parseString(string, lines, config, cacheFile)
 
@@ -56,6 +56,16 @@ describe('common.ts Tests', () => {
             const actual = getRel(uri, roots)
 
             assert(actual === undefined)
+        })
+    })
+    describe('getId() Tests', () => {
+        it('Should return the ID', () => {
+            const uri = Uri.parse('files:///c:/bar/data/minecraft/functions/test.mcfunction')
+            const roots = [Uri.parse('files:///c:/foo/'), Uri.parse('files:///c:/bar/')]
+
+            const actual = getId(uri, roots) as string
+
+            assert(actual === 'minecraft:test')
         })
     })
 })

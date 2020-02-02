@@ -57,7 +57,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
             ]
         }
         //#region Tokens
-        ans.tokens.push(Token.from(start, reader, token, [TokenModifier.declaration]))
+        ans.tokens.push(Token.from(start, reader, token, new Set([TokenModifier.declaration])))
         //#endregion
 
         return ans

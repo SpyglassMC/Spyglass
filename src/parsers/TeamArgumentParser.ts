@@ -39,7 +39,7 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Tokens
         if (this.isDefinition) {
-            ans.tokens.push(Token.from(start, reader, TokenType.variable, [TokenModifier.declaration]))
+            ans.tokens.push(Token.from(start, reader, TokenType.variable, new Set([TokenModifier.declaration])))
         } else {
             ans.tokens.push(Token.from(start, reader, TokenType.variable))
         }

@@ -13,7 +13,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         const version = 2
         const config = VanillaConfig
         const infos: InfosOfUris = new Map()
-        const cacheFile = { cache: {}, files: {}, version: NaN }
+        const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
 
         await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
@@ -29,7 +29,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         const version = 2
         const infos: InfosOfUris = new Map()
         const config = VanillaConfig
-        const cacheFile = { cache: {}, files: {}, version: NaN }
+        const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
 
         await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
@@ -43,7 +43,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         const version = 2
         const infos: InfosOfUris = new Map()
         const config = VanillaConfig
-        const cacheFile = { cache: {}, files: {}, version: NaN }
+        const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
 
         await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo

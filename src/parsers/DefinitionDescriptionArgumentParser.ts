@@ -22,7 +22,7 @@ export default class DefinitionDescriptionArgumentParser extends ArgumentParser<
         const description = reader.readRemaining()
         const ans: ArgumentParserResult<string> = {
             data: description,
-            tokens: [Token.from(start, reader, TokenType.string, [TokenModifier.documentation])],
+            tokens: [Token.from(start, reader, TokenType.string, new Set([TokenModifier.documentation]))],
             errors: [],
             cache: {},
             completions: []

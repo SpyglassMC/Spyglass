@@ -23,8 +23,8 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * Default implements to return something like `<id: string>`
      */
     toHint(name: string, optional: boolean): string {
-        const prefix = optional ? '[' : '<'
-        const suffix = optional ? ']' : '>'
+        const prefix = optional ? '[<' : '<'
+        const suffix = optional ? '>]' : '>'
         return `${prefix}${name}: ${this.identity}${suffix}`
     }
 

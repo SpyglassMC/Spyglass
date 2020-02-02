@@ -32,7 +32,7 @@ export default class Token {
     constructor(
         public range: TextRange,
         public type: TokenType,
-        public modifiers: TokenModifier[] = []
+        public modifiers = new Set<TokenModifier>()
     ) { }
 
     /**
@@ -43,7 +43,7 @@ export default class Token {
      * @param modifiers The modifiers of this token.
      */
     /* istanbul ignore next */
-    static from(start: number, reader: StringReader, type: TokenType, modifiers: TokenModifier[] = []) {
+    static from(start: number, reader: StringReader, type: TokenType, modifiers = new Set<TokenModifier>()) {
         return new Token({ start, end: reader.cursor }, type, modifiers)
     }
 

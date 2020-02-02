@@ -4,6 +4,7 @@ import Config from '../../types/Config'
 import { CacheFile } from '../../types/ClientCache'
 import { parseString } from './common'
 import Line from '../../types/Line'
+import { TokenType } from '../../types/Token'
 
 export default async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile }) {
     // Update `version`.
@@ -31,6 +32,9 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
                 await parseString(string, affectedLines, config, cacheFile)
             }
             info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
+
+            console.log('===')
+            console.log(info.lines.map(v => v.tokens.map(t => TokenType[t.type]).join(', ')).join('\n'))
         } else {
             // Full update.
 

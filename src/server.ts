@@ -21,6 +21,8 @@ import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 import onCompletion from './utils/handlers/onCompletion'
 import { getCallHierarchyItem } from './utils/handlers/onCallHierarchy'
 import TagInfo from './types/TagInfo'
+import onSignatureHelp from './utils/handlers/onSignatureHelp'
+import onFoldingRanges from './utils/handlers/onFoldingRanges'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -257,146 +259,31 @@ connection.onInitialized(() => {
         // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
     })
 
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line } }) => {
-        // TODO(#230)
+    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        return onCompletion({ cacheFile, line, char, info })
+        return onCompletion({ cacheFile, lineNumber, char, info })
     })
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
-        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const config = info.config
-        const strings = info.strings
-        const parser = new LineParser(false, 'line')
-        const reader = new StringReader(strings[lineNumber])
-        const { data: { hint: { fix, options } } } = parser.parse(reader, await constructContext({
-            cursor: char,
-            cache: cacheFile.cache,
-            config
-        }))
-        const signatures: SignatureInformation[] = []
-
-        const fixLabel = fix.length > 0 ? fix.join(' ') + ' ' : ''
-        const nonEmptyOptions: [string, string[]][] = options.length > 0 ? options : [['', ['']]]
-
-        for (let [current, nextOptions] of nonEmptyOptions) {
-            nextOptions = nextOptions.length > 0 ? nextOptions : ['']
-            for (const option of nextOptions) {
-                const label = `${fixLabel}${current} ${option}`
-                if (label !== ' ') {
-                    signatures.push({
-                        label: `${fixLabel}${current} ${option}`,
-                        parameters: [
-                            {
-                                label: [
-                                    0,
-                                    fixLabel.length
-                                ]
-                            },
-                            {
-                                label: [
-                                    fixLabel.length,
-                                    fixLabel.length + current.length
-                                ]
-                            },
-                            {
-                                label: [
-                                    fixLabel.length + current.length,
-                                    fixLabel.length + current.length + option.length
-                                ]
-                            }
-                        ]
-                    })
-                }
-            }
-        }
-
-        return { signatures, activeParameter: 1, activeSignature: signatures.length - 1 }
+        return onSignatureHelp({ cacheFile, lineNumber, char, info })
     })
 
     connection.onFoldingRanges(({ textDocument: { uri: uriString } }) => {
-        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const strings = info.strings
-        const regionStartLineNumbers: number[] = []
-        const foldingRanges: FoldingRange[] = []
-        const commentStartLineNumers: {
-            [amount: number]: number | undefined
-        } = {}
-        const getHashAmount = (string: string) => {
-            const reader = new StringReader(string)
-            let ans = 0
-            while (reader.canRead() && reader.peek() === '#') {
-                reader.skip()
-                ans += 1
-            }
-            if (!StringReader.isWhiteSpace(reader.peek())) {
-                ans = 0
-            }
-            return ans
-        }
-        let i = 0
-        for (const string of strings) {
-            if (string.startsWith('#region')) {
-                regionStartLineNumbers.push(i)
-            } else if (string.startsWith('#endregion')) {
-                const startLineNumber = regionStartLineNumbers.pop()
-                if (startLineNumber !== undefined) {
-                    foldingRanges.push(FoldingRange.create(
-                        startLineNumber, i,
-                        undefined, undefined,
-                        FoldingRangeKind.Region
-                    ))
-                }
-                for (const key in commentStartLineNumers) {
-                    const keyAmount = parseFloat(key)
-                    foldingRanges.push(FoldingRange.create(
-                        commentStartLineNumers[keyAmount] as number, i - 1,
-                        undefined, undefined,
-                        FoldingRangeKind.Region
-                    ))
-                    delete commentStartLineNumers[keyAmount]
-                }
-            } else {
-                const amount = getHashAmount(string)
-                for (const key in commentStartLineNumers) {
-                    const keyAmount = parseFloat(key)
-                    if (amount > 0 && keyAmount >= amount && commentStartLineNumers[keyAmount] !== undefined) {
-                        foldingRanges.push(FoldingRange.create(
-                            commentStartLineNumers[keyAmount] as number, i - 1,
-                            undefined, undefined,
-                            FoldingRangeKind.Region
-                        ))
-                        delete commentStartLineNumers[keyAmount]
-                    } else if (i === strings.length - 1) {
-                        foldingRanges.push(FoldingRange.create(
-                            commentStartLineNumers[keyAmount] as number, i,
-                            undefined, undefined,
-                            FoldingRangeKind.Region
-                        ))
-                        delete commentStartLineNumers[keyAmount]
-                    }
-                }
-                if (amount > 0) {
-                    commentStartLineNumers[amount] = i
-                }
-            }
-            i += 1
-        }
-        return foldingRanges
+        return onFoldingRanges({ info })
     })
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
@@ -471,6 +358,7 @@ connection.onInitialized(() => {
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
+        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -513,6 +401,7 @@ connection.onInitialized(() => {
      * See also #298.
      */
     connection.languages.callHierarchy.onIncomingCalls(async ({ item }) => {
+        // TODO(#230)
         const ans: Proposed.CallHierarchyIncomingCall[] = []
         let unit: CacheUnit | undefined
         if (item.name[0] === Identity.TagSymbol) {
@@ -553,7 +442,7 @@ connection.onInitialized(() => {
                         ans.push(
                             {
                                 from: getCallHierarchyItem(
-                                    Identity.TagSymbol + tagIdString, tagUri.toString(),
+                                    tagId.toTagString(), tagUri.toString(),
                                     0, 0, 0
                                 ),
                                 fromRanges: [{
@@ -582,6 +471,7 @@ connection.onInitialized(() => {
      * See also #298.
      */
     connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
+        // TODO(#230)
         const ans: Proposed.CallHierarchyOutgoingCall[] = []
         if (item.name[0] === Identity.TagSymbol) {
             const tagInfo = cacheFile.tags.functions[item.name.slice(1)]

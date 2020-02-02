@@ -21,6 +21,9 @@ export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
     return 'base'
 }
 
+/**
+ * @param lastIndex The index counted from the last, starting from `1`.
+ */
 export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
     return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
 }

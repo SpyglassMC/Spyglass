@@ -587,7 +587,7 @@ describe('LineParser Tests', () => {
                     tokens: [],
                     hint: {
                         fix: ['<first: test>'],
-                        options: [['<second: test>', ['[foo: test]', '[bar: test]']]]
+                        options: [['<second: test>', ['[<foo: test>]', '[<bar: test>]']]]
                     }
                 }
             })

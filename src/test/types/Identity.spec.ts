@@ -11,9 +11,23 @@ describe('Identity Tests', () => {
             const id = new Identity('minecraft', ['foo', 'bar'])
             assert(`${id}` === 'minecraft:foo/bar')
         })
+        it("Should return without tag symbol even if it's a tag", () => {
+            const id = new Identity('minecraft', ['foo', 'bar'], true)
+            assert(`${id}` === 'minecraft:foo/bar')
+        })
         it('Should return empty identity', () => {
             const id = new Identity()
             assert(`${id}` === 'minecraft:')
+        })
+    })
+    describe('toTagString() Tests', () => {
+        it('Should return without tag symbol', () => {
+            const id = new Identity('minecraft', ['foo', 'bar'])
+            assert(id.toTagString() === 'minecraft:foo/bar')
+        })
+        it('Should return with tag symbol', () => {
+            const id = new Identity('minecraft', ['foo', 'bar'], true)
+            assert(id.toTagString() === '#minecraft:foo/bar')
         })
     })
     describe('[ToLintedString]() Tests', () => {

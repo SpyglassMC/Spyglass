@@ -5,7 +5,7 @@ import TagInfo from './TagInfo'
 
 export const LatestCacheFileVersion = 5
 
-export const DefaultCacheFile = { cache: {}, files: {}, tags: { functions: {} }, version: LatestCacheFileVersion }
+export const DefaultCacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: LatestCacheFileVersion }
 
 export interface CacheFile {
     cache: ClientCache,

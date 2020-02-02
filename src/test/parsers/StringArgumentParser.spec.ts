@@ -42,7 +42,7 @@ describe('StringArgumentParser Tests', () => {
         it('Should return correctly for optional node', () => {
             const parser = new StringArgumentParser()
             const actual = parser.toHint('id', true)
-            assert(actual === '[id: string]')
+            assert(actual === '[<id: string>]')
         })
     })
     describe('getExamples() Tests', () => {

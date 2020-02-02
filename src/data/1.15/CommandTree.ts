@@ -26,7 +26,7 @@ import TextComponentArgumentParser from '../../parsers/TextComponentArgumentPars
 import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
-import { TokenType, TokenModifier } from '../../types/Token'
+import Token, { TokenType, TokenModifier } from '../../types/Token'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1943,11 +1943,21 @@ const CommandTree: CommandTreeType = {
         }
     },
     comments: {
-        // #define (bossbar|entity|objective|storage|tag|team) <id: string> [description: string]
+        // #define (bossbar|entity|objective|storage|tag|team) <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
-            run: parsedLine => {
-                parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.comment
+            run: ({ tokens, args }) => {
+                if (getArgOrDefault(args, 1, undefined) === '#define') {
+                    const lastToken = tokens[tokens.length - 1]
+                    tokens.push(
+                        new Token(
+                            { start: lastToken.range.start + 1, end: lastToken.range.end },
+                            lastToken.type, lastToken.modifiers
+                        )
+                    )
+                    lastToken.range.end = lastToken.range.start + 1
+                    lastToken.type = TokenType.comment
+                }
             },
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
@@ -1958,7 +1968,6 @@ const CommandTree: CommandTreeType = {
                         if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
                             parsedLine.completions = []
                         }
-                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.type
                     },
                     children: {
                         id: {
@@ -1981,8 +1990,10 @@ const CommandTree: CommandTreeType = {
     templates: {
         boolean: {
             parser: new LiteralArgumentParser('false', 'true'),
-            run: ({ tokens }) => {
-                tokens[tokens.length - 1].type = TokenType.boolean
+            run: ({ tokens, args }) => {
+                const lastArg = getArgOrDefault(args, 1, undefined)
+                const lastToken = tokens[tokens.length - 1]
+                lastToken.type = TokenType.boolean
             }
         },
         single_score: {

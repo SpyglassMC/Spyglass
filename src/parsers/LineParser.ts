@@ -71,7 +71,7 @@ export default class LineParser implements Parser<Line> {
         //#endregion
 
         if (line.errors.length === 0) {
-            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line)
+            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line, undefined, true)
         }
         saturatedLineToLine(line)
 
@@ -88,21 +88,15 @@ export default class LineParser implements Parser<Line> {
             }
         }
 
-        // Handle tokens.
-        /* istanbul ignore next */
-        if (line.tokens.length > 0) {
-            line.tokens[0].modifiers.push(TokenModifier.firstArgument)
-        }
-
         return { data: line }
     }
 
-    parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, isTheLastElement: boolean = false, optional = false) {
+    parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, isTheLastElement = false, optional = false) {
         if (node.redirect) {
             if (!node.redirect.includes('.')) {
                 // Redirect to children.
                 const redirect = ctx.tree[node.redirect]
-                this.parseChildren(reader, ctx, redirect, parsedLine, optional)
+                this.parseChildren(reader, ctx, redirect, parsedLine, optional, node.redirect === 'commands')
             } else {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
@@ -113,7 +107,7 @@ export default class LineParser implements Parser<Line> {
             if (!node.template.includes('.')) {
                 // Use `children` as the template.
                 const template = fillChildrenTemplate(node, ctx.tree[node.template])
-                this.parseChildren(reader, ctx, template, parsedLine, optional)
+                this.parseChildren(reader, ctx, template, parsedLine, optional, node.redirect === 'commands')
             } else {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
@@ -142,7 +136,7 @@ export default class LineParser implements Parser<Line> {
                 node.run(parsedLine)
             }
 
-            // Handle trailing data or absent data.
+            //#region Handle trailing data or absent data.
             if (!reader.canRead(2) && (reader.peek() === '' || reader.peek() === ' ')) {
                 // The input line is all parsed.
                 if (!node.executable) {
@@ -163,7 +157,7 @@ export default class LineParser implements Parser<Line> {
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
                             const result = { args: parsedLine.args, tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
-                            this.parseChildren(reader, ctx, node.children, result, optional)
+                            this.parseChildren(reader, ctx, node.children, result, optional, false)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
                                 parsedLine.completions.push(...result.completions)
@@ -187,7 +181,7 @@ export default class LineParser implements Parser<Line> {
                     if (shouldParseChildren) {
                         if (reader.peek() === ' ') {
                             reader.skip()
-                            this.parseChildren(reader, ctx, node.children, parsedLine, optional)
+                            this.parseChildren(reader, ctx, node.children, parsedLine, optional, false)
                             // Downgrade errors.
                             parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
                         } else {
@@ -198,7 +192,8 @@ export default class LineParser implements Parser<Line> {
                     }
                 }
             }
-            // Check permission level.
+            //#endregion
+            //#region Check permission level.
             const level = node.permission !== undefined ? node.permission : 2
             const levelMax = ctx.config.env.permissionLevel
             if (level > levelMax) {
@@ -209,15 +204,13 @@ export default class LineParser implements Parser<Line> {
                     )
                 )
             }
+            //#endregion
         } else {
             throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
         }
-        // if (node.run) {
-        //     node.run(parsedLine)
-        // }
     }
 
-    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false) {
+    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false, isFirstArgument = false) {
         let i = -1
         for (const key in children) {
             i += 1
@@ -229,6 +222,14 @@ export default class LineParser implements Parser<Line> {
                 const oldTokens = [...parsedLine.tokens]
                 const isTheLastElement = i === Object.keys(children).length - 1
                 this.parseSingle(newReader, ctx, key, node, parsedLine, isTheLastElement, optional)
+                //#region Add `firstArgument` token modifer.
+                if (isFirstArgument) {
+                    const firstArgumentToken = parsedLine.tokens[oldTokens.length]
+                    if (firstArgumentToken) {
+                        firstArgumentToken.modifiers.add(TokenModifier.firstArgument)
+                    }
+                }
+                //#endregion
                 if (
                     !isTheLastElement && /* Has untolerable errors */
                     parsedLine.errors.filter(v => !v.tolerable).length > 0

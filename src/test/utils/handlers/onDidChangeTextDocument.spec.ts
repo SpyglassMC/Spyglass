@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../../types/Config'
 import Token, { TokenType } from '../../../types/Token'
 
 describe('onDidChangeTextDocument() Tests', () => {
-    const cacheFile = { cache: {}, files: {}, tags: { functions: {} }, version: NaN }
+    const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
     it('Should handle with full update', async () => {
@@ -103,7 +103,7 @@ describe('onDidChangeTextDocument() Tests', () => {
         }
         const contentChanges = [
             {
-                text: '\r\n# Test 1-1',
+                text: '\n# Test 1-1',
                 range: {
                     start: { line: 1, character: 8 },
                     end: { line: 1, character: 8 }
@@ -115,7 +115,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         assert.deepEqual(info, {
             config: VanillaConfig,
-            lineBreak: '\r\n',
+            lineBreak: '\n',
             lines: [
                 { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
                 { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
@@ -163,8 +163,8 @@ describe('onDidChangeTextDocument() Tests', () => {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 16 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
+                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
+                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
             ],
             strings: [
                 '# Test 0',
