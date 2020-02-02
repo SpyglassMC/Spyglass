@@ -10,14 +10,6 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, Sy
 
 let client: LanguageClient
 
-const TokenTypes = [
-    'comment', 'function', 'keyword', 'namespace', 'number', 'operator',
-    'parameter', 'property', 'string', 'type', 'variable'
-]
-const TokenModifiers = [
-    'declaration', 'deprecated', 'documentation', 'firstArgument'
-]
-
 export function activate(context: ExtensionContext) {
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(
@@ -50,7 +42,8 @@ export function activate(context: ExtensionContext) {
         },
         initializationOptions: {
             storagePath: context.storagePath
-        }
+        },
+        progressOnInitialization: true
     }
 
     if (workspace.workspaceFolders) {

@@ -32,9 +32,6 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
                 await parseString(string, affectedLines, config, cacheFile)
             }
             info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
-
-            console.log('===')
-            console.log(info.lines.map(v => v.tokens.map(t => TokenType[t.type]).join(', ')).join('\n'))
         } else {
             // Full update.
 

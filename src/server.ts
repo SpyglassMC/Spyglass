@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, FoldingRange, FoldingRangeKind, SignatureInformation, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SymbolKind } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SelectionRange } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile, CacheCategory } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import { lineToLintedString } from './types/Line'
@@ -23,6 +23,7 @@ import { getCallHierarchyItem } from './utils/handlers/onCallHierarchy'
 import TagInfo from './types/TagInfo'
 import onSignatureHelp from './utils/handlers/onSignatureHelp'
 import onFoldingRanges from './utils/handlers/onFoldingRanges'
+import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -42,8 +43,10 @@ const roots: Uri[] = []
 let cachePath: string | undefined
 let cacheFile: CacheFile = clone(DefaultCacheFile)
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }, _, progress) => {
     await loadLocale()
+
+    progress.begin(locale('server.initializing'))
 
     if (workspaceFolders) {
         // The later the root folder is, the later it will be loaded, the higher the priority it has.
@@ -750,9 +753,13 @@ connection.onInitialized(() => {
     connection.onExecuteCommand(async ({ command }) => {
         switch (command) {
             case 'datapackLanguageServer.regenerageCache':
+                const progress = await connection.window.createWorkDoneProgress()
+                progress.begin(locale('server.regenerating-cache'))
+
                 cacheFile = clone(DefaultCacheFile)
-                await updateCacheFile(cacheFile, roots)
-                connection.window.showInformationMessage(locale('server.regenerated-cache'))
+                await updateCacheFile(cacheFile, roots, progress)
+
+                progress.done()
                 break
             default:
                 connection.console.error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
@@ -977,12 +984,13 @@ async function walk(workspaceRootPath: string, abs: string, cb: (abs: string, re
     )
 }
 
-async function updateCacheFile(cacheFile: CacheFile, roots: Uri[]) {
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
     // Check the files saved in the cache file.
     for (const uriString in cacheFile.files) {
         /* istanbul ignore next */
         if (cacheFile.files.hasOwnProperty(uriString)) {
-            // connection.console.info(`Walked ${uriString}`)
+            progress.report(locale('server.checking-file', uriString))
+            // connection.console.info(`Walked ${ uriString }`)
             const uri = getUri(uriString, uris)
             const rel = getRel(uri, roots)
             if (!rel) {
