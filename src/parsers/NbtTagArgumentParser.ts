@@ -605,7 +605,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const clonedReader = reader.clone()
                 const value = reader.readQuotedString(undefined, this.isJson)
                 ans.data = getNbtStringTag(value)
-                const result = walker ?
+                const result = walker && !this.isJson ?
                     walker.getParserResult(clonedReader, ctx, { isPredicate: this.isPredicate }) :
                     { completions: [], errors: [], cache: {} }
                 ans.completions = result.completions.map(v => {
