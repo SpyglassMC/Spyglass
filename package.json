@@ -753,7 +753,7 @@
                 }
             }
         },
-        "tokenTypes": [
+        "semanticTokenTypes": [
             {
                 "id": "annotation",
                 "description": "An annotation in doc comments"
@@ -779,52 +779,52 @@
                 "description": "A vector"
             }
         ],
-        "tokenModifiers": [
+        "semanticTokenModifiers": [
             {
                 "id": "firstArgument",
                 "description": "The first argument in a command"
             }
         ],
-        "tokenStyleDefaults": [
+        "semanticTokenStyleDefaults": [
             {
                 "selector": "annotation",
-                "scopes": [
+                "scope": [
                     "support.type.doc.annotation.mcfunction"
                 ]
             },
             {
                 "selector": "boolean",
-                "scopes": [
+                "scope": [
                     "constant.language.boolean.mcfunction"
                 ]
             },
             {
                 "selector": "entity",
-                "scopes": [
+                "scope": [
                     "support.class.entity.mcfunction"
                 ]
             },
             {
                 "selector": "literal",
-                "scopes": [
+                "scope": [
                     "keyword.other.mcfunction"
                 ]
             },
             {
                 "selector": "literal.firstArgument",
-                "scopes": [
+                "scope": [
                     "keyword.control.mcfunction"
                 ]
             },
             {
                 "selector": "namespacedID",
-                "scopes": [
+                "scope": [
                     "entity.name.function.mcfunction"
                 ]
             },
             {
                 "selector": "vector",
-                "scopes": [
+                "scope": [
                     "constant.numeric.vector.mcfunction"
                 ]
             }
