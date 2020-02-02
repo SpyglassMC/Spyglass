@@ -6,10 +6,7 @@ import { createConnection, ProposedFeatures, TextDocumentSyncKind, ColorInformat
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile, CacheCategory } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import { lineToLintedString } from './types/Line'
-import LineParser from './parsers/LineParser'
-import StringReader from './utils/StringReader'
 import Identity from './types/Identity'
-import { constructContext } from './types/ParsingContext'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
 import { getUri, parseString, getRel, getSemanticTokensLegend, getId } from './utils/handlers/common'
@@ -62,7 +59,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             //     await fs.pathExists(path.join(uri.fsPath, 'data'))
             // ) {
             roots.push(uri)
-            connection.console.info(`root${roots.length}Uri = ${uri.toString()}`)
+            connection.console.info(`rootUri (priority = ${roots.length}) = ${uri.toString()}`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
             const legacyDotPath = path.join(uri.fsPath, '.datapack')
             if (await fs.pathExists(legacyDotPath)) {
@@ -86,7 +83,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 cacheFile = clone(DefaultCacheFile)
             }
         }
-        await updateCacheFile(cacheFile, roots)
+        await updateCacheFile(cacheFile, roots, progress)
         saveCacheFile()
     }
 
@@ -99,12 +96,12 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
-            // didChangeWatchedFiles: true,
             documentFormattingProvider: true,
             documentHighlightProvider: true,
             documentLinkProvider: {},
             executeCommandProvider: {
-                commands: ['datapackLanguageServer.regenerageCache']
+                commands: ['datapackLanguageServer.regenerageCache'],
+                workDoneProgress: true
             },
             foldingRangeProvider: true,
             // hoverProvider: true,
@@ -112,6 +109,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             renameProvider: {
                 prepareProvider: true
             },
+            selectionRangeProvider: true,
             semanticTokensProvider: {
                 legend: getSemanticTokensLegend(),
                 documentProvider: {
@@ -133,6 +131,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             }
         }
     }
+
+    progress.done()
 
     return result
 })
@@ -262,6 +262,12 @@ connection.onInitialized(() => {
         // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
     })
 
+    // connection.workspace.onDidChangeWorkspaceFolders(({ added, removed }) => {
+    //     console.log('====')
+    //     console.log(JSON.stringify(added))
+    //     console.log(JSON.stringify(removed))
+    // })
+
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
@@ -358,6 +364,31 @@ connection.onInitialized(() => {
             return ans
         }
         return null
+    })
+
+    connection.onSelectionRanges(({ textDocument: { uri: uriString }, positions }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        const ans: SelectionRange[] = []
+        for (const { line: lineNumber, character: char } of positions) {
+            const line = info.lines[lineNumber]
+            for (const token of line.tokens) {
+                if (token.range.start <= char && char <= token.range.end) {
+                    ans.push({
+                        range: {
+                            start: { line: lineNumber, character: token.range.start },
+                            end: { line: lineNumber, character: token.range.end }
+                        }
+                    })
+                }
+                break
+            }
+        }
+        return ans
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
