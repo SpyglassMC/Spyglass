@@ -99,7 +99,7 @@
         ],
         "commands": [
             {
-                "command": "datapackLanguageServer.regenerageCache",
+                "command": "datapackLanguageServer.regenerateCache",
                 "title": "Regenerate Cache",
                 "category": "Datapack",
                 "enablement": "workspaceFolderCount != 0 && editorLangId == mcfunction"

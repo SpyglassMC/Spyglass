@@ -99,7 +99,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             documentHighlightProvider: true,
             documentLinkProvider: {},
             executeCommandProvider: {
-                commands: ['datapackLanguageServer.regenerageCache'],
+                commands: ['datapackLanguageServer.regenerateCache'],
                 workDoneProgress: true
             },
             foldingRangeProvider: true,
@@ -745,7 +745,7 @@ connection.onInitialized(() => {
 
     connection.onExecuteCommand(async ({ command }) => {
         switch (command) {
-            case 'datapackLanguageServer.regenerageCache':
+            case 'datapackLanguageServer.regenerateCache':
                 const progress = await connection.window.createWorkDoneProgress()
                 progress.begin(locale('server.regenerating-cache'))
 
