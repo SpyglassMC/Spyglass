@@ -68,6 +68,9 @@ describe('NamespacedIDArgumentParser Tests', () => {
     }
     const parsers = new ArgumentParserManager()
     const cache = {
+        advancements: {
+            'spgoding:advancement': { def: [], ref: [] }
+        },
         bossbars: {
             'spgoding:bossbar/a': { def: [], ref: [] },
             'spgoding:bossbar/b': { def: [], ref: [] }
@@ -150,6 +153,39 @@ describe('NamespacedIDArgumentParser Tests', () => {
                         label: 'spgoding',
                         kind: CompletionItemKind.Module,
                         commitCharacters: [':']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for advancements with special kind', async () => {
+            const ctx = await constructContext({ registries, parsers, cache, cursor: 9 })
+            const parser = new NamespacedIDArgumentParser('$advancements')
+            const actual = parser.parse(new StringReader('spgoding:'), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'advancement',
+                        kind: CompletionItemKind.Event,
+                        commitCharacters: [' ']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for functions with special kind', async () => {
+            const ctx = await constructContext({ registries, parsers, cache, cursor: 19 })
+            const parser = new NamespacedIDArgumentParser('$functions', true)
+            const actual = parser.parse(new StringReader('#spgoding:function/'), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: '1',
+                        kind: CompletionItemKind.Function,
+                        commitCharacters: [' ']
+                    },
+                    {
+                        label: '2',
+                        kind: CompletionItemKind.Function,
+                        commitCharacters: [' ']
                     }
                 ]
             )

@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../../types/Config'
 
 describe('onCompletion() Tests', () => {
     it('Should return completions', async () => {
-        const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: 0 }
+        const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
         const lineNumber = 0
         const char = 12
         const info: FunctionInfo = {

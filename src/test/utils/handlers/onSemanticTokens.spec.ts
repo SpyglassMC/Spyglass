@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../../types/Config'
 import Token, { TokenType } from '../../../types/Token'
 
 describe('onSemanticTokens() Tests', () => {
-    it('Should return correctly', async () => {
+    it('Should return correctly', () => {
         const info: FunctionInfo = {
             config: VanillaConfig,
             lineBreak: '\n',

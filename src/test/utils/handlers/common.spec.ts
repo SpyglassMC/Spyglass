@@ -39,7 +39,7 @@ describe('common.ts Tests', () => {
             const string = '  \t  '
             const lines: Line[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
+            const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
             await parseString(string, lines, config, cacheFile)
 
@@ -49,7 +49,7 @@ describe('common.ts Tests', () => {
             const string = '# test'
             const lines: Line[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
+            const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
             await parseString(string, lines, config, cacheFile)
 

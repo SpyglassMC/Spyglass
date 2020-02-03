@@ -226,6 +226,21 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
+        /// advancement file -> CompletionItemKind.Event
+        /// function (tag) file -> CompletionItemKind.Function
+        let fileKind: CompletionItemKind
+        switch (this.type) {
+            case '$advancements':
+                fileKind = CompletionItemKind.Event
+                break
+            case '$functions':
+            case '$tags/functions':
+                fileKind = CompletionItemKind.Function
+                break
+            default:
+                fileKind = CompletionItemKind.Field
+                break
+        }
         complNamespaces.forEach(k => void ans.completions.push({
             label: k,
             kind: CompletionItemKind.Module,
@@ -238,7 +253,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         }))
         complFiles.forEach(k => void ans.completions.push({
             label: k,
-            kind: CompletionItemKind.Field,
+            kind: fileKind,
             commitCharacters: [' ']
         }))
         //#endregion

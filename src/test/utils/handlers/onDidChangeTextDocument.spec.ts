@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../../types/Config'
 import Token, { TokenType } from '../../../types/Token'
 
 describe('onDidChangeTextDocument() Tests', () => {
-    const cacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: NaN }
+    const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
     it('Should handle with full update', async () => {

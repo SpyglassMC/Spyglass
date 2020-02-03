@@ -34,7 +34,6 @@
         "eofline": true,
         "prefer-const": true,
         "prefer-for-of": true,
-        "prefer-method-signature": true,
         "prefer-object-spread": true,
         "prefer-readonly": true,
         "prefer-while": true,

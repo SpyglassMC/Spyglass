@@ -7,7 +7,7 @@ import { Position } from 'vscode-languageserver'
 import Token, { TokenType } from '../../../types/Token'
 
 describe('onSelectionRanges() Tests', () => {
-    it('Should return selection ranges', async () => {
+    it('Should return selection ranges', () => {
         const positions: Position[] = [{
             line: 0,
             character: 4
@@ -28,7 +28,7 @@ describe('onSelectionRanges() Tests', () => {
             version: 0
         }
 
-        const ranges = await onSelectionRanges({ info, positions })
+        const ranges = onSelectionRanges({ info, positions })
 
         assert.deepEqual(ranges, [
             {

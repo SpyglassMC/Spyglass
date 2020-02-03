@@ -1,91 +1,28 @@
 import TextRange from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
+import AdvancementInfo from './AdvancementInfo'
 import TagInfo from './TagInfo'
 
 export const LatestCacheFileVersion = 5
 
-export const DefaultCacheFile = { cache: {}, tags: { functions: {} }, files: {}, version: LatestCacheFileVersion }
+export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: LatestCacheFileVersion }
 
 export interface CacheFile {
     cache: ClientCache,
     files: {
-        [uri: string]: number
+        [uri: string]: number | undefined
+    },
+    advancements: {
+        [id: string]: AdvancementInfo | undefined
     },
     tags: {
         functions: {
-            [id: string]: TagInfo
+            [id: string]: TagInfo | undefined
         }
     },
     version: number
 }
-
-// export function getFromCachedFileTree(tree: CachedFileTree, rel: string) {
-//     const segments = rel.split(/[\\/]/)
-//     let currentValue: number | CachedFileTree = tree
-//     for (const seg of segments) {
-//         if (typeof currentValue === 'object' && currentValue[seg] !== undefined) {
-//             currentValue = currentValue[seg]
-//         } else {
-//             return undefined
-//         }
-//     }
-//     return currentValue
-// }
-
-// export function setForCachedFileTree(tree: CachedFileTree, rel: string, timestamp: number) {
-//     const segments = rel.split(/[\\/]/)
-//     let files: CachedFileTree = tree
-//     for (let i = 0; i < segments.length; i++) {
-//         const seg = segments[i]
-//         if (i !== segments.length - 1) {
-//             if (typeof files[seg] !== 'object') {
-//                 files[seg] = {}
-//             }
-//             files = files[seg] as CachedFileTree
-//         } else {
-//             files[seg] = timestamp
-//         }
-//     }
-// }
-
-// export function delFromCachedFileTree(tree: CachedFileTree, rel: string) {
-//     const segments = rel.split(/[\\/]/)
-//     const files: CachedFileTree = tree
-//     const del = (val: number | CachedFileTree) => {
-//         const seg = segments.shift() as string
-//         const obj = val as CachedFileTree
-//         if (segments.length >= 2) {
-//             del(obj[seg])
-//             if (Object.keys(obj[seg]).length === 0) {
-//                 delete obj[seg]
-//             }
-//         } else {
-//             delete obj[seg]
-//         }
-//     }
-//     del(files[segments.shift() as string])
-// }
-
-// export async function walkInCachedFileTree(tree: CachedFileTree, cb: (rel: string) => any, sep: string) {
-//     const files = tree
-//     const walk = async (former: string, tree: CachedFileTree) => {
-//         for (const seg in tree) {
-//             /* istanbul ignore next */
-//             if (tree.hasOwnProperty(seg)) {
-//                 const element = tree[seg]
-//                 if (typeof element === 'number') {
-//                     const rel = `${former}${seg}`
-//                     await cb(rel)
-//                 } else {
-//                     const nextFormer = `${former}${seg}${sep}`
-//                     walk(nextFormer, element)
-//                 }
-//             }
-//         }
-//     }
-//     await walk('', files)
-// }
 
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 

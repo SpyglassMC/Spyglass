@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SelectionRange } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SelectionRange, SymbolKind } from 'vscode-languageserver'
 import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile, CacheCategory } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import { lineToLintedString } from './types/Line'
@@ -16,7 +16,7 @@ import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
 import onSemanticTokens from './utils/handlers/onSemanticTokens'
 import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 import onCompletion from './utils/handlers/onCompletion'
-import { getCallHierarchyItem } from './utils/handlers/onCallHierarchy'
+import { getCallHierarchyItem, IdentityKind } from './utils/handlers/onCallHierarchyPrepare'
 import TagInfo from './types/TagInfo'
 import onSignatureHelp from './utils/handlers/onSignatureHelp'
 import onFoldingRanges from './utils/handlers/onFoldingRanges'
@@ -24,6 +24,15 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import onSelectionRanges from './utils/handlers/onSelectionRanges'
 import onDocumentHighlight from './utils/handlers/onDocumentHighlight'
 import onDidChangeWorkspaceFolders from './utils/handlers/onDidChangeWorkspaceFolders'
+import onDocumentColor from './utils/handlers/onDocumentColor'
+import onColorPresentation from './utils/handlers/onColorPresentation'
+import onPrepareRename from './utils/handlers/onPrepareRename'
+import AdvancementInfo from './types/AdvancementInfo'
+import onCallHierarchyPrepare from './utils/handlers/onCallHierarchyPrepare'
+import onCallHierarchyIncomingCalls from './utils/handlers/onCallHierarchyIncomingCalls'
+import onCallHierarchyOutgoingCalls from './utils/handlers/onCallHierarchyOutgoingCalls'
+import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
+import onDocumentLinks from './utils/handlers/onDocumentLinks'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -190,10 +199,10 @@ connection.onInitialized(() => {
                                         const result = Identity.fromRel(rel)
                                         if (result) {
                                             const { category, id, ext } = result
-                                            const uri = getUri(abs, uris)
+                                            const uri = getUri(Uri.file(abs).toString(), uris)
                                             const uriString = uri.toString()
                                             if (Identity.isExtValid(ext, category)) {
-                                                await cacheFileOperations.fileAdded(category, id)
+                                                await cacheFileOperations.fileAdded(uri, category, id)
                                                 cacheFile.files[uriString] = stat.mtimeMs
                                             }
                                         }
@@ -206,7 +215,7 @@ connection.onInitialized(() => {
                         if (result) {
                             const { category, id, ext } = result
                             if (Identity.isExtValid(ext, category)) {
-                                await cacheFileOperations.fileAdded(category, id)
+                                await cacheFileOperations.fileAdded(uri, category, id)
                                 cacheFile.files[uriString] = stat.mtimeMs
                             }
                         }
@@ -223,7 +232,7 @@ connection.onInitialized(() => {
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
                         const result = Identity.fromRel(getRel(uri, roots) as string)
-                        if (result && result.category === 'tags/functions') {
+                        if (result && (result.category === 'tags/functions' || result.category === 'advancements')) {
                             const { category, ext } = result
                             if (Identity.isExtValid(ext, category)) {
                                 await cacheFileOperations.fileModified(uri, category)
@@ -245,7 +254,7 @@ connection.onInitialized(() => {
                                 if (result) {
                                     const { category, id, ext } = result
                                     if (Identity.isExtValid(ext, category)) {
-                                        cacheFileOperations.fileDeleted(fileUri, category, id)
+                                        await cacheFileOperations.fileDeleted(fileUri, category, id)
                                         delete cacheFile.files[fileUriString]
                                     }
                                 }
@@ -272,7 +281,7 @@ connection.onInitialized(() => {
         }
     })
 
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+    connection.onCompletion(({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -281,7 +290,7 @@ connection.onInitialized(() => {
         return onCompletion({ cacheFile, lineNumber, char, info })
     })
 
-    connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+    connection.onSignatureHelp(({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -299,45 +308,24 @@ connection.onInitialized(() => {
         return onFoldingRanges({ info })
     })
 
-    connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
-        // TODO(#230)
+    connection.onDocumentFormatting(({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const config = info.config
-        if (config.lint.enableFormatting) {
-            const lines = info.lines
-            const strings = info.strings
-            const ansStrings = []
-            for (let i = 0; i < lines.length; i++) {
-                const string = strings[i]
-                const line = lines[i]
-                if (line.errors && line.errors.filter(v => v.severity === DiagnosticSeverity.Error).length > 0) {
-                    return null
-                }
-                const prefix = string.match(/^[\s\t]*/) ? (string.match(/^[\s\t]*/) as Array<string>)[0] : ''
-                ansStrings.push(prefix + lineToLintedString(line, config.lint))
-            }
-            return [{
-                range: { start: { line: 0, character: 0 }, end: { line: Number.MAX_VALUE, character: Number.MAX_VALUE } },
-                newText: ansStrings.join(info.lineBreak)
-            }]
-        }
-        return null
+
+        return onDocumentFormatting({ info })
     })
 
     connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
-        // TODO(#230)
         return await getReferencesOrDefinition(uri, number, char, 'def')
     })
     connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
-        // TODO(#230)
         return await getReferencesOrDefinition(uri, number, char, 'ref')
     })
 
-    connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
+    connection.onDocumentHighlight(({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
@@ -358,189 +346,35 @@ connection.onInitialized(() => {
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
-        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
 
-        const line = info.lines[lineNumber]
-        const result = getCacheFromChar(line.cache || {}, char)
-        if (result) {
-            if (result.type === 'functions') {
-                const uri = await getUriFromId(Identity.fromString(result.id), result.type)
-                if (!uri) {
-                    return null
-                }
-                return [
-                    getCallHierarchyItem(result.id, uri.toString(), lineNumber, result.start, result.end)
-                ]
-            } else if (result.type === 'tags/functions') {
-                const uri = await getUriFromId(Identity.fromString(result.id), result.type)
-                if (!uri) {
-                    return null
-                }
-                return [
-                    getCallHierarchyItem(Identity.TagSymbol + result.id, uri.toString(), lineNumber, result.start, result.end)
-                ]
-            }
-        }
-        return null
+        return onCallHierarchyPrepare({ info, lineNumber, char, getUriFromId })
     })
 
-    /**
-     * A function or a function tag can be called from:
-     * - A function. We can get this from the said function's `ref`.
-     * - A function tag. We can get this from `cacheFile.tags.functions`.
-     * 
-     * See also #298.
-     */
-    connection.languages.callHierarchy.onIncomingCalls(async ({ item }) => {
+    connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
         // TODO(#230)
-        const ans: Proposed.CallHierarchyIncomingCall[] = []
-        let unit: CacheUnit | undefined
-        if (item.name[0] === Identity.TagSymbol) {
-            unit = getSafeCategory(cacheFile.cache, 'tags/functions')[item.name.slice(1)]
-        } else {
-            unit = getSafeCategory(cacheFile.cache, 'functions')[item.name]
-        }
-
-        if (unit && unit.ref.length > 0) {
-            for (const ref of unit.ref) {
-                try {
-                    ans.push(
-                        {
-                            from: getCallHierarchyItem(
-                                getId(getUri(ref.uri!, uris), roots),
-                                ref.uri!, ref.line!, ref.start, ref.end
-                            ),
-                            fromRanges: [{
-                                start: { line: ref.line!, character: ref.start },
-                                end: { line: ref.line!, character: ref.end }
-                            }]
-                        }
-                    )
-                } catch (ignored) {
-                    unit.ref.splice(unit.ref.indexOf(ref), 1)
-                }
-            }
-        }
-
-        for (const tagIdString in cacheFile.tags.functions) {
-            /* istanbul ignore next */
-            if (cacheFile.tags.functions.hasOwnProperty(tagIdString)) {
-                const { values } = cacheFile.tags.functions[tagIdString]
-                if (values.includes(item.name)) {
-                    const tagId = Identity.fromString(tagIdString)
-                    const tagUri = await getUriFromId(tagId, 'tags/functions')
-                    if (tagUri) {
-                        ans.push(
-                            {
-                                from: getCallHierarchyItem(
-                                    tagId.toTagString(), tagUri.toString(),
-                                    0, 0, 0
-                                ),
-                                fromRanges: [{
-                                    start: { line: 0, character: 0 },
-                                    end: { line: 0, character: 0 }
-                                }]
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        return ans
+        return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, getUriFromId })
     })
 
-    /**
-     * A function can call:
-     * - A function. We can get this from all functions' `ref` and compare if the `uri` of that cache position is the expected one.
-     * - A function tag. We can get this from all function tags' `ref` and compare if the `uri` of that cache position is the expected one.
-     * 
-     * A function tag can call:
-     * - A function. We can get this from `cacheFile.tags.functions`.
-     * - Another function tag. We can get this from `cacheFile.tags.functions`.
-     * 
-     * See also #298.
-     */
-    connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
+    connection.languages.callHierarchy.onOutgoingCalls(async ({ item: { kind, name: id } }) => {
         // TODO(#230)
-        const ans: Proposed.CallHierarchyOutgoingCall[] = []
-        if (item.name[0] === Identity.TagSymbol) {
-            const tagInfo = cacheFile.tags.functions[item.name.slice(1)]
-            if (!tagInfo) {
-                return null
-            }
-            for (const valueIdString of tagInfo.values) {
-                const valueId = Identity.fromString(valueIdString)
-                const uri = await getUriFromId(valueId, valueId.isTag ? 'tags/functions' : 'functions')
-                if (uri) {
-                    ans.push(
-                        {
-                            to: getCallHierarchyItem(valueIdString, uri.toString(), 0, 0, 0),
-                            fromRanges: [{
-                                start: { line: 0, character: 0 },
-                                end: { line: 0, character: 0 }
-                            }]
-                        }
-                    )
-                }
-            }
-        } else {
-            const pushItems = async (category: CacheCategory) => {
-                for (const outgoingIdString in category) {
-                    /* istanbul ignore next */
-                    if (category.hasOwnProperty(outgoingIdString)) {
-                        const unit = category[outgoingIdString]
-                        for (const ref of unit!.ref) {
-                            const refId = getId(getUri(ref.uri!, uris), roots)
-                            if (item.name === refId) {
-                                const outgoingId = Identity.fromString(outgoingIdString)
-                                const outgoingUri = await getUriFromId(outgoingId, outgoingId.isTag ? 'tags/functions' : 'functions')
-                                if (outgoingUri) {
-                                    ans.push(
-                                        {
-                                            to: getCallHierarchyItem(outgoingIdString, outgoingUri.toString(), 0, 0, 0),
-                                            fromRanges: [{
-                                                start: { line: 0, character: 0 },
-                                                end: { line: 0, character: 0 }
-                                            }]
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            await pushItems(getSafeCategory(cacheFile.cache, 'functions'))
-            await pushItems(getSafeCategory(cacheFile.cache, 'tags/functions'))
-        }
-
-        return ans
+        return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, getUriFromId })
     })
 
-    connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { character: char, line: number } }) => {
-        // TODO(#230)
+    connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const line = info.lines[number]
-        const result = getCacheFromChar(line.cache || {}, char)
-        if (result) {
-            return {
-                start: { line: number, character: result.start },
-                end: { line: number, character: result.end }
-            }
-        }
-        return null
+
+        return onPrepareRename({ info, lineNumber, char })
     })
-    connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: number, character: char }, newName }) => {
+    connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char }, newName }) => {
         // TODO(#230)
         // Inject getUriFromId
         // connection.console.info(`BR: ${JSON.stringify(cacheFile)}`)
@@ -549,7 +383,7 @@ connection.onInitialized(() => {
         if (!info) {
             return null
         }
-        const line = info.lines[number]
+        const line = info.lines[lineNumber]
         const result = getCacheFromChar(line.cache || {}, char)
         if (result && !result.type.startsWith('colors/')) {
             const documentChanges: (TextDocumentEdit | RenameFile)[] = []
@@ -618,109 +452,36 @@ connection.onInitialized(() => {
     })
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
-        // TODO(#230)
-        // Inject getUriFromId
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const lines = info.lines
-        const ans: DocumentLink[] = []
-        let i = 0
-        for (const { cache } of lines) {
-            for (const type in cache) {
-                if (isFileType(type)) {
-                    const category = cache[type]
-                    for (const id in category) {
-                        if (category.hasOwnProperty(id)) {
-                            const toLink = async (v: CachePosition) => ({
-                                range: {
-                                    start: { line: i, character: v.start },
-                                    end: { line: i, character: v.end }
-                                },
-                                target: await getUriFromId(Identity.fromString(id), type)
-                            })
-                            const unit = category[id] as CacheUnit
-                            for (const def of unit.def) {
-                                const link = await toLink(def)
-                                if (link.target) {
-                                    ans.push({ range: link.range, target: link.target.toString() })
-                                }
-                            }
-                            for (const ref of unit.ref) {
-                                const link = await toLink(ref)
-                                if (link.target) {
-                                    ans.push({ range: link.range, target: link.target.toString() })
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            i++
-        }
-        return ans
+
+        return onDocumentLinks({ info, getUriFromId })
     })
 
-    connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
-        // TODO(#230)
-        const ans: ColorInformation[] = []
+    connection.onDocumentColor(({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const lines = info.lines
-        let i = 0
-        for (const line of lines) {
-            const dustColors = getSafeCategory(line.cache, 'colors')
-            for (const key in dustColors) {
-                if (dustColors.hasOwnProperty(key)) {
-                    const numbers = key.split(' ').map(v => parseFloat(v))
-                    const color = {
-                        red: numbers[0],
-                        green: numbers[1],
-                        blue: numbers[2],
-                        alpha: numbers[3]
-                    }
-                    const unit = dustColors[key] as CacheUnit
-                    for (const { start, end } of unit.ref) {
-                        ans.push({
-                            range: { start: { character: start, line: i }, end: { character: end, line: i } },
-                            color
-                        })
-                    }
-                }
-            }
-            i++
-        }
-        return ans
+
+        return onDocumentColor({ info })
     })
 
     connection.onColorPresentation(({
-        color: { red: r, green: g, blue: b, alpha: a },
-        range: { start: { character: startChar, line }, end: { character: endChar } },
-        textDocument: { uri: uriString }
+        color: { red: r, green: g, blue: b, alpha: a }, textDocument: { uri: uriString },
+        range: { start: { character: start, line: lineNumber }, end: { character: end } }
     }) => {
-        // TODO(#230)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const ans: ColorPresentation[] = []
-        const strings = info.strings
-        const string = strings[line].slice(startChar, endChar)
-        if (string.startsWith('dust')) {
-            ans.push({ label: `dust ${r} ${g} ${b} ${a}` })
-        } else if (string.startsWith('minecraft:dust')) {
-            ans.push({ label: `minecraft:dust ${r} ${g} ${b} ${a}` })
-        } else {
-            ans.push({ label: `${(Math.round(r * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(b * 255)}` })
-        }
 
-        return ans
+        return onColorPresentation({ r, g, b, a, start, end, lineNumber, info })
     })
 
     connection.languages.semanticTokens.on(({ textDocument: { uri: uriString } }) => {
@@ -762,12 +523,15 @@ connection.onInitialized(() => {
 })
 
 async function getReferencesOrDefinition(uriString: string, number: number, char: number, key: 'def' | 'ref') {
+    // TODO(#230)
     const uri = getUri(uriString, uris)
     const info = infos.get(uri)
     if (!info) {
         return null
     }
+    
     const line = info.lines[number]
+    /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
@@ -871,7 +635,7 @@ const cacheFileOperations = {
     //#endregion
 
     //#region tags/functions
-    // ADDED/MODIFIED?DELETED: update the corresponding tagInfo.
+    // ADDED/MODIFIED/DELETED: update the corresponding TagInfo.
     isStringArray(obj: any) {
         return obj &&
             obj instanceof Array &&
@@ -920,6 +684,47 @@ const cacheFileOperations = {
     },
     //#endregion
 
+    //#region advancements
+    // ADDED/MODIFIED/DELETED: update the corresponding AdvancementInfo.
+    updateAdvancementInfo: async (id: Identity, pathExists = fs.pathExists, readJson = fs.readJson) => {
+        const idString = id.toString()
+        delete cacheFile.advancements[idString]
+
+        const rel = id.toRel('advancements')
+        const ans: AdvancementInfo = {}
+        for (let i = roots.length - 1; i >= 0; i--) {
+            // We should use the order in which Minecraft loads datapacks to load tags.
+            // So that we can treat overrides correctly.
+            const root = roots[i]
+            const p = path.join(root.fsPath, rel)
+            if (await pathExists(p)) {
+                try {
+                    const content = await readJson(p)
+                    if (!content) {
+                        throw new Error(`Advancement ‘${id}’ has a bad format: ‘${JSON.stringify(content)}’`)
+                    }
+                    if (content.rewards && typeof content.rewards.function === 'string') {
+                        try {
+                            const id = Identity.fromString(content.rewards.function)
+                            if (await getUriFromId(id, 'functions')) {
+                                ans.rewards = {
+                                    function: content.rewards.function
+                                }
+                            }
+                        } catch (ignored) {
+                            // Ignore this bad value.
+                        }
+                    }
+                } catch (e) {
+                    connection.console.info(`updateAdvancementInfo - ${e.message}`)
+                }
+            }
+        }
+
+        cacheFile.advancements[idString] = ans
+    },
+    //#endregion
+
     //#region advancements, functions, lootTables, predicates, tags/*, recipes:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
@@ -934,11 +739,13 @@ const cacheFileOperations = {
     //#endregion
 
     // Hooks.
-    fileAdded: async (type: CacheKey, id: Identity) => {
+    fileAdded: async (uri: Uri, type: CacheKey, id: Identity) => {
         // connection.console.info(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
         if (type === 'tags/functions') {
             await cacheFileOperations.updateTagInfo(id)
+        } else if (type === 'advancements') {
+            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
         }
     },
     fileModified: async (uri: Uri, type: CacheKey) => {
@@ -948,14 +755,18 @@ const cacheFileOperations = {
             await cacheFileOperations.combineCacheOfLines(uri)
         } else if (type === 'tags/functions') {
             await cacheFileOperations.updateTagInfo(Identity.fromString(getId(uri, roots)))
+        } else if (type === 'advancements') {
+            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
         }
     },
-    fileDeleted: (uri: Uri, type: CacheKey, id: Identity) => {
+    fileDeleted: async (uri: Uri, type: CacheKey, id: Identity) => {
         // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
         } else if (type === 'tags/functions') {
-            cacheFileOperations.updateTagInfo(id)
+            await cacheFileOperations.updateTagInfo(id)
+        } else if (type === 'advancements') {
+            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
         }
         cacheFileOperations.deleteDefault(id.toString(), type)
     }
@@ -994,12 +805,12 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             if (result) {
                 const { id, category: key } = result
                 if (!(await fs.pathExists(uri.fsPath))) {
-                    cacheFileOperations.fileDeleted(uri, key, id)
+                    await cacheFileOperations.fileDeleted(uri, key, id)
                     delete cacheFile.files[uriString]
                 } else {
                     const stat = await fs.stat(uri.fsPath)
                     const lastModified = stat.mtimeMs
-                    const lastUpdated = cacheFile.files[uriString]
+                    const lastUpdated = cacheFile.files[uriString]!
                     if (lastModified > lastUpdated) {
                         await cacheFileOperations.fileModified(uri, key)
                         cacheFile.files[uriString] = lastModified
@@ -1044,7 +855,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                                 if (result && Identity.isExtValid(result.ext, result.category)) {
                                     const { id, category: key } = result
                                     if (cacheFile.files[uriString] === undefined) {
-                                        cacheFileOperations.fileAdded(key, id)
+                                        cacheFileOperations.fileAdded(uri, key, id)
                                         cacheFile.files[uriString] = stat.mtimeMs
                                         addedFiles.push([uri, key])
                                     }

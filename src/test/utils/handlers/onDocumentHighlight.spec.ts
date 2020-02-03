@@ -48,13 +48,13 @@ describe('onDocumentHighlight() Tests', () => {
         ],
         version: 0
     }
-    it('Should return ranges for all references of the selected cache stuff', async () => {
+    it('Should return ranges for all references of the selected cache stuff', () => {
         const position: Position = {
             line: 0,
             character: 8
         }
 
-        const ranges = await onDocumentHighlight({ info, position })
+        const ranges = onDocumentHighlight({ info, position })
 
         assert.deepEqual(ranges, [            
             {
@@ -71,13 +71,13 @@ describe('onDocumentHighlight() Tests', () => {
             }
         ])
     })
-    it('Should return range for the selected token', async () => {
+    it('Should return range for the selected token', () => {
         const position: Position = {
             line: 0,
             character: 2
         }
 
-        const ranges = await onDocumentHighlight({ info, position })
+        const ranges = onDocumentHighlight({ info, position })
 
         assert.deepEqual(ranges, [
             {
