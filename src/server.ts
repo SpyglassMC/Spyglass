@@ -9,7 +9,7 @@ import { lineToLintedString } from './types/Line'
 import Identity from './types/Identity'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import { getUri, parseString, getRel, getSemanticTokensLegend, getId } from './utils/handlers/common'
+import { getUri, parseString, getRel, getSemanticTokensLegend, getId, getRootUri } from './utils/handlers/common'
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
@@ -21,6 +21,9 @@ import TagInfo from './types/TagInfo'
 import onSignatureHelp from './utils/handlers/onSignatureHelp'
 import onFoldingRanges from './utils/handlers/onFoldingRanges'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
+import onSelectionRanges from './utils/handlers/onSelectionRanges'
+import onDocumentHighlight from './utils/handlers/onDocumentHighlight'
+import onDidChangeWorkspaceFolders from './utils/handlers/onDidChangeWorkspaceFolders'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -49,11 +52,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         // The later the root folder is, the later it will be loaded, the higher the priority it has.
         // So the roots stored in `roots` is sorted by priority DESC.
         for (let i = workspaceFolders.length - 1; i >= 0; i--) {
-            let { uri: uriString } = workspaceFolders[i]
-            if (uriString[uriString.length - 1] !== '/') {
-                uriString = `${uriString}/`
-            }
-            const uri = getUri(uriString, uris)
+            const { uri: uriString } = workspaceFolders[i]
+            const uri = getRootUri(uriString, uris)
             // if (
             //     await fs.pathExists(path.join(uri.fsPath, 'pack.mcmeta')) &&
             //     await fs.pathExists(path.join(uri.fsPath, 'data'))
@@ -262,11 +262,16 @@ connection.onInitialized(() => {
         // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
     })
 
-    // connection.workspace.onDidChangeWorkspaceFolders(({ added, removed }) => {
-    //     console.log('====')
-    //     console.log(JSON.stringify(added))
-    //     console.log(JSON.stringify(removed))
-    // })
+    connection.workspace.onDidChangeWorkspaceFolders(async () => {
+        const folders = await connection.workspace.getWorkspaceFolders()
+        onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
+
+        console.info('Roots have been modified:')
+        for (let i = 0; i < roots.length; i++) {
+            const root = roots[i]
+            console.info(`rootUri (priority = ${i + 1}) = ${root.toString()}`)
+        }
+    })
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)

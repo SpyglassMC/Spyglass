@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
-import { getUri, parseString, getRel, getId } from '../../../utils/handlers/common'
+import { getUri, parseString, getRel, getId, getRootUri } from '../../../utils/handlers/common'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { VanillaConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
@@ -16,6 +16,22 @@ describe('common.ts Tests', () => {
             const uri2 = getUri('file:///c:/foo/', uris)
 
             assert(uri1 === uri2)
+        })
+    })
+    describe('getRootUri() Tests', () => {
+        it('Should append slash', () => {
+            const uris = new Map()
+
+            const uri = getRootUri('file:///c:/foo', uris)
+
+            assert.deepEqual(uri, Uri.parse('file:///c:/foo/'))
+        })
+        it('Should not append slash when already exists', () => {
+            const uris = new Map()
+
+            const uri = getRootUri('file:///c:/foo/', uris)
+
+            assert.deepEqual(uri, Uri.parse('file:///c:/foo/'))
         })
     })
     describe('parseString() Tests', () => {

@@ -21,6 +21,13 @@ export function getUri(str: string, uris: Map<string, Uri>) {
     }
 }
 
+export function getRootUri(str: string, uris: Map<string, Uri>) {
+    if (str[str.length - 1] !== '/') {
+        str = `${str}/`
+    }
+    return getUri(str, uris)
+}
+
 export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
