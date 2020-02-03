@@ -31,7 +31,6 @@ const uris = new Map<string, Uri>()
 const infos = new Map<Uri, FunctionInfo>()
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
- * TODO(#251): This map will be cleared when the workspace folders are changed.
  */
 const urisOfIds = new Map<string, Uri | null>()
 /**
@@ -338,37 +337,14 @@ connection.onInitialized(() => {
         return await getReferencesOrDefinition(uri, number, char, 'ref')
     })
 
-    connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position: { character: char, line: number } }) => {
-        // TODO(#230)
+    connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const lines = info.lines
-        const line = lines[number]
-        const result = getCacheFromChar(line.cache || {}, char)
-        if (result) {
-            const ans: DocumentHighlight[] = []
-            let i = 0
-            for (const line of lines) {
-                const unit = getSafeCategory(line.cache, result.type)[result.id]
-                if (unit) {
-                    const ref = [...unit.def, ...unit.ref]
-                    if (ref.length > 0) {
-                        ans.push(...ref.map(v => ({
-                            range: {
-                                start: { line: i, character: v.start },
-                                end: { line: i, character: v.end }
-                            }
-                        })))
-                    }
-                }
-                i++
-            }
-            return ans
-        }
-        return null
+
+        return onDocumentHighlight({ position, info })
     })
 
     connection.onSelectionRanges(({ textDocument: { uri: uriString }, positions }) => {
@@ -378,22 +354,7 @@ connection.onInitialized(() => {
             return null
         }
 
-        const ans: SelectionRange[] = []
-        for (const { line: lineNumber, character: char } of positions) {
-            const line = info.lines[lineNumber]
-            for (const token of line.tokens) {
-                if (token.range.start <= char && char <= token.range.end) {
-                    ans.push({
-                        range: {
-                            start: { line: lineNumber, character: token.range.start },
-                            end: { line: lineNumber, character: token.range.end }
-                        }
-                    })
-                }
-                break
-            }
-        }
-        return ans
+        return onSelectionRanges({ positions, info })
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
@@ -429,13 +390,9 @@ connection.onInitialized(() => {
     })
 
     /**
-     * A function can be called from:
+     * A function or a function tag can be called from:
      * - A function. We can get this from the said function's `ref`.
      * - A function tag. We can get this from `cacheFile.tags.functions`.
-     * 
-     * A function tag can be called from:
-     * - A function. We can get this from the said function tag's `ref`.
-     * - Another function tag. We can get this from `cacheFile.tags.functions`.
      * 
      * See also #298.
      */
@@ -517,13 +474,13 @@ connection.onInitialized(() => {
             if (!tagInfo) {
                 return null
             }
-            for (const idString of tagInfo.values) {
-                const id = Identity.fromString(idString)
-                const uri = await getUriFromId(id, id.isTag ? 'tags/functions' : 'functions')
+            for (const valueIdString of tagInfo.values) {
+                const valueId = Identity.fromString(valueIdString)
+                const uri = await getUriFromId(valueId, valueId.isTag ? 'tags/functions' : 'functions')
                 if (uri) {
                     ans.push(
                         {
-                            to: getCallHierarchyItem(idString, uri.toString(), 0, 0, 0),
+                            to: getCallHierarchyItem(valueIdString, uri.toString(), 0, 0, 0),
                             fromRanges: [{
                                 start: { line: 0, character: 0 },
                                 end: { line: 0, character: 0 }
@@ -629,12 +586,12 @@ connection.onInitialized(() => {
                         }
                         const newUri = getUriFromId(Identity.fromString(newName), result.type)
                         documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
-                        // // Update cache.
-                        // const oldTimestamp = getFromCachedFileTree(cacheFile.files, oldRel) as number
-                        // if (oldTimestamp !== undefined) {
-                        //     setForCachedFileTree(cacheFile.files, newRel, oldTimestamp)
-                        //     delFromCachedFileTree(cacheFile.files, oldRel)
-                        // }
+                        // Update cache.
+                        const oldTimestamp = cacheFile.files[oldUri.toString()]
+                        if (oldTimestamp !== undefined) {
+                            cacheFile.files[newUri.toString()] = oldTimestamp
+                            delete cacheFile.files[oldUri.toString()]
+                        }
                     }
 
                     // Update cache.

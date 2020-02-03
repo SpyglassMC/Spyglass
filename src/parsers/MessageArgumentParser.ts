@@ -33,7 +33,12 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
                 } else {
                     value.push(reader.read())
                 }
-                ans.tokens.push(Token.from(start, reader, TokenType.string))
+                const lastToken = ans.tokens[ans.tokens.length - 1]
+                if (lastToken && lastToken.type === TokenType.string) {
+                    lastToken.range.end = reader.cursor
+                } else {
+                    ans.tokens.push(Token.from(start, reader, TokenType.string))
+                }
             }
         }
 
