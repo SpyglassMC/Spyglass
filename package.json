@@ -122,10 +122,11 @@
                 "datapackLanguageServer.env.version": {
                     "type": "string",
                     "enum": [
-                        "1.15"
+                        "1.15",
+                        "1.16"
                     ],
                     "markdownDescription": "Game version.",
-                    "default": "1.15"
+                    "default": "1.16"
                 },
                 "datapackLanguageServer.snippets": {
                     "type": "object",

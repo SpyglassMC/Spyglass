@@ -11,7 +11,7 @@ export type EnvConfig = {
     permissionLevel: 1 | 2 | 3 | 4,
     /**
      * Game version.  
-     * @default '1.15'
+     * @default '1.16'
      */
     version: GameVersion
 }
@@ -399,7 +399,7 @@ export default interface Config {
 export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
-        version: '1.15'
+        version: '1.16'
     },
     lint: {
         enableFormatting: false,

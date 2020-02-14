@@ -455,13 +455,17 @@ const NbtSchema: NbtSchema = {
         'minecraft:birch_sign',
         'minecraft:jungle_sign',
         'minecraft:acacia_sign',
+        'minecraft:crimson_sign',
+        'minecraft:warped_sign',
         'minecraft:dark_oak_sign',
         'minecraft:oak_wall_sign',
         'minecraft:spruce_wall_sign',
         'minecraft:birch_wall_sign',
         'minecraft:jungle_wall_sign',
         'minecraft:acacia_wall_sign',
-        'minecraft:dark_oak_wall_sign'
+        'minecraft:dark_oak_wall_sign',
+        'minecraft:crimson_wall_sign',
+        'minecraft:warped_wall_sign',
     ],
     'block/hopper.json': {
         type: 'compound',
@@ -1446,6 +1450,12 @@ const NbtSchema: NbtSchema = {
         'minecraft:snowball',
         'minecraft:xp_bottle'
     ],
+    'entity/hoglin.json': {
+        type: 'compound',
+        child_ref: [
+            'ref/mob.json'
+        ]
+    },
     'entity/hopper_minecart.json': {
         type: 'compound',
         child_ref: [
@@ -2856,61 +2866,81 @@ const NbtSchema: NbtSchema = {
         'minecraft:jungle_sign',
         'minecraft:acacia_sign',
         'minecraft:dark_oak_sign',
+        'minecraft:crimson_sign',
+        'minecraft:warped_sign',
 
         'minecraft:structure_block'
     ],
     'item/group/breakable.json': [
         'minecraft:bow',
+        'minecraft:carrot_on_a_stick',
+        'minecraft:fishing_rod',
+        'minecraft:flint_and_steel',
+        'minecraft:shears',
+        'minecraft:trident',
+
         'minecraft:wooden_sword',
         'minecraft:stone_sword',
         'minecraft:iron_sword',
         'minecraft:golden_sword',
         'minecraft:diamond_sword',
+        'minecraft:netherite_sword',
+
         'minecraft:wooden_pickaxe',
         'minecraft:stone_pickaxe',
         'minecraft:iron_pickaxe',
         'minecraft:golden_pickaxe',
         'minecraft:diamond_pickaxe',
+        'minecraft:netherite_pickaxe',
+
         'minecraft:wooden_axe',
         'minecraft:stone_axe',
         'minecraft:iron_axe',
         'minecraft:golden_axe',
         'minecraft:diamond_axe',
+        'minecraft:netherite_axe',
+
         'minecraft:wooden_shovel',
         'minecraft:stone_shovel',
         'minecraft:iron_shovel',
         'minecraft:golden_shovel',
         'minecraft:diamond_shovel',
+        'minecraft:netherite_shovel',
+
         'minecraft:wooden_hoe',
         'minecraft:stone_hoe',
         'minecraft:iron_hoe',
         'minecraft:golden_hoe',
         'minecraft:diamond_hoe',
+        'minecraft:netherite_hoe',
+
         'minecraft:leather_helmet',
         'minecraft:chainmail_helmet',
         'minecraft:iron_helmet',
         'minecraft:golden_helmet',
         'minecraft:diamond_helmet',
+        'minecraft:netherite_helmet',
+
         'minecraft:leather_chestplate',
         'minecraft:chainmail_chestplate',
         'minecraft:iron_chestplate',
         'minecraft:golden_chestplate',
         'minecraft:diamond_chestplate',
+        'minecraft:netherite_chestplate',
+
         'minecraft:leather_leggings',
         'minecraft:chainmail_leggings',
         'minecraft:iron_leggings',
         'minecraft:golden_leggings',
         'minecraft:diamond_leggings',
+        'minecraft:netherite_leggings',
+
         'minecraft:leather_boots',
         'minecraft:chainmail_boots',
         'minecraft:iron_boots',
         'minecraft:golden_boots',
         'minecraft:diamond_boots',
-        'minecraft:shears',
-        'minecraft:flint_and_steel',
-        'minecraft:fishing_rod',
-        'minecraft:carrot_on_a_stick',
-        'minecraft:trident'
+        'minecraft:netherite_boots'
     ],
     'item/group/potion.json': [
         'minecraft:potion',
@@ -2938,6 +2968,7 @@ const NbtSchema: NbtSchema = {
         'minecraft:fox_spawn_egg',
         'minecraft:ghast_spawn_egg',
         'minecraft:guardian_spawn_egg',
+        'minecraft:hoglin_spawn_egg',
         'minecraft:horse_spawn_egg',
         'minecraft:husk_spawn_egg',
         'minecraft:llama_spawn_egg',
@@ -4329,6 +4360,9 @@ const NbtSchema: NbtSchema = {
             },
             'minecraft:furnace_minecart': {
                 ref: 'entity/furnace_minecart.json'
+            },
+            'minecraft:hoglin': {
+                ref: 'entity/hoglin.json'
             },
             'minecraft:hopper_minecart': {
                 ref: 'entity/hopper_minecart.json'
