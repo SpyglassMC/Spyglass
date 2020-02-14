@@ -3072,7 +3072,7 @@ const NbtSchema: NbtSchema = {
         children: {
             EntityTag: {
                 description: 'The NBT of the spawned entity',
-                ref: 'ref/mob.json'
+                ref: 'roots/blocks.json#base'
             }
         }
     },
@@ -4241,7 +4241,7 @@ const NbtSchema: NbtSchema = {
                     type: 'compound',
                     children: {
                         Entity: {
-                            ref: 'ref/mob.json'
+                            ref: 'roots/blocks.json#base'
                         },
                         Weight: {
                             type: 'int',
