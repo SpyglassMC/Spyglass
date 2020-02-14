@@ -251,6 +251,27 @@ const NbtSchema: NbtSchema = {
             }
         }
     },
+    'block/campfire.json': {
+        type: 'compound',
+        child_ref: [
+            'ref/block_entity.json'
+        ],
+        children: {
+            Items: {
+                type: 'list',
+                item: {
+                    ref: 'ref/inventory_item.json'
+                },
+                description: 'Items in the campfire'
+            },
+            CookingTimes: {
+                type: 'int_array'
+            },
+            CookingTotalTimes: {
+                type: 'int_array'
+            }
+        }
+    },
     'block/comparator.json': {
         type: 'compound',
         child_ref: [
@@ -333,10 +354,80 @@ const NbtSchema: NbtSchema = {
             }
         }
     },
+    'block/group/banner.json': [
+        'minecraft:banner',
+        'minecraft:white_banner',
+        'minecraft:orange_banner',
+        'minecraft:magenta_banner',
+        'minecraft:light_blue_banner',
+        'minecraft:yellow_banner',
+        'minecraft:lime_banner',
+        'minecraft:pink_banner',
+        'minecraft:gray_banner',
+        'minecraft:light_gray_banner',
+        'minecraft:cyan_banner',
+        'minecraft:purple_banner',
+        'minecraft:blue_banner',
+        'minecraft:brown_banner',
+        'minecraft:green_banner',
+        'minecraft:red_banner',
+        'minecraft:black_banner',
+        'minecraft:white_wall_banner',
+        'minecraft:orange_wall_banner',
+        'minecraft:magenta_wall_banner',
+        'minecraft:light_blue_wall_banner',
+        'minecraft:yellow_wall_banner',
+        'minecraft:lime_wall_banner',
+        'minecraft:pink_wall_banner',
+        'minecraft:gray_wall_banner',
+        'minecraft:light_gray_wall_banner',
+        'minecraft:cyan_wall_banner',
+        'minecraft:purple_wall_banner',
+        'minecraft:blue_wall_banner',
+        'minecraft:brown_wall_banner',
+        'minecraft:green_wall_banner',
+        'minecraft:red_wall_banner',
+        'minecraft:black_wall_banner'
+    ],
+    'block/group/bed.json': [
+        'minecraft:bed',
+        'minecraft:white_bed',
+        'minecraft:orange_bed',
+        'minecraft:magenta_bed',
+        'minecraft:light_blue_bed',
+        'minecraft:yellow_bed',
+        'minecraft:lime_bed',
+        'minecraft:pink_bed',
+        'minecraft:gray_bed',
+        'minecraft:light_gray_bed',
+        'minecraft:cyan_bed',
+        'minecraft:purple_bed',
+        'minecraft:blue_bed',
+        'minecraft:brown_bed',
+        'minecraft:green_bed',
+        'minecraft:red_bed',
+        'minecraft:black_bed'
+    ],
+    'block/group/beehive.json': [
+        'minecraft:beehive',
+        'minecraft:bee_nest'
+    ],
+    'block/group/chest.json': [
+        'minecraft:barrel',
+        'minecraft:chest',
+        'minecraft:dispenser',
+        'minecraft:dropper',
+        'minecraft:trapped_chest'
+    ],
     'block/group/command_block.json': [
         'minecraft:command_block',
         'minecraft:chain_command_block',
         'minecraft:repeating_command_block'
+    ],
+    'block/group/furnace.json': [
+        'minecraft:blast_furnace',
+        'minecraft:furnace',
+        'minecraft:smoker'
     ],
     'block/group/shulker_box.json': [
         'minecraft:shulker_box',
@@ -357,6 +448,21 @@ const NbtSchema: NbtSchema = {
         'minecraft:red_shulker_box',
         'minecraft:black_shulker_box'
     ],
+    'block/group/sign.json': [
+        'minecraft:sign',
+        'minecraft:oak_sign',
+        'minecraft:spruce_sign',
+        'minecraft:birch_sign',
+        'minecraft:jungle_sign',
+        'minecraft:acacia_sign',
+        'minecraft:dark_oak_sign',
+        'minecraft:oak_wall_sign',
+        'minecraft:spruce_wall_sign',
+        'minecraft:birch_wall_sign',
+        'minecraft:jungle_wall_sign',
+        'minecraft:acacia_wall_sign',
+        'minecraft:dark_oak_wall_sign'
+    ],
     'block/hopper.json': {
         type: 'compound',
         child_ref: [
@@ -371,6 +477,23 @@ const NbtSchema: NbtSchema = {
             }
         }
     },
+    'block/jigsaw.json': {
+        type: 'compound',
+        child_ref: [
+            'ref/block_entity.json'
+        ],
+        children: {
+            attachement_type: {
+                type: 'string'
+            },
+            target_pool: {
+                type: 'string'
+            },
+            final_state: {
+                type: 'string'
+            }
+        }
+    },
     'block/jukebox.json': {
         type: 'compound',
         child_ref: [
@@ -379,6 +502,20 @@ const NbtSchema: NbtSchema = {
         children: {
             RecordItem: {
                 ref: 'ref/item.json'
+            }
+        }
+    },
+    'block/lectern.json': {
+        type: 'compound',
+        child_ref: [
+            'ref/block_entity.json'
+        ],
+        children: {
+            Book: {
+                ref: 'ref/item.json'
+            },
+            Page: {
+                type: 'int'
             }
         }
     },
@@ -2618,21 +2755,82 @@ const NbtSchema: NbtSchema = {
         }
     },
     'item/group/block_item.json': [
+        'minecraft:brewing_stand',
+
+        // banner
+        'minecraft:white_banner',
+        'minecraft:orange_banner',
+        'minecraft:magenta_banner',
+        'minecraft:light_blue_banner',
+        'minecraft:yellow_banner',
+        'minecraft:lime_banner',
+        'minecraft:pink_banner',
+        'minecraft:gray_banner',
+        'minecraft:light_gray_banner',
+        'minecraft:cyan_banner',
+        'minecraft:purple_banner',
+        'minecraft:blue_banner',
+        'minecraft:brown_banner',
+        'minecraft:green_banner',
+        'minecraft:red_banner',
+        'minecraft:black_banner',
+
+        'minecraft:beacon',
+
+        // bed
+        'minecraft:white_bed',
+        'minecraft:orange_bed',
+        'minecraft:magenta_bed',
+        'minecraft:light_blue_bed',
+        'minecraft:yellow_bed',
+        'minecraft:lime_bed',
+        'minecraft:pink_bed',
+        'minecraft:gray_bed',
+        'minecraft:light_gray_bed',
+        'minecraft:cyan_bed',
+        'minecraft:purple_bed',
+        'minecraft:blue_bed',
+        'minecraft:brown_bed',
+        'minecraft:green_bed',
+        'minecraft:red_bed',
+        'minecraft:black_bed',
+
+        // beehive
+        'minecraft:beehive',
+        'minecraft:bee_nest',
+
+        'minecraft:bell',
+        'minecraft:campfire',
+
+        // chest
+        'minecraft:barrel',
+        'minecraft:chest',
+        'minecraft:dispenser',
+        'minecraft:dropper',
+        'minecraft:trapped_chest',
+
+        // command_block
         'minecraft:command_block',
         'minecraft:chain_command_block',
         'minecraft:repeating_command_block',
-        'minecraft:chest',
-        'minecraft:banner',
-        'minecraft:beacon',
-        'minecraft:brewing_stand',
+
         'minecraft:comparator',
+        'minecraft:conduit',
         'minecraft:enchanting_table',
+
+        // furnace
+        'minecraft:blast_furnace',
         'minecraft:furnace',
+        'minecraft:smoker',
+
         'minecraft:hopper',
+        'minecraft:jigsaw',
         'minecraft:jukebox',
+        'minecraft:lectern',
         'minecraft:mob_spawner',
         'minecraft:player_head',
-        'minecraft:structure_block',
+
+        // shulker_box        
         'minecraft:white_shulker_box',
         'minecraft:orange_shulker_box',
         'minecraft:magenta_shulker_box',
@@ -2649,12 +2847,17 @@ const NbtSchema: NbtSchema = {
         'minecraft:green_shulker_box',
         'minecraft:red_shulker_box',
         'minecraft:black_shulker_box',
+
+        // sign
+        'minecraft:sign',
         'minecraft:oak_sign',
         'minecraft:spruce_sign',
         'minecraft:birch_sign',
-        'minecraft:acacia_sign',
         'minecraft:jungle_sign',
-        'minecraft:dark_oak_sign'
+        'minecraft:acacia_sign',
+        'minecraft:dark_oak_sign',
+
+        'minecraft:structure_block'
     ],
     'item/group/breakable.json': [
         'minecraft:bow',
@@ -4361,41 +4564,47 @@ const NbtSchema: NbtSchema = {
                     'ref/block_entity.json'
                 ]
             },
-            '$block/group/shulker_box.json': {
+            '$block/group/banner.json': {
+                ref: 'block/banner.json'
+            },
+            '$block/group/bed.json': {
+                ref: 'ref/block_entity.json'
+            },
+            '$block/group/beehive.json': {
+                ref: 'block/beehive.json'
+            },
+            '$block/group/chest.json': {
                 ref: 'block/chest.json'
             },
             '$block/group/command_block.json': {
                 ref: 'block/command_block.json'
             },
-            'minecraft:banner': {
-                ref: 'block/banner.json'
+            '$block/group/furnace.json': {
+                ref: 'block/furnace.json'
+            },
+            '$block/group/shulker_box.json': {
+                ref: 'block/chest.json'
+            },
+            '$block/group/sign.json': {
+                ref: 'block/sign.json'
             },
             'minecraft:beacon': {
                 ref: 'block/beacon.json'
             },
-            'minecraft:bed': {
+            'minecraft:bell': {
                 ref: 'ref/block_entity.json'
-            },
-            'minecraft:beehive': {
-                ref: 'block/beehive.json'
             },
             'minecraft:brewing_stand': {
                 ref: 'block/brewing_stand.json'
             },
-            'minecraft:chest': {
-                ref: 'block/chest.json'
+            'minecraft:campfire': {
+                ref: 'block/campfire.json'
             },
             'minecraft:comparator': {
                 ref: 'block/comparator.json'
             },
             'minecraft:daylight_detector': {
                 ref: 'ref/block_entity.json'
-            },
-            'minecraft:dispenser': {
-                ref: 'block/chest.json'
-            },
-            'minecraft:dropper': {
-                ref: 'block/chest.json'
             },
             'minecraft:enchanting_table': {
                 ref: 'block/enchanting_table.json'
@@ -4409,14 +4618,17 @@ const NbtSchema: NbtSchema = {
             'minecraft:ender_chest': {
                 ref: 'ref/block_entity.json'
             },
-            'minecraft:furnace': {
-                ref: 'block/furnace.json'
-            },
             'minecraft:hopper': {
                 ref: 'block/hopper.json'
             },
+            'minecraft:jigsaw': {
+                ref: 'block/jigsaw.json'
+            },
             'minecraft:jukebox': {
                 ref: 'block/jukebox.json'
+            },
+            'minecraft:lectern': {
+                ref: 'block/lectern.json'
             },
             'minecraft:mob_spawner': {
                 ref: 'block/mob_spawner.json'
@@ -4424,14 +4636,8 @@ const NbtSchema: NbtSchema = {
             'minecraft:player_head': {
                 ref: 'block/player_head.json'
             },
-            'minecraft:sign': {
-                ref: 'block/sign.json'
-            },
             'minecraft:structure_block': {
                 ref: 'block/structure_block.json'
-            },
-            'minecraft:trapped_chest': {
-                ref: 'block/chest.json'
             }
         }
     },
