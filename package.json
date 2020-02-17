@@ -1,4 +1,5 @@
 {
+    "enableProposedApi": true,
     "name": "datapack-language-server",
     "version": "1.12.0",
     "main": "dist/client.js",

@@ -79,7 +79,11 @@ If you'd like to help us translate this project into other languages, it would b
 
 ## Semantic Highlighting
 
-All command arguments can be colored semantically. You can see [#308](https://github.com/SPGoding/datapack-language-server/issues/308) for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
+All command arguments should be colored semantically. You can see [#308](https://github.com/SPGoding/datapack-language-server/issues/308) for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
+
+Unfortunately, the semantic coloring API of VSCode is still in proposed stage, thus we cannot use it in production environment. All the screenshots below are taken in development mode.
+
+Before VSCode finalizes its API, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension for coloring. 
 
 ## Signature Information
 
@@ -188,7 +192,7 @@ You can rename entities, tags, teams, bossbars, data storages, advancements, fun
 
 All the references of the same symbol in the whole workspace will be renamed.
 
-**WARNING**: your input can be accidentally corrupted by using this feature. Use it at your own risk.
+**WARNING**: your input can be accidentally corrupted by using this feature. Use it at your own risk. You can use the Rename Preview operation provided by VSCode to make sure that nothing is broken before actually renaming.
 
 ![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
 
