@@ -465,7 +465,7 @@ const NbtSchema: NbtSchema = {
         'minecraft:acacia_wall_sign',
         'minecraft:dark_oak_wall_sign',
         'minecraft:crimson_wall_sign',
-        'minecraft:warped_wall_sign',
+        'minecraft:warped_wall_sign'
     ],
     'block/hopper.json': {
         type: 'compound',

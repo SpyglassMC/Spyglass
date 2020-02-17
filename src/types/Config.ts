@@ -365,7 +365,7 @@ export type LintConfig = {
      * No matter what the setting is, namespaces in SNBT predicates will always be kept.  
      * @default false
      */
-    omitDefaultNamespace: boolean,
+    omitDefaultNamespace: boolean
     // /**
     //  * Whether to keep at least one decimal place in vectors or not.  
     //  * If sets to `false`, the decimal place will still be kept to avoid center-correcting when necessary.  

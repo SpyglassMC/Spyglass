@@ -41,7 +41,7 @@ export interface CommandTreeNode<T> {
      * 'execute_subcommand'
      * 'commands.teleport'
      */
-    redirect?: string
+    redirect?: string,
     /**
      * Copy the content of the current node to the specific node and redirect to there.
      * @example

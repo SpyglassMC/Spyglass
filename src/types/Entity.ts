@@ -83,13 +83,13 @@ export type SelectorParsedArgument = {
     nbt?: NbtCompoundTag[],
     nbtNeg?: NbtCompoundTag[],
     predicate?: Identity[],
-    predicateNeg?: Identity[]
+    predicateNeg?: Identity[],
     tag?: string[],
     tagNeg?: string[],
     team?: string[],
     teamNeg?: string[],
     type?: Identity[],
-    typeNeg?: Identity[],
+    typeNeg?: Identity[]
 }
 
 /**
@@ -134,7 +134,7 @@ export default class Entity implements Lintable {
                         const advancements = this.argument.advancements as any
                         ans.push(`${prefix}{${Object.keys(advancements).map(k => `${k}${equalSign}${
                             typeof advancements[k] === 'boolean' ? toLintedString(advancements[k], lint) : `{${Object.keys(advancements[k]).map(m => `${m}${equalSign}${toLintedString(advancements[k][m], lint)}`).join(comma)}}`
-                            }`).join(comma)}}`)
+                        }`).join(comma)}}`)
                     } else if (key === 'scores') {
                         const scores = this.argument.scores as any
                         ans.push(`${prefix}{${Object.keys(scores).map(k => `${k}${equalSign}${toLintedString(scores[k], lint)}`).join(comma)}}`)

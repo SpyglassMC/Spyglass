@@ -3,7 +3,7 @@ import { parseString } from './common'
 import Config from '../../types/Config'
 import { CacheFile } from '../../types/ClientCache'
 
-export default async function onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile }: { text: string; uri: Uri; version: number; infos: InfosOfUris, config: Config, cacheFile: CacheFile }) {
+export default async function onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile }: { text: string, uri: Uri, version: number, infos: InfosOfUris, config: Config, cacheFile: CacheFile }) {
     const info: any = {}
 
     // lineBreak

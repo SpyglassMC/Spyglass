@@ -31,7 +31,7 @@ export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
                         label,
                         insertText,
                         insertTextFormat: InsertTextFormat.Snippet,
-                        kind: CompletionItemKind.Snippet,
+                        kind: CompletionItemKind.Snippet
                     })
                 }
             }

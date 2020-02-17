@@ -8,9 +8,9 @@ export interface NodeBase {
     description?: string,
     references?: { [key: string]: any },
     suggestions?: Array<
-        | string
-        | { description?: string; value?: string }
-        | { parser: string; params?: any[] }
+    | string
+    | { description?: string, value?: string }
+    | { parser: string, params?: any[] }
     >,
     isColor?: boolean,
     canAlsoBe?: string[]
@@ -52,7 +52,7 @@ export interface NbtRootSchemaNode extends NodeBase {
     type: 'root'
 }
 
-export type ValueList = Array<string | { description: string; value: string }>
+export type ValueList = Array<string | { description: string, value: string }>
 
 export type NbtSchemaNode =
     | NbtNoPropertySchemaNode
