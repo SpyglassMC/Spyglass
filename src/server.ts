@@ -9,7 +9,7 @@ import { lineToLintedString } from './types/Line'
 import Identity from './types/Identity'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import { getUri, parseString, getRel, getSemanticTokensLegend, getId, getRootUri } from './utils/handlers/common'
+import { getUri, parseString, getRel, getSemanticTokensLegend, getId, getRootUri, getUriFromId } from './utils/handlers/common'
 import FunctionInfo from './types/FunctionInfo'
 import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
 import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
@@ -33,15 +33,14 @@ import onCallHierarchyIncomingCalls from './utils/handlers/onCallHierarchyIncomi
 import onCallHierarchyOutgoingCalls from './utils/handlers/onCallHierarchyOutgoingCalls'
 import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
 import onDocumentLinks from './utils/handlers/onDocumentLinks'
+import onDefOrRef from './utils/handlers/onDefOrRef'
+import { UrisOfIds, UrisOfStrings } from './types/handlers'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
-const uris = new Map<string, Uri>()
+const uris: UrisOfStrings = new Map<string, Uri>()
 const infos = new Map<Uri, FunctionInfo>()
-/**
- * A map of namespaced IDs (in form of `type|ID`) and URIs.
- */
-const urisOfIds = new Map<string, Uri | null>()
+const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
 /**
  * Sorted by priority. If you want to read something in which Minecraft does,
  * iterate from the last element of this array to the first element.
@@ -121,7 +120,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             semanticTokensProvider: {
                 legend: getSemanticTokensLegend(),
                 documentProvider: {
-                    edits: true,
+                    edits: true
                 }
             },
             signatureHelpProvider: {
@@ -228,7 +227,7 @@ connection.onInitialized(() => {
                     // TODO(#252): Only trigger update for non-opened documents.
 
                     // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
-
+                    console.log(`Changed : ${uriString}`)
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
                         const result = Identity.fromRel(getRel(uri, roots) as string)
@@ -318,11 +317,23 @@ connection.onInitialized(() => {
         return onDocumentFormatting({ info })
     })
 
-    connection.onDefinition(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
-        return await getReferencesOrDefinition(uri, number, char, 'def')
+    connection.onDefinition(({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        return onDefOrRef({ uri, info, cacheFile, lineNumber, char, type: 'def' })
     })
-    connection.onReferences(async ({ textDocument: { uri }, position: { character: char, line: number } }) => {
-        return await getReferencesOrDefinition(uri, number, char, 'ref')
+    connection.onReferences(({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+        const uri = getUri(uriString, uris)
+        const info = infos.get(uri)
+        if (!info) {
+            return null
+        }
+
+        return onDefOrRef({ uri, info, cacheFile, lineNumber, char, type: 'ref' })
     })
 
     connection.onDocumentHighlight(({ textDocument: { uri: uriString }, position }) => {
@@ -352,17 +363,15 @@ connection.onInitialized(() => {
             return null
         }
 
-        return onCallHierarchyPrepare({ info, lineNumber, char, getUriFromId })
+        return onCallHierarchyPrepare({ info, lineNumber, char, uris, roots, urisOfIds, pathExists: fs.pathExists })
     })
 
     connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
-        // TODO(#230)
-        return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, getUriFromId })
+        return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
     })
 
     connection.languages.callHierarchy.onOutgoingCalls(async ({ item: { kind, name: id } }) => {
-        // TODO(#230)
-        return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, getUriFromId })
+        return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
     })
 
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char } }) => {
@@ -414,11 +423,11 @@ connection.onInitialized(() => {
                     // Rename file if necessary.
                     if (isFileType(result.type)) {
                         const oldID = Identity.fromString(result.id)
-                        const oldUri = await getUriFromId(oldID, result.type)
+                        const oldUri = await getUriFromId(fs.pathExists, roots, uris, urisOfIds, oldID, result.type)
                         if (!oldUri) {
                             return null
                         }
-                        const newUri = getUriFromId(Identity.fromString(newName), result.type)
+                        const newUri = getUriFromId(fs.pathExists, roots, uris, urisOfIds, Identity.fromString(newName), result.type)
                         documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
                         // Update cache.
                         const oldTimestamp = cacheFile.files[oldUri.toString()]
@@ -458,7 +467,7 @@ connection.onInitialized(() => {
             return null
         }
 
-        return onDocumentLinks({ info, getUriFromId })
+        return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
     })
 
     connection.onDocumentColor(({ textDocument: { uri: uriString } }) => {
@@ -521,53 +530,6 @@ connection.onInitialized(() => {
         }
     })
 })
-
-async function getReferencesOrDefinition(uriString: string, number: number, char: number, key: 'def' | 'ref') {
-    // TODO(#230)
-    const uri = getUri(uriString, uris)
-    const info = infos.get(uri)
-    if (!info) {
-        return null
-    }
-    
-    const line = info.lines[number]
-    /* istanbul ignore next */
-    const result = getCacheFromChar(line.cache || {}, char)
-    if (result) {
-        const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]
-        if (unit && unit[key].length > 0) {
-            return unit[key].map(v => ({
-                uri: uri.toString(),
-                range: {
-                    start: { line: v.line as number, character: v.start },
-                    end: { line: v.line as number, character: v.end }
-                }
-            }))
-        }
-    }
-    return null
-}
-
-async function getUriFromId(id: Identity, category: CacheKey): Promise<Uri | null> {
-    const rel = id.toRel(category, 'data')
-    const idString = id.toString()
-    const key = `${category}|${idString}`
-    const value = urisOfIds.get(key)
-    if (value !== undefined) {
-        return value
-    }
-    for (const root of roots) {
-        const abs = path.join(root.fsPath, rel)
-        if (await fs.pathExists(abs)) {
-            const uri = getUri(Uri.file(abs).toString(), uris)
-            urisOfIds.set(key, uri)
-            return uri
-        }
-    }
-    connection.console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
-    urisOfIds.set(key, null)
-    return null
-}
 
 async function updateDiagnostics(uri: Uri) {
     const info = infos.get(uri)
@@ -662,7 +624,7 @@ const cacheFileOperations = {
                     for (const value of content.values) {
                         try {
                             const id = Identity.fromString(value)
-                            if (await getUriFromId(id, id.isTag ? 'tags/functions' : 'functions')) {
+                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, id.isTag ? 'tags/functions' : 'functions')) {
                                 validValues.push(id.toTagString())
                             }
                         } catch (ignored) {
@@ -706,7 +668,7 @@ const cacheFileOperations = {
                     if (content.rewards && typeof content.rewards.function === 'string') {
                         try {
                             const id = Identity.fromString(content.rewards.function)
-                            if (await getUriFromId(id, 'functions')) {
+                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, 'functions')) {
                                 ans.rewards = {
                                     function: content.rewards.function
                                 }

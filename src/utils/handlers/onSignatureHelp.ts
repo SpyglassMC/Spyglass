@@ -18,7 +18,11 @@ export default async function onSignatureHelp({ char, lineNumber, info, cacheFil
 
     const fixLabel = fix.join(' ')
 
-    for (const [current, nextOptions] of options) {
+    // eslint-disable-next-line prefer-const
+    for (let [current, nextOptions] of options) {
+        if (nextOptions.length === 0) {
+            nextOptions = ['']
+        }
         for (const nextOption of nextOptions) {
             const fixLabelStart = 0
             const fixLabelEnd = fixLabelStart + fixLabel.length

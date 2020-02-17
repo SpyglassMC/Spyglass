@@ -3,7 +3,7 @@ import { getCacheFromChar, getSafeCategory } from '../../types/ClientCache'
 import { Position, DocumentHighlight } from 'vscode-languageserver'
 import onSelectionRanges from './onSelectionRanges'
 
-export default function onDocumentHighlight({ position, info }: { position: Position, info: FunctionInfo }) {
+export default function onDocumentHighlight({ position, info }: { position: Position, info: FunctionInfo }): DocumentHighlight[] {
     const { line: lineNumber, character: char } = position
     const line = info.lines[lineNumber]
     /* istanbul ignore next */

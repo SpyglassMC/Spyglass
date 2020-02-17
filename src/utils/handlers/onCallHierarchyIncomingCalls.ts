@@ -1,8 +1,8 @@
 import { CacheFile, CacheUnit, getSafeCategory } from '../../types/ClientCache'
 import Identity from '../../types/Identity'
-import { Uri, UrisOfStrings, GetUriFromId } from '../../types/handlers'
+import { Uri, UrisOfStrings, GetUriFromIdFunction, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 import { Proposed } from 'vscode-languageserver'
-import { getId, getUri } from './common'
+import { getId, getUri, getUriFromId } from './common'
 import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
 
 /**
@@ -13,11 +13,11 @@ import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
  * 
  * See also #298.
  */
-export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, getUriFromId }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], getUriFromId: GetUriFromId }) {
+export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }) {
     const ans: Proposed.CallHierarchyIncomingCall[] = []
-    let unit: CacheUnit | undefined
 
-    //#region Get calls from functions.
+    //#region Get function callers.
+    let unit: CacheUnit | undefined
     switch (kind) {
         case IdentityKind.Advancement:
             return null
@@ -29,7 +29,7 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
             unit = getSafeCategory(cacheFile.cache, 'tags/functions')[id.slice(1)]
             break
     }
-    /* istanbul ignore next */
+    /* istanbul ignore else */
     if (unit && unit.ref.length > 0) {
         for (const ref of unit.ref) {
             try {
@@ -54,14 +54,15 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
     }
     //#endregion
 
-    //#region Get calls from function tags.
+    //#region Get function tag callers.
     for (const tagIdString in cacheFile.tags.functions) {
-        /* istanbul ignore next */
+        /* istanbul ignore else */
         if (cacheFile.tags.functions.hasOwnProperty(tagIdString)) {
             const { values } = cacheFile.tags.functions[tagIdString]!
+            /* istanbul ignore else */
             if (values.includes(id)) {
                 const tagId = Identity.fromString(Identity.TagSymbol + tagIdString)
-                const tagUri = await getUriFromId(tagId, 'tags/functions')
+                const tagUri = await getUriFromId(pathExists, roots, uris, urisOfIds, tagId, 'tags/functions')
                 /* istanbul ignore else */
                 if (tagUri) {
                     ans.push(
@@ -70,10 +71,7 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
                                 tagId.toTagString(), tagUri.toString(),
                                 0, 0, 0, IdentityKind.FunctionTag
                             ),
-                            fromRanges: [{
-                                start: { line: 0, character: 0 },
-                                end: { line: 0, character: 0 }
-                            }]
+                            fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
                         }
                     )
                 }
@@ -82,28 +80,28 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
     }
     //#endregion
 
-    //#region Get calls from advancement rewards.
-    for (const advIdString in cacheFile.advancements) {
-        /* istanbul ignore next */
-        if (cacheFile.advancements.hasOwnProperty(advIdString)) {
-            const { rewards } = cacheFile.advancements[advIdString]!
-            if (rewards && kind === IdentityKind.Function && rewards.function === id) {
-                const advId = Identity.fromString(advIdString)
-                const advUri = await getUriFromId(advId, 'advancements')
+    //#region Get advancement callers.
+    if (kind === IdentityKind.Function) {
+        for (const advIdString in cacheFile.advancements) {
+            /* istanbul ignore else */
+            if (cacheFile.advancements.hasOwnProperty(advIdString)) {
+                const { rewards } = cacheFile.advancements[advIdString]!
                 /* istanbul ignore else */
-                if (advUri) {
-                    ans.push(
-                        {
-                            from: getCallHierarchyItem(
-                                advId.toTagString(), advUri.toString(),
-                                0, 0, 0, IdentityKind.Advancement
-                            ),
-                            fromRanges: [{
-                                start: { line: 0, character: 0 },
-                                end: { line: 0, character: 0 }
-                            }]
-                        }
-                    )
+                if (rewards && rewards.function === id) {
+                    const advId = Identity.fromString(advIdString)
+                    const advUri = await getUriFromId(pathExists, roots, uris, urisOfIds, advId, 'advancements')
+                    /* istanbul ignore else */
+                    if (advUri) {
+                        ans.push(
+                            {
+                                from: getCallHierarchyItem(
+                                    advId.toTagString(), advUri.toString(),
+                                    0, 0, 0, IdentityKind.Advancement
+                                ),
+                                fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
+                            }
+                        )
+                    }
                 }
             }
         }

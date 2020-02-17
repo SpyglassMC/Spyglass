@@ -1,10 +1,11 @@
 import FunctionInfo from '../../types/FunctionInfo'
 import { DocumentLink } from 'vscode-languageserver'
 import { isFileType, CacheUnit } from '../../types/ClientCache'
-import { GetUriFromId } from '../../types/handlers'
+import { GetUriFromIdFunction, UrisOfStrings, UrisOfIds, PathExistsFunction, Uri } from '../../types/handlers'
 import Identity from '../../types/Identity'
+import { getUriFromId } from './common'
 
-export default async function onDocumentLinks({ info, getUriFromId }: { info: FunctionInfo, getUriFromId: GetUriFromId }) {
+export default async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
     const ans: DocumentLink[] = []
 
     for (let i = 0; i < info.lines.length; i++) {
@@ -23,7 +24,7 @@ export default async function onDocumentLinks({ info, getUriFromId }: { info: Fu
                                     start: { line: i, character: pos.start },
                                     end: { line: i, character: pos.end }
                                 },
-                                target: await getUriFromId(Identity.fromString(id), type)
+                                target: await getUriFromId(pathExists, roots, uris, urisOfIds, Identity.fromString(id), type)
                             }
                             /* istanbul ignore next */
                             if (link.target) {
@@ -35,6 +36,6 @@ export default async function onDocumentLinks({ info, getUriFromId }: { info: Fu
             }
         }
     }
-    
+
     return ans
 }

@@ -4,9 +4,9 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, DocumentSemanticTokensProvider, TextDocument, SemanticTokens, languages, SemanticTokensLegend, commands } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher } from 'vscode'
 
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, SynchronizeOptions } from 'vscode-languageclient'
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
 
 let client: LanguageClient
 
@@ -64,7 +64,7 @@ export function activate(context: ExtensionContext) {
         clientOptions
     )
 
-    // client.registerProposedFeatures()
+    client.registerProposedFeatures()
 
     // Start the client. This will also launch the server
     client.start()

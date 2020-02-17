@@ -19,11 +19,11 @@ module.exports = {
             "error",
             {
                 "multiline": {
-                    "delimiter": "none",
-                    "requireLast": true
+                    "delimiter": "comma",
+                    "requireLast": false
                 },
                 "singleline": {
-                    "delimiter": "semi",
+                    "delimiter": "comma",
                     "requireLast": false
                 }
             }

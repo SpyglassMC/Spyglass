@@ -5,12 +5,13 @@ import Config from '../../types/Config'
 import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
 import { constructContext } from '../../types/ParsingContext'
-import { CacheFile } from '../../types/ClientCache'
+import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
 import { TokenType, TokenModifier } from '../../types/Token'
 import Identity from '../../types/Identity'
+import { UrisOfStrings, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 
-export function getUri(str: string, uris: Map<string, Uri>) {
+export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
     if (value) {
         return value
@@ -21,11 +22,41 @@ export function getUri(str: string, uris: Map<string, Uri>) {
     }
 }
 
-export function getRootUri(str: string, uris: Map<string, Uri>) {
+export function getRootUri(str: string, uris: UrisOfStrings) {
     if (str[str.length - 1] !== '/') {
         str = `${str}/`
     }
     return getUri(str, uris)
+}
+
+export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: Identity, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
+    const idString = id.toString()
+    const key = `${category}|${idString}`
+    const value = urisOfIds.get(key)
+    if (value !== undefined) {
+        return value
+    }
+
+    const rel = id.toRel(category, 'data')
+    if (preferredRoot) {
+        // TODO: set `preferredRoot` for renaming operations.
+        const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
+        urisOfIds.set(key, uri)
+        return uri
+    } else {
+        for (const root of roots) {
+            const abs = path.join(root.fsPath, rel)
+            if (await pathExists(abs)) {
+                const uri = getUri(Uri.file(abs).toString(), uris)
+                urisOfIds.set(key, uri)
+                return uri
+            }
+        }
+        // console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
+    }
+
+    urisOfIds.set(key, null)
+    return null
 }
 
 export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1) {
@@ -48,7 +79,7 @@ export function getRel(uri: Uri, roots: Uri[]) {
             return path.relative(root.fsPath, uri.fsPath)
         }
     }
-    console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots (${roots})`)
+    // console.warn(`Path ‘${uri.fsPath}’ does not belong to any datapack roots (${roots})`)
     return undefined
 }
 

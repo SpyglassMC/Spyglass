@@ -1,16 +1,17 @@
 import FunctionInfo from '../../types/FunctionInfo'
 import { getCacheFromChar } from '../../types/ClientCache'
 import Identity from '../../types/Identity'
-import { GetUriFromId } from '../../types/handlers'
+import { PathExistsFunction, UrisOfIds, Uri, UrisOfStrings } from '../../types/handlers'
 import { SymbolKind, Proposed } from 'vscode-languageserver'
+import { getUriFromId } from './common'
 
-export default async function onCallHierarchyPrepare({ info, lineNumber, char, getUriFromId }: { info: FunctionInfo, lineNumber: number, char: number, getUriFromId: GetUriFromId }) {
+export default async function onCallHierarchyPrepare({ info, lineNumber, char, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, lineNumber: number, char: number, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
     const line = info.lines[lineNumber]
     /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)
     /* istanbul ignore next */
-    if (result && (result.type === 'functions' || result.type === 'tags/functions')) {
-        const uri = await getUriFromId(Identity.fromString(result.id), result.type)
+    if (result && (result.type === 'advancements' || result.type === 'functions' || result.type === 'tags/functions')) {
+        const uri = await getUriFromId(pathExists, roots, uris, urisOfIds, Identity.fromString(result.id), result.type)
         /* istanbul ignore next */
         if (!uri) {
             return null
@@ -19,7 +20,9 @@ export default async function onCallHierarchyPrepare({ info, lineNumber, char, g
             getCallHierarchyItem(
                 (result.type === 'tags/functions' ? Identity.TagSymbol : '') + result.id,
                 uri.toString(), lineNumber, result.start, result.end,
-                result.type === 'tags/functions' ? IdentityKind.FunctionTag : IdentityKind.Function
+                result.type === 'advancements' ? IdentityKind.Advancement :
+                    result.type === 'functions' ? IdentityKind.Function :
+                        IdentityKind.FunctionTag
             )
         ]
     }
