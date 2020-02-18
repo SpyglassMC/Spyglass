@@ -29,31 +29,35 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
     return getUri(str, uris)
 }
 
+/**
+ * @returns Never be `null` if `preferredRoot` exists.
+ */
 export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: Identity, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
+    
+    if (preferredRoot) {
+        const rel = id.toRel(category, 'data')
+        const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
+        urisOfIds.set(key, uri)
+        return uri
+    }
+
     const value = urisOfIds.get(key)
     if (value !== undefined) {
         return value
     }
 
     const rel = id.toRel(category, 'data')
-    if (preferredRoot) {
-        // TODO: set `preferredRoot` for renaming operations.
-        const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
-        urisOfIds.set(key, uri)
-        return uri
-    } else {
-        for (const root of roots) {
-            const abs = path.join(root.fsPath, rel)
-            if (await pathExists(abs)) {
-                const uri = getUri(Uri.file(abs).toString(), uris)
-                urisOfIds.set(key, uri)
-                return uri
-            }
+    for (const root of roots) {
+        const abs = path.join(root.fsPath, rel)
+        if (await pathExists(abs)) {
+            const uri = getUri(Uri.file(abs).toString(), uris)
+            urisOfIds.set(key, uri)
+            return uri
         }
-        // console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
     }
+    // console.warn(`Namespaced ID ‘${key}’ cannot be resolved in any root`)
 
     urisOfIds.set(key, null)
     return null

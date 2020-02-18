@@ -34,7 +34,7 @@ export function activate(context: ExtensionContext) {
     }
 
     // Options to control the language client
-    const clientOptions: LanguageClientOptions = {
+    const clientOptions: LanguageClientOptions & { synchronize: { fileEvents: FileSystemWatcher[] } } = {
         // Register the server for mcfunction documents
         documentSelector: [{ language: 'mcfunction' }],
         synchronize: {
@@ -48,7 +48,7 @@ export function activate(context: ExtensionContext) {
 
     if (workspace.workspaceFolders) {
         for (const root of workspace.workspaceFolders) {
-            (clientOptions.synchronize!.fileEvents as FileSystemWatcher[]).push(
+            clientOptions.synchronize.fileEvents.push(
                 workspace.createFileSystemWatcher(
                     new RelativePattern(root, 'data/**/*')
                 )

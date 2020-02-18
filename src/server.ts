@@ -2,10 +2,9 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, ColorInformation, ColorPresentation, TextDocumentEdit, FileChangeType, RenameFile, DocumentLink, DocumentHighlight, InitializeResult, DiagnosticSeverity, Proposed, SelectionRange, SymbolKind } from 'vscode-languageserver'
-import { getSafeCategory, CacheUnit, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, getCacheFromChar, isFileType, CachePosition, isNamespacedType, LatestCacheFileVersion, DefaultCacheFile, CacheCategory } from './types/ClientCache'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed } from 'vscode-languageserver'
+import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
-import { lineToLintedString } from './types/Line'
 import Identity from './types/Identity'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
@@ -16,7 +15,6 @@ import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
 import onSemanticTokens from './utils/handlers/onSemanticTokens'
 import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 import onCompletion from './utils/handlers/onCompletion'
-import { getCallHierarchyItem, IdentityKind } from './utils/handlers/onCallHierarchyPrepare'
 import TagInfo from './types/TagInfo'
 import onSignatureHelp from './utils/handlers/onSignatureHelp'
 import onFoldingRanges from './utils/handlers/onFoldingRanges'
@@ -34,12 +32,13 @@ import onCallHierarchyOutgoingCalls from './utils/handlers/onCallHierarchyOutgoi
 import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
 import onDocumentLinks from './utils/handlers/onDocumentLinks'
 import onDefOrRef from './utils/handlers/onDefOrRef'
-import { UrisOfIds, UrisOfStrings } from './types/handlers'
+import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
+import onRenameRequest from './utils/handlers/onRenameRequest'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
 const uris: UrisOfStrings = new Map<string, Uri>()
-const infos = new Map<Uri, FunctionInfo>()
+const infos: InfosOfUris = new Map<Uri, FunctionInfo>()
 const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
 /**
  * Sorted by priority. If you want to read something in which Minecraft does,
@@ -164,8 +163,11 @@ connection.onInitialized(() => {
 
         await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile })
 
-        cacheFileOperations.fileModified(uri, 'functions')
-        trimCache(cacheFile.cache)
+        const rel = getRel(uri, roots)
+        if (rel) {
+            cacheFileOperations.fileModified(uri, 'functions', Identity.fromRel(rel)!.id)
+            trimCache(cacheFile.cache)
+        }
 
         updateDiagnostics(uri)
         // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
@@ -230,11 +232,11 @@ connection.onInitialized(() => {
                     console.log(`Changed : ${uriString}`)
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
-                        const result = Identity.fromRel(getRel(uri, roots) as string)
+                        const result = Identity.fromRel(getRel(uri, roots)!)
                         if (result && (result.category === 'tags/functions' || result.category === 'advancements')) {
-                            const { category, ext } = result
+                            const { category, ext, id } = result
                             if (Identity.isExtValid(ext, category)) {
-                                await cacheFileOperations.fileModified(uri, category)
+                                await cacheFileOperations.fileModified(uri, category, id)
                                 cacheFile.files[uriString] = stat.mtimeMs
                             }
                         }
@@ -248,7 +250,7 @@ connection.onInitialized(() => {
                         if (cacheFile.files.hasOwnProperty(fileUriString)) {
                             if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
                                 const fileUri = getUri(fileUriString, uris)
-                                const result = Identity.fromRel(getRel(fileUri, roots) as string)
+                                const result = Identity.fromRel(getRel(fileUri, roots)!)
                                 // connection.console.info(`result = ${JSON.stringify(result)}`)
                                 if (result) {
                                     const { category, id, ext } = result
@@ -384,80 +386,13 @@ connection.onInitialized(() => {
         return onPrepareRename({ info, lineNumber, char })
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char }, newName }) => {
-        // TODO(#230)
-        // Inject getUriFromId
-        // connection.console.info(`BR: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
         const info = infos.get(uri)
         if (!info) {
             return null
         }
-        const line = info.lines[lineNumber]
-        const result = getCacheFromChar(line.cache || {}, char)
-        if (result && !result.type.startsWith('colors/')) {
-            const documentChanges: (TextDocumentEdit | RenameFile)[] = []
-            const category = getSafeCategory(cacheFile.cache, result.type)
-            const unit = category[result.id]
-            if (unit) {
-                try {
-                    const newID = isNamespacedType(result.type) ? Identity.fromString(newName).toString() : newName
 
-                    // Change file content.
-                    for (const key in unit) {
-                        if (key === 'def' || key === 'ref') {
-                            for (const pos of unit[key]) {
-                                documentChanges.push({
-                                    textDocument: { uri: uri.toString(), version: info.version || null },
-                                    edits: [{
-                                        newText: newName,
-                                        range: {
-                                            start: { line: pos.line as number, character: pos.start },
-                                            end: { line: pos.line as number, character: pos.end }
-                                        }
-                                    }]
-                                })
-                            }
-                        }
-                    }
-
-                    // Rename file if necessary.
-                    if (isFileType(result.type)) {
-                        const oldID = Identity.fromString(result.id)
-                        const oldUri = await getUriFromId(fs.pathExists, roots, uris, urisOfIds, oldID, result.type)
-                        if (!oldUri) {
-                            return null
-                        }
-                        const newUri = getUriFromId(fs.pathExists, roots, uris, urisOfIds, Identity.fromString(newName), result.type)
-                        documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
-                        // Update cache.
-                        const oldTimestamp = cacheFile.files[oldUri.toString()]
-                        if (oldTimestamp !== undefined) {
-                            cacheFile.files[newUri.toString()] = oldTimestamp
-                            delete cacheFile.files[oldUri.toString()]
-                        }
-                    }
-
-                    // Update cache.
-                    const targetUnit = category[newID]
-                    if (targetUnit) {
-                        targetUnit.def.push(...unit.def)
-                        targetUnit.ref.push(...unit.ref)
-                    } else {
-                        category[newID] = unit
-                        cacheFile.cache[result.type] = category
-                    }
-                    delete category[result.id]
-                } catch (ignored) {
-                    return null
-                }
-            }
-
-            // connection.console.info(`DC: ${JSON.stringify(documentChanges)}`)
-            // connection.console.info(`AR: ${JSON.stringify(cacheFile)}`)
-            return { documentChanges }
-        } else {
-            return null
-        }
+        return onRenameRequest({ infos, cacheFile, info, lineNumber, char, newName, roots, uris, urisOfIds, pathExists: fs.pathExists })
     })
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
@@ -704,21 +639,24 @@ const cacheFileOperations = {
     fileAdded: async (uri: Uri, type: CacheKey, id: Identity) => {
         // connection.console.info(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
-        if (type === 'tags/functions') {
+        if (type === 'functions') {
+            cacheFileOperations.removeCachePositionsWith(uri)
+            await cacheFileOperations.combineCacheOfLines(uri)
+        } else if (type === 'tags/functions') {
             await cacheFileOperations.updateTagInfo(id)
         } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
+            await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
-    fileModified: async (uri: Uri, type: CacheKey) => {
+    fileModified: async (uri: Uri, type: CacheKey, id: Identity) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         if (!uri.toString().startsWith('untitled:') && type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
             await cacheFileOperations.combineCacheOfLines(uri)
         } else if (type === 'tags/functions') {
-            await cacheFileOperations.updateTagInfo(Identity.fromString(getId(uri, roots)))
+            await cacheFileOperations.updateTagInfo(id)
         } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
+            await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
     fileDeleted: async (uri: Uri, type: CacheKey, id: Identity) => {
@@ -728,7 +666,7 @@ const cacheFileOperations = {
         } else if (type === 'tags/functions') {
             await cacheFileOperations.updateTagInfo(id)
         } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(Identity.fromString(getId(uri, roots)))
+            await cacheFileOperations.updateAdvancementInfo(id)
         }
         cacheFileOperations.deleteDefault(id.toString(), type)
     }
@@ -774,7 +712,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                     const lastModified = stat.mtimeMs
                     const lastUpdated = cacheFile.files[uriString]!
                     if (lastModified > lastUpdated) {
-                        await cacheFileOperations.fileModified(uri, key)
+                        await cacheFileOperations.fileModified(uri, key, id)
                         cacheFile.files[uriString] = lastModified
                     }
                 }
@@ -783,7 +721,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     }
 
     const promises: Promise<void>[] = []
-    const addedFiles: [Uri, CacheKey][] = []
+    const addedFiles: [Uri, CacheKey, Identity][] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
         const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
@@ -819,7 +757,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                                     if (cacheFile.files[uriString] === undefined) {
                                         cacheFileOperations.fileAdded(uri, key, id)
                                         cacheFile.files[uriString] = stat.mtimeMs
-                                        addedFiles.push([uri, key])
+                                        addedFiles.push([uri, key, id])
                                     }
                                 }
                             }
@@ -832,7 +770,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     await Promise.all(promises)
     await Promise.all(
         addedFiles.map(
-            ([uri, key]) => cacheFileOperations.fileModified(uri, key)
+            ([uri, key, id]) => cacheFileOperations.fileModified(uri, key, id)
         )
     )
 

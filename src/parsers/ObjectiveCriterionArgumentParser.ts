@@ -48,7 +48,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
         const categoryResult = ctx.parsers
             .get('Literal', Object.keys(ObjectiveCriterionArgumentParser.Category))
             .parse(reader, ctx)
-        categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
+        categoryResult.tokens = []
         const category = categoryResult.data as string
         let subCriteria = ObjectiveCriterionArgumentParser.Category[category]
         combineArgumentParserResult(ans, categoryResult)
@@ -61,12 +61,11 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
 
         if (subCriteria.length > 0) {
             try {
-                const start = reader.cursor
                 reader
                     .expect(ObjectiveCriterionArgumentParser.Sep)
                     .skip()
                 const subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
-                subResult.tokens = [Token.from(start, reader, TokenType.type)]
+                subResult.tokens = []
                 const sub: string = subResult.data
                 combineArgumentParserResult(ans, subResult)
                 ans.data = `${category}${ObjectiveCriterionArgumentParser.Sep}${sub}`
@@ -75,6 +74,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
             }
         }
         ans.data = ans.data || category
+        ans.tokens = [Token.from(start, reader, TokenType.type)]
 
         return ans
     }
