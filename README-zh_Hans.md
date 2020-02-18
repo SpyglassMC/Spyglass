@@ -81,6 +81,10 @@ DHP支持多种语言。目前以下语言已经完全支持：
 
 所有命令参数都可以被语义化高亮。如果感兴趣的话，你可以在 [#308](https://github.com/SPGoding/datapack-language-server/issues/308) 查看大憨批使用的所有 Semantic Token Type 与 Semantic Token Modifer。
 
+不幸的是，VSCode 的相关 API 仍处于 proposed 阶段，这意味着我们无法在生产环境下使用这些 API。下方所有图片都是在开发环境下截取的。
+
+在 VSCode 正式发布这些 API 之前，我建议使用 [Arcensoth](https://github.com/Arcensoth) 制作的 [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) 插件进行语法高亮。
+
 ## 签名信息
 
 您可以在敲打命令的过程中得到该命令的签名提示。
@@ -152,6 +156,14 @@ execute if score @p test matches 1 run say 1
 ```
 
 ![folding-ranges](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-ranges.gif)
+
+## 调用层级
+
+_该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
+
+调用层级可以让你很方便地浏览各个函数。你可以获取到一个函数、函数标签、进度的调用者以及被调用者。该特性的默认快捷键为 `Shift + Alt + H`。
+
+![call-hierarchy](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/call-hierarchy.gif)
 
 ## 颜色信息
 

@@ -21,6 +21,31 @@ DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio
 | [DHP (JSON)](https://github.com/SPGoding/datapack-json)           | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       |
 | [DHP (MCF)](https://github.com/SPGoding/datapack-language-server) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
 
+- [Installation](#installation)
+- [Features](#features)
+  - [Workspace Support](#workspace-support)
+  - [Multiple Language Support](#multiple-language-support)
+  - [Semantic Highlighting](#semantic-highlighting)
+  - [Signature Information](#signature-information)
+  - [Completions](#completions)
+  - [Code Snippets](#code-snippets)
+  - [Definition Comments](#definition-comments)
+  - [Diagnostics](#diagnostics)
+  - [Folding Ranges](#folding-ranges)
+  - [Call Hierarchy](#call-hierarchy)
+  - [Color Information](#color-information)
+  - [Hover Information](#hover-information)
+  - [Resolving Namespaced IDs](#resolving-namespaced-ids)
+  - [Goto Definitions](#goto-definitions)
+  - [Finding References](#finding-references)
+  - [Renaming](#renaming)
+  - [Formatting and Linting](#formatting-and-linting)
+  - [Configuration Settings](#configuration-settings)
+  - [Regenerating Cache](#regenerating-cache)
+- [Contributors](#contributors)
+- [Repository Structure](#repository-structure)
+- [References](#references)
+
 # Installation
 
 You can install DHP (MCF) from the VSCode Marketplace: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
@@ -154,6 +179,14 @@ execute if score @p test matches 1 run say 1
 
 ![folding-ranges](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/folding-ranges.gif)
 
+## Call Hierarchy
+
+_This feature is finished by using the proposed API, which is only accessible in development environment._
+
+Call hierarchies are a great way to navigate through functions. You can get all the callers/callees of a function, function tag, or an advancement reward by using this feature. The default hotkey of this feature is `Shift + Alt + H`.
+
+![call-hierarchy](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/call-hierarchy.gif)
+
 ## Color Information
 
 DHP will display colors for `dust` particles and `color` tags in NBTs. You can change the color by hovering your cursor on it.
@@ -215,6 +248,10 @@ There are several linting rules you can set in the configuration settings.
 ## Configuration Settings
 
 Press Ctrl + `,` (or other configured hotkey) to open the Settings page of VSCode, and search `datapackLanguageServer` to see all the configuration settings contributed by DHP. You can add your own code snippets, set the lint preferences and environment information to meet your needs. These config can be changed for the current user or the workspace. See [VSCode's official docs](https://code.visualstudio.com/docs/getstarted/settings) to learn more about configuring settings.
+
+## Regenerating Cache
+
+DHP uses cache to accelerate the process of renaming, finding references/definitions, document links, etc. However, the cache may become outdated because of various reasons, which could lead to strange behaviors. You can use the `Datapack: Regenerate Cache` command (ID: `datapackLanguageServer.regenerateCache`) to regenerate the cache manually.
 
 # Contributors
 
