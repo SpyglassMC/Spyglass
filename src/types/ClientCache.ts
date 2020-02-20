@@ -4,7 +4,7 @@ import { URI as Uri } from 'vscode-uri'
 import AdvancementInfo from './AdvancementInfo'
 import TagInfo from './TagInfo'
 
-export const LatestCacheFileVersion = 5
+export const LatestCacheFileVersion = 6
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: LatestCacheFileVersion }
 
