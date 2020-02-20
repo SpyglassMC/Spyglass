@@ -2,11 +2,11 @@ import path from 'path'
 import FunctionInfo from '../../types/FunctionInfo'
 import { TextDocumentEdit, RenameFile, WorkspaceEdit } from 'vscode-languageserver'
 import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheFile, removeCachePosition } from '../../types/ClientCache'
-import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris } from '../../types/handlers'
+import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris, FetchConfigFunction, ReadFileFunction } from '../../types/handlers'
 import Identity from '../../types/Identity'
-import { getUriFromId, getUri } from './common'
+import { getUriFromId, getUri, getInfo } from './common'
 
-export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }): Promise<WorkspaceEdit | null> {
+export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const line = info.lines[lineNumber]
 
@@ -26,7 +26,9 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
                     /* istanbul ignore else */
                     if (key === 'def' || key === 'ref') {
                         for (const pos of unit[key]) {
-                            const info = infos.get(getUri(pos.uri!, uris))
+                            // CHECKME
+                            // const info = infos.get(getUri(pos.uri!, uris))
+                            const info = await getInfo(getUri(pos.uri!, uris), infos, cacheFile, fetchConfig, readFile)
                             /* istanbul ignore else */
                             if (info) {
                                 documentChanges.push({

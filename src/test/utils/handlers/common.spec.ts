@@ -1,13 +1,14 @@
 import assert = require('power-assert')
 import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
-import { getUri, parseString, getRel, getId, getRootUri, getUriFromId } from '../../../utils/handlers/common'
+import { getUri, parseString, getRel, getId, getRootUri, getUriFromId, getInfo } from '../../../utils/handlers/common'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { VanillaConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
 import Token, { TokenType } from '../../../types/Token'
-import { UrisOfIds, UrisOfStrings } from '../../../types/handlers'
+import { UrisOfIds, UrisOfStrings, InfosOfUris } from '../../../types/handlers'
 import Identity from '../../../types/Identity'
+import { CacheFile } from '../../../types/ClientCache'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -153,6 +154,38 @@ describe('common.ts Tests', () => {
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[1])
 
             assert.deepEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
+        })
+    })
+    describe('getInfo() Tests', () => {
+        const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
+        const fetchConfig = async () => VanillaConfig
+        const readFile = async () => { throw 'Fake readFile() Intended Exception' }
+        const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
+        it('Should return the info directly if it exists in infos', async () => {
+            const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+            const infos: InfosOfUris = new Map([[uri, info]])
+
+            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+
+            assert(actual === info)
+        })
+        it('Should return undefined when exceptions are thrown during reading file', async () => {
+            const infos: InfosOfUris = new Map()
+
+            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+
+            assert(actual === undefined)
+        })
+        it('Should return the info after reading file', async () => {
+            const readFile = async () => '# foo'
+            const infos: InfosOfUris = new Map()
+
+            const actual = (await getInfo(uri, infos, cacheFile, fetchConfig, readFile))!
+
+            assert(actual.config === VanillaConfig)
+            assert(actual.lineBreak === '\n')
+            assert(actual.version === null)
+            assert.deepEqual(actual.strings, ['# foo'])
         })
     })
 })

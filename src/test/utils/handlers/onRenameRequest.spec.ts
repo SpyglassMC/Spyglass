@@ -10,6 +10,8 @@ describe('onRenameRequest() Tests', () => {
         abs.match(/^c:[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i) ||
         abs.match(/^d:[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]bar\.mcfunction$/i)
     )
+    const fetchConfig = async () => VanillaConfig
+    const readFile = async () => { throw 'Fake readFile() Intended Exception' }
     const roots = [Uri.parse('file:///c:/'), Uri.parse('file:///d:/')]
 
     const oldFunction1 = Uri.parse('file:///c:/data/spgoding/functions/foo.mcfunction').toString()
@@ -64,7 +66,7 @@ describe('onRenameRequest() Tests', () => {
         const char = 2
         const newName = 'ruhuasiyu:foo'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
         assert(actual === null)
     })
@@ -81,7 +83,7 @@ describe('onRenameRequest() Tests', () => {
         const char = 28
         const newName = 'newObjective'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
         assert.deepEqual(actual, {
             documentChanges: [{
@@ -118,7 +120,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
         assert.deepEqual(actual, {
             documentChanges: [
@@ -158,7 +160,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
         assert.deepEqual(actual, {
             documentChanges: [
@@ -198,7 +200,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:bar'
         const newFunction = Uri.parse('file:///d:/data/ruhuasiyu/functions/bar.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
         assert.deepEqual(actual, {
             documentChanges: [

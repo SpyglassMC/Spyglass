@@ -1,7 +1,7 @@
 import FunctionInfo from '../../types/FunctionInfo'
 import { DocumentLink } from 'vscode-languageserver'
 import { isFileType, CacheUnit } from '../../types/ClientCache'
-import { GetUriFromIdFunction, UrisOfStrings, UrisOfIds, PathExistsFunction, Uri } from '../../types/handlers'
+import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri } from '../../types/handlers'
 import Identity from '../../types/Identity'
 import { getUriFromId } from './common'
 

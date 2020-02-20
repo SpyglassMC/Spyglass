@@ -9,7 +9,9 @@ import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
 import { TokenType, TokenModifier } from '../../types/Token'
 import Identity from '../../types/Identity'
-import { UrisOfStrings, PathExistsFunction, UrisOfIds } from '../../types/handlers'
+import { UrisOfStrings, PathExistsFunction, UrisOfIds, FetchConfigFunction, ReadFileFunction, InfosOfUris } from '../../types/handlers'
+import FunctionInfo from '../../types/FunctionInfo'
+import onDidOpenTextDocument from './onDidOpenTextDocument'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -35,7 +37,7 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
 export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: Identity, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
-    
+
     if (preferredRoot) {
         const rel = id.toRel(category, 'data')
         const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
@@ -93,6 +95,23 @@ export function getRel(uri: Uri, roots: Uri[]) {
  */
 export function getId(uri: Uri, roots: Uri[]) {
     return Identity.fromRel(getRel(uri, roots)!)!.id.toString()
+}
+
+export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction): Promise<FunctionInfo | undefined> {
+    let info = infos.get(uri)
+
+    if (!info) {
+        try {
+            const text = await readFile(uri.fsPath, 'utf8')
+            const config = await fetchConfig(uri)
+            await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null })
+            info = infos.get(uri)
+        } catch (ignored) {
+            // Ignored.
+        }
+    }
+
+    return info
 }
 
 /* istanbul ignore next */
