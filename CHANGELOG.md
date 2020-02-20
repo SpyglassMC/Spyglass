@@ -1,3 +1,9 @@
+# [v1.13.1](https://github.com/SPGoding/datapack-language-server/compare/v1.13.0...v1.13.1) (2020-02-20)
+
+## 🐛 Bug Fixes
+- [`629bf48`](https://github.com/SPGoding/datapack-language-server/commit/629bf48)  Fix unhandled rejects for ‘.git’ files (Issues: [`#337`](https://github.com/SPGoding/datapack-language-server/issues/337))
+- [`1ff4fbf`](https://github.com/SPGoding/datapack-language-server/commit/1ff4fbf)  Fix not showing document links at start (Issues: [`#331`](https://github.com/SPGoding/datapack-language-server/issues/331) [`#336`](https://github.com/SPGoding/datapack-language-server/issues/336))
+
 # [v1.13.0](https://github.com/SPGoding/datapack-language-server/compare/v1.12.0...v1.13.0) (2020-02-18)
 
 ## ✨ New Features
