@@ -225,7 +225,7 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 # 贡献者
 
-大憨批目前已有 36 名直接贡献者，没有他们就没有大憨批的今天。完整的贡献者列表请在 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 查看。
+大憨批目前已有 39 名直接贡献者，没有他们就没有大憨批的今天。完整的贡献者列表请在 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 查看。
 
 # Q：大憨批就是个垃圾！
 
