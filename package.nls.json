@@ -38,7 +38,7 @@
     "datapackLanguageServer.config.lint.snbtDoubleSuffix": "The suffix used for TAG_Double in SNBTs.",
     "datapackLanguageServer.config.lint.snbtOmitDoubleSuffix": "Whether to omit the suffix of double numbers when possible in SNBTs or not.",
     "datapackLanguageServer.config.lint.snbtKeepDecimalPlace": "Whether to keep at least one decimal place in SNBTs or not.",
-    "datapackLanguageServer.config.lint.snbtSortKeys": "Whether to keep at least one decimal place in SNBTs or not.",
+    "datapackLanguageServer.config.lint.snbtSortKeys": "Whether to sort the keys in SNBTs or not.",
     "datapackLanguageServer.config.lint.timeOmitTickUnit": "Whether to omit the unit of tick (`t`) in time arguments.",
     "datapackLanguageServer.config.lint.nameOfObjectives": "The naming convension for scoreboard objectives.",
     "datapackLanguageServer.config.lint.nameOfSnbtCompoundTagKeys": "The naming convension for compound tag keys in SNBTs.",
