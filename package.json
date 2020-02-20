@@ -75,8 +75,8 @@
     "engines": {
         "vscode": "^1.41.0"
     },
-    "displayName": "Datapack Helper Plus (MCF)",
-    "description": "Heavy language features for MCFunction files",
+    "displayName": "%datapackLanguageServer.displayName%",
+    "description": "%datapackLanguageServer.description%",
     "icon": "icon.png",
     "categories": [
         "Formatters",
@@ -102,7 +102,7 @@
         "commands": [
             {
                 "command": "datapackLanguageServer.regenerateCache",
-                "title": "Regenerate Cache",
+                "title": "%datapackLanguageServer.commands.regenerateCache.title%",
                 "category": "Datapack",
                 "enablement": "workspaceFolderCount != 0 && editorLangId == mcfunction"
             }
@@ -118,7 +118,7 @@
                         3,
                         4
                     ],
-                    "markdownDescription": "`function-permission-level` defined in `server.properties`.",
+                    "markdownDescription": "%datapackLanguageServer.config.env.permissionLevel%",
                     "default": 2
                 },
                 "datapackLanguageServer.env.version": {
@@ -127,15 +127,31 @@
                         "1.15",
                         "1.16"
                     ],
-                    "markdownDescription": "Game version.",
+                    "markdownDescription": "%datapackLanguageServer.config.env.version%",
                     "default": "1.16"
+                },
+                "datapackLanguageServer.env.dataVersion": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "Latest release",
+                                "Latest snapshot"
+                            ]
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "markdownDescription": "%datapackLanguageServer.config.env.dataVersion%",
+                    "default": "Latest snapshot"
                 },
                 "datapackLanguageServer.snippets": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "markdownDescription": "Code snippets.",
+                    "markdownDescription": "%datapackLanguageServer.config.snippets%",
                     "default": {
                         "executeIfScoreSet": "execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0",
                         "scoreboardPlayersOperation": "scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}",
@@ -148,32 +164,32 @@
                 },
                 "datapackLanguageServer.lint.enableFormatting": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to enable the formatting feature. **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.enableFormatting%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.blockStateAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to append spaces after commas in block states or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStateAppendSpaceAfterComma%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.blockStatePutSpacesAroundEqualSign": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to put spaces around equal signs in block states or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStatePutSpacesAroundEqualSign%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.blockStateSortKeys": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to sort the keys in block states or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStateSortKeys%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.entitySelectorAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to append spaces after commas in entity selectors or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorAppendSpaceAfterComma%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.entitySelectorPutSpacesAroundEqualSign": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to put spaces around equal signs in entity selectors or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorPutSpacesAroundEqualSign%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.entitySelectorKeyOrder": {
@@ -212,7 +228,7 @@
                         ]
                     },
                     "uniqueItems": true,
-                    "markdownDescription": "In which order the arguments in entity selectors should be. The default order is based on the research by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorKeyOrder%",
                     "default": [
                         "sort",
                         "limit",
@@ -252,12 +268,12 @@
                         "prefer single",
                         "prefer double"
                     ],
-                    "markdownDescription": "Quotes used in NBT strings and phrase strings.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteType%",
                     "markdownEnumDescriptions": [
-                        "Always use single quotes.",
-                        "Always use double quotes.",
-                        "Always use single quotes, unless there are single quotes in the string.",
-                        "Always use double quotes, unless there are double quotes in the string."
+                        "%datapackLanguageServer.config.lint.quoteType.0%",
+                        "%datapackLanguageServer.config.lint.quoteType.1%",
+                        "%datapackLanguageServer.config.lint.quoteType.2%",
+                        "%datapackLanguageServer.config.lint.quoteType.3%"
                     ],
                     "default": "prefer double"
                 },
@@ -267,10 +283,10 @@
                         true,
                         false
                     ],
-                    "markdownDescription": "When the keys in entity selectors should be quoted.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys%",
                     "markdownEnumDescriptions": [
-                        "Always.",
-                        "Never."
+                        "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys.0%",
+                        "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys.1%"
                     ],
                     "default": false
                 },
@@ -280,10 +296,10 @@
                         true,
                         false
                     ],
-                    "markdownDescription": "When the string keys in SNBTs should be quoted.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteSnbtStringKeys%",
                     "markdownEnumDescriptions": [
-                        "Always.",
-                        "Only when there are special characters in the string."
+                        "%datapackLanguageServer.config.lint.quoteSnbtStringKeys.0%",
+                        "%datapackLanguageServer.config.lint.quoteSnbtStringKeys.1%"
                     ],
                     "default": false
                 },
@@ -293,26 +309,26 @@
                         true,
                         false
                     ],
-                    "markdownDescription": "When the string values in SNBTs should be quoted.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteNbtStringValues%",
                     "markdownEnumDescriptions": [
-                        "Always.",
-                        "Only when there are special characters in the string."
+                        "%datapackLanguageServer.config.lint.quoteNbtStringValues.0%",
+                        "%datapackLanguageServer.config.lint.quoteNbtStringValues.1%"
                     ],
                     "default": true
                 },
                 "datapackLanguageServer.lint.snbtAppendSpaceAfterColon": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to append spaces after colons in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterColon%",
                     "default": true
                 },
                 "datapackLanguageServer.lint.snbtAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to append spaces after commas in SNBT or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterComma%",
                     "default": true
                 },
                 "datapackLanguageServer.lint.snbtAppendSpaceAfterSemicolon": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to append spaces after semicolons in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterSemicolon%",
                     "default": true
                 },
                 "datapackLanguageServer.lint.snbtByteSuffix": {
@@ -321,12 +337,12 @@
                         "b",
                         "B"
                     ],
-                    "markdownDescription": "The suffix used for TAG_Byte in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtByteSuffix%",
                     "default": "b"
                 },
                 "datapackLanguageServer.lint.snbtUseBooleans": {
                     "type": "boolean",
-                    "markdownDescription": "Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtUseBooleans%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.snbtShortSuffix": {
@@ -335,7 +351,7 @@
                         "s",
                         "S"
                     ],
-                    "markdownDescription": "The suffix used for TAG_Short in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtShortSuffix%",
                     "default": "s"
                 },
                 "datapackLanguageServer.lint.snbtLongSuffix": {
@@ -344,7 +360,7 @@
                         "l",
                         "L"
                     ],
-                    "markdownDescription": "The suffix used for TAG_Long in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtLongSuffix%",
                     "default": "L"
                 },
                 "datapackLanguageServer.lint.snbtFloatSuffix": {
@@ -353,7 +369,7 @@
                         "f",
                         "F"
                     ],
-                    "markdownDescription": "The suffix used for TAG_Float in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtFloatSuffix%",
                     "default": "f"
                 },
                 "datapackLanguageServer.lint.snbtDoubleSuffix": {
@@ -362,27 +378,27 @@
                         "d",
                         "D"
                     ],
-                    "markdownDescription": "The suffix used for TAG_Double in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtDoubleSuffix%",
                     "default": "d"
                 },
                 "datapackLanguageServer.lint.snbtOmitDoubleSuffix": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to omit the suffix of double numbers when possible in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtOmitDoubleSuffix%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.snbtKeepDecimalPlace": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to keep at least one decimal place in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtKeepDecimalPlace%",
                     "default": true
                 },
                 "datapackLanguageServer.lint.snbtSortKeys": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to sort keys in compound tags in SNBTs or not.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtSortKeys%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.timeOmitTickUnit": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to omit the unit of tick (`t`) in time arguments.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.timeOmitTickUnit%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.nameOfObjectives": {
@@ -413,7 +429,7 @@
                             }
                         }
                     ],
-                    "markdownDescription": "The naming convension for scoreboard objectives.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfObjectives%",
                     "default": "whatever"
                 },
                 "datapackLanguageServer.lint.nameOfSnbtCompoundTagKeys": {
@@ -444,7 +460,7 @@
                             }
                         }
                     ],
-                    "markdownDescription": "The naming convension for compound tag keys in SNBTs.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfSnbtCompoundTagKeys%",
                     "default": "whatever"
                 },
                 "datapackLanguageServer.lint.nameOfTags": {
@@ -475,7 +491,7 @@
                             }
                         }
                     ],
-                    "markdownDescription": "The naming convension for scoreboard tags.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfTags%",
                     "default": "whatever"
                 },
                 "datapackLanguageServer.lint.nameOfTeams": {
@@ -506,82 +522,82 @@
                             }
                         }
                     ],
-                    "markdownDescription": "The naming convension for teams.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfTeams%",
                     "default": "whatever"
                 },
                 "datapackLanguageServer.lint.strictBossbarCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for undefined bossbars.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBossbarCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictStorageCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for undefined data storages.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictStorageCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictObjectiveCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for undefined objectives.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictObjectiveCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for undefined tags.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictTeamCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for undefined teams.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictTeamCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictAdvancementCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for advancements which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictAdvancementCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictFunctionCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for functions which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFunctionCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictLootTableCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for loot tables which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictLootTableCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictPredicateCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for predicates which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictPredicateCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictRecipeCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for recipes which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictRecipeCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictBlockTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for block tags which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBlockTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictEntityTypeTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for entity type tags which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEntityTypeTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictFluidTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for fluid tags which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFluidTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictFunctionTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for function tags which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFunctionTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictItemTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to throw warnings for item tags which don't exist in your workspace.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictItemTagCheck%",
                     "default": false
                 },
                 "datapackLanguageServer.lint.strictMobEffectCheck": {
@@ -592,11 +608,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown mob effects.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictMobEffectCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictEnchantmentCheck": {
@@ -607,11 +623,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown enchantments.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEnchantmentCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictSoundEventCheck": {
@@ -622,11 +638,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown sound events.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictSoundEventCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictEntityTypeCheck": {
@@ -637,11 +653,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown entity types.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEntityTypeCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictDimensionTypeCheck": {
@@ -652,11 +668,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown dimension types.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictDimensionTypeCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictBlockCheck": {
@@ -667,11 +683,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown blocks.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBlockCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictItemCheck": {
@@ -682,11 +698,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown items.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictItemCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictPotionCheck": {
@@ -697,11 +713,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown potions.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictPotionCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictMotiveCheck": {
@@ -712,11 +728,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown motives.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictMotiveCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictFluidCheck": {
@@ -727,11 +743,11 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown fluids.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFluidCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.strictParticleTypeCheck": {
@@ -742,16 +758,16 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "Check all IDs.",
-                        "Only check IDs belonging to the default namespace (`minecraft`).",
-                        "Never check those IDs."
+                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
+                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "Whether to throw warnings for unknown particle types.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.strictParticleTypeCheck%",
                     "default": "only-default-namespace"
                 },
                 "datapackLanguageServer.lint.omitDefaultNamespace": {
                     "type": "boolean",
-                    "markdownDescription": "Whether to omit default namespace (`minecraft`) in namespaced IDs. No matter what the setting is, namespaces in SNBT predicates will always be kept.",
+                    "markdownDescription": "%datapackLanguageServer.config.lint.omitDefaultNamespace%",
                     "default": false
                 }
             }
