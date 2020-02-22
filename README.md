@@ -311,6 +311,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2612019"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2612019&size=middle" width="100px;" alt=""/><br /><sub><b>Chelove_C60</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChelove_C60" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1253833"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1253833&size=middle" width="100px;" alt=""/><br /><sub><b>brooke_zb</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Abrooke_zb" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/dragon3025"><img src="https://avatars3.githubusercontent.com/u/11652210?s=460&v=4" width="100px;" alt=""/><br /><sub><b>dragon3025</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Adragon3025" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/misode"><img src="https://avatars0.githubusercontent.com/u/17352009?s=460&v=4" width="100px;" alt=""/><br /><sub><b>misode</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Amisode" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
