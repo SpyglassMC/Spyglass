@@ -84,7 +84,12 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             await fs.mkdirp(storagePath)
         }
         if (fs.existsSync(cachePath)) {
-            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+            try {
+                cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+            } catch (e) {
+                connection.console.error(`Error occurred while reading cache (‘${cachePath}’): ${e}`)
+                cacheFile = clone(DefaultCacheFile)
+            }
             if (cacheFile.version !== LatestCacheFileVersion) {
                 cacheFile = clone(DefaultCacheFile)
             }
