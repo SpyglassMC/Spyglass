@@ -1,3 +1,8 @@
+# [v1.13.4](https://github.com/SPGoding/datapack-language-server/compare/v1.13.3...v1.13.4) (2020-02-22)
+
+## 🐛 Bug Fixes
+- [`8846b09`](https://github.com/SPGoding/datapack-language-server/commit/8846b09)  Fix not packaging package.nls.json (Issues: [`#344`](https://github.com/SPGoding/datapack-language-server/issues/344))
+
 # [v1.13.3](https://github.com/SPGoding/datapack-language-server/compare/v1.13.2...v1.13.3) (2020-02-22)
 
 ## 🐛 Bug Fixes
