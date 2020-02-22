@@ -178,22 +178,22 @@ export type LintConfig = {
      */
     timeOmitTickUnit: boolean,
     /**
-     * The naming convension for scoreboard objectives.  
+     * The naming convention for scoreboard objectives.  
      * @default 'whatever'
      */
     nameOfObjectives: NamingConventionConfig,
     /**
-     * The naming convension for compound tag keys in SNBTs.  
+     * The naming convention for compound tag keys in SNBTs.  
      * @default 'whatever'
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
     /**
-     * The naming convension for scoreboard tags.  
+     * The naming convention for scoreboard tags.  
      * @default 'whatever'
      */
     nameOfTags: NamingConventionConfig,
     /**
-     * The naming convension for teams.  
+     * The naming convention for teams.  
      * @default 'whatever'
      */
     nameOfTeams: NamingConventionConfig,

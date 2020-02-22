@@ -6,4 +6,5 @@
 !icon.png
 !LICENSE
 !package.json
+!package.*.json
 !README.md
