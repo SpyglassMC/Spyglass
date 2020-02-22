@@ -1,3 +1,8 @@
+# [v1.13.2](https://github.com/SPGoding/datapack-language-server/compare/v1.13.1...v1.13.2) (2020-02-22)
+
+## 🐛 Bug Fixes
+- [`8e2fa68`](https://github.com/SPGoding/datapack-language-server/commit/8e2fa68)  Fix error messages for unknown commands (Issues: [`#340`](https://github.com/SPGoding/datapack-language-server/issues/340))
+
 # [v1.13.1](https://github.com/SPGoding/datapack-language-server/compare/v1.13.0...v1.13.1) (2020-02-20)
 
 ## 🐛 Bug Fixes
