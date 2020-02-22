@@ -1,6 +1,6 @@
 {
     "name": "datapack-language-server",
-    "version": "1.13.2",
+    "version": "1.13.3",
     "main": "dist/client.js",
     "author": "SPGoding",
     "publisher": "SPGoding",

@@ -1,3 +1,8 @@
+# [v1.13.3](https://github.com/SPGoding/datapack-language-server/compare/v1.13.2...v1.13.3) (2020-02-22)
+
+## 🐛 Bug Fixes
+- [`a860db6`](https://github.com/SPGoding/datapack-language-server/commit/a860db6)  Catch errors occurring while reading cache (Issues: [`#331`](https://github.com/SPGoding/datapack-language-server/issues/331))
+
 # [v1.13.2](https://github.com/SPGoding/datapack-language-server/compare/v1.13.1...v1.13.2) (2020-02-22)
 
 ## 🐛 Bug Fixes
