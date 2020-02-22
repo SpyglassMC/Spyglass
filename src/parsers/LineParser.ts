@@ -8,6 +8,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
+import { toLintedString } from '../utils/utils'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -71,7 +72,7 @@ export default class LineParser implements Parser<Line> {
         //#endregion
 
         if (line.errors.length === 0) {
-            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line, undefined, true)
+            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line, false, true)
         }
         saturatedLineToLine(line)
 
@@ -216,6 +217,7 @@ export default class LineParser implements Parser<Line> {
             i += 1
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
+                const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
                 const node = children[key]
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
@@ -230,10 +232,7 @@ export default class LineParser implements Parser<Line> {
                     }
                 }
                 //#endregion
-                if (
-                    !isTheLastElement && /* Has untolerable errors */
-                    parsedLine.errors.filter(v => !v.tolerable).length > 0
-                ) {
+                if (!isTheLastElement && hasUntolerableErrors(parsedLine.errors)) {
                     parsedLine.args.pop()
                     parsedLine.hint.fix.pop()
                     parsedLine.errors = oldErrors
@@ -262,7 +261,7 @@ export default class LineParser implements Parser<Line> {
                     errors: []
                 }
                 const subNode = children[key]
-                this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, undefined, node.executable)
+                this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, false, !!node.executable)
                 const option = line.hint.fix[0]
                 ans.push(option)
             }

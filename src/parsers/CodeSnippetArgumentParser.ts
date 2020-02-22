@@ -20,7 +20,7 @@ export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
         }
         //#region Completions.
         const startCursor = reader.cursor
-        reader.readUntilOrEnd(' ')
+        ans.data = reader.readUntilOrEnd(' ')
         const endCursor = reader.cursor
         if (startCursor <= cursor && cursor <= endCursor) {
             for (const label in snippets) {

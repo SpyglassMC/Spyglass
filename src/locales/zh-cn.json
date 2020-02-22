@@ -81,6 +81,7 @@
   "unexpected-relative-coordinate": "不能使用相对坐标%0%",
   "unexpected-scoreboard-sub-slot": "只有“sidebar”有子栏目",
   "unexpected-selector-variable": "错误的选择器变量%0%",
+  "unknown-command": "未知的命令%0%",
   "unknown-key": "未知的键%0%",
   "vector": "一个向量"
 }

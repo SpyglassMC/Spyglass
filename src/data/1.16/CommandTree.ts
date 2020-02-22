@@ -27,6 +27,10 @@ import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
 import Token, { TokenType, TokenModifier } from '../../types/Token'
+import ParsingError from '../../types/ParsingError'
+import { locale } from '../../locales/Locales'
+import { toLintedString } from '../../utils/utils'
+import { VanillaConfig } from '../../types/Config'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1949,6 +1953,28 @@ const CommandTree: CommandTreeType = {
             parser: new CodeSnippetArgumentParser(),
             permission: 0,
             executable: true
+        },
+        unknown: {
+            parser: new StringArgumentParser('SingleWord'),
+            permission: 0,
+            run: ({ args, errors }) => {
+                errors.push(
+                    new ParsingError(
+                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        locale('unknown-command',
+                            locale('punc.quote', toLintedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
+                        ),
+                        false
+                    )
+                )
+            },
+            children: {
+                arguments: {
+                    parser: new StringArgumentParser('GreedyPhrase'),
+                    executable: true
+                }
+            },
+            executable: true
         }
     },
     comments: {
@@ -1994,6 +2020,28 @@ const CommandTree: CommandTreeType = {
                     }
                 }
             }
+        },
+        unknown: {
+            parser: new StringArgumentParser('SingleWord'),
+            permission: 0,
+            run: ({ args, errors }) => {
+                errors.push(
+                    new ParsingError(
+                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        locale('unknown-command',
+                            locale('punc.quote', toLintedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
+                        ),
+                        false
+                    )
+                )
+            },
+            children: {
+                arguments: {
+                    parser: new StringArgumentParser('GreedyPhrase'),
+                    executable: true
+                }
+            },
+            executable: true
         }
     },
     templates: {
