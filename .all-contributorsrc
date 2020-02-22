@@ -17,7 +17,7 @@
       "profile": "https://github.com/SPGoding",
       "contributions": [
         "code",
-        "doc"
+        "localization"
       ]
     },
     {
@@ -26,7 +26,7 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/17830663?v=4",
       "profile": "https://github.com/MrYurihi",
       "contributions": [
-        "doc",
+        "dependency",
         "ideas"
       ]
     },
@@ -64,7 +64,7 @@
       "profile": "https://github.com/MarsCloud",
       "contributions": [
         "code",
-        "financial",
+        "sponsor",
         "bug"
       ]
     },
@@ -74,7 +74,7 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/19944539?v=4",
       "profile": "https://github.com/switefaster",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -83,7 +83,7 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/15832518?v=4",
       "profile": "https://github.com/PutEgg",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -92,7 +92,7 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/44725122?v=4",
       "profile": "https://github.com/RicoloveFeng",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -101,7 +101,7 @@
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1073895&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1073895",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -110,7 +110,7 @@
       "avatar_url": "https://pic.afdiancdn.com/default/avatar/default-avatar@2x.png",
       "profile": "https://afdian.net/u/64da395e2b6811e99c7652540025c377",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -119,7 +119,7 @@
       "avatar_url": "https://pic.afdiancdn.com/user/9c5521849fb011e99ecc52540025c377/avatar/5d5ebfa0c83f7a50304bb472c9d320c1_w640_h640_s69.jpg",
       "profile": "https://afdian.net/u/9c5521849fb011e99ecc52540025c377",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -128,7 +128,7 @@
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2176760&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2176760",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -137,7 +137,7 @@
       "avatar_url": "https://pic.afdiancdn.com/user/80487c58bfa911e8856452540025c377/avatar/c71ebb2c5c792b45d6f5b5bf087b0625_w1536_h1536_s1404.jpg",
       "profile": "https://afdian.net/@ChongXG",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -146,7 +146,7 @@
       "avatar_url": "https://pic.afdiancdn.com/user/470992469a5c11e881aa52540025c377/avatar/407310e7b07629c97d42949e4522f1c8_w395_h395_s71.jpg",
       "profile": "https://afdian.net/@dhwpcs",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -155,7 +155,7 @@
       "avatar_url": "https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg",
       "profile": "https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -164,7 +164,7 @@
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=145106",
       "contributions": [
-        "financial"
+        "sponsor"
       ]
     },
     {
@@ -182,6 +182,7 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/1885643?v=4",
       "profile": "https://arcensoth.github.io",
       "contributions": [
+        "dependency",
         "ideas",
         "bug"
       ]
@@ -254,13 +255,13 @@
     },
     {
       "login": "ChenCMD",
-      "name": "??",
+      "name": "ChenCMD",
       "avatar_url": "https://avatars2.githubusercontent.com/u/46134240?v=4",
       "profile": "https://github.com/ChenCMD",
       "contributions": [
         "bug",
         "ideas",
-        "translation"
+        "localization"
       ]
     },
     {
@@ -372,23 +373,52 @@
       ]
     },
     {
-      "login": "misode",
-      "name": "misode",
+      "login": "Misode",
+      "name": "Misode",
       "avatar_url": "https://avatars0.githubusercontent.com/u/17352009?s=460&v=4",
-      "profile": "https://github.com/misode",
+      "profile": "https://github.com/Misode",
       "contributions": [
+        "dependency",
         "bug"
       ]
     },
     {
-      "login": "Feierwoerx#????",
+      "login": "Feierwoerx",
       "name": "Feierwoerx",
       "avatar_url": "https://cdn.discordapp.com/avatars/236162204318040065/2163d83b5f7a30335792349f3eb10d13.png?size=256",
       "contributions": [
-        "translation"
+        "localization"
+      ]
+    },
+    {
+      "login": "TCasseBloc",
+      "name": "TCasseBloc",
+      "avatar_url": "https://cdn.discordapp.com/avatars/277115101465673729/17caf7ffa677227d81c4dd06ef6974f3.png?size=256",
+      "contributions": [
+        "localization"
       ]
     }
   ],
   "contributorsPerLine": 7,
+  "types": {
+    "localization": {
+      "symbol": "🌍",
+      "description": "Localization"
+    },
+    "sponsor": {
+      "symbol": "💝",
+      "description": "Sponsor",
+      "link": "#sponsor"
+    },
+    "ideas": {
+      "symbol": "🤔",
+      "description": "Ideas, Planning, and Feedback",
+      "link": "#"
+    },
+    "dependency": {
+      "symbol": "⬆️",
+      "description": "Dependencies other than NPM modules"
+    }
+  },
   "skipCi": true
 }

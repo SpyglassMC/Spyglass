@@ -43,8 +43,17 @@ DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio
   - [Configuration Settings](#configuration-settings)
   - [Regenerating Cache](#regenerating-cache)
 - [Contributors](#contributors)
+  - [dependency-npm_modules](#dependency-npmmodules)
+  - [dependency-Arcensoth](#dependency-arcensoth)
+  - [dependency-MrYurihi](#dependency-mryurihi)
+  - [dependency-Misode](#dependency-misode)
+  - [design-BlackNight0315](#design-blacknight0315)
+  - [localization-Feierwoerx](#localization-feierwoerx)
+  - [localization-TCasseBloc](#localization-tcassebloc)
+  - [localization-ChenCMD](#localization-chencmd)
+  - [localization-SPGoding](#localization-spgoding)
+  - [sponsor](#sponsor)
 - [Repository Structure](#repository-structure)
-- [References](#references)
 
 # Installation
 
@@ -94,11 +103,12 @@ By acting like this, DHP ensures that the order it handling datapacks is consist
 
 DHP supports multiple languages. Currently these languages are available:
 
-| Language             | VSCode Language ID | Contributor                             |
-| -------------------- | ------------------ | --------------------------------------- |
-| English              | `en`               | [SPGoding](https://github.com/SPGoding) |
-| Japanese             | `ja`               | [ChenCMD](https://github.com/ChenCMD)   |
-| Chinese (Simplified) | `zh-cn`            | [SPGoding](https://github.com/SPGoding) |
+| Language             | VSCode Language ID |
+| -------------------- | ------------------ |
+| English              | `en`               |
+| German               | `de`               |
+| Japanese             | `ja`               |
+| Chinese (Simplified) | `zh-cn`            |
 
 If you'd like to help us translate this project into other languages, it would be really appreciated! See [CONTRIBUTING.md](https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md) for more information!
 
@@ -262,39 +272,39 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt=""/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/MrYurihi"><img src="https://avatars3.githubusercontent.com/u/17830663?v=4" width="100px;" alt=""/><br /><sub><b>MrYurihi</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MrYurihi" title="Documentation">📖</a> <a href="#ideas-MrYurihi" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/SPGoding"><img src="https://avatars3.githubusercontent.com/u/15277496?v=4" width="100px;" alt=""/><br /><sub><b>SPGoding</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=SPGoding" title="Code">💻</a> <a href="#localization-SPGoding" title="Localization">🌍</a></td>
+    <td align="center"><a href="https://github.com/MrYurihi"><img src="https://avatars3.githubusercontent.com/u/17830663?v=4" width="100px;" alt=""/><br /><sub><b>MrYurihi</b></sub></a><br /><a href="#dependency-MrYurihi" title="Dependencies other than NPM modules">⬆️</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/Levertion"><img src="https://avatars1.githubusercontent.com/u/26185209?v=4" width="100px;" alt=""/><br /><sub><b>Levertion</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Levertion" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Bassab03"><img src="https://avatars3.githubusercontent.com/u/21043977?v=4" width="100px;" alt=""/><br /><sub><b>Bassab03</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Bassab03" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/BlackNight0315"><img src="https://avatars3.githubusercontent.com/u/4495596?v=4" width="100px;" alt=""/><br /><sub><b>BlackNight0315</b></sub></a><br /><a href="#design-BlackNight0315" title="Design">🎨</a></td>
-    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt=""/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MarsCloud" title="Code">💻</a> <a href="#financial-MarsCloud" title="Financial">💵</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMarsCloud" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt=""/><br /><sub><b>switefaster</b></sub></a><br /><a href="#financial-switefaster" title="Financial">💵</a></td>
+    <td align="center"><a href="https://github.com/MarsCloud"><img src="https://avatars2.githubusercontent.com/u/43104628?v=4" width="100px;" alt=""/><br /><sub><b>MarsCloud</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/commits?author=MarsCloud" title="Code">💻</a> <a href="#sponsor" title="Sponsor">💝</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMarsCloud" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/switefaster"><img src="https://avatars2.githubusercontent.com/u/19944539?v=4" width="100px;" alt=""/><br /><sub><b>switefaster</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt=""/><br /><sub><b>Heyu</b></sub></a><br /><a href="#financial-PutEgg" title="Financial">💵</a></td>
-    <td align="center"><a href="https://github.com/RicoloveFeng"><img src="https://avatars1.githubusercontent.com/u/44725122?v=4" width="100px;" alt=""/><br /><sub><b>RicoloveFeng</b></sub></a><br /><a href="#financial-RicoloveFeng" title="Financial">💵</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1073895"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1073895&size=middle" width="100px;" alt=""/><br /><sub><b>uuu2011</b></sub></a><br /><a href="#financial-uuu2011" title="Financial">💵</a></td>
-    <td align="center"><a href="https://afdian.net/u/64da395e2b6811e99c7652540025c377"><img src="https://pic.afdiancdn.com/default/avatar/default-avatar@2x.png" width="100px;" alt=""/><br /><sub><b>爱发电用户_4vCR</b></sub></a><br /><a href="#financial-爱发电用户_4vCR" title="Financial">💵</a></td>
-    <td align="center"><a href="https://afdian.net/u/9c5521849fb011e99ecc52540025c377"><img src="https://pic.afdiancdn.com/user/9c5521849fb011e99ecc52540025c377/avatar/5d5ebfa0c83f7a50304bb472c9d320c1_w640_h640_s69.jpg" width="100px;" alt=""/><br /><sub><b>夏白千层心</b></sub></a><br /><a href="#financial-夏白千层心" title="Financial">💵</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2176760"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2176760&size=middle" width="100px;" alt=""/><br /><sub><b>MCSugar_cane</b></sub></a><br /><a href="#financial-MCSugar_cane" title="Financial">💵</a></td>
-    <td align="center"><a href="https://afdian.net/@ChongXG"><img src="https://pic.afdiancdn.com/user/80487c58bfa911e8856452540025c377/avatar/c71ebb2c5c792b45d6f5b5bf087b0625_w1536_h1536_s1404.jpg" width="100px;" alt=""/><br /><sub><b>虫小哥</b></sub></a><br /><a href="#financial-虫小哥" title="Financial">💵</a></td>
+    <td align="center"><a href="https://github.com/PutEgg"><img src="https://avatars2.githubusercontent.com/u/15832518?v=4" width="100px;" alt=""/><br /><sub><b>Heyu</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://github.com/RicoloveFeng"><img src="https://avatars1.githubusercontent.com/u/44725122?v=4" width="100px;" alt=""/><br /><sub><b>RicoloveFeng</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1073895"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1073895&size=middle" width="100px;" alt=""/><br /><sub><b>uuu2011</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://afdian.net/u/64da395e2b6811e99c7652540025c377"><img src="https://pic.afdiancdn.com/default/avatar/default-avatar@2x.png" width="100px;" alt=""/><br /><sub><b>爱发电用户_4vCR</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://afdian.net/u/9c5521849fb011e99ecc52540025c377"><img src="https://pic.afdiancdn.com/user/9c5521849fb011e99ecc52540025c377/avatar/5d5ebfa0c83f7a50304bb472c9d320c1_w640_h640_s69.jpg" width="100px;" alt=""/><br /><sub><b>夏白千层心</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2176760"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2176760&size=middle" width="100px;" alt=""/><br /><sub><b>MCSugar_cane</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://afdian.net/@ChongXG"><img src="https://pic.afdiancdn.com/user/80487c58bfa911e8856452540025c377/avatar/c71ebb2c5c792b45d6f5b5bf087b0625_w1536_h1536_s1404.jpg" width="100px;" alt=""/><br /><sub><b>虫小哥</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://afdian.net/@dhwpcs"><img src="https://pic.afdiancdn.com/user/470992469a5c11e881aa52540025c377/avatar/407310e7b07629c97d42949e4522f1c8_w395_h395_s71.jpg" width="100px;" alt=""/><br /><sub><b>Craft_Kevin</b></sub></a><br /><a href="#financial-Craft_Kevin" title="Financial">💵</a></td>
-    <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt=""/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#financial-陌余Oucher" title="Financial">💵</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=145106"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle" width="100px;" alt=""/><br /><sub><b>龙腾猫跃</b></sub></a><br /><a href="#financial-龙腾猫跃" title="Financial">💵</a></td>
-    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?v=4" width="100px;" alt=""/><br /><sub><b>pca006132</b></sub></a><br /><a href="#ideas-pca006132" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://arcensoth.github.io"><img src="https://avatars3.githubusercontent.com/u/1885643?v=4" width="100px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a><br /><a href="#ideas-Arcensoth" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AArcensoth" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/fedpol1"><img src="https://avatars3.githubusercontent.com/u/54010140?v=4" width="100px;" alt=""/><br /><sub><b>fedpol1</b></sub></a><br /><a href="#ideas-fedpol1" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/ruhuasiyu"><img src="https://avatars2.githubusercontent.com/u/31852729?v=4" width="100px;" alt=""/><br /><sub><b>ruhuasiyu</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Aruhuasiyu" title="Bug reports">🐛</a> <a href="#ideas-ruhuasiyu" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://afdian.net/@dhwpcs"><img src="https://pic.afdiancdn.com/user/470992469a5c11e881aa52540025c377/avatar/407310e7b07629c97d42949e4522f1c8_w395_h395_s71.jpg" width="100px;" alt=""/><br /><sub><b>Craft_Kevin</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://afdian.net/u/c0ff1996ab5911e8ac0152540025c377"><img src="https://pic.afdiancdn.com/user/c0ff1996ab5911e8ac0152540025c377/avatar/8743119a6dbbfeb3b986472835a7accb_w413_h456_s155.jpg" width="100px;" alt=""/><br /><sub><b>陌余Oucher</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=145106"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=145106&size=middle" width="100px;" alt=""/><br /><sub><b>龙腾猫跃</b></sub></a><br /><a href="#sponsor" title="Sponsor">💝</a></td>
+    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?v=4" width="100px;" alt=""/><br /><sub><b>pca006132</b></sub></a><br /><a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
+    <td align="center"><a href="https://arcensoth.github.io"><img src="https://avatars3.githubusercontent.com/u/1885643?v=4" width="100px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a><br /><a href="#dependency-Arcensoth" title="Dependencies other than NPM modules">⬆️</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AArcensoth" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/fedpol1"><img src="https://avatars3.githubusercontent.com/u/54010140?v=4" width="100px;" alt=""/><br /><sub><b>fedpol1</b></sub></a><br /><a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/ruhuasiyu"><img src="https://avatars2.githubusercontent.com/u/31852729?v=4" width="100px;" alt=""/><br /><sub><b>ruhuasiyu</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Aruhuasiyu" title="Bug reports">🐛</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars0.githubusercontent.com/u/35702771?v=4" width="100px;" alt=""/><br /><sub><b>mathaym25</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Amathaym25" title="Bug reports">🐛</a> <a href="#ideas-mathaym25" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="http://mulverinex.github.io/home"><img src="https://avatars2.githubusercontent.com/u/12068027?v=4" width="100px;" alt=""/><br /><sub><b>MulverineX</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMulverineX" title="Bug reports">🐛</a> <a href="#ideas-MulverineX" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars0.githubusercontent.com/u/35702771?v=4" width="100px;" alt=""/><br /><sub><b>mathaym25</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Amathaym25" title="Bug reports">🐛</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
+    <td align="center"><a href="http://mulverinex.github.io/home"><img src="https://avatars2.githubusercontent.com/u/12068027?v=4" width="100px;" alt=""/><br /><sub><b>MulverineX</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMulverineX" title="Bug reports">🐛</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/YijunYuan"><img src="https://avatars0.githubusercontent.com/u/7012463?v=4" width="100px;" alt=""/><br /><sub><b>Yijun Yuan</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AYijunYuan" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/MinecraftPeace"><img src="https://avatars2.githubusercontent.com/u/57551211?v=4" width="100px;" alt=""/><br /><sub><b>MinecraftPeace</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMinecraftPeace" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/K-bai"><img src="https://avatars2.githubusercontent.com/u/31344344?v=4" width="100px;" alt=""/><br /><sub><b>K-bai</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AK-bai" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?v=4" width="100px;" alt=""/><br /><sub><b>??</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" title="Bug reports">🐛</a> <a href="#ideas-ChenCMD" title="Ideas, Planning, & Feedback">🤔</a> <a href="#translation-ChenCMD" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?v=4" width="100px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" title="Bug reports">🐛</a> <a href="#" title="Ideas, Planning, and Feedback">🤔</a> <a href="#localization-ChenCMD" title="Localization">🌍</a></td>
     <td align="center"><a href="https://github.com/TouchFisha"><img src="https://avatars0.githubusercontent.com/u/48653079?v=4" width="100px;" alt=""/><br /><sub><b>TouchFisha</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3ATouchFisha" title="Bug reports">🐛</a></td>
   </tr>
   <tr>
@@ -311,8 +321,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2612019"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2612019&size=middle" width="100px;" alt=""/><br /><sub><b>Chelove_C60</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChelove_C60" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1253833"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1253833&size=middle" width="100px;" alt=""/><br /><sub><b>brooke_zb</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Abrooke_zb" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/dragon3025"><img src="https://avatars3.githubusercontent.com/u/11652210?s=460&v=4" width="100px;" alt=""/><br /><sub><b>dragon3025</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Adragon3025" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/misode"><img src="https://avatars0.githubusercontent.com/u/17352009?s=460&v=4" width="100px;" alt=""/><br /><sub><b>misode</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Amisode" title="Bug reports">🐛</a></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/236162204318040065/2163d83b5f7a30335792349f3eb10d13.png?size=256" width="100px;" alt=""/><br /><sub><b>Feierwoerx</b></sub><br /><a href="#translation-Feierwoerx#???1" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/Misode"><img src="https://avatars0.githubusercontent.com/u/17352009?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Misode</b></sub></a><br /><a href="#dependency-Misode" title="Dependencies other than NPM modules">⬆️</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMisode" title="Bug reports">🐛</a></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/236162204318040065/2163d83b5f7a30335792349f3eb10d13.png?size=256" width="100px;" alt=""/><br /><sub><b>Feierwoerx</b></sub><br /><a href="#localization-Feierwoerx" title="Localization">🌍</a></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/277115101465673729/17caf7ffa677227d81c4dd06ef6974f3.png?size=256" width="100px;" alt=""/><br /><sub><b>TCasseBloc</b></sub><br /><a href="#localization-TCasseBloc" title="Localization">🌍</a></td>
   </tr>
 </table>
 
@@ -322,7 +333,45 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
-\* SPGoding used to receive financial supports, but there are no ways to sponsor spg anymore.
+## dependency-npm_modules
+
+The exisistence of DHP comes from many other excellent developers! All NPM module dependencies which are installed via [NPM](https://www.npmjs.com/) can be found in [package.json](https://github.com/SPGoding/datapack-language-server/blob/master/package.json).
+
+## dependency-Arcensoth
+
+Maintains [mcdata](https://github.com/Arcensoth/mcdata), a repository that stores the latest data generated by Minecraft's data generator. DHP downloads data from this repository to provide version-specific completions for blocks and registries. See [#333](https://github.com/SPGoding/datapack-language-server/issues/333) for more details.
+
+## dependency-MrYurihi
+
+Maintains [mc-nbtdoc](https://github.com/Yurihaia/mc-nbtdoc/tree/master), a repository that stores "machine and human readable documentation for all of Minecraft's in game NBT data". DHP downloads genetated JSON files from this repository to provide completions and validations for version-specific NBT data. See [#332](https://github.com/SPGoding/datapack-language-server/issues/332) for more details.
+
+## dependency-Misode
+
+Provides [Tabula](https://github.com/misode/tabula), a lightweight localization tool which is used by DHP to help translate `src/locales/en.json` and `package.nls.json`.
+
+## design-BlackNight0315
+
+Designed the DHP's icon and the banner showed on top of this page.
+
+## localization-Feierwoerx
+
+Localization for 🇩🇪 German (`de`).
+
+## localization-TCasseBloc
+
+Localization for 🇫🇷 French (`fr`).
+
+## localization-ChenCMD
+
+Localization for 🇯🇵 Japanese (`ja`).
+
+## localization-SPGoding
+
+Localization for 🇨🇳 Simplified Chinese (`zh-cn`).
+
+## sponsor
+
+SPGoding used to receive financial supports, but there are no ways to sponsor spg anymore.
 
 # Repository Structure
 
@@ -331,7 +380,3 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   - `server.js`: Stuff related to the server. Included in both the VSCode extension and the NPM package.
 - `lib`: TypeScript Declaration (`.d.ts`) files. These files are only included in the NPM package.
 - `src`: TypeScript source code.
-
-# References
-
-- [https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-multi-server-sample/client/src/extension.ts](Multi Language Server Example)
