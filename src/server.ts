@@ -107,8 +107,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 cacheFile = clone(DefaultCacheFile)
             }
         }
-        await updateCacheFile(cacheFile, roots, progress)
         await getLatestVersions()
+        await updateCacheFile(cacheFile, roots, progress)
         saveCacheFile()
     }
 
@@ -525,7 +525,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
             section: 'datapackLanguageServer'
         }) as Config
     } catch (e) {
-        connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
+        // connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
         return VanillaConfig
     }
 }
