@@ -105,8 +105,9 @@ DHP supports multiple languages. Currently these languages are available:
 
 | Language             | VSCode Language ID |
 | -------------------- | ------------------ |
-| English              | `en`               |
 | German               | `de`               |
+| English              | `en`               |
+| French               | `fr`               |
 | Japanese             | `ja`               |
 | Chinese (Simplified) | `zh-cn`            |
 

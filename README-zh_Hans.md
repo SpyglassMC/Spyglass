@@ -16,10 +16,10 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 大憨批被分为了两部分：JSON 部分与 MCF 部分。前者提供数据包中 JSON 文件（如进度、配方、战利品表、断言、标签等）的支持，后者提供函数文件的支持。您当前正在阅读的帖子是为 MCF 部分编写的。
 
-| 名称 | 版本 | 下载量 |
-| - | - | - |
-| [大憨批（JSON）](https://www.mcbbs.net/thread-897610-1-1.html) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) |
-| [大憨批（MCF）](https://www.mcbbs.net/thread-926724-1-1.html) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
+| 名称                                                           | 版本                                                                                                                                                                                                                                               | 下载量                                                                                                                                                                                                                                                       |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [大憨批（JSON）](https://www.mcbbs.net/thread-897610-1-1.html) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       |
+| [大憨批（MCF）](https://www.mcbbs.net/thread-926724-1-1.html)  | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
 
 # 安装
 
@@ -67,13 +67,15 @@ function spgoding:foo
 
 ## 多语言支持
 
-DHP支持多种语言。目前以下语言已经完全支持：
+大憨批支持多种语言。目前以下语言已经完全支持：
 
-| 语言 | VSCode 语言 ID | 贡献者 |
-| ---- | ---- | ----------- |
-| 英语 | `en` | [SPGoding](https://github.com/SPGoding) |
-| 日语 | `ja` | [ChenCMD](https://github.com/ChenCMD) |
-| 简体中文 | `zh-cn` | [SPGoding](https://github.com/SPGoding) |
+| Language | VSCode Language ID |
+| -------- | ------------------ |
+| 德语     | `de`               |
+| 英语     | `en`               |
+| 法语     | `fr`               |
+| 日语     | `ja`               |
+| 简体中文 | `zh-cn`            |
 
 如果您愿意帮助翻译大憨批至其他语言，我们将不胜感激！请查看 [CONTRIBUTING.md](https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md) 了解更多信息。
 
