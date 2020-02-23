@@ -1,3 +1,4 @@
+import https from 'https'
 import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
 import { ToLintedString } from '../types/Lintable'
@@ -133,4 +134,24 @@ export function toJsonString(value: any, lint: LintConfig): string {
     } else {
         return toLintedString(value, lint)
     }
+}
+
+/* istanbul ignore next */
+export function requestText(uri: string) {
+    return new Promise<string>((resolve, reject) => {
+        https
+            .get(uri, res => {
+                let data: string = ''
+                res.on('data', chunk => {
+                    data += chunk
+                })
+                res.on('end', () => {
+                    resolve(data)
+                })
+            })
+            .on('error', e => {
+                reject(e)
+            })
+            .end()
+    })
 }

@@ -41,7 +41,8 @@ export function activate(context: ExtensionContext) {
             fileEvents: []
         },
         initializationOptions: {
-            storagePath: context.storagePath
+            storagePath: context.storagePath,
+            globalStoragePath: context.globalStoragePath
         },
         progressOnInitialization: true
     }

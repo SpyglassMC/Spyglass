@@ -5,8 +5,9 @@ import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheF
 import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris, FetchConfigFunction, ReadFileFunction } from '../../types/handlers'
 import Identity from '../../types/Identity'
 import { getUriFromId, getUri, getInfo } from './common'
+import { VanillaReportOptions } from '../../types/ParsingContext'
 
-export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
+export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, reportOptions, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, reportOptions?: VanillaReportOptions, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const line = info.lines[lineNumber]
 
@@ -28,7 +29,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
                         for (const pos of unit[key]) {
                             // CHECKME
                             // const info = infos.get(getUri(pos.uri!, uris))
-                            const info = await getInfo(getUri(pos.uri!, uris), infos, cacheFile, fetchConfig, readFile)
+                            const info = await getInfo(getUri(pos.uri!, uris), infos, cacheFile, fetchConfig, readFile, reportOptions)
                             /* istanbul ignore else */
                             if (info) {
                                 documentChanges.push({

@@ -4,8 +4,9 @@ import Config from '../../types/Config'
 import { CacheFile } from '../../types/ClientCache'
 import { parseString } from './common'
 import Line from '../../types/Line'
+import { VanillaReportOptions } from '../../types/ParsingContext'
 
-export default async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile }) {
+export default async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, reportOptions }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
     // Update `version`.
     info.version = version
 
@@ -28,7 +29,7 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
             // Update `lines`.
             const affectedLines: Line[] = []
             for (const string of affectedStrings) {
-                await parseString(string, affectedLines, config, cacheFile)
+                await parseString(string, affectedLines, config, cacheFile, undefined, reportOptions)
             }
             info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
         } else {
@@ -48,7 +49,7 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
             // Update `lines`.
             info.lines = []
             for (const string of info.strings) {
-                await parseString(string, info.lines, config, cacheFile)
+                await parseString(string, info.lines, config, cacheFile, undefined, reportOptions)
             }
         }
     }

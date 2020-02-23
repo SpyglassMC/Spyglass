@@ -2,10 +2,10 @@ import FunctionInfo from '../../types/FunctionInfo'
 import { CacheFile } from '../../types/ClientCache'
 import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
-import { constructContext } from '../../types/ParsingContext'
+import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
 import { SignatureInformation } from 'vscode-languageserver'
 
-export default async function onSignatureHelp({ char, lineNumber, info, cacheFile }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile }) {
+export default async function onSignatureHelp({ char, lineNumber, info, cacheFile, reportOptions }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
     const signatures: SignatureInformation[] = []
 
     const parser = new LineParser(false, 'line')
@@ -14,7 +14,7 @@ export default async function onSignatureHelp({ char, lineNumber, info, cacheFil
         cursor: char,
         cache: cacheFile.cache,
         config: info.config
-    }))
+    }, reportOptions))
 
     const fixLabel = fix.join(' ')
 

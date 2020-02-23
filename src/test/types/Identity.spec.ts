@@ -1,5 +1,5 @@
 import assert = require('power-assert')
-import * as path from 'path'
+import path from 'path'
 import { describe, it } from 'mocha'
 import Identity from '../../types/Identity'
 import { constructConfig } from '../../types/Config'

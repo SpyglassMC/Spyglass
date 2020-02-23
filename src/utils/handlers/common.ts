@@ -1,10 +1,10 @@
-import * as path from 'path'
+import path from 'path'
 import { URI as Uri } from 'vscode-uri'
 import Line from '../../types/Line'
 import Config from '../../types/Config'
 import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
-import { constructContext } from '../../types/ParsingContext'
+import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
 import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
 import { TokenType, TokenModifier } from '../../types/Token'
@@ -65,7 +65,7 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1) {
+export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1, reportOptions?: VanillaReportOptions) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
     } else {
@@ -74,7 +74,7 @@ export async function parseString(string: string, lines: Line[], config: Config,
         const { data } = parser.parse(reader, await constructContext({
             cache: cacheFile.cache,
             config, cursor
-        }))
+        }, reportOptions))
         lines.push(data)
     }
 }
@@ -97,14 +97,14 @@ export function getId(uri: Uri, roots: Uri[]) {
     return Identity.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
-export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction): Promise<FunctionInfo | undefined> {
+export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction, reportOptions?: VanillaReportOptions): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
         try {
             const text = await readFile(uri.fsPath, 'utf8')
             const config = await fetchConfig(uri)
-            await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null })
+            await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null, reportOptions })
             info = infos.get(uri)
         } catch (ignored) {
             // Ignored.

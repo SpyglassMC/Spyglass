@@ -2,8 +2,9 @@ import { InfosOfUris, Uri } from '../../types/handlers'
 import { parseString } from './common'
 import Config from '../../types/Config'
 import { CacheFile } from '../../types/ClientCache'
+import { VanillaReportOptions } from '../../types/ParsingContext'
 
-export default async function onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile }: { text: string, uri: Uri, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile }) {
+export default async function onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile, reportOptions }: { text: string, uri: Uri, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
     const info: any = {}
 
     // lineBreak
@@ -25,7 +26,7 @@ export default async function onDidOpenTextDocument({ text, uri, version, infos,
     // lines
     info.lines = []
     for (const string of info.strings) {
-        await parseString(string, info.lines, config, cacheFile)
+        await parseString(string, info.lines, config, cacheFile, undefined, reportOptions)
     }
 
     infos.set(uri, info)

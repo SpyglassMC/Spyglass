@@ -7,10 +7,9 @@ import Manager from './Manager'
 import NbtSchema from './NbtSchema'
 import Registry from './Registry'
 import { ClientCache } from './ClientCache'
-import { getBlockDefinition } from '../data/BlockDefinition'
+import { getReport } from '../data/Report'
 import { getCommandTree } from '../data/CommandTree'
 import { getNbtSchema } from '../data/NbtSchema'
-import { getRegistry } from '../data/Registry'
 
 export default interface ParsingContext {
     blocks: BlockDefinitions,
@@ -34,11 +33,13 @@ interface ParsingContextLike {
     tree?: CommandTree
 }
 
+export type VanillaReportOptions = { globalStoragePath: string, latestRelease: string, latestSnapshot: string }
+
 /**
  * Construct a `ParsingContext`.
  */
 /* istanbul ignore next */
-export async function constructContext(custom: ParsingContextLike): Promise<ParsingContext> {
+export async function constructContext(custom: ParsingContextLike, options?: VanillaReportOptions): Promise<ParsingContext> {
     const ans = {
         cache: {},
         config: VanillaConfig,
@@ -47,9 +48,9 @@ export async function constructContext(custom: ParsingContextLike): Promise<Pars
         ...custom
     } as ParsingContext
 
-    ans.blocks = ans.blocks || await getBlockDefinition(ans.config.env.version)
+    ans.blocks = ans.blocks || await getReport('BlockDefinition', ans.config.env.dataVersion, options)
+    ans.registries = ans.registries || await getReport('Registry', ans.config.env.dataVersion, options)
     ans.nbt = ans.nbt || await getNbtSchema(ans.config.env.version)
-    ans.registries = ans.registries || await getRegistry(ans.config.env.version)
     ans.tree = ans.tree || await getCommandTree(ans.config.env.version)
 
     return ans

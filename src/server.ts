@@ -1,5 +1,5 @@
-import * as fs from 'fs-extra'
-import * as path from 'path'
+import fs from 'fs-extra'
+import path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed } from 'vscode-languageserver'
@@ -34,6 +34,8 @@ import onDocumentLinks from './utils/handlers/onDocumentLinks'
 import onDefOrRef from './utils/handlers/onDefOrRef'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
 import onRenameRequest from './utils/handlers/onRenameRequest'
+import { requestText } from './utils/utils'
+import { VanillaReportOptions } from './types/ParsingContext'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -46,11 +48,15 @@ const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
  */
 const roots: Uri[] = []
 
+let globalStoragePath: string
+
 let cachePath: string | undefined
 let cacheFile: CacheFile = clone(DefaultCacheFile)
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath } }, _, progress) => {
-    await loadLocale()
+let reportOptions: VanillaReportOptions | undefined
+
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath } }, _, progress) => {
+    await loadLocale(connection.console as any)
 
     progress.begin(locale('server.initializing'))
 
@@ -65,7 +71,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             //     await fs.pathExists(path.join(uri.fsPath, 'data'))
             // ) {
             roots.push(uri)
-            connection.console.info(`rootUri (priority = ${roots.length}) = ${uri.toString()}`)
+            connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
             const legacyDotPath = path.join(uri.fsPath, '.datapack')
             if (await fs.pathExists(legacyDotPath)) {
@@ -76,13 +82,20 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             // }
         }
 
-        cachePath = path.join(storagePath, './cache.json')
+        globalStoragePath = gsPath
+        if (!await fs.pathExists(globalStoragePath)) {
+            await fs.mkdirp(globalStoragePath)
+        }
+        connection.console.info(`globalStoragePath = ‘${globalStoragePath}’`)
 
-        connection.console.info(`storagePath = ${storagePath}`)
-        connection.console.info(`cachePath = ${cachePath}`)
         if (!await fs.pathExists(storagePath)) {
             await fs.mkdirp(storagePath)
         }
+        connection.console.info(`storagePath = ‘${storagePath}’`)
+
+        cachePath = path.join(storagePath, './cache.json')
+        connection.console.info(`cachePath = ‘${cachePath}’`)
+
         if (fs.existsSync(cachePath)) {
             try {
                 cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
@@ -95,6 +108,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             }
         }
         await updateCacheFile(cacheFile, roots, progress)
+        await getLatestVersions()
         saveCacheFile()
     }
 
@@ -154,20 +168,20 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const config = await fetchConfig(uri)
 
-        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
+        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile, reportOptions })
 
         updateDiagnostics(uri)
     })
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return
         }
         const config = info.config
 
-        await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile })
+        await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, reportOptions })
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -185,7 +199,7 @@ connection.onInitialized(() => {
     })
 
     connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
-        console.log(`WillSave: ‘${uriString}’`)
+        // console.log(`WillSave: ‘${uriString}’`)
     })
 
     connection.onDidChangeWatchedFiles(async ({ changes }) => {
@@ -239,7 +253,7 @@ connection.onInitialized(() => {
                     // TODO(#252): Only trigger update for non-opened documents.
 
                     // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
-                    console.log(`Changed : ‘${uriString}’`)
+                    // console.log(`Changed : ‘${uriString}’`)
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
                         const result = Identity.fromRel(getRel(uri, roots)!)
@@ -294,25 +308,25 @@ connection.onInitialized(() => {
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
-        return onCompletion({ cacheFile, lineNumber, char, info })
+        return onCompletion({ cacheFile, lineNumber, char, info, reportOptions })
     })
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
-        return onSignatureHelp({ cacheFile, lineNumber, char, info })
+        return onSignatureHelp({ cacheFile, lineNumber, char, info, reportOptions })
     })
 
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -321,7 +335,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -331,7 +345,7 @@ connection.onInitialized(() => {
 
     connection.onDefinition(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -340,7 +354,7 @@ connection.onInitialized(() => {
     })
     connection.onReferences(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -350,7 +364,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -360,7 +374,7 @@ connection.onInitialized(() => {
 
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -370,7 +384,7 @@ connection.onInitialized(() => {
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -388,7 +402,7 @@ connection.onInitialized(() => {
 
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -397,7 +411,7 @@ connection.onInitialized(() => {
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char }, newName }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -407,7 +421,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -417,7 +431,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -430,7 +444,7 @@ connection.onInitialized(() => {
         range: { start: { character: start, line: lineNumber }, end: { character: end } }
     }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return null
         }
@@ -440,7 +454,7 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return { data: [] }
         }
@@ -450,7 +464,7 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (!info) {
             return { edits: [] }
         }
@@ -476,8 +490,19 @@ connection.onInitialized(() => {
     })
 })
 
+async function getLatestVersions() {
+    try {
+        const str = await requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json')
+        const { latest: { release, snapshot } }: { latest: { release: string, snapshot: string } } = JSON.parse(str)
+        reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot } : undefined
+    } catch (e) {
+        connection.console.warn(`Error occurred while getting latest verions: ${e}`)
+    }
+    connection.console.info(`reportOptions = ${JSON.stringify(reportOptions)}`)
+}
+
 async function updateDiagnostics(uri: Uri) {
-    const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+    const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
     if (!info) {
         return
     }
@@ -499,8 +524,8 @@ async function fetchConfig(uri: Uri): Promise<Config> {
             scopeUri: uri.toString(),
             section: 'datapackLanguageServer'
         }) as Config
-    } catch (ignored) {
-        // connection.console.error(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
+    } catch (e) {
+        connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
         return VanillaConfig
     }
 }
@@ -524,7 +549,7 @@ const cacheFileOperations = {
     combineCacheOfLines: async (uri: Uri) => {
         // CHECKME
         // const info = infos.get(uri)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0

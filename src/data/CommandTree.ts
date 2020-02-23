@@ -1,11 +1,11 @@
-import GameVersion from '../types/GameVersion'
+import CommandTreeVersion from '../types/CommandTreeVersion'
 import CommandTree from '../types/CommandTree'
 
 const CommandTrees: {
     [version: string]: CommandTree | undefined
 } = {}
 
-export async function getCommandTree(version: GameVersion) {
+export async function getCommandTree(version: CommandTreeVersion) {
     if (!CommandTrees[version]) {
         CommandTrees[version] = (await import(`./${version}/CommandTree`)).default
     }

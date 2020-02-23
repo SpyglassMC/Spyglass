@@ -1,19 +1,28 @@
 import { SelectorParsedArgument } from './Entity'
-import GameVersion from './GameVersion'
+import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 
 export type EnvConfig = {
+
     /**
      * `function-permission-level` defined in `server.properties`.  
      * @default 2
      */
     permissionLevel: 1 | 2 | 3 | 4,
     /**
-     * Game version.  
+     * The version of the command tree. Only major versions are available.  
      * @default '1.16'
      */
-    version: GameVersion
+    version: CommandTreeVersion,
+    /**
+     * The version of the completion data, including registries, block definitions, and nbtdoc.
+     * Should be an identity in the [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json)
+     * which was released after `19w40a`.
+     * Apart from a version identity, you can also input `Latest release` or `Latest snapshot` here (case-insensitive).
+     * @default 'Latest snapshot'
+     */
+    dataVersion: string
 }
 
 export type LintConfig = {
@@ -399,6 +408,7 @@ export default interface Config {
 export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
+        dataVersion: 'Latest snapshot',
         version: '1.16'
     },
     lint: {

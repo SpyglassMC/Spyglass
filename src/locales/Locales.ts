@@ -19,7 +19,7 @@ export function locale(key: string, ...params: any[]) {
     }
 
     if (!value) {
-        console.error(`Unknown locale key ‘${key}’`)
+        console.warn(`Unknown locale key ‘${key}’`)
         value = ''
     }
 
@@ -32,11 +32,11 @@ export function locale(key: string, ...params: any[]) {
 }
 
 /* istanbul ignore next */
-export async function loadLocale() {
+export async function loadLocale(console: Console) {
     if (!language) {
         language = 'en'
 
-        console.log('[I18N] Start.')
+        console.info('[I18N] Start.')
 
         if (process.env.VSCODE_NLS_CONFIG) {
             try {
@@ -45,25 +45,25 @@ export async function loadLocale() {
                     const code: string = config.locale
                     if (code !== 'en' && code !== 'en-us') {
                         try {
-                            console.log(`[I18N] Try: ‘${code}’.`)
+                            console.info(`[I18N] Try: ‘${code}’.`)
                             const locale = await import(`./${code}.json`)
                             language = code
                             Locales[code] = locale
-                            console.log(`[I18N] Succeded: ‘${code}’.`)
+                            console.info(`[I18N] Succeded: ‘${code}’.`)
                         } catch (e) {
-                            console.error(`[I18N] Faild: ‘${code}’.`)
+                            console.warn(`[I18N] Faild: ‘${code}’.`)
                         }
                     }
                 } else {
-                    console.error(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
+                    console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
                 }
             } catch (ignored) {
-                console.error(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
+                console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
             }
         } else {
-            console.error('[I18N] No VSCODE_NLS_CONFIG found.')
+            console.warn('[I18N] No VSCODE_NLS_CONFIG found.')
         }
 
-        console.log(`[I18N] Final: ‘${language}’.`)
+        console.info(`[I18N] Final: ‘${language}’.`)
     }
 }

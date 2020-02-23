@@ -1,4 +1,4 @@
-import * as path from 'path'
+import path from 'path'
 import Lintable, { ToLintedString } from './Lintable'
 import { ClientCache, CacheKey } from './ClientCache'
 import { LintConfig } from './Config'
