@@ -50,6 +50,7 @@ DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio
   - [design-BlackNight0315](#design-blacknight0315)
   - [localization-Feierwoerx](#localization-feierwoerx)
   - [localization-TCasseBloc](#localization-tcassebloc)
+  - [localization-Ghoulboy78](#localization-ghoulboy78)
   - [localization-ChenCMD](#localization-chencmd)
   - [localization-SPGoding](#localization-spgoding)
   - [sponsor](#sponsor)
@@ -108,6 +109,7 @@ DHP supports multiple languages. Currently these languages are available:
 | German               | `de`               |
 | English              | `en`               |
 | French               | `fr`               |
+| Italian              | `it`               |
 | Japanese             | `ja`               |
 | Chinese (Simplified) | `zh-cn`            |
 
@@ -326,6 +328,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><img src="https://cdn.discordapp.com/avatars/236162204318040065/2163d83b5f7a30335792349f3eb10d13.png?size=256" width="100px;" alt=""/><br /><sub><b>Feierwoerx</b></sub><br /><a href="#localization-Feierwoerx" title="Localization">🌍</a></td>
     <td align="center"><img src="https://cdn.discordapp.com/avatars/277115101465673729/17caf7ffa677227d81c4dd06ef6974f3.png?size=256" width="100px;" alt=""/><br /><sub><b>TCasseBloc</b></sub><br /><a href="#localization-TCasseBloc" title="Localization">🌍</a></td>
   </tr>
+  <tr>
+    <td align="center"><img src="https://avatars1.githubusercontent.com/u/53367549?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Ghoulboy</b></sub><br /><a href="#localization-Ghoulboy78" title="Localization">🌍</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
@@ -361,6 +366,10 @@ Localization for 🇩🇪 German (`de`).
 ## localization-TCasseBloc
 
 Localization for 🇫🇷 French (`fr`).
+
+## localization-Ghoulboy78
+
+Localization for 🇮🇹 Italian (`it`).
 
 ## localization-ChenCMD
 

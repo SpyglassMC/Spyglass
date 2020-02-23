@@ -74,6 +74,7 @@ function spgoding:foo
 | 德语     | `de`               |
 | 英语     | `en`               |
 | 法语     | `fr`               |
+| 意大利语 | `it`               |
 | 日语     | `ja`               |
 | 简体中文 | `zh-cn`            |
 
