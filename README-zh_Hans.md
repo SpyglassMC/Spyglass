@@ -69,7 +69,7 @@ function spgoding:foo
 
 大憨批支持多种语言。目前以下语言已经完全支持：
 
-| Language | VSCode Language ID |
+| 语言     | VSCode Language ID |
 | -------- | ------------------ |
 | 德语     | `de`               |
 | 英语     | `en`               |
