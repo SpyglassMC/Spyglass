@@ -108,76 +108,76 @@ export type LintConfig = {
      */
     quoteEntitySelectorKeys: boolean,
     /**
-     * When the string keys in SNBTs should be quoted.  
+     * When the string keys in NBTs should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default false
      */
     quoteSnbtStringKeys: boolean,
     /**
-     * When the string values in SNBTs should be quoted.  
+     * When the string values in NBTs should be quoted.  
      * `true`: Always.  
      * `false`: Only when there are special characters in the string.  
      * @default true
      */
     quoteSnbtStringValues: boolean,
     /**
-     * Whether to append spaces after colons in SNBTs or not.  
+     * Whether to append spaces after colons in NBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterColon: boolean,
     /**
-     * Whether to append spaces after commas in SNBTs or not.  
+     * Whether to append spaces after commas in NBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterComma: boolean,
     /**
-     * Whether to append spaces after semicolons in SNBTs or not.  
+     * Whether to append spaces after semicolons in NBTs or not.  
      * @default true
      */
     snbtAppendSpaceAfterSemicolon: boolean,
     /**
-     * The suffix used for TAG_Byte in SNBTs.  
+     * The suffix used for TAG_Byte in NBTs.  
      * @default 'b'
      */
     snbtByteSuffix: 'b' | 'B',
     /**
-     * Whether `0b` and `1b` should be represents by `false` and `true` in SNBTs or not.  
+     * Whether `0b` and `1b` should be represents by `false` and `true` in NBTs or not.  
      * @default false
      */
     snbtUseBooleans: boolean,
     /**
-     * The suffix used for TAG_Short in SNBTs.  
+     * The suffix used for TAG_Short in NBTs.  
      * @default 's'
      */
     snbtShortSuffix: 's' | 'S',
     /**
-     * The suffix used for TAG_Long in SNBTs.  
+     * The suffix used for TAG_Long in NBTs.  
      * @default 'L'
      */
     snbtLongSuffix: 'l' | 'L',
     /**
-     * The suffix used for TAG_Float in SNBTs.  
+     * The suffix used for TAG_Float in NBTs.  
      * @default 'f'
      */
     snbtFloatSuffix: 'f' | 'F',
     /**
-     * The suffix used for TAG_Double in SNBTs.  
+     * The suffix used for TAG_Double in NBTs.  
      * @default 'd'
      */
     snbtDoubleSuffix: 'd' | 'D',
     /**
-     * Whether to omit the suffix of double numbers when possible in SNBTs or not.  
+     * Whether to omit the suffix of double numbers when possible in NBTs or not.  
      * @default false
      */
     snbtOmitDoubleSuffix: boolean,
     /**
-     * Whether to keep at least one decimal place in SNBTs or not.  
+     * Whether to keep at least one decimal place in NBTs or not.  
      * @default true
      */
     snbtKeepDecimalPlace: boolean,
     /**
-     * Whether to sort keys in compound tags in SNBTs or not.  
+     * Whether to sort keys in compound tags in NBTs or not.  
      * @default false
      */
     snbtSortKeys: boolean,
@@ -192,7 +192,7 @@ export type LintConfig = {
      */
     nameOfObjectives: NamingConventionConfig,
     /**
-     * The naming convention for compound tag keys in SNBTs.  
+     * The naming convention for compound tag keys in NBTs.  
      * @default 'whatever'
      */
     nameOfSnbtCompoundTagKeys: NamingConventionConfig,
@@ -371,7 +371,7 @@ export type LintConfig = {
     strictParticleTypeCheck: StrictCheckConfig,
     /**
      * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-     * No matter what the setting is, namespaces in SNBT predicates will always be kept.  
+     * No matter what the setting is, namespaces in NBT predicates will always be kept.  
      * @default false
      */
     omitDefaultNamespace: boolean

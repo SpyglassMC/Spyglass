@@ -148,7 +148,7 @@
 - [`0206330`](https://github.com/SPGoding/datapack-language-server/commit/0206330)  Fix not recognizing UUIDs (Issues: [`#208`](https://github.com/SPGoding/datapack-language-server/issues/208))
 - [`c089af8`](https://github.com/SPGoding/datapack-language-server/commit/c089af8)  Fix the completions for non-definition comments (Issues: [`#207`](https://github.com/SPGoding/datapack-language-server/issues/207))
 - [`a4c675b`](https://github.com/SPGoding/datapack-language-server/commit/a4c675b)  Fix duplicated definition cache (Issues: [`#218`](https://github.com/SPGoding/datapack-language-server/issues/218))
-- [`b9659c4`](https://github.com/SPGoding/datapack-language-server/commit/b9659c4)  Fix not renaming tags in SNBTs (Issues: [`#194`](https://github.com/SPGoding/datapack-language-server/issues/194))
+- [`b9659c4`](https://github.com/SPGoding/datapack-language-server/commit/b9659c4)  Fix not renaming tags in NBTs (Issues: [`#194`](https://github.com/SPGoding/datapack-language-server/issues/194))
 - [`93b462c`](https://github.com/SPGoding/datapack-language-server/commit/93b462c)  Fix errors with text components (Issues: [`#170`](https://github.com/SPGoding/datapack-language-server/issues/170))
 
 # [v1.10.5](https://github.com/SPGoding/datapack-language-server/compare/v1.10.4...v1.10.5) (2019-12-15)
@@ -179,7 +179,7 @@
 
 ## 🐛 Bug Fixes
 - [`7fcd246`](https://github.com/SPGoding/datapack-language-server/commit/7fcd246)  Fix not formatting when hints or warnings exist 
-- [`c56d320`](https://github.com/SPGoding/datapack-language-server/commit/c56d320)  Fix parsing some namespaced IDs in SNBTs 
+- [`c56d320`](https://github.com/SPGoding/datapack-language-server/commit/c56d320)  Fix parsing some namespaced IDs in NBTs 
 
 ## 🔒 Security Issues
 - [`832dee8`](https://github.com/SPGoding/datapack-language-server/commit/832dee8)  Fix 9 vulnerabilities
