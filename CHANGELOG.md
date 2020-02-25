@@ -1,3 +1,8 @@
+# [v1.13.5](https://github.com/SPGoding/datapack-language-server/compare/v1.13.4...v1.13.5) (2020-02-25)
+
+## 🐛 Bug Fixes
+- [`81cae2d`](https://github.com/SPGoding/datapack-language-server/commit/81cae2d)  Ensure parsing is after getting latest verisons
+
 # [v1.13.4](https://github.com/SPGoding/datapack-language-server/compare/v1.13.3...v1.13.4) (2020-02-22)
 
 ## 🐛 Bug Fixes
