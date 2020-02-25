@@ -27,6 +27,8 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 或者，您也可以直接打开 VSCode，按 Ctrl + P，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
 
+**提示**：大憨批要求 VSCode 的版本最低为 `1.41.0`。请确保你安装的 VSCode 在该版本之后发布。
+
 # 特性
 
 ## 工作区支持

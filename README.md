@@ -62,6 +62,8 @@ You can install DHP (MCF) from the VSCode Marketplace: [![VSCode Marketplace](ht
 
 Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-language-server` in your VSCode.
 
+**Note**: DHP has a minimum version requirement of VSCode `1.41.0`. Please make sure that your VSCode is later than this version.
+
 # Features
 
 ## Workspace Support
