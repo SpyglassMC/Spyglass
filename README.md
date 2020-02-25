@@ -325,8 +325,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Misode"><img src="https://avatars0.githubusercontent.com/u/17352009?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Misode</b></sub></a><br /><a href="#dependency-Misode" title="Dependencies other than NPM modules">⬆️</a> <a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AMisode" title="Bug reports">🐛</a></td>
     <td align="center"><img src="https://cdn.discordapp.com/avatars/236162204318040065/2163d83b5f7a30335792349f3eb10d13.png?size=256" width="100px;" alt=""/><br /><sub><b>Feierwoerx</b></sub><br /><a href="#localization-Feierwoerx" title="Localization">🌍</a></td>
     <td align="center"><img src="https://cdn.discordapp.com/avatars/277115101465673729/17caf7ffa677227d81c4dd06ef6974f3.png?size=256" width="100px;" alt=""/><br /><sub><b>TCasseBloc</b></sub><br /><a href="#localization-TCasseBloc" title="Localization">🌍</a></td>
-  </tr>
-  <tr>
     <td align="center"><img src="https://avatars1.githubusercontent.com/u/53367549?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Ghoulboy</b></sub><br /><a href="#localization-Ghoulboy78" title="Localization">🌍</a></td>
   </tr>
 </table>
