@@ -86,7 +86,7 @@ describe('ParticleArgumentParser Tests', () => {
                 colors: {
                     '0.93 0.4 0.8': {
                         def: [],
-                        ref: [{ start: 0, end: 34 }]
+                        ref: [{ start: 0, end: 29 }]
                     }
                 }
             })
