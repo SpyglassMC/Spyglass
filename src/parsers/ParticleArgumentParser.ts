@@ -34,20 +34,18 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                         .expect(' ')
                         .skip()
                     const colorResult = ctx.parsers.get('Vector', [
-                        4, false, false,
-                        [0, 0, 0, undefined],
-                        [1, 1, 1, undefined]
+                        3, false, false,
+                        [0, 0, 0],
+                        [1, 1, 1]
                     ]).parse(reader, ctx)
                     const color = colorResult.data as Vector
                     combineArgumentParserResult(ans, colorResult)
-                    ans.data.param = color
                     /* istanbul ignore else */
                     if (ans.errors.length === 0) {
                         const key = `${
                             parseFloat(color.elements[0].value)} ${
                             parseFloat(color.elements[1].value)} ${
-                            parseFloat(color.elements[2].value)} ${
-                            parseFloat(color.elements[3].value)}`
+                            parseFloat(color.elements[2].value)}`
                         ans.cache = {
                             colors: {
                                 [key]: {
@@ -57,6 +55,14 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                             }
                         }
                     }
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const sizeResult = ctx.parsers.get('Number', ['float']).parse(reader, ctx)
+                    const size = sizeResult.data as number
+                    combineArgumentParserResult(ans, colorResult)
+                    color.elements.push({ type: 'absolute', value: size.toString() })
+                    ans.data.param = color
                     break
                 case 'minecraft:block':
                 case 'minecraft:falling_dust':

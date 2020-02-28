@@ -71,7 +71,7 @@ describe('ParticleArgumentParser Tests', () => {
         })
         it('Should return data for ‘dust’ particle', () => {
             const parser = new ParticleArgumentParser()
-            const actual = parser.parse(new StringReader('minecraft:dust 0.93 0.40 0.80 1.00'), ctx)
+            const actual = parser.parse(new StringReader('minecraft:dust 0.93 0.40 0.80 1'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Particle(
                 new Identity('minecraft', ['dust']),
@@ -79,12 +79,12 @@ describe('ParticleArgumentParser Tests', () => {
                     { value: '0.93', type: 'absolute' },
                     { value: '0.40', type: 'absolute' },
                     { value: '0.80', type: 'absolute' },
-                    { value: '1.00', type: 'absolute' }
+                    { value: '1', type: 'absolute' }
                 ])
             ))
             assert.deepEqual(actual.cache, {
                 colors: {
-                    '0.93 0.4 0.8 1': {
+                    '0.93 0.4 0.8': {
                         def: [],
                         ref: [{ start: 0, end: 34 }]
                     }

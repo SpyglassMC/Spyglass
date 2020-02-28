@@ -17,7 +17,7 @@ export default function onDocumentColor({ info }: { info: FunctionInfo }) {
                     red: numbers[0],
                     green: numbers[1],
                     blue: numbers[2],
-                    alpha: numbers[3]
+                    alpha: numbers[3] !== undefined ? numbers[3] : 1
                 }
                 for (const { start, end } of unit.ref) {
                     ans.push({
