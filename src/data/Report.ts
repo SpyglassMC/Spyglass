@@ -42,8 +42,13 @@ function getVersion(version: string, options: VanillaReportOptions) {
     }
 }
 
-function getReportUri(type: ReportType, version: string) {
-    return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/generated/reports/${type === 'BlockDefinition' ? 'blocks' : 'registries'}.json`
+function getReportUri(type: ReportType, version: string, processedVersions: string[]) {
+    const name = type === 'BlockDefinition' ? 'blocks' : 'registries'
+    if (processedVersions.includes(version)) {
+        return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/processed/reports/${name}/${name}.min.json`
+    } else {
+        return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/generated/reports/${name}.json`
+    }
 }
 
 export async function getReport(type: ReportType, versionOrLiteral: string, options?: VanillaReportOptions) {
@@ -66,7 +71,7 @@ export async function getReport(type: ReportType, versionOrLiteral: string, opti
                     console.info(`[${type}] Loaded ${version} (${versionOrLiteral}) from local file.`)
                     cache[versionOrLiteral] = json
                 } else {
-                    const uri = getReportUri(type, version)
+                    const uri = getReportUri(type, version, options.processedVersions)
                     console.info(`[${type}] Fetching ${version} (${versionOrLiteral}) from GitHub ‘${uri}’...`)
                     const json = JSON.parse(await requestText(uri))
                     await fs.mkdirp(versionPath)

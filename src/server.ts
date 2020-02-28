@@ -493,8 +493,11 @@ connection.onInitialized(() => {
 async function getLatestVersions() {
     try {
         const str = await requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json')
-        const { latest: { release, snapshot } }: { latest: { release: string, snapshot: string } } = JSON.parse(str)
-        reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot } : undefined
+        const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
+        const processedVersion = '20w09a'
+        const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
+        const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
+        reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
         connection.console.warn(`Error occurred while getting latest verions: ${e}`)
     }

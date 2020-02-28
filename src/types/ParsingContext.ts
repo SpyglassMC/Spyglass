@@ -33,7 +33,7 @@ interface ParsingContextLike {
     tree?: CommandTree
 }
 
-export type VanillaReportOptions = { globalStoragePath: string, latestRelease: string, latestSnapshot: string }
+export type VanillaReportOptions = { globalStoragePath: string, latestRelease: string, latestSnapshot: string, processedVersions: string[] }
 
 /**
  * Construct a `ParsingContext`.
