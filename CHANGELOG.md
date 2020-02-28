@@ -1,3 +1,9 @@
+# [v1.13.6](https://github.com/SPGoding/datapack-language-server/compare/v1.13.5...v1.13.6) (2020-02-28)
+
+## 🐛 Bug Fixes
+- [`3f6b84d`](https://github.com/SPGoding/datapack-language-server/commit/3f6b84d)  Fix treating the forth element in dust as alpha (Issues: [`#350`](https://github.com/SPGoding/datapack-language-server/issues/350))
+- [`531f13d`](https://github.com/SPGoding/datapack-language-server/commit/531f13d)  Fix keeping retrying downloading reports (Issues: [`#353`](https://github.com/SPGoding/datapack-language-server/issues/353))
+
 # [v1.13.5](https://github.com/SPGoding/datapack-language-server/compare/v1.13.4...v1.13.5) (2020-02-25)
 
 ## 🐛 Bug Fixes
