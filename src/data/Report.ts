@@ -15,6 +15,9 @@ const Registries: {
     [version: string]: Registry | undefined
 } = {}
 
+const MaxFaildTimes = 5
+let faildTimes = 0
+
 type ReportType = 'BlockDefinition' | 'Registry'
 
 function getCache(type: ReportType) {
@@ -46,6 +49,11 @@ function getReportUri(type: ReportType, version: string) {
 export async function getReport(type: ReportType, versionOrLiteral: string, options?: VanillaReportOptions) {
     const cache = getCache(type)
     if (!cache[versionOrLiteral]) {
+        if (faildTimes >= MaxFaildTimes) {
+            const ans = await getDefault(type)
+            cache[versionOrLiteral] = ans
+            return ans
+        }
         if (options) {
             const version = getVersion(versionOrLiteral, options)
             const versionPath = path.join(options.globalStoragePath, version)
@@ -67,7 +75,8 @@ export async function getReport(type: ReportType, versionOrLiteral: string, opti
                     cache[versionOrLiteral] = json
                 }
             } catch (e) {
-                console.warn(`[${type}] Error occurred: ${e}`)
+                console.warn(`[${type}] Error occurred: ${e} (${faildTimes}/${MaxFaildTimes})`)
+                faildTimes++
                 const ans = await getDefault(type)
                 console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
                 return ans
