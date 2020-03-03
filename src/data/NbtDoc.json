@@ -1,0 +1,9460 @@
+{
+	"registries": {
+		"minecraft:block": [
+			{
+				"minecraft:smoker": 106,
+				"minecraft:light_blue_shulker_box": 108,
+				"minecraft:wither_skeleton_skull": 100,
+				"minecraft:banner": 122,
+				"minecraft:ender_chest": 100,
+				"minecraft:dark_oak_sign": 104,
+				"minecraft:enchanting_table": 110,
+				"minecraft:bell": 100,
+				"minecraft:bed": 100,
+				"minecraft:spruce_sign": 104,
+				"minecraft:oak_wall_sign": 104,
+				"minecraft:comparator": 116,
+				"minecraft:lectern": 114,
+				"minecraft:beacon": 117,
+				"minecraft:jungle_sign": 104,
+				"minecraft:end_portal": 100,
+				"minecraft:jigsaw": 124,
+				"minecraft:gray_shulker_box": 108,
+				"minecraft:hopper": 127,
+				"minecraft:moving_piston": 103,
+				"minecraft:zombie_wall_head": 100,
+				"minecraft:jungle_wall_sign": 104,
+				"minecraft:structure_block": 115,
+				"minecraft:red_shulker_box": 108,
+				"minecraft:spruce_wall_sign": 104,
+				"minecraft:repeating_command_block": 111,
+				"minecraft:birch_sign": 104,
+				"minecraft:magenta_shulker_box": 108,
+				"minecraft:lime_shulker_box": 108,
+				"minecraft:daylight_detector": 100,
+				"minecraft:dragon_head": 100,
+				"minecraft:orange_shulker_box": 108,
+				"minecraft:mob_spawner": 132,
+				"minecraft:dragon_wall_head": 100,
+				"minecraft:brown_shulker_box": 108,
+				"minecraft:pink_shulker_box": 108,
+				"minecraft:chain_command_block": 111,
+				"minecraft:black_shulker_box": 108,
+				"minecraft:acacia_wall_sign": 104,
+				"minecraft:zombie_head": 100,
+				"minecraft:acacia_sign": 104,
+				"minecraft:cyan_shulker_box": 108,
+				"minecraft:command_block": 111,
+				"minecraft:dispenser": 109,
+				"minecraft:barrel": 108,
+				"minecraft:birch_wall_sign": 104,
+				"minecraft:dropper": 109,
+				"minecraft:skeleton_skull": 100,
+				"minecraft:green_shulker_box": 108,
+				"minecraft:conduit": 125,
+				"minecraft:dark_oak_wall_sign": 104,
+				"minecraft:jukebox": 105,
+				"minecraft:skeleton_wall_skull": 100,
+				"minecraft:shulker_box": 108,
+				"minecraft:blast_furnace": 106,
+				"minecraft:light_gray_shulker_box": 108,
+				"minecraft:blue_shulker_box": 108,
+				"minecraft:brewing_stand": 131,
+				"minecraft:chest": 108,
+				"minecraft:purple_shulker_box": 108,
+				"minecraft:end_gateway": 112,
+				"minecraft:creeper_head": 100,
+				"minecraft:white_shulker_box": 108,
+				"minecraft:creeper_wall_head": 100,
+				"minecraft:furnace": 106,
+				"minecraft:campfire": 102,
+				"minecraft:wither_skeleton_wall_skull": 100,
+				"minecraft:yellow_shulker_box": 108
+			},
+			101
+		],
+		"minecraft:item": [
+			{
+				"minecraft:trader_llama_spawn_egg": 168,
+				"minecraft:purple_concrete": 162,
+				"minecraft:cod_spawn_egg": 168,
+				"minecraft:dark_prismarine_slab": 162,
+				"minecraft:potion": 163,
+				"minecraft:spruce_slab": 162,
+				"minecraft:end_stone_bricks": 162,
+				"minecraft:purple_carpet": 162,
+				"minecraft:green_glazed_terracotta": 162,
+				"minecraft:jigsaw": 162,
+				"minecraft:bamboo": 162,
+				"minecraft:black_carpet": 162,
+				"minecraft:lime_banner": 162,
+				"minecraft:wandering_trader_spawn_egg": 168,
+				"minecraft:light_gray_banner": 162,
+				"minecraft:enderman_spawn_egg": 168,
+				"minecraft:rabbit_spawn_egg": 168,
+				"minecraft:pufferfish_bucket": 160,
+				"minecraft:black_concrete_powder": 162,
+				"minecraft:chicken_spawn_egg": 168,
+				"minecraft:salmon_bucket": 160,
+				"minecraft:sticky_piston": 162,
+				"minecraft:polar_bear_spawn_egg": 168,
+				"minecraft:stripped_jungle_wood": 162,
+				"minecraft:terracotta": 162,
+				"minecraft:mule_spawn_egg": 168,
+				"minecraft:chiseled_stone_bricks": 162,
+				"minecraft:nether_brick_fence": 162,
+				"minecraft:pink_concrete_powder": 162,
+				"minecraft:orange_carpet": 162,
+				"minecraft:brown_glazed_terracotta": 162,
+				"minecraft:light_gray_stained_glass_pane": 162,
+				"minecraft:dark_oak_slab": 162,
+				"minecraft:sunflower": 162,
+				"minecraft:zombie_spawn_egg": 168,
+				"minecraft:infested_stone_bricks": 162,
+				"minecraft:jukebox": 162,
+				"minecraft:white_banner": 162,
+				"minecraft:vex_spawn_egg": 168,
+				"minecraft:tnt": 162,
+				"minecraft:iron_door": 162,
+				"minecraft:clay": 162,
+				"minecraft:orange_concrete_powder": 162,
+				"minecraft:zombie_head": 162,
+				"minecraft:nether_bricks": 162,
+				"minecraft:brown_concrete": 162,
+				"minecraft:player_head": 152,
+				"minecraft:stray_spawn_egg": 168,
+				"minecraft:lingering_potion": 163,
+				"minecraft:horn_coral_block": 162,
+				"minecraft:soul_sand": 162,
+				"minecraft:gold_ore": 162,
+				"minecraft:gravel": 162,
+				"minecraft:lapis_block": 162,
+				"minecraft:redstone_torch": 162,
+				"minecraft:yellow_concrete_powder": 162,
+				"minecraft:tall_grass": 162,
+				"minecraft:llama_spawn_egg": 168,
+				"minecraft:diorite_stairs": 162,
+				"minecraft:yellow_carpet": 162,
+				"minecraft:parrot_spawn_egg": 168,
+				"minecraft:oak_planks": 162,
+				"minecraft:red_mushroom_block": 162,
+				"minecraft:stone_brick_wall": 162,
+				"minecraft:dragon_egg": 162,
+				"minecraft:campfire": 162,
+				"minecraft:lime_stained_glass": 162,
+				"minecraft:green_shulker_box": 162,
+				"minecraft:nether_brick_wall": 162,
+				"minecraft:cobblestone_stairs": 162,
+				"minecraft:polished_andesite_slab": 162,
+				"minecraft:quartz_block": 162,
+				"minecraft:blue_concrete_powder": 162,
+				"minecraft:jungle_sapling": 162,
+				"minecraft:stone": 162,
+				"minecraft:nether_brick_slab": 162,
+				"minecraft:birch_pressure_plate": 162,
+				"minecraft:sponge": 162,
+				"minecraft:brick_wall": 162,
+				"minecraft:prismarine_brick_stairs": 162,
+				"minecraft:black_banner": 162,
+				"minecraft:dark_oak_pressure_plate": 162,
+				"minecraft:dead_horn_coral_fan": 162,
+				"minecraft:piston": 162,
+				"minecraft:lilac": 162,
+				"minecraft:rose_bush": 162,
+				"minecraft:gray_carpet": 162,
+				"minecraft:prismarine_slab": 162,
+				"minecraft:firework_star": 157,
+				"minecraft:pufferfish_spawn_egg": 168,
+				"minecraft:brown_carpet": 162,
+				"minecraft:orange_concrete": 162,
+				"minecraft:azure_bluet": 162,
+				"minecraft:mossy_stone_brick_wall": 162,
+				"minecraft:light_blue_concrete": 162,
+				"minecraft:pink_carpet": 162,
+				"minecraft:bee_spawn_egg": 168,
+				"minecraft:red_sand": 162,
+				"minecraft:dead_bush": 162,
+				"minecraft:structure_block": 162,
+				"minecraft:polished_diorite": 162,
+				"minecraft:dark_oak_trapdoor": 162,
+				"minecraft:grass": 162,
+				"minecraft:red_terracotta": 162,
+				"minecraft:yellow_stained_glass_pane": 162,
+				"minecraft:dead_bubble_coral_fan": 162,
+				"minecraft:birch_wood": 162,
+				"minecraft:orange_stained_glass_pane": 162,
+				"minecraft:prismarine_brick_slab": 162,
+				"minecraft:orange_tulip": 162,
+				"minecraft:acacia_trapdoor": 162,
+				"minecraft:gray_stained_glass": 162,
+				"minecraft:black_glazed_terracotta": 162,
+				"minecraft:smooth_stone": 162,
+				"minecraft:ocelot_spawn_egg": 168,
+				"minecraft:light_gray_concrete_powder": 162,
+				"minecraft:red_glazed_terracotta": 162,
+				"minecraft:jungle_door": 162,
+				"minecraft:white_tulip": 162,
+				"minecraft:gold_block": 162,
+				"minecraft:cyan_carpet": 162,
+				"minecraft:purple_banner": 162,
+				"minecraft:light_gray_wool": 162,
+				"minecraft:cut_sandstone_slab": 162,
+				"minecraft:dropper": 162,
+				"minecraft:pumpkin_seeds": 162,
+				"minecraft:coarse_dirt": 162,
+				"minecraft:dirt": 162,
+				"minecraft:wither_rose": 162,
+				"minecraft:carved_pumpkin": 162,
+				"minecraft:grass_path": 162,
+				"minecraft:glass": 162,
+				"minecraft:command_block": 162,
+				"minecraft:iron_bars": 162,
+				"minecraft:chiseled_sandstone": 162,
+				"minecraft:dark_oak_door": 162,
+				"minecraft:redstone": 162,
+				"minecraft:purpur_stairs": 162,
+				"minecraft:trapped_chest": 162,
+				"minecraft:nether_wart_block": 162,
+				"minecraft:white_wool": 162,
+				"minecraft:light_blue_stained_glass_pane": 162,
+				"minecraft:wheat_seeds": 162,
+				"minecraft:bubble_coral": 162,
+				"minecraft:chorus_flower": 162,
+				"minecraft:bone_block": 162,
+				"minecraft:mooshroom_spawn_egg": 168,
+				"minecraft:red_nether_brick_wall": 162,
+				"minecraft:magenta_wool": 162,
+				"minecraft:dead_fire_coral": 162,
+				"minecraft:spruce_log": 162,
+				"minecraft:gray_banner": 162,
+				"minecraft:note_block": 162,
+				"minecraft:prismarine_stairs": 162,
+				"minecraft:tropical_fish_spawn_egg": 168,
+				"minecraft:endermite_spawn_egg": 168,
+				"minecraft:large_fern": 162,
+				"minecraft:birch_leaves": 162,
+				"minecraft:oak_button": 162,
+				"minecraft:red_stained_glass": 162,
+				"minecraft:enchanted_book": 161,
+				"minecraft:lantern": 162,
+				"minecraft:wither_skeleton_skull": 162,
+				"minecraft:jungle_button": 162,
+				"minecraft:acacia_wood": 162,
+				"minecraft:andesite": 162,
+				"minecraft:green_stained_glass": 162,
+				"minecraft:birch_door": 162,
+				"minecraft:gray_terracotta": 162,
+				"minecraft:yellow_banner": 162,
+				"minecraft:yellow_terracotta": 162,
+				"minecraft:conduit": 162,
+				"minecraft:prismarine": 162,
+				"minecraft:red_nether_brick_slab": 162,
+				"minecraft:string": 162,
+				"minecraft:white_stained_glass_pane": 162,
+				"minecraft:spruce_trapdoor": 162,
+				"minecraft:stonecutter": 162,
+				"minecraft:light_gray_shulker_box": 162,
+				"minecraft:cyan_terracotta": 162,
+				"minecraft:wolf_spawn_egg": 168,
+				"minecraft:oak_stairs": 162,
+				"minecraft:fire_coral_fan": 162,
+				"minecraft:infested_mossy_stone_bricks": 162,
+				"minecraft:barrier": 162,
+				"minecraft:granite": 162,
+				"minecraft:gray_concrete_powder": 162,
+				"minecraft:pink_stained_glass": 162,
+				"minecraft:smooth_quartz": 162,
+				"minecraft:chest": 162,
+				"minecraft:jungle_fence": 162,
+				"minecraft:end_stone": 162,
+				"minecraft:red_nether_bricks": 162,
+				"minecraft:pig_spawn_egg": 168,
+				"minecraft:shulker_spawn_egg": 168,
+				"minecraft:brown_wool": 162,
+				"minecraft:oak_slab": 162,
+				"minecraft:end_rod": 162,
+				"minecraft:end_portal_frame": 162,
+				"minecraft:nether_brick_stairs": 162,
+				"minecraft:cave_spider_spawn_egg": 168,
+				"minecraft:spawner": 162,
+				"minecraft:repeating_command_block": 162,
+				"minecraft:orange_glazed_terracotta": 162,
+				"minecraft:red_sandstone": 162,
+				"minecraft:lime_concrete": 162,
+				"minecraft:chain_command_block": 162,
+				"minecraft:dragon_head": 162,
+				"minecraft:oxeye_daisy": 162,
+				"minecraft:oak_pressure_plate": 162,
+				"minecraft:pink_stained_glass_pane": 162,
+				"minecraft:dead_tube_coral": 162,
+				"minecraft:smooth_red_sandstone_slab": 162,
+				"minecraft:purple_shulker_box": 162,
+				"minecraft:shield": 165,
+				"minecraft:lectern": 162,
+				"minecraft:iron_block": 162,
+				"minecraft:pink_wool": 162,
+				"minecraft:tube_coral_block": 162,
+				"minecraft:dark_prismarine": 162,
+				"minecraft:tipped_arrow": 163,
+				"minecraft:blue_terracotta": 162,
+				"minecraft:smooth_sandstone_slab": 162,
+				"minecraft:stripped_dark_oak_log": 162,
+				"minecraft:brown_stained_glass_pane": 162,
+				"minecraft:green_carpet": 162,
+				"minecraft:infested_cracked_stone_bricks": 162,
+				"minecraft:grass_block": 162,
+				"minecraft:fern": 162,
+				"minecraft:black_wool": 162,
+				"minecraft:red_nether_brick_stairs": 162,
+				"minecraft:jungle_sign": 162,
+				"minecraft:ghast_spawn_egg": 168,
+				"minecraft:black_concrete": 162,
+				"minecraft:black_stained_glass": 162,
+				"minecraft:cocoa_beans": 162,
+				"minecraft:sandstone_stairs": 162,
+				"minecraft:yellow_stained_glass": 162,
+				"minecraft:tube_coral_fan": 162,
+				"minecraft:lime_wool": 162,
+				"minecraft:mushroom_stem": 162,
+				"minecraft:emerald_ore": 162,
+				"minecraft:pink_shulker_box": 162,
+				"minecraft:tripwire_hook": 162,
+				"minecraft:purpur_pillar": 162,
+				"minecraft:dead_tube_coral_block": 162,
+				"minecraft:brain_coral": 162,
+				"minecraft:acacia_slab": 162,
+				"minecraft:spruce_stairs": 162,
+				"minecraft:skeleton_spawn_egg": 168,
+				"minecraft:stripped_spruce_wood": 162,
+				"minecraft:oak_leaves": 162,
+				"minecraft:cracked_stone_bricks": 162,
+				"minecraft:oak_trapdoor": 162,
+				"minecraft:yellow_concrete": 162,
+				"minecraft:leather_boots": 142,
+				"minecraft:white_concrete_powder": 162,
+				"minecraft:anvil": 162,
+				"minecraft:magenta_carpet": 162,
+				"minecraft:blast_furnace": 162,
+				"minecraft:ladder": 162,
+				"minecraft:sandstone_wall": 162,
+				"minecraft:water_bucket": 162,
+				"minecraft:nether_wart": 162,
+				"minecraft:white_carpet": 162,
+				"minecraft:light_gray_stained_glass": 162,
+				"minecraft:pink_concrete": 162,
+				"minecraft:sandstone": 162,
+				"minecraft:birch_stairs": 162,
+				"minecraft:end_stone_brick_slab": 162,
+				"minecraft:cauldron": 162,
+				"minecraft:lava_bucket": 162,
+				"minecraft:zombie_horse_spawn_egg": 168,
+				"minecraft:dead_fire_coral_block": 162,
+				"minecraft:diorite_slab": 162,
+				"minecraft:spruce_wood": 162,
+				"minecraft:ender_chest": 162,
+				"minecraft:gray_concrete": 162,
+				"minecraft:drowned_spawn_egg": 168,
+				"minecraft:coal_block": 162,
+				"minecraft:smooth_red_sandstone": 162,
+				"minecraft:shulker_box": 162,
+				"minecraft:horn_coral_fan": 162,
+				"minecraft:blue_ice": 162,
+				"minecraft:bucket": 162,
+				"minecraft:evoker_spawn_egg": 168,
+				"minecraft:oak_fence_gate": 162,
+				"minecraft:polished_diorite_slab": 162,
+				"minecraft:sheep_spawn_egg": 168,
+				"minecraft:mossy_stone_bricks": 162,
+				"minecraft:lime_terracotta": 162,
+				"minecraft:chorus_plant": 162,
+				"minecraft:purple_stained_glass": 162,
+				"minecraft:cobblestone_slab": 162,
+				"minecraft:daylight_detector": 162,
+				"minecraft:bricks": 162,
+				"minecraft:seagrass": 162,
+				"minecraft:chipped_anvil": 162,
+				"minecraft:cake": 162,
+				"minecraft:polished_andesite": 162,
+				"minecraft:poppy": 162,
+				"minecraft:cobblestone": 162,
+				"minecraft:leather_helmet": 142,
+				"minecraft:blue_stained_glass_pane": 162,
+				"minecraft:magma_cube_spawn_egg": 168,
+				"minecraft:ice": 162,
+				"minecraft:cobblestone_wall": 162,
+				"minecraft:magenta_glazed_terracotta": 162,
+				"minecraft:smoker": 162,
+				"minecraft:quartz_slab": 162,
+				"minecraft:detector_rail": 162,
+				"minecraft:polished_granite_slab": 162,
+				"minecraft:squid_spawn_egg": 168,
+				"minecraft:white_glazed_terracotta": 162,
+				"minecraft:blue_banner": 162,
+				"minecraft:writable_book": 150,
+				"minecraft:bee_nest": 162,
+				"minecraft:black_shulker_box": 162,
+				"minecraft:jungle_wood": 162,
+				"minecraft:cut_sandstone": 162,
+				"minecraft:light_blue_glazed_terracotta": 162,
+				"minecraft:stone_stairs": 162,
+				"minecraft:salmon_spawn_egg": 168,
+				"minecraft:dark_oak_log": 162,
+				"minecraft:dead_brain_coral": 162,
+				"minecraft:composter": 162,
+				"minecraft:cow_spawn_egg": 168,
+				"minecraft:red_sandstone_slab": 162,
+				"minecraft:pillager_spawn_egg": 168,
+				"minecraft:crossbow": 144,
+				"minecraft:red_banner": 162,
+				"minecraft:stone_button": 162,
+				"minecraft:white_stained_glass": 162,
+				"minecraft:skeleton_skull": 162,
+				"minecraft:green_concrete_powder": 162,
+				"minecraft:tube_coral": 162,
+				"minecraft:sand": 162,
+				"minecraft:birch_planks": 162,
+				"minecraft:stripped_birch_wood": 162,
+				"minecraft:red_sandstone_wall": 162,
+				"minecraft:iron_ore": 162,
+				"minecraft:armor_stand": 168,
+				"minecraft:allium": 162,
+				"minecraft:gray_wool": 162,
+				"minecraft:cyan_glazed_terracotta": 162,
+				"minecraft:brown_shulker_box": 162,
+				"minecraft:villager_spawn_egg": 168,
+				"minecraft:activator_rail": 162,
+				"minecraft:gray_shulker_box": 162,
+				"minecraft:dead_bubble_coral_block": 162,
+				"minecraft:dark_oak_planks": 162,
+				"minecraft:end_stone_brick_stairs": 162,
+				"minecraft:horn_coral": 162,
+				"minecraft:iron_trapdoor": 162,
+				"minecraft:red_concrete": 162,
+				"minecraft:splash_potion": 163,
+				"minecraft:melon_seeds": 162,
+				"minecraft:donkey_spawn_egg": 168,
+				"minecraft:smooth_red_sandstone_stairs": 162,
+				"minecraft:magenta_concrete": 162,
+				"minecraft:scaffolding": 162,
+				"minecraft:loom": 162,
+				"minecraft:quartz_pillar": 162,
+				"minecraft:grindstone": 162,
+				"minecraft:stone_brick_stairs": 162,
+				"minecraft:glass_pane": 162,
+				"minecraft:magenta_terracotta": 162,
+				"minecraft:black_terracotta": 162,
+				"minecraft:birch_slab": 162,
+				"minecraft:dried_kelp_block": 162,
+				"minecraft:cod_bucket": 160,
+				"minecraft:powered_rail": 162,
+				"minecraft:dark_oak_stairs": 162,
+				"minecraft:red_stained_glass_pane": 162,
+				"minecraft:structure_void": 162,
+				"minecraft:birch_sign": 162,
+				"minecraft:mossy_cobblestone_stairs": 162,
+				"minecraft:firework_rocket": 156,
+				"minecraft:cornflower": 162,
+				"minecraft:andesite_wall": 162,
+				"minecraft:blue_concrete": 162,
+				"minecraft:dark_oak_leaves": 162,
+				"minecraft:jungle_pressure_plate": 162,
+				"minecraft:jack_o_lantern": 162,
+				"minecraft:mossy_stone_brick_slab": 162,
+				"minecraft:brown_banner": 162,
+				"minecraft:cyan_concrete_powder": 162,
+				"minecraft:magma_block": 162,
+				"minecraft:lily_of_the_valley": 162,
+				"minecraft:black_stained_glass_pane": 162,
+				"minecraft:light_blue_stained_glass": 162,
+				"minecraft:smooth_quartz_slab": 162,
+				"minecraft:stripped_acacia_log": 162,
+				"minecraft:dark_oak_button": 162,
+				"minecraft:blue_carpet": 162,
+				"minecraft:bat_spawn_egg": 168,
+				"minecraft:brown_mushroom": 162,
+				"minecraft:acacia_stairs": 162,
+				"minecraft:brick_slab": 162,
+				"minecraft:guardian_spawn_egg": 168,
+				"minecraft:lime_glazed_terracotta": 162,
+				"minecraft:red_mushroom": 162,
+				"minecraft:husk_spawn_egg": 168,
+				"minecraft:oak_fence": 162,
+				"minecraft:pumpkin": 162,
+				"minecraft:carrot": 162,
+				"minecraft:coal_ore": 162,
+				"minecraft:pink_terracotta": 162,
+				"minecraft:slime_block": 162,
+				"minecraft:spruce_fence_gate": 162,
+				"minecraft:polished_granite": 162,
+				"minecraft:acacia_fence": 162,
+				"minecraft:blue_stained_glass": 162,
+				"minecraft:glowstone": 162,
+				"minecraft:prismarine_wall": 162,
+				"minecraft:fire_coral_block": 162,
+				"minecraft:acacia_planks": 162,
+				"minecraft:spruce_sign": 162,
+				"minecraft:acacia_sign": 162,
+				"minecraft:mycelium": 162,
+				"minecraft:brown_terracotta": 162,
+				"minecraft:brewing_stand": 162,
+				"minecraft:magenta_shulker_box": 162,
+				"minecraft:birch_button": 162,
+				"minecraft:blue_wool": 162,
+				"minecraft:stripped_oak_log": 162,
+				"minecraft:spruce_planks": 162,
+				"minecraft:spruce_door": 162,
+				"minecraft:leather_horse_armor": 142,
+				"minecraft:orange_terracotta": 162,
+				"minecraft:acacia_fence_gate": 162,
+				"minecraft:stripped_oak_wood": 162,
+				"minecraft:enchanting_table": 162,
+				"minecraft:light_gray_concrete": 162,
+				"minecraft:lime_concrete_powder": 162,
+				"minecraft:hopper": 162,
+				"minecraft:knowledge_book": 164,
+				"minecraft:orange_shulker_box": 162,
+				"minecraft:blue_shulker_box": 162,
+				"minecraft:snow_block": 162,
+				"minecraft:infested_cobblestone": 162,
+				"minecraft:dead_horn_coral": 162,
+				"minecraft:granite_slab": 162,
+				"minecraft:comparator": 162,
+				"minecraft:cyan_stained_glass": 162,
+				"minecraft:mossy_cobblestone": 162,
+				"minecraft:gray_glazed_terracotta": 162,
+				"minecraft:oak_door": 162,
+				"minecraft:stripped_acacia_wood": 162,
+				"minecraft:lapis_ore": 162,
+				"minecraft:prismarine_bricks": 162,
+				"minecraft:light_gray_terracotta": 162,
+				"minecraft:cut_red_sandstone": 162,
+				"minecraft:horse_spawn_egg": 168,
+				"minecraft:white_terracotta": 162,
+				"minecraft:yellow_glazed_terracotta": 162,
+				"minecraft:white_concrete": 162,
+				"minecraft:magenta_concrete_powder": 162,
+				"minecraft:polished_diorite_stairs": 162,
+				"minecraft:light_blue_carpet": 162,
+				"minecraft:brown_concrete_powder": 162,
+				"minecraft:sweet_berries": 162,
+				"minecraft:podzol": 162,
+				"minecraft:acacia_log": 162,
+				"minecraft:spruce_button": 162,
+				"minecraft:jungle_slab": 162,
+				"minecraft:acacia_button": 162,
+				"minecraft:andesite_slab": 162,
+				"minecraft:cyan_concrete": 162,
+				"minecraft:pink_tulip": 162,
+				"minecraft:orange_banner": 162,
+				"minecraft:diorite_wall": 162,
+				"minecraft:repeater": 162,
+				"minecraft:acacia_pressure_plate": 162,
+				"minecraft:damaged_anvil": 162,
+				"minecraft:fox_spawn_egg": 168,
+				"minecraft:pink_glazed_terracotta": 162,
+				"minecraft:purple_wool": 162,
+				"minecraft:birch_sapling": 162,
+				"minecraft:vindicator_spawn_egg": 168,
+				"minecraft:torch": 162,
+				"minecraft:turtle_egg": 162,
+				"minecraft:smooth_sandstone_stairs": 162,
+				"minecraft:pink_banner": 162,
+				"minecraft:written_book": 151,
+				"minecraft:hay_block": 162,
+				"minecraft:red_concrete_powder": 162,
+				"minecraft:beehive": 162,
+				"minecraft:diamond_block": 162,
+				"minecraft:dead_horn_coral_block": 162,
+				"minecraft:andesite_stairs": 162,
+				"minecraft:zombie_pigman_spawn_egg": 168,
+				"minecraft:cyan_stained_glass_pane": 162,
+				"minecraft:redstone_lamp": 162,
+				"minecraft:cyan_banner": 162,
+				"minecraft:gray_stained_glass_pane": 162,
+				"minecraft:redstone_block": 162,
+				"minecraft:lily_pad": 162,
+				"minecraft:spruce_pressure_plate": 162,
+				"minecraft:fletching_table": 162,
+				"minecraft:beacon": 162,
+				"minecraft:brain_coral_fan": 162,
+				"minecraft:filled_map": 147,
+				"minecraft:acacia_sapling": 162,
+				"minecraft:birch_fence": 162,
+				"minecraft:jungle_planks": 162,
+				"minecraft:snow": 162,
+				"minecraft:red_sandstone_stairs": 162,
+				"minecraft:green_concrete": 162,
+				"minecraft:dandelion": 162,
+				"minecraft:silverfish_spawn_egg": 168,
+				"minecraft:sandstone_slab": 162,
+				"minecraft:stone_bricks": 162,
+				"minecraft:turtle_spawn_egg": 168,
+				"minecraft:white_shulker_box": 162,
+				"minecraft:lime_shulker_box": 162,
+				"minecraft:dead_fire_coral_fan": 162,
+				"minecraft:magenta_banner": 162,
+				"minecraft:bell": 162,
+				"minecraft:magenta_stained_glass": 162,
+				"minecraft:orange_wool": 162,
+				"minecraft:elder_guardian_spawn_egg": 168,
+				"minecraft:dead_tube_coral_fan": 162,
+				"minecraft:lever": 162,
+				"minecraft:brown_mushroom_block": 162,
+				"minecraft:cobweb": 162,
+				"minecraft:quartz_stairs": 162,
+				"minecraft:mossy_stone_brick_stairs": 162,
+				"minecraft:stone_slab": 162,
+				"minecraft:honey_block": 162,
+				"minecraft:purple_stained_glass_pane": 162,
+				"minecraft:smithing_table": 162,
+				"minecraft:mossy_cobblestone_slab": 162,
+				"minecraft:honeycomb_block": 162,
+				"minecraft:red_carpet": 162,
+				"minecraft:sugar_cane": 162,
+				"minecraft:slime_spawn_egg": 168,
+				"minecraft:crafting_table": 162,
+				"minecraft:skeleton_horse_spawn_egg": 168,
+				"minecraft:wet_sponge": 162,
+				"minecraft:smooth_sandstone": 162,
+				"minecraft:lime_stained_glass_pane": 162,
+				"minecraft:brain_coral_block": 162,
+				"minecraft:flower_pot": 162,
+				"minecraft:light_blue_banner": 162,
+				"minecraft:infested_chiseled_stone_bricks": 162,
+				"minecraft:dead_brain_coral_fan": 162,
+				"minecraft:purple_glazed_terracotta": 162,
+				"minecraft:oak_log": 162,
+				"minecraft:melon": 162,
+				"minecraft:acacia_door": 162,
+				"minecraft:cartography_table": 162,
+				"minecraft:spider_spawn_egg": 168,
+				"minecraft:end_stone_brick_wall": 162,
+				"minecraft:red_tulip": 162,
+				"minecraft:furnace": 162,
+				"minecraft:heavy_weighted_pressure_plate": 162,
+				"minecraft:green_wool": 162,
+				"minecraft:dark_prismarine_stairs": 162,
+				"minecraft:birch_log": 162,
+				"minecraft:green_stained_glass_pane": 162,
+				"minecraft:light_blue_wool": 162,
+				"minecraft:blue_orchid": 162,
+				"minecraft:spruce_leaves": 162,
+				"minecraft:red_wool": 162,
+				"minecraft:purpur_slab": 162,
+				"minecraft:netherrack": 162,
+				"minecraft:petrified_oak_slab": 162,
+				"minecraft:peony": 162,
+				"minecraft:cactus": 162,
+				"minecraft:sea_lantern": 162,
+				"minecraft:bubble_coral_block": 162,
+				"minecraft:granite_stairs": 162,
+				"minecraft:jungle_log": 162,
+				"minecraft:observer": 162,
+				"minecraft:polished_andesite_stairs": 162,
+				"minecraft:light_gray_glazed_terracotta": 162,
+				"minecraft:dark_oak_fence_gate": 162,
+				"minecraft:dark_oak_wood": 162,
+				"minecraft:light_weighted_pressure_plate": 162,
+				"minecraft:creeper_head": 162,
+				"minecraft:beetroot_seeds": 162,
+				"minecraft:dolphin_spawn_egg": 168,
+				"minecraft:yellow_wool": 162,
+				"minecraft:light_blue_shulker_box": 162,
+				"minecraft:emerald_block": 162,
+				"minecraft:creeper_spawn_egg": 168,
+				"minecraft:brown_stained_glass": 162,
+				"minecraft:acacia_leaves": 162,
+				"minecraft:yellow_shulker_box": 162,
+				"minecraft:sea_pickle": 162,
+				"minecraft:bedrock": 162,
+				"minecraft:purple_terracotta": 162,
+				"minecraft:green_terracotta": 162,
+				"minecraft:birch_fence_gate": 162,
+				"minecraft:smooth_quartz_stairs": 162,
+				"minecraft:smooth_stone_slab": 162,
+				"minecraft:stripped_birch_log": 162,
+				"minecraft:magenta_stained_glass_pane": 162,
+				"minecraft:stone_brick_slab": 162,
+				"minecraft:kelp": 162,
+				"minecraft:air": 162,
+				"minecraft:wither_skeleton_spawn_egg": 168,
+				"minecraft:nether_quartz_ore": 162,
+				"minecraft:blue_glazed_terracotta": 162,
+				"minecraft:polished_granite_stairs": 162,
+				"minecraft:potato": 162,
+				"minecraft:ravager_spawn_egg": 168,
+				"minecraft:dark_oak_fence": 162,
+				"minecraft:redstone_ore": 162,
+				"minecraft:barrel": 162,
+				"minecraft:obsidian": 162,
+				"minecraft:stripped_jungle_log": 162,
+				"minecraft:vine": 162,
+				"minecraft:lime_carpet": 162,
+				"minecraft:cyan_shulker_box": 162,
+				"minecraft:dead_bubble_coral": 162,
+				"minecraft:bookshelf": 162,
+				"minecraft:oak_wood": 162,
+				"minecraft:chiseled_quartz_block": 162,
+				"minecraft:brick_stairs": 162,
+				"minecraft:zombie_villager_spawn_egg": 168,
+				"minecraft:blaze_spawn_egg": 168,
+				"minecraft:witch_spawn_egg": 168,
+				"minecraft:spruce_sapling": 162,
+				"minecraft:dark_oak_sapling": 162,
+				"minecraft:farmland": 162,
+				"minecraft:jungle_stairs": 162,
+				"minecraft:phantom_spawn_egg": 168,
+				"minecraft:panda_spawn_egg": 168,
+				"minecraft:cut_red_sandstone_slab": 162,
+				"minecraft:diorite": 162,
+				"minecraft:granite_wall": 162,
+				"minecraft:red_shulker_box": 162,
+				"minecraft:orange_stained_glass": 162,
+				"minecraft:packed_ice": 162,
+				"minecraft:leather_leggings": 142,
+				"minecraft:oak_sapling": 162,
+				"minecraft:stripped_dark_oak_wood": 162,
+				"minecraft:light_blue_terracotta": 162,
+				"minecraft:spruce_fence": 162,
+				"minecraft:cyan_wool": 162,
+				"minecraft:light_blue_concrete_powder": 162,
+				"minecraft:dead_brain_coral_block": 162,
+				"minecraft:rail": 162,
+				"minecraft:jungle_trapdoor": 162,
+				"minecraft:jungle_fence_gate": 162,
+				"minecraft:mossy_cobblestone_wall": 162,
+				"minecraft:green_banner": 162,
+				"minecraft:light_gray_carpet": 162,
+				"minecraft:purpur_block": 162,
+				"minecraft:suspicious_stew": 145,
+				"minecraft:jungle_leaves": 162,
+				"minecraft:tropical_fish_bucket": 160,
+				"minecraft:dark_oak_sign": 162,
+				"minecraft:cat_spawn_egg": 168,
+				"minecraft:stripped_spruce_log": 162,
+				"minecraft:birch_trapdoor": 162,
+				"minecraft:purple_concrete_powder": 162,
+				"minecraft:fire_coral": 162,
+				"minecraft:bubble_coral_fan": 162,
+				"minecraft:oak_sign": 162,
+				"minecraft:leather_chestplate": 142,
+				"minecraft:chiseled_red_sandstone": 162,
+				"minecraft:dispenser": 162,
+				"minecraft:stone_pressure_plate": 162,
+				"minecraft:diamond_ore": 162,
+				"minecraft:infested_stone": 162
+			},
+			138
+		],
+		"minecraft:entity": [
+			{
+				"minecraft:wither_skull": 25,
+				"minecraft:bee": 94,
+				"minecraft:tropical_fish": 55,
+				"minecraft:ravager": 64,
+				"minecraft:fireball": 27,
+				"minecraft:firework_rocket": 23,
+				"minecraft:armor_stand": 51,
+				"minecraft:falling_block": 13,
+				"minecraft:enderman": 97,
+				"minecraft:witch": 60,
+				"minecraft:giant": 29,
+				"minecraft:snowball": 4,
+				"minecraft:blaze": 29,
+				"minecraft:skeleton_horse": 85,
+				"minecraft:spider": 29,
+				"minecraft:fox": 90,
+				"minecraft:turtle": 93,
+				"minecraft:polar_bear": 68,
+				"minecraft:snow_golem": 45,
+				"minecraft:small_fireball": 26,
+				"minecraft:panda": 92,
+				"minecraft:illusioner": 62,
+				"minecraft:ghast": 49,
+				"minecraft:vindicator": 65,
+				"minecraft:magma_cube": 59,
+				"minecraft:zombie": 56,
+				"minecraft:sheep": 87,
+				"minecraft:egg": 4,
+				"minecraft:villager": 78,
+				"minecraft:elder_guardian": 29,
+				"minecraft:shulker": 42,
+				"minecraft:silverfish": 29,
+				"minecraft:skeleton": 29,
+				"minecraft:shulker_bullet": 43,
+				"minecraft:cod": 53,
+				"minecraft:pufferfish": 54,
+				"minecraft:squid": 29,
+				"minecraft:evoker_fangs": 21,
+				"minecraft:mooshroom": 88,
+				"minecraft:experience_orb": 18,
+				"minecraft:item_frame": 16,
+				"minecraft:horse": 84,
+				"minecraft:stray": 29,
+				"minecraft:spectral_arrow": 11,
+				"minecraft:end_crystal": 98,
+				"minecraft:dragon_fireball": 25,
+				"minecraft:wither_skeleton": 29,
+				"minecraft:evoker": 62,
+				"minecraft:cow": 68,
+				"minecraft:item": 19,
+				"minecraft:endermite": 36,
+				"minecraft:eye_of_ender": 15,
+				"minecraft:experience_bottle": 4,
+				"minecraft:guardian": 29,
+				"minecraft:husk": 56,
+				"minecraft:chicken": 69,
+				"minecraft:pig": 70,
+				"minecraft:salmon": 53,
+				"minecraft:zombie_villager": 57,
+				"minecraft:slime": 59,
+				"minecraft:dolphin": 67,
+				"minecraft:player": 37,
+				"minecraft:ender_pearl": 4,
+				"minecraft:wandering_trader": 46,
+				"minecraft:llama": 71,
+				"minecraft:donkey": 86,
+				"minecraft:bat": 66,
+				"minecraft:arrow": 10,
+				"minecraft:area_effect_cloud": 17,
+				"minecraft:trident": 12,
+				"minecraft:trader_llama": 72,
+				"minecraft:llama_spit": 7,
+				"minecraft:creeper": 48,
+				"minecraft:cave_spider": 29,
+				"minecraft:mule": 86,
+				"minecraft:pillager": 63,
+				"minecraft:ender_dragon": 58,
+				"minecraft:drowned": 56,
+				"minecraft:wither": 50,
+				"minecraft:zombie_horse": 83,
+				"minecraft:tnt": 14,
+				"minecraft:parrot": 77
+			},
+			0
+		]
+	},
+	"root_modules": {
+		"minecraft": 0
+	},
+	"compound_arena": [
+		{
+			"description": " Base NBT for all entities",
+			"fields": {
+				"FallDistance": {
+					"description": " How far the entity has fallen",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"Fire": {
+					"description": " Ticks of fire left, or if negative, ticks until the entity starts to burn",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Motion": {
+					"description": " The motion in [x, y, z]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Double": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"Glowing": {
+					"description": " Whether the entity should glow",
+					"nbttype": "Boolean"
+				},
+				"CustomName": {
+					"description": " The JSON text component name",
+					"nbttype": "String"
+				},
+				"id": {
+					"description": " The id of the entity",
+					"nbttype": {
+						"Id": "minecraft:entity"
+					}
+				},
+				"NoGravity": {
+					"description": " Whether the entity should be effected by gravity",
+					"nbttype": "Boolean"
+				},
+				"UUIDMost": {
+					"description": " The upper bits of the modifiers UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Pos": {
+					"description": " The position in [x, y, z]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Double": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"OnGround": {
+					"description": " Whether the entity is on the ground",
+					"nbttype": "Boolean"
+				},
+				"Invulnerable": {
+					"description": " Whether the entity should take damage",
+					"nbttype": "Boolean"
+				},
+				"CustomNameVisible": {
+					"description": " Whether the custom name should be visible always",
+					"nbttype": "Boolean"
+				},
+				"Tags": {
+					"description": " The tags on the entity",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": "String"
+						}
+					}
+				},
+				"Air": {
+					"description": " Ticks of air left",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Silent": {
+					"description": " Whether the entity should make any sound",
+					"nbttype": "Boolean"
+				},
+				"Rotation": {
+					"description": " The rotation in [y-rotation, x-rotation]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								2,
+								2
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"PortalCooldown": {
+					"description": " How long until the entity can go through a nether portal",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Passengers": {
+					"description": " The passengers on the entity",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 1
+							}
+						}
+					}
+				},
+				"UUIDLeast": {
+					"description": " The lower bits of the modifiers UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"id": {
+					"description": " The id of the entity",
+					"nbttype": {
+						"Id": "minecraft:entity"
+					}
+				}
+			},
+			"supers": {
+				"Registry": {
+					"target": "minecraft:entity",
+					"path": [
+						{
+							"Child": "id"
+						}
+					]
+				}
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"xTile": {
+					"description": " The x coordinate of the projectile",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"inBlockState": {
+					"description": " The block the projectile is in",
+					"nbttype": {
+						"Compound": 134
+					}
+				},
+				"yTile": {
+					"description": " The y coordinate of the projectile",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"zTile": {
+					"description": " The z coordinate of the projectile",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"owner": {
+					"description": " The player that threw the projectile",
+					"nbttype": {
+						"Compound": 6
+					}
+				},
+				"shake": {
+					"description": " The shake the projectile creates",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 2
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Item": {
+					"description": " The item representation of the projectile",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 3
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Potion": {
+					"description": " The item representation of the potion",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 3
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"M": {
+					"description": " The upper bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"L": {
+					"description": " The lower bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Owner": {
+					"description": " The owner of the spit",
+					"nbttype": {
+						"Compound": 8
+					}
+				}
+			},
+			"supers": {
+				"Compound": 2
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"OwnerUUIDLeast": {
+					"description": " The lower bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"OwnerUUIDMost": {
+					"description": " The upper bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"OwnerUUIDLeast": {
+					"description": " The lower bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"player": {
+					"description": " Whether a player shot the projectile",
+					"nbttype": "Boolean"
+				},
+				"OwnerUUIDMost": {
+					"description": " The upper bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"PierceLevel": {
+					"description": " The number of entities to pass through",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"pickup": {
+					"description": " How players can pick up the projectile",
+					"nbttype": {
+						"Enum": 0
+					}
+				},
+				"inGround": {
+					"description": " Whether the projectile is in the ground",
+					"nbttype": "Boolean"
+				},
+				"shake": {
+					"description": " The shake the projectile creates",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"life": {
+					"description": " The number of ticks since the projectile last moved",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"damage": {
+					"description": " The damage the projectile should do",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"crit": {
+					"description": " Whether the projectile should do critical damage",
+					"nbttype": "Boolean"
+				},
+				"ShotFromCrossbow": {
+					"description": " Whether the projectile was shot from a crossbow",
+					"nbttype": "Boolean"
+				},
+				"SoundEvent": {
+					"description": " The sound event to play when the projectile hits something",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 2
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"CustomPotionEffects": {
+					"description": " The custom potion effects to give to the hit entity",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 135
+							}
+						}
+					}
+				},
+				"Color": {
+					"description": " The color of the arrow  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Potion": {
+					"description": " The name of the default potion effect",
+					"nbttype": {
+						"Id": "minecraft:mob_effect"
+					}
+				},
+				"CustomPotionColor": {
+					"description": " The color of the arrow's particles  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 9
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Duration": {
+					"description": " The number of ticks the glowing effect lasts",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 9
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Trident": {
+					"description": " The trident that was thrown",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 9
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"FallHurtAmount": {
+					"description": " The damage multiplier for this falling block",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"HurtEntities": {
+					"description": " Whether this falling block should hurt entities",
+					"nbttype": "Boolean"
+				},
+				"FallHurtMax": {
+					"description": " The maximum damage this falling block should do",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TileEntityData": {
+					"description": " The NBT data for the placed block",
+					"nbttype": {
+						"Index": {
+							"target": "minecraft:block",
+							"path": [
+								{
+									"Child": "BlockState"
+								},
+								{
+									"Child": "Name"
+								}
+							]
+						}
+					}
+				},
+				"DropItem": {
+					"description": " Whether this falling block should drop as a block when destroyed",
+					"nbttype": "Boolean"
+				},
+				"Time": {
+					"description": " The number of ticks this falling block has existed",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"BlockState": {
+					"description": " The block state for the placed block",
+					"nbttype": {
+						"Compound": 134
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Fuse": {
+					"description": " The number of ticks until this tnt explodes",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Item": {
+					"description": " The item to render as",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"TileX": {
+					"description": " The x coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Facing": {
+					"description": " The direction the item frame is facing",
+					"nbttype": {
+						"Enum": 1
+					}
+				},
+				"Item": {
+					"description": " The item in the item frame",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"ItemDropChance": {
+					"description": " The chance the item has to drop",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"ItemRotation": {
+					"description": " The rotation of the item",
+					"nbttype": {
+						"Byte": {
+							"range": [
+								0,
+								7
+							]
+						}
+					}
+				},
+				"TileY": {
+					"description": " The y coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TileZ": {
+					"description": " The z coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Potion": {
+					"description": " The default potion effect",
+					"nbttype": {
+						"Id": "minecraft:potion"
+					}
+				},
+				"RadiusOnUse": {
+					"description": " The change in the radius of the area effect cloud when it is used",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"WaitTime": {
+					"description": " The number of ticks until the area effect cloud appears",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Radius": {
+					"description": " The radius of the area effect cloud",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"ReapplicationDelay": {
+					"description": " The number of ticks until the effects are reapplied",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Duration": {
+					"description": " The maximum number of ticks until this area effect cloud will disappear after `WaitTime` is done",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"DurationOnUse": {
+					"description": " The amount the duration changes when the area effect cloud is used",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"OwnerUUIDLeast": {
+					"description": " The lower bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"RadiusPerTick": {
+					"description": " The change in the radius of the area effect cloud per tick",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"Particle": {
+					"description": " The particle the area effect cloud displays",
+					"nbttype": "String"
+				},
+				"Effects": {
+					"description": " The potion effects that get applied on use",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 135
+							}
+						}
+					}
+				},
+				"Age": {
+					"description": " The number of ticks this area effect cloud has been alive  \n The area effect cloud will disappear when greater than `Duration + WaitTime`",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"OwnerUUIDMost": {
+					"description": " The upper bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Color": {
+					"description": " The color of the particles  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Value": {
+					"description": " The amount of experience the orb will give",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Age": {
+					"description": " The number of ticks that the orb has been alive",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Health": {
+					"description": " The health of the orb",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Item": {
+					"description": " The item's representation",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"Owner": {
+					"description": " The owner of the item  \n Only the owner can pick up the item",
+					"nbttype": {
+						"Compound": 20
+					}
+				},
+				"Thrower": {
+					"description": " The player who threw the item",
+					"nbttype": {
+						"Compound": 20
+					}
+				},
+				"Age": {
+					"description": " The number of ticks the item has been alive",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Health": {
+					"description": " The health of the item",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"PickupDelay": {
+					"description": " The number of ticks until a player can pick up this item",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"M": {
+					"description": " The upper bits of the target player's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"L": {
+					"description": " The lower bits of the target player's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Owner": {
+					"description": " The owner of the fangs",
+					"nbttype": {
+						"Compound": 22
+					}
+				},
+				"Warmup": {
+					"description": " The number of ticks until the fangs pop out of the ground",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"OwnerUUIDMost": {
+					"description": " The upper bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"OwnerUUIDLeast": {
+					"description": " The lower bits of the owner's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"LifeTime": {
+					"description": " The number of ticks this firework rocket will live for",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"ShotAtAngle": {
+					"description": " Whether the firework rocket should move at an angle",
+					"nbttype": "Boolean"
+				},
+				"Life": {
+					"description": " The number of ticks the firework rocket has been alive for",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"FireworksItem": {
+					"description": " The item representation of the firework rocket",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"TileX": {
+					"description": " The x coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Facing": {
+					"description": " The direction the painting is facing",
+					"nbttype": {
+						"Enum": 2
+					}
+				},
+				"TileZ": {
+					"description": " The z coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TileY": {
+					"description": " The y coordinate of the block the item frame is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Motive": {
+					"description": " The type of the painting",
+					"nbttype": {
+						"Id": "minecraft:motive"
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"life": {
+					"description": " The number of ticks since the fireball last moved",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"power": {
+					"description": " The acceleration of the fireball",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Double": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"direction": {
+					"description": " The direction of the fireball",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Double": {
+									"range": null
+								}
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Item": {
+					"description": " The item the fireball should render as",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 25
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"ExplosionPower": {
+					"description": " The power of the fireball explosion",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 26
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Health": {
+					"description": " How much health the entity has",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"Brain": {
+					"description": " The mob's brain, empty",
+					"nbttype": {
+						"Compound": 32
+					}
+				},
+				"HurtTime": {
+					"description": " Timer since the mob has been damaged  \n Counts down to zero",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Attributes": {
+					"description": " The mob's attributes",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 30
+							}
+						}
+					}
+				},
+				"AbsorbtionAmount": {
+					"description": " How much absorbtion health the entity has",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"DeathTime": {
+					"description": " Timer since the mob was marked as dead  \n Counts down to zero",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"FallFlying": {
+					"description": " Whether the mob will glide when it falls",
+					"nbttype": "Boolean"
+				},
+				"SleepingX": {
+					"description": " The x coordinate of where the mob is sleeping",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"SleepingY": {
+					"description": " The y coordinate of where the mob is sleeping",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"NoAI": {
+					"description": " Whether the mob should have an AI",
+					"nbttype": "Boolean"
+				},
+				"Team": {
+					"description": " The team to join when the mob is spawned",
+					"nbttype": "String"
+				},
+				"SleepingZ": {
+					"description": " The z coordinate of where the mob is sleeping",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"ActiveEffects": {
+					"description": " The active potion effects on the mob",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 135
+							}
+						}
+					}
+				},
+				"HurtByTimestamp": {
+					"description": " Number of ticks since the mob was last damaged, from its creation",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": " Base NBT for all mobs",
+			"fields": {
+				"DeathLootTable": {
+					"description": " The mob's death loot table",
+					"nbttype": {
+						"Id": "minecraft:loot_table"
+					}
+				},
+				"HandDropChances": {
+					"description": " The chance to drop the items that the mob is holding, in [main hand, offhand]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								2,
+								2
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"DeathLootTableSeed": {
+					"description": " The seed for generating the death loot table",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"PersistenceRequired": {
+					"description": " Whether the mob should not despawn naturally",
+					"nbttype": "Boolean"
+				},
+				"Leash": {
+					"description": " What the leash is attached to",
+					"nbttype": {
+						"Or": [
+							{
+								"Compound": 34
+							},
+							{
+								"Compound": 35
+							}
+						]
+					}
+				},
+				"LeftHanded": {
+					"description": " Whether the mob is left handed",
+					"nbttype": "Boolean"
+				},
+				"ArmorDropChances": {
+					"description": " The chance to drop the items that the mob is wearing, in [head, body, legs, feet]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								4,
+								4
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"HandItems": {
+					"description": " The items that the mob is holding, in [main hand, offhand]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								2,
+								2
+							],
+							"value_type": {
+								"Compound": 136
+							}
+						}
+					}
+				},
+				"CanPickUpLoot": {
+					"description": " Wether the mob can pick up loot",
+					"nbttype": "Boolean"
+				},
+				"Leashed": {
+					"description": " Whether the mob is leashed",
+					"nbttype": "Boolean"
+				},
+				"ArmorItems": {
+					"description": " The items that the mob is wearing, in [head, body, legs, feet]",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								4,
+								4
+							],
+							"value_type": {
+								"Compound": 136
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 28
+			}
+		},
+		{
+			"description": " A single attribute",
+			"fields": {
+				"Name": {
+					"description": " The name of the attribute",
+					"nbttype": {
+						"Compound": 30
+					}
+				},
+				"Modifiers": {
+					"description": " The modifiers that act on the attribute",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 31
+							}
+						}
+					}
+				},
+				"Base": {
+					"description": " The base value of the attribute",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " A single attribute modifier",
+			"fields": {
+				"Amount": {
+					"description": " The change in the attribute",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"Name": {
+					"description": " Name of the modifier, has no real effect",
+					"nbttype": "String"
+				},
+				"Operation": {
+					"description": " The modifier operation",
+					"nbttype": {
+						"Enum": 27
+					}
+				},
+				"UUIDMost": {
+					"description": " The upper bits of the modifier's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Slot": {
+					"description": " The slot that the modifier is active in",
+					"nbttype": {
+						"Enum": 28
+					}
+				},
+				"UUIDLeast": {
+					"description": " The lower bits of the modifier's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"memories": {
+					"description": " The mobs memories, empty",
+					"nbttype": {
+						"Compound": 33
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"UUIDLeast": {
+					"description": " The lower bits of the other entity's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"UUIDMost": {
+					"description": " The upper bits of the other entity's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": " The z coordiante of leash knot",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordiante of leash knot",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y coordiante of leash knot",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Lifetime": {
+					"description": " How long the endermite has existed",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"PlayerSpawned": {
+					"description": " Whether enderman should attack the endermite",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"EnderItems": {
+					"description": " The player's enderchest inventory",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								27
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"enteredNetherPosition": {
+					"description": " The position that the player entered the nether at",
+					"nbttype": {
+						"Compound": 39
+					}
+				},
+				"Score": {
+					"description": " The score to display upon death",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"SelectedItem": {
+					"description": " The item in the hotbar slot the player has selected",
+					"nbttype": {
+						"Compound": 137
+					}
+				},
+				"foodLevel": {
+					"description": " The level of the hunger bar",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"SpawnForced": {
+					"description": " Whether the player must spawn at the spawn point",
+					"nbttype": "Boolean"
+				},
+				"id": {
+					"description": "",
+					"nbttype": {
+						"Or": []
+					}
+				},
+				"foodExhaustionLevel": {
+					"description": " The rate at which the `foodSaturationLevel` depletes",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"foodTickTimer": {
+					"description": " The number of ticks until the player heals or takes starvation damage",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"recipeBook": {
+					"description": " The recipes that the player has",
+					"nbttype": {
+						"Compound": 41
+					}
+				},
+				"playerGameType": {
+					"description": " The game mode that the player is in",
+					"nbttype": {
+						"Enum": 4
+					}
+				},
+				"Dimension": {
+					"description": " The dimension the player is in",
+					"nbttype": {
+						"Enum": 3
+					}
+				},
+				"CustomName": {
+					"description": "",
+					"nbttype": {
+						"Or": []
+					}
+				},
+				"XpP": {
+					"description": " The percentage the experience bar is filled up",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"SpawnY": {
+					"description": " The y coordinate of the player's spawpoint",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"SelectedItemSlot": {
+					"description": " The hotbar slot the player has selected",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								8
+							]
+						}
+					}
+				},
+				"CustomNameVisible": {
+					"description": "",
+					"nbttype": {
+						"Or": []
+					}
+				},
+				"SpawnX": {
+					"description": " The x coordinate of the player's spawpoint",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"abilities": {
+					"description": " The abilities of the player",
+					"nbttype": {
+						"Compound": 38
+					}
+				},
+				"XpLevel": {
+					"description": " The number of experience levels the player has",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"SpawnZ": {
+					"description": " The z coordinate of the player's spawpoint",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Inventory": {
+					"description": " The player's inventory",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								41
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"RootVehicle": {
+					"description": " The entity that the player is riding",
+					"nbttype": {
+						"Compound": 40
+					}
+				},
+				"DataVersion": {
+					"description": " The version of the player NBT structure",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"seenCredits": {
+					"description": " Whether the player has gone to the overworld after defeating the Ender Dragon",
+					"nbttype": "Boolean"
+				},
+				"ShoulderEntityLeft": {
+					"description": " The entity that is on the player's left shoulder",
+					"nbttype": {
+						"Compound": 1
+					}
+				},
+				"foodSaturationLevel": {
+					"description": " The rate at which the hunger bar depletes",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"XpTotal": {
+					"description": " The total experience the player has",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"XpSeed": {
+					"description": " The seed for enchantments",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"ShoulderEntityRight": {
+					"description": " The entity that is on the player's right shoulder",
+					"nbttype": {
+						"Compound": 1
+					}
+				},
+				"SleepTimer": {
+					"description": " The number of ticks the player has been in bed",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 28
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"flySpeed": {
+					"description": " The speed that the player flies at",
+					"nbttype": {
+						"Float": {
+							"range": [
+								0.05,
+								0.05
+							]
+						}
+					}
+				},
+				"invulnerable": {
+					"description": " Whether the player can only take damage from the void",
+					"nbttype": "Boolean"
+				},
+				"mayBuild": {
+					"description": " Whether the player may build",
+					"nbttype": "Boolean"
+				},
+				"mayfly": {
+					"description": " Whether the player can fly",
+					"nbttype": "Boolean"
+				},
+				"instabuild": {
+					"description": " Whether the player destroys blocks instantly",
+					"nbttype": "Boolean"
+				},
+				"flying": {
+					"description": " Whether the player is flying",
+					"nbttype": "Boolean"
+				},
+				"walkSpeed": {
+					"description": " The speed that the player walks at",
+					"nbttype": {
+						"Float": {
+							"range": [
+								0.1,
+								0.1
+							]
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"x": {
+					"description": " The x coordinate that the player entered the nether",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"z": {
+					"description": " The z coordinate that the player entered the nether",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"y": {
+					"description": " The y coordinate that the player entered the nether",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"AttachLeast": {
+					"description": " The lower bits of the ridden entity's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"AttachMost": {
+					"description": " The upper bits of the ridden entity's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Entity": {
+					"description": " The ridden entity",
+					"nbttype": {
+						"Compound": 1
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"isFurnaceFilteringCraftable": {
+					"description": " Whether the player has filtered crafting on in the furnace",
+					"nbttype": "Boolean"
+				},
+				"isFilteringCraftable": {
+					"description": " Whether the player has filtered crafting on in the crafting table",
+					"nbttype": "Boolean"
+				},
+				"isFurnaceGuiOpen": {
+					"description": " Whether the player has the crafting book open in the furnace",
+					"nbttype": "Boolean"
+				},
+				"isGuiOpen": {
+					"description": " Whether the player has the crafting book open in the crafting table",
+					"nbttype": "Boolean"
+				},
+				"toBeDisplayed": {
+					"description": " The recipes that should pulse in the crafting book",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Id": "minecraft:recipe"
+							}
+						}
+					}
+				},
+				"recipes": {
+					"description": " The recipes the player has acquired",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Id": "minecraft:recipe"
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Color": {
+					"description": " The color of the shulker",
+					"nbttype": {
+						"Enum": 6
+					}
+				},
+				"Peek": {
+					"description": " Whether the shulker is peeking",
+					"nbttype": "Boolean"
+				},
+				"APX": {
+					"description": " Approximate x coordinate of the shulker",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"APY": {
+					"description": " Approximate y coordinate of the shulker",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"APZ": {
+					"description": " Approximate z coordinate of the shulker",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"AttachFace": {
+					"description": " Which face the shulker is attached to",
+					"nbttype": {
+						"Enum": 5
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"TXD": {
+					"description": " The offset in the x direction to move based on the target's location",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"TYD": {
+					"description": " The offset in the y direction to move based on the target's location",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"TZD": {
+					"description": " The offset in the z direction to move based on the target's location",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"Owner": {
+					"description": " The owner of the shulker bullet",
+					"nbttype": {
+						"Compound": 44
+					}
+				},
+				"Steps": {
+					"description": " The number of steps it takes to reach the target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Target": {
+					"description": " The target of the bullet",
+					"nbttype": {
+						"Compound": 44
+					}
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"M": {
+					"description": " The upper bits of the target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x block coordiante of the target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y block coordiante of the target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"L": {
+					"description": " The lower bits of the target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Z": {
+					"description": " The z block coordiante of the target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Pumpkin": {
+					"description": " Whether the snow golem has a pumpkin",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"WanderTarget": {
+					"description": " The block the wandering trader is heading to",
+					"nbttype": {
+						"Compound": 47
+					}
+				},
+				"Offers": {
+					"description": " The offers the wandering trader has to offer",
+					"nbttype": {
+						"Compound": 81
+					}
+				},
+				"DespawnDelay": {
+					"description": " The number of ticks until the wandering trader despawns",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": " The z coordinate that the wandering trader is headed to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y coordinate that the wandering trader is headed to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate that the wandering trader is headed to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Fuse": {
+					"description": " The ticks until the creeper explodes",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"ignited": {
+					"description": " Whether the creeper was lit with flint and steel",
+					"nbttype": "Boolean"
+				},
+				"powered": {
+					"description": " If the creeper is charged by getting struck by lightning",
+					"nbttype": "Boolean"
+				},
+				"ExplosionRadius": {
+					"description": " The radius of the creeper's explosion",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"ExplosionPower": {
+					"description": " The explosion radius of the fireball created by the ghast",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								2147483647
+							]
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Invul": {
+					"description": " The number of ticks the wither is invulnerable for",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Pose": {
+					"description": " The post of the armor stand",
+					"nbttype": {
+						"Compound": 52
+					}
+				},
+				"ShowArms": {
+					"description": " Whether the armor stand should show its arms",
+					"nbttype": "Boolean"
+				},
+				"NoBasePlate": {
+					"description": " Whether the armor stand should have a no base plate",
+					"nbttype": "Boolean"
+				},
+				"DisabledSlots": {
+					"description": " A bit field of the slots that cannot be used",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Marker": {
+					"description": " Whether the armor stand has no hitbox",
+					"nbttype": "Boolean"
+				},
+				"Small": {
+					"description": " Whether the armor stand is small",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 28
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"LeftArm": {
+					"description": " The x, y, and z rotations for the left arm",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"RightArm": {
+					"description": " The x, y, and z rotations for the right arm",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"Head": {
+					"description": " The x, y, and z rotations for the head",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"LeftLeg": {
+					"description": " The x, y, and z rotations for the left leg",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"Body": {
+					"description": " The x, y, and z rotations for the body",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				},
+				"RightLeg": {
+					"description": " The x, y, and z rotations for the right leg",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								3,
+								3
+							],
+							"value_type": {
+								"Float": {
+									"range": null
+								}
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"FromBucket": {
+					"description": " If this fish was released from a bucket",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"PuffState": {
+					"description": " How puffed the pufferfish is",
+					"nbttype": {
+						"Enum": 7
+					}
+				}
+			},
+			"supers": {
+				"Compound": 53
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Variant": {
+					"description": " The fish variant",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 53
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"DrownedConversionTime": {
+					"description": " Time until the zombie converts",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"CanBreakDoors": {
+					"description": " Whether the zombie can break doors",
+					"nbttype": "Boolean"
+				},
+				"IsBaby": {
+					"description": " Whether the zombie is a baby",
+					"nbttype": "Boolean"
+				},
+				"InWaterTime": {
+					"description": " Time the zombie has been in the water",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"ConversionPlayerLeast": {
+					"description": " The lower bits of the player's uuid who triggered the conversion",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Offers": {
+					"description": " The villager's offers",
+					"nbttype": {
+						"Compound": 81
+					}
+				},
+				"VillagerData": {
+					"description": " The villager's skin data",
+					"nbttype": {
+						"Compound": 79
+					}
+				},
+				"Gossips": {
+					"description": " The villager's gossips",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 80
+							}
+						}
+					}
+				},
+				"ConversionTime": {
+					"description": " The number of ticks until the zombie villager is converted",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"ConversionPlayerMost": {
+					"description": " The upper bits of the player's uuid who triggered the conversion",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 56
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"DragonPhase": {
+					"description": " The phase that the dragon is in",
+					"nbttype": {
+						"Enum": 8
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Size": {
+					"description": " The size of the slime  \n 0 is the smallest",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"wasOnGround": {
+					"description": " Whether the slime is on the ground",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"RaidId": {
+					"description": " Id of the raid that the raider is in",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"PatrolLeader": {
+					"description": " Whether the raider is leading the patrol",
+					"nbttype": "Boolean"
+				},
+				"Wave": {
+					"description": " Wave that the raider is in",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								6
+							]
+						}
+					}
+				},
+				"PatrolTarget": {
+					"description": " Where the patrol is heading towards",
+					"nbttype": {
+						"Compound": 61
+					}
+				},
+				"HasRaidGoal": {
+					"description": "",
+					"nbttype": "Boolean"
+				},
+				"Patrolling": {
+					"description": "",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Y": {
+					"description": " The y coordinate of the patrol target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Z": {
+					"description": " The z coordinate of the patrol target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate of the patrol target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"SpellTicks": {
+					"description": " Number of ticks until the raider can cast their spell",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 60
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Inventory": {
+					"description": " The pillager's inventory",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 60
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"StunTick": {
+					"description": " Ticks the ravager is stunned for",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"AttackTick": {
+					"description": " Ticks until the ravager can attack",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"RoarTick": {
+					"description": " Ticks until the ravager can roar",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 60
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Johnny": {
+					"description": " Whether the vindicator should try to attack most other mobs",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 60
+			}
+		},
+		{
+			"description": " A bat",
+			"fields": {
+				"BatFlags": {
+					"description": " Whether the bat is upside down",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"TreasurePosZ": {
+					"description": " The z coordinate of the treasure the dolphin leads to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"GotFish": {
+					"description": " Whether the dolphin has gotten fish from a player",
+					"nbttype": "Boolean"
+				},
+				"TreasurePosX": {
+					"description": " The x coordinate of the treasure the dolphin leads to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TreasurePosY": {
+					"description": " The y coordinate of the treasure the dolphin leads to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"CanFindTreasure": {
+					"description": " Whether the dolphin will lead a player to treasure",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"InLove": {
+					"description": " Number of ticks until the mob stops searching for a mate",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								2147483647
+							]
+						}
+					}
+				},
+				"LoveCauseMost": {
+					"description": " The UUIDMost of the entity that caused this mob to breed",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Age": {
+					"description": " The age of the mob  \n When negative the mob is a baby",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"LoveCauseLeast": {
+					"description": " The UUIDMost of the entity that caused this mob to breed",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"ForcedAge": {
+					"description": " A value of age assigned to this mob when it grows up  \n Incremented when a baby mob is fed",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"IsChickenJockey": {
+					"description": " Whether this chicken is from a chicken jockey\n If true this chicken will despawn and will drop more experience",
+					"nbttype": "Boolean"
+				},
+				"EggLayTime": {
+					"description": " Time until this chicken lays another egg",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Saddle": {
+					"description": " Whether there is a saddle on the pig",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Strength": {
+					"description": " Determines both the number of item the llama can carry\n and how likely it is for wolves to run away",
+					"nbttype": {
+						"Int": {
+							"range": [
+								1,
+								5
+							]
+						}
+					}
+				},
+				"Tame": {
+					"description": " Whether the llama has been tamed",
+					"nbttype": "Boolean"
+				},
+				"EatingHaystack": {
+					"description": " Whether the llama is grazing",
+					"nbttype": "Boolean"
+				},
+				"OwnerUUID": {
+					"description": " UUID of the player who tamed the llama",
+					"nbttype": "String"
+				},
+				"Temper": {
+					"description": " Higher values make the llama easier to tame  \n Increases with feeding",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								100
+							]
+						}
+					}
+				},
+				"Variant": {
+					"description": " The variant of the llama",
+					"nbttype": {
+						"Enum": 9
+					}
+				},
+				"Items": {
+					"description": " The items in the llama's chest",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"ChestedHorse": {
+					"description": " Whether the llama has a chest",
+					"nbttype": "Boolean"
+				},
+				"Bred": {
+					"description": " Unknown use  \n Remains `0` even if the llama was bred",
+					"nbttype": "Boolean"
+				},
+				"DecorItem": {
+					"description": " The carpet item of the llama",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"DespawnDelay": {
+					"description": " When the trader llama will despawn",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 71
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"MoreCarrotTicks": {
+					"description": " Ticks down once a carrot crop is eaten",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"RabbitType": {
+					"description": " The type of the rabbit",
+					"nbttype": {
+						"Enum": 10
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"OwnerUUID": {
+					"description": " The UUID of the owner",
+					"nbttype": "String"
+				},
+				"Sitting": {
+					"description": " Whether the mob is sitting",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"CollarColor": {
+					"description": " The wolf's collar color, present for wild wolfs",
+					"nbttype": {
+						"Enum": 23
+					}
+				},
+				"Angry": {
+					"description": " Whether the wolf is angry",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 74
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"CatType": {
+					"description": " The type of the cat",
+					"nbttype": {
+						"Enum": 11
+					}
+				},
+				"CollarColor": {
+					"description": " The cat's collar color, present for stray cats",
+					"nbttype": {
+						"Enum": 23
+					}
+				}
+			},
+			"supers": {
+				"Compound": 74
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Variant": {
+					"description": " The variant of the parrot",
+					"nbttype": {
+						"Enum": 12
+					}
+				},
+				"Sitting": {
+					"description": " Whether the parrot is sitting",
+					"nbttype": "Boolean"
+				},
+				"OwnerUUID": {
+					"description": " The UUID of the owner",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 74
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Willing": {
+					"description": " Whether the villager is willing to breed",
+					"nbttype": "Boolean"
+				},
+				"LastRestock": {
+					"description": " The tick of the last time the villager has restocked",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"LastGossipDecay": {
+					"description": " The tick of the last time the villager's gossips have decreased in strength",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Xp": {
+					"description": " The xp the villager has, increases with trading",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"RestocksToday": {
+					"description": " The number of times the villager has restocked in the past ten minutes",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Inventory": {
+					"description": " The villager's inventory",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 136
+							}
+						}
+					}
+				},
+				"VillagerData": {
+					"description": " The data associated with the villager and it's skin",
+					"nbttype": {
+						"Compound": 79
+					}
+				},
+				"Gossips": {
+					"description": " The gossips the villager has heard",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 80
+							}
+						}
+					}
+				},
+				"Offers": {
+					"description": " The trade offers the villager has",
+					"nbttype": {
+						"Compound": 81
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"level": {
+					"description": " The level of the villager  \n Used for trading and badge rendering",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"profession": {
+					"description": " The profession of the villager",
+					"nbttype": {
+						"Id": "minecraft:villager_profession"
+					}
+				},
+				"type": {
+					"description": " The type of the villager",
+					"nbttype": {
+						"Id": "minecraft:villager_type"
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Type": {
+					"description": " The type of the gossip",
+					"nbttype": {
+						"Enum": 13
+					}
+				},
+				"Value": {
+					"description": " The value of the gossip",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TargetLeast": {
+					"description": " The lower bits of the gossip target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"TargetMost": {
+					"description": " The upper bits of the gossip target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Recipes": {
+					"description": " The trades the villager has to offer",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 82
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"priceMultiplier": {
+					"description": " The multiplier on the demand price adjuster",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"xp": {
+					"description": " The amount of xp the villager gains from the trade",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"buyB": {
+					"description": " The second item the villager buys",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"demand": {
+					"description": " The price adjuster of the first cost item based on demand",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"specialPrice": {
+					"description": " A modifier added to the original price of the first cost item",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"buy": {
+					"description": " The first item the villager buys",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"uses": {
+					"description": " The number of times this trade has been used since the villager last restocked",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"sell": {
+					"description": " The item the villager sells",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"maxUses": {
+					"description": " The maximum number of uses for this trade before the villager has to restock",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"rewardExp": {
+					"description": " Whether the villager should reward experience for using this trade",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Temper": {
+					"description": " Higher values make the horse easier to tame  \n Increases with feeding",
+					"nbttype": {
+						"Int": {
+							"range": [
+								0,
+								100
+							]
+						}
+					}
+				},
+				"OwnerUUID": {
+					"description": " UUID of the player who tamed the horse",
+					"nbttype": "String"
+				},
+				"ArmorItem": {
+					"description": " The armor item of the horse",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"SaddleItem": {
+					"description": " The saddle item of the horse",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"EatingHaystack": {
+					"description": " Whether the horse is eating a haystack",
+					"nbttype": "Boolean"
+				},
+				"Tame": {
+					"description": " Whether the horse has been tamed",
+					"nbttype": "Boolean"
+				},
+				"Bred": {
+					"description": " Unknown use  \n Remains `0` even if the horse was bred",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Variant": {
+					"description": " The variant of the horse",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 83
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"SkeletonTrap": {
+					"description": " Whether the skeleton horse is trapped",
+					"nbttype": "Boolean"
+				},
+				"SkeletonTrapTime": {
+					"description": " How many ticks the skeleton horse trap has been alive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 83
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"ChestedHorse": {
+					"description": " Whether the horse has a chest",
+					"nbttype": "Boolean"
+				},
+				"Items": {
+					"description": " The items in the horse's chest",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 83
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Color": {
+					"description": " The color of the sheep",
+					"nbttype": {
+						"Enum": 23
+					}
+				},
+				"Sheared": {
+					"description": " Whether the sheep has been shorn",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"EffectId": {
+					"description": " The effect that the mooshroom gives to suspicious stew",
+					"nbttype": {
+						"Enum": 25
+					}
+				},
+				"Type": {
+					"description": " The type of the mooshroom",
+					"nbttype": {
+						"Enum": 14
+					}
+				},
+				"EffectDuration": {
+					"description": " The duration of the suspicious stew effect",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Trusting": {
+					"description": " Whether the ocelot trusts players",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Sleeping": {
+					"description": " Whether the fox is sleeping",
+					"nbttype": "Boolean"
+				},
+				"Crouching": {
+					"description": " Whether the fox is crouching",
+					"nbttype": "Boolean"
+				},
+				"TrustedUUIDs": {
+					"description": " List of trusted players",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 91
+							}
+						}
+					}
+				},
+				"Type": {
+					"description": " The type of the fox",
+					"nbttype": {
+						"Enum": 15
+					}
+				},
+				"Sitting": {
+					"description": " Whether the fox is sitting",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"M": {
+					"description": " The upper bits of the trusted player's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"L": {
+					"description": " The lower bits of the trusted player's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"MainGene": {
+					"description": " The displayed gene\n If this gene is recessive '(r)' and 'HiddenGene' is not the same, the panda will display the 'normal' gene",
+					"nbttype": {
+						"Enum": 16
+					}
+				},
+				"HiddenGene": {
+					"description": " The hidden gene",
+					"nbttype": {
+						"Enum": 16
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"HomePosX": {
+					"description": " The x coordinate of the turtles home",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TravelPosZ": {
+					"description": " The z coordinate of the turtles travel target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TravelPosX": {
+					"description": " The x coordinate of the turtles travel target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"HasEgg": {
+					"description": " Whether the turtle has an egg",
+					"nbttype": "Boolean"
+				},
+				"HomePosY": {
+					"description": " The y coordinate of the turtles home",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"HomePosZ": {
+					"description": " The z coordinate of the turtles home",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TravelPosY": {
+					"description": " The y coordinate of the turtles travel target",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"TicksSincePollination": {
+					"description": " The number of ticks since the bee has pollinated a crop",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"HasNectar": {
+					"description": " Whether the bee has nectar",
+					"nbttype": "Boolean"
+				},
+				"HivePos": {
+					"description": " The position of the bee's hive",
+					"nbttype": {
+						"Compound": 95
+					}
+				},
+				"CannotEnterHiveTicks": {
+					"description": " The number of ticks until the bee can enter its hive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"CropsGrownSincePollination": {
+					"description": " The number of crops grown since the bee has gathered nectar",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"FlowerPos": {
+					"description": " The position of the flower the bee is circling",
+					"nbttype": {
+						"Compound": 96
+					}
+				},
+				"Anger": {
+					"description": " The number of ticks the bee will be angry for",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"HasStung": {
+					"description": " Whether the bee has stung an entity",
+					"nbttype": "Boolean"
+				},
+				"HurtBy": {
+					"description": " The UUID of the player that has attacked the bee",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 68
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Y": {
+					"description": " The y coordinate of the hive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Z": {
+					"description": " The z coordinate of the hive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate of the hive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": " The z coordinate of the flower",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate of the flower",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y coordinate of the flower",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"carriedBlockState": {
+					"description": " The block the enderman is carrying",
+					"nbttype": {
+						"Compound": 134
+					}
+				}
+			},
+			"supers": {
+				"Compound": 29
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"BeamTarget": {
+					"description": " The block that the beam is pointing to",
+					"nbttype": {
+						"Compound": 99
+					}
+				},
+				"ShowBottom": {
+					"description": " Whether to show the base of the end crystal",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 0
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": " The z coordinate of the block the beam is pointing to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y coordinate of the block the beam is pointing to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate of the block the beam is pointing to",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"id": {
+					"description": " The id of the block entity",
+					"nbttype": {
+						"Id": "minecraft:block_entity"
+					}
+				},
+				"y": {
+					"description": " The y coordinate of the block entity",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"z": {
+					"description": " The z coordinate of the block entity",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"x": {
+					"description": " The x coordinate of the block entity",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"keepPacked": {
+					"description": " Unknown\n 0 for regular block entities",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"CookingTotalTimes": {
+					"description": " The time each item has to cook  \n Index zero is slot zero, etc",
+					"nbttype": {
+						"IntArray": {
+							"length_range": [
+								4,
+								4
+							],
+							"value_range": null
+						}
+					}
+				},
+				"Items": {
+					"description": " The items that are currently cooking",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								4
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"CookingTimes": {
+					"description": " The time each item has been cooking  \n Index zero is slot zero, etc",
+					"nbttype": {
+						"IntArray": {
+							"length_range": [
+								4,
+								4
+							],
+							"value_range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"blockState": {
+					"description": " The moving block represented by the moving piston",
+					"nbttype": {
+						"Compound": 134
+					}
+				},
+				"progress": {
+					"description": " How far the moving piston has moved",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				},
+				"facing": {
+					"description": " The direction the moving piston is moving",
+					"nbttype": {
+						"Enum": 17
+					}
+				},
+				"extending": {
+					"description": " Whether the moving piston is extending",
+					"nbttype": "Boolean"
+				},
+				"source": {
+					"description": " Whether the moving piston is the piston head",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Text2": {
+					"description": " The second line of text from the top",
+					"nbttype": "String"
+				},
+				"Color": {
+					"description": " The color the sign has been dyed",
+					"nbttype": {
+						"Enum": 18
+					}
+				},
+				"Text4": {
+					"description": " The fourth line of text from the top",
+					"nbttype": "String"
+				},
+				"Text1": {
+					"description": " The first line of text from the top",
+					"nbttype": "String"
+				},
+				"Text3": {
+					"description": " The third line of text from the top",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"RecordItem": {
+					"description": " The item in the jukebox",
+					"nbttype": {
+						"Compound": 136
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"CookTimeTotal": {
+					"description": " The number of ticks the item takes to be smelted",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"BurnTime": {
+					"description": " The number of ticks until the fuel runs out",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Items": {
+					"description": " The items in this furnace, with slots:  \n * 0: The item being smelted  \n * 1: The fuel  \n * 2: The output",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								3
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"CustomName": {
+					"description": " The name of the furance",
+					"nbttype": "String"
+				},
+				"Lock": {
+					"description": " The name of the item that a player has to be holding to open this furnace",
+					"nbttype": "String"
+				},
+				"CookTime": {
+					"description": " The number of ticks the item has been smelting for",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"LootTable": {
+					"description": " The loot table that will populate this container",
+					"nbttype": {
+						"Id": "minecraft:loot_table"
+					}
+				},
+				"CustomName": {
+					"description": " The name of the container",
+					"nbttype": "String"
+				},
+				"LootTableSeed": {
+					"description": " The seed of the loot table",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Lock": {
+					"description": " The name of the item that a player has to be holding to open this container",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Items": {
+					"description": " The items in this container, with slots from 0 to 26",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								27
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 107
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Items": {
+					"description": " The items in this container, with slots from 0 to 8",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								9
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 107
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"CustomName": {
+					"description": " The name of this enchanting table",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"LastExecution": {
+					"description": " The tick the command block last executed in",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"CustomName": {
+					"description": " The name of the command block",
+					"nbttype": "String"
+				},
+				"conditionMet": {
+					"description": " Whether the previous command block was successful when the command block was executed  \n This is always true for non-conditional command blocks",
+					"nbttype": "Boolean"
+				},
+				"Command": {
+					"description": " The command stored in the command block",
+					"nbttype": "String"
+				},
+				"SuccessCount": {
+					"description": " The success count of the last command",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"TrackOutput": {
+					"description": " Whether the command block should track its output",
+					"nbttype": "Boolean"
+				},
+				"LastOutput": {
+					"description": " The last output of the command block",
+					"nbttype": "String"
+				},
+				"powered": {
+					"description": " Whether the command block is powered by redstone",
+					"nbttype": "Boolean"
+				},
+				"UpdateLastExecution": {
+					"description": " Whether to update the tick that this command block last executed",
+					"nbttype": "Boolean"
+				},
+				"auto": {
+					"description": " Whether the command block is automatically powered",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"ExitPortal": {
+					"description": " The coordinates of where to teleport entities to",
+					"nbttype": {
+						"Compound": 113
+					}
+				},
+				"Age": {
+					"description": " The age of the portal in ticks",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"ExactTeleport": {
+					"description": " Whether the portal should teleport to the exact location",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": " The z coordinate of the teleport location",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": " The x coordinate of the teleport location",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": " The y coordinate of the teleport location",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Book": {
+					"description": " The book that is on the lectern",
+					"nbttype": {
+						"Compound": 136
+					}
+				},
+				"Page": {
+					"description": " The current page the book is on",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"showair": {
+					"description": " Whether to show invisible blocks inside the bounding box",
+					"nbttype": "Boolean"
+				},
+				"name": {
+					"description": " The name of the structure",
+					"nbttype": "String"
+				},
+				"rotation": {
+					"description": " How the structure should be rotated",
+					"nbttype": {
+						"Enum": 19
+					}
+				},
+				"showboundingbox": {
+					"description": " Whether the structure block should show the bounding box",
+					"nbttype": "Boolean"
+				},
+				"posZ": {
+					"description": " The offset on the z axis for the structure position",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"sizeY": {
+					"description": " The size on the y axis for the structure",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"powered": {
+					"description": " Whether the structure block has been powered by redstone",
+					"nbttype": "Boolean"
+				},
+				"mirror": {
+					"description": " How the structure should be mirrored",
+					"nbttype": {
+						"Enum": 20
+					}
+				},
+				"ignoreEntities": {
+					"description": " Whether the structure block should ignore entities",
+					"nbttype": "Boolean"
+				},
+				"author": {
+					"description": " The author of the structure",
+					"nbttype": "String"
+				},
+				"posX": {
+					"description": " The offset on the x axis for the structure position",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"posY": {
+					"description": " The offset on the y axis for the structure position",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"seed": {
+					"description": " The seed for the integrity randomness",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"metadata": {
+					"description": " Custom data for the structure",
+					"nbttype": "String"
+				},
+				"sizeX": {
+					"description": " The size on the x axis for the structure",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"sizeZ": {
+					"description": " The size on the z axis for the structure",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"mode": {
+					"description": " The mode of the structure block",
+					"nbttype": {
+						"Enum": 21
+					}
+				},
+				"integrity": {
+					"description": " The chance for each block to stay",
+					"nbttype": {
+						"Float": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"OutputSignal": {
+					"description": " The strength of the redstone output",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Levels": {
+					"description": " The number of levels from the pyramid",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Primary": {
+					"description": " The primary potion effect of the beacon",
+					"nbttype": {
+						"Enum": 22
+					}
+				},
+				"Secondary": {
+					"description": " The secondary potion effect of the beacon",
+					"nbttype": {
+						"Enum": 22
+					}
+				},
+				"Lock": {
+					"description": " The name of the item that a player has to be holding to open this beacon",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Owner": {
+					"description": " The owner of the skull",
+					"nbttype": {
+						"Compound": 119
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Name": {
+					"description": " Name of the owner, if missing appears as a steve head",
+					"nbttype": "String"
+				},
+				"Properties": {
+					"description": " Texture properties",
+					"nbttype": {
+						"Compound": 120
+					}
+				},
+				"Id": {
+					"description": " UUID of the owner, optional",
+					"nbttype": "String"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"textures": {
+					"description": " The textures",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 121
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Value": {
+					"description": " Base64 encoded JSON value of the texture",
+					"nbttype": "String"
+				},
+				"Signature": {
+					"description": " Signature of the texture",
+					"nbttype": "String"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Patterns": {
+					"description": " The patterns on the banner",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 123
+							}
+						}
+					}
+				},
+				"CustomName": {
+					"description": " The name of the banner  \n Will show up on map markers",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Pattern": {
+					"description": " The pattern id",
+					"nbttype": {
+						"Enum": 29
+					}
+				},
+				"Color": {
+					"description": " The color of the pattern",
+					"nbttype": {
+						"Enum": 24
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"attachement_type": {
+					"description": " The id of the type of jigsaw this connects to",
+					"nbttype": "String"
+				},
+				"target_pool": {
+					"description": " The structure pool that the jigsaw will connect to",
+					"nbttype": "String"
+				},
+				"final_state": {
+					"description": " The final block state of the jigsaw",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"target_uuid": {
+					"description": " The UUID of the conduit's target",
+					"nbttype": {
+						"Compound": 126
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"M": {
+					"description": " The upper bits of the target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"L": {
+					"description": " The lower bits of the target's UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"CustomName": {
+					"description": " The name of the container",
+					"nbttype": "String"
+				},
+				"Items": {
+					"description": " The items in this container, with slots from 0 to 4",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								5
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"TransferCooldown": {
+					"description": " The number of ticks until an item can be transfered",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Lock": {
+					"description": " The name of the item that a player has to be holding to open this container",
+					"nbttype": "String"
+				},
+				"LootTableSeed": {
+					"description": " The seed of the loot table",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"LootTable": {
+					"description": " The loot table that will populate this container",
+					"nbttype": {
+						"Id": "minecraft:loot_table"
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"FlowerPos": {
+					"description": "",
+					"nbttype": {
+						"Compound": 129
+					}
+				},
+				"Bees": {
+					"description": "",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 130
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Z": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"X": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Y": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"MinOccupationTicks": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"EntityData": {
+					"description": "",
+					"nbttype": {
+						"Compound": 1
+					}
+				},
+				"TicksInHive": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Items": {
+					"description": " The items in this furnace, with slots:  \n * 0: left brewing slot  \n * 1: middle brewing slot  \n * 2: right brewing slot  \n * 3: ingredient slot  \n * 4: fuel slot",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								5
+							],
+							"value_type": {
+								"Compound": 137
+							}
+						}
+					}
+				},
+				"BrewTime": {
+					"description": " The number of ticks until the brewing is complete",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Fuel": {
+					"description": " The amount of fuel the brewing stand has left",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"Lock": {
+					"description": " The name of the item that a player has to be holding to open this brewing stand",
+					"nbttype": "String"
+				},
+				"CustomName": {
+					"description": " The name of the brewing stand",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"MinSpawnDelay": {
+					"description": " The minimum random delay for the next spawn",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"MaxNearbyEntities": {
+					"description": " The maximum number of entities nearby",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"MaxSpawnDelay": {
+					"description": " The maximum random delay for the next spawn",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"SpawnCount": {
+					"description": " The number of entities that will be placed",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"Delay": {
+					"description": " The number of ticks until the next spawn",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"SpawnData": {
+					"description": " The data for the next mob to spawn  \n Will get overwritten by `SpawnPotentials`",
+					"nbttype": {
+						"Compound": 1
+					}
+				},
+				"SpawnPotentials": {
+					"description": " A list of potential entities to spawn next",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 133
+							}
+						}
+					}
+				},
+				"SpawnRange": {
+					"description": " The range that the spawned entities will be placed",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				},
+				"RequiredPlayerRange": {
+					"description": " The radius in blocks that a player has to be within to spawn entities",
+					"nbttype": {
+						"Short": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 100
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Weight": {
+					"description": " The weight for this entry to get chosen",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Entity": {
+					"description": " The entity to spawn",
+					"nbttype": {
+						"Compound": 1
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Properties": {
+					"description": " The properties of the block",
+					"nbttype": {
+						"Index": {
+							"target": "custom:blockstates",
+							"path": [
+								{
+									"Child": "Name"
+								}
+							]
+						}
+					}
+				},
+				"Name": {
+					"description": " The id of the block",
+					"nbttype": {
+						"Id": "minecraft:block"
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " A single potion effect",
+			"fields": {
+				"ShowParticles": {
+					"description": " Whether the effect particles should be shown",
+					"nbttype": "Boolean"
+				},
+				"ShowIcon": {
+					"description": " Whether the effect icon should be shown",
+					"nbttype": "Boolean"
+				},
+				"Ambient": {
+					"description": " Whether the effect particles are semi-transparent (like with a Beacon)",
+					"nbttype": "Boolean"
+				},
+				"Amplifier": {
+					"description": "",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"Duration": {
+					"description": "",
+					"nbttype": {
+						"Int": {
+							"range": [
+								1,
+								2147483647
+							]
+						}
+					}
+				},
+				"Id": {
+					"description": "",
+					"nbttype": {
+						"Enum": 25
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"id": {
+					"description": " The id of the item",
+					"nbttype": {
+						"Id": "minecraft:item"
+					}
+				},
+				"Count": {
+					"description": " The number of items in the stack",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"tag": {
+					"description": " The NBT of the item",
+					"nbttype": {
+						"Index": {
+							"target": "minecraft:item",
+							"path": [
+								{
+									"Child": "id"
+								}
+							]
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Slot": {
+					"description": " The inventory slot the item is in",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 136
+			}
+		},
+		{
+			"description": " The base NBT of all items",
+			"fields": {
+				"CanDestroy": {
+					"description": " A list of the blocks that can be destroyed by this item when holding it in adventure mode",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Id": "minecraft:block"
+							}
+						}
+					}
+				},
+				"Unbreakable": {
+					"description": " Whether the item should be unbreakable\n Only used for tools, armor, etc",
+					"nbttype": "Boolean"
+				},
+				"Enchantments": {
+					"description": " A list of enchantments that are on the item",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 139
+							}
+						}
+					}
+				},
+				"RepairCost": {
+					"description": " Number of levels to add to the cost when using this in an anvil",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Damage": {
+					"description": " The damage that an item has. Only used for tools, armor, etc",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"display": {
+					"description": " The display settings of the item",
+					"nbttype": {
+						"Compound": 141
+					}
+				},
+				"AttributeModifiers": {
+					"description": " Attribute modifiers to apply while this item is being worn, held, etc",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 140
+							}
+						}
+					}
+				},
+				"HideFlags": {
+					"description": " Bitfield for which flags to hide on an item  \n 1 -> `Enchantments`  \n 2 -> `AttributeModifiers`  \n 4 -> `Unbreakable`  \n 8 -> `CanDestroy`  \n 16 -> `CanPlaceOn` (for block items)  \n 32 -> other misc info",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"CustomModelData": {
+					"description": " A tag that describes the custom model an item will take.  \n Gets used by the `custom_model_data` model predicate",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " An individual enchantment, with ID and level",
+			"fields": {
+				"lvl": {
+					"description": " Which level the enchantment is",
+					"nbttype": {
+						"Int": {
+							"range": [
+								1,
+								2147483647
+							]
+						}
+					}
+				},
+				"id": {
+					"description": " Which enchantment is being described",
+					"nbttype": {
+						"Id": "minecraft:enchantment"
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " A single attribute modifier",
+			"fields": {
+				"Operation": {
+					"description": " The modifier operation",
+					"nbttype": {
+						"Enum": 27
+					}
+				},
+				"Amount": {
+					"description": " The change in the attribute",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"UUIDMost": {
+					"description": " The upper bits of the modifiers UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"UUIDLeast": {
+					"description": " The lower bits of the modifiers UUID",
+					"nbttype": {
+						"Long": {
+							"range": null
+						}
+					}
+				},
+				"Slot": {
+					"description": " The slot that the modifier is active in",
+					"nbttype": {
+						"Enum": 28
+					}
+				},
+				"Name": {
+					"description": " Name of the modifier, has no real effect",
+					"nbttype": "String"
+				},
+				"AttributeName": {
+					"description": " The name of the attribute",
+					"nbttype": {
+						"Enum": 26
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " The display settings of an item",
+			"fields": {
+				"Lore": {
+					"description": " The lore of an item, with each element being a lore line",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": "String"
+						}
+					}
+				},
+				"Name": {
+					"description": " The name of an item, as a JSON text component",
+					"nbttype": "String"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"display": {
+					"description": " The display settings of the item",
+					"nbttype": {
+						"Compound": 143
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " The display settings of an item",
+			"fields": {
+				"color": {
+					"description": " The color of the armor  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 141
+			}
+		},
+		{
+			"description": " A crossbow",
+			"fields": {
+				"ChargedProjectiles": {
+					"description": " The projectiles loaded into the crossbow",
+					"nbttype": {
+						"List": {
+							"length_range": [
+								0,
+								3
+							],
+							"value_type": {
+								"Compound": 136
+							}
+						}
+					}
+				},
+				"Charged": {
+					"description": " Whether the crossbow is charged",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " A suspicious stew item",
+			"fields": {
+				"Effects": {
+					"description": " The effects this stew will give",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 146
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " A suspicious stew effect",
+			"fields": {
+				"EffectDuration": {
+					"description": " The duration of the effect in ticks",
+					"nbttype": {
+						"Int": {
+							"range": [
+								1,
+								2147483647
+							]
+						}
+					}
+				},
+				"EffectId": {
+					"description": " The id of the effect",
+					"nbttype": {
+						"Enum": 25
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " A filled map",
+			"fields": {
+				"map": {
+					"description": " The map number",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				},
+				"Decorations": {
+					"description": " The decorations on the map",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 148
+							}
+						}
+					}
+				},
+				"map_scale_direction": {
+					"description": " The amount to increase the current map scale by when crafting",
+					"nbttype": {
+						"Int": {
+							"range": [
+								1,
+								1
+							]
+						}
+					}
+				},
+				"display": {
+					"description": " The display for the item",
+					"nbttype": {
+						"Compound": 149
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " A decoration on a map",
+			"fields": {
+				"z": {
+					"description": " The world z position of the decoration",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"id": {
+					"description": " An arbitrary string identifying the decoration",
+					"nbttype": "String"
+				},
+				"x": {
+					"description": " The world x position of the decoration",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				},
+				"type": {
+					"description": " The decoration type",
+					"nbttype": {
+						"Enum": 30
+					}
+				},
+				"rot": {
+					"description": " The rotation of the decoration, measured in degrees clockwise",
+					"nbttype": {
+						"Double": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " The display settings of an item",
+			"fields": {
+				"Name": {
+					"description": " The name of an item, as a JSON text component",
+					"nbttype": "String"
+				},
+				"Lore": {
+					"description": " The lore of an item, with each element being a lore line",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": "String"
+						}
+					}
+				},
+				"MapColor": {
+					"description": " The color of the map  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " A writable or written book",
+			"fields": {
+				"pages": {
+					"description": " The pages of the book as JSON text components",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": "String"
+						}
+					}
+				},
+				"resolved": {
+					"description": " Whether the dynamic content on the pages has been resolved",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"generation": {
+					"description": " The generation of the book",
+					"nbttype": {
+						"Enum": 31
+					}
+				},
+				"author": {
+					"description": " The author of the book",
+					"nbttype": "String"
+				},
+				"title": {
+					"description": " The title of the book",
+					"nbttype": "String"
+				}
+			},
+			"supers": {
+				"Compound": 150
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"SkullOwner": {
+					"description": " The skull owner",
+					"nbttype": {
+						"Or": [
+							{
+								"Compound": 153
+							},
+							"String"
+						]
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Properties": {
+					"description": " Texture properties",
+					"nbttype": {
+						"Compound": 154
+					}
+				},
+				"Name": {
+					"description": " Name of the owner, if missing appears as a steve head",
+					"nbttype": "String"
+				},
+				"Id": {
+					"description": " UUID of the owner, optional",
+					"nbttype": "String"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"textures": {
+					"description": " The textures",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 155
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Value": {
+					"description": " Base64 encoded JSON value of the texture",
+					"nbttype": "String"
+				},
+				"Signature": {
+					"description": " Signature of the texture",
+					"nbttype": "String"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Fireworks": {
+					"description": " The firework settings",
+					"nbttype": {
+						"Compound": 158
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Explosion": {
+					"description": " The explosion settings",
+					"nbttype": {
+						"Compound": 159
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Flight": {
+					"description": " Flight duration of the firework rocket",
+					"nbttype": {
+						"Byte": {
+							"range": null
+						}
+					}
+				},
+				"Explosions": {
+					"description": " Explosions on the firework",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 159
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"FadeColors": {
+					"description": " The colors of the explosion fade  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"IntArray": {
+							"length_range": null,
+							"value_range": null
+						}
+					}
+				},
+				"Type": {
+					"description": " The type of the explosion",
+					"nbttype": {
+						"Enum": 32
+					}
+				},
+				"Trail": {
+					"description": " Whether the explosion should have a trail",
+					"nbttype": "Boolean"
+				},
+				"Colors": {
+					"description": " The colors of the explosion  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"IntArray": {
+							"length_range": null,
+							"value_range": null
+						}
+					}
+				},
+				"Flicker": {
+					"description": " Whether the explosion should flicker",
+					"nbttype": "Boolean"
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"BucketVariantTag": {
+					"description": " The variant of fish. Only used for tropical fish",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 168
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"StoredEnchantments": {
+					"description": " The stored enchantments",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 139
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " An item that can be placed as a block",
+			"fields": {
+				"CanPlaceOn": {
+					"description": " A list of blocks that this block item can be placed on",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Id": "minecraft:block"
+							}
+						}
+					}
+				},
+				"BlockEntityTag": {
+					"description": " The tags that the block entity that is placed can have",
+					"nbttype": {
+						"Index": {
+							"target": "minecraft:block",
+							"path": [
+								"Super",
+								{
+									"Child": "id"
+								}
+							]
+						}
+					}
+				},
+				"BlockStateTag": {
+					"description": " The block states that the placed block will have",
+					"nbttype": {
+						"Index": {
+							"target": "custom:blockitemstates",
+							"path": [
+								"Super",
+								{
+									"Child": "id"
+								}
+							]
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " An item that has a potion effect",
+			"fields": {
+				"CustomPotionEffects": {
+					"description": " A list of the potion effects that will be used with this item",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 135
+							}
+						}
+					}
+				},
+				"Potion": {
+					"description": " The name of the default potion effect",
+					"nbttype": {
+						"Id": "minecraft:potion"
+					}
+				},
+				"CustomPotionColor": {
+					"description": " Color of this item  \n calculated as `RED << 16 | GREEN << 8 | BLUE`. Each of these fields must be between 0 and 255, inclusive",
+					"nbttype": {
+						"Int": {
+							"range": null
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": " A knowledge book item",
+			"fields": {
+				"Recipes": {
+					"description": " The recipes this book can give",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Id": "minecraft:recipe"
+							}
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"BlockEntityTag": {
+					"description": " The tag for the shield",
+					"nbttype": {
+						"Compound": 166
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		},
+		{
+			"description": "",
+			"fields": {
+				"Patterns": {
+					"description": " The patterns on the shield",
+					"nbttype": {
+						"List": {
+							"length_range": null,
+							"value_type": {
+								"Compound": 167
+							}
+						}
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": "",
+			"fields": {
+				"Pattern": {
+					"description": " The pattern id",
+					"nbttype": {
+						"Enum": 29
+					}
+				},
+				"Color": {
+					"description": " The color of the pattern",
+					"nbttype": {
+						"Enum": 24
+					}
+				}
+			},
+			"supers": null
+		},
+		{
+			"description": " An item that can spawn an entity",
+			"fields": {
+				"EntityTag": {
+					"description": " The data of the spawned entity",
+					"nbttype": {
+						"Index": {
+							"target": "custom:spawnitementag",
+							"path": [
+								"Super",
+								{
+									"Child": "id"
+								}
+							]
+						}
+					}
+				}
+			},
+			"supers": {
+				"Compound": 138
+			}
+		}
+	],
+	"enum_arena": [
+		{
+			"et": {
+				"Byte": {
+					"Any": {
+						"value": 1,
+						"description": ""
+					},
+					"Creative": {
+						"value": 2,
+						"description": ""
+					},
+					"None": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"West": {
+						"value": 4,
+						"description": ""
+					},
+					"Down": {
+						"value": 0,
+						"description": ""
+					},
+					"South": {
+						"value": 3,
+						"description": ""
+					},
+					"East": {
+						"value": 5,
+						"description": ""
+					},
+					"North": {
+						"value": 2,
+						"description": ""
+					},
+					"Up": {
+						"value": 1,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"West": {
+						"value": 1,
+						"description": ""
+					},
+					"East": {
+						"value": 3,
+						"description": ""
+					},
+					"North": {
+						"value": 2,
+						"description": ""
+					},
+					"South": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Overworld": {
+						"value": 0,
+						"description": ""
+					},
+					"End": {
+						"value": 1,
+						"description": ""
+					},
+					"Nether": {
+						"value": -1,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Creative": {
+						"value": 1,
+						"description": ""
+					},
+					"Survival": {
+						"value": 0,
+						"description": ""
+					},
+					"Spectator": {
+						"value": 3,
+						"description": ""
+					},
+					"Adventure": {
+						"value": 2,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"North": {
+						"value": 2,
+						"description": ""
+					},
+					"Down": {
+						"value": 0,
+						"description": ""
+					},
+					"South": {
+						"value": 3,
+						"description": ""
+					},
+					"East": {
+						"value": 5,
+						"description": ""
+					},
+					"Up": {
+						"value": 1,
+						"description": ""
+					},
+					"West": {
+						"value": 4,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"Green": {
+						"value": 13,
+						"description": ""
+					},
+					"Black": {
+						"value": 15,
+						"description": ""
+					},
+					"Orange": {
+						"value": 1,
+						"description": ""
+					},
+					"Gray": {
+						"value": 7,
+						"description": ""
+					},
+					"White": {
+						"value": 0,
+						"description": ""
+					},
+					"LightGray": {
+						"value": 8,
+						"description": ""
+					},
+					"Purple": {
+						"value": 10,
+						"description": ""
+					},
+					"Cyan": {
+						"value": 9,
+						"description": ""
+					},
+					"Yellow": {
+						"value": 4,
+						"description": ""
+					},
+					"Normal": {
+						"value": 16,
+						"description": ""
+					},
+					"LightBlue": {
+						"value": 3,
+						"description": ""
+					},
+					"Magenta": {
+						"value": 2,
+						"description": ""
+					},
+					"Lime": {
+						"value": 5,
+						"description": ""
+					},
+					"Blue": {
+						"value": 11,
+						"description": ""
+					},
+					"Brown": {
+						"value": 12,
+						"description": ""
+					},
+					"Red": {
+						"value": 14,
+						"description": ""
+					},
+					"Pink": {
+						"value": 6,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"HalfPuffed": {
+						"value": 1,
+						"description": ""
+					},
+					"Puffed": {
+						"value": 2,
+						"description": ""
+					},
+					"Deflated": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Landing": {
+						"value": 3,
+						"description": ""
+					},
+					"BreathAttack": {
+						"value": 5,
+						"description": ""
+					},
+					"Dying": {
+						"value": 9,
+						"description": ""
+					},
+					"Hovering": {
+						"value": 10,
+						"description": ""
+					},
+					"FlyingToPortal": {
+						"value": 2,
+						"description": ""
+					},
+					"Strafing": {
+						"value": 1,
+						"description": ""
+					},
+					"Landed": {
+						"value": 6,
+						"description": ""
+					},
+					"Circling": {
+						"value": 0,
+						"description": ""
+					},
+					"TakingOff": {
+						"value": 4,
+						"description": ""
+					},
+					"Roar": {
+						"value": 7,
+						"description": ""
+					},
+					"Charging": {
+						"value": 8,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Creamy": {
+						"value": 0,
+						"description": ""
+					},
+					"Brown": {
+						"value": 2,
+						"description": ""
+					},
+					"White": {
+						"value": 1,
+						"description": ""
+					},
+					"Gray": {
+						"value": 3,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Killer": {
+						"value": 99,
+						"description": ""
+					},
+					"Black": {
+						"value": 2,
+						"description": ""
+					},
+					"Gold": {
+						"value": 4,
+						"description": ""
+					},
+					"White": {
+						"value": 1,
+						"description": ""
+					},
+					"BlackAndWhite": {
+						"value": 3,
+						"description": ""
+					},
+					"SaltAndPepper": {
+						"value": 5,
+						"description": ""
+					},
+					"Brown": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Tuxedo": {
+						"value": 1,
+						"description": ""
+					},
+					"Invisible": {
+						"value": -1,
+						"description": ""
+					},
+					"Tabby": {
+						"value": 0,
+						"description": ""
+					},
+					"Persian": {
+						"value": 6,
+						"description": ""
+					},
+					"Ragdoll": {
+						"value": 7,
+						"description": ""
+					},
+					"Shorthair": {
+						"value": 4,
+						"description": ""
+					},
+					"White": {
+						"value": 8,
+						"description": ""
+					},
+					"Jellie": {
+						"value": 9,
+						"description": ""
+					},
+					"Red": {
+						"value": 2,
+						"description": ""
+					},
+					"Black": {
+						"value": 10,
+						"description": ""
+					},
+					"Calico": {
+						"value": 5,
+						"description": ""
+					},
+					"Siamese": {
+						"value": 3,
+						"description": ""
+					}
+				}
+			},
+			"description": " The type of the cat"
+		},
+		{
+			"et": {
+				"Int": {
+					"Cyan": {
+						"value": 3,
+						"description": ""
+					},
+					"Green": {
+						"value": 2,
+						"description": ""
+					},
+					"Gray": {
+						"value": 4,
+						"description": ""
+					},
+					"Blue": {
+						"value": 1,
+						"description": ""
+					},
+					"Red": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"MinorPositive": {
+						"value": "minor_positive",
+						"description": ""
+					},
+					"MinorNegative": {
+						"value": "minor_negative",
+						"description": ""
+					},
+					"MajorNegative": {
+						"value": "major_negative",
+						"description": ""
+					},
+					"MajorPositive": {
+						"value": "major_positive",
+						"description": ""
+					},
+					"Trading": {
+						"value": "trading",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Red": {
+						"value": "red",
+						"description": ""
+					},
+					"Brown": {
+						"value": "brown",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Snow": {
+						"value": "snow",
+						"description": ""
+					},
+					"Red": {
+						"value": "red",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Lazy": {
+						"value": "lazy",
+						"description": " The lazy gene (d)"
+					},
+					"Playful": {
+						"value": "playful",
+						"description": " The playful gene (d)"
+					},
+					"Worried": {
+						"value": "worried",
+						"description": " The worried gene (d)"
+					},
+					"Weak": {
+						"value": "weak",
+						"description": " The weak gene (r)"
+					},
+					"Brown": {
+						"value": "brown",
+						"description": " The brown gene (r)"
+					},
+					"Normal": {
+						"value": "normal",
+						"description": " The normal gene (d)"
+					},
+					"Aggressive": {
+						"value": "aggressive",
+						"description": " The aggressive gene (d)"
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"West": {
+						"value": 4,
+						"description": ""
+					},
+					"North": {
+						"value": 2,
+						"description": ""
+					},
+					"East": {
+						"value": 5,
+						"description": ""
+					},
+					"South": {
+						"value": 3,
+						"description": ""
+					},
+					"Down": {
+						"value": 0,
+						"description": ""
+					},
+					"Up": {
+						"value": 1,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Pink": {
+						"value": "pink",
+						"description": ""
+					},
+					"Yellow": {
+						"value": "yellow",
+						"description": ""
+					},
+					"Green": {
+						"value": "green",
+						"description": ""
+					},
+					"Orange": {
+						"value": "orange",
+						"description": ""
+					},
+					"Brown": {
+						"value": "brown",
+						"description": ""
+					},
+					"Lime": {
+						"value": "lime",
+						"description": ""
+					},
+					"White": {
+						"value": "white",
+						"description": ""
+					},
+					"Gray": {
+						"value": "gray",
+						"description": ""
+					},
+					"Red": {
+						"value": "red",
+						"description": ""
+					},
+					"Black": {
+						"value": "black",
+						"description": ""
+					},
+					"Cyan": {
+						"value": "cyan",
+						"description": ""
+					},
+					"Magenta": {
+						"value": "magenta",
+						"description": ""
+					},
+					"Purple": {
+						"value": "purple",
+						"description": ""
+					},
+					"LightGray": {
+						"value": "light_gray",
+						"description": ""
+					},
+					"Blue": {
+						"value": "blue",
+						"description": ""
+					},
+					"LightBlue": {
+						"value": "light_blue",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Clockwise180": {
+						"value": "CLOCKWISE_180",
+						"description": ""
+					},
+					"Clockwise90": {
+						"value": "CLOCKWISE_90",
+						"description": ""
+					},
+					"None": {
+						"value": "NONE",
+						"description": ""
+					},
+					"CounterClockwise90": {
+						"value": "COUNTERCLOCKWISE_90",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"FrontBack": {
+						"value": "FRONT_BACK",
+						"description": ""
+					},
+					"None": {
+						"value": "NONE",
+						"description": ""
+					},
+					"LeftRight": {
+						"value": "LEFT_RIGHT",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"Save": {
+						"value": "SAVE",
+						"description": ""
+					},
+					"Data": {
+						"value": "DATA",
+						"description": ""
+					},
+					"Load": {
+						"value": "LOAD",
+						"description": ""
+					},
+					"Corner": {
+						"value": "CORNER",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Haste": {
+						"value": 3,
+						"description": ""
+					},
+					"InstantHealth": {
+						"value": 6,
+						"description": ""
+					},
+					"FireResistance": {
+						"value": 12,
+						"description": ""
+					},
+					"Slowness": {
+						"value": 2,
+						"description": ""
+					},
+					"Speed": {
+						"value": 1,
+						"description": ""
+					},
+					"WaterBreathing": {
+						"value": 13,
+						"description": ""
+					},
+					"DolphinsGRace": {
+						"value": 30,
+						"description": ""
+					},
+					"None": {
+						"value": 0,
+						"description": ""
+					},
+					"InstantDamage": {
+						"value": 7,
+						"description": ""
+					},
+					"Strength": {
+						"value": 5,
+						"description": ""
+					},
+					"Glowing": {
+						"value": 24,
+						"description": ""
+					},
+					"Levitation": {
+						"value": 25,
+						"description": ""
+					},
+					"HeroOfTheVillage": {
+						"value": 32,
+						"description": ""
+					},
+					"JumpBoost": {
+						"value": 8,
+						"description": ""
+					},
+					"Absorption": {
+						"value": 22,
+						"description": ""
+					},
+					"Resistance": {
+						"value": 11,
+						"description": ""
+					},
+					"Regeneration": {
+						"value": 10,
+						"description": ""
+					},
+					"Hunger": {
+						"value": 17,
+						"description": ""
+					},
+					"Blindness": {
+						"value": 15,
+						"description": ""
+					},
+					"NightVision": {
+						"value": 16,
+						"description": ""
+					},
+					"ConduitPower": {
+						"value": 29,
+						"description": ""
+					},
+					"BadOmen": {
+						"value": 31,
+						"description": ""
+					},
+					"UnLuck": {
+						"value": 27,
+						"description": ""
+					},
+					"Saturation": {
+						"value": 23,
+						"description": ""
+					},
+					"SlowFalling": {
+						"value": 28,
+						"description": ""
+					},
+					"MiningFatigue": {
+						"value": 4,
+						"description": ""
+					},
+					"Weakness": {
+						"value": 18,
+						"description": ""
+					},
+					"Poison": {
+						"value": 19,
+						"description": ""
+					},
+					"Invisibility": {
+						"value": 14,
+						"description": ""
+					},
+					"Nausea": {
+						"value": 9,
+						"description": ""
+					},
+					"Wither": {
+						"value": 20,
+						"description": ""
+					},
+					"HealthBoost": {
+						"value": 21,
+						"description": ""
+					},
+					"Luck": {
+						"value": 26,
+						"description": ""
+					}
+				}
+			},
+			"description": " Numerical ids for effects"
+		},
+		{
+			"et": {
+				"Byte": {
+					"Magenta": {
+						"value": 2,
+						"description": ""
+					},
+					"Purple": {
+						"value": 10,
+						"description": ""
+					},
+					"Lime": {
+						"value": 5,
+						"description": ""
+					},
+					"Green": {
+						"value": 13,
+						"description": ""
+					},
+					"Red": {
+						"value": 14,
+						"description": ""
+					},
+					"Brown": {
+						"value": 12,
+						"description": ""
+					},
+					"Pink": {
+						"value": 6,
+						"description": ""
+					},
+					"Yellow": {
+						"value": 4,
+						"description": ""
+					},
+					"LightGray": {
+						"value": 8,
+						"description": ""
+					},
+					"Blue": {
+						"value": 11,
+						"description": ""
+					},
+					"White": {
+						"value": 0,
+						"description": ""
+					},
+					"Gray": {
+						"value": 7,
+						"description": ""
+					},
+					"LightBlue": {
+						"value": 3,
+						"description": ""
+					},
+					"Black": {
+						"value": 15,
+						"description": ""
+					},
+					"Orange": {
+						"value": 1,
+						"description": ""
+					},
+					"Cyan": {
+						"value": 9,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Orange": {
+						"value": 1,
+						"description": ""
+					},
+					"Yellow": {
+						"value": 4,
+						"description": ""
+					},
+					"Green": {
+						"value": 13,
+						"description": ""
+					},
+					"Black": {
+						"value": 15,
+						"description": ""
+					},
+					"LightGray": {
+						"value": 8,
+						"description": ""
+					},
+					"Brown": {
+						"value": 12,
+						"description": ""
+					},
+					"White": {
+						"value": 0,
+						"description": ""
+					},
+					"Lime": {
+						"value": 5,
+						"description": ""
+					},
+					"Pink": {
+						"value": 6,
+						"description": ""
+					},
+					"Cyan": {
+						"value": 9,
+						"description": ""
+					},
+					"Red": {
+						"value": 14,
+						"description": ""
+					},
+					"Purple": {
+						"value": 10,
+						"description": ""
+					},
+					"LightBlue": {
+						"value": 3,
+						"description": ""
+					},
+					"Gray": {
+						"value": 7,
+						"description": ""
+					},
+					"Magenta": {
+						"value": 2,
+						"description": ""
+					},
+					"Blue": {
+						"value": 11,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"Invisibility": {
+						"value": 14,
+						"description": ""
+					},
+					"Luck": {
+						"value": 26,
+						"description": ""
+					},
+					"FireResistance": {
+						"value": 12,
+						"description": ""
+					},
+					"BadOmen": {
+						"value": 31,
+						"description": ""
+					},
+					"JumpBoost": {
+						"value": 8,
+						"description": ""
+					},
+					"Nausea": {
+						"value": 9,
+						"description": ""
+					},
+					"Regeneration": {
+						"value": 10,
+						"description": ""
+					},
+					"NightVision": {
+						"value": 16,
+						"description": ""
+					},
+					"Haste": {
+						"value": 3,
+						"description": ""
+					},
+					"Strength": {
+						"value": 5,
+						"description": ""
+					},
+					"InstantHealth": {
+						"value": 6,
+						"description": ""
+					},
+					"Poison": {
+						"value": 19,
+						"description": ""
+					},
+					"HealthBoost": {
+						"value": 21,
+						"description": ""
+					},
+					"UnLuck": {
+						"value": 27,
+						"description": ""
+					},
+					"SlowFalling": {
+						"value": 28,
+						"description": ""
+					},
+					"DolphinsGRace": {
+						"value": 30,
+						"description": ""
+					},
+					"Slowness": {
+						"value": 2,
+						"description": ""
+					},
+					"Resistance": {
+						"value": 11,
+						"description": ""
+					},
+					"WaterBreathing": {
+						"value": 13,
+						"description": ""
+					},
+					"Weakness": {
+						"value": 18,
+						"description": ""
+					},
+					"Blindness": {
+						"value": 15,
+						"description": ""
+					},
+					"Saturation": {
+						"value": 23,
+						"description": ""
+					},
+					"HeroOfTheVillage": {
+						"value": 32,
+						"description": ""
+					},
+					"ConduitPower": {
+						"value": 29,
+						"description": ""
+					},
+					"Wither": {
+						"value": 20,
+						"description": ""
+					},
+					"Levitation": {
+						"value": 25,
+						"description": ""
+					},
+					"Absorption": {
+						"value": 22,
+						"description": ""
+					},
+					"InstantDamage": {
+						"value": 7,
+						"description": ""
+					},
+					"Hunger": {
+						"value": 17,
+						"description": ""
+					},
+					"MiningFatigue": {
+						"value": 4,
+						"description": ""
+					},
+					"Glowing": {
+						"value": 24,
+						"description": ""
+					},
+					"Speed": {
+						"value": 1,
+						"description": ""
+					}
+				}
+			},
+			"description": " Numerical ids for effects"
+		},
+		{
+			"et": {
+				"String": {
+					"Luck": {
+						"value": "generic.luck",
+						"description": ""
+					},
+					"HorseJumpStrength": {
+						"value": "horse.jumpStrength",
+						"description": ""
+					},
+					"KnockbackResistance": {
+						"value": "generic.knockbackResistance",
+						"description": ""
+					},
+					"MovementSpeed": {
+						"value": "generic.movementSpeed",
+						"description": ""
+					},
+					"FlyingSpeed": {
+						"value": "generic.flyingSpeed",
+						"description": ""
+					},
+					"ZombieSpawnReinforcements": {
+						"value": "zombie.spawnReinforcements",
+						"description": ""
+					},
+					"MaxHealth": {
+						"value": "generic.maxHealth",
+						"description": ""
+					},
+					"Armor": {
+						"value": "generic.armor",
+						"description": ""
+					},
+					"ArmorToughness": {
+						"value": "generic.armorToughness",
+						"description": ""
+					},
+					"AttackKnockback": {
+						"value": "generic.attackKnockback",
+						"description": ""
+					},
+					"AttackDamage": {
+						"value": "generic.attackDamage",
+						"description": ""
+					},
+					"FollowRange": {
+						"value": "generic.followRange",
+						"description": ""
+					},
+					"AttackSpeed": {
+						"value": "generic.attackSpeed",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Multiplicative": {
+						"value": 1,
+						"description": " Multiplies the current value of the attribute by (1 + x),\n where x is the sum of the modifiers' amounts."
+					},
+					"Percentage": {
+						"value": 2,
+						"description": " For every modifier, multiplies the current value of the attribute by (1 + x),\n where x is the amount of the particular modifier.\n Functions the same as Operation 1 if there is only a single modifier with operation 1 or 2.\n However, for multiple modifiers it will multiply the modifiers rather than adding them"
+					},
+					"Additive": {
+						"value": 0,
+						"description": " Adds all of the modifiers' amounts to the current value of the attribute"
+					}
+				}
+			},
+			"description": " A modifier operation"
+		},
+		{
+			"et": {
+				"String": {
+					"Mainhand": {
+						"value": "mainhand",
+						"description": ""
+					},
+					"Offhand": {
+						"value": "offhand",
+						"description": ""
+					},
+					"Chest": {
+						"value": "chest",
+						"description": ""
+					},
+					"Feet": {
+						"value": "feet",
+						"description": ""
+					},
+					"Legs": {
+						"value": "legs",
+						"description": ""
+					},
+					"Head": {
+						"value": "head",
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"String": {
+					"MiddleCircle": {
+						"value": "mc",
+						"description": " Middle Circle (Roundel)"
+					},
+					"TopRightCorner": {
+						"value": "tr",
+						"description": " Top Right Corner (Chief sinister canton)"
+					},
+					"DownRightStripe": {
+						"value": "drs",
+						"description": " Down Right Stripe (Bend)"
+					},
+					"TopTriangleSawtooth": {
+						"value": "tts",
+						"description": " Top Triangle Sawtooth (Chief indented)"
+					},
+					"MiddleStripeHorizontal": {
+						"value": "ms",
+						"description": " Middle Stripe (Horizontal) (Fess)"
+					},
+					"SquareCross": {
+						"value": "sc",
+						"description": " Square Cross (Cross)"
+					},
+					"TopTriangle": {
+						"value": "tt",
+						"description": " Top Triangle (Inverted chevron)"
+					},
+					"MiddleRhombus": {
+						"value": "mr",
+						"description": " Middle Rhombus (Lozenge)"
+					},
+					"CurlyBorder": {
+						"value": "cbo",
+						"description": " Curly Border (Bordure indented)"
+					},
+					"Skull": {
+						"value": "sku",
+						"description": " Skull (Skull charge)"
+					},
+					"HorizontalHalfTop": {
+						"value": "hh",
+						"description": " Horizontal Half (top) (Per fess)"
+					},
+					"RightStripe": {
+						"value": "rs",
+						"description": " Right Stripe (Pale sinister)"
+					},
+					"Creeper": {
+						"value": "cre",
+						"description": " Creeper (Creeper charge)"
+					},
+					"LeftOfDiagonal": {
+						"value": "ld",
+						"description": " Left of Diagonal (Per bend sinister)"
+					},
+					"RightOfDiagonal": {
+						"value": "rd",
+						"description": " Right of Diagonal (Per bend sinister inverted)"
+					},
+					"VerticalHalfLeft": {
+						"value": "vh",
+						"description": " Vertical Half (left) (Per pale)"
+					},
+					"DownLeftStripe": {
+						"value": "dls",
+						"description": " Down Left Stripe (Bend sinister)"
+					},
+					"Flower": {
+						"value": "flo",
+						"description": " Flower (Flower charge)"
+					},
+					"Gradient": {
+						"value": "gra",
+						"description": " Gradient (Gradient)"
+					},
+					"TopStripe": {
+						"value": "ts",
+						"description": " Top Stripe (Chief)"
+					},
+					"BottomLeftCorner": {
+						"value": "bl",
+						"description": " Bottom Left Corner (Base dexter canton)"
+					},
+					"Brick": {
+						"value": "bri",
+						"description": " Brick (Field masoned)"
+					},
+					"Globe": {
+						"value": "glb",
+						"description": " Globe (Globe)"
+					},
+					"BottomTriangle": {
+						"value": "bt",
+						"description": " Bottom Triangle (Chevron)"
+					},
+					"LeftStripe": {
+						"value": "ls",
+						"description": " Left Stripe (Pale dexter)"
+					},
+					"Mojang": {
+						"value": "moj",
+						"description": " Mojang (Thing)"
+					},
+					"DiagonalCross": {
+						"value": "cr",
+						"description": " Diagonal Cross (Saltire)"
+					},
+					"VerticalHalfRight": {
+						"value": "vhr",
+						"description": " Vertical Half (right) (Per pale inverted)"
+					},
+					"RightOfUpsideDownDiagonal": {
+						"value": "rud",
+						"description": " Right of upside-down Diagonal (Per bend)"
+					},
+					"BottomRightCorner": {
+						"value": "br",
+						"description": " Bottom Right Corner (Base sinister canton)"
+					},
+					"BottomTriangleSawtooth": {
+						"value": "bts",
+						"description": " Bottom Triangle Sawtooth (Base indented)"
+					},
+					"SmallVerticalStripes": {
+						"value": "ss",
+						"description": " Small (Vertical) Stripes (Paly)"
+					},
+					"TopLeftCorner": {
+						"value": "tl",
+						"description": " Top Left Corner (Chief dexter canton)"
+					},
+					"Border": {
+						"value": "bo",
+						"description": " Border (Bordure)"
+					},
+					"BottomStripe": {
+						"value": "bs",
+						"description": " Bottom Stripe (Base)"
+					},
+					"HorizontalHalfBottom": {
+						"value": "hhb",
+						"description": " Horizontal Half (bottom) (Per fess inverted)"
+					},
+					"CenterStripeVertical": {
+						"value": "cs",
+						"description": " Center Stripe (Vertical) (Pale)"
+					},
+					"LeftOfUpsideDownDiagonal": {
+						"value": "lud",
+						"description": " Left of upside-down Diagonal (Per bend inverted)"
+					},
+					"GradientUpsideDown": {
+						"value": "gru",
+						"description": " Gradient upside-down (Base gradient)"
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Byte": {
+					"CyanBanner": {
+						"value": 19,
+						"description": " Cyan banner"
+					},
+					"LightBlueBanner": {
+						"value": 13,
+						"description": " Light blue banner"
+					},
+					"BlackBanner": {
+						"value": 25,
+						"description": " Black banner"
+					},
+					"PlayerOffMap": {
+						"value": 6,
+						"description": " Large white dot"
+					},
+					"TargetPoint": {
+						"value": 5,
+						"description": " Red triangle"
+					},
+					"LimeBanner": {
+						"value": 15,
+						"description": " Lime banner"
+					},
+					"Mansion": {
+						"value": 8,
+						"description": " Woodland mansion"
+					},
+					"RedMarker": {
+						"value": 2,
+						"description": " Red pentagon"
+					},
+					"RedBanner": {
+						"value": 24,
+						"description": " Red banner"
+					},
+					"PlayerOffLimits": {
+						"value": 7,
+						"description": " Small white dot"
+					},
+					"PinkBanner": {
+						"value": 16,
+						"description": " Pink banner"
+					},
+					"Player": {
+						"value": 0,
+						"description": " White pentagon"
+					},
+					"Frame": {
+						"value": 1,
+						"description": " Green pentagon"
+					},
+					"WhiteBanner": {
+						"value": 10,
+						"description": " White banner"
+					},
+					"GreenBanner": {
+						"value": 23,
+						"description": " Green banner"
+					},
+					"RedX": {
+						"value": 26,
+						"description": " Red x"
+					},
+					"Monument": {
+						"value": 9,
+						"description": " Ocean monument"
+					},
+					"MagentaBanner": {
+						"value": 12,
+						"description": " Magenta banner"
+					},
+					"GrayBanner": {
+						"value": 17,
+						"description": " Gray banner"
+					},
+					"LightGrayBanner": {
+						"value": 18,
+						"description": " Light gray banner"
+					},
+					"BlueBanner": {
+						"value": 21,
+						"description": " Blue banner"
+					},
+					"BrownBanner": {
+						"value": 22,
+						"description": " Brown banner"
+					},
+					"YellowBanner": {
+						"value": 14,
+						"description": " Yellow banner"
+					},
+					"PurpleBanner": {
+						"value": 20,
+						"description": " Purple banner"
+					},
+					"BlueMarker": {
+						"value": 3,
+						"description": " Blue pentagon"
+					},
+					"TargetX": {
+						"value": 4,
+						"description": " White x"
+					},
+					"OrangeBanner": {
+						"value": 11,
+						"description": " Orange banner"
+					}
+				}
+			},
+			"description": ""
+		},
+		{
+			"et": {
+				"Int": {
+					"Copy": {
+						"value": 1,
+						"description": ""
+					},
+					"Tattered": {
+						"value": 3,
+						"description": ""
+					},
+					"CopyOfCopy": {
+						"value": 2,
+						"description": ""
+					},
+					"Original": {
+						"value": 0,
+						"description": ""
+					}
+				}
+			},
+			"description": " The generation of the book"
+		},
+		{
+			"et": {
+				"Byte": {
+					"Burst": {
+						"value": 4,
+						"description": ""
+					},
+					"SmallBall": {
+						"value": 0,
+						"description": ""
+					},
+					"LargeBall": {
+						"value": 1,
+						"description": ""
+					},
+					"Star": {
+						"value": 2,
+						"description": ""
+					},
+					"Creeper": {
+						"value": 3,
+						"description": ""
+					}
+				}
+			},
+			"description": ""
+		}
+	],
+	"module_arena": [
+		{
+			"children": {
+				"util": {
+					"Module": 3
+				},
+				"entity": {
+					"Module": 1
+				},
+				"generated": {
+					"Module": 5
+				},
+				"block": {
+					"Module": 2
+				},
+				"item": {
+					"Module": 4
+				}
+			},
+			"parent": null
+		},
+		{
+			"children": {
+				"mob": {
+					"Module": 18
+				},
+				"tnt": {
+					"Module": 8
+				},
+				"EntityBase": {
+					"Compound": 0
+				},
+				"painting": {
+					"Module": 16
+				},
+				"itemframe": {
+					"Module": 10
+				},
+				"fallingblock": {
+					"Module": 7
+				},
+				"fireball": {
+					"Module": 17
+				},
+				"projectile": {
+					"Module": 6
+				},
+				"evokerfangs": {
+					"Module": 14
+				},
+				"effectcloud": {
+					"Module": 11
+				},
+				"AnyEntity": {
+					"Compound": 1
+				},
+				"xporb": {
+					"Module": 12
+				},
+				"item": {
+					"Module": 13
+				},
+				"fireworkrocket": {
+					"Module": 15
+				},
+				"endcrystal": {
+					"Module": 19
+				},
+				"eyeofender": {
+					"Module": 9
+				}
+			},
+			"parent": 0
+		},
+		{
+			"children": {
+				"campfire": {
+					"Module": 65
+				},
+				"jukebox": {
+					"Module": 68
+				},
+				"commandblock": {
+					"Module": 72
+				},
+				"conduit": {
+					"Module": 81
+				},
+				"jigsaw": {
+					"Module": 80
+				},
+				"brewingstand": {
+					"Module": 84
+				},
+				"spawner": {
+					"Module": 85
+				},
+				"structureblock": {
+					"Module": 75
+				},
+				"comparator": {
+					"Module": 76
+				},
+				"enchantingtable": {
+					"Module": 71
+				},
+				"container": {
+					"Module": 70
+				},
+				"movingpiston": {
+					"Module": 66
+				},
+				"lectern": {
+					"Module": 74
+				},
+				"BlockEntity": {
+					"Compound": 100
+				},
+				"sign": {
+					"Module": 67
+				},
+				"RegularBlock": {
+					"Compound": 101
+				},
+				"hopper": {
+					"Module": 82
+				},
+				"beacon": {
+					"Module": 77
+				},
+				"endgateway": {
+					"Module": 73
+				},
+				"beehive": {
+					"Module": 83
+				},
+				"head": {
+					"Module": 78
+				},
+				"furnace": {
+					"Module": 69
+				},
+				"banner": {
+					"Module": 79
+				}
+			},
+			"parent": 0
+		},
+		{
+			"children": {
+				"effect": {
+					"Module": 88
+				},
+				"EffectId": {
+					"Enum": 25
+				},
+				"InventoryItem": {
+					"Compound": 136
+				},
+				"BlockState": {
+					"Compound": 134
+				},
+				"blockstate": {
+					"Module": 86
+				},
+				"color": {
+					"Module": 87
+				},
+				"Attribute": {
+					"Enum": 26
+				},
+				"slot": {
+					"Module": 90
+				},
+				"SlottedItem": {
+					"Compound": 137
+				},
+				"PotionEffect": {
+					"Compound": 135
+				},
+				"attribute": {
+					"Module": 89
+				},
+				"Color": {
+					"Enum": 23
+				},
+				"bannerpattern": {
+					"Module": 92
+				},
+				"invitem": {
+					"Module": 91
+				},
+				"BannerPattern": {
+					"Enum": 29
+				},
+				"Slot": {
+					"Enum": 28
+				}
+			},
+			"parent": 0
+		},
+		{
+			"children": {
+				"AttributeModifier": {
+					"Compound": 140
+				},
+				"firework": {
+					"Module": 99
+				},
+				"leatherarmor": {
+					"Module": 93
+				},
+				"map": {
+					"Module": 96
+				},
+				"potion": {
+					"Module": 103
+				},
+				"Enchantment": {
+					"Compound": 139
+				},
+				"crossbow": {
+					"Module": 94
+				},
+				"enchantedbook": {
+					"Module": 101
+				},
+				"suspiciousstew": {
+					"Module": 95
+				},
+				"head": {
+					"Module": 98
+				},
+				"knowledgebook": {
+					"Module": 104
+				},
+				"shield": {
+					"Module": 105
+				},
+				"Display": {
+					"Compound": 141
+				},
+				"fishbucket": {
+					"Module": 100
+				},
+				"spawnitem": {
+					"Module": 106
+				},
+				"blockitem": {
+					"Module": 102
+				},
+				"ItemBase": {
+					"Compound": 138
+				},
+				"book": {
+					"Module": 97
+				}
+			},
+			"parent": 0
+		},
+		{
+			"children": {
+				"item": {
+					"Module": 107
+				}
+			},
+			"parent": 0
+		},
+		{
+			"children": {
+				"llamaspit": {
+					"Module": 21
+				},
+				"ProjectileBase": {
+					"Compound": 2
+				},
+				"arrow": {
+					"Module": 22
+				},
+				"throwable": {
+					"Module": 20
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"FallingBlock": {
+					"Compound": 13
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"Tnt": {
+					"Compound": 14
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"EyeOfEnder": {
+					"Compound": 15
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"ItemFrame": {
+					"Compound": 16
+				},
+				"Facing": {
+					"Enum": 1
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"EffectCloud": {
+					"Compound": 17
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"XpOrb": {
+					"Compound": 18
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"Item": {
+					"Compound": 19
+				},
+				"UUID": {
+					"Compound": 20
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"Owner": {
+					"Compound": 22
+				},
+				"EvokerFangs": {
+					"Compound": 21
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"FireworkRocket": {
+					"Compound": 23
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"Facing": {
+					"Enum": 2
+				},
+				"Painting": {
+					"Compound": 24
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"FireballBase": {
+					"Compound": 25
+				},
+				"Fireball": {
+					"Compound": 26
+				},
+				"LargeFireball": {
+					"Compound": 27
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"armorstand": {
+					"Module": 31
+				},
+				"enderdragon": {
+					"Module": 34
+				},
+				"endermite": {
+					"Module": 23
+				},
+				"BlockLeash": {
+					"Compound": 35
+				},
+				"Brain": {
+					"Compound": 32
+				},
+				"Attribute": {
+					"Compound": 30
+				},
+				"MobBase": {
+					"Compound": 29
+				},
+				"ghast": {
+					"Module": 29
+				},
+				"Memories": {
+					"Compound": 33
+				},
+				"wither": {
+					"Module": 30
+				},
+				"trader": {
+					"Module": 27
+				},
+				"creeper": {
+					"Module": 28
+				},
+				"fish": {
+					"Module": 32
+				},
+				"dolphin": {
+					"Module": 38
+				},
+				"UUIDLeash": {
+					"Compound": 34
+				},
+				"raider": {
+					"Module": 36
+				},
+				"breedable": {
+					"Module": 39
+				},
+				"shulker": {
+					"Module": 25
+				},
+				"snowgolem": {
+					"Module": 26
+				},
+				"enderman": {
+					"Module": 40
+				},
+				"AttributeModifier": {
+					"Compound": 31
+				},
+				"bat": {
+					"Module": 37
+				},
+				"zombie": {
+					"Module": 33
+				},
+				"LivingEntity": {
+					"Compound": 28
+				},
+				"player": {
+					"Module": 24
+				},
+				"slime": {
+					"Module": 35
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"EndCrystal": {
+					"Compound": 98
+				},
+				"BeamTarget": {
+					"Compound": 99
+				}
+			},
+			"parent": 1
+		},
+		{
+			"children": {
+				"Owner": {
+					"Compound": 6
+				},
+				"BasicThrowable": {
+					"Compound": 4
+				},
+				"PotionThrowable": {
+					"Compound": 5
+				},
+				"Throwable": {
+					"Compound": 3
+				}
+			},
+			"parent": 6
+		},
+		{
+			"children": {
+				"LlamaSpit": {
+					"Compound": 7
+				},
+				"Owner": {
+					"Compound": 8
+				}
+			},
+			"parent": 6
+		},
+		{
+			"children": {
+				"Arrow": {
+					"Compound": 10
+				},
+				"SpectralArrow": {
+					"Compound": 11
+				},
+				"Pickup": {
+					"Enum": 0
+				},
+				"ArrowBase": {
+					"Compound": 9
+				},
+				"Trident": {
+					"Compound": 12
+				}
+			},
+			"parent": 6
+		},
+		{
+			"children": {
+				"Endermite": {
+					"Compound": 36
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Player": {
+					"Compound": 37
+				},
+				"RecipeBook": {
+					"Compound": 41
+				},
+				"RootVehicle": {
+					"Compound": 40
+				},
+				"Dimension": {
+					"Enum": 3
+				},
+				"Gamemode": {
+					"Enum": 4
+				},
+				"Abilities": {
+					"Compound": 38
+				},
+				"EnteredNetherPosition": {
+					"Compound": 39
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"AttachFace": {
+					"Enum": 5
+				},
+				"BulletTarget": {
+					"Compound": 44
+				},
+				"Shulker": {
+					"Compound": 42
+				},
+				"ShulkerBullet": {
+					"Compound": 43
+				},
+				"ShulkerColor": {
+					"Enum": 6
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"SnowGolem": {
+					"Compound": 45
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"WanderTarget": {
+					"Compound": 47
+				},
+				"WanderingTrader": {
+					"Compound": 46
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Creeper": {
+					"Compound": 48
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Ghast": {
+					"Compound": 49
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Wither": {
+					"Compound": 50
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"ArmorStand": {
+					"Compound": 51
+				},
+				"Pose": {
+					"Compound": 52
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"TropicalFish": {
+					"Compound": 55
+				},
+				"Fish": {
+					"Compound": 53
+				},
+				"PuffState": {
+					"Enum": 7
+				},
+				"Pufferfish": {
+					"Compound": 54
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"ZombieVillager": {
+					"Compound": 57
+				},
+				"Zombie": {
+					"Compound": 56
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"DragonPhase": {
+					"Enum": 8
+				},
+				"EnderDragon": {
+					"Compound": 58
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Slimelike": {
+					"Compound": 59
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"RaiderBase": {
+					"Compound": 60
+				},
+				"PatrolTarget": {
+					"Compound": 61
+				},
+				"pillager": {
+					"Module": 42
+				},
+				"ravager": {
+					"Module": 43
+				},
+				"spellcaster": {
+					"Module": 41
+				},
+				"vindicator": {
+					"Module": 44
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Bat": {
+					"Compound": 66
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Dolphin": {
+					"Compound": 67
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"panda": {
+					"Module": 56
+				},
+				"pig": {
+					"Module": 46
+				},
+				"turtle": {
+					"Module": 57
+				},
+				"villager": {
+					"Module": 50
+				},
+				"fox": {
+					"Module": 55
+				},
+				"chicken": {
+					"Module": 45
+				},
+				"bee": {
+					"Module": 58
+				},
+				"rabbit": {
+					"Module": 48
+				},
+				"llama": {
+					"Module": 47
+				},
+				"Breedable": {
+					"Compound": 68
+				},
+				"ocelot": {
+					"Module": 54
+				},
+				"tamable": {
+					"Module": 49
+				},
+				"horse": {
+					"Module": 51
+				},
+				"sheep": {
+					"Module": 52
+				},
+				"mooshroom": {
+					"Module": 53
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Enderman": {
+					"Compound": 97
+				}
+			},
+			"parent": 18
+		},
+		{
+			"children": {
+				"Spellcaster": {
+					"Compound": 62
+				}
+			},
+			"parent": 36
+		},
+		{
+			"children": {
+				"Pillager": {
+					"Compound": 63
+				}
+			},
+			"parent": 36
+		},
+		{
+			"children": {
+				"Ravager": {
+					"Compound": 64
+				}
+			},
+			"parent": 36
+		},
+		{
+			"children": {
+				"Vindicator": {
+					"Compound": 65
+				}
+			},
+			"parent": 36
+		},
+		{
+			"children": {
+				"Chicken": {
+					"Compound": 69
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Pig": {
+					"Compound": 70
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Variant": {
+					"Enum": 9
+				},
+				"Llama": {
+					"Compound": 71
+				},
+				"TraderLlama": {
+					"Compound": 72
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Rabbit": {
+					"Compound": 73
+				},
+				"RabbitType": {
+					"Enum": 10
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"wolf": {
+					"Module": 59
+				},
+				"parrot": {
+					"Module": 61
+				},
+				"cat": {
+					"Module": 60
+				},
+				"Tamable": {
+					"Compound": 74
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"GossipType": {
+					"Enum": 13
+				},
+				"Villager": {
+					"Compound": 78
+				},
+				"Gossip": {
+					"Compound": 80
+				},
+				"VillagerData": {
+					"Compound": 79
+				},
+				"Offers": {
+					"Compound": 81
+				},
+				"Recipe": {
+					"Compound": 82
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"horse": {
+					"Module": 62
+				},
+				"HorseBase": {
+					"Compound": 83
+				},
+				"skeleton": {
+					"Module": 63
+				},
+				"chested": {
+					"Module": 64
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Sheep": {
+					"Compound": 87
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Mooshroom": {
+					"Compound": 88
+				},
+				"Type": {
+					"Enum": 14
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Ocelot": {
+					"Compound": 89
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Fox": {
+					"Compound": 90
+				},
+				"TrustedUUID": {
+					"Compound": 91
+				},
+				"FoxType": {
+					"Enum": 15
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Panda": {
+					"Compound": 92
+				},
+				"Gene": {
+					"Enum": 16
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Turtle": {
+					"Compound": 93
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Bee": {
+					"Compound": 94
+				},
+				"HivePos": {
+					"Compound": 95
+				},
+				"FlowerPos": {
+					"Compound": 96
+				}
+			},
+			"parent": 39
+		},
+		{
+			"children": {
+				"Cat": {
+					"Compound": 75
+				}
+			},
+			"parent": 49
+		},
+		{
+			"children": {
+				"CatType": {
+					"Enum": 11
+				},
+				"Cat": {
+					"Compound": 76
+				}
+			},
+			"parent": 49
+		},
+		{
+			"children": {
+				"Parrot": {
+					"Compound": 77
+				},
+				"Variant": {
+					"Enum": 12
+				}
+			},
+			"parent": 49
+		},
+		{
+			"children": {
+				"Horse": {
+					"Compound": 84
+				}
+			},
+			"parent": 51
+		},
+		{
+			"children": {
+				"SkeletonHorse": {
+					"Compound": 85
+				}
+			},
+			"parent": 51
+		},
+		{
+			"children": {
+				"ChestedHorse": {
+					"Compound": 86
+				}
+			},
+			"parent": 51
+		},
+		{
+			"children": {
+				"Campfire": {
+					"Compound": 102
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Facing": {
+					"Enum": 17
+				},
+				"MovingPiston": {
+					"Compound": 103
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Color": {
+					"Enum": 18
+				},
+				"Sign": {
+					"Compound": 104
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Jukebox": {
+					"Compound": 105
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Furnace": {
+					"Compound": 106
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"ContainerBase": {
+					"Compound": 107
+				},
+				"Container27": {
+					"Compound": 108
+				},
+				"Container9": {
+					"Compound": 109
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"EnchantingTable": {
+					"Compound": 110
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"CommandBlock": {
+					"Compound": 111
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"EndGateway": {
+					"Compound": 112
+				},
+				"ExitPortal": {
+					"Compound": 113
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Lectern": {
+					"Compound": 114
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"StructureBlock": {
+					"Compound": 115
+				},
+				"Mirror": {
+					"Enum": 20
+				},
+				"Rotation": {
+					"Enum": 19
+				},
+				"Mode": {
+					"Enum": 21
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Comparator": {
+					"Compound": 116
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Beacon": {
+					"Compound": 117
+				},
+				"EffectId": {
+					"Enum": 22
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Properties": {
+					"Compound": 120
+				},
+				"PlayerHead": {
+					"Compound": 118
+				},
+				"Texture": {
+					"Compound": 121
+				},
+				"Owner": {
+					"Compound": 119
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Banner": {
+					"Compound": 122
+				},
+				"Pattern": {
+					"Compound": 123
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Jigsaw": {
+					"Compound": 124
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"TargetUUID": {
+					"Compound": 126
+				},
+				"Conduit": {
+					"Compound": 125
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"Hopper": {
+					"Compound": 127
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"BeeHive": {
+					"Compound": 128
+				},
+				"FlowerPos": {
+					"Compound": 129
+				},
+				"Bee": {
+					"Compound": 130
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"BrewingStand": {
+					"Compound": 131
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"SpawnPotential": {
+					"Compound": 133
+				},
+				"Spawner": {
+					"Compound": 132
+				}
+			},
+			"parent": 2
+		},
+		{
+			"children": {
+				"BlockState": {
+					"Compound": 134
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"ColorInt": {
+					"Enum": 24
+				},
+				"Color": {
+					"Enum": 23
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"EffectId": {
+					"Enum": 25
+				},
+				"PotionEffect": {
+					"Compound": 135
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"Attribute": {
+					"Enum": 26
+				},
+				"Operation": {
+					"Enum": 27
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"Slot": {
+					"Enum": 28
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"InventoryItem": {
+					"Compound": 136
+				},
+				"SlottedItem": {
+					"Compound": 137
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"BannerPattern": {
+					"Enum": 29
+				}
+			},
+			"parent": 3
+		},
+		{
+			"children": {
+				"ColorDisplay": {
+					"Compound": 143
+				},
+				"LeatherArmor": {
+					"Compound": 142
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"Crossbow": {
+					"Compound": 144
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"SuspiciousStew": {
+					"Compound": 145
+				},
+				"Effect": {
+					"Compound": 146
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"Decoration": {
+					"Compound": 148
+				},
+				"Display": {
+					"Compound": 149
+				},
+				"FilledMap": {
+					"Compound": 147
+				},
+				"IconId": {
+					"Enum": 30
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"WritableBook": {
+					"Compound": 150
+				},
+				"WrittenBook": {
+					"Compound": 151
+				},
+				"Generation": {
+					"Enum": 31
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"PlayerHead": {
+					"Compound": 152
+				},
+				"SkullOwner": {
+					"Compound": 153
+				},
+				"Properties": {
+					"Compound": 154
+				},
+				"Texture": {
+					"Compound": 155
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"FireworkRocket": {
+					"Compound": 156
+				},
+				"Type": {
+					"Enum": 32
+				},
+				"FireworkStar": {
+					"Compound": 157
+				},
+				"Explosion": {
+					"Compound": 159
+				},
+				"Fireworks": {
+					"Compound": 158
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"FishBucket": {
+					"Compound": 160
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"EnchantedBook": {
+					"Compound": 161
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"BlockItem": {
+					"Compound": 162
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"EffectItem": {
+					"Compound": 163
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"KnowledgeBook": {
+					"Compound": 164
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"Shield": {
+					"Compound": 165
+				},
+				"Tag": {
+					"Compound": 166
+				},
+				"Pattern": {
+					"Compound": 167
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {
+				"SpawnItem": {
+					"Compound": 168
+				}
+			},
+			"parent": 4
+		},
+		{
+			"children": {},
+			"parent": 5
+		}
+	],
+	"unresolved_inject": []
+}

@@ -495,6 +495,7 @@ connection.onInitialized(() => {
 
 async function getLatestVersions() {
     try {
+        connection.console.info('[LatestVersions] Fetching the latest versions...')
         const str = await requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json')
         const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
         const processedVersion = '20w09a'
@@ -502,9 +503,9 @@ async function getLatestVersions() {
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
-        connection.console.warn(`Error occurred while getting latest verions: ${e}`)
+        connection.console.warn(`[LatestVersions] Error occurred: ${e}`)
     }
-    connection.console.info(`reportOptions = ${JSON.stringify(reportOptions)}`)
+    connection.console.info(`[LatestVersions] reportOptions = ${JSON.stringify(reportOptions)}`)
 }
 
 async function updateDiagnostics(uri: Uri) {

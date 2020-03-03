@@ -360,23 +360,23 @@ Designed the DHP's icon and the banner showed on top of this page.
 
 ## localization-Feierwoerx
 
-Localization for 🇩🇪 German (`de`).
+Localization for German (`de`).
 
 ## localization-TCasseBloc
 
-Localization for 🇫🇷 French (`fr`).
+Localization for French (`fr`).
 
 ## localization-Ghoulboy78
 
-Localization for 🇮🇹 Italian (`it`).
+Localization for Italian (`it`).
 
 ## localization-ChenCMD
 
-Localization for 🇯🇵 Japanese (`ja`).
+Localization for Japanese (`ja`).
 
 ## localization-SPGoding
 
-Localization for 🇨🇳 Simplified Chinese (`zh-cn`).
+Localization for Simplified Chinese (`zh-cn`).
 
 ## sponsor
 

@@ -7,7 +7,7 @@ import Manager from './Manager'
 import NbtSchema from './NbtSchema'
 import Registry from './Registry'
 import { ClientCache } from './ClientCache'
-import { getReport } from '../data/Report'
+import { getReport } from '../data/VanillaData'
 import { getCommandTree } from '../data/CommandTree'
 import { getNbtSchema } from '../data/NbtSchema'
 
@@ -49,8 +49,8 @@ export async function constructContext(custom: ParsingContextLike, options?: Van
     } as ParsingContext
 
     ans.blocks = ans.blocks || await getReport('BlockDefinition', ans.config.env.dataVersion, options)
+    ans.nbt = ans.nbt || await getReport('Nbtdoc', ans.config.env.dataVersion, options)
     ans.registries = ans.registries || await getReport('Registry', ans.config.env.dataVersion, options)
-    ans.nbt = ans.nbt || await getNbtSchema(ans.config.env.version)
     ans.tree = ans.tree || await getCommandTree(ans.config.env.version)
 
     return ans

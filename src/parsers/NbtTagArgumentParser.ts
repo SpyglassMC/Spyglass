@@ -1,6 +1,6 @@
 import ArgumentParser from './ArgumentParser'
 import MapAbstractParser from './MapAbstractParser'
-import NbtSchemaWalker from '../utils/NbtSchemaWalker'
+import NbtdocHelper from '../utils/NbtdocHelper'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -135,11 +135,11 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtTag> {
-        let walker: NbtSchemaWalker | undefined
+        let walker: NbtdocHelper | undefined
         if (this.id) {
             try {
                 const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
-                walker = new NbtSchemaWalker(ctx.nbt)
+                walker = new NbtdocHelper(ctx.nbt)
                 walker
                     .go(nbtSchemaPath)
                     .read()
@@ -161,7 +161,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
+    private parseTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtTag> {
         let ans
         const start = reader.cursor
         switch (reader.peek()) {
@@ -174,12 +174,12 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             case '':
             case '}':
                 if (walker) {
-                    if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                    if (NbtdocHelper.isCompoundNode(walker.read())) {
                         ans = this.parseCompoundTag(reader, ctx, walker)
                         if (ctx.cursor === start) {
                             ans.completions.push({ label: '{}' })
                         }
-                    } else if (NbtSchemaWalker.isListNode(walker.read())) {
+                    } else if (NbtdocHelper.isListNode(walker.read())) {
                         ans = this.parseListOrArray(reader, ctx, walker)
                         if (ctx.cursor === start) {
                             ans.completions.push({ label: '[]' })
@@ -268,7 +268,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtCompoundTag> {
+    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtCompoundTag> {
         const ans: ArgumentParserResult<NbtCompoundTag> = {
             data: getNbtCompoundTag({}),
             tokens: [],
@@ -276,7 +276,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             cache: {},
             completions: []
         }
-        const isSchemaAvailable = walker && NbtSchemaWalker.isCompoundNode(walker.read())
+        const isSchemaAvailable = walker && NbtdocHelper.isCompoundNode(walker.read())
         new MapAbstractParser<string, NbtCompoundTag>(
             '{', ':', ',', '}',
             (ans, reader, ctx) => {
@@ -358,7 +358,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 let isUnexpectedKey = false
                 // Check whether the schema for the key is available.
                 let isSchemaForKeyAvailable = false
-                let clonedWalker: undefined | NbtSchemaWalker
+                let clonedWalker: undefined | NbtdocHelper
                 if (walker && isSchemaAvailable) {
                     clonedWalker = walker
                         .clone()
@@ -397,7 +397,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parseListOrArray(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtTag> {
+    private parseListOrArray(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtListTag([]),
             tokens: [],
@@ -424,7 +424,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker,
+    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper,
         specifiedType: 'byte_array' | 'int_array' | 'long_array' | null = null):
         ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
@@ -469,7 +469,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     reader,
                     ctx,
                     /* istanbul ignore next */
-                    (walker && NbtSchemaWalker.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined,
+                    (walker && NbtdocHelper.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined,
                     (walker && walker.read().isColor)
                 )
                 combineArgumentParserResult(ans, result)
@@ -533,7 +533,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parseList(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker): ArgumentParserResult<NbtListTag> {
+    private parseList(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtListTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
             data: getNbtListTag([]),
             tokens: [],
@@ -551,7 +551,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const result = this.parseTag(
                     reader,
                     ctx,
-                    (walker && NbtSchemaWalker.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined
+                    (walker && NbtdocHelper.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined
                 )
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
@@ -588,7 +588,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, walker?: NbtSchemaWalker, isColor?: boolean): ArgumentParserResult<NbtTag> {
+    private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper, isColor?: boolean): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtStringTag(''),
             tokens: [],

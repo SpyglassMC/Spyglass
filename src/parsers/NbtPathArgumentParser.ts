@@ -5,7 +5,7 @@ import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import NbtPath, { NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../types/NbtPath'
-import NbtSchemaWalker from '../utils/NbtSchemaWalker'
+import NbtdocHelper from '../utils/NbtdocHelper'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -31,11 +31,11 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             completions: [],
             errors: []
         }
-        let walker: NbtSchemaWalker | undefined
+        let walker: NbtdocHelper | undefined
         if (this.id) {
             try {
                 const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
-                walker = new NbtSchemaWalker(ctx.nbt)
+                walker = new NbtdocHelper(ctx.nbt)
                 walker.go(nbtSchemaPath)
                 walker.read()
             } catch (ignored) {
@@ -52,13 +52,13 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
      * @throws {ParsingError} When `alloEmpty === false` and the input doesn't meet the requirements.
      */
     private parseSpecifiedTypes(
-        ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtSchemaWalker | undefined,
+        ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtdocHelper | undefined,
         types: ('key' | 'filter' | 'index')[], allowEmpty: boolean
     ) {
-        let subWalker: NbtSchemaWalker | undefined = undefined
+        let subWalker: NbtdocHelper | undefined = undefined
 
         //#region Completions
-        if (types.includes('key') && walker && NbtSchemaWalker.isCompoundNode(walker.read())) {
+        if (types.includes('key') && walker && NbtdocHelper.isCompoundNode(walker.read())) {
             if (reader.cursor === ctx.cursor) {
                 const node = walker.read() as NbtCompoundSchemaNode
                 const children = node.children /* istanbul ignore next */ || {}
@@ -70,7 +70,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
         if (types.includes('key') && this.canParseKey(reader)) {
             if (walker) {
-                if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                if (NbtdocHelper.isCompoundNode(walker.read())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
@@ -83,7 +83,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             this.parseKey(ans, reader, ctx, subWalker)
         } else if (types.includes('filter') && this.canParseCompoundFilter(reader)) {
             if (walker) {
-                if (NbtSchemaWalker.isCompoundNode(walker.read())) {
+                if (NbtdocHelper.isCompoundNode(walker.read())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
@@ -97,7 +97,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         } else if (types.includes('index') && this.canParseIndex(reader)) {
             if (walker) {
                 if ((
-                    NbtSchemaWalker.isListNode(walker.read()) ||
+                    NbtdocHelper.isListNode(walker.read()) ||
                     walker.read().type === 'byte_array' ||
                     walker.read().type === 'int_array' ||
                     walker.read().type === 'long_array'
@@ -125,8 +125,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         }
     }
 
-    private parseKey(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtSchemaWalker | undefined) {
-        let subWalker: NbtSchemaWalker | undefined = undefined
+    private parseKey(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtdocHelper | undefined) {
+        let subWalker: NbtdocHelper | undefined = undefined
         const start = reader.cursor
         let key: string = ''
         try {
@@ -175,7 +175,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         }
     }
 
-    private parseCompoundFilter(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtSchemaWalker | undefined) {
+    private parseCompoundFilter(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtdocHelper | undefined) {
         const result = ctx.parsers
             .get('NbtTag', ['compound', this.category, walker ? walker.anchorPath.full : undefined, true])
             .parse(reader, ctx)
@@ -188,8 +188,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         }
     }
 
-    private parseIndex(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtSchemaWalker | undefined) {
-        let subWalker: NbtSchemaWalker | undefined = undefined
+    private parseIndex(ans: ArgumentParserResult<NbtPath>, reader: StringReader, ctx: ParsingContext, walker: NbtdocHelper | undefined) {
+        let subWalker: NbtdocHelper | undefined = undefined
         this.parseIndexBegin(ans, reader)
         reader.skipWhiteSpace()
 

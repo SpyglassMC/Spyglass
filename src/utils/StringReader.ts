@@ -122,6 +122,7 @@ export default class StringReader {
     }
 
     /**
+     * @deprecated
      * @throws When the value is float.
      */
     readLong() {
@@ -144,6 +145,9 @@ export default class StringReader {
         return parseFloat(str)
     }
 
+    /**
+     * @deprecated
+     */
     readDouble() {
         const str = this.readNumber()
         return parseFloat(str)
@@ -281,6 +285,7 @@ export default class StringReader {
     }
 
     /**
+     * @deprecated
      * @throws {ParsingError}
      */
     readBoolean() {

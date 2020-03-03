@@ -1,6 +1,6 @@
 import ArgumentNode from './types/ArgumentNode'
 import Entity from './types/Entity'
-import NbtSchemaWalker from './utils/NbtSchemaWalker'
+import NbtdocHelper from './utils/NbtdocHelper'
 import NbtSchema from './types/NbtSchema'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 
@@ -10,7 +10,7 @@ export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
         if (!firstID.isTag) {
             const anchor = firstID.toString()
             try {
-                new NbtSchemaWalker(schema)
+                new NbtdocHelper(schema)
                     .goFile('roots/entities.json')
                     .goAnchor(anchor)
                     .read()
@@ -86,7 +86,7 @@ export function fillSingleTemplate(currentNode: CommandTreeNode<any>, singleTemp
 export function fillChildrenTemplate(currentNode: CommandTreeNode<any>, childrenTemplate: CommandTreeNodeChildren): CommandTreeNodeChildren {
     const ans: CommandTreeNodeChildren = {}
     for (const key in childrenTemplate) {
-        /* istanbul ignore next */
+        /* istanbul ignore else */
         if (childrenTemplate.hasOwnProperty(key)) {
             const node = childrenTemplate[key]
             ans[key] = fillSingleTemplate(currentNode, node)
