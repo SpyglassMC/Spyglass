@@ -256,17 +256,17 @@ You can format the current function by pressing Shift + Alt + F or other configu
 
 There are several linting rules you can set in the configuration settings.
 
-**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the `datapackLanguageServer.lint.enableFormatting` setting.
+**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the `datapack.lint.enableFormatting` setting.
 
 ![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
 ## Configuration Settings
 
-Press Ctrl + `,` (or other configured hotkey) to open the Settings page of VSCode, and search `datapackLanguageServer` to see all the configuration settings contributed by DHP. You can add your own code snippets, set the lint preferences and environment information to meet your needs. These config can be changed for the current user or the workspace. See [VSCode's official docs](https://code.visualstudio.com/docs/getstarted/settings) to learn more about configuring settings.
+Press Ctrl + `,` (or other configured hotkey) to open the Settings page of VSCode, and search `datapack` to see all the configuration settings contributed by DHP. You can add your own code snippets, set the lint preferences and environment information to meet your needs. These config can be changed for the current user or the workspace. See [VSCode's official docs](https://code.visualstudio.com/docs/getstarted/settings) to learn more about configuring settings.
 
 ## Regenerating Cache
 
-DHP uses cache to accelerate the process of renaming, finding references/definitions, document links, etc. However, the cache may become outdated because of various reasons, which could lead to strange behaviors. You can use the `Datapack: Regenerate Cache` command (ID: `datapackLanguageServer.regenerateCache`) to regenerate the cache manually.
+DHP uses cache to accelerate the process of renaming, finding references/definitions, document links, etc. However, the cache may become outdated because of various reasons, which could lead to strange behaviors. You can use the `Datapack: Regenerate Cache` command (ID: `datapack.regenerateCache`) to regenerate the cache manually.
 
 # Contributors
 

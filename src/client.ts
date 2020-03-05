@@ -59,7 +59,7 @@ export function activate(context: ExtensionContext) {
 
     // Create the language client and start the client.
     client = new LanguageClient(
-        'datapackLanguageServer',
+        'datapack',
         'Datapack Language Server',
         serverOptions,
         clientOptions

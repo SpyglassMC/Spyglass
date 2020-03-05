@@ -75,8 +75,8 @@
     "engines": {
         "vscode": "^1.41.0"
     },
-    "displayName": "%datapackLanguageServer.displayName%",
-    "description": "%datapackLanguageServer.description%",
+    "displayName": "%datapack.displayName%",
+    "description": "%datapack.description%",
     "icon": "icon.png",
     "categories": [
         "Formatters",
@@ -101,8 +101,8 @@
         ],
         "commands": [
             {
-                "command": "datapackLanguageServer.regenerateCache",
-                "title": "%datapackLanguageServer.commands.regenerateCache.title%",
+                "command": "datapack.regenerateCache",
+                "title": "%datapack.commands.regenerateCache.title%",
                 "category": "Datapack",
                 "enablement": "workspaceFolderCount != 0 && editorLangId == mcfunction"
             }
@@ -110,7 +110,7 @@
         "configuration": {
             "title": "Datapack Language Server",
             "properties": {
-                "datapackLanguageServer.env.permissionLevel": {
+                "datapack.env.permissionLevel": {
                     "type": "number",
                     "enum": [
                         1,
@@ -118,19 +118,19 @@
                         3,
                         4
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.env.permissionLevel%",
+                    "markdownDescription": "%datapack.config.env.permissionLevel%",
                     "default": 2
                 },
-                "datapackLanguageServer.env.version": {
+                "datapack.env.version": {
                     "type": "string",
                     "enum": [
                         "1.15",
                         "1.16"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.env.version%",
+                    "markdownDescription": "%datapack.config.env.version%",
                     "default": "1.16"
                 },
-                "datapackLanguageServer.env.dataVersion": {
+                "datapack.env.dataVersion": {
                     "anyOf": [
                         {
                             "type": "string",
@@ -143,15 +143,15 @@
                             "type": "string"
                         }
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.env.dataVersion%",
+                    "markdownDescription": "%datapack.config.env.dataVersion%",
                     "default": "Latest snapshot"
                 },
-                "datapackLanguageServer.snippets": {
+                "datapack.snippets": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "markdownDescription": "%datapackLanguageServer.config.snippets%",
+                    "markdownDescription": "%datapack.config.snippets%",
                     "default": {
                         "executeIfScoreSet": "execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0",
                         "scoreboardPlayersOperation": "scoreboard players operation ${1:target_score_holder} ${2:target_objective} ${3|+=,-=,*=,/=,%=,=,>,<,<>|} ${4:source_score_holder} ${5:source_objective}",
@@ -162,37 +162,37 @@
                         "summonAec": "summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: [\"${1:tag}\"]}"
                     }
                 },
-                "datapackLanguageServer.lint.enableFormatting": {
+                "datapack.lint.enableFormatting": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.enableFormatting%",
+                    "markdownDescription": "%datapack.config.lint.enableFormatting%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.blockStateAppendSpaceAfterComma": {
+                "datapack.lint.blockStateAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStateAppendSpaceAfterComma%",
+                    "markdownDescription": "%datapack.config.lint.blockStateAppendSpaceAfterComma%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.blockStatePutSpacesAroundEqualSign": {
+                "datapack.lint.blockStatePutSpacesAroundEqualSign": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStatePutSpacesAroundEqualSign%",
+                    "markdownDescription": "%datapack.config.lint.blockStatePutSpacesAroundEqualSign%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.blockStateSortKeys": {
+                "datapack.lint.blockStateSortKeys": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.blockStateSortKeys%",
+                    "markdownDescription": "%datapack.config.lint.blockStateSortKeys%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.entitySelectorAppendSpaceAfterComma": {
+                "datapack.lint.entitySelectorAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorAppendSpaceAfterComma%",
+                    "markdownDescription": "%datapack.config.lint.entitySelectorAppendSpaceAfterComma%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.entitySelectorPutSpacesAroundEqualSign": {
+                "datapack.lint.entitySelectorPutSpacesAroundEqualSign": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorPutSpacesAroundEqualSign%",
+                    "markdownDescription": "%datapack.config.lint.entitySelectorPutSpacesAroundEqualSign%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.entitySelectorKeyOrder": {
+                "datapack.lint.entitySelectorKeyOrder": {
                     "type": "array",
                     "items": {
                         "type": "string",
@@ -228,7 +228,7 @@
                         ]
                     },
                     "uniqueItems": true,
-                    "markdownDescription": "%datapackLanguageServer.config.lint.entitySelectorKeyOrder%",
+                    "markdownDescription": "%datapack.config.lint.entitySelectorKeyOrder%",
                     "default": [
                         "sort",
                         "limit",
@@ -260,7 +260,7 @@
                         "y_rotation"
                     ]
                 },
-                "datapackLanguageServer.lint.quoteType": {
+                "datapack.lint.quoteType": {
                     "type": "string",
                     "enum": [
                         "always single",
@@ -268,140 +268,140 @@
                         "prefer single",
                         "prefer double"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteType%",
+                    "markdownDescription": "%datapack.config.lint.quoteType%",
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.quoteType.0%",
-                        "%datapackLanguageServer.config.lint.quoteType.1%",
-                        "%datapackLanguageServer.config.lint.quoteType.2%",
-                        "%datapackLanguageServer.config.lint.quoteType.3%"
+                        "%datapack.config.lint.quoteType.0%",
+                        "%datapack.config.lint.quoteType.1%",
+                        "%datapack.config.lint.quoteType.2%",
+                        "%datapack.config.lint.quoteType.3%"
                     ],
                     "default": "prefer double"
                 },
-                "datapackLanguageServer.lint.quoteEntitySelectorKeys": {
+                "datapack.lint.quoteEntitySelectorKeys": {
                     "type": "boolean",
                     "enum": [
                         true,
                         false
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys%",
+                    "markdownDescription": "%datapack.config.lint.quoteEntitySelectorKeys%",
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys.0%",
-                        "%datapackLanguageServer.config.lint.quoteEntitySelectorKeys.1%"
+                        "%datapack.config.lint.quoteEntitySelectorKeys.0%",
+                        "%datapack.config.lint.quoteEntitySelectorKeys.1%"
                     ],
                     "default": false
                 },
-                "datapackLanguageServer.lint.quoteSnbtStringKeys": {
+                "datapack.lint.quoteSnbtStringKeys": {
                     "type": "boolean",
                     "enum": [
                         true,
                         false
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteSnbtStringKeys%",
+                    "markdownDescription": "%datapack.config.lint.quoteSnbtStringKeys%",
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.quoteSnbtStringKeys.0%",
-                        "%datapackLanguageServer.config.lint.quoteSnbtStringKeys.1%"
+                        "%datapack.config.lint.quoteSnbtStringKeys.0%",
+                        "%datapack.config.lint.quoteSnbtStringKeys.1%"
                     ],
                     "default": false
                 },
-                "datapackLanguageServer.lint.quoteNbtStringValues": {
+                "datapack.lint.quoteNbtStringValues": {
                     "type": "boolean",
                     "enum": [
                         true,
                         false
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.quoteNbtStringValues%",
+                    "markdownDescription": "%datapack.config.lint.quoteNbtStringValues%",
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.quoteNbtStringValues.0%",
-                        "%datapackLanguageServer.config.lint.quoteNbtStringValues.1%"
+                        "%datapack.config.lint.quoteNbtStringValues.0%",
+                        "%datapack.config.lint.quoteNbtStringValues.1%"
                     ],
                     "default": true
                 },
-                "datapackLanguageServer.lint.snbtAppendSpaceAfterColon": {
+                "datapack.lint.snbtAppendSpaceAfterColon": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterColon%",
+                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterColon%",
                     "default": true
                 },
-                "datapackLanguageServer.lint.snbtAppendSpaceAfterComma": {
+                "datapack.lint.snbtAppendSpaceAfterComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterComma%",
+                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterComma%",
                     "default": true
                 },
-                "datapackLanguageServer.lint.snbtAppendSpaceAfterSemicolon": {
+                "datapack.lint.snbtAppendSpaceAfterSemicolon": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtAppendSpaceAfterSemicolon%",
+                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterSemicolon%",
                     "default": true
                 },
-                "datapackLanguageServer.lint.snbtByteSuffix": {
+                "datapack.lint.snbtByteSuffix": {
                     "type": "string",
                     "enum": [
                         "b",
                         "B"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtByteSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtByteSuffix%",
                     "default": "b"
                 },
-                "datapackLanguageServer.lint.snbtUseBooleans": {
+                "datapack.lint.snbtUseBooleans": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtUseBooleans%",
+                    "markdownDescription": "%datapack.config.lint.snbtUseBooleans%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.snbtShortSuffix": {
+                "datapack.lint.snbtShortSuffix": {
                     "type": "string",
                     "enum": [
                         "s",
                         "S"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtShortSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtShortSuffix%",
                     "default": "s"
                 },
-                "datapackLanguageServer.lint.snbtLongSuffix": {
+                "datapack.lint.snbtLongSuffix": {
                     "type": "string",
                     "enum": [
                         "l",
                         "L"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtLongSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtLongSuffix%",
                     "default": "L"
                 },
-                "datapackLanguageServer.lint.snbtFloatSuffix": {
+                "datapack.lint.snbtFloatSuffix": {
                     "type": "string",
                     "enum": [
                         "f",
                         "F"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtFloatSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtFloatSuffix%",
                     "default": "f"
                 },
-                "datapackLanguageServer.lint.snbtDoubleSuffix": {
+                "datapack.lint.snbtDoubleSuffix": {
                     "type": "string",
                     "enum": [
                         "d",
                         "D"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtDoubleSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtDoubleSuffix%",
                     "default": "d"
                 },
-                "datapackLanguageServer.lint.snbtOmitDoubleSuffix": {
+                "datapack.lint.snbtOmitDoubleSuffix": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtOmitDoubleSuffix%",
+                    "markdownDescription": "%datapack.config.lint.snbtOmitDoubleSuffix%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.snbtKeepDecimalPlace": {
+                "datapack.lint.snbtKeepDecimalPlace": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtKeepDecimalPlace%",
+                    "markdownDescription": "%datapack.config.lint.snbtKeepDecimalPlace%",
                     "default": true
                 },
-                "datapackLanguageServer.lint.snbtSortKeys": {
+                "datapack.lint.snbtSortKeys": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.snbtSortKeys%",
+                    "markdownDescription": "%datapack.config.lint.snbtSortKeys%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.timeOmitTickUnit": {
+                "datapack.lint.timeOmitTickUnit": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.timeOmitTickUnit%",
+                    "markdownDescription": "%datapack.config.lint.timeOmitTickUnit%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.nameOfObjectives": {
+                "datapack.lint.nameOfObjectives": {
                     "oneOf": [
                         {
                             "type": "string",
@@ -429,10 +429,10 @@
                             }
                         }
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfObjectives%",
+                    "markdownDescription": "%datapack.config.lint.nameOfObjectives%",
                     "default": "whatever"
                 },
-                "datapackLanguageServer.lint.nameOfSnbtCompoundTagKeys": {
+                "datapack.lint.nameOfSnbtCompoundTagKeys": {
                     "oneOf": [
                         {
                             "type": "string",
@@ -460,10 +460,10 @@
                             }
                         }
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfSnbtCompoundTagKeys%",
+                    "markdownDescription": "%datapack.config.lint.nameOfSnbtCompoundTagKeys%",
                     "default": "whatever"
                 },
-                "datapackLanguageServer.lint.nameOfTags": {
+                "datapack.lint.nameOfTags": {
                     "oneOf": [
                         {
                             "type": "string",
@@ -491,10 +491,10 @@
                             }
                         }
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfTags%",
+                    "markdownDescription": "%datapack.config.lint.nameOfTags%",
                     "default": "whatever"
                 },
-                "datapackLanguageServer.lint.nameOfTeams": {
+                "datapack.lint.nameOfTeams": {
                     "oneOf": [
                         {
                             "type": "string",
@@ -522,85 +522,85 @@
                             }
                         }
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.nameOfTeams%",
+                    "markdownDescription": "%datapack.config.lint.nameOfTeams%",
                     "default": "whatever"
                 },
-                "datapackLanguageServer.lint.strictBossbarCheck": {
+                "datapack.lint.strictBossbarCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBossbarCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictBossbarCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictStorageCheck": {
+                "datapack.lint.strictStorageCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictStorageCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictStorageCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictObjectiveCheck": {
+                "datapack.lint.strictObjectiveCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictObjectiveCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictObjectiveCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictTagCheck": {
+                "datapack.lint.strictTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictTeamCheck": {
+                "datapack.lint.strictTeamCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictTeamCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictTeamCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictAdvancementCheck": {
+                "datapack.lint.strictAdvancementCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictAdvancementCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictAdvancementCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictFunctionCheck": {
+                "datapack.lint.strictFunctionCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFunctionCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictFunctionCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictLootTableCheck": {
+                "datapack.lint.strictLootTableCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictLootTableCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictLootTableCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictPredicateCheck": {
+                "datapack.lint.strictPredicateCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictPredicateCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictPredicateCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictRecipeCheck": {
+                "datapack.lint.strictRecipeCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictRecipeCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictRecipeCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictBlockTagCheck": {
+                "datapack.lint.strictBlockTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBlockTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictBlockTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictEntityTypeTagCheck": {
+                "datapack.lint.strictEntityTypeTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEntityTypeTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictEntityTypeTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictFluidTagCheck": {
+                "datapack.lint.strictFluidTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFluidTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictFluidTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictFunctionTagCheck": {
+                "datapack.lint.strictFunctionTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFunctionTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictFunctionTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictItemTagCheck": {
+                "datapack.lint.strictItemTagCheck": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictItemTagCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictItemTagCheck%",
                     "default": false
                 },
-                "datapackLanguageServer.lint.strictMobEffectCheck": {
+                "datapack.lint.strictMobEffectCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -608,14 +608,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictMobEffectCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictMobEffectCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictEnchantmentCheck": {
+                "datapack.lint.strictEnchantmentCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -623,14 +623,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEnchantmentCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictEnchantmentCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictSoundEventCheck": {
+                "datapack.lint.strictSoundEventCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -638,14 +638,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictSoundEventCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictSoundEventCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictEntityTypeCheck": {
+                "datapack.lint.strictEntityTypeCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -653,14 +653,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictEntityTypeCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictEntityTypeCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictDimensionTypeCheck": {
+                "datapack.lint.strictDimensionTypeCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -668,14 +668,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictDimensionTypeCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictDimensionTypeCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictBlockCheck": {
+                "datapack.lint.strictBlockCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -683,14 +683,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictBlockCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictBlockCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictItemCheck": {
+                "datapack.lint.strictItemCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -698,14 +698,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictItemCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictItemCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictPotionCheck": {
+                "datapack.lint.strictPotionCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -713,14 +713,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictPotionCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictPotionCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictMotiveCheck": {
+                "datapack.lint.strictMotiveCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -728,14 +728,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictMotiveCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictMotiveCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictFluidCheck": {
+                "datapack.lint.strictFluidCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -743,14 +743,14 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictFluidCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictFluidCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.strictParticleTypeCheck": {
+                "datapack.lint.strictParticleTypeCheck": {
                     "type": "string",
                     "enum": [
                         "always",
@@ -758,16 +758,16 @@
                         "never"
                     ],
                     "markdownEnumDescriptions": [
-                        "%datapackLanguageServer.config.lint.strictCheckOption.0%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.1%",
-                        "%datapackLanguageServer.config.lint.strictCheckOption.2%"
+                        "%datapack.config.lint.strictCheckOption.0%",
+                        "%datapack.config.lint.strictCheckOption.1%",
+                        "%datapack.config.lint.strictCheckOption.2%"
                     ],
-                    "markdownDescription": "%datapackLanguageServer.config.lint.strictParticleTypeCheck%",
+                    "markdownDescription": "%datapack.config.lint.strictParticleTypeCheck%",
                     "default": "only-default-namespace"
                 },
-                "datapackLanguageServer.lint.omitDefaultNamespace": {
+                "datapack.lint.omitDefaultNamespace": {
                     "type": "boolean",
-                    "markdownDescription": "%datapackLanguageServer.config.lint.omitDefaultNamespace%",
+                    "markdownDescription": "%datapack.config.lint.omitDefaultNamespace%",
                     "default": false
                 }
             }

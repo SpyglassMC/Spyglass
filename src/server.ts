@@ -125,7 +125,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             documentHighlightProvider: true,
             documentLinkProvider: {},
             executeCommandProvider: {
-                commands: ['datapackLanguageServer.regenerateCache'],
+                commands: ['datapack.regenerateCache'],
                 workDoneProgress: true
             },
             foldingRangeProvider: true,
@@ -477,7 +477,7 @@ connection.onInitialized(() => {
 
     connection.onExecuteCommand(async ({ command }) => {
         switch (command) {
-            case 'datapackLanguageServer.regenerateCache':
+            case 'datapack.regenerateCache':
                 const progress = await connection.window.createWorkDoneProgress()
                 progress.begin(locale('server.regenerating-cache'))
 
@@ -529,7 +529,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
     try {
         return await connection.workspace.getConfiguration({
             scopeUri: uri.toString(),
-            section: 'datapackLanguageServer'
+            section: 'datapack'
         }) as Config
     } catch (e) {
         // connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)

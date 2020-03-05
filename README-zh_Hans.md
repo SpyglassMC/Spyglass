@@ -220,7 +220,7 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 您可以在配置中设置一些格式化与校验的规则。
 
-**警告**：格式化功能可能导致您的函数内容损坏，请及时备份。使用风险请自行承担。格式化功能默认是禁用的，如果您要使用，应当在设置界面中勾选 `datapackLanguageServer.lint.enableFormatting`。
+**警告**：格式化功能可能导致您的函数内容损坏，请及时备份。使用风险请自行承担。格式化功能默认是禁用的，如果您要使用，应当在设置界面中勾选 `datapack.lint.enableFormatting`。
 
 ![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
