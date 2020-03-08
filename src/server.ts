@@ -498,7 +498,7 @@ async function getLatestVersions() {
         connection.console.info('[LatestVersions] Fetching the latest versions...')
         const str = await requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json')
         const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
-        const processedVersion = '20w09a'
+        const processedVersion = '20w10a'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined

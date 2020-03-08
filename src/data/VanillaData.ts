@@ -7,25 +7,35 @@ import BlockDefinition from '../types/BlockDefinition'
 import { VanillaReportOptions } from '../types/ParsingContext'
 import Registry from '../types/Registry'
 import { requestText } from '../utils/utils'
+import NamespaceSummary from '../types/VanillaSummary'
 
 const BlockDefinitions: {
     [version: string]: BlockDefinition | undefined
 } = {}
 
-const Registries: {
-    [version: string]: Registry | undefined
+const NamespaceSummaries: {
+    [version: string]: NamespaceSummary | undefined
 } = {}
 
 const Nbtdocs: {
     [version: string]: nbtdoc.Root | undefined
 } = {}
 
-type DataType = 'BlockDefinition' | 'Nbtdoc' | 'Registry'
+const Registries: {
+    [version: string]: Registry | undefined
+} = {}
+
+type DataType = 'BlockDefinition' | 'VanillaSummary' | 'Nbtdoc' | 'Registry'
+
+let faildTimes = 0
+const MaxFaildTimes = 5
 
 function getCache(type: DataType) {
     switch (type) {
         case 'BlockDefinition':
             return BlockDefinitions
+        case 'VanillaSummary':
+            return NamespaceSummaries
         case 'Nbtdoc':
             return Nbtdocs
         case 'Registry':
@@ -56,22 +66,28 @@ function getReportUri(type: DataType, version: string, processedVersions: string
             } else {
                 return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/generated/reports/blocks.json`
             }
+        case 'VanillaSummary':
+            if (processedVersions.includes(version)) {
+                return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/processed/data/minecraft/minecraft.min.json`
+            } else {
+                throw new Error(`No namespace summary for version ${version}.`)
+            }
+        case 'Nbtdoc':
+            return `https://raw.githubusercontent.com/Yurihaia/mc-nbtdoc/${version}-gen/build/generated.json`
         case 'Registry':
+        default:
             if (processedVersions.includes(version)) {
                 return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/processed/reports/registries/registries.min.json`
             } else {
                 return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/generated/reports/registries.json`
             }
-        case 'Nbtdoc':
-        default:
-            return `https://raw.githubusercontent.com/Yurihaia/mc-nbtdoc/${version}-gen/build/generated.json`
     }
 }
 
 export async function getReport(type: DataType, versionOrLiteral: string, options?: VanillaReportOptions) {
     const cache = getCache(type)
     if (!cache[versionOrLiteral]) {
-        if (options) {
+        if (options && faildTimes < MaxFaildTimes) {
             const version = getVersion(versionOrLiteral, options)
             const versionPath = path.join(options.globalStoragePath, version)
             const jsonPath = path.join(versionPath, `${type}.json`)
@@ -92,16 +108,18 @@ export async function getReport(type: DataType, versionOrLiteral: string, option
                     cache[versionOrLiteral] = json
                 }
             } catch (e) {
-                console.warn(`[${type}] Error occurred: ${e}`)
+                console.warn(`[${type}] Error occurred: ${e} (${++faildTimes}/${MaxFaildTimes})`)
                 const ans = await getDefault(type)
                 console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
                 return ans
             }
         } else {
             const ans = await getDefault(type)
-            console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
+            if (faildTimes < MaxFaildTimes) {
+                console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
+            }
             return ans
         }
     }
-    return cache[versionOrLiteral]!
+    return cache[versionOrLiteral]
 }
