@@ -10,6 +10,7 @@ import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import NamespaceSummary from '../types/NamespaceSummary'
 
 export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
     static identity = 'NamespacedID'
@@ -28,7 +29,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor, registries }: ParsingContext): ArgumentParserResult<Identity> {
+    parse(reader: StringReader, { cache, config, cursor, registries, vanilla }: ParsingContext): ArgumentParserResult<Identity> {
         const ans: ArgumentParserResult<Identity> = {
             data: new Identity(),
             tokens: [],
@@ -64,11 +65,17 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             const type = getCacheTagType()
             const category = getSafeCategory(cache, type)
             tagPool.push(...Object.keys(category))
+            if (config.env.dependsOnVanilla) {
+                tagPool.push(...this.getVanillaPool(type, vanilla))
+            }
         }
         // Set `idPool`.
         if (this.type.startsWith('$')) {
-            const type = this.type.slice(1)
-            idPool.push(...Object.keys(getSafeCategory(cache, type as any)))
+            const type = this.type.slice(1) as CacheKey
+            idPool.push(...Object.keys(getSafeCategory(cache, type)))
+            if (config.env.dependsOnVanilla) {
+                tagPool.push(...this.getVanillaPool(type, vanilla))
+            }
         } else {
             const registry = registries[this.type]
             idPool.push(...Object.keys(registry.entries))
@@ -327,6 +334,28 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 return shouldStrictCheck(lint.strictParticleTypeCheck)
             default:
                 return false
+        }
+    }
+
+    /* istanbul ignore next: tired of writing tests */
+    private getVanillaPool(type: CacheKey, vanilla: NamespaceSummary): string[] {
+        switch (type) {
+            case 'advancements':
+                return vanilla.advancements
+            case 'lootTables':
+                return vanilla.loot_tables
+            case 'recipes':
+                return vanilla.recipes
+            case 'tags/blocks':
+                return vanilla.tags.blocks
+            case 'tags/entityTypes':
+                return vanilla.tags.entity_types
+            case 'tags/fluids':
+                return vanilla.tags.fluids
+            case 'tags/items':
+                return vanilla.tags.items
+            default:
+                return []
         }
     }
 

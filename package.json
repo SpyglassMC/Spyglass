@@ -121,6 +121,11 @@
                     "markdownDescription": "%datapack.config.env.permissionLevel%",
                     "default": 2
                 },
+                "datapack.env.dependsOnVanilla": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.env.dependsOnVanilla%",
+                    "default": true
+                },
                 "datapack.env.version": {
                     "type": "string",
                     "enum": [

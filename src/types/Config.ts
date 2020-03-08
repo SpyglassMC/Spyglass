@@ -22,7 +22,13 @@ export type EnvConfig = {
      * Apart from a version identity, you can also input `Latest release` or `Latest snapshot` here (case-insensitive).
      * @default 'Latest snapshot'
      */
-    dataVersion: string
+    dataVersion: string,
+    /**
+     * Whether this datapack depends on the vanilla datapack or not. If this option is enabled, 
+     * completions for the corresponding data of the vanilla datapack will be provided.
+     * @default true
+     */
+    dependsOnVanilla: boolean
 }
 
 export type LintConfig = {
@@ -409,7 +415,8 @@ export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
         dataVersion: 'Latest snapshot',
-        version: '1.16'
+        version: '1.16',
+        dependsOnVanilla: true
     },
     lint: {
         enableFormatting: false,

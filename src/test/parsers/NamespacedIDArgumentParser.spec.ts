@@ -10,6 +10,7 @@ import Identity from '../../types/Identity'
 import { fail } from 'assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import NamespaceSummary from '../../types/NamespaceSummary'
 
 describe('NamespacedIDArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -102,6 +103,12 @@ describe('NamespacedIDArgumentParser Tests', () => {
             omitDefaultNamespace: true
         }
     })
+    const vanilla: NamespaceSummary = {
+        advancements: ['minecraft:adventure/root'],
+        loot_tables: [],
+        recipes: [],
+        tags: { blocks: [], entity_types: [], fluids: [], items: [] }
+    }
     let ctx: ParsingContext
     before(async () => {
         ctx = await constructContext({ registries, parsers, cache, config })
@@ -157,7 +164,31 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for advancements with special kind', async () => {
+        it('Should return completions in the vanilla datapack', async () => {
+            const ctx = await constructContext({ registries, parsers, vanilla, cache, cursor: 9 })
+            const parser = new NamespacedIDArgumentParser('$advancements')
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'minecraft',
+                        kind: CompletionItemKind.Module,
+                        commitCharacters: [':']
+                    },
+                    {
+                        label: 'adventure',
+                        kind: CompletionItemKind.Folder,
+                        commitCharacters: ['/']
+                    }
+                ]
+            )
+        })
+        it('Should return completions for advancements with Event kind', async () => {
             const ctx = await constructContext({ registries, parsers, cache, cursor: 9 })
             const parser = new NamespacedIDArgumentParser('$advancements')
             const actual = parser.parse(new StringReader('spgoding:'), ctx)
@@ -171,7 +202,7 @@ describe('NamespacedIDArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for functions with special kind', async () => {
+        it('Should return completions for functions with Function kind', async () => {
             const ctx = await constructContext({ registries, parsers, cache, cursor: 19 })
             const parser = new NamespacedIDArgumentParser('$functions', true)
             const actual = parser.parse(new StringReader('#spgoding:function/'), ctx)

@@ -1,6 +1,7 @@
 {
   "datapack.commands.regenerateCache.title": "重新生成缓存",
   "datapack.config.env.dataVersion": "补全数据（包括注册表、方块定义、NBTDOC）的版本。应当是 [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) 中定义的一个晚于 `19w40a` 的版本。除了填写版本标识符以外，你还可以填写 `Latest release`（最新正式版）或 `Latest snapshot`（最新快照），大小写不敏感。",
+  "datapack.config.env.dependsOnVanilla": "当前数据包是否依赖于原版数据包。当启用该选项时，大憨批将会提供原版数据包中相应数据的补全提示。",
   "datapack.config.env.permissionLevel": "`server.properties` 中定义的 `function-permission-level`。",
   "datapack.config.env.version": "命令树的版本。只能选择正式版本号。",
   "datapack.config.lint.blockStateAppendSpaceAfterComma": "是否在方块状态内的逗号后添加空格。",
