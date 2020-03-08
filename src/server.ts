@@ -312,7 +312,7 @@ connection.onInitialized(() => {
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.completions) {
             return null
         }
         return onCompletion({ cacheFile, lineNumber, char, info, reportOptions })
@@ -321,7 +321,7 @@ connection.onInitialized(() => {
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.signatures) {
             return null
         }
         return onSignatureHelp({ cacheFile, lineNumber, char, info, reportOptions })
@@ -330,7 +330,7 @@ connection.onInitialized(() => {
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.foldingRanges) {
             return null
         }
         return onFoldingRanges({ info })
@@ -339,7 +339,7 @@ connection.onInitialized(() => {
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.formatting) {
             return null
         }
 
@@ -368,7 +368,7 @@ connection.onInitialized(() => {
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.documentHighlighting) {
             return null
         }
 
@@ -378,7 +378,7 @@ connection.onInitialized(() => {
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.selectionRanges) {
             return null
         }
 
@@ -425,7 +425,7 @@ connection.onInitialized(() => {
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.documentLinks) {
             return null
         }
 
@@ -435,7 +435,7 @@ connection.onInitialized(() => {
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.colors) {
             return null
         }
 
@@ -448,7 +448,7 @@ connection.onInitialized(() => {
     }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.colors) {
             return null
         }
 
@@ -458,7 +458,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.semanticColoring) {
             return { data: [] }
         }
 
@@ -468,7 +468,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        if (!info || !info.config.features.semanticColoring) {
             return { edits: [] }
         }
 

@@ -2,6 +2,9 @@
     "name": "datapack-language-server",
     "version": "1.13.7",
     "main": "dist/client.js",
+    "bin": {
+        "datapack-language-server": "./lib/server.js"
+    },
     "author": "SPGoding",
     "publisher": "SPGoding",
     "license": "MIT",
@@ -14,6 +17,7 @@
         "build:profile": "webpack --profile --json > dist/stats.json",
         "codecov": "codecov -f coverage/*.json",
         "commit": "gitmoji -c",
+        "compile": "tsc",
         "contributors:add": "all-contributors add",
         "contributors:generate": "all-contributors generate",
         "lint": "eslint --fix src/**/*.ts",
@@ -150,6 +154,51 @@
                     ],
                     "markdownDescription": "%datapack.config.env.dataVersion%",
                     "default": "Latest snapshot"
+                },
+                "datapack.features.colors": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.colors%",
+                    "default": true
+                },
+                "datapack.features.completions": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.completions%",
+                    "default": true
+                },
+                "datapack.features.documentHighlighting": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.documentHighlighting%",
+                    "default": true
+                },
+                "datapack.features.documentLinks": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.documentLinks%",
+                    "default": true
+                },
+                "datapack.features.foldingRanges": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.foldingRanges%",
+                    "default": true
+                },
+                "datapack.features.formatting": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.formatting%",
+                    "default": true
+                },
+                "datapack.features.semanticColoring": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.semanticColoring%",
+                    "default": true
+                },
+                "datapack.features.selectionRanges": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.selectionRanges%",
+                    "default": true
+                },
+                "datapack.features.signatures": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.signatures%",
+                    "default": true
                 },
                 "datapack.snippets": {
                     "type": "object",

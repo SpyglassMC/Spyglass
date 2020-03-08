@@ -119,8 +119,7 @@ If you'd like to help us translate this project into other languages, it would b
 
 ## Semantic Highlighting
 
-All command arguments should be colored semantically. You can see [#308](https://github.com/SPGoding/datapack-language-server/issues/308) for a detailed list of all semantic token types and modifiers used by DHP if you are interested in.
-
+All command arguments should be colored semantically. 
 Unfortunately, the semantic coloring API of VSCode is still in proposed stage, thus we cannot use it in production environment. All the screenshots below are taken in development mode.
 
 Before VSCode finalizes its API, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension for coloring. 
@@ -384,8 +383,8 @@ SPGoding used to receive financial supports, but there are no ways to sponsor sp
 
 # Repository Structure
 
-- `dist`: Bundled files.
-  - `client.js`: Stuff related to the client. Only included in the VSCode extension.
-  - `server.js`: Stuff related to the server. Included in both the VSCode extension and the NPM package.
-- `lib`: TypeScript Declaration (`.d.ts`) files. These files are only included in the NPM package.
-- `src`: TypeScript source code.
+- `dist`: Bundled files. These files are only included in the VSCode extension.
+  - `client.js`: Stuff related to the client.
+  - `server.js`: Stuff related to the server.
+- `lib`: Compiled JavaScript codes and TypeScript declaration (`.d.ts`) files. These files are only included in the NPM package.
+- `src`: TypeScript source code. These files are only included in the GitHub repository.

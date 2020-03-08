@@ -35,8 +35,14 @@ export function activate(context: ExtensionContext) {
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions & { synchronize: { fileEvents: FileSystemWatcher[] } } = {
-        // Register the server for mcfunction documents
-        documentSelector: [{ language: 'mcfunction' }],
+        documentSelector: [
+            { language: 'mcfunction' },
+            { language: 'json', pattern: 'data/*/advancements/**.json' },
+            { language: 'json', pattern: 'data/*/loot_tables/**.json' },
+            { language: 'json', pattern: 'data/*/predicates/**.json' },
+            { language: 'json', pattern: 'data/*/recipes/**.json' },
+            { language: 'json', pattern: 'data/*/tags/{block,entity_types,fluids,functions,items}/**.json' }
+        ],
         synchronize: {
             fileEvents: []
         },
@@ -51,7 +57,7 @@ export function activate(context: ExtensionContext) {
         for (const root of workspace.workspaceFolders) {
             clientOptions.synchronize.fileEvents.push(
                 workspace.createFileSystemWatcher(
-                    new RelativePattern(root, 'data/**/*.{json,mcfunction,mcmeta}')
+                    new RelativePattern(root, 'data/**/*.{json,mcfunction}')
                 )
             )
         }

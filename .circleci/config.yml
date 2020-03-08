@@ -43,6 +43,7 @@ jobs:
             - node_modules
       - run: rm -rf lib
       - run: npm run build
+      - run: npm run compile
       - run: npm run release
 
 workflows:

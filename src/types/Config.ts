@@ -3,8 +3,26 @@ import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 
-export type EnvConfig = {
+export default interface Config {
+    /**
+     * Runtime environment.
+     */
+    env: EnvConfig,
+    /**
+     * Lint rules.
+     */
+    lint: LintConfig,
+    /**
+     * Settings for language server features.
+     */
+    features: FeaturesConfig,
+    /**
+     * Code snippets.
+     */
+    snippets: SnippetsConfig
+}
 
+export interface EnvConfig {
     /**
      * `function-permission-level` defined in `server.properties`.  
      * @default 2
@@ -31,7 +49,7 @@ export type EnvConfig = {
     dependsOnVanilla: boolean
 }
 
-export type LintConfig = {
+export interface LintConfig {
     /**
      * Whether to enable the formatting feature. **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk.  
      * @default false
@@ -389,23 +407,47 @@ export type LintConfig = {
     // vectorKeepDecimalPlace: boolean
 }
 
-export interface SnippetsConfig {
-    [label: string]: string
+export interface FeaturesConfig {
+    /**
+     * Whether DHP should provide color supports or not.
+     */
+    colors: boolean,
+    /**
+     * Whether DHP should provide completions or not.
+     */
+    completions: boolean,
+    /**
+     * Whether DHP should provide document highlighting or not.
+     */
+    documentHighlighting: boolean,
+    /**
+     * Whether DHP should provide document links or not.
+     */
+    documentLinks: boolean,
+    /**
+     * Whether DHP should provide folding ranges or not.
+     */
+    foldingRanges: boolean,
+    /**
+     * Whether DHP should provide formatting feature or not.
+     */
+    formatting: boolean,
+    /**
+     * Whether DHP should provide semantic coloring or not.
+     */
+    semanticColoring: boolean,
+    /**
+     * Whether DHP should provide selection ranges or not.
+     */
+    selectionRanges: boolean,
+    /**
+     * Whether DHP should provide signature information for commands or not.
+     */
+    signatures: boolean
 }
 
-export default interface Config {
-    /**
-     * Runtime environment.  
-     */
-    env: EnvConfig,
-    /**
-     * Lint rules.  
-     */
-    lint: LintConfig,
-    /**
-     * Code snippets.
-     */
-    snippets: SnippetsConfig
+export interface SnippetsConfig {
+    [label: string]: string
 }
 
 /**
@@ -504,6 +546,17 @@ export const VanillaConfig: Config = {
         strictParticleTypeCheck: 'only-default-namespace',
         strictPotionCheck: 'only-default-namespace',
         strictSoundEventCheck: 'only-default-namespace'
+    },
+    features: {
+        colors: true,
+        completions: true,
+        documentHighlighting: true,
+        documentLinks: true,
+        foldingRanges: true,
+        formatting: true,
+        semanticColoring: true,
+        selectionRanges: true,
+        signatures: true
     },
     snippets: {
         executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
