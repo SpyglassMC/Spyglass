@@ -388,6 +388,15 @@
       "contributions": [
         "localization"
       ]
+    },
+    {
+      "login": "missinggo",
+      "name": "missinggo",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
+      "profile": "https://search.mcbbs.net/home.php?mod=space&uid=2905154",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
