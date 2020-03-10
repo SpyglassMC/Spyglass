@@ -1,3 +1,8 @@
+# [v1.13.7](https://github.com/SPGoding/datapack-language-server/compare/v1.13.6...v1.13.7) (2020-03-10)
+
+## 🐛 Bug Fixes
+- [`8d5a3fc`](https://github.com/SPGoding/datapack-language-server/commit/8d5a3fc)  Fix crashing when encountering invalid rel
+
 # [v1.13.6](https://github.com/SPGoding/datapack-language-server/compare/v1.13.5...v1.13.6) (2020-02-28)
 
 ## 🐛 Bug Fixes
