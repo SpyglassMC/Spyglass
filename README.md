@@ -12,15 +12,11 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack Helper Plus is the spiritual successor of [pca006132](https://github.com/pca006132)'s [datapack helper](https://github.com/pca006132/datapack-helper) which is only updated to _Minecraft_: Java Edition 1.13. There are no actual connections between them.
+Datapack Helper Plus is the _spiritual_ successor of [pca006132](https://github.com/pca006132)'s [datapack helper](https://github.com/pca006132/datapack-helper) which is only updated to _Minecraft_: Java Edition 1.13. There are no actual connections between them.
 
-DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json) and [the MCF part](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). While the former provides supports for all JSON files in a datapack (like advancements, recipes, predicates, loot tables, and tags), the latter provides supports for mcfunction files. The introduction you are reading right now is for the MCF part.
+DHP can provide many heavy language features for documents in your datapack, including advancements, functions, loot tables, predicates, recipes, and all kinds of tags.
 
-| Name                                                              | Version                                                                                                                                                                                                                                            | Downloads                                                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [DHP (JSON)](https://github.com/SPGoding/datapack-json)           | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       |
-| [DHP (MCF)](https://github.com/SPGoding/datapack-language-server) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
-
+- [Disclaimer](#disclaimer)
 - [Installation](#installation)
 - [Features](#features)
   - [Workspace Support](#workspace-support)
@@ -56,9 +52,13 @@ DHP is splitted into two parts: [the JSON part](https://marketplace.visualstudio
   - [sponsor](#sponsor)
 - [Repository Structure](#repository-structure)
 
+# Disclaimer
+
+We tried our best to keep your datapacks safe. However, your documents might still be corrupted under certain extreme circumstances by DHP, and we couldn't provide any help if the said thing happened. Please **back up** your precious work from time to time like uploading it to a cloud storage, which is really important even if you choose not to use DHP!
+
 # Installation
 
-You can install DHP (MCF) from the VSCode Marketplace: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
+You can install DHP from the VSCode Marketplace: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
 
 Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-language-server` in your VSCode.
 
@@ -239,8 +239,6 @@ You can rename entities, tags, teams, bossbars, data storages, advancements, fun
 
 All the references of the same symbol in the whole workspace will be renamed.
 
-**WARNING**: your input can be accidentally corrupted by using this feature. Use it at your own risk. You can use the Rename Preview operation provided by VSCode to make sure that nothing is broken before actually renaming.
-
 ![rename-objective](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/rename-objective.gif)
 
 Additionally, if you rename a namespaced ID with file definition (e.g. the ID for advancement, function, loot table, predicate, recipe or tag), the corresponding file in the workspace will be renamed/moved too.
@@ -254,8 +252,6 @@ Additionally, if you rename a namespaced ID with file definition (e.g. the ID fo
 You can format the current function by pressing Shift + Alt + F or other configured hotkey.
 
 There are several linting rules you can set in the configuration settings.
-
-**WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk. This feature is disabled by default. You can enable this feature by changing the `datapack.lint.enableFormatting` setting.
 
 ![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 

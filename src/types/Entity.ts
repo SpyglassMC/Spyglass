@@ -2,7 +2,7 @@ import NumberRange from './NumberRange'
 import { NbtCompoundTag } from './NbtTag'
 import Identity from './Identity'
 import GameMode from './GameMode'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
 import { toLintedString } from '../utils/utils'
 
@@ -95,7 +95,7 @@ export type SelectorParsedArgument = {
 /**
  * Represent an entity.
  */
-export default class Entity implements Lintable {
+export default class Entity implements Formattable {
     constructor(
         /**
          * Used for player names or entity UUIDs.
@@ -111,10 +111,10 @@ export default class Entity implements Lintable {
         public argument: SelectorParsedArgument = {}
     ) { }
 
-    [ToLintedString](lint: LintConfig) {
-        const comma = lint.entitySelectorAppendSpaceAfterComma ? ', ' : ','
-        const equalSign = lint.entitySelectorPutSpacesAroundEqualSign ? ' = ' : '='
-        const order = lint.entitySelectorKeyOrder
+    [ToFormattedString](lint: LintConfig) {
+        const comma = lint.selectorCommaSpacing ? ', ' : ','
+        const equalSign = lint.selectorEqualSpacing ? ' = ' : '='
+        const order = lint.selectorSortKeys
         if (this.plain) {
             return this.plain
         } else if (Object.keys(this.argument).length > 0) {

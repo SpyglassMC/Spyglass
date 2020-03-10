@@ -3,7 +3,7 @@ import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
 import Identity from '../types/Identity'
-import MapAbstractParser from './MapAbstractParser'
+import MapParser from './MapParser'
 import NumberRange from '../types/NumberRange'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
@@ -193,7 +193,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 }
                 combineArgumentParserResult(ans, result)
             }
-            new MapAbstractParser<string, Entity>(
+            new MapParser<string, Entity>(
                 '[', '=', ',', ']',
                 (_ans, reader, ctx) => {
                     const start = reader.cursor
@@ -255,7 +255,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
-                        new MapAbstractParser<Identity, Entity>(
+                        new MapParser<Identity, Entity>(
                             '{', '=', ',', '}',
                             (_ans, reader, ctx) => {
                                 return ctx.parsers
@@ -266,7 +266,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                                 ans.data.argument.advancements = ans.data.argument.advancements || {}
                                 if (reader.peek() === '{') {
                                     const criteriaObject: { [crit: string]: boolean } = ans.data.argument.advancements[adv.toString()] = {}
-                                    new MapAbstractParser<string, Entity>(
+                                    new MapParser<string, Entity>(
                                         '{', '=', ',', '}',
                                         (_ans, reader, ctx) => {
                                             const start = reader.cursor
@@ -299,7 +299,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                             }
                         ).parse(ans, reader, ctx)
                     } else if (key === 'scores') {
-                        new MapAbstractParser<string, Entity>(
+                        new MapParser<string, Entity>(
                             '{', '=', ',', '}',
                             (_ans, reader, ctx) => {
                                 return ctx.parsers

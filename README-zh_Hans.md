@@ -12,14 +12,11 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20%F0%9F%98%9C%20%F0%9F%98%8D-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一组能够为 Minecraft Java版 1.15 的数据包提供支持的插件。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。
+Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一组能够为 Minecraft Java版的数据包文件（包括进度、函数、战利品表、断言、配方、各种标签）提供支持的插件。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。
 
-大憨批被分为了两部分：JSON 部分与 MCF 部分。前者提供数据包中 JSON 文件（如进度、配方、战利品表、断言、标签等）的支持，后者提供函数文件的支持。您当前正在阅读的帖子是为 MCF 部分编写的。
+# 免责声明
 
-| 名称                                                           | 版本                                                                                                                                                                                                                                               | 下载量                                                                                                                                                                                                                                                       |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [大憨批（JSON）](https://www.mcbbs.net/thread-897610-1-1.html) | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-json.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-json)                       |
-| [大憨批（MCF）](https://www.mcbbs.net/thread-926724-1-1.html)  | [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) | [![VSCode Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) |
+我们尽了最大的努力来保证您的数据包的文件安全。然而，在某些极端情况下，您的文档可能仍会被大憨批破坏。遗憾的是，我们无法为这种情况提供任何帮助。请随时**备份**您宝贵的数据包作品（如上传到网盘等）。即使您最终选择不使用大憨批，我们也建议您不时进行备份！
 
 # 安装
 

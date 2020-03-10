@@ -1,7 +1,7 @@
 import https from 'https'
 import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
-import { ToLintedString } from '../types/Lintable'
+import { ToFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
@@ -116,8 +116,8 @@ export function arrayToCompletions(array: any[]): CompletionItem[] {
  * @param value Any value.
  */
 export function toLintedString(value: any, lint: LintConfig): string {
-    if (value && value[ToLintedString]) {
-        return value[ToLintedString](lint)
+    if (value && value[ToFormattedString]) {
+        return value[ToFormattedString](lint)
     } else {
         return `${value}`
     }

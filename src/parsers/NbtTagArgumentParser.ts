@@ -1,5 +1,5 @@
 import ArgumentParser from './ArgumentParser'
-import MapAbstractParser from './MapAbstractParser'
+import MapParser from './MapParser'
 import NbtdocHelper from '../utils/NbtdocHelper'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
@@ -10,7 +10,7 @@ import { checkNamingConvention } from '../types/NamingConventionConfig'
 import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
 import { NbtCompoundSchemaNode } from '../types/NbtSchema'
 import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
-import { ToLintedString } from '../types/Lintable'
+import { ToFormattedString } from '../types/Formattable'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 
@@ -202,17 +202,17 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 if (walker.read().type === 'string') {
                                     return quoteString(value, ctx.config.lint.quoteType, ctx.config.lint.quoteSnbtStringValues)
                                 } else if (walker.read().type === 'byte') {
-                                    return getNbtByteTag(parseFloat(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtByteTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'short') {
-                                    return getNbtShortTag(parseFloat(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtShortTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'int') {
-                                    return getNbtIntTag(parseFloat(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtIntTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'long') {
-                                    return getNbtLongTag(BigInt(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtLongTag(BigInt(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'float') {
-                                    return getNbtFloatTag(parseFloat(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtFloatTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'double') {
-                                    return getNbtDoubleTag(parseFloat(value))[ToLintedString](ctx.config.lint)
+                                    return getNbtDoubleTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else {
                                     return value
                                 }
@@ -277,7 +277,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             completions: []
         }
         const isSchemaAvailable = walker && NbtdocHelper.isCompoundNode(walker.read())
-        new MapAbstractParser<string, NbtCompoundTag>(
+        new MapParser<string, NbtCompoundTag>(
             '{', ':', ',', '}',
             (ans, reader, ctx) => {
                 const result: ArgumentParserResult<string> = {

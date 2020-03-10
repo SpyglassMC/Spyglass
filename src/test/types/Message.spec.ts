@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToLintedString } from '../../types/Lintable'
+import { ToFormattedString } from '../../types/Formattable'
 import Entity from '../../types/Entity'
 import Message from '../../types/Message'
 
@@ -12,7 +12,7 @@ describe('Message Tests', () => {
             const message = new Message(
                 ['Hello, ', new Entity(undefined, 'a'), '!']
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === 'Hello, @a!')
         })
     })

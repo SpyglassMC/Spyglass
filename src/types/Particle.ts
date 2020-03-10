@@ -1,14 +1,14 @@
 import { LintConfig } from './Config'
 import Identity from './Identity'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 
-export default class Particle<T extends Lintable> implements Lintable {
+export default class Particle<T extends Formattable> implements Formattable {
     constructor(
         public id: Identity,
         public param?: T
     ) { }
 
-    [ToLintedString](lint: LintConfig) {
-        return `${this.id[ToLintedString](lint)}${this.param ? ` ${this.param[ToLintedString](lint)}` : ''}`
+    [ToFormattedString](lint: LintConfig) {
+        return `${this.id[ToFormattedString](lint)}${this.param ? ` ${this.param[ToFormattedString](lint)}` : ''}`
     }
 }

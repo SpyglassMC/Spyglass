@@ -1,14 +1,14 @@
 import { LintConfig } from './Config'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 
-export default class NumberRange implements Lintable {
+export default class NumberRange implements Formattable {
     constructor(
         readonly type: 'integer' | 'float',
         readonly min?: number,
         readonly max?: number
     ) { }
 
-    [ToLintedString](_lint: LintConfig) {
+    [ToFormattedString](_lint: LintConfig) {
         if (this.min !== undefined && this.min === this.max) {
             return this.min.toString()
         } else {

@@ -1,5 +1,5 @@
 import assert = require('power-assert')
-import Lintable, { ToLintedString } from '../../types/Lintable'
+import Formattable, { ToFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
 import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toLintedString } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
@@ -128,8 +128,8 @@ describe('utils.ts Tests', () => {
     describe('toLintedString() Tests', () => {
         it('Should return for lintable object', () => {
             const { lint } = constructConfig({})
-            const object = new class implements Lintable {
-                [ToLintedString](_lint: LintConfig) {
+            const object = new class implements Formattable {
+                [ToFormattedString](_lint: LintConfig) {
                     return 'aaa'
                 }
             }

@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import Vector from '../../types/Vector'
-import { ToLintedString } from '../../types/Lintable'
+import { ToFormattedString } from '../../types/Formattable'
 
 describe('Vector Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -14,7 +14,7 @@ describe('Vector Tests', () => {
                     { value: '-.5', type: 'absolute' }
                 ]
             )
-            const actual = vector[ToLintedString]({} as any)
+            const actual = vector[ToFormattedString]({} as any)
             assert(actual === '^ ~1 -.5')
         })
     })

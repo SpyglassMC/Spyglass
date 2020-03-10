@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import Block from '../../types/Block'
+import BlockToken from '../../types/tokens/BlockToken'
 import Identity from '../../types/Identity'
 import Item from '../../types/Item'
 import Particle from '../../types/Particle'
@@ -97,7 +97,7 @@ describe('ParticleArgumentParser Tests', () => {
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Particle(
                 new Identity('minecraft', ['block']),
-                new Block(
+                new BlockToken(
                     new Identity('minecraft', ['stone'])
                 )
             ))

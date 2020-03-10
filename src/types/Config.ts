@@ -2,6 +2,7 @@ import { SelectorParsedArgument } from './Entity'
 import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
+import StylisticConfig, { SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 
 export default interface Config {
     /**
@@ -51,35 +52,50 @@ export interface EnvConfig {
 
 export interface LintConfig {
     /**
-     * Whether to enable the formatting feature. **WARNING**: your input can be accidentally lost by using this feature. Use it at your own risk.  
-     * @default false
+     * Enforce spacing inside the square brackets of block states.
+     * @default { inside: true }
      */
-    enableFormatting: boolean,
+    stateBracketSpacing: StylisticConfig<BracketSpacingConfig>,
     /**
-     * Whether to append spaces after commas in block states or not.  
-     * @default false
+     * Enforce spacing around commas in block states. Trailing commas will be ignored by this rule.
+     * @default { before: false, after: true }
      */
-    blockStateAppendSpaceAfterComma: boolean,
+    stateCommaSpacing: StylisticConfig<SepSpacingConfig>,
     /**
-     * Whether to put spaces around equal signs in block states or not.  
-     * @default false
+     * Spacing settings for equal signs in block states.  
+     * @default { before: true, after: true }
      */
-    blockStatePutSpacesAroundEqualSign: boolean,
+    stateEqualSpacing: StylisticConfig<SepSpacingConfig>,
     /**
-     * Whether to sort keys in block states or not.  
+     * Whether to keep empty block states or not.  
      * @default false
      */
-    blockStateSortKeys: boolean,
+    stateKeepEmpty: StylisticConfig<boolean>,
     /**
-     * Whether to append spaces after commas in entity selectors or not.  
+     * Sort keys in block states.  
+     * @default null
+     */
+    stateSortKeys: StylisticConfig<true>,
+    /**
+     * Whether to keep a trailing comma in block states or not.  
      * @default false
      */
-    entitySelectorAppendSpaceAfterComma: boolean,
+    stateTrailingComma: StylisticConfig<boolean>,
+    /**
+     * Enforce spacing around commas in entity selectors. Trailing commas will be ignored by this rule.
+     * @default { before: false, after: true }
+     */
+    selectorCommaSpacing: StylisticConfig<SepSpacingConfig>,
+    /**
+     * Whether to keep a trailing comma in entity selectors or not.  
+     * @default false
+     */
+    selectorTrailingComma: StylisticConfig<boolean>,
     /**
      * Whether to put spaces around equal signs in entity selectors or not.  
      * @default false
      */
-    entitySelectorPutSpacesAroundEqualSign: boolean,
+    selectorEqualSpacing: StylisticConfig<SepSpacingConfig>,
     /**
      * In which order the arguments in entity selectors should be. The default order is based on the research
      * by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
@@ -114,7 +130,12 @@ export interface LintConfig {
      *     'y_rotation'
      * ]
      */
-    entitySelectorKeyOrder: (keyof SelectorParsedArgument)[],
+    selectorSortKeys: StylisticConfig<{ order: (keyof SelectorParsedArgument)[] }>,
+    /**
+     * Whether to keep the entity selector brackets even if it's empty (`[]`) or not.  
+     * @default false
+     */
+    selectorKeepEmpty: StylisticConfig<boolean>,
     /**
      * Quotes used in NBT strings and phrase strings.  
      * `always single`: Always use single quotes.  
@@ -461,42 +482,49 @@ export const VanillaConfig: Config = {
         dependsOnVanilla: true
     },
     lint: {
-        enableFormatting: false,
-        blockStateAppendSpaceAfterComma: false,
-        blockStatePutSpacesAroundEqualSign: false,
-        blockStateSortKeys: false,
-        entitySelectorAppendSpaceAfterComma: false,
-        entitySelectorPutSpacesAroundEqualSign: false,
-        entitySelectorKeyOrder: [
-            'sort',
-            'limit',
-            'type',
-            'gamemode',
-            'gamemodeNeg',
-            'level',
-            'team',
-            'teamNeg',
-            'typeNeg',
-            'tag',
-            'tagNeg',
-            'name',
-            'nameNeg',
-            'predicate',
-            'predicateNeg',
-            'scores',
-            'advancements',
-            'nbt',
-            'nbtNeg',
-            'x',
-            'y',
-            'z',
-            'dx',
-            'dy',
-            'dz',
-            'distance',
-            'x_rotation',
-            'y_rotation'
-        ],
+        stateBracketSpacing: { inside: true },
+        stateCommaSpacing: { before: false, after: true },
+        stateEqualSpacing: { before: true, after: true },
+        stateKeepEmpty: false,
+        stateKeepDefault: null,
+        stateSortKeys: null,
+        stateTrailingComma: false,
+        selectorCommaSpacing: { before: false, after: true },
+        selectorTrailingComma: false,
+        selectorEqualSpacing: { before: true, after: true },
+        selectorSortKeys: {
+            order: [
+                'sort',
+                'limit',
+                'type',
+                'gamemode',
+                'gamemodeNeg',
+                'level',
+                'team',
+                'teamNeg',
+                'typeNeg',
+                'tag',
+                'tagNeg',
+                'name',
+                'nameNeg',
+                'predicate',
+                'predicateNeg',
+                'scores',
+                'advancements',
+                'nbt',
+                'nbtNeg',
+                'x',
+                'y',
+                'z',
+                'dx',
+                'dy',
+                'dz',
+                'distance',
+                'x_rotation',
+                'y_rotation'
+            ]
+        },
+        selectorKeepEmpty: false,
         quoteType: 'prefer double',
         quoteEntitySelectorKeys: false,
         quoteSnbtStringKeys: false,

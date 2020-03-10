@@ -1,10 +1,10 @@
 import path from 'path'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import { ClientCache, CacheKey } from './ClientCache'
 import { LintConfig } from './Config'
 import { sep } from 'path'
 
-export default class Identity implements Lintable {
+export default class Identity implements Formattable {
     static readonly DefaultNamespace = 'minecraft'
     static readonly Sep = '/'
     static readonly TagSymbol = '#'
@@ -15,7 +15,7 @@ export default class Identity implements Lintable {
         readonly isTag = false
     ) { }
 
-    [ToLintedString](lint: LintConfig): string {
+    [ToFormattedString](lint: LintConfig): string {
         let id
         if (lint.omitDefaultNamespace && this.namespace === Identity.DefaultNamespace) {
             id = this.path.join(Identity.Sep)

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToLintedString } from '../../types/Lintable'
+import { ToFormattedString } from '../../types/Formattable'
 import Entity from '../../types/Entity'
 import Identity from '../../types/Identity'
 import NumberRange from '../../types/NumberRange'
@@ -49,7 +49,7 @@ describe('Entity Tests', () => {
             const message = new Entity(
                 'SPGoding'
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === 'SPGoding')
         })
         it('Should return when the argument is empty', () => {
@@ -64,7 +64,7 @@ describe('Entity Tests', () => {
                 undefined,
                 'a'
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === '@a')
         })
         it('Should return according to entitySelectorKeyOrder', () => {
@@ -84,7 +84,7 @@ describe('Entity Tests', () => {
                     limit: 1
                 }
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === '@a[limit=1,type=!minecraft:a,type=!minecraft:b,tag=a,tag=b,tag=c]')
         })
         it('Should return extra spaces', () => {
@@ -104,7 +104,7 @@ describe('Entity Tests', () => {
                     limit: 1
                 }
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === '@a[limit = 1, type = !minecraft:a, type = !minecraft:b, tag = a, tag = b, tag = c]')
         })
         it('Should return scores', () => {
@@ -122,7 +122,7 @@ describe('Entity Tests', () => {
                     scores: { foo: new NumberRange('integer', 0) }
                 }
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === '@a[scores={foo=0..}]')
         })
         it('Should return advancements', () => {
@@ -146,7 +146,7 @@ describe('Entity Tests', () => {
                     }
                 }
             )
-            const actual = message[ToLintedString](lint)
+            const actual = message[ToFormattedString](lint)
             assert(actual === '@a[advancements={foo=true,bar={baz=true,qux=false}}]')
         })
     })

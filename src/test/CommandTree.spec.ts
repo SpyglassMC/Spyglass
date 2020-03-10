@@ -4,7 +4,7 @@ import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } fro
 import { TestArgumentParser } from './parsers/LineParser.spec'
 import { NbtSchemaNode, ValueList } from '../types/NbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import Block from '../types/Block'
+import BlockToken from '../types/tokens/BlockToken'
 import Entity from '../types/Entity'
 import Identity from '../types/Identity'
 import LineParser from '../parsers/LineParser'
@@ -366,7 +366,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new Block(new Identity(undefined, ['grass_block'])), parser: 'block' }
+                { data: new BlockToken(new Identity(undefined, ['grass_block'])), parser: 'block' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['setblock', '<pos: vector3D>'],

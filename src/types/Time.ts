@@ -1,13 +1,13 @@
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
 
-export default class Time implements Lintable {
+export default class Time implements Formattable {
     constructor(
         public value: number,
         public unit: 'd' | 's' | 't'
     ) { }
 
-    [ToLintedString](lint: LintConfig) {
+    [ToFormattedString](lint: LintConfig) {
         if (this.unit === 't' && lint.timeOmitTickUnit) {
             return `${this.value}`
         } else {

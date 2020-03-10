@@ -1,5 +1,5 @@
 import { LintConfig } from './Config'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import VectorArgumentParser from '../parsers/VectorArgumentParser'
 
 export type VectorElementType = 'absolute' | 'relative' | 'local'
@@ -9,12 +9,12 @@ export interface VectorElement {
     value: string
 }
 
-export default class Vector implements Lintable {
+export default class Vector implements Formattable {
     constructor(
         public elements: VectorElement[]
     ) { }
 
-    [ToLintedString](_lint: LintConfig) {
+    [ToFormattedString](_lint: LintConfig) {
         const elementToString = (ele: VectorElement) => {
             const getSymbol = (type: VectorElementType) => {
                 switch (type) {

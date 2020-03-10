@@ -1,16 +1,16 @@
 import { LintConfig } from './Config'
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import { NbtCompoundTag, isNbtCompoundTag, getComma } from './NbtTag'
 import { toJsonString } from '../utils/utils'
 
 export type TextComponentType = NbtCompoundTag | string | TextComponentType[]
 
-export default class TextComponent implements Lintable {
+export default class TextComponent implements Formattable {
     constructor(
         public value: TextComponentType
     ) { }
 
-    [ToLintedString](lint: LintConfig): string {
+    [ToFormattedString](lint: LintConfig): string {
         if (typeof this.value === 'string') {
             return this.value
         } else if (isNbtCompoundTag(this.value)) {

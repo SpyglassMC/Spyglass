@@ -1,11 +1,11 @@
 import assert = require('power-assert')
-import { constructConfig } from '../../types/Config'
+import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
-import { ToLintedString } from '../../types/Lintable'
-import Identity from '../../types/Identity'
-import Block from '../../types/Block'
-import Vector from '../../types/Vector'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
+import { ToFormattedString } from '../../../types/Formattable'
+import Identity from '../../../types/Identity'
+import BlockToken from '../../../types/tokens/BlockToken'
+import Vector from '../../../types/Vector'
+import { getNbtCompoundTag, getNbtStringTag } from '../../../types/NbtTag'
 
 describe('Block Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -17,10 +17,10 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone'])
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone')
         })
         it('Should return block ID and block states', () => {
@@ -31,11 +31,11 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 { snowy: 'true' }
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true]')
         })
         it('Should return block ID and nbt compound tag', () => {
@@ -46,12 +46,12 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 undefined,
                 getNbtCompoundTag({ Lock: getNbtStringTag('test') })
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone{Lock: "test"}')
         })
         it('Should return block ID, block states and nbt compound tag', () => {
@@ -62,12 +62,12 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 { snowy: 'true', age: '7' },
                 getNbtCompoundTag({ Lock: getNbtStringTag('test') })
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true,age=7]{Lock: "test"}')
         })
         it('Should append spaces after the comma in block states', () => {
@@ -78,11 +78,11 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true, age=7]')
         })
         it('Should put spaces around the equal sign in block states', () => {
@@ -93,11 +93,11 @@ describe('Block Tests', () => {
                     blockStateSortKeys: false
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy = true,age = 7]')
         })
         it('Should sort keys in block states', () => {
@@ -108,11 +108,11 @@ describe('Block Tests', () => {
                     blockStateSortKeys: true
                 }
             })
-            const block = new Block(
+            const block = new BlockToken(
                 new Identity('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
-            const actual = block[ToLintedString](lint)
+            const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone[age=7,snowy=true]')
         })
     })

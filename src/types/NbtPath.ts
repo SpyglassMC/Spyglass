@@ -1,4 +1,4 @@
-import Lintable, { ToLintedString } from './Lintable'
+import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
 import { toLintedString, quoteString } from '../utils/utils'
 import { NbtCompoundTag, isNbtCompoundTag } from './NbtTag'
@@ -10,7 +10,7 @@ type NbtPathIndex = number
 type NbtPathCompoundFilter = NbtCompoundTag
 type NbtPathKey = string
 
-export default class NbtPath implements Lintable {
+export default class NbtPath implements Formattable {
     constructor(
         readonly value: (
             | typeof NbtPathIndexBegin
@@ -22,7 +22,7 @@ export default class NbtPath implements Lintable {
         )[]
     ) { }
 
-    [ToLintedString](lint: LintConfig): string {
+    [ToFormattedString](lint: LintConfig): string {
         let ans = ''
         for (const value of this.value) {
             if (value === NbtPathIndexBegin) {

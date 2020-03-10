@@ -1,16 +1,16 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
-import Block from '../types/Block'
+import BlockToken from '../types/tokens/BlockToken'
 import Identity from '../types/Identity'
 import StringReader from '../utils/StringReader'
-import MapAbstractParser from './MapAbstractParser'
+import MapParser from './MapParser'
 import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 
-export default class BlockArgumentParser extends ArgumentParser<Block> {
+export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
     static identity = 'Block'
     readonly identity = 'block'
 
@@ -22,9 +22,9 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
         super()
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Block> {
-        const ans: ArgumentParserResult<Block> = {
-            data: new Block(new Identity()),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<BlockToken> {
+        const ans: ArgumentParserResult<BlockToken> = {
+            data: new BlockToken(new Identity()),
             tokens: [],
             errors: [],
             cache: {},
@@ -42,13 +42,13 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
         return ans
     }
 
-    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<Block>, id: Identity): void {
-        if (reader.peek() === Block.StatesBeginSymbol) {
+    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockToken>, id: Identity): void {
+        if (reader.peek() === BlockToken.StatesBeginSymbol) {
             const definition = !id.isTag ? ctx.blocks[id.toString()] : undefined
             const properties = definition ? (definition.properties || {}) : {}
 
-            new MapAbstractParser<string, Block>(
-                Block.StatesBeginSymbol, '=', ',', Block.StatesEndSymbol,
+            new MapParser<string, BlockToken>(
+                BlockToken.StatesBeginSymbol, '=', ',', BlockToken.StatesEndSymbol,
                 // '','','','',
                 (ans, reader, ctx) => {
                     const existingKeys = Object.keys(ans.data.states)
@@ -85,7 +85,7 @@ export default class BlockArgumentParser extends ArgumentParser<Block> {
         }
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<Block>, id: Identity): void {
+    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockToken>, id: Identity): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
             const tagResult = ctx.parsers.get('NbtTag', ['compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)

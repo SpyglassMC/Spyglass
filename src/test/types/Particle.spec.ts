@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToLintedString } from '../../types/Lintable'
+import { ToFormattedString } from '../../types/Formattable'
 import Identity from '../../types/Identity'
 import Particle from '../../types/Particle'
 import Vector from '../../types/Vector'
@@ -13,7 +13,7 @@ describe('Particle Tests', () => {
             const particle = new Particle(
                 new Identity('minecraft', ['mob_effect'])
             )
-            const actual = particle[ToLintedString](lint)
+            const actual = particle[ToFormattedString](lint)
             assert(actual === 'minecraft:mob_effect')
         })
         it('Should return for extra data', () => {
@@ -27,7 +27,7 @@ describe('Particle Tests', () => {
                     { value: '1.00', type: 'absolute' }
                 ])
             )
-            const actual = particle[ToLintedString](lint)
+            const actual = particle[ToFormattedString](lint)
             assert(actual === 'minecraft:dust 0.93 0.40 0.80 1.00')
         })
     })
