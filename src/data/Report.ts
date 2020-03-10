@@ -80,8 +80,7 @@ export async function getReport(type: ReportType, versionOrLiteral: string, opti
                     cache[versionOrLiteral] = json
                 }
             } catch (e) {
-                console.warn(`[${type}] Error occurred: ${e} (${faildTimes}/${MaxFaildTimes})`)
-                faildTimes++
+                console.warn(`[${type}] Error occurred: ${e} (${++faildTimes}/${MaxFaildTimes})`)
                 const ans = await getDefault(type)
                 console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
                 return ans

@@ -185,8 +185,11 @@ connection.onInitialized(() => {
 
         const rel = getRel(uri, roots)
         if (rel) {
-            cacheFileOperations.fileModified(uri, 'functions', Identity.fromRel(rel)!.id)
-            trimCache(cacheFile.cache)
+            const result = Identity.fromRel(rel)
+            if (result) {
+                cacheFileOperations.fileModified(uri, 'functions', result.id)
+                trimCache(cacheFile.cache)
+            }
         }
 
         updateDiagnostics(uri)
