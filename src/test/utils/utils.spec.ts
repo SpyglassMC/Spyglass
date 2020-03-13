@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import Formattable, { ToFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
-import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toLintedString } from '../../utils/utils'
+import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
 
 describe('utils.ts Tests', () => {
@@ -133,12 +133,12 @@ describe('utils.ts Tests', () => {
                     return 'aaa'
                 }
             }
-            const actual = toLintedString(object, lint)
+            const actual = toFormattedString(object, lint)
             assert(actual === 'aaa')
         })
         it('Should return for non-lintable object', () => {
             const { lint } = constructConfig({})
-            const actual = toLintedString(undefined, lint)
+            const actual = toFormattedString(undefined, lint)
             assert(actual === 'undefined')
         })
     })

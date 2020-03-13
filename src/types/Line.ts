@@ -2,7 +2,7 @@ import { ClientCache, combineCache } from './ClientCache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
 import ArgumentNode from './ArgumentNode'
-import { toLintedString } from '../utils/utils'
+import { toFormattedString } from '../utils/utils'
 import { LintConfig } from './Config'
 import Token from './Token'
 
@@ -125,5 +125,5 @@ export function saturatedLineToLine(line: SaturatedLine) {
 }
 
 export function lineToLintedString(line: Line, lint: LintConfig) {
-    return line.args.map(v => toLintedString(v.data, lint)).join(' ')
+    return line.args.map(v => toFormattedString(v.data, lint)).join(' ')
 }

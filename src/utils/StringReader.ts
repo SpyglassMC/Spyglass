@@ -54,14 +54,6 @@ export default class StringReader {
         return this
     }
 
-    readWhiteSpace() {
-        let ans = ''
-        while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
-            ans += this.read()
-        }
-        return ans
-    }
-
     /**
      * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
      */

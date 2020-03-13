@@ -81,7 +81,7 @@
   "unexpected-relative-coordinate": "Relative coordinate %0% is not allowed",
   "unexpected-scoreboard-sub-slot": "Only ‘sidebar’ has sub slots",
   "unexpected-selector-variable": "Unexpected selector variable %0%",
-  "unexpected-spacing": "Unexpected spacing (rule: ‘%0%’)",
+  "unsorted-keys": "Unsorted keys (rule: ‘%0%’)",
   "unknown-command": "Unknown command %0%",
   "unknown-key": "Unknown key %0%",
   "vector": "a vector"

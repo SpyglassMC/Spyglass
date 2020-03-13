@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import BlockToken from '../../types/tokens/BlockToken'
+import BlockNode from '../../types/nodes/BlockNode'
 import BlockArgumentParser from '../../parsers/BlockArgumentParser'
 import Identity from '../../types/Identity'
 import ParsingError from '../../types/ParsingError'

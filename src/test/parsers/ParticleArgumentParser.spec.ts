@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import BlockToken from '../../types/tokens/BlockToken'
+import BlockNode from '../../types/nodes/BlockNode'
 import Identity from '../../types/Identity'
 import Item from '../../types/Item'
 import Particle from '../../types/Particle'

@@ -1,7 +1,7 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
-import BlockToken from '../types/tokens/BlockToken'
+import BlockNode from '../types/nodes/BlockNode'
 import Identity from '../types/Identity'
 import StringReader from '../utils/StringReader'
 import MapParser from './MapParser'
@@ -9,8 +9,10 @@ import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import StateMapNode, { StateMapNodeChars } from '../types/nodes/map/StateMapNode'
+import { IsMapNodeSorted } from '../types/nodes/map/MapNode'
 
-export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
+export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     static identity = 'Block'
     readonly identity = 'block'
 
@@ -22,9 +24,9 @@ export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
         super()
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<BlockToken> {
-        const ans: ArgumentParserResult<BlockToken> = {
-            data: new BlockToken(new Identity()),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<BlockNode> {
+        const ans: ArgumentParserResult<BlockNode> = {
+            data: new BlockNode(),
             tokens: [],
             errors: [],
             cache: {},
@@ -42,16 +44,16 @@ export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
         return ans
     }
 
-    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockToken>, id: Identity): void {
-        if (reader.peek() === BlockToken.StatesBeginSymbol) {
-            const definition = !id.isTag ? ctx.blocks[id.toString()] : undefined
+    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: Identity): void {
+        if (reader.peek() === '[') {
+            const start = reader.cursor
+            const definition = id.isTag ? undefined : ctx.blocks[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
-            new MapParser<string, BlockToken>(
-                BlockToken.StatesBeginSymbol, '=', ',', BlockToken.StatesEndSymbol,
-                // '','','','',
+            const statesResult = new MapParser<StateMapNode>(
+                StateMapNodeChars,
                 (ans, reader, ctx) => {
-                    const existingKeys = Object.keys(ans.data.states)
+                    const existingKeys = Object.keys(ans.data)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
 
                     const start = reader.cursor
@@ -64,7 +66,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
                     return result
                 },
                 (ans, reader, ctx, key, range) => {
-                    if (Object.keys(ans.data.states).filter(v => v === key).length > 0) {
+                    if (Object.keys(ans.data).filter(v => v === key).length > 0) {
                         ans.errors.push(new ParsingError(
                             range,
                             locale('duplicate-key', locale('punc.quote', key))
@@ -75,23 +77,32 @@ export default class BlockArgumentParser extends ArgumentParser<BlockToken> {
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
                     result.tokens = [Token.from(start, reader, TokenType.string)]
 
-                    ans.data.states[key] = result.data
+                    ans.data[key] = result.data
                     if (id.isTag) {
                         result.errors = []
                     }
                     combineArgumentParserResult(ans, result)
                 }
-            ).parse(ans, reader, ctx)
+            ).parse(reader, ctx)
+            combineArgumentParserResult(ans, statesResult)
+            ans.data.states = statesResult.data
+
+            if (ctx.config.lint.stateSortKeys && !ans.data.states[IsMapNodeSorted]()) {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    locale('unsorted-keys', 'datapack.lint.stateSortKeys')
+                ))
+            }
         }
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockToken>, id: Identity): void {
+    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: Identity): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
             const tagResult = ctx.parsers.get('NbtTag', ['compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundTag
             combineArgumentParserResult(ans, tagResult)
-            ans.data.nbt = tag
+            ans.data.tag = tag
         }
     }
 

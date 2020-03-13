@@ -115,7 +115,7 @@ export function arrayToCompletions(array: any[]): CompletionItem[] {
  * Convert specific value to a linted string.
  * @param value Any value.
  */
-export function toLintedString(value: any, lint: LintConfig): string {
+export function toFormattedString(value: any, lint: LintConfig): string {
     if (value && value[ToFormattedString]) {
         return value[ToFormattedString](lint)
     } else {
@@ -132,7 +132,7 @@ export function toJsonString(value: any, lint: LintConfig): string {
     if (value && value[ToJsonString]) {
         return value[ToJsonString](lint)
     } else {
-        return toLintedString(value, lint)
+        return toFormattedString(value, lint)
     }
 }
 

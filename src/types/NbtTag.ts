@@ -1,15 +1,11 @@
 import { LintConfig } from './Config'
-import { quoteString, toLintedString, toJsonString } from '../utils/utils'
+import { quoteString, toFormattedString, toJsonString } from '../utils/utils'
 import Formattable, { ToFormattedString } from './Formattable'
 import JsonConvertible, { ToJsonString } from './JsonConvertible'
 
 export const NbtTagType = Symbol()
 export const NbtContentTagType = Symbol()
 export const NbtEnclosingCompound = Symbol()
-
-export type NbtTagTypeName =
-    'compound' | 'list' | 'byte_array' | 'int_array' | 'long_array' |
-    'byte' | 'short' | 'int' | 'long' | 'string' | 'float' | 'double'
 
 export type NbtTag = (number | BigInt | string | object | any[]) & { [NbtTagType]: NbtTagTypeName, [NbtEnclosingCompound]: NbtCompoundTag | null } & Formattable
 export type NbtByteTag = NbtTag & number & { [NbtTagType]: 'byte' } & Formattable & JsonConvertible
@@ -43,15 +39,15 @@ function getArrayPrefix(type: 'byte_array' | 'int_array' | 'long_array', lint: L
     return `[${prefix}${getSemicolon(lint)}`
 }
 
-function getSemicolon({ snbtAppendSpaceAfterSemicolon }: LintConfig) {
+function getSemicolon({ nbtAppendSpaceAfterSemicolon: snbtAppendSpaceAfterSemicolon }: LintConfig) {
     return `;${snbtAppendSpaceAfterSemicolon ? ' ' : ''}`
 }
 
-export function getComma({ snbtAppendSpaceAfterComma }: LintConfig) {
+export function getComma({ nbtAppendSpaceAfterComma: snbtAppendSpaceAfterComma }: LintConfig) {
     return `,${snbtAppendSpaceAfterComma ? ' ' : ''}`
 }
 
-function getColon({ snbtAppendSpaceAfterComma }: LintConfig) {
+function getColon({ nbtAppendSpaceAfterComma: snbtAppendSpaceAfterComma }: LintConfig) {
     return `:${snbtAppendSpaceAfterComma ? ' ' : ''}`
 }
 
@@ -77,7 +73,7 @@ function getNbtNumberTag<T = number>(val: T, type: NbtTagTypeName, suffixParam?:
     })
 }
 
-function getStringFromFloat(val: number, { snbtKeepDecimalPlace }: LintConfig) {
+function getStringFromFloat(val: number, { nbtKeepDecimalPlace: snbtKeepDecimalPlace }: LintConfig) {
     const strValue = val.toString()
     if (snbtKeepDecimalPlace && !strValue.includes('.')) {
         return `${strValue}.0`
@@ -92,7 +88,7 @@ export function getNbtListTag(val: NbtTag[], enclosingCompound: NbtCompoundTag |
         [NbtEnclosingCompound]: enclosingCompound,
         [NbtTagType]: 'list',
         [ToFormattedString]: (lint: LintConfig) => {
-            const body = val.map(v => toLintedString(v, lint)).join(getComma(lint))
+            const body = val.map(v => toFormattedString(v, lint)).join(getComma(lint))
             return `[${body}]`
         }
     }) as NbtListTag
@@ -116,14 +112,14 @@ export function getNbtByteTag(val: number, enclosingCompound: NbtCompoundTag | n
         [NbtEnclosingCompound]: enclosingCompound,
         [NbtTagType]: 'byte' as 'byte',
         [ToFormattedString]: (lint: LintConfig) => {
-            if (lint.snbtUseBooleans) {
+            if (lint.nbtBoolean) {
                 if (val === 0) {
                     return 'false'
                 } else if (val === 1) {
                     return 'true'
                 }
             }
-            return `${val}${lint.snbtByteSuffix}`
+            return `${val}${lint.nbtByteSuffix}`
         },
         [ToJsonString]: (_lint: LintConfig) => val === 0 ? 'false' : 'true'
     })
@@ -146,7 +142,7 @@ export function getNbtFloatTag(val: number, enclosingCompound: NbtCompoundTag | 
     return Object.assign(val, {
         [NbtEnclosingCompound]: enclosingCompound,
         [NbtTagType]: 'float',
-        [ToFormattedString]: (lint: LintConfig) => `${getStringFromFloat(val, lint)}${lint.snbtFloatSuffix}`
+        [ToFormattedString]: (lint: LintConfig) => `${getStringFromFloat(val, lint)}${lint.nbtFloatSuffix}`
     }) as NbtFloatTag
 }
 
@@ -157,10 +153,10 @@ export function getNbtDoubleTag(val: number, enclosingCompound: NbtCompoundTag |
         [NbtTagType]: 'double',
         [ToFormattedString]: (lint: LintConfig) => {
             const strValue = getStringFromFloat(val, lint)
-            if (lint.snbtOmitDoubleSuffix && strValue.includes('.')) {
+            if (lint.nbtDoubleOmitSuffix && strValue.includes('.')) {
                 return strValue
             } else {
-                return `${strValue}${lint.snbtDoubleSuffix}`
+                return `${strValue}${lint.nbtDoubleSuffix}`
             }
         },
         [ToJsonString]: (lint: LintConfig) => {
@@ -175,7 +171,7 @@ export function getNbtStringTag(val: string, enclosingCompound: NbtCompoundTag |
     return Object.assign(val, {
         [NbtEnclosingCompound]: enclosingCompound,
         [NbtTagType]: 'string',
-        [ToFormattedString]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.quoteSnbtStringValues),
+        [ToFormattedString]: (lint: LintConfig) => quoteString(val, lint.quoteType, lint.nbtStringQuote),
         [ToJsonString]: (_lint: LintConfig) => val
     }) as NbtStringTag
 }
@@ -186,15 +182,15 @@ export function getNbtCompoundTag(val: { [key: string]: NbtTag }, enclosingCompo
         [NbtEnclosingCompound]: enclosingCompound,
         [NbtTagType]: 'compound',
         [ToFormattedString]: (lint: LintConfig) => {
-            const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
-                .map(v => `${quoteString(v, lint.quoteType, lint.quoteSnbtStringKeys)}${
-                    getColon(lint)}${toLintedString(val[v], lint)}`)
+            const body = (lint.nbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
+                .map(v => `${quoteString(v, lint.quoteType, lint.nbtCompoundKeyQuote)}${
+                    getColon(lint)}${toFormattedString(val[v], lint)}`)
                 .join(getComma(lint))
             return `{${body}}`
         },
         [ToJsonString]: (lint: LintConfig) => {
             /* istanbul ignore next */
-            const body = (lint.snbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
+            const body = (lint.nbtSortKeys ? Object.keys(val).sort() : Object.keys(val))
                 .map(v => `${quoteString(v, 'always double', true)}${
                     getColon(lint)}${toJsonString(val[v], lint)}`)
                 .join(getComma(lint))

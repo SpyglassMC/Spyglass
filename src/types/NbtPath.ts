@@ -1,6 +1,6 @@
 import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
-import { toLintedString, quoteString } from '../utils/utils'
+import { toFormattedString, quoteString } from '../utils/utils'
 import { NbtCompoundTag, isNbtCompoundTag } from './NbtTag'
 
 export const NbtPathIndexBegin = Symbol('[')
@@ -32,7 +32,7 @@ export default class NbtPath implements Formattable {
             } else if (value === NbtPathSep) {
                 ans += '.'
             } else if (isNbtPathCompoundFilter(value) || isNbtPathIndex(value)) {
-                ans += toLintedString(value, lint)
+                ans += toFormattedString(value, lint)
             } else {
                 ans += quoteString(value as string, 'always double', false)
             }

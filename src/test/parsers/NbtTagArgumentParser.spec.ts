@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
+import NbtTagArgumentParser from '../../parsers/NbtArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { constructConfig } from '../../types/Config'

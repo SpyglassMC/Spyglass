@@ -2,7 +2,7 @@ import { SelectorParsedArgument } from './Entity'
 import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
-import StylisticConfig, { SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
+import DiagnosticConfig, { SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 
 export default interface Config {
     /**
@@ -52,50 +52,154 @@ export interface EnvConfig {
 
 export interface LintConfig {
     /**
-     * Enforce spacing inside the square brackets of block states.
-     * @default { inside: true }
+     * The naming convention for scoreboard objectives.  
+     * @default 'whatever'
      */
-    stateBracketSpacing: StylisticConfig<BracketSpacingConfig>,
+    nameOfObjectives: NamingConventionConfig,
     /**
-     * Enforce spacing around commas in block states. Trailing commas will be ignored by this rule.
-     * @default { before: false, after: true }
+     * The naming convention for compound tag keys in NBTs.  
+     * @default 'whatever'
      */
-    stateCommaSpacing: StylisticConfig<SepSpacingConfig>,
+    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
     /**
-     * Spacing settings for equal signs in block states.  
-     * @default { before: true, after: true }
+     * The naming convention for scoreboard tags.  
+     * @default 'whatever'
      */
-    stateEqualSpacing: StylisticConfig<SepSpacingConfig>,
+    nameOfTags: NamingConventionConfig,
     /**
-     * Whether to keep empty block states or not.  
+     * The naming convention for teams.  
+     * @default 'whatever'
+     */
+    nameOfTeams: NamingConventionConfig,
+    /**
+     * Enforce spacing inside the square brackets of NBT arrays.
+     * @default { inside: 0 }
+     */
+    nbtArrayBracketSpacing: BracketSpacingConfig,
+    /**
+     * Enforce spacing around commas around commas in NBT arrays. No matter what the settings are, spaces after trailing commas are always removed.
+     * @default { before: 0, after: 1 }
+     */
+    nbtArrayCommaSpacing: SepSpacingConfig,
+    /**
+     * Whether there should be a trailing comma after the last key-value pair in NBT arrays or not.
      * @default false
      */
-    stateKeepEmpty: StylisticConfig<boolean>,
+    nbtArrayTrailingComma: boolean,
     /**
-     * Sort keys in block states.  
-     * @default null
+     * Enforce spacing around semicolons in NBT arrays. No matter what the settings are, spaces are always removed if there's no value in the array.
+     * @default { before: 0, after: 1 }
      */
-    stateSortKeys: StylisticConfig<true>,
+    nbtArraySemicolonSpacing: SepSpacingConfig,
     /**
-     * Whether to keep a trailing comma in block states or not.  
+     * Whether boolean-like NBT bytes (e.g. `Invisible` for armor stands) should be represented by `true`/`false`.  
      * @default false
      */
-    stateTrailingComma: StylisticConfig<boolean>,
+    nbtBoolean: boolean,
     /**
-     * Enforce spacing around commas in entity selectors. Trailing commas will be ignored by this rule.
-     * @default { before: false, after: true }
+     * The suffix used for NBT bytes.  
+     * @default 'b'
      */
-    selectorCommaSpacing: StylisticConfig<SepSpacingConfig>,
+    nbtByteSuffix: 'b' | 'B',
     /**
-     * Whether to keep a trailing comma in entity selectors or not.  
+     * Enforce spacing inside the curly brackets of NBT compounds.
+     * @default { inside: 0 }
+     */
+    nbtCompoundBracketSpacing: BracketSpacingConfig,
+    /**
+     * Enforce spacing around colons in NBT compounds.
+     * @default { before: 0, after: 1 }
+     */
+    nbtCompoundColonSpacing: SepSpacingConfig,
+    /**
+     * Enforce spacing around commas in NBT compounds. No matter what the settings are, spaces after trailing commas are always removed.
+     * @default { before: 0, after: 1 }
+     */
+    nbtCompoundCommaSpacing: SepSpacingConfig,
+    /**
+     * When NBT compound keys should be quoted.  
+     * `true`: Always.  
+     * `false`: Only when there are special characters in the key.  
      * @default false
      */
-    selectorTrailingComma: StylisticConfig<boolean>,
+    nbtCompoundKeyQuote: boolean,
     /**
-     * Whether to put spaces around equal signs in entity selectors or not.  
+     * Whether there should be a trailing comma after the last key-value pair in NBT compounds or not.
      * @default false
      */
-    selectorEqualSpacing: StylisticConfig<SepSpacingConfig>,
+    nbtCompoundTrailingComma: boolean,
+    /**
+     * Whether the values in an NBT compound should be sorted by the keys alphabetically or not.
+     * @default false
+     */
+    nbtCompoundSortKeys: boolean,
+    /**
+     * Whether to omit the suffixes of NBT doubles when possible or not.  
+     * @default false
+     */
+    nbtDoubleOmitSuffix: boolean,
+    /**
+     * The suffix used for NBT doubles.  
+     * @default 'd'
+     */
+    nbtDoubleSuffix: 'd' | 'D',
+    /**
+     * The suffix used for NBT floats.  
+     * @default 'f'
+     */
+    nbtFloatSuffix: 'f' | 'F',
+    /**
+     * Enforce spacing inside the square brackets of NBT lists.
+     * @default { inside: 0 }
+     */
+    nbtListBracketSpacing: BracketSpacingConfig,
+    /**
+     * Enforce spacing around commas in NBT lists. No matter what the settings are, spaces after trailing commas are always removed.
+     * @default { before: 0, after: 1 }
+     */
+    nbtListCommaSpacing: SepSpacingConfig,
+    /**
+     * Whether there should be a trailing comma after the last key-value pair in NBT lists or not.
+     * @default false
+     */
+    nbtListTrailingComma: boolean,
+    /**
+     * The suffix used for NBT longs.  
+     * @default 'L'
+     */
+    nbtLongSuffix: 'l' | 'L',
+    /**
+     * The suffix used for NBT shorts.  
+     * @default 's'
+     */
+    nbtShortSuffix: 's' | 'S',
+    /**
+     * When NBT strings should be quoted.  
+     * `true`: Always.  
+     * `false`: Only when there are special characters in the string.  
+     * @default true
+     */
+    nbtStringQuote: boolean,
+    /**
+     * Enforce spacing inside the square brackets of entity selectors.
+     * @default { inside: 0 }
+     */
+    selectorBracketSpacing: BracketSpacingConfig,
+    /**
+     * Enforce spacing around commas in entity selectors. No matter what the settings are, spaces after trailing commas are always removed.
+     * @default { before: 0, after: 0 }
+     */
+    selectorCommaSpacing: SepSpacingConfig,
+    /**
+     * Enforce spacing around equal signs in entity selectors.
+     * @default { before: 0, after: 0 }
+     */
+    selectorEqualSpacing: SepSpacingConfig,
+    /**
+     * Whether the square brackets (`[]`) should be kept or not if the entity selector has an empty arguments list.
+     * @default false
+     */
+    selectorKeepEmpty: boolean,
     /**
      * In which order the arguments in entity selectors should be. The default order is based on the research
      * by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
@@ -130,12 +234,42 @@ export interface LintConfig {
      *     'y_rotation'
      * ]
      */
-    selectorSortKeys: StylisticConfig<{ order: (keyof SelectorParsedArgument)[] }>,
+    selectorSortKeys: DiagnosticConfig<{ order: (keyof SelectorParsedArgument)[] }>,
     /**
-     * Whether to keep the entity selector brackets even if it's empty (`[]`) or not.  
+     * Whether there should be a trailing comma after the last key-value pair in entity selectors or not.
      * @default false
      */
-    selectorKeepEmpty: StylisticConfig<boolean>,
+    selectorTrailingComma: boolean,
+    /**
+     * Enforce spacing inside the square brackets of block states.
+     * @default { inside: 0 }
+     */
+    stateBracketSpacing: BracketSpacingConfig,
+    /**
+     * Enforce spacing around commas in block states. No matter what the settings are, spaces after trailing commas are always removed.
+     * @default { before: 0, after: 0 }
+     */
+    stateCommaSpacing: SepSpacingConfig,
+    /**
+     * Enforce spacing around equal signs in block states.
+     * @default { before: 0, after: 0 }
+     */
+    stateEqualSpacing: SepSpacingConfig,
+    /**
+     * Whether the square brackets (`[]`) should be kept or not if the block state is empty.
+     * @default false
+     */
+    stateKeepEmpty: boolean,
+    /**
+     * Whether the values in a block state should be sorted by the keys alphabetically or not.
+     * @default false
+     */
+    stateSortKeys: boolean,
+    /**
+     * Whether there should be a trailing comma after the last key-value pair in block states or not.
+     * @default false
+     */
+    stateTrailingComma: boolean,
     /**
      * Quotes used in NBT strings and phrase strings.  
      * `always single`: Always use single quotes.  
@@ -153,104 +287,10 @@ export interface LintConfig {
      */
     quoteEntitySelectorKeys: boolean,
     /**
-     * When the string keys in NBTs should be quoted.  
-     * `true`: Always.  
-     * `false`: Only when there are special characters in the string.  
-     * @default false
-     */
-    quoteSnbtStringKeys: boolean,
-    /**
-     * When the string values in NBTs should be quoted.  
-     * `true`: Always.  
-     * `false`: Only when there are special characters in the string.  
-     * @default true
-     */
-    quoteSnbtStringValues: boolean,
-    /**
-     * Whether to append spaces after colons in NBTs or not.  
-     * @default true
-     */
-    snbtAppendSpaceAfterColon: boolean,
-    /**
-     * Whether to append spaces after commas in NBTs or not.  
-     * @default true
-     */
-    snbtAppendSpaceAfterComma: boolean,
-    /**
-     * Whether to append spaces after semicolons in NBTs or not.  
-     * @default true
-     */
-    snbtAppendSpaceAfterSemicolon: boolean,
-    /**
-     * The suffix used for TAG_Byte in NBTs.  
-     * @default 'b'
-     */
-    snbtByteSuffix: 'b' | 'B',
-    /**
-     * Whether `0b` and `1b` should be represents by `false` and `true` in NBTs or not.  
-     * @default false
-     */
-    snbtUseBooleans: boolean,
-    /**
-     * The suffix used for TAG_Short in NBTs.  
-     * @default 's'
-     */
-    snbtShortSuffix: 's' | 'S',
-    /**
-     * The suffix used for TAG_Long in NBTs.  
-     * @default 'L'
-     */
-    snbtLongSuffix: 'l' | 'L',
-    /**
-     * The suffix used for TAG_Float in NBTs.  
-     * @default 'f'
-     */
-    snbtFloatSuffix: 'f' | 'F',
-    /**
-     * The suffix used for TAG_Double in NBTs.  
-     * @default 'd'
-     */
-    snbtDoubleSuffix: 'd' | 'D',
-    /**
-     * Whether to omit the suffix of double numbers when possible in NBTs or not.  
-     * @default false
-     */
-    snbtOmitDoubleSuffix: boolean,
-    /**
-     * Whether to keep at least one decimal place in NBTs or not.  
-     * @default true
-     */
-    snbtKeepDecimalPlace: boolean,
-    /**
-     * Whether to sort keys in compound tags in NBTs or not.  
-     * @default false
-     */
-    snbtSortKeys: boolean,
-    /**
      * Whether to omit the unit of tick (`t`) in time arguments.  
      * @default false
      */
     timeOmitTickUnit: boolean,
-    /**
-     * The naming convention for scoreboard objectives.  
-     * @default 'whatever'
-     */
-    nameOfObjectives: NamingConventionConfig,
-    /**
-     * The naming convention for compound tag keys in NBTs.  
-     * @default 'whatever'
-     */
-    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
-    /**
-     * The naming convention for scoreboard tags.  
-     * @default 'whatever'
-     */
-    nameOfTags: NamingConventionConfig,
-    /**
-     * The naming convention for teams.  
-     * @default 'whatever'
-     */
-    nameOfTeams: NamingConventionConfig,
     /**
      * Whether to throw warnings for undefined bossbars.  
      * @default false
@@ -420,12 +460,6 @@ export interface LintConfig {
      * @default false
      */
     omitDefaultNamespace: boolean
-    // /**
-    //  * Whether to keep at least one decimal place in vectors or not.  
-    //  * If sets to `false`, the decimal place will still be kept to avoid center-correcting when necessary.  
-    //  * @default true
-    //  */
-    // vectorKeepDecimalPlace: boolean
 }
 
 export interface FeaturesConfig {
@@ -482,16 +516,37 @@ export const VanillaConfig: Config = {
         dependsOnVanilla: true
     },
     lint: {
-        stateBracketSpacing: { inside: true },
-        stateCommaSpacing: { before: false, after: true },
-        stateEqualSpacing: { before: true, after: true },
+        nbtArrayBracketSpacing: { inside: 0 },
+        nbtArrayCommaSpacing: { before: 0, after: 1 },
+        nbtArraySemicolonSpacing: { before: 0, after: 1 },
+        nbtArrayTrailingComma: false,
+        nbtBoolean: false,
+        nbtByteSuffix: 'b',
+        nbtCompoundBracketSpacing: { inside: 0 },
+        nbtCompoundColonSpacing: { before: 0, after: 1 },
+        nbtCompoundCommaSpacing: { before: 0, after: 1 },
+        nbtCompoundKeyQuote: false,
+        nbtCompoundSortKeys: false,
+        nbtCompoundTrailingComma: false,
+        nbtDoubleSuffix: 'd',
+        nbtFloatSuffix: 'f',
+        nbtListBracketSpacing: { inside: 0 },
+        nbtListCommaSpacing: { before: 0, after: 1 },
+        nbtListTrailingComma: false,
+        nbtLongSuffix: 'L',
+        nbtDoubleOmitSuffix: false,
+        nbtShortSuffix: 's',
+        nbtStringQuote: true,
+        stateBracketSpacing: { inside: 0 },
+        stateCommaSpacing: { before: 0, after: 0 },
+        stateEqualSpacing: { before: 0, after: 0 },
         stateKeepEmpty: false,
-        stateKeepDefault: null,
-        stateSortKeys: null,
+        stateSortKeys: false,
         stateTrailingComma: false,
-        selectorCommaSpacing: { before: false, after: true },
+        selectorBracketSpacing: { inside: 0 },
+        selectorCommaSpacing: { before: 0, after: 0 },
         selectorTrailingComma: false,
-        selectorEqualSpacing: { before: true, after: true },
+        selectorEqualSpacing: { before: 0, after: 0 },
         selectorSortKeys: {
             order: [
                 'sort',
@@ -527,20 +582,6 @@ export const VanillaConfig: Config = {
         selectorKeepEmpty: false,
         quoteType: 'prefer double',
         quoteEntitySelectorKeys: false,
-        quoteSnbtStringKeys: false,
-        quoteSnbtStringValues: true,
-        snbtAppendSpaceAfterColon: true,
-        snbtAppendSpaceAfterComma: true,
-        snbtAppendSpaceAfterSemicolon: true,
-        snbtByteSuffix: 'b',
-        snbtUseBooleans: false,
-        snbtShortSuffix: 's',
-        snbtLongSuffix: 'L',
-        snbtFloatSuffix: 'f',
-        snbtDoubleSuffix: 'd',
-        snbtOmitDoubleSuffix: false,
-        snbtKeepDecimalPlace: true,
-        snbtSortKeys: false,
         timeOmitTickUnit: false,
         omitDefaultNamespace: false,
         // TRUE LINT BEGINS
@@ -598,16 +639,20 @@ export const VanillaConfig: Config = {
 }
 
 /* istanbul ignore next */
-export function constructConfig(custom: { [key: string]: any }, base = VanillaConfig) {
+export function constructConfig(custom: { [key: string]: any }, base = VanillaConfig): Config {
     custom.env = custom.env || {}
     custom.lint = custom.lint || {}
+    custom.features = custom.features || {}
     return {
         env: {
             ...base.env, ...custom.env
+        },
+        features: {
+            ...base.features, ...custom.features
         },
         lint: {
             ...base.lint, ...custom.lint
         },
         snippets: custom.snippets || base.snippets
-    } as Config
+    }
 }

@@ -8,7 +8,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
-import { toLintedString } from '../utils/utils'
+import { toFormattedString } from '../utils/utils'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */

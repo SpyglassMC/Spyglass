@@ -4,7 +4,7 @@ import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } fro
 import { TestArgumentParser } from './parsers/LineParser.spec'
 import { NbtSchemaNode, ValueList } from '../types/NbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import BlockToken from '../types/tokens/BlockToken'
+import BlockNode from '../types/nodes/BlockNode'
 import Entity from '../types/Entity'
 import Identity from '../types/Identity'
 import LineParser from '../parsers/LineParser'

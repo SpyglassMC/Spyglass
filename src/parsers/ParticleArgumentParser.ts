@@ -1,6 +1,6 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
-import BlockToken from '../types/tokens/BlockToken'
+import BlockNode from '../types/nodes/BlockNode'
 import Identity from '../types/Identity'
 import Item from '../types/Item'
 import ParsingContext from '../types/ParsingContext'
@@ -70,7 +70,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                         .expect(' ')
                         .skip()
                     const blockResult = ctx.parsers.get('Block').parse(reader, ctx)
-                    const block = blockResult.data as BlockToken
+                    const block = blockResult.data as BlockNode
                     combineArgumentParserResult(ans, blockResult)
                     ans.data.param = block
                     break

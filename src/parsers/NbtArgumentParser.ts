@@ -200,7 +200,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                             /* istanbul ignore next */
                             const getLabel = (value: string) => {
                                 if (walker.read().type === 'string') {
-                                    return quoteString(value, ctx.config.lint.quoteType, ctx.config.lint.quoteSnbtStringValues)
+                                    return quoteString(value, ctx.config.lint.quoteType, ctx.config.lint.nbtStringQuote)
                                 } else if (walker.read().type === 'byte') {
                                     return getNbtByteTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
                                 } else if (walker.read().type === 'short') {

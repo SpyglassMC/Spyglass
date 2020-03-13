@@ -4,7 +4,7 @@ import Identity from './Identity'
 import GameMode from './GameMode'
 import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
-import { toLintedString } from '../utils/utils'
+import { toFormattedString } from '../utils/utils'
 
 export type SelectorArgumentKey =
     | 'advancements'
@@ -127,19 +127,19 @@ export default class Entity implements Formattable {
                     if (value instanceof Array) {
                         ans.push(
                             (value as any)
-                                .map((v: any) => `${prefix}${toLintedString(v, lint)}`)
+                                .map((v: any) => `${prefix}${toFormattedString(v, lint)}`)
                                 .join(comma)
                         )
                     } else if (key === 'advancements') {
                         const advancements = this.argument.advancements as any
                         ans.push(`${prefix}{${Object.keys(advancements).map(k => `${k}${equalSign}${
-                            typeof advancements[k] === 'boolean' ? toLintedString(advancements[k], lint) : `{${Object.keys(advancements[k]).map(m => `${m}${equalSign}${toLintedString(advancements[k][m], lint)}`).join(comma)}}`
+                            typeof advancements[k] === 'boolean' ? toFormattedString(advancements[k], lint) : `{${Object.keys(advancements[k]).map(m => `${m}${equalSign}${toFormattedString(advancements[k][m], lint)}`).join(comma)}}`
                         }`).join(comma)}}`)
                     } else if (key === 'scores') {
                         const scores = this.argument.scores as any
-                        ans.push(`${prefix}{${Object.keys(scores).map(k => `${k}${equalSign}${toLintedString(scores[k], lint)}`).join(comma)}}`)
+                        ans.push(`${prefix}{${Object.keys(scores).map(k => `${k}${equalSign}${toFormattedString(scores[k], lint)}`).join(comma)}}`)
                     } else {
-                        ans.push(`${prefix}${toLintedString(value, lint)}`)
+                        ans.push(`${prefix}${toFormattedString(value, lint)}`)
                     }
                 }
             }

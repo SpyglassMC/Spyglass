@@ -12,7 +12,7 @@ import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import NamespacedIDArgumentParser from '../../parsers/NamespacedIDArgumentParser'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import NbtTagArgumentParser from '../../parsers/NbtTagArgumentParser'
+import NbtTagArgumentParser from '../../parsers/NbtArgumentParser'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
 import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
@@ -29,7 +29,7 @@ import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
 import Token, { TokenType, TokenModifier } from '../../types/Token'
 import ParsingError from '../../types/ParsingError'
 import { locale } from '../../locales/Locales'
-import { toLintedString } from '../../utils/utils'
+import { toFormattedString } from '../../utils/utils'
 import { VanillaConfig } from '../../types/Config'
 
 /**
@@ -1962,7 +1962,7 @@ const CommandTree: CommandTreeType = {
                     new ParsingError(
                         { start: 0, end: Number.MAX_SAFE_INTEGER },
                         locale('unknown-command',
-                            locale('punc.quote', toLintedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
+                            locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),
                         false
                     )
@@ -2029,7 +2029,7 @@ const CommandTree: CommandTreeType = {
                     new ParsingError(
                         { start: 0, end: Number.MAX_SAFE_INTEGER },
                         locale('unknown-command',
-                            locale('punc.quote', toLintedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
+                            locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),
                         false
                     )
