@@ -1,4 +1,4 @@
-export type NamingConvention = 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'kebab-case' | 'whatever'
+export type NamingConvention = 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'kebab-case'
 export type NamingConventionConfig = NamingConvention | NamingConvention[]
 export default NamingConventionConfig
 
@@ -7,8 +7,7 @@ const validators: { [key in NamingConvention]: RegExp } = {
     PascalCase: /^([A-Z\d]+[a-z\d]*)+$/,
     snake_case: /^[a-z\d]+(_[a-z\d]+)*$/,
     SCREAMING_SNAKE_CASE: /^[A-Z\d]+(_[A-Z\d]+)*$/,
-    'kebab-case': /^[a-z\d]+(\-[a-z\d]+)*$/,
-    whatever: /^.+$/
+    'kebab-case': /^[a-z\d]+(\-[a-z\d]+)*$/
 }
 
 /**

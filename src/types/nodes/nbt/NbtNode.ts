@@ -1,21 +1,23 @@
 import ArgumentNode, { NodeType } from '../ArgumentNode'
 import { ToFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
+import NbtCompoundNode from '../map/NbtCompoundNode'
 
-export type NbtTypeName =
+export type NbtNodeTypeName =
     | 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String'
     | 'ByteArray' | 'IntArray' | 'LongArray' | 'Compound' | 'List'
     | 'Boolean'
 
-export const NbtNodeType = Symbol('NbtType')
+export const NbtNodeType = Symbol('NbtNodeType')
 export const SuperNbt = Symbol('SuperNbt')
 
-export default abstract class NbtNode implements ArgumentNode {
+export default abstract class NbtNode extends ArgumentNode {
     abstract [NodeType]: string
-    abstract [NbtNodeType]: NbtTypeName
+    abstract [NbtNodeType]: NbtNodeTypeName
 
-    [SuperNbt]: NbtNode | null
-    constructor(superNbt: NbtNode | null) {
+    [SuperNbt]: NbtCompoundNode | null
+    constructor(superNbt: NbtCompoundNode | null) {
+        super()
         this[SuperNbt] = superNbt
     }
 

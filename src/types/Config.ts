@@ -2,7 +2,7 @@ import { SelectorParsedArgument } from './Entity'
 import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
-import DiagnosticConfig, { SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
+import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 
 export default interface Config {
     /**
@@ -51,415 +51,77 @@ export interface EnvConfig {
 }
 
 export interface LintConfig {
-    /**
-     * The naming convention for scoreboard objectives.  
-     * @default 'whatever'
-     */
-    nameOfObjectives: NamingConventionConfig,
-    /**
-     * The naming convention for compound tag keys in NBTs.  
-     * @default 'whatever'
-     */
-    nameOfSnbtCompoundTagKeys: NamingConventionConfig,
-    /**
-     * The naming convention for scoreboard tags.  
-     * @default 'whatever'
-     */
-    nameOfTags: NamingConventionConfig,
-    /**
-     * The naming convention for teams.  
-     * @default 'whatever'
-     */
-    nameOfTeams: NamingConventionConfig,
-    /**
-     * Enforce spacing inside the square brackets of NBT arrays.
-     * @default { inside: 0 }
-     */
+    // Stylistic configs.
+    blockStateBracketSpacing: BracketSpacingConfig,
+    blockStateCommaSpacing: SepSpacingConfig,
+    blockStateEqualSpacing: SepSpacingConfig,
+    blockStateTrailingComma: boolean,
+    idOmitDefaultNamespace: boolean,
     nbtArrayBracketSpacing: BracketSpacingConfig,
-    /**
-     * Enforce spacing around commas around commas in NBT arrays. No matter what the settings are, spaces after trailing commas are always removed.
-     * @default { before: 0, after: 1 }
-     */
     nbtArrayCommaSpacing: SepSpacingConfig,
-    /**
-     * Whether there should be a trailing comma after the last key-value pair in NBT arrays or not.
-     * @default false
-     */
+    nbtArraySemicolonSpacing: { after: number },
     nbtArrayTrailingComma: boolean,
-    /**
-     * Enforce spacing around semicolons in NBT arrays. No matter what the settings are, spaces are always removed if there's no value in the array.
-     * @default { before: 0, after: 1 }
-     */
-    nbtArraySemicolonSpacing: SepSpacingConfig,
-    /**
-     * Whether boolean-like NBT bytes (e.g. `Invisible` for armor stands) should be represented by `true`/`false`.  
-     * @default false
-     */
-    nbtBoolean: boolean,
-    /**
-     * The suffix used for NBT bytes.  
-     * @default 'b'
-     */
     nbtByteSuffix: 'b' | 'B',
-    /**
-     * Enforce spacing inside the curly brackets of NBT compounds.
-     * @default { inside: 0 }
-     */
     nbtCompoundBracketSpacing: BracketSpacingConfig,
-    /**
-     * Enforce spacing around colons in NBT compounds.
-     * @default { before: 0, after: 1 }
-     */
     nbtCompoundColonSpacing: SepSpacingConfig,
-    /**
-     * Enforce spacing around commas in NBT compounds. No matter what the settings are, spaces after trailing commas are always removed.
-     * @default { before: 0, after: 1 }
-     */
     nbtCompoundCommaSpacing: SepSpacingConfig,
-    /**
-     * When NBT compound keys should be quoted.  
-     * `true`: Always.  
-     * `false`: Only when there are special characters in the key.  
-     * @default false
-     */
-    nbtCompoundKeyQuote: boolean,
-    /**
-     * Whether there should be a trailing comma after the last key-value pair in NBT compounds or not.
-     * @default false
-     */
     nbtCompoundTrailingComma: boolean,
-    /**
-     * Whether the values in an NBT compound should be sorted by the keys alphabetically or not.
-     * @default false
-     */
-    nbtCompoundSortKeys: boolean,
-    /**
-     * Whether to omit the suffixes of NBT doubles when possible or not.  
-     * @default false
-     */
     nbtDoubleOmitSuffix: boolean,
-    /**
-     * The suffix used for NBT doubles.  
-     * @default 'd'
-     */
     nbtDoubleSuffix: 'd' | 'D',
-    /**
-     * The suffix used for NBT floats.  
-     * @default 'f'
-     */
     nbtFloatSuffix: 'f' | 'F',
-    /**
-     * Enforce spacing inside the square brackets of NBT lists.
-     * @default { inside: 0 }
-     */
     nbtListBracketSpacing: BracketSpacingConfig,
-    /**
-     * Enforce spacing around commas in NBT lists. No matter what the settings are, spaces after trailing commas are always removed.
-     * @default { before: 0, after: 1 }
-     */
     nbtListCommaSpacing: SepSpacingConfig,
-    /**
-     * Whether there should be a trailing comma after the last key-value pair in NBT lists or not.
-     * @default false
-     */
     nbtListTrailingComma: boolean,
-    /**
-     * The suffix used for NBT longs.  
-     * @default 'L'
-     */
     nbtLongSuffix: 'l' | 'L',
-    /**
-     * The suffix used for NBT shorts.  
-     * @default 's'
-     */
     nbtShortSuffix: 's' | 'S',
-    /**
-     * When NBT strings should be quoted.  
-     * `true`: Always.  
-     * `false`: Only when there are special characters in the string.  
-     * @default true
-     */
-    nbtStringQuote: boolean,
-    /**
-     * Enforce spacing inside the square brackets of entity selectors.
-     * @default { inside: 0 }
-     */
     selectorBracketSpacing: BracketSpacingConfig,
-    /**
-     * Enforce spacing around commas in entity selectors. No matter what the settings are, spaces after trailing commas are always removed.
-     * @default { before: 0, after: 0 }
-     */
     selectorCommaSpacing: SepSpacingConfig,
-    /**
-     * Enforce spacing around equal signs in entity selectors.
-     * @default { before: 0, after: 0 }
-     */
     selectorEqualSpacing: SepSpacingConfig,
-    /**
-     * Whether the square brackets (`[]`) should be kept or not if the entity selector has an empty arguments list.
-     * @default false
-     */
-    selectorKeepEmpty: boolean,
-    /**
-     * In which order the arguments in entity selectors should be. The default order is based on the research
-     * by vdvman1 at https://minecraftcommands.github.io/commanders-handbook/selector-argument-order.  
-     * @default [
-     *     'sort',
-     *     'limit',
-     *     'type',
-     *     'gamemode',
-     *     'gamemodeNeg',
-     *     'level',
-     *     'team',
-     *     'teamNeg',
-     *     'typeNeg',
-     *     'tag',
-     *     'tagNeg',
-     *     'name',
-     *     'nameNeg',
-     *     'predicate',
-     *     'predicateNeg',
-     *     'scores',
-     *     'advancements',
-     *     'nbt',
-     *     'nbtNeg',
-     *     'x',
-     *     'y',
-     *     'z',
-     *     'dx',
-     *     'dy',
-     *     'dz',
-     *     'distance',
-     *     'x_rotation',
-     *     'y_rotation'
-     * ]
-     */
-    selectorSortKeys: DiagnosticConfig<{ order: (keyof SelectorParsedArgument)[] }>,
-    /**
-     * Whether there should be a trailing comma after the last key-value pair in entity selectors or not.
-     * @default false
-     */
     selectorTrailingComma: boolean,
-    /**
-     * Enforce spacing inside the square brackets of block states.
-     * @default { inside: 0 }
-     */
-    stateBracketSpacing: BracketSpacingConfig,
-    /**
-     * Enforce spacing around commas in block states. No matter what the settings are, spaces after trailing commas are always removed.
-     * @default { before: 0, after: 0 }
-     */
-    stateCommaSpacing: SepSpacingConfig,
-    /**
-     * Enforce spacing around equal signs in block states.
-     * @default { before: 0, after: 0 }
-     */
-    stateEqualSpacing: SepSpacingConfig,
-    /**
-     * Whether the square brackets (`[]`) should be kept or not if the block state is empty.
-     * @default false
-     */
-    stateKeepEmpty: boolean,
-    /**
-     * Whether the values in a block state should be sorted by the keys alphabetically or not.
-     * @default false
-     */
-    stateSortKeys: boolean,
-    /**
-     * Whether there should be a trailing comma after the last key-value pair in block states or not.
-     * @default false
-     */
-    stateTrailingComma: boolean,
-    /**
-     * Quotes used in NBT strings and phrase strings.  
-     * `always single`: Always use single quotes.  
-     * `always double`: Always use double quotes.  
-     * `prefer single`: Always use single quotes, unless there are single quotes in the string.  
-     * `prefer double`: Always use double quotes, unless there are double quotes in the string.  
-     * @default 'prefer double'
-     */
-    quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double',
-    /**
-     * When the keys in entity selectors should be quoted.  
-     * `true`: Always.  
-     * `false`: Never.  
-     * @default false
-     */
-    quoteEntitySelectorKeys: boolean,
-    /**
-     * Whether to omit the unit of tick (`t`) in time arguments.  
-     * @default false
-     */
     timeOmitTickUnit: boolean,
-    /**
-     * Whether to throw warnings for undefined bossbars.  
-     * @default false
-     */
-    strictBossbarCheck: boolean,
-    /**
-     * Whether to throw warnings for undefined data storages.  
-     * @default false
-     */
-    strictStorageCheck: boolean,
-    /**
-     * Whether to throw warnings for undefined objectives.  
-     * @default false
-     */
-    strictObjectiveCheck: boolean,
-    /**
-     * Whether to throw warnings for undefined tags.  
-     * @default false
-     */
-    strictTagCheck: boolean,
-    /**
-     * Whether to throw warnings for undefined teams.  
-     * @default false
-     */
-    strictTeamCheck: boolean,
-    /**
-     * Whether to throw warnings for advancements which don't exist in your workspace.  
-     * @default false
-     */
-    strictAdvancementCheck: boolean,
-    /**
-     * Whether to throw warnings for functions which don't exist in your workspace.  
-     * @default false
-     */
-    strictFunctionCheck: boolean,
-    /**
-     * Whether to throw warnings for loot tables which don't exist in your workspace.  
-     * @default false
-     */
-    strictLootTableCheck: boolean,
-    /**
-     * Whether to throw warnings for predicates which don't exist in your workspace.  
-     * @default false
-     */
-    strictPredicateCheck: boolean,
-    /**
-     * Whether to throw warnings for recipes which don't exist in your workspace.  
-     * @default false
-     */
-    strictRecipeCheck: boolean,
-    /**
-     * Whether to throw warnings for block tags which don't exist in your workspace.  
-     * @default false
-     */
-    strictBlockTagCheck: boolean,
-    /**
-     * Whether to throw warnings for entity type tags which don't exist in your workspace.  
-     * @default false
-     */
-    strictEntityTypeTagCheck: boolean,
-    /**
-     * Whether to throw warnings for fluid tags which don't exist in your workspace.  
-     * @default false
-     */
-    strictFluidTagCheck: boolean,
-    /**
-     * Whether to throw warnings for function tags which don't exist in your workspace.  
-     * @default false
-     */
-    strictFunctionTagCheck: boolean,
-    /**
-     * Whether to throw warnings for item tags which don't exist in your workspace.  
-     * @default false
-     */
-    strictItemTagCheck: boolean,
-    /**
-     * Whether to throw warnings for unknown mob effects.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictMobEffectCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown enchantments.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictEnchantmentCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown sound events.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictSoundEventCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown entity types.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictEntityTypeCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown dimension types.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictDimensionTypeCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown blocks.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictBlockCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown items.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictItemCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown potions.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictPotionCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown motives.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictMotiveCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown fluids.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictFluidCheck: StrictCheckConfig,
-    /**
-     * Whether to throw warnings for unknown particle types.  
-     * `always`: Check all IDs.  
-     * `only-default-namespace`: Only check IDs belonging to the default namespace (`minecraft`).  
-     * `never`: Never check those IDs.
-     * @default 'only-default-namespace'
-     */
-    strictParticleTypeCheck: StrictCheckConfig,
-    /**
-     * Whether to omit default namespace (`minecraft`) in namespaced IDs.  
-     * No matter what the setting is, namespaces in NBT predicates will always be kept.  
-     * @default false
-     */
-    omitDefaultNamespace: boolean
+    // Diagnostic configs.
+    blockStateSortKeys: DiagnosticConfig<'alphabetically'>,
+    nameOfObjectives: DiagnosticConfig<NamingConventionConfig>,
+    nameOfSnbtCompoundTagKeys: DiagnosticConfig<NamingConventionConfig>,
+    nameOfTags: DiagnosticConfig<NamingConventionConfig>,
+    nameOfTeams: DiagnosticConfig<NamingConventionConfig>,
+    nbtBoolean: DiagnosticConfig<boolean>,
+    nbtCompoundKeyQuote: DiagnosticConfig<boolean>,
+    nbtCompoundKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    nbtCompoundSortKeys: DiagnosticConfig<'alphabetically' | 'nbtdoc'>,
+    nbtPathQuote: DiagnosticConfig<boolean>,
+    nbtPathQuoteType: DiagnosticConfig<'always double'>,
+    nbtStringQuote: DiagnosticConfig<boolean>,
+    nbtStringQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    selectorSortKeys: DiagnosticConfig<(keyof SelectorParsedArgument)[]>,
+    selectorKeyQuote: DiagnosticConfig<boolean>,
+    selectorKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    strictAdvancementCheck: DiagnosticConfig<true>,
+    strictBlockCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictBlockTagCheck: DiagnosticConfig<true>,
+    strictBossbarCheck: DiagnosticConfig<true>,
+    strictDimensionTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictEnchantmentCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictEntityTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictEntityTypeTagCheck: DiagnosticConfig<true>,
+    strictFluidCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictFluidTagCheck: DiagnosticConfig<true>,
+    strictFunctionCheck: DiagnosticConfig<true>,
+    strictFunctionTagCheck: DiagnosticConfig<true>,
+    strictItemCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictItemTagCheck: DiagnosticConfig<true>,
+    strictLootTableCheck: DiagnosticConfig<true>,
+    strictMobEffectCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictObjectiveCheck: DiagnosticConfig<true>,
+    strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictPredicateCheck: DiagnosticConfig<true>,
+    strictRecipeCheck: DiagnosticConfig<true>,
+    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictStorageCheck: DiagnosticConfig<true>,
+    strictTagCheck: DiagnosticConfig<true>,
+    strictTeamCheck: DiagnosticConfig<true>
 }
 
 export interface FeaturesConfig {
@@ -516,17 +178,21 @@ export const VanillaConfig: Config = {
         dependsOnVanilla: true
     },
     lint: {
+        // Stylistic configs.
+        blockStateBracketSpacing: { inside: 0 },
+        blockStateCommaSpacing: { before: 0, after: 0 },
+        blockStateEqualSpacing: { before: 0, after: 0 },
+        blockStateTrailingComma: false,
+        idOmitDefaultNamespace: false,
         nbtArrayBracketSpacing: { inside: 0 },
         nbtArrayCommaSpacing: { before: 0, after: 1 },
-        nbtArraySemicolonSpacing: { before: 0, after: 1 },
+        nbtArraySemicolonSpacing: { after: 1 },
         nbtArrayTrailingComma: false,
-        nbtBoolean: false,
+        nbtBoolean: null,
         nbtByteSuffix: 'b',
         nbtCompoundBracketSpacing: { inside: 0 },
         nbtCompoundColonSpacing: { before: 0, after: 1 },
         nbtCompoundCommaSpacing: { before: 0, after: 1 },
-        nbtCompoundKeyQuote: false,
-        nbtCompoundSortKeys: false,
         nbtCompoundTrailingComma: false,
         nbtDoubleSuffix: 'd',
         nbtFloatSuffix: 'f',
@@ -536,85 +202,53 @@ export const VanillaConfig: Config = {
         nbtLongSuffix: 'L',
         nbtDoubleOmitSuffix: false,
         nbtShortSuffix: 's',
-        nbtStringQuote: true,
-        stateBracketSpacing: { inside: 0 },
-        stateCommaSpacing: { before: 0, after: 0 },
-        stateEqualSpacing: { before: 0, after: 0 },
-        stateKeepEmpty: false,
-        stateSortKeys: false,
-        stateTrailingComma: false,
         selectorBracketSpacing: { inside: 0 },
         selectorCommaSpacing: { before: 0, after: 0 },
         selectorTrailingComma: false,
         selectorEqualSpacing: { before: 0, after: 0 },
-        selectorSortKeys: {
-            order: [
-                'sort',
-                'limit',
-                'type',
-                'gamemode',
-                'gamemodeNeg',
-                'level',
-                'team',
-                'teamNeg',
-                'typeNeg',
-                'tag',
-                'tagNeg',
-                'name',
-                'nameNeg',
-                'predicate',
-                'predicateNeg',
-                'scores',
-                'advancements',
-                'nbt',
-                'nbtNeg',
-                'x',
-                'y',
-                'z',
-                'dx',
-                'dy',
-                'dz',
-                'distance',
-                'x_rotation',
-                'y_rotation'
-            ]
-        },
-        selectorKeepEmpty: false,
-        quoteType: 'prefer double',
-        quoteEntitySelectorKeys: false,
+        selectorSortKeys: null,
         timeOmitTickUnit: false,
-        omitDefaultNamespace: false,
-        // TRUE LINT BEGINS
-        nameOfObjectives: 'whatever',
-        nameOfSnbtCompoundTagKeys: 'whatever',
-        nameOfTags: 'whatever',
-        nameOfTeams: 'whatever',
-        strictBossbarCheck: false,
-        strictStorageCheck: false,
-        strictObjectiveCheck: false,
-        strictTagCheck: false,
-        strictTeamCheck: false,
-        strictAdvancementCheck: false,
-        strictFunctionCheck: false,
-        strictLootTableCheck: false,
-        strictPredicateCheck: false,
-        strictRecipeCheck: false,
-        strictBlockTagCheck: false,
-        strictEntityTypeTagCheck: false,
-        strictFluidTagCheck: false,
-        strictFunctionTagCheck: false,
-        strictItemTagCheck: false,
-        strictBlockCheck: 'only-default-namespace',
-        strictDimensionTypeCheck: 'only-default-namespace',
-        strictEnchantmentCheck: 'only-default-namespace',
-        strictEntityTypeCheck: 'only-default-namespace',
-        strictFluidCheck: 'only-default-namespace',
-        strictItemCheck: 'only-default-namespace',
-        strictMobEffectCheck: 'only-default-namespace',
-        strictMotiveCheck: 'only-default-namespace',
-        strictParticleTypeCheck: 'only-default-namespace',
-        strictPotionCheck: 'only-default-namespace',
-        strictSoundEventCheck: 'only-default-namespace'
+        // Diagnostic configs.
+        blockStateSortKeys: null,
+        nameOfObjectives: null,
+        nameOfSnbtCompoundTagKeys: null,
+        nameOfTags: null,
+        nameOfTeams: null,
+        nbtCompoundKeyQuote: null,
+        nbtCompoundKeyQuoteType: null,
+        nbtCompoundSortKeys: null,
+        nbtPathQuote: null,
+        nbtPathQuoteType: null,
+        nbtStringQuote: ['warning', true],
+        nbtStringQuoteType: ['warning', 'prefer double'],
+        selectorKeyQuote: null,
+        selectorKeyQuoteType: null,
+        strictBossbarCheck: null,
+        strictStorageCheck: null,
+        strictObjectiveCheck: null,
+        strictTagCheck: null,
+        strictTeamCheck: null,
+        strictAdvancementCheck: null,
+        strictFunctionCheck: null,
+        strictLootTableCheck: null,
+        strictPredicateCheck: null,
+        strictRecipeCheck: null,
+        strictBlockTagCheck: null,
+        strictEntityTypeTagCheck: null,
+        strictFluidTagCheck: null,
+        strictFunctionTagCheck: null,
+        strictItemTagCheck: null,
+        strictBlockCheck: ['error', 'only-default-namespace'],
+        strictDimensionTypeCheck: ['error', 'only-default-namespace'],
+        strictEnchantmentCheck: ['error', 'only-default-namespace'],
+        strictEntityTypeCheck: ['error', 'only-default-namespace'],
+        strictFluidCheck: ['error', 'only-default-namespace'],
+        strictItemCheck: ['error', 'only-default-namespace'],
+        strictMobEffectCheck: ['error', 'only-default-namespace'],
+        strictMotiveCheck: ['warning', 'only-default-namespace'],
+        strictParticleTypeCheck: ['error', 'only-default-namespace'],
+        strictPotionCheck: ['warning', 'only-default-namespace'],
+        strictSoundEventCheck: ['warning', 'only-default-namespace']
     },
     features: {
         colors: true,

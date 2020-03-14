@@ -9,7 +9,7 @@ import ParsingError from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
-import StateMapNode, { StateMapNodeChars } from '../types/nodes/map/StateMapNode'
+import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateMapNode'
 import { IsMapNodeSorted } from '../types/nodes/map/MapNode'
 
 export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
@@ -50,8 +50,8 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             const definition = id.isTag ? undefined : ctx.blocks[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
-            const statesResult = new MapParser<StateMapNode>(
-                StateMapNodeChars,
+            const statesResult = new MapParser<BlockStateNode>(
+                BlockStateNodeChars,
                 (ans, reader, ctx) => {
                     const existingKeys = Object.keys(ans.data)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
@@ -87,7 +87,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             combineArgumentParserResult(ans, statesResult)
             ans.data.states = statesResult.data
 
-            if (ctx.config.lint.stateSortKeys && !ans.data.states[IsMapNodeSorted]()) {
+            if (ctx.config.lint.blockStateSortKeys && !ans.data.states[IsMapNodeSorted]()) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unsorted-keys', 'datapack.lint.stateSortKeys')

@@ -1,2 +1,2 @@
-export type StrictCheckConfig = 'always' | 'only-default-namespace' | 'never'
+export type StrictCheckConfig = 'always' | 'only-default-namespace'
 export default StrictCheckConfig

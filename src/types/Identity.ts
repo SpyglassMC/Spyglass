@@ -17,7 +17,7 @@ export default class Identity implements Formattable {
 
     [ToFormattedString](lint: LintConfig): string {
         let id
-        if (lint.omitDefaultNamespace && this.namespace === Identity.DefaultNamespace) {
+        if (lint.idOmitDefaultNamespace && this.namespace === Identity.DefaultNamespace) {
             id = this.path.join(Identity.Sep)
         } else {
             id = `${this.namespace}:${this.path.join(Identity.Sep)}`

@@ -4,20 +4,19 @@ import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType } from '../ArgumentNode'
 
-const enum BracketType { open, close }
+export const enum BracketType { open, close }
 
 export type ShouldInsertSpacesPredicate = (lint: LintConfig, data?: any) => boolean
 
 export const IsMapNodeSorted = Symbol('IsMapNodeSorted')
-export const SortMapNode = Symbol('SortMapNode')
 export const ConfigKeys = Symbol('ConfigKeys')
 export const Chars = Symbol('Chars')
 
-export default abstract class MapNode<V> implements ArgumentNode {
+export default abstract class MapNode<V> extends ArgumentNode {
     [key: string]: V
 
-    readonly [NodeType] = 'map'
-    
+    readonly [NodeType]: string = 'Map'
+
     protected abstract [ConfigKeys]: {
         bracketSpacing: keyof LintConfig,
         pairSepSpacing: keyof LintConfig,
@@ -60,27 +59,11 @@ export default abstract class MapNode<V> implements ArgumentNode {
     }
 
     [IsMapNodeSorted](): boolean {
-        const keys = Object.keys(this.content)
+        const keys = Object.keys(this)
         return keys.slice(1).every((v, i) => v.toLowerCase() >= keys[i].toLowerCase())
     }
 
-    [SortMapNode](): void {
-        const tmp = this
-        for (const key in this) {
-            if (this.hasOwnProperty(key)) {
-                delete this[key]
-            }
-        }
-
-        const sortedKeys = Object.keys(tmp).sort((a, b) => a <= b ? -1 : 1)
-        for (const key of sortedKeys) {
-            if (tmp.hasOwnProperty(key)) {
-                this[key] = tmp[key]
-            }
-        }
-    }
-
-    [ToFormattedString](lint: LintConfig) {
+    [ToFormattedString](lint: LintConfig, sort = false) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
         const sepSpacingConfig = lint[this[ConfigKeys].sepSpacing] as SepSpacingConfig
         const pairSepSpacingConfig = lint[this[ConfigKeys].pairSepSpacing] as SepSpacingConfig
@@ -92,7 +75,8 @@ export default abstract class MapNode<V> implements ArgumentNode {
         const pairSep = MapNode.getFormattedSep(this[Chars].pairSep, pairSepSpacingConfig)
 
         const content: string[] = []
-        for (const key in this) {
+        const keys = sort ? Object.keys(this).sort((a, b) => a <= b ? -1 : 1) : Object.keys(this)
+        for (const key of keys) {
             if (this.hasOwnProperty(key)) {
                 const value = this[key]
                 content.push(`${key}${sep}${toFormattedString(value, lint)}`)
