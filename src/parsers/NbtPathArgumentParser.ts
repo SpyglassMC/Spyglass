@@ -37,7 +37,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                 const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
                 walker = new NbtdocHelper(ctx.nbt)
                 walker.go(nbtSchemaPath)
-                walker.read()
+                walker.readField()
             } catch (ignored) {
                 /* istanbul ignore next */
                 walker = undefined
@@ -58,9 +58,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         let subWalker: NbtdocHelper | undefined = undefined
 
         //#region Completions
-        if (types.includes('key') && walker && NbtdocHelper.isCompoundNode(walker.read())) {
+        if (types.includes('key') && walker && NbtdocHelper.isCompoundNode(walker.readField())) {
             if (reader.cursor === ctx.cursor) {
-                const node = walker.read() as NbtCompoundSchemaNode
+                const node = walker.readField() as NbtCompoundSchemaNode
                 const children = node.children /* istanbul ignore next */ || {}
                 const keys = Object.keys(children)
                 ans.completions.push(...arrayToCompletions(keys))
@@ -70,7 +70,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
 
         if (types.includes('key') && this.canParseKey(reader)) {
             if (walker) {
-                if (NbtdocHelper.isCompoundNode(walker.read())) {
+                if (NbtdocHelper.isCompoundNode(walker.readField())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
@@ -83,7 +83,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
             this.parseKey(ans, reader, ctx, subWalker)
         } else if (types.includes('filter') && this.canParseCompoundFilter(reader)) {
             if (walker) {
-                if (NbtdocHelper.isCompoundNode(walker.read())) {
+                if (NbtdocHelper.isCompoundNode(walker.readField())) {
                     subWalker = walker
                 } else {
                     ans.errors.push(new ParsingError(
@@ -97,10 +97,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         } else if (types.includes('index') && this.canParseIndex(reader)) {
             if (walker) {
                 if ((
-                    NbtdocHelper.isListNode(walker.read()) ||
-                    walker.read().type === 'byte_array' ||
-                    walker.read().type === 'int_array' ||
-                    walker.read().type === 'long_array'
+                    NbtdocHelper.isListNode(walker.readField()) ||
+                    walker.readField().type === 'byte_array' ||
+                    walker.readField().type === 'int_array' ||
+                    walker.readField().type === 'long_array'
                 )) {
                     subWalker = walker
                 } else {
@@ -148,13 +148,13 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
         //#endregion
 
         if (walker) {
-            const node = walker.read() as NbtCompoundSchemaNode
+            const node = walker.readField() as NbtCompoundSchemaNode
 
             try {
                 subWalker = walker
                     .clone()
                     .goAnchor(key)
-                subWalker.read()
+                subWalker.readField()
             } catch (ignored) {
                 subWalker = undefined
                 if (!node.additionalChildren) {
@@ -199,7 +199,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPath> {
                     subWalker = walker
                         .clone()
                         .goAnchor('[]')
-                    subWalker.read()
+                    subWalker.readField()
                 } catch (ignored) {
                     subWalker = undefined
                     ans.errors.push(new ParsingError(

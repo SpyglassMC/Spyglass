@@ -12,9 +12,9 @@ export default class NbtCompoundNode extends MapNode<NbtNode> implements NbtNode
     readonly [NodeType] = 'NbtCompound'
     readonly [NbtNodeType] = 'Compound';
 
-    [SuperNbt]: NbtCompoundNode
+    [SuperNbt]: NbtCompoundNode | null
 
-    constructor(superNbt: NbtCompoundNode) {
+    constructor(superNbt: NbtCompoundNode | null) {
         super()
         this[SuperNbt] = superNbt
     }

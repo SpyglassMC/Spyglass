@@ -6,7 +6,7 @@ import NbtCompoundNode from '../map/NbtCompoundNode'
 export type NbtNodeTypeName =
     | 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String'
     | 'ByteArray' | 'IntArray' | 'LongArray' | 'Compound' | 'List'
-    | 'Boolean'
+    | 'Boolean' | 'Identity'
 
 export const NbtNodeType = Symbol('NbtNodeType')
 export const SuperNbt = Symbol('SuperNbt')

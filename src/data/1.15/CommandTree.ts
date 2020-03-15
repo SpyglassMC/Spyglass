@@ -12,7 +12,7 @@ import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import NamespacedIDArgumentParser from '../../parsers/NamespacedIDArgumentParser'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import NbtTagArgumentParser from '../../parsers/NbtArgumentParser'
+import NbtArgumentParser from '../../parsers/NbtArgumentParser'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
 import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
@@ -430,10 +430,10 @@ const CommandTree: CommandTreeType = {
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
                                             const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtTagArgumentParser('compound', 'entities', anchor)
+                                            return new NbtArgumentParser('Compound', 'minecraft:entity', anchor)
                                         }
                                         else {
-                                            return new NbtTagArgumentParser('compound', 'blocks')
+                                            return new NbtArgumentParser('Compound', 'minecraft:block')
                                         }
                                     },
                                     executable: true
@@ -498,10 +498,10 @@ const CommandTree: CommandTreeType = {
                                                                 if (type === 'entity') {
                                                                     const entity = getArgOrDefault(args, 1, new Entity()) as Entity
                                                                     const anchor = getSchemaAnchor(entity, nbt)
-                                                                    return new NbtTagArgumentParser(undefined, 'entities', anchor)
+                                                                    return new NbtArgumentParser(undefined, 'minecraft:entity', anchor)
                                                                 }
                                                                 else {
-                                                                    return new NbtTagArgumentParser(undefined, 'blocks')
+                                                                    return new NbtArgumentParser(undefined, 'minecraft:block')
                                                                 }
                                                             },
                                                             executable: true
@@ -1505,7 +1505,7 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtTagArgumentParser('compound', 'entities', getArgOrDefault(args, 2, new Identity()).toString()),
+                                    parser: ({ args }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(args, 2, new Identity()).toString()),
                                     executable: true
                                 }
                             }

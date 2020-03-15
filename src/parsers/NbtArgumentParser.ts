@@ -8,14 +8,21 @@ import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
-import { NbtCompoundSchemaNode } from '../types/NbtSchema'
-import { NbtTag, NbtTagTypeName, NbtContentTagType, NbtTagType, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtStringTag, NbtCompoundTag, getNbtCompoundTag, getNbtListTag, NbtByteArrayTag, NbtIntArrayTag, NbtLongArrayTag, NbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag, isNbtByteArrayTag, isNbtByteTag, isNbtIntArrayTag, isNbtIntTag, isNbtLongTag } from '../types/NbtTag'
 import { ToFormattedString } from '../types/Formattable'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import NbtNode, { NbtNodeTypeName, NbtNodeType } from '../types/nodes/nbt/NbtNode'
+import NbtByteNode from '../types/nodes/nbt/NbtByteNode'
+import NbtCompoundNode, { NbtCompoundNodeChars } from '../types/nodes/map/NbtCompoundNode'
+import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
+import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
+import NbtLongNode from '../types/nodes/nbt/NbtLongNode'
+import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
+import NbtDoubleNode from '../types/nodes/nbt/NbtDoubleNode'
+import { nbtdoc } from '../types/nbtdoc'
 
-export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
-    static identity = 'NbtTag'
+export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
+    static identity = 'Nbt'
     /**
      * @throws {string}
      */
@@ -35,92 +42,90 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return value
     }
 
-    private static readonly Patterns: { [type: string]: [RegExp, /** @throws {string} */(value: string) => NbtTag] } = {
-        byte: [
-            /^[-+]?(?:0|[1-9][0-9]*)b$/i,
-            value => getNbtByteTag(NbtTagArgumentParser.parseNumber(
-                value.slice(0, -1),
-                ['-128', '127'],
-                Number,
-                (value: number) => -(2 ** 7) <= value && value <= 2 ** 7 - 1
-            ))
-        ],
-        short: [
-            /^[-+]?(?:0|[1-9][0-9]*)s$/i,
-            value => getNbtShortTag(NbtTagArgumentParser.parseNumber(
-                value.slice(0, -1),
-                ['-32,768', '32,767'],
-                Number,
-                (value: number) => -(2 ** 15) <= value && value <= 2 ** 15 - 1
-            ))
-        ],
-        int: [
-            /^[-+]?(?:0|[1-9][0-9]*)$/i,
-            value => getNbtIntTag(NbtTagArgumentParser.parseNumber(
-                value,
-                ['-2,147,483,648', '2,147,483,647'],
-                Number,
-                (value: number) => -(2 ** 31) <= value && value <= 2 ** 31 - 1
-            ))
-        ],
-        long: [
-            /^[-+]?(?:0|[1-9][0-9]*)l$/i,
-            value => getNbtLongTag(NbtTagArgumentParser.parseNumber<BigInt>(
-                value.slice(0, -1),
-                ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
-                (str: string) => BigInt(str),
-                (value: BigInt) =>
-                    value >= -9_223_372_036_854_775_808n &&
-                    value <= 9_223_372_036_854_775_807n
-            ))
-        ],
-        float: [
-            /^[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?f$/i,
-            value => getNbtFloatTag(NbtTagArgumentParser.parseNumber(
-                value.slice(0, -1),
-                [],
-                Number
-            ))
-        ],
-        double: [
-            /^[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?d$/i,
-            value => getNbtDoubleTag(NbtTagArgumentParser.parseNumber(
-                value.slice(0, -1),
-                [],
-                Number
-            ))
-        ],
-        doubleImplicit: [
-            /^[-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?$/i,
-            value => getNbtDoubleTag(NbtTagArgumentParser.parseNumber(
-                value,
-                [],
-                Number
-            ))
-        ],
-        false: [/^false$/i, _ => getNbtByteTag(0)],
-        true: [/^true$/i, _ => getNbtByteTag(1)]
-    }
+    private static readonly Patterns: {
+        [type: string]: [RegExp, /** @throws {string} */(superNbt: NbtCompoundNode | null, value: string) => NbtNode]
+    } = {
+            byte: [
+                /^[-+]?(0|[1-9][0-9]*)b$/i,
+                (superNode, value) => new NbtByteNode(superNode, NbtArgumentParser.parseNumber(
+                    value.slice(0, -1),
+                    ['-128', '127'],
+                    Number,
+                    value => -128 <= value && value <= 127
+                ), value)
+            ],
+            short: [
+                /^[-+]?(0|[1-9][0-9]*)s$/i,
+                (superNode, value) => new NbtShortNode(superNode, NbtArgumentParser.parseNumber(
+                    value.slice(0, -1),
+                    ['-32,768', '32,767'],
+                    Number,
+                    value => -32_768 <= value && value <= 32_767
+                ), value)
+            ],
+            int: [
+                /^[-+]?(0|[1-9][0-9]*)$/i,
+                (superNode, value) => new NbtIntNode(superNode, NbtArgumentParser.parseNumber(
+                    value,
+                    ['-2,147,483,648', '2,147,483,647'],
+                    Number,
+                    value => -2_147_483_648 <= value && value <= 2_147_483_647
+                ), value)
+            ],
+            long: [
+                /^[-+]?(0|[1-9][0-9]*)l$/i,
+                (superNode, value) => new NbtLongNode(superNode, NbtArgumentParser.parseNumber<bigint>(
+                    value.slice(0, -1),
+                    ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
+                    str => BigInt(str),
+                    value => value >= -9_223_372_036_854_775_808n && value <= 9_223_372_036_854_775_807n
+                ), value)
+            ],
+            float: [
+                /^[-+]?([0-9]+[.]?|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?f$/i,
+                (superNode, value) => new NbtFloatNode(superNode, NbtArgumentParser.parseNumber(
+                    value.slice(0, -1),
+                    [],
+                    Number
+                ), value)
+            ],
+            double: [
+                /^[-+]?([0-9]+[.]?|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?d$/i,
+                (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
+                    value.slice(0, -1), [], Number
+                ), value)
+            ],
+            doubleImplicit: [
+                /^[-+]?([0-9]+[.]|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?$/i,
+                (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
+                    value, [], Number
+                ), value)
+            ],
+            false: [/^false$/i, (superNode, value) => new NbtByteNode(superNode, 0, value)],
+            true: [/^true$/i, (superNode, value) => new NbtByteNode(superNode, 1, value)]
+        }
 
     /**
      * The diagnostic level of nbt schema is `Warning`. 
      * 
      * This field is used to trigger `Error` diagnostics.
      */
-    private readonly expectedTypes: NbtTagTypeName[]
+    private readonly expectedTypes: NbtNodeTypeName[]
 
     readonly identity = 'nbtTag'
 
     /* istanbul ignore next */
     constructor(
-        type: NbtTagTypeName | NbtTagTypeName[] = [
-            'compound', 'list', 'byte_array', 'int_array', 'long_array',
-            'byte', 'short', 'int', 'long', 'string', 'float', 'double'
+        type: NbtNodeTypeName | NbtNodeTypeName[] = [
+            'Compound', 'List', 'ByteArray', 'IntArray', 'LongArray',
+            'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double',
+            'Boolean'
         ],
-        private readonly category: 'blocks' | 'entities' | 'items',
+        private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
         private readonly id: string | undefined = undefined,
         private readonly isPredicate = false,
-        private readonly isJson = false
+        private readonly isJson = false,
+        private readonly superNode: NbtCompoundNode | null = null
     ) {
         super()
         if (type instanceof Array) {
@@ -130,155 +135,141 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private getLocaleName(name: NbtTagTypeName) {
+    private getLocaleName(name: NbtNodeTypeName) {
         return locale(`nbt-tag.${name}`)
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtTag> {
-        let walker: NbtdocHelper | undefined
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtNode> {
+        let helper: NbtdocHelper | undefined
         if (this.id) {
             try {
-                const nbtSchemaPath = `roots/${this.category}.json#${this.id}`
-                walker = new NbtdocHelper(ctx.nbt)
-                walker
-                    .go(nbtSchemaPath)
-                    .read()
+                helper = new NbtdocHelper(ctx.nbt)
+                helper
+                    .goRegistryCompound(this.category, this.id)
+                    .readCompound()
             } catch (ignored) {
-                walker = undefined
+                helper = undefined
             }
         }
         const start = reader.cursor
-        const ans = this.parseTag(reader, ctx, walker)
-        if (!this.expectedTypes.includes(ans.data[NbtTagType])) {
+        const ans = this.parseTag(reader, ctx, this.superNode, helper)
+        if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',
                     arrayToMessage(this.expectedTypes.map(this.getLocaleName), false, 'or'),
-                    this.getLocaleName(ans.data[NbtTagType])
+                    this.getLocaleName(ans.data[NbtNodeType])
                 )
             ))
         }
         return ans
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtTag> {
+    private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper): ArgumentParserResult<NbtNode> {
         let ans
-        const start = reader.cursor
         switch (reader.peek()) {
             case '{':
-                ans = this.parseCompoundTag(reader, ctx, walker)
+                ans = this.parseCompoundTag(reader, ctx, superNode, helper)
                 break
             case '[':
-                ans = this.parseListOrArray(reader, ctx, walker)
+                ans = this.parseListOrArray(reader, ctx, superNode, helper)
                 break
-            case '':
-            case '}':
-                if (walker) {
-                    if (NbtdocHelper.isCompoundNode(walker.read())) {
-                        ans = this.parseCompoundTag(reader, ctx, walker)
-                        if (ctx.cursor === start) {
-                            ans.completions.push({ label: '{}' })
-                        }
-                    } else if (NbtdocHelper.isListNode(walker.read())) {
-                        ans = this.parseListOrArray(reader, ctx, walker)
-                        if (ctx.cursor === start) {
-                            ans.completions.push({ label: '[]' })
-                        }
-                    } else if (
-                        walker.read().type === 'byte_array' ||
-                        walker.read().type === 'int_array' ||
-                        walker.read().type === 'long_array'
-                    ) {
-                        ans = this.parsePrimitiveArray(reader, ctx, walker, walker.read().type as any)
-                        if (ctx.cursor === start) {
-                            ans.completions.push({ label: `[${walker.read().type.toUpperCase()[0]};]` })
-                        }
-                    } else {
-                        const clonedReader = reader.clone()
-                        ans = this.parsePrimitiveTag(reader, ctx, walker)
-                        if (ctx.cursor === start) {
-                            /* istanbul ignore next */
-                            const getLabel = (value: string) => {
-                                if (walker.read().type === 'string') {
-                                    return quoteString(value, ctx.config.lint.quoteType, ctx.config.lint.nbtStringQuote)
-                                } else if (walker.read().type === 'byte') {
-                                    return getNbtByteTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
-                                } else if (walker.read().type === 'short') {
-                                    return getNbtShortTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
-                                } else if (walker.read().type === 'int') {
-                                    return getNbtIntTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
-                                } else if (walker.read().type === 'long') {
-                                    return getNbtLongTag(BigInt(value))[ToFormattedString](ctx.config.lint)
-                                } else if (walker.read().type === 'float') {
-                                    return getNbtFloatTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
-                                } else if (walker.read().type === 'double') {
-                                    return getNbtDoubleTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
-                                } else {
-                                    return value
-                                }
-                            }
-                            const result = walker
-                                .getParserResult(clonedReader, ctx, { isPredicate: this.isPredicate })
-                            ans.completions.push(
-                                ...result
-                                    .completions
-                                    .map(v => {
-                                        /* istanbul ignore next */
-                                        if (v.insertText) {
-                                            return {
-                                                ...v,
-                                                insertText: getLabel(v.insertText)
-                                            }
-                                        } else {
-                                            return {
-                                                ...v,
-                                                label: getLabel(v.label)
-                                            }
-                                        }
-                                    })
-                            )
-                            ans.errors.push(
-                                ...result.errors
-                            )
-                            ans.cache = result.cache
-                        }
-                    }
-                } else {
-                    ans = this.parsePrimitiveTag(reader, ctx, walker)
-                }
-                break
+            //#region
+            // case '':
+            // case '}':
+            //     if (walker) {
+            //         if (NbtdocHelper.isCompoundNode(walker.goKey())) {
+            //             ans = this.parseCompoundTag(reader, ctx, walker)
+            //             if (ctx.cursor === start) {
+            //                 ans.completions.push({ label: '{}' })
+            //             }
+            //         } else if (NbtdocHelper.isListNode(walker.goKey())) {
+            //             ans = this.parseListOrArray(reader, ctx, walker)
+            //             if (ctx.cursor === start) {
+            //                 ans.completions.push({ label: '[]' })
+            //             }
+            //         } else if (
+            //             walker.goKey().type === 'byte_array' ||
+            //             walker.goKey().type === 'int_array' ||
+            //             walker.goKey().type === 'long_array'
+            //         ) {
+            //             ans = this.parsePrimitiveArray(reader, ctx, walker, walker.goKey().type as any)
+            //             if (ctx.cursor === start) {
+            //                 ans.completions.push({ label: `[${walker.goKey().type.toUpperCase()[0]};]` })
+            //             }
+            //         } else {
+            //             const clonedReader = reader.clone()
+            //             ans = this.parsePrimitiveTag(reader, ctx, walker)
+            //             if (ctx.cursor === start) {
+            //                 /* istanbul ignore next */
+            //                 const getLabel = (value: string) => {
+            //                     if (walker.goKey().type === 'string') {
+            //                         return quoteString(value, ctx.config.lint.quoteType, ctx.config.lint.nbtStringQuote)
+            //                     } else if (walker.goKey().type === 'byte') {
+            //                         return getNbtByteTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
+            //                     } else if (walker.goKey().type === 'short') {
+            //                         return getNbtShortTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
+            //                     } else if (walker.goKey().type === 'int') {
+            //                         return getNbtIntTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
+            //                     } else if (walker.goKey().type === 'long') {
+            //                         return getNbtLongTag(BigInt(value))[ToFormattedString](ctx.config.lint)
+            //                     } else if (walker.goKey().type === 'float') {
+            //                         return getNbtFloatTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
+            //                     } else if (walker.goKey().type === 'double') {
+            //                         return getNbtDoubleTag(parseFloat(value))[ToFormattedString](ctx.config.lint)
+            //                     } else {
+            //                         return value
+            //                     }
+            //                 }
+            //                 const result = walker
+            //                     .getParserResult(clonedReader, ctx, { isPredicate: this.isPredicate })
+            //                 ans.completions.push(
+            //                     ...result
+            //                         .completions
+            //                         .map(v => {
+            //                             /* istanbul ignore next */
+            //                             if (v.insertText) {
+            //                                 return {
+            //                                     ...v,
+            //                                     insertText: getLabel(v.insertText)
+            //                                 }
+            //                             } else {
+            //                                 return {
+            //                                     ...v,
+            //                                     label: getLabel(v.label)
+            //                                 }
+            //                             }
+            //                         })
+            //                 )
+            //                 ans.errors.push(
+            //                     ...result.errors
+            //                 )
+            //                 ans.cache = result.cache
+            //             }
+            //         }
+            //     } else {
+            //         ans = this.parsePrimitiveTag(reader, ctx, walker)
+            //     }
+            //     break
+            //#endregion
             default:
-                ans = this.parsePrimitiveTag(reader, ctx, walker)
+                ans = this.parsePrimitiveTag(reader, ctx, superNode, helper)
                 break
-        }
-        if (
-            walker && walker.read().type !== ans.data[NbtTagType] &&
-            !(walker.read().canAlsoBe && (walker.read().canAlsoBe as string[]).includes(ans.data[NbtTagType]))
-        ) {
-            ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
-                locale('expected-got',
-                    this.getLocaleName(walker.read().type as NbtTagTypeName),
-                    this.getLocaleName(ans.data[NbtTagType])
-                ),
-                true,
-                DiagnosticSeverity.Warning
-            ))
         }
         return ans
     }
 
-    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtCompoundTag> {
-        const ans: ArgumentParserResult<NbtCompoundTag> = {
-            data: getNbtCompoundTag({}),
+    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper): ArgumentParserResult<NbtCompoundNode> {
+        const ans: ArgumentParserResult<NbtCompoundNode> = {
+            data: new NbtCompoundNode(superNode),
             tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
-        const isSchemaAvailable = walker && NbtdocHelper.isCompoundNode(walker.read())
-        new MapParser<string, NbtCompoundTag>(
-            '{', ':', ',', '}',
+        const isSchemaAvailable = helper && helper.readCompound()
+        new MapParser<NbtCompoundNode>(
+            NbtCompoundNodeChars,
             (ans, reader, ctx) => {
                 const result: ArgumentParserResult<string> = {
                     data: '',
@@ -295,19 +286,19 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     result.tokens.push(Token.from(start, reader, TokenType.property))
                     //#endregion
                     //#region Completions
-                    if (walker && isSchemaAvailable && ctx.cursor === reader.cursor) {
-                        const { children } = walker.read() as NbtCompoundSchemaNode
-                        const safeChildren = children ? children : {}
+                    if (helper && isSchemaAvailable && ctx.cursor === reader.cursor) {
+                        const { fields } = helper.readCompound()!
+                        // const safeChildren = fields ? fields : {}
                         const existingKeys = Object.keys(ans.data)
-                        const keys = Object.keys(safeChildren).filter(v => !existingKeys.includes(v))
+                        const keys = Object.keys(fields).filter(v => !existingKeys.includes(v))
                         result.completions.push(...keys.map(
                             key => ({
                                 ...{
                                     label: quoteString(key, ctx.config.lint.quoteType, ctx.config.lint.quoteSnbtStringKeys),
                                     kind: CompletionItemKind.Property
                                 },
-                                ...safeChildren[key].description ?
-                                    { documentation: safeChildren[key].description } :
+                                ...fields[key].description ?
+                                    { documentation: fields[key].description } :
                                     {}
                             } as CompletionItem
                             )
@@ -358,16 +349,13 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 let isUnexpectedKey = false
                 // Check whether the schema for the key is available.
                 let isSchemaForKeyAvailable = false
-                let clonedWalker: undefined | NbtdocHelper
-                if (walker && isSchemaAvailable) {
-                    clonedWalker = walker
-                        .clone()
-                        .goAnchor(key)
-                    try {
-                        clonedWalker.read()
+                let fieldDoc: nbtdoc.Field | null = null
+                if (helper && isSchemaAvailable) {
+                    fieldDoc = helper.readField(key)
+                    if (fieldDoc) {
                         isSchemaForKeyAvailable = true
-                    } catch (ignored) {
-                        if (!(walker.read() as NbtCompoundSchemaNode).additionalChildren) {
+                    } else {
+                        if (!(helper.readCompound()).additionalChildren) {
                             isUnexpectedKey = true
                         }
                     }
@@ -375,7 +363,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const result = this.parseTag(
                     reader,
                     ctx,
-                    (clonedWalker && isSchemaForKeyAvailable) ? clonedWalker : undefined
+                    (helper && isSchemaForKeyAvailable) ? clonedHelper : undefined
                 )
                 if (isUnexpectedKey) {
                     result.errors.push(
@@ -397,7 +385,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         return ans
     }
 
-    private parseListOrArray(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtTag> {
+    private parseListOrArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, walker?: NbtdocHelper): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtListTag([]),
             tokens: [],
@@ -424,7 +412,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper,
+    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, walker?: NbtdocHelper,
         specifiedType: 'byte_array' | 'int_array' | 'long_array' | null = null):
         ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> {
         const ans: ArgumentParserResult<NbtByteArrayTag | NbtIntArrayTag | NbtLongArrayTag> = {
@@ -435,7 +423,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             completions: []
         }
         if (specifiedType) {
-            ans.data[NbtTagType] = specifiedType
+            ans.data[NbtNodeType] = specifiedType
         }
         try {
             reader
@@ -469,8 +457,8 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                     reader,
                     ctx,
                     /* istanbul ignore next */
-                    (walker && NbtdocHelper.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined,
-                    (walker && walker.read().isColor)
+                    (walker && NbtdocHelper.isListNode(walker.readField())) ? walker.clone().goAnchor('[]') : undefined,
+                    (walker && walker.readField().isColor)
                 )
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
@@ -488,7 +476,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 { start, end: reader.cursor },
                                 locale('expected-got',
                                     locale('nbt-tag.byte'),
-                                    this.getLocaleName(result.data[NbtTagType])
+                                    this.getLocaleName(result.data[NbtNodeType])
                                 )
                             )
                         )
@@ -502,7 +490,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 { start, end: reader.cursor },
                                 locale('expected-got',
                                     locale('nbt-tag.int'),
-                                    this.getLocaleName(result.data[NbtTagType])
+                                    this.getLocaleName(result.data[NbtNodeType])
                                 )
                             )
                         )
@@ -516,7 +504,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                                 { start, end: reader.cursor },
                                 locale('expected-got',
                                     locale('nbt-tag.long'),
-                                    this.getLocaleName(result.data[NbtTagType])
+                                    this.getLocaleName(result.data[NbtNodeType])
                                 )
                             )
                         )
@@ -533,7 +521,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parseList(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper): ArgumentParserResult<NbtListTag> {
+    private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, walker?: NbtdocHelper): ArgumentParserResult<NbtListTag> {
         const ans: ArgumentParserResult<NbtListTag> = {
             data: getNbtListTag([]),
             tokens: [],
@@ -551,21 +539,21 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const result = this.parseTag(
                     reader,
                     ctx,
-                    (walker && NbtdocHelper.isListNode(walker.read())) ? walker.clone().goAnchor('[]') : undefined
+                    (walker && NbtdocHelper.isListNode(walker.readField())) ? walker.clone().goAnchor('[]') : undefined
                 )
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
                 ans.data.push(result.data)
                 if (!ans.data[NbtContentTagType]) {
-                    ans.data[NbtContentTagType] = result.data[NbtTagType]
-                } else if (ans.data[NbtContentTagType] !== result.data[NbtTagType]) {
+                    ans.data[NbtContentTagType] = result.data[NbtNodeType]
+                } else if (ans.data[NbtContentTagType] !== result.data[NbtNodeType]) {
                     ans.errors.push(
                         new ParsingError(
                             { start, end },
                             locale('expected-got',
                                 this.getLocaleName(ans.data[NbtContentTagType]),
-                                this.getLocaleName(result.data[NbtTagType])
+                                this.getLocaleName(result.data[NbtNodeType])
                             )
                         )
                     )
@@ -588,7 +576,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
         }
     }
 
-    private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, walker?: NbtdocHelper, isColor?: boolean): ArgumentParserResult<NbtTag> {
+    private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, walker?: NbtdocHelper, isColor?: boolean): ArgumentParserResult<NbtTag> {
         const ans: ArgumentParserResult<NbtTag> = {
             data: getNbtStringTag(''),
             tokens: [],
@@ -597,7 +585,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
             completions: []
         }
         const start = reader.cursor
-        isColor = isColor || (walker && walker.read().isColor)
+        isColor = isColor || (walker && walker.readField().isColor)
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             const quote = reader.peek()
@@ -644,10 +632,10 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
                 const failedToMatchAllPatterns = Symbol('failed to match all patterns')
                 try {
                     // Try parsing as a number.
-                    for (const type in NbtTagArgumentParser.Patterns) {
+                    for (const type in NbtArgumentParser.Patterns) {
                         /* istanbul ignore else */
-                        if (NbtTagArgumentParser.Patterns.hasOwnProperty(type)) {
-                            const [pattern, func] = NbtTagArgumentParser.Patterns[type]
+                        if (NbtArgumentParser.Patterns.hasOwnProperty(type)) {
+                            const [pattern, func] = NbtArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
                                 ans.data = func(value)
                                 //#region Tokens
@@ -694,7 +682,7 @@ export default class NbtTagArgumentParser extends ArgumentParser<NbtTag> {
 
     getExamples(): string[] {
         const ans: string[] = []
-        const examplesOfNames: { [name in NbtTagTypeName]: string[] } = {
+        const examplesOfNames: { [name in NbtNodeTypeName]: string[] } = {
             byte: ['0b'],
             byte_array: ['[B; 0b],'],
             compound: ['{}', '{foo: bar}'],
