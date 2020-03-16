@@ -2,9 +2,6 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
-import MapToken from '../types/nodes/map/MapNode'
-import StringToken from '../types/nodes/StringToken'
-import { LintConfig } from '../types/Config'
 import ArgumentParser from './ArgumentParser'
 
 export default class MapParser<T extends { [key: string]: any }> extends ArgumentParser<T> {

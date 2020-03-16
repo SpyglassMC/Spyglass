@@ -17,10 +17,7 @@ export function getDiagnosticSeverity(s: SeverityConfig | undefined) {
         case 'information':
             return DiagnosticSeverity.Information
         case 'hint':
-            return DiagnosticSeverity.Hint
-        case 'none':
-        case false:
         default:
-            return null
+            return DiagnosticSeverity.Hint
     }
 }

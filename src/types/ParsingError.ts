@@ -2,6 +2,19 @@ import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
 import TextRange from './TextRange'
 import { locale } from '../locales/Locales'
 
+export const enum ActionCode {
+    NbtTypeToByte,
+    NbtTypeToShort,
+    NbtTypeToInt,
+    NbtTypeToLong,
+    NbtTypeToFloat,
+    NbtTypeToDouble,
+    NbtByteToLiteral,
+    NbtByteToNumber,
+    NbtStringQuote,
+    NbtStringUnquote,
+}
+
 /**
  * Represent an error occured while parsing.
  */
@@ -23,7 +36,11 @@ export default class ParsingError {
         /**
          * The severity of the error.
          */
-        public readonly severity: DiagnosticSeverity = DiagnosticSeverity.Error
+        public readonly severity: DiagnosticSeverity = DiagnosticSeverity.Error,
+        /**
+         * The code of the error.
+         */
+        public readonly code?: ActionCode
     ) { }
 
     /**
@@ -34,7 +51,8 @@ export default class ParsingError {
             range: { start: { line, character: this.range.start }, end: { line, character: this.range.end } },
             severity: this.severity,
             source: 'datapack',
-            message: this.message + locale('punc.period')
+            message: this.message + locale('punc.period'),
+            ...this.code ? { code: this.code } : {}
         }
     }
 }

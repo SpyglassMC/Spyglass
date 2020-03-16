@@ -5,6 +5,10 @@ import { ToFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
+import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
+import ParsingError, { ActionCode } from '../types/ParsingError'
+import range from 'python-range'
+import TextRange from '../types/TextRange'
 
 /**
  * Convert an array to human-readable message.
@@ -63,10 +67,10 @@ export function escapeString(str: string, quote: '"' | "'" = '"') {
  * Quote a string.
  * @param inner The inner string.
  * @param quoteType Which quote to use.
- * @param force Whether to quote regardless.
+ * @param forced Whether to quote regardless.
  */
-export function quoteString(inner: string, quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double', force: boolean) {
-    const shouldQuote = force ||
+export function quoteString(inner: string, quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double', forced: boolean) {
+    const shouldQuote = forced ||
         !StringReader.canInUnquotedString(inner) ||
         inner.toLowerCase() === 'false' ||
         inner.toLowerCase() === 'true'
@@ -101,6 +105,41 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
     } else {
         return inner
     }
+}
+
+export function validateStringQuote(raw: string, inner: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>): ParsingError[] {
+    const ans: ParsingError[] = []
+    const firstChar = raw.charAt(0)
+    const isQuoted = StringReader.isQuote(firstChar)
+
+    if (quoteConfig) {
+        const [severity, expectQuote] = quoteConfig
+        if (expectQuote !== isQuoted) {
+            ans.push(new ParsingError(
+                range,
+                locale('expected-got',
+                    expectQuote ? locale('quote') : locale('string'),
+                    locale('punc.quote', firstChar)
+                ),
+                true, getDiagnosticSeverity(severity),
+                expectQuote ? ActionCode.NbtStringQuote : ActionCode.NbtStringUnquote
+            ))
+        }
+    }
+
+    if (isQuoted && quoteTypeConfig) {
+        const [severity, expectedType] = quoteTypeConfig
+        if (quoteString(inner, expectedType, true) !== raw) {
+            ans.push(new ParsingError(
+                range,
+                locale('expected', locale('punc.quote', expectedType)),
+                true, getDiagnosticSeverity(severity),
+                ActionCode.NbtStringQuote
+            ))
+        }
+    }
+
+    return ans
 }
 
 /**

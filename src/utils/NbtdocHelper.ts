@@ -3,14 +3,32 @@ import { ClientCache, offsetCachePosition } from '../types/ClientCache'
 import { nbtdoc } from '../types/nbtdoc'
 import LineParser from '../parsers/LineParser'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { ActionCode } from '../types/ParsingError'
 import StringReader from './StringReader'
-import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType } from '../types/nodes/nbt/NbtNode'
+import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
 import TextRange from '../types/TextRange'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import Identity from '../types/Identity'
+import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import { locale } from '../locales/Locales'
+import { arrayToMessage, arrayToCompletions, validateStringQuote } from './utils'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
+import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
+import NbtNumberNode from '../types/nodes/nbt/NbtNumberNode'
+import NbtByteArrayNode from '../types/nodes/nbt/NbtByteArrayNode'
+import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
+import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
+import NbtByteNode from '../types/nodes/nbt/NbtByteNode'
+import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
+import NbtLongNode from '../types/nodes/nbt/NbtLongNode'
+import NbtDoubleNode from '../types/nodes/nbt/NbtDoubleNode'
+import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
+import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
+import NbtListNode from '../types/nodes/nbt/NbtListNode'
+import { Keys } from '../types/nodes/map/MapNode'
 
 // type SuggestionNode =
 //     | string
@@ -52,23 +70,17 @@ function isIntDoc(doc: nbtdoc.NbtValue): doc is IntDoc {
     return (doc as any).Int !== undefined
 }
 
-type LongDoc = {
-    Long: nbtdoc.NumberTag
-}
+type LongDoc = { Long: nbtdoc.NumberTag }
 function isLongDoc(doc: nbtdoc.NbtValue): doc is LongDoc {
     return (doc as any).Long !== undefined
 }
 
-type FloatDoc = {
-    Float: nbtdoc.NumberTag
-}
+type FloatDoc = { Float: nbtdoc.NumberTag }
 function isFloatDoc(doc: nbtdoc.NbtValue): doc is FloatDoc {
     return (doc as any).Float !== undefined
 }
 
-type DoubleDoc = {
-    Double: nbtdoc.NumberTag
-}
+type DoubleDoc = { Double: nbtdoc.NumberTag }
 function isDoubleDoc(doc: nbtdoc.NbtValue): doc is DoubleDoc {
     return (doc as any).Double !== undefined
 }
@@ -78,71 +90,47 @@ function isStringDoc(doc: nbtdoc.NbtValue): doc is StringDoc {
     return doc === 'String'
 }
 
-type ByteArrayDoc = {
-    ByteArray: nbtdoc.NumberArrayTag
-}
+type ByteArrayDoc = { ByteArray: nbtdoc.NumberArrayTag }
 function isByteArrayDoc(doc: nbtdoc.NbtValue): doc is ByteArrayDoc {
     return (doc as any).ByteArray !== undefined
 }
 
-type IntArrayDoc = {
-    IntArray: nbtdoc.NumberArrayTag
-}
+type IntArrayDoc = { IntArray: nbtdoc.NumberArrayTag }
 function isIntArrayDoc(doc: nbtdoc.NbtValue): doc is IntArrayDoc {
     return (doc as any).IntArray !== undefined
 }
 
-type LongArrayDoc = {
-    LongArray: nbtdoc.NumberArrayTag
-}
+type LongArrayDoc = { LongArray: nbtdoc.NumberArrayTag }
 function isLongArrayDoc(doc: nbtdoc.NbtValue): doc is LongArrayDoc {
     return (doc as any).LongArray !== undefined
 }
 
-type CompoundDoc = {
-    Compound: nbtdoc.Index<nbtdoc.CompoundTag>
-}
+type CompoundDoc = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 function isCompoundDoc(doc: nbtdoc.NbtValue): doc is CompoundDoc {
     return (doc as any).Compound !== undefined
 }
 
-type EnumDoc = {
-    Enum: nbtdoc.Index<nbtdoc.EnumItem>
-}
+type EnumDoc = { Enum: nbtdoc.Index<nbtdoc.EnumItem> }
 function isEnumDoc(doc: nbtdoc.NbtValue): doc is EnumDoc {
     return (doc as any).Enum !== undefined
 }
 
-type ListDoc = {
-    List: {
-        length_range: [number, number] | null,
-        value_type: nbtdoc.NbtValue
-    }
-}
+type ListDoc = { List: { length_range: [number, number] | null, value_type: nbtdoc.NbtValue } }
 function isListDoc(doc: nbtdoc.NbtValue): doc is ListDoc {
     return (doc as any).List !== undefined
 }
 
-type IndexDoc = {
-    Index: {
-        target: string,
-        path: nbtdoc.FieldPath[]
-    }
-}
+type IndexDoc = { Index: { target: string, path: nbtdoc.FieldPath[] } }
 function isIndexDoc(doc: nbtdoc.NbtValue): doc is IndexDoc {
     return (doc as any).Index !== undefined
 }
 
-type IdDoc = {
-    Id: string
-}
+type IdDoc = { Id: string }
 function isIdDoc(doc: nbtdoc.NbtValue): doc is IdDoc {
     return (doc as any).Id !== undefined
 }
 
-type OrDoc = {
-    Or: nbtdoc.NbtValue[]
-}
+type OrDoc = { Or: nbtdoc.NbtValue[] }
 function isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
     return (doc as any).Or !== undefined
 }
@@ -276,125 +264,312 @@ export default class NbtdocHelper {
         return null
     }
 
-    validateField(range: TextRange, ctx: ParsingContext, tag: NbtNode, fieldDoc: nbtdoc.Field | null): ValidateResult {
-        let ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        if (fieldDoc) {
-            const doc = fieldDoc.nbttype
+    validateField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean): ValidateResult {
+        if (doc) {
             if (isBooleanDoc(doc)) {
-                ans = this.validateBooleanField(range, ctx, tag, doc)
+                ans = this.validateBooleanField(ctx, tag, doc, isPredicate)
             } else if (isByteArrayDoc(doc)) {
-                ans = this.validateByteArrayField(range, ctx, tag, doc)
+                ans = this.validateByteArrayField(ctx, tag, doc, isPredicate)
             } else if (isByteDoc(doc)) {
-                ans = this.validateByteField(range, ctx, tag, doc)
+                ans = this.validateByteField(ctx, tag, doc, isPredicate)
             } else if (isCompoundDoc(doc)) {
-                ans = this.validateCompoundField(range, ctx, tag, doc)
+                ans = this.validateCompoundField(ctx, tag, doc, isPredicate)
             } else if (isDoubleDoc(doc)) {
-                ans = this.validateDoubleField(range, ctx, tag, doc)
+                ans = this.validateDoubleField(ctx, tag, doc, isPredicate)
             } else if (isEnumDoc(doc)) {
-                ans = this.validateEnumField(range, ctx, tag, doc)
+                ans = this.validateEnumField(ctx, tag, doc, isPredicate)
             } else if (isFloatDoc(doc)) {
-                ans = this.validateFloatField(range, ctx, tag, doc)
+                ans = this.validateFloatField(ctx, tag, doc, isPredicate)
             } else if (isIdDoc(doc)) {
-                ans = this.validateIdField(range, ctx, tag, doc)
+                ans = this.validateIdField(ctx, tag, doc, isPredicate)
             } else if (isIndexDoc(doc)) {
-                ans = this.validateIndexField(range, ctx, tag, doc)
+                ans = this.validateIndexField(ctx, tag, doc, isPredicate)
             } else if (isIntArrayDoc(doc)) {
-                ans = this.validateIntArrayField(range, ctx, tag, doc)
+                ans = this.validateIntArrayField(ctx, tag, doc, isPredicate)
             } else if (isIntDoc(doc)) {
-                ans = this.validateIntField(range, ctx, tag, doc)
+                ans = this.validateIntField(ctx, tag, doc, isPredicate)
             } else if (isListDoc(doc)) {
-                ans = this.validateListField(range, ctx, tag, doc)
+                ans = this.validateListField(ctx, tag, doc, isPredicate)
             } else if (isLongArrayDoc(doc)) {
-                ans = this.validateLongArrayField(range, ctx, tag, doc)
+                ans = this.validateLongArrayField(ctx, tag, doc, isPredicate)
             } else if (isLongDoc(doc)) {
-                ans = this.validateLongField(range, ctx, tag, doc)
+                ans = this.validateLongField(ctx, tag, doc, isPredicate)
             } else if (isOrDoc(doc)) {
-                ans = this.validateOrField(range, ctx, tag, doc)
+                ans = this.validateOrField(ctx, tag, doc, isPredicate)
             } else if (isShortDoc(doc)) {
-                ans = this.validateShortField(range, ctx, tag, doc)
+                ans = this.validateShortField(ctx, tag, doc, isPredicate)
             } else {
-                ans = this.validateStringField(range, ctx, tag, doc)
+                ans = this.validateStringField(ctx, tag, doc, isPredicate)
             }
         }
         return ans
     }
 
-    private validateNbtNodeType(ans: ValidateResult, range: TextRange, _ctx: ParsingContext, tag: NbtNode, expected: NbtNodeTypeName) {
+    /**
+     * @returns If it matches loosely; whether or not should be furthermore validated.
+     */
+    private validateNbtNodeType(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, expected: NbtNodeTypeName, isPredicate: boolean) {
+        const config = ctx.config.lint.nbtTypeCheck
         const actual = tag[NbtNodeType]
-        if (actual !== expected) {
-            
+        const isLooselyMatched = isNbtNodeTypeLooselyMatched(actual, expected)
+        if (config) {
+            const [severity, value] = config
+            if (
+                !isLooselyMatched ||
+                ((isPredicate || value === 'stirctly') && !isNbtNodeTypeStrictlyMatched(actual, expected))
+            ) {
+                let errorCode: ActionCode | undefined = undefined
+                if (expected === 'Byte') errorCode = ActionCode.NbtTypeToByte
+                else if (expected === 'Short') errorCode = ActionCode.NbtTypeToShort
+                else if (expected === 'Int') errorCode = ActionCode.NbtTypeToInt
+                else if (expected === 'Long') errorCode = ActionCode.NbtTypeToLong
+                else if (expected === 'Float') errorCode = ActionCode.NbtTypeToFloat
+                else if (expected === 'Double') errorCode = ActionCode.NbtTypeToDouble
+                ans.errors.push(new ParsingError(
+                    tag[NodeRange],
+                    locale('expected-got', locale(`nbt-tag.${expected}`), locale(`nbt-tag.${actual}`)),
+                    true, getDiagnosticSeverity(severity), errorCode
+                ))
+            }
+        }
+        return isLooselyMatched
+    }
+
+    private validateCollectionLength(ans: ValidateResult, _ctx: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number, number], _isPredicate: boolean) {
+        if (tag.length < min) {
+            ans.errors.push(new ParsingError(
+                tag[NodeRange],
+                locale('expected', locale('collection-length.>=', min)),
+                true, DiagnosticSeverity.Warning
+            ))
+        } else if (tag.length > max) {
+            ans.errors.push(new ParsingError(
+                tag[NodeRange],
+                locale('expected', locale('collection-length.<=', max)),
+                true, DiagnosticSeverity.Warning
+            ))
         }
     }
 
-    private validateBooleanField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: BooleanDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+    private validateNumberArrayField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtArrayNode<NbtNumberNode<number | bigint>>, { length_range: lengthRange, value_range: valueRange }: nbtdoc.NumberArrayTag, _isPredicate: boolean) {
+        if (lengthRange) {
+            this.validateCollectionLength(ans, _ctx, tag, lengthRange, _isPredicate)
+        }
+        if (valueRange) {
+            for (const item of tag) {
+                this.validateNumberField(ans, _ctx, item, valueRange, _isPredicate)
+            }
+        }
+    }
 
+    private validateNumberField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, [min, max]: [number, number], _isPredicate: boolean) {
+        if (tag.valueOf() < min) {
+            ans.errors.push(new ParsingError(
+                tag[NodeRange],
+                locale('expected-got', locale('number.>=', min), tag.valueOf()),
+                true, DiagnosticSeverity.Warning
+            ))
+        } else if (tag.valueOf() > max) {
+            ans.errors.push(new ParsingError(
+                tag[NodeRange],
+                locale('expected-got', locale('number.<=', max), tag.valueOf()),
+                true, DiagnosticSeverity.Warning
+            ))
+        }
+    }
 
+    private validateBooleanField(ctx: ParsingContext, tag: NbtNode, _doc: BooleanDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Byte', isPredicate)
+        const config = ctx.config.lint.nbtBoolean
+        // Completions.
+        if (tag[NodeRange].start === ctx.cursor && (!config || config[1])) {
+            ans.completions.push(...arrayToCompletions(['false', 'true']))
+        }
+        // Errors.
+        if (shouldValidate) {
+            if (config) {
+                const actualString = tag.toString()
+                const isBooleanLiteral = /^true|false$/i.test(actualString)
+                const [severity, expectedLiteral] = config
+                if (isBooleanLiteral !== expectedLiteral) {
+                    ans.errors.push(new ParsingError(
+                        tag[NodeRange],
+                        locale('expected-got', arrayToMessage(['false', 'true'], true, 'or'), locale('punc.quote', actualString)),
+                        true, getDiagnosticSeverity(severity), expectedLiteral ? ActionCode.NbtByteToLiteral : ActionCode.NbtByteToNumber
+                    ))
+                }
+            }
+        }
+        return ans
+    }
+    private validateByteArrayField(ctx: ParsingContext, tag: NbtNode, doc: ByteArrayDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'ByteArray', isPredicate)
+        if (shouldValidate) {
+            this.validateNumberArrayField(ans, ctx, tag as NbtByteArrayNode, doc.ByteArray, isPredicate)
+        }
+        return ans
+    }
+    private validateByteField(ctx: ParsingContext, tag: NbtNode, doc: ByteDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Byte', isPredicate)
+        if (shouldValidate && doc.Byte.range) {
+            this.validateNumberField(ans, ctx, tag as NbtByteNode, doc.Byte.range, isPredicate)
+        }
+        return ans
+    }
+    private validateCompoundField(ctx: ParsingContext, tag: NbtNode, doc: CompoundDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Compound', isPredicate)
+        if (shouldValidate) {
+            const compoundTag: NbtCompoundNode = tag as any
+            const clonedHelper = this
+                .clone()
+                .withTag(compoundTag)
+                .goCompound(doc.Compound)
+            const compoundDoc = clonedHelper.readCompound()
+            if (compoundDoc) {
+                for (const key in compoundTag) {
+                    if (compoundTag.hasOwnProperty(key)) {
+                        const childTag = compoundTag[key]
+                        const field = clonedHelper.readField(key)
+                        if (field) {
+                            compoundTag[Keys][key].description = field.description
+                            clonedHelper.validateField(ans, ctx, childTag, field.nbttype, isPredicate)
+                        } else {
+                            if (ctx.config.lint.nbtCompoundCheckKeys) {
+                                ans.errors.push(new ParsingError(
+                                    tag[NodeRange],
+                                    locale('unknown-key', locale('punc.quote', key)),
+                                    true, getDiagnosticSeverity(ctx.config.lint.nbtCompoundCheckKeys[0])
+                                ))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ans
+    }
+    private validateDoubleField(ctx: ParsingContext, tag: NbtNode, doc: DoubleDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Double', isPredicate)
+        if (shouldValidate && doc.Double.range) {
+            this.validateNumberField(ans, ctx, tag as NbtDoubleNode, doc.Double.range, isPredicate)
+        }
+        return ans
+    }
+    private validateEnumField(ctx: ParsingContext, tag: NbtNode, doc: EnumDoc, isPredicate: boolean): ValidateResult {
+        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Enum', isPredicate)
+        if (shouldValidate) {
+            // TODO
 
+        }
         return ans
     }
-    private validateByteArrayField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: ByteArrayDoc): ValidateResult {
+    private validateFloatField(ctx: ParsingContext, tag: NbtNode, doc: FloatDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Float', isPredicate)
+        if (shouldValidate && doc.Float.range) {
+            this.validateNumberField(ans, ctx, tag as NbtFloatNode, doc.Float.range, isPredicate)
+        }
         return ans
     }
-    private validateByteField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: ByteDoc): ValidateResult {
+    private validateIdField(ctx: ParsingContext, tag: NbtNode, doc: IdDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Id', isPredicate)
+        if (shouldValidate) {
+            // TODO
+
+        }
         return ans
     }
-    private validateCompoundField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: CompoundDoc): ValidateResult {
+    private validateIndexField(ctx: ParsingContext, tag: NbtNode, doc: IndexDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Index', isPredicate)
+        if (shouldValidate) {
+            // TODO
+
+        }
         return ans
     }
-    private validateDoubleField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: DoubleDoc): ValidateResult {
+    private validateIntArrayField(ctx: ParsingContext, tag: NbtNode, doc: IntArrayDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'IntArray', isPredicate)
+        if (shouldValidate) {
+            this.validateNumberArrayField(ans, ctx, tag as NbtIntArrayNode, doc.IntArray, isPredicate)
+        }
         return ans
     }
-    private validateEnumField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: EnumDoc): ValidateResult {
+    private validateIntField(ctx: ParsingContext, tag: NbtNode, doc: IntDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Int', isPredicate)
+        if (shouldValidate && doc.Int.range) {
+            this.validateNumberField(ans, ctx, tag as NbtIntNode, doc.Int.range, isPredicate)
+        }
         return ans
     }
-    private validateFloatField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: FloatDoc): ValidateResult {
+    private validateListField(ctx: ParsingContext, tag: NbtNode, doc: ListDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'List', isPredicate)
+        if (shouldValidate) {
+            const { length_range: lengthRange, value_type: valueType } = doc.List
+            if (lengthRange) {
+                this.validateCollectionLength(ans, ctx, tag as NbtListNode<NbtNode>, lengthRange, isPredicate)
+            }
+            for (const item of tag as NbtListNode<NbtNode>) {
+                this.validateField(ans, ctx, item, valueType, isPredicate)
+            }
+        }
         return ans
     }
-    private validateIdField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: IdDoc): ValidateResult {
+    private validateLongArrayField(ctx: ParsingContext, tag: NbtNode, doc: LongArrayDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'LongArray', isPredicate)
+        if (shouldValidate) {
+            this.validateNumberArrayField(ans, ctx, tag as NbtLongArrayNode, doc.LongArray, isPredicate)
+        }
         return ans
     }
-    private validateIndexField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: IndexDoc): ValidateResult {
+    private validateLongField(ctx: ParsingContext, tag: NbtNode, doc: LongDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Long', isPredicate)
+        if (shouldValidate && doc.Long.range) {
+            this.validateNumberField(ans, ctx, tag as NbtLongNode, doc.Long.range, isPredicate)
+        }
         return ans
     }
-    private validateIntArrayField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: IntArrayDoc): ValidateResult {
+    private validateOrField(ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Or', isPredicate)
+        if (shouldValidate) {
+            // TODO
+
+        }
         return ans
     }
-    private validateIntField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: IntDoc): ValidateResult {
+    private validateShortField(ctx: ParsingContext, tag: NbtNode, doc: ShortDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Short', isPredicate)
+        if (shouldValidate && doc.Short.range) {
+            this.validateNumberField(ans, ctx, tag as NbtShortNode, doc.Short.range, isPredicate)
+        }
         return ans
     }
-    private validateListField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: ListDoc): ValidateResult {
+    private validateStringField(ctx: ParsingContext, tag: NbtNode, doc: StringDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        return ans
-    }
-    private validateLongArrayField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: LongArrayDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        return ans
-    }
-    private validateLongField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: LongDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        return ans
-    }
-    private validateOrField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: OrDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        return ans
-    }
-    private validateShortField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: ShortDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        return ans
-    }
-    private validateStringField(range: TextRange, ctx: ParsingContext, tag: NbtNode, doc: StringDoc): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'String', isPredicate)
+        if (shouldValidate) {
+            // Completions.
+            // TODO
+            // Redirect to argument parser.
+
+            // Errors.
+            const strTag = tag as NbtStringNode
+            ans.errors = validateStringQuote(strTag.toString(), strTag.valueOf(), tag[NodeRange], ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType)
+        }
         return ans
     }
 

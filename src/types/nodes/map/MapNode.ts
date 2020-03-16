@@ -3,6 +3,7 @@ import { ToFormattedString } from '../../Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType } from '../ArgumentNode'
+import TextRange from '../../TextRange'
 
 export const enum BracketType { open, close }
 
@@ -11,11 +12,14 @@ export type ShouldInsertSpacesPredicate = (lint: LintConfig, data?: any) => bool
 export const IsMapNodeSorted = Symbol('IsMapNodeSorted')
 export const ConfigKeys = Symbol('ConfigKeys')
 export const Chars = Symbol('Chars')
+export const Keys = Symbol('KeysData')
 
-export default abstract class MapNode<V> extends ArgumentNode {
+export default abstract class MapNode<KI, V> extends ArgumentNode {
     [key: string]: V
 
     readonly [NodeType]: string = 'Map'
+
+    readonly [Keys]: { [key: string]: KI } = {}
 
     protected abstract [ConfigKeys]: {
         bracketSpacing: keyof LintConfig,

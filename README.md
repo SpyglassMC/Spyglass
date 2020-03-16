@@ -39,7 +39,7 @@ DHP can provide many heavy language features for documents in your datapack, inc
   - [Configuration Settings](#configuration-settings)
   - [Regenerating Cache](#regenerating-cache)
 - [Contributors](#contributors)
-  - [dependency-npm_modules](#dependency-npmmodules)
+  - [dependency-npm-modules](#dependency-npm-modules)
   - [dependency-Arcensoth](#dependency-arcensoth)
   - [dependency-Yurihaia](#dependency-yurihaia)
   - [dependency-Misode](#dependency-misode)
@@ -333,7 +333,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
-## dependency-npm_modules
+## dependency-npm-modules
 
 The exisistence of DHP comes from many other excellent developers! All NPM module dependencies which are installed via [NPM](https://www.npmjs.com/) can be found in [package.json](https://github.com/SPGoding/datapack-language-server/blob/master/package.json).
 
