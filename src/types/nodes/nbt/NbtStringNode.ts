@@ -11,7 +11,7 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> {
 
     constructor(
         superNbt: NbtCompoundNode | null, value: string, raw: string,
-        public mapping: IndexMapping = []
+        public mapping: IndexMapping 
     ) {
         super(superNbt, value, raw)
     }

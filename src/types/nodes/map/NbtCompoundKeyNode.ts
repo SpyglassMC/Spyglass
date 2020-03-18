@@ -3,7 +3,6 @@ import { NodeType, NodeDescription } from '../ArgumentNode'
 import { NbtNodeType } from '../nbt/NbtNode'
 import NbtStringNode from '../nbt/NbtStringNode'
 import NbtCompoundNode from './NbtCompoundNode'
-import TextRange from '../../TextRange'
 
 export default class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -12,9 +11,9 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
     [NodeDescription]: string
 
     constructor(
-        range: TextRange, superNbt: NbtCompoundNode, value: string, raw: string
+        superNbt: NbtCompoundNode, value: string, raw: string
     ) {
-        super(range, superNbt, value, raw)
+        super(superNbt, value, raw)
     }
 
     [ToFormattedString]() {

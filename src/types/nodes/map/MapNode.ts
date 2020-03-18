@@ -83,7 +83,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         for (const key of keys) {
             if (this.hasOwnProperty(key)) {
                 const value = this[key]
-                content.push(`${key}${sep}${toFormattedString(value, lint)}`)
+                content.push(`${toFormattedString(key, lint)}${sep}${toFormattedString(value, lint)}`)
             }
         }
 

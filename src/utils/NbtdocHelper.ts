@@ -3,17 +3,16 @@ import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCa
 import { nbtdoc } from '../types/nbtdoc'
 import LineParser from '../parsers/LineParser'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode, remapParsingErrors } from '../types/ParsingError'
+import ParsingError, { ActionCode, remapParsingErrors, downgradeError } from '../types/ParsingError'
 import StringReader from './StringReader'
 import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
-import TextRange, { remapTextRange } from '../types/TextRange'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { locale } from '../locales/Locales'
-import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString, downgradeError } from './utils'
+import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString } from './utils'
 import { NodeRange, NodeDescription } from '../types/nodes/ArgumentNode'
 import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
 import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
@@ -31,7 +30,6 @@ import NbtListNode from '../types/nodes/nbt/NbtListNode'
 import { Keys } from '../types/nodes/map/MapNode'
 import { ToFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
-import { combineArgumentParserResult, ArgumentParserResult } from '../types/Parser'
 import { getInnerIndex } from '../types/IndexMapping'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
@@ -50,96 +48,45 @@ function isRegistrySupers(supers: Supers): supers is RegistrySupers {
 }
 
 type BooleanDoc = 'Boolean'
-function isBooleanDoc(doc: nbtdoc.NbtValue): doc is BooleanDoc {
-    return doc === 'Boolean'
-}
 
 type ByteDoc = { Byte: nbtdoc.NumberTag }
-function isByteDoc(doc: nbtdoc.NbtValue): doc is ByteDoc {
-    return (doc as any).Byte !== undefined
-}
 
 type ShortDoc = { Short: nbtdoc.NumberTag }
-function isShortDoc(doc: nbtdoc.NbtValue): doc is ShortDoc {
-    return (doc as any).Short !== undefined
-}
 
 type IntDoc = { Int: nbtdoc.NumberTag }
-function isIntDoc(doc: nbtdoc.NbtValue): doc is IntDoc {
-    return (doc as any).Int !== undefined
-}
 
 type LongDoc = { Long: nbtdoc.NumberTag }
-function isLongDoc(doc: nbtdoc.NbtValue): doc is LongDoc {
-    return (doc as any).Long !== undefined
-}
 
 type FloatDoc = { Float: nbtdoc.NumberTag }
-function isFloatDoc(doc: nbtdoc.NbtValue): doc is FloatDoc {
-    return (doc as any).Float !== undefined
-}
 
 type DoubleDoc = { Double: nbtdoc.NumberTag }
-function isDoubleDoc(doc: nbtdoc.NbtValue): doc is DoubleDoc {
-    return (doc as any).Double !== undefined
-}
 
 type StringDoc = 'String'
-function isStringDoc(doc: nbtdoc.NbtValue): doc is StringDoc {
-    return doc === 'String'
-}
 
 type ByteArrayDoc = { ByteArray: nbtdoc.NumberArrayTag }
-function isByteArrayDoc(doc: nbtdoc.NbtValue): doc is ByteArrayDoc {
-    return (doc as any).ByteArray !== undefined
-}
 
 type IntArrayDoc = { IntArray: nbtdoc.NumberArrayTag }
-function isIntArrayDoc(doc: nbtdoc.NbtValue): doc is IntArrayDoc {
-    return (doc as any).IntArray !== undefined
-}
 
 type LongArrayDoc = { LongArray: nbtdoc.NumberArrayTag }
-function isLongArrayDoc(doc: nbtdoc.NbtValue): doc is LongArrayDoc {
-    return (doc as any).LongArray !== undefined
-}
 
-type CompoundDoc = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
-function isCompoundDoc(doc: nbtdoc.NbtValue): doc is CompoundDoc {
-    return (doc as any).Compound !== undefined
-}
+export type CompoundDoc = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 
 type EnumDoc = { Enum: nbtdoc.Index<nbtdoc.EnumItem> }
-function isEnumDoc(doc: nbtdoc.NbtValue): doc is EnumDoc {
-    return (doc as any).Enum !== undefined
-}
 
-type ListDoc = { List: { length_range: [number, number] | null, value_type: nbtdoc.NbtValue } }
-function isListDoc(doc: nbtdoc.NbtValue): doc is ListDoc {
-    return (doc as any).List !== undefined
-}
+export type ListDoc = { List: { length_range: [number, number] | null, value_type: nbtdoc.NbtValue } }
 
 type IndexDoc = { Index: { target: string, path: nbtdoc.FieldPath[] } }
-function isIndexDoc(doc: nbtdoc.NbtValue): doc is IndexDoc {
-    return (doc as any).Index !== undefined
-}
 
 type IdDoc = { Id: string }
-function isIdDoc(doc: nbtdoc.NbtValue): doc is IdDoc {
-    return (doc as any).Id !== undefined
-}
 
 type OrDoc = { Or: nbtdoc.NbtValue[] }
-function isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
-    return (doc as any).Or !== undefined
-}
 
 export default class NbtdocHelper {
     // private static readonly MockEnumIndex: nbtdoc.Index<nbtdoc.EnumItem> = 114514
 
-    private compoundIndex: nbtdoc.Index<nbtdoc.CompoundTag> | null
-    private enumIndex: nbtdoc.Index<nbtdoc.EnumItem>
-    private moduleIndex: nbtdoc.Index<nbtdoc.Module>
+    compoundIndex: nbtdoc.Index<nbtdoc.CompoundTag> | null
+    enumIndex: nbtdoc.Index<nbtdoc.EnumItem>
+    moduleIndex: nbtdoc.Index<nbtdoc.Module>
     private tag: NbtCompoundNode | null
 
     // private mockEnum: nbtdoc.EnumItem
@@ -277,20 +224,38 @@ export default class NbtdocHelper {
 
     completeField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string) {
         if (doc) {
-            if (isBooleanDoc(doc)) {
-                this.completeBooleanField(ans, ctx, tag, doc, isPredicate)
-            } else if (isEnumDoc(doc)) {
-                this.completeEnumField(ans, ctx, tag, doc, isPredicate)
-            } else if (isIdDoc(doc)) {
+            if (NbtdocHelper.isBooleanDoc(doc)) {
+                this.completeBooleanField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isByteArrayDoc(doc)) {
+                this.completeByteArrayField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isCompoundDoc(doc)) {
+                this.completeCompoundField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isEnumDoc(doc)) {
+                this.completeEnumField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isIdDoc(doc)) {
                 this.completeIdField(ans, ctx, tag, doc, isPredicate)
-            } else if (isStringDoc(doc)) {
+            } else if (NbtdocHelper.isIntArrayDoc(doc)) {
+                this.completeIntArrayField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isListDoc(doc)) {
+                this.completeListField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isLongArrayDoc(doc)) {
+                this.completeLongArrayField(ans, ctx, tag, doc)
+            } else if (NbtdocHelper.isStringDoc(doc)) {
                 this.completeStringField(ans, ctx, tag, doc, isPredicate, description)
             }
+            // TODO: completions for OR
+            // TODO: completions for compound keys in OR
         }
     }
 
-    private completeBooleanField(ans: ValidateResult, _ctx: ParsingContext, _tag: NbtNode, _doc: BooleanDoc, isPredicate: boolean) {
+    private completeBooleanField(ans: ValidateResult, _ctx: ParsingContext, _tag: NbtNode, _doc: BooleanDoc) {
         ans.completions.push(...arrayToCompletions(['false', 'true']))
+    }
+    private completeByteArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ByteArrayDoc) {
+        ans.completions.push({ label: new NbtByteArrayNode(null)[ToFormattedString](lint) })
+    }
+    private completeCompoundField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: CompoundDoc) {
+        ans.completions.push({ label: new NbtCompoundNode(null)[ToFormattedString](lint) })
     }
     public completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, _isPredicate: boolean) {
         const existingKeys = Object.keys(tag)
@@ -313,7 +278,7 @@ export default class NbtdocHelper {
 
         ans.completions.push(...arrayToCompletions(['false', 'true']))
     }
-    private completeEnumField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: EnumDoc, isPredicate: boolean) {
+    private completeEnumField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: EnumDoc) {
         const { et } = this
             .goEnum(doc.Enum)
             .readEnum()
@@ -342,6 +307,15 @@ export default class NbtdocHelper {
             })
         }
     }
+    private completeIntArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: IntArrayDoc) {
+        ans.completions.push({ label: new NbtIntArrayNode(null)[ToFormattedString](lint) })
+    }
+    private completeListField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ListDoc) {
+        ans.completions.push({ label: new NbtListNode(null)[ToFormattedString](lint) })
+    }
+    private completeLongArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: LongArrayDoc) {
+        ans.completions.push({ label: new NbtLongArrayNode(null)[ToFormattedString](lint) })
+    }
     private completeStringField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, _doc: StringDoc, _isPredicate: boolean, description: string) {
         const subCtx = { ...ctx, cursor: 0 }
         const reader = new StringReader('')
@@ -358,40 +332,40 @@ export default class NbtdocHelper {
 
     validateField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string): ValidateResult {
         if (doc) {
-            if (isBooleanDoc(doc)) {
+            if (NbtdocHelper.isBooleanDoc(doc)) {
                 ans = this.validateBooleanField(ctx, tag, doc, isPredicate)
-            } else if (isByteArrayDoc(doc)) {
+            } else if (NbtdocHelper.isByteArrayDoc(doc)) {
                 ans = this.validateByteArrayField(ctx, tag, doc, isPredicate)
-            } else if (isByteDoc(doc)) {
+            } else if (NbtdocHelper.isByteDoc(doc)) {
                 ans = this.validateByteField(ctx, tag, doc, isPredicate)
-            } else if (isCompoundDoc(doc)) {
+            } else if (NbtdocHelper.isCompoundDoc(doc)) {
                 ans = this.validateCompoundField(ctx, tag, doc, isPredicate)
-            } else if (isDoubleDoc(doc)) {
+            } else if (NbtdocHelper.isDoubleDoc(doc)) {
                 ans = this.validateDoubleField(ctx, tag, doc, isPredicate)
-            } else if (isEnumDoc(doc)) {
+            } else if (NbtdocHelper.isEnumDoc(doc)) {
                 ans = this.validateEnumField(ctx, tag, doc, isPredicate)
-            } else if (isFloatDoc(doc)) {
+            } else if (NbtdocHelper.isFloatDoc(doc)) {
                 ans = this.validateFloatField(ctx, tag, doc, isPredicate)
-            } else if (isIdDoc(doc)) {
+            } else if (NbtdocHelper.isIdDoc(doc)) {
                 ans = this.validateIdField(ctx, tag, doc, isPredicate)
-            } else if (isIndexDoc(doc)) {
+            } else if (NbtdocHelper.isIndexDoc(doc)) {
                 ans = this.validateIndexField(ctx, tag, doc, isPredicate)
-            } else if (isIntArrayDoc(doc)) {
+            } else if (NbtdocHelper.isIntArrayDoc(doc)) {
                 ans = this.validateIntArrayField(ctx, tag, doc, isPredicate, description)
-            } else if (isIntDoc(doc)) {
+            } else if (NbtdocHelper.isIntDoc(doc)) {
                 ans = this.validateIntField(ctx, tag, doc, isPredicate, description)
-            } else if (isListDoc(doc)) {
+            } else if (NbtdocHelper.isListDoc(doc)) {
                 ans = this.validateListField(ctx, tag, doc, isPredicate, description)
-            } else if (isLongArrayDoc(doc)) {
+            } else if (NbtdocHelper.isLongArrayDoc(doc)) {
                 ans = this.validateLongArrayField(ctx, tag, doc, isPredicate)
-            } else if (isLongDoc(doc)) {
+            } else if (NbtdocHelper.isLongDoc(doc)) {
                 ans = this.validateLongField(ctx, tag, doc, isPredicate)
-            } else if (isOrDoc(doc)) {
+            } else if (NbtdocHelper.isOrDoc(doc)) {
                 ans = this.validateOrField(ctx, tag, doc, isPredicate, description)
-            } else if (isShortDoc(doc)) {
+            } else if (NbtdocHelper.isShortDoc(doc)) {
                 ans = this.validateShortField(ctx, tag, doc, isPredicate)
             } else {
-                ans = this.validateStringField(ctx, tag, doc, isPredicate, description)
+                ans = this.validateStringField(ctx, tag, isPredicate, description)
             }
         }
         return ans
@@ -540,7 +514,7 @@ export default class NbtdocHelper {
                 break
             case 'String':
             default:
-                tag = new NbtStringNode(null, value as string, value.toString())
+                tag = new NbtStringNode(null, value as string, value.toString(), [])
                 break
         }
         return tag[ToFormattedString](lint)
@@ -820,7 +794,7 @@ export default class NbtdocHelper {
         }
         return ans
     }
-    private validateStringField(ctx: ParsingContext, tag: NbtNode, doc: StringDoc, isPredicate: boolean, description: string): ValidateResult {
+    private validateStringField(ctx: ParsingContext, tag: NbtNode, isPredicate: boolean, description: string): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'String', isPredicate)
         if (shouldValidate) {
@@ -872,5 +846,57 @@ export default class NbtdocHelper {
                 ans.completions.push(...result.completions)
             }
         }
+    }
+
+    static isBooleanDoc(doc: nbtdoc.NbtValue): doc is BooleanDoc {
+        return doc === 'Boolean'
+    }
+    static isByteDoc(doc: nbtdoc.NbtValue): doc is ByteDoc {
+        return (doc as any).Byte !== undefined
+    }
+    static isShortDoc(doc: nbtdoc.NbtValue): doc is ShortDoc {
+        return (doc as any).Short !== undefined
+    }
+    static isIntDoc(doc: nbtdoc.NbtValue): doc is IntDoc {
+        return (doc as any).Int !== undefined
+    }
+    static isLongDoc(doc: nbtdoc.NbtValue): doc is LongDoc {
+        return (doc as any).Long !== undefined
+    }
+    static isFloatDoc(doc: nbtdoc.NbtValue): doc is FloatDoc {
+        return (doc as any).Float !== undefined
+    }
+    static isDoubleDoc(doc: nbtdoc.NbtValue): doc is DoubleDoc {
+        return (doc as any).Double !== undefined
+    }
+    static isStringDoc(doc: nbtdoc.NbtValue): doc is StringDoc {
+        return doc === 'String'
+    }
+    static isByteArrayDoc(doc: nbtdoc.NbtValue): doc is ByteArrayDoc {
+        return (doc as any).ByteArray !== undefined
+    }
+    static isIntArrayDoc(doc: nbtdoc.NbtValue): doc is IntArrayDoc {
+        return (doc as any).IntArray !== undefined
+    }
+    static isLongArrayDoc(doc: nbtdoc.NbtValue): doc is LongArrayDoc {
+        return (doc as any).LongArray !== undefined
+    }
+    static isCompoundDoc(doc: nbtdoc.NbtValue): doc is CompoundDoc {
+        return (doc as any).Compound !== undefined
+    }
+    static isEnumDoc(doc: nbtdoc.NbtValue): doc is EnumDoc {
+        return (doc as any).Enum !== undefined
+    }
+    static isListDoc(doc: nbtdoc.NbtValue): doc is ListDoc {
+        return (doc as any).List !== undefined
+    }
+    static isIndexDoc(doc: nbtdoc.NbtValue): doc is IndexDoc {
+        return (doc as any).Index !== undefined
+    }
+    static isIdDoc(doc: nbtdoc.NbtValue): doc is IdDoc {
+        return (doc as any).Id !== undefined
+    }
+    static isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
+        return (doc as any).Or !== undefined
     }
 }

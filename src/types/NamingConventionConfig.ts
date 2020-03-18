@@ -1,3 +1,5 @@
+import { DiagnosticConfig } from "./StylisticConfig"
+
 export type NamingConvention = 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'kebab-case'
 export type NamingConventionConfig = NamingConvention | NamingConvention[]
 export default NamingConventionConfig
@@ -15,11 +17,15 @@ const validators: { [key in NamingConvention]: RegExp } = {
  * @param identity An identity.
  * @param config A naming convention config.
  */
-export function checkNamingConvention(identity: string, config: NamingConventionConfig) {
-    if (!(config instanceof Array)) {
-        config = [config]
+export function checkNamingConvention(identity: string, config: DiagnosticConfig<NamingConventionConfig>) {
+    if (!config) {
+        return true
     }
-    for (const convention of config) {
+    let value = config[1]
+    if (!(value instanceof Array)) {
+        value = [value]
+    }
+    for (const convention of value) {
         const validator = validators[convention]
         if (validator.test(identity)) {
             return true

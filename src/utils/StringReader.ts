@@ -1,5 +1,6 @@
 import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
+import IndexMapping from '../types/IndexMapping'
 
 export default class StringReader {
     public cursor = 0
@@ -156,7 +157,7 @@ export default class StringReader {
     /**
      * @param out Stores a mapping from in-string indexes to real indexes. 
      */
-    readUnquotedString(out: { mapping: number[] } = { mapping: [] }) {
+    readUnquotedString(out: { mapping: IndexMapping } = { mapping: [] }) {
         let ans = ''
         while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             out.mapping.push(this.cursor)
@@ -170,7 +171,7 @@ export default class StringReader {
      * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readQuotedString(out: { mapping: number[] } = { mapping: [] }, isReadingJson = false) {
+    readQuotedString(out: { mapping: IndexMapping } = { mapping: [] }, isReadingJson = false) {
         let ans = ''
         if (!this.canRead()) {
             return ''
@@ -199,7 +200,7 @@ export default class StringReader {
      * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    private readUntilQuote(terminator: '"' | "'", out: { mapping: number[] }, isReadingJson: boolean) {
+    private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }, isReadingJson: boolean) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -268,10 +269,10 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readString(out: { cursor: number } = { cursor: -1 }, isReadingJson = false) {
+    readString(out: { mapping: IndexMapping } = { mapping: [] }, isReadingJson = false) {
         if (!this.canRead()) {
             return ''
         }
