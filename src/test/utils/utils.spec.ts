@@ -1,7 +1,8 @@
 import assert = require('power-assert')
+import os from 'os'
 import Formattable, { ToFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
-import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString } from '../../utils/utils'
+import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString, getEol } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
 
 describe('utils.ts Tests', () => {
@@ -140,6 +141,23 @@ describe('utils.ts Tests', () => {
             const { lint } = constructConfig({})
             const actual = toFormattedString(undefined, lint)
             assert(actual === 'undefined')
+        })
+    })
+    describe('getEol() Tests', () => {
+        it('Should return CRLF', () => {
+            const { lint } = constructConfig({ lint: { eol: 'CRLF' } })
+            const actual = getEol(lint)
+            assert(actual === '\r\n')
+        })
+        it('Should return LF', () => {
+            const { lint } = constructConfig({ lint: { eol: 'LF' } })
+            const actual = getEol(lint)
+            assert(actual === '\n')
+        })
+        it('Should return system-specific eol', () => {
+            const { lint } = constructConfig({ lint: { eol: 'auto' } })
+            const actual = getEol(lint)
+            assert(actual === os.EOL)
         })
     })
 })

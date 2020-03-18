@@ -3,7 +3,7 @@ import FunctionInfo from '../../types/FunctionInfo'
 import { TextDocumentEdit, RenameFile, WorkspaceEdit } from 'vscode-languageserver'
 import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheFile, removeCachePosition } from '../../types/ClientCache'
 import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris, FetchConfigFunction, ReadFileFunction } from '../../types/handlers'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { getUriFromId, getUri, getInfo } from './common'
 import { VanillaReportOptions } from '../../types/ParsingContext'
 
@@ -20,7 +20,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
         /* istanbul ignore else */
         if (unit) {
             try {
-                const newID = isNamespacedType(result.type) ? Identity.fromString(newName).toString() : newName
+                const newID = isNamespacedType(result.type) ? IdentityNode.fromString(newName).toString() : newName
 
                 // Change function contents.
                 for (const key in unit) {
@@ -49,7 +49,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
 
                 // Rename file if necessary.
                 if (isFileType(result.type)) {
-                    const oldID = Identity.fromString(result.id)
+                    const oldID = IdentityNode.fromString(result.id)
                     const oldUri = await getUriFromId(pathExists, roots, uris, urisOfIds, oldID, result.type)
                     /* istanbul ignore next */
                     if (!oldUri) {
@@ -69,7 +69,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
                         return null
                     }
 
-                    const newUri = (await getUriFromId(pathExists, roots, uris, urisOfIds, Identity.fromString(newName), result.type, preferredRoot))!
+                    const newUri = (await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(newName), result.type, preferredRoot))!
                     documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
 
                     // Update cache.

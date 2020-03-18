@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import Particle from '../../types/Particle'
 import Vector from '../../types/Vector'
 
@@ -11,7 +11,7 @@ describe('Particle Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
             const particle = new Particle(
-                new Identity('minecraft', ['mob_effect'])
+                new IdentityNode('minecraft', ['mob_effect'])
             )
             const actual = particle[ToFormattedString](lint)
             assert(actual === 'minecraft:mob_effect')
@@ -19,7 +19,7 @@ describe('Particle Tests', () => {
         it('Should return for extra data', () => {
             const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
             const particle = new Particle(
-                new Identity('minecraft', ['dust']),
+                new IdentityNode('minecraft', ['dust']),
                 new Vector([
                     { value: '0.93', type: 'absolute' },
                     { value: '0.40', type: 'absolute' },

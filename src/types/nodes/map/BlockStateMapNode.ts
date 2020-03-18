@@ -6,7 +6,7 @@ export const BlockStateNodeChars = {
     openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
 }
 
-export default class BlockStateNode extends MapNode<string> {
+export default class BlockStateNode extends MapNode<string, string> {
     readonly [NodeType] = 'BlockState'
 
     protected readonly [ConfigKeys] = {

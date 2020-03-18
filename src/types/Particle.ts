@@ -1,10 +1,10 @@
 import { LintConfig } from './Config'
-import Identity from './Identity'
+import IdentityNode from './nodes/IdentityNode'
 import Formattable, { ToFormattedString } from './Formattable'
 
 export default class Particle<T extends Formattable> implements Formattable {
     constructor(
-        public id: Identity,
+        public id: IdentityNode,
         public param?: T
     ) { }
 

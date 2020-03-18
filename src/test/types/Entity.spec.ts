@@ -3,7 +3,7 @@ import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
 import Entity from '../../types/Entity'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import NumberRange from '../../types/NumberRange'
 
 describe('Entity Tests', () => {
@@ -80,7 +80,7 @@ describe('Entity Tests', () => {
                 'a',
                 {
                     tag: ['a', 'b', 'c'],
-                    typeNeg: [new Identity('minecraft', ['a']), new Identity('minecraft', ['b'])],
+                    typeNeg: [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])],
                     limit: 1
                 }
             )
@@ -100,7 +100,7 @@ describe('Entity Tests', () => {
                 'a',
                 {
                     tag: ['a', 'b', 'c'],
-                    typeNeg: [new Identity('minecraft', ['a']), new Identity('minecraft', ['b'])],
+                    typeNeg: [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])],
                     limit: 1
                 }
             )

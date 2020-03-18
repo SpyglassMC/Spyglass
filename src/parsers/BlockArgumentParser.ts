@@ -1,8 +1,7 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import BlockNode from '../types/nodes/BlockNode'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import StringReader from '../utils/StringReader'
 import MapParser from './MapParser'
 import ParsingError from '../types/ParsingError'
@@ -11,6 +10,7 @@ import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateMapNode'
 import { IsMapNodeSorted } from '../types/nodes/map/MapNode'
+import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 
 export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     static identity = 'Block'
@@ -33,8 +33,8 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             completions: []
         }
 
-        const idResult = ctx.parsers.get('NamespacedID', ['minecraft:block', this.allowTag]).parse(reader, ctx)
-        const id = idResult.data as Identity
+        const idResult = ctx.parsers.get('Identity', ['minecraft:block', this.allowTag]).parse(reader, ctx)
+        const id = idResult.data as IdentityNode
         combineArgumentParserResult(ans, idResult)
         ans.data.id = id
 
@@ -44,7 +44,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
         return ans
     }
 
-    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: Identity): void {
+    private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '[') {
             const start = reader.cursor
             const definition = id.isTag ? undefined : ctx.blocks[id.toString()]
@@ -96,11 +96,11 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
         }
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: Identity): void {
+    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
             const tagResult = ctx.parsers.get('NbtTag', ['compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)
-            const tag = tagResult.data as NbtCompoundTag
+            const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag
         }

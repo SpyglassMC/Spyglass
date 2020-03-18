@@ -12,10 +12,6 @@ export default class TagArgumentParser extends ArgumentParser<string> {
     static identity = 'Tag'
     readonly identity = 'tag'
 
-    constructor() {
-        super()
-    }
-
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',

@@ -1,11 +1,11 @@
 import { LintConfig } from './Config'
 import { NbtCompoundTag, getNbtCompoundTag } from './NbtTag'
-import Identity from './Identity'
+import IdentityNode from './nodes/IdentityNode'
 import Formattable, { ToFormattedString } from './Formattable'
 
 export default class Item implements Formattable {
     constructor(
-        public id: Identity,
+        public id: IdentityNode,
         public nbt: NbtCompoundTag = getNbtCompoundTag({})
     ) { }
 

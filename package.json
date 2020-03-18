@@ -3,7 +3,7 @@
     "version": "1.13.7",
     "main": "dist/client.js",
     "bin": {
-        "datapack-language-server": "./lib/server.js"
+        "datapack-language-server": "./dist/server.js"
     },
     "author": "SPGoding",
     "publisher": "SPGoding",
@@ -17,7 +17,6 @@
         "build:profile": "webpack --profile --json > dist/stats.json",
         "codecov": "codecov -f coverage/*.json",
         "commit": "gitmoji -c",
-        "compile": "tsc",
         "contributors:add": "all-contributors add",
         "contributors:generate": "all-contributors generate",
         "lint": "eslint --fix src/**/*.ts",

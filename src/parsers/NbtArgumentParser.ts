@@ -118,8 +118,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     constructor(
         type: NbtNodeTypeName | NbtNodeTypeName[] = [
             'Compound', 'List', 'ByteArray', 'IntArray', 'LongArray',
-            'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double',
-            'Boolean'
+            'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
         private readonly id: string | undefined = undefined,

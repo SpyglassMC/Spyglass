@@ -148,7 +148,7 @@ describe('NbtSchemaWalker Tests', () => {
                 },
                 argumentParserWithVariables: {
                     type: 'no-nbt',
-                    suggestions: [{ parser: 'NamespacedID', params: ['$bossbars', undefined, '%isPredicate%'] }]
+                    suggestions: [{ parser: 'Identity', params: ['$bossbars', undefined, '%isPredicate%'] }]
                 },
                 lineParser: {
                     type: 'no-nbt',

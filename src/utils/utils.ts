@@ -2,13 +2,14 @@ import https from 'https'
 import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
 import { ToFormattedString } from '../types/Formattable'
-import { LintConfig } from '../types/Config'
+import Config, { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import ParsingError, { ActionCode } from '../types/ParsingError'
-import range from 'python-range'
-import TextRange from '../types/TextRange'
+import { EOL } from 'os'
+import TextRange, { remapTextRange } from '../types/TextRange'
+import IndexMapping from '../types/IndexMapping'
 
 /**
  * Convert an array to human-readable message.
@@ -193,4 +194,20 @@ export function requestText(uri: string) {
             })
             .end()
     })
+}
+
+/**
+ * Get EOL from specific lint config.
+ * @param param0 The lint config.
+ */
+export function getEol({ eol }: LintConfig) {
+    switch (eol) {
+        case 'CRLF':
+            return '\r\n'
+        case 'LF':
+            return '\n'
+        case 'auto':
+        default:
+            return EOL
+    }
 }

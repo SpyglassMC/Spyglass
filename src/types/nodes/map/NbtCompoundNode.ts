@@ -14,12 +14,10 @@ export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode
     readonly [NodeType] = 'NbtCompound'
     readonly [NbtNodeType] = 'Compound';
     
-    [NodeRange]: TextRange;
     [SuperNbt]: NbtCompoundNode | null
 
-    constructor(range: TextRange, superNbt: NbtCompoundNode | null) {
+    constructor(superNbt: NbtCompoundNode | null) {
         super()
-        this[NodeRange] = range
         this[SuperNbt] = superNbt
     }
 

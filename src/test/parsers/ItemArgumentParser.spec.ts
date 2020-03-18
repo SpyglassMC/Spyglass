@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import Item from '../../types/Item'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import StringReader from '../../utils/StringReader'
@@ -39,7 +39,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Item(
-                new Identity('minecraft', ['stick'])
+                new IdentityNode('minecraft', ['stick'])
             ))
         })
         it('Should return data with tag', () => {
@@ -47,7 +47,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick{ foo : "bar" }'), ctx)
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Item(
-                new Identity('minecraft', ['stick']),
+                new IdentityNode('minecraft', ['stick']),
                 getNbtCompoundTag({ foo: getNbtStringTag('bar') })
             ))
         })
@@ -57,7 +57,7 @@ describe('ItemArgumentParser Tests', () => {
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.data, new Item(
-                new Identity()
+                new IdentityNode()
             ))
             assert.deepStrictEqual(actual.completions,
                 [

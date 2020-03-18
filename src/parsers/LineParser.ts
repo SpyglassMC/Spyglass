@@ -8,7 +8,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
-import { toFormattedString } from '../utils/utils'
+import { toFormattedString, downgradeError } from '../utils/utils'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -184,7 +184,7 @@ export default class LineParser implements Parser<Line> {
                             reader.skip()
                             this.parseChildren(reader, ctx, node.children, parsedLine, optional, false)
                             // Downgrade errors.
-                            parsedLine.errors = parsedLine.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))
+                            parsedLine.errors = downgradeError(parsedLine.errors)
                         } else {
                             parsedLine.errors.push(
                                 new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('space-seperating-arguments'))

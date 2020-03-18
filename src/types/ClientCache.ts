@@ -1,8 +1,9 @@
-import TextRange from './TextRange'
+import TextRange, { remapTextRange } from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import AdvancementInfo from './AdvancementInfo'
 import TagInfo from './TagInfo'
+import IndexMapping from './IndexMapping'
 
 export const LatestCacheFileVersion = 6
 
@@ -114,21 +115,13 @@ export function getCacheFromChar(cache: ClientCache, char: number) {
     return undefined
 }
 
-export function offsetCachePosition(cache: ClientCache, offset: number) {
+export function remapCachePosition(cache: ClientCache, mapping: IndexMapping) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            unit.def = unit.def.map(ele => ({
-                ...ele,
-                start: ele.start + offset,
-                end: ele.end + offset
-            }))
-            unit.ref = unit.ref.map(ele => ({
-                ...ele,
-                start: ele.start + offset,
-                end: ele.end + offset
-            }))
+            unit.def = unit.def.map(ele => remapTextRange(ele, mapping))
+            unit.ref = unit.ref.map(ele => remapTextRange(ele, mapping))
         }
     }
 }

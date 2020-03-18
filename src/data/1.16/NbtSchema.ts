@@ -1,11 +1,9 @@
-import NbtSchema from '../../types/NbtSchema'
-
 /**
  * The following contents are adjusted from [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths).
  * I personally really appreciate what MrYurihi, Levertion and Bassab03 have done, and thanks for your 
  * `Unlicense` license, which is really cool.
  */
-const NbtSchema: NbtSchema = {
+const NbtSchema: any = {
     'block/banner.json': {
         type: 'compound',
         child_ref: [
@@ -920,7 +918,7 @@ const NbtSchema: NbtSchema = {
                 description: 'Name of the potion effect on the arrow',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             'minecraft:potion',
                             undefined,
@@ -1217,7 +1215,7 @@ const NbtSchema: NbtSchema = {
                         description: 'ID of carried block',
                         suggestions: [
                             {
-                                parser: 'NamespacedID',
+                                parser: 'Identity',
                                 params: [
                                     'minecraft:block',
                                     undefined,
@@ -1294,7 +1292,7 @@ const NbtSchema: NbtSchema = {
                         description: 'ID of the block',
                         suggestions: [
                             {
-                                parser: 'NamespacedID',
+                                parser: 'Identity',
                                 params: [
                                     'minecraft:block',
                                     undefined,
@@ -1728,7 +1726,7 @@ const NbtSchema: NbtSchema = {
                 description: 'Name of painting',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             'minecraft:motive',
                             undefined,
@@ -3241,7 +3239,7 @@ const NbtSchema: NbtSchema = {
                 description: 'The id of this block entity',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             'minecraft:block',
                             undefined,
@@ -3303,7 +3301,7 @@ const NbtSchema: NbtSchema = {
                 description: 'ID of the entity',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             'minecraft:entity_type',
                             undefined,
@@ -3546,7 +3544,7 @@ const NbtSchema: NbtSchema = {
                 description: 'Loot table that generates the contents',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             '$lootTables',
                             undefined,
@@ -3597,7 +3595,7 @@ const NbtSchema: NbtSchema = {
                 description: 'ID of the item',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             'minecraft:item',
                             undefined,
@@ -3729,7 +3727,7 @@ const NbtSchema: NbtSchema = {
                             type: 'string',
                             suggestions: [
                                 {
-                                    parser: 'NamespacedID',
+                                    parser: 'Identity',
                                     params: [
                                         'minecraft:enchantment',
                                         undefined,
@@ -3920,7 +3918,7 @@ const NbtSchema: NbtSchema = {
                 description: 'Loot table to drop upon death',
                 suggestions: [
                     {
-                        parser: 'NamespacedID',
+                        parser: 'Identity',
                         params: [
                             '$lootTables',
                             undefined,

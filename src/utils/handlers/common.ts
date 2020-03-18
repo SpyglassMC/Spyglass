@@ -8,7 +8,7 @@ import { constructContext, VanillaReportOptions } from '../../types/ParsingConte
 import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
 import { TokenType, TokenModifier } from '../../types/Token'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { UrisOfStrings, PathExistsFunction, UrisOfIds, FetchConfigFunction, ReadFileFunction, InfosOfUris } from '../../types/handlers'
 import FunctionInfo from '../../types/FunctionInfo'
 import onDidOpenTextDocument from './onDidOpenTextDocument'
@@ -34,7 +34,7 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
 /**
  * @returns Never be `null` if `preferredRoot` exists.
  */
-export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: Identity, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
+export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
 
@@ -94,7 +94,7 @@ export function getRel(uri: Uri, roots: Uri[]) {
  * @throws When the URI is not a valid datapack resource.
  */
 export function getId(uri: Uri, roots: Uri[]) {
-    return Identity.fromRel(getRel(uri, roots)!)!.id.toString()
+    return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
 export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction, reportOptions?: VanillaReportOptions): Promise<FunctionInfo | undefined> {

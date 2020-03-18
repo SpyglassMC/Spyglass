@@ -7,20 +7,29 @@ import HoverInformation from '../HoverInformation'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('Range')
+export const NodeDescription = Symbol('NbtNodeDescription')
 export const GetCodeActions = Symbol('GetCodeActions')
 export const GetHoverInformation = Symbol('GetHoverInformation')
 
 export default abstract class ArgumentNode implements Formattable {
     abstract [NodeType]: string
-    abstract [NodeRange]: TextRange
+    [NodeRange]: TextRange
+    [NodeDescription]: string
 
-    abstract [ToFormattedString](lint: LintConfig): string;
+    abstract [ToFormattedString](lint: LintConfig): string
 
     [GetCodeActions](_ctx: ParsingContext, _diagnostics: Diagnostic[]): CodeAction[] {
         return []
     }
 
-    [GetHoverInformation](_ctx: ParsingContext): HoverInformation[] {
-        return []
+    [GetHoverInformation]({ cursor }: ParsingContext): HoverInformation[] {
+        const ans: HoverInformation[] = []
+        if (this[NodeRange].start <= cursor && cursor <= this[NodeRange].end) {
+            ans.push({
+                contents: { kind: 'markdown', value: this[NodeDescription] },
+                range: this[NodeRange]
+            })
+        }
+        return ans
     }
 }

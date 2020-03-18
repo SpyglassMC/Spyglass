@@ -3,7 +3,7 @@ import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import { getSafeCategory, CacheKey, ClientCache } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -12,9 +12,9 @@ import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import NamespaceSummary from '../types/NamespaceSummary'
 
-export default class NamespacedIDArgumentParser extends ArgumentParser<Identity> {
-    static identity = 'NamespacedID'
-    readonly identity = 'namespacedID'
+export default class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
+    static identity = 'Identity'
+    readonly identity = 'identity'
 
     /**
      * @param type A type in registries, or a type in cache if beginning with hash (`$`).
@@ -29,9 +29,9 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor, registries, vanilla }: ParsingContext): ArgumentParserResult<Identity> {
-        const ans: ArgumentParserResult<Identity> = {
-            data: new Identity(),
+    parse(reader: StringReader, { cache, config, cursor, registries, vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
+        const ans: ArgumentParserResult<IdentityNode> = {
+            data: new IdentityNode(),
             tokens: [],
             errors: [],
             cache: {},
@@ -87,11 +87,11 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
         //#endregion
 
         //#region Data
-        let namespace = Identity.DefaultNamespace
+        let namespace = IdentityNode.DefaultNamespace
         const paths: string[] = []
 
         // Whether this is a tag ID.
-        if (reader.peek() === Identity.TagSymbol) {
+        if (reader.peek() === IdentityNode.TagSymbol) {
             reader.skip()
             isTag = true
             if (!this.allowTag) {
@@ -115,12 +115,12 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 for (const id of tagPool) {
                     const complNamespace = id.split(':')[0]
                     const complPaths = id.split(':')[1].split('/')
-                    complNamespaces.add(`${Identity.TagSymbol}${complNamespace}`)
-                    if (!this.isPredicate && complNamespace === Identity.DefaultNamespace) {
+                    complNamespaces.add(`${IdentityNode.TagSymbol}${complNamespace}`)
+                    if (!this.isPredicate && complNamespace === IdentityNode.DefaultNamespace) {
                         this.completeFolderOrFile(
                             // Only the first element and the length matter. We don't care
                             // if other elements are also prefixed by `Identity.TagSymbol`.
-                            complPaths.map(v => `${Identity.TagSymbol}${v}`),
+                            complPaths.map(v => `${IdentityNode.TagSymbol}${v}`),
                             complFolders,
                             complFiles
                         )
@@ -131,7 +131,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 const namespace = id.split(':')[0]
                 const paths = id.split(':')[1].split('/')
                 complNamespaces.add(namespace)
-                if (!this.isPredicate && namespace === Identity.DefaultNamespace) {
+                if (!this.isPredicate && namespace === IdentityNode.DefaultNamespace) {
                     this.completeFolderOrFile(paths, complFolders, complFiles)
                 }
             }
@@ -151,7 +151,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                     .map(v => v.slice(namespace.length + 1))
                 if (start <= cursor && cursor <= reader.cursor) {
                     for (const id of pool) {
-                        const complPaths = id.split(Identity.Sep)
+                        const complPaths = id.split(IdentityNode.Sep)
                         this.completeFolderOrFile(complPaths, complFolders, complFiles)
                     }
                 }
@@ -159,8 +159,8 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             } else {
                 // `path0` is the first element of the paths.
                 pool = pool
-                    .filter(v => v.startsWith(`${Identity.DefaultNamespace}:`))
-                    .map(v => v.slice(Identity.DefaultNamespace.length + 1))
+                    .filter(v => v.startsWith(`${IdentityNode.DefaultNamespace}:`))
+                    .map(v => v.slice(IdentityNode.DefaultNamespace.length + 1))
                 if (this.isPredicate) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
@@ -171,15 +171,15 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
             paths.push(path0)
 
             // Parse the remaning paths.
-            while (reader.peek() === Identity.Sep) {
+            while (reader.peek() === IdentityNode.Sep) {
                 reader.skip()
                 const start = reader.cursor
                 const path = this.readValidString(reader, ans)
                 //#region Completions
-                pool = pool.filter(v => v.startsWith(paths.join(Identity.Sep)))
+                pool = pool.filter(v => v.startsWith(paths.join(IdentityNode.Sep)))
                 if (start <= cursor && cursor <= reader.cursor) {
                     for (const id of pool) {
-                        const complPaths = id.split(Identity.Sep)
+                        const complPaths = id.split(IdentityNode.Sep)
                         this.completeFolderOrFile(complPaths, complFolders, complFiles, paths.length)
                     }
                 }
@@ -187,7 +187,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 paths.push(path)
             }
 
-            ans.data = new Identity(namespace, paths, isTag)
+            ans.data = new IdentityNode(namespace, paths, isTag)
             stringID = ans.data.toString()
         } else {
             ans.errors.push(new ParsingError({ start, end: start + 1 },
@@ -279,7 +279,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
                 case 'always':
                     return true
                 case 'only-default-namespace':
-                    return namespace === Identity.DefaultNamespace
+                    return namespace === IdentityNode.DefaultNamespace
                 case 'never':
                 default:
                     return false
@@ -362,7 +362,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
     /**
      * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
      */
-    private readValidString(reader: StringReader, ans: ArgumentParserResult<Identity>) {
+    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>) {
         const start = reader.cursor
         const value = reader.readUnquotedString()
         const end = reader.cursor
@@ -396,7 +396,7 @@ export default class NamespacedIDArgumentParser extends ArgumentParser<Identity>
      * @param stringID The stringified ID.
      * @param start The start of the whole parsing process of this ID.
      */
-    private checkIDInCache(ans: ArgumentParserResult<Identity>, reader: StringReader, type: CacheKey, namespace: string, stringID: string, start: number, config: Config, cache: ClientCache) {
+    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheKey, namespace: string, stringID: string, start: number, config: Config, cache: ClientCache) {
         const category = getSafeCategory(cache, type)
         const canResolve = Object.keys(category).includes(stringID)
 

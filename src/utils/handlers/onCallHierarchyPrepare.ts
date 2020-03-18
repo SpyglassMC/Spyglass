@@ -1,6 +1,6 @@
 import FunctionInfo from '../../types/FunctionInfo'
 import { getCacheFromChar } from '../../types/ClientCache'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { PathExistsFunction, UrisOfIds, Uri, UrisOfStrings } from '../../types/handlers'
 import { SymbolKind, Proposed } from 'vscode-languageserver'
 import { getUriFromId } from './common'
@@ -11,14 +11,14 @@ export default async function onCallHierarchyPrepare({ info, lineNumber, char, p
     const result = getCacheFromChar(line.cache || {}, char)
     /* istanbul ignore next */
     if (result && (result.type === 'advancements' || result.type === 'functions' || result.type === 'tags/functions')) {
-        const uri = await getUriFromId(pathExists, roots, uris, urisOfIds, Identity.fromString(result.id), result.type)
+        const uri = await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(result.id), result.type)
         /* istanbul ignore next */
         if (!uri) {
             return null
         }
         return [
             getCallHierarchyItem(
-                (result.type === 'tags/functions' ? Identity.TagSymbol : '') + result.id,
+                (result.type === 'tags/functions' ? IdentityNode.TagSymbol : '') + result.id,
                 uri.toString(), lineNumber, result.start, result.end,
                 result.type === 'advancements' ? IdentityKind.Advancement :
                     result.type === 'functions' ? IdentityKind.Function :

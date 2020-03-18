@@ -12,14 +12,12 @@ export const NbtNodeType = Symbol('NbtNodeType')
 export const SuperNbt = Symbol('SuperNbt')
 
 export default abstract class NbtNode extends ArgumentNode {
-    [NodeRange]: TextRange
     abstract [NodeType]: string
     abstract [NbtNodeType]: NbtNodeTypeName
 
     [SuperNbt]: NbtCompoundNode | null
-    constructor(range: TextRange, superNbt: NbtCompoundNode | null) {
+    constructor(superNbt: NbtCompoundNode | null) {
         super()
-        this[NodeRange] = range
         this[SuperNbt] = superNbt
     }
 

@@ -7,7 +7,7 @@ import { VanillaConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
 import Token, { TokenType } from '../../../types/Token'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from '../../../types/handlers'
-import Identity from '../../../types/Identity'
+import IdentityNode from '../../../types/nodes/IdentityNode'
 import { CacheFile } from '../../../types/ClientCache'
 
 describe('common.ts Tests', () => {
@@ -98,7 +98,7 @@ describe('common.ts Tests', () => {
             const urisOfIds: UrisOfIds = new Map([
                 ['functions|spgoding:foo', uri]
             ])
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
 
@@ -107,7 +107,7 @@ describe('common.ts Tests', () => {
         it('Should return null when cannot resolve', async () => {
             const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
 
@@ -116,7 +116,7 @@ describe('common.ts Tests', () => {
         it('Should return the uri if the file can be found in root[0]', async () => {
             const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
             const pathExists = async (abs: string) => {
                 return !!abs.match(/^c:[\\\/]foo[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
@@ -128,7 +128,7 @@ describe('common.ts Tests', () => {
         it('Should return the uri if the file can be found in root[1]', async () => {
             const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
             const pathExists = async (abs: string) => {
                 return !!abs.match(/^c:[\\\/]bar[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
@@ -140,7 +140,7 @@ describe('common.ts Tests', () => {
         it('Should return the uri under the preferred root[0]', async () => {
             const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[0])
 
@@ -149,7 +149,7 @@ describe('common.ts Tests', () => {
         it('Should return the uri under the preferred root[1]', async () => {
             const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
-            const id = new Identity('spgoding', ['foo'])
+            const id = new IdentityNode('spgoding', ['foo'])
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[1])
 

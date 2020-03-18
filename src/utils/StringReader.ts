@@ -154,12 +154,12 @@ export default class StringReader {
     }
 
     /**
-     * @param out Stores a cursor which will be transformed to a cursor in the string. 
+     * @param out Stores a mapping from in-string indexes to real indexes. 
      */
-    readUnquotedString(out: { cursor: number } = { cursor: -1 }) {
-        out.cursor -= this.cursor
+    readUnquotedString(out: { mapping: number[] } = { mapping: [] }) {
         let ans = ''
         while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
+            out.mapping.push(this.cursor)
             ans += this.read()
         }
         return ans
@@ -167,12 +167,11 @@ export default class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readQuotedString(out: { cursor: number } = { cursor: -1 }, isReadingJson = false) {
+    readQuotedString(out: { mapping: number[] } = { mapping: [] }, isReadingJson = false) {
         let ans = ''
-        out.cursor -= this.cursor
         if (!this.canRead()) {
             return ''
         }
@@ -181,7 +180,6 @@ export default class StringReader {
             if (isReadingJson) {
                 ans += quote
             }
-            out.cursor -= 1
             this.skip()
             ans += this.readUntilQuote(quote, out, isReadingJson)
         } else {
@@ -198,10 +196,10 @@ export default class StringReader {
     /**
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
-     * @param out Stores a cursor which will be transformed to a cursor in the string.
+     * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    private readUntilQuote(terminator: '"' | "'", out: { cursor: number }, isReadingJson: boolean) {
+    private readUntilQuote(terminator: '"' | "'", out: { mapping: number[] }, isReadingJson: boolean) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -210,6 +208,7 @@ export default class StringReader {
             const c = this.read()
             if (escaped) {
                 if (isReadingJson || c === escapeChar || c === terminator) {
+                    out.mapping.push(this.cursor - 1)
                     ans += c
                     escaped = false
                 } else {
@@ -223,18 +222,18 @@ export default class StringReader {
             } else {
                 if (c === escapeChar) {
                     if (isReadingJson) {
+                        out.mapping.push(this.cursor - 1)
                         ans += c
-                    }
-                    if (out.cursor + start + 1 >= this.cursor) {
-                        out.cursor -= 1
                     }
                     escaped = true
                 } else if (c === terminator) {
                     if (isReadingJson) {
+                        out.mapping.push(this.cursor - 1)
                         ans += c
                     }
                     return ans
                 } else {
+                    out.mapping.push(this.cursor - 1)
                     ans += c
                 }
             }

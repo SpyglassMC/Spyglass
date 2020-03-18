@@ -251,7 +251,9 @@ Additionally, if you rename a namespaced ID with file definition (e.g. the ID fo
 
 You can format the current function by pressing Shift + Alt + F or other configured hotkey.
 
-There are several linting rules you can set in the configuration settings.
+Also there are several linting rules you can set in the configuration settings. DHP can report errors for commands that don't follow your preference.
+
+See the [wiki](https://github.com/SPGoding/datapack-language-server/wiki/Stylistic-Rules) for more information.
 
 ![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 

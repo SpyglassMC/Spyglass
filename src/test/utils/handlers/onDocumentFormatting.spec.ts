@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onDocumentFormatting from '../../../utils/handlers/onDocumentFormatting'
 import { VanillaConfig, constructConfig } from '../../../types/Config'
-import Identity from '../../../types/Identity'
+import IdentityNode from '../../../types/nodes/IdentityNode'
 import ParsingError from '../../../types/ParsingError'
 
 describe('onDocumentFormatting() Tests', () => {
@@ -15,7 +15,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new Identity(undefined, ['stone']) }
+                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
                 ]
             }],
             strings: [
@@ -37,7 +37,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new Identity(undefined, ['stone']) }
+                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
                 ]
             }],
             strings: [
@@ -60,7 +60,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'wrong' },
-                        { parser: 'namespacedID', data: new Identity(undefined, ['stone']) }
+                        { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
                     ],
                     errors: [
                         new ParsingError({ start: 0, end: 5 }, '')
@@ -70,7 +70,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'fake' },
-                        { parser: 'namespacedID', data: new Identity(undefined, ['stone']) }
+                        { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
                     ]
                 }
             ],
@@ -95,7 +95,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new Identity(undefined, ['stone']) }
+                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
                 ]
             }],
             strings: [

@@ -100,7 +100,7 @@ export module nbtdoc {
     /**
      * The different types of enums
      */
-    type EnumType = { Byte: {
+    export type EnumType = { Byte: {
         /**i8 range*/ 
         [key: string]: EnumOption<number>
     } } | 

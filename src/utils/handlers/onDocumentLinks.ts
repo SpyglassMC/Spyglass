@@ -2,7 +2,7 @@ import FunctionInfo from '../../types/FunctionInfo'
 import { DocumentLink } from 'vscode-languageserver'
 import { isFileType, CacheUnit } from '../../types/ClientCache'
 import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri } from '../../types/handlers'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { getUriFromId } from './common'
 
 export default async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
@@ -24,7 +24,7 @@ export default async function onDocumentLinks({ info, roots, uris, urisOfIds, pa
                                     start: { line: i, character: pos.start },
                                     end: { line: i, character: pos.end }
                                 },
-                                target: await getUriFromId(pathExists, roots, uris, urisOfIds, Identity.fromString(id), type)
+                                target: await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(id), type)
                             }
                             /* istanbul ignore next */
                             if (link.target) {

@@ -1,42 +1,47 @@
 import path from 'path'
-import Formattable, { ToFormattedString } from './Formattable'
-import { ClientCache, CacheKey } from './ClientCache'
-import { LintConfig } from './Config'
+import { ToFormattedString } from '../Formattable'
+import { ClientCache, CacheKey } from '../ClientCache'
+import { LintConfig } from '../Config'
 import { sep } from 'path'
+import ArgumentNode, { NodeType } from './ArgumentNode'
 
-export default class Identity implements Formattable {
+export default class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
     static readonly Sep = '/'
     static readonly TagSymbol = '#'
 
+    readonly [NodeType] = 'Identity'
+
     constructor(
-        readonly namespace = Identity.DefaultNamespace,
-        readonly path: string[] = [],
-        readonly isTag = false
-    ) { }
+        public namespace = IdentityNode.DefaultNamespace,
+        public path: string[] = [],
+        public isTag = false
+    ) {
+        super()
+    }
 
     [ToFormattedString](lint: LintConfig): string {
         let id
-        if (lint.idOmitDefaultNamespace && this.namespace === Identity.DefaultNamespace) {
-            id = this.path.join(Identity.Sep)
+        if (lint.idOmitDefaultNamespace && this.namespace === IdentityNode.DefaultNamespace) {
+            id = this.path.join(IdentityNode.Sep)
         } else {
-            id = `${this.namespace}:${this.path.join(Identity.Sep)}`
+            id = `${this.namespace}:${this.path.join(IdentityNode.Sep)}`
         }
-        return `${this.isTag ? Identity.TagSymbol : ''}${id}`
+        return `${this.isTag ? IdentityNode.TagSymbol : ''}${id}`
     }
 
     /**
      * Convert the ID to a string in form of `${namespace}:${path}`. Will NOT begin with TagSymbol (`#`) if the ID is a tag.
      */
     toString() {
-        return `${this.namespace}:${this.path.join(Identity.Sep)}`
+        return `${this.namespace}:${this.path.join(IdentityNode.Sep)}`
     }
 
     /**
      * Convert the ID to a string in form of `${namespace}:${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
      */
     toTagString() {
-        return `${this.isTag ? Identity.TagSymbol : ''}${this.namespace}:${this.path.join(Identity.Sep)}`
+        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace}:${this.path.join(IdentityNode.Sep)}`
     }
 
     /**
@@ -69,7 +74,7 @@ export default class Identity implements Formattable {
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string): { id: Identity, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
+    static fromRel(rel: string): { id: IdentityNode, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
         rel = path.normalize(rel)
         const segs = rel.split(/[/\\]/)
         const ext = path.extname(rel)
@@ -80,7 +85,7 @@ export default class Identity implements Formattable {
             const paths = segs.slice(3)
             if (side && namespace && datapackCategory && paths.length > 0) {
                 paths[paths.length - 1] = path.basename(paths[paths.length - 1], ext)
-                const id = new Identity(namespace, paths)
+                const id = new IdentityNode(namespace, paths)
                 let category: keyof ClientCache
                 if (datapackCategory === 'tags') {
                     switch (paths[0]) {
@@ -116,15 +121,15 @@ export default class Identity implements Formattable {
     }
 
     static fromString(str: string) {
-        const isTag = str[0] === Identity.TagSymbol
+        const isTag = str[0] === IdentityNode.TagSymbol
         if (isTag) {
             str = str.slice(1)
         }
         const parts = str.split(':')
         if (parts.length === 1) {
-            return new Identity(undefined, parts[0].split(Identity.Sep), isTag)
+            return new IdentityNode(undefined, parts[0].split(IdentityNode.Sep), isTag)
         } else {
-            return new Identity(parts[0], parts[1].split(Identity.Sep), isTag)
+            return new IdentityNode(parts[0], parts[1].split(IdentityNode.Sep), isTag)
         }
     }
 

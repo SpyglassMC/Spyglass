@@ -6,7 +6,7 @@ import { NbtSchemaNode, ValueList } from '../types/NbtSchema'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import BlockNode from '../types/nodes/BlockNode'
 import Entity from '../types/Entity'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import LineParser from '../parsers/LineParser'
 import NbtPath from '../types/NbtPath'
 import ParsingError from '../types/ParsingError'
@@ -201,19 +201,19 @@ describe('CommandTree Tests', () => {
             assert(actual === 'base')
         })
         it('Should return base when the first type is a tag', () => {
-            const id = new Identity('minecraft', ['spgoding'], true)
+            const id = new IdentityNode('minecraft', ['spgoding'], true)
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
             assert(actual === 'base')
         })
         it('Should return base when the first type cannot be interpreted as an anchor', () => {
-            const id = new Identity('minecraft', ['qwertyuiop'])
+            const id = new IdentityNode('minecraft', ['qwertyuiop'])
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
             assert(actual === 'base')
         })
         it('Should return the respective schema', () => {
-            const id = new Identity('minecraft', ['spgoding'])
+            const id = new IdentityNode('minecraft', ['spgoding'])
             const entity = new Entity(undefined, 'e', { type: [id] })
             const actual = getSchemaAnchor(entity, schema)
             assert(actual === 'minecraft:spgoding')
@@ -229,7 +229,7 @@ describe('CommandTree Tests', () => {
         }
         ctx = await constructContext({ parsers, cache })
     })
-    describe('Just Fucking Parse', () => {
+    describe('Just fucking parse', () => {
         const parsers = new ArgumentParserManager()
         it('advancement g', async () => {
             const ctx = await constructContext({ parsers, cursor: 13 })
@@ -278,7 +278,7 @@ describe('CommandTree Tests', () => {
                 { data: 'grant', parser: 'literal' },
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new Identity('minecraft', ['test']), parser: 'namespacedID' }
+                { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>'],
@@ -301,7 +301,7 @@ describe('CommandTree Tests', () => {
                 { data: 'grant', parser: 'literal' },
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new Identity('minecraft', ['test']), parser: 'namespacedID' },
+                { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' },
                 { data: 'aaa', parser: 'string' }
             ])
             assert.deepEqual(data.hint, {
@@ -325,7 +325,7 @@ describe('CommandTree Tests', () => {
                 { data: 'revoke', parser: 'literal' },
                 { data: new Entity(undefined, 's'), parser: 'entity' },
                 { data: 'through', parser: 'literal' },
-                { data: new Identity(undefined, ['test']), parser: 'namespacedID' }
+                { data: new IdentityNode(undefined, ['test']), parser: 'namespacedID' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespacedID>'],
@@ -366,7 +366,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new BlockToken(new Identity(undefined, ['grass_block'])), parser: 'block' }
+                { data: new BlockToken(new IdentityNode(undefined, ['grass_block'])), parser: 'block' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['setblock', '<pos: vector3D>'],

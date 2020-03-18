@@ -1,7 +1,7 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
 import BlockNode from '../types/nodes/BlockNode'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import Item from '../types/Item'
 import ParsingContext from '../types/ParsingContext'
 import Particle from '../types/Particle'
@@ -14,7 +14,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Particle<any>> {
         const ans: ArgumentParserResult<Particle<any>> = {
-            data: new Particle(new Identity()),
+            data: new Particle(new IdentityNode()),
             tokens: [],
             errors: [],
             cache: {},
@@ -22,8 +22,8 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
         }
         const start = reader.cursor
 
-        const typeResult = ctx.parsers.get('NamespacedID', ['minecraft:particle_type']).parse(reader, ctx)
-        const type = typeResult.data as Identity
+        const typeResult = ctx.parsers.get('Identity', ['minecraft:particle_type']).parse(reader, ctx)
+        const type = typeResult.data as IdentityNode
         combineArgumentParserResult(ans, typeResult)
         ans.data.id = type
 

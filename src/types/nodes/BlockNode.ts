@@ -1,5 +1,5 @@
 import { LintConfig } from '../Config'
-import Identity from '../Identity'
+import IdentityNode from './IdentityNode'
 import ArgumentNode, { NodeType, NodeRange } from './ArgumentNode'
 import { ToFormattedString } from '../Formattable'
 import BlockStateNode from './map/BlockStateMapNode'
@@ -11,13 +11,11 @@ export default class BlockNode extends ArgumentNode {
     [NodeRange]: TextRange
 
     constructor(
-        public range: TextRange,
-        public id: Identity = new Identity(),
+        public id: IdentityNode = new IdentityNode(),
         public states: BlockStateNode = new BlockStateNode(),
         public tag: NbtCompoundNode = new NbtCompoundNode(null)
     ) {
         super()
-        this[NodeRange] = range
     }
 
     [ToFormattedString](lint: LintConfig): string {

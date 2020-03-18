@@ -1,20 +1,20 @@
-import { CompletionItem, DiagnosticSeverity } from 'vscode-languageserver'
-import { ClientCache, offsetCachePosition } from '../types/ClientCache'
+import { CompletionItem, DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
+import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
 import { nbtdoc } from '../types/nbtdoc'
 import LineParser from '../parsers/LineParser'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ActionCode, remapParsingErrors } from '../types/ParsingError'
 import StringReader from './StringReader'
 import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
-import TextRange from '../types/TextRange'
+import TextRange, { remapTextRange } from '../types/TextRange'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { locale } from '../locales/Locales'
-import { arrayToMessage, arrayToCompletions, validateStringQuote } from './utils'
-import { NodeRange } from '../types/nodes/ArgumentNode'
+import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString, downgradeError } from './utils'
+import { NodeRange, NodeDescription } from '../types/nodes/ArgumentNode'
 import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
 import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
 import NbtNumberNode from '../types/nodes/nbt/NbtNumberNode'
@@ -29,22 +29,21 @@ import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
 import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
 import NbtListNode from '../types/nodes/nbt/NbtListNode'
 import { Keys } from '../types/nodes/map/MapNode'
-
-// type SuggestionNode =
-//     | string
-//     | DocedSuggestionNode
-//     | ParserSuggestionNode
-// type DocedSuggestionNode = { description?: string, value?: string }
-// type ParserSuggestionNode = { parser: string, params?: any }
-type Variables = { isPredicate: boolean }
-
-type RegistryType = 'minecraft:block' | 'minecraft:entity' | 'minecraft:item'
+import { ToFormattedString } from '../types/Formattable'
+import { LintConfig } from '../types/Config'
+import { combineArgumentParserResult, ArgumentParserResult } from '../types/Parser'
+import { getInnerIndex } from '../types/IndexMapping'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
 type Supers = CompoundSupers | RegistrySupers | null
 
-type ValidateResult = { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache }
+interface ValidateResultLike {
+    completions?: CompletionItem[], errors?: ParsingError[], cache?: ClientCache
+}
+interface ValidateResult extends ValidateResultLike {
+    completions: CompletionItem[], errors: ParsingError[], cache: ClientCache
+}
 
 function isRegistrySupers(supers: Supers): supers is RegistrySupers {
     return (supers as RegistrySupers).Registry !== undefined
@@ -136,10 +135,14 @@ function isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
 }
 
 export default class NbtdocHelper {
+    // private static readonly MockEnumIndex: nbtdoc.Index<nbtdoc.EnumItem> = 114514
+
     private compoundIndex: nbtdoc.Index<nbtdoc.CompoundTag> | null
     private enumIndex: nbtdoc.Index<nbtdoc.EnumItem>
     private moduleIndex: nbtdoc.Index<nbtdoc.Module>
     private tag: NbtCompoundNode | null
+
+    // private mockEnum: nbtdoc.EnumItem
 
     constructor(private readonly doc: nbtdoc.Root) { }
 
@@ -179,6 +182,9 @@ export default class NbtdocHelper {
     }
 
     readEnum(): nbtdoc.EnumItem {
+        // if (this.enumIndex === NbtdocHelper.MockEnumIndex) {
+        //     return this.mockEnum
+        // }
         return this.doc.enum_arena[this.enumIndex]
     }
 
@@ -186,12 +192,17 @@ export default class NbtdocHelper {
         return this.doc.module_arena[this.moduleIndex]
     }
 
-    goRegistryCompound(type: RegistryType, id: string | null) {
-        const [registry, fallback] = this.doc.registries[type]
-        if (id && registry[id] !== undefined) {
-            this.compoundIndex = registry[id]
+    goRegistryCompound(type: string, id: string | null) {
+        const registry = this.doc.registries[type]
+        if (registry) {
+            const [reg, fallback] = registry
+            if (id && reg[id] !== undefined) {
+                this.compoundIndex = reg[id]
+            } else {
+                this.compoundIndex = fallback
+            }
         } else {
-            this.compoundIndex = fallback
+            this.compoundIndex = null
         }
         return this
     }
@@ -202,8 +213,8 @@ export default class NbtdocHelper {
         } else if (isRegistrySupers(supers)) {
             const id = this.resolveFieldPath(supers.Registry.path)
             this.goRegistryCompound(
-                supers.Registry.target as RegistryType,
-                id ? Identity.fromString(id.valueOf().toString()).toString() : null
+                supers.Registry.target,
+                id ? IdentityNode.fromString(id.valueOf().toString()).toString() : null
             )
         } else {
             this.goCompound(supers.Compound)
@@ -264,7 +275,88 @@ export default class NbtdocHelper {
         return null
     }
 
-    validateField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean): ValidateResult {
+    completeField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string) {
+        if (doc) {
+            if (isBooleanDoc(doc)) {
+                this.completeBooleanField(ans, ctx, tag, doc, isPredicate)
+            } else if (isEnumDoc(doc)) {
+                this.completeEnumField(ans, ctx, tag, doc, isPredicate)
+            } else if (isIdDoc(doc)) {
+                this.completeIdField(ans, ctx, tag, doc, isPredicate)
+            } else if (isStringDoc(doc)) {
+                this.completeStringField(ans, ctx, tag, doc, isPredicate, description)
+            }
+        }
+    }
+
+    private completeBooleanField(ans: ValidateResult, _ctx: ParsingContext, _tag: NbtNode, _doc: BooleanDoc, isPredicate: boolean) {
+        ans.completions.push(...arrayToCompletions(['false', 'true']))
+    }
+    public completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, _isPredicate: boolean) {
+        const existingKeys = Object.keys(tag)
+        const clonedHelper = this.clone()
+        const pool = clonedHelper
+            .goCompound(doc.Compound)
+            .readCompoundKeys()
+            .filter(v => !existingKeys.includes(v))
+        for (const key of pool) {
+            const field = clonedHelper.readField(key)
+            const description = field ? field.description : ''
+            const quoteType = ctx.config.lint.nbtCompoundKeyQuoteType ? ctx.config.lint.nbtCompoundKeyQuoteType[1] : 'prefer double'
+            const quote = ctx.config.lint.nbtCompoundKeyQuote ? ctx.config.lint.nbtCompoundKeyQuote[1] : false
+            ans.completions.push({
+                label: quoteString(key, quoteType, quote),
+                kind: CompletionItemKind.Property,
+                ...description ? { documentation: description } : {}
+            } as CompletionItem)
+        }
+
+        ans.completions.push(...arrayToCompletions(['false', 'true']))
+    }
+    private completeEnumField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: EnumDoc, isPredicate: boolean) {
+        const { et } = this
+            .goEnum(doc.Enum)
+            .readEnum()
+        const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
+        const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
+        for (const key in options) {
+            if (options.hasOwnProperty(key)) {
+                const { description, value } = options[key]
+                ans.completions.push({
+                    label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
+                    detail: key,
+                    ...description ? { documentation: description } : {}
+                })
+            }
+        }
+    }
+    private completeIdField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: IdDoc, isPredicate: boolean) {
+        const subCtx = { ...ctx, cursor: 0 }
+        const reader = new StringReader('')
+        const result = ctx.parsers.get('Identity', [
+            NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
+        ]).parse(reader, subCtx)
+        for (const com of result.completions) {
+            ans.completions.push({
+                label: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.label)
+            })
+        }
+    }
+    private completeStringField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, _doc: StringDoc, _isPredicate: boolean, description: string) {
+        const subCtx = { ...ctx, cursor: 0 }
+        const reader = new StringReader('')
+        const result = this.validateInnerString(reader, subCtx, description)
+        if (result && result.completions) {
+            for (const com of result.completions) {
+                ans.completions.push({
+                    label: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.label),
+                    ...com.insertText ? { insertText: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.insertText) } : {}
+                })
+            }
+        }
+    }
+
+    validateField(ans: ValidateResult = { cache: {}, completions: [], errors: [] }, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string): ValidateResult {
         if (doc) {
             if (isBooleanDoc(doc)) {
                 ans = this.validateBooleanField(ctx, tag, doc, isPredicate)
@@ -285,21 +377,21 @@ export default class NbtdocHelper {
             } else if (isIndexDoc(doc)) {
                 ans = this.validateIndexField(ctx, tag, doc, isPredicate)
             } else if (isIntArrayDoc(doc)) {
-                ans = this.validateIntArrayField(ctx, tag, doc, isPredicate)
+                ans = this.validateIntArrayField(ctx, tag, doc, isPredicate, description)
             } else if (isIntDoc(doc)) {
-                ans = this.validateIntField(ctx, tag, doc, isPredicate)
+                ans = this.validateIntField(ctx, tag, doc, isPredicate, description)
             } else if (isListDoc(doc)) {
-                ans = this.validateListField(ctx, tag, doc, isPredicate)
+                ans = this.validateListField(ctx, tag, doc, isPredicate, description)
             } else if (isLongArrayDoc(doc)) {
                 ans = this.validateLongArrayField(ctx, tag, doc, isPredicate)
             } else if (isLongDoc(doc)) {
                 ans = this.validateLongField(ctx, tag, doc, isPredicate)
             } else if (isOrDoc(doc)) {
-                ans = this.validateOrField(ctx, tag, doc, isPredicate)
+                ans = this.validateOrField(ctx, tag, doc, isPredicate, description)
             } else if (isShortDoc(doc)) {
                 ans = this.validateShortField(ctx, tag, doc, isPredicate)
             } else {
-                ans = this.validateStringField(ctx, tag, doc, isPredicate)
+                ans = this.validateStringField(ctx, tag, doc, isPredicate, description)
             }
         }
         return ans
@@ -351,18 +443,30 @@ export default class NbtdocHelper {
         }
     }
 
-    private validateNumberArrayField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtArrayNode<NbtNumberNode<number | bigint>>, { length_range: lengthRange, value_range: valueRange }: nbtdoc.NumberArrayTag, _isPredicate: boolean) {
+    private validateNumberArrayField(ans: ValidateResult, ctx: ParsingContext, tag: NbtArrayNode<NbtNumberNode<number | bigint>>, { length_range: lengthRange, value_range: valueRange }: nbtdoc.NumberArrayTag, isPredicate: boolean, description: string) {
         if (lengthRange) {
-            this.validateCollectionLength(ans, _ctx, tag, lengthRange, _isPredicate)
+            this.validateCollectionLength(ans, ctx, tag, lengthRange, isPredicate)
         }
         if (valueRange) {
             for (const item of tag) {
-                this.validateNumberField(ans, _ctx, item, valueRange, _isPredicate)
+                this.validateNumberField(ans, ctx, item, valueRange, isPredicate, description)
             }
         }
     }
 
-    private validateNumberField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, [min, max]: [number, number], _isPredicate: boolean) {
+    private validateNumberField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, [min, max]: [number, number], _isPredicate: boolean, description: string) {
+        // Cache.
+        /// Color information.
+        if (description.match(/RED << 16 \| GREEN << 8 \| BLUE/i)) {
+            const num = Number(tag.valueOf())
+            const r = ((num >> 16) & 255) / 255
+            const g = ((num >> 8) & 255) / 255
+            const b = (num & 255) / 255
+            ans.cache.colors = {
+                [`${r} ${g} ${b} 1`]: { def: [], ref: [tag[NodeRange]] }
+            }
+        }
+        // Errors.
         if (tag.valueOf() < min) {
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
@@ -378,14 +482,82 @@ export default class NbtdocHelper {
         }
     }
 
+    private isInheritFromItemBase(doc: nbtdoc.CompoundTag | null): boolean {
+        if (!doc) {
+            return false
+        }
+        if (doc.fields.hasOwnProperty('CustomModelData')) {
+            return true
+        }
+        return this.isInheritFromItemBase(this.clone().goSupers(doc.supers).readCompound())
+    }
+
+    private validateCompoundDoc(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: nbtdoc.CompoundTag | null, isPredicate: boolean) {
+        if (doc) {
+            for (const key in tag) {
+                if (tag.hasOwnProperty(key)) {
+                    const childTag = tag[key]
+                    const field = this.readField(key)
+                    if (field) {
+                        // Hover information.
+                        tag[Keys][key][NodeDescription] = `(${NbtdocHelper.getValueType(field.nbttype)}) ${field.description}`
+                        this.validateField(ans, ctx, childTag, field.nbttype, isPredicate, field.description)
+                    } else {
+                        // Errors.
+                        if (!this.isInheritFromItemBase(doc)) {
+                            ans.errors.push(new ParsingError(
+                                tag[NodeRange],
+                                locale('unknown-key', locale('punc.quote', key)),
+                                true, DiagnosticSeverity.Warning
+                            ))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static getFormattedString(lint: LintConfig, type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String', value: string | number) {
+        let tag: NbtPrimitiveNode<string | number | bigint>
+        switch (type) {
+            case 'Byte':
+                tag = new NbtByteNode(null, value as number, value.toString())
+                break
+            case 'Short':
+                tag = new NbtShortNode(null, value as number, value.toString())
+                break
+            case 'Int':
+                tag = new NbtIntNode(null, value as number, value.toString())
+                break
+            case 'Long':
+                tag = new NbtLongNode(null, BigInt(value as number), value.toString())
+                break
+            case 'Float':
+                tag = new NbtFloatNode(null, value as number, value.toString())
+                break
+            case 'Double':
+                tag = new NbtDoubleNode(null, value as number, value.toString())
+                break
+            case 'String':
+            default:
+                tag = new NbtStringNode(null, value as string, value.toString())
+                break
+        }
+        return tag[ToFormattedString](lint)
+    }
+
+    private static getValueType(value: nbtdoc.NbtValue | nbtdoc.EnumType) {
+        if (typeof value === 'string') {
+            return value
+        } else {
+            return Object.keys(value)[0]
+        }
+    }
+
     private validateBooleanField(ctx: ParsingContext, tag: NbtNode, _doc: BooleanDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Byte', isPredicate)
         const config = ctx.config.lint.nbtBoolean
-        // Completions.
-        if (tag[NodeRange].start === ctx.cursor && (!config || config[1])) {
-            ans.completions.push(...arrayToCompletions(['false', 'true']))
-        }
         // Errors.
         if (shouldValidate) {
             if (config) {
@@ -407,7 +579,7 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'ByteArray', isPredicate)
         if (shouldValidate) {
-            this.validateNumberArrayField(ans, ctx, tag as NbtByteArrayNode, doc.ByteArray, isPredicate)
+            this.validateNumberArrayField(ans, ctx, tag as NbtByteArrayNode, doc.ByteArray, isPredicate, '')
         }
         return ans
     }
@@ -415,7 +587,7 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Byte', isPredicate)
         if (shouldValidate && doc.Byte.range) {
-            this.validateNumberField(ans, ctx, tag as NbtByteNode, doc.Byte.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtByteNode, doc.Byte.range, isPredicate, '')
         }
         return ans
     }
@@ -424,31 +596,13 @@ export default class NbtdocHelper {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Compound', isPredicate)
         if (shouldValidate) {
             const compoundTag: NbtCompoundNode = tag as any
-            const clonedHelper = this
-                .clone()
-                .withTag(compoundTag)
+            const clonedHelpler = this.clone()
+            const compoundDoc = clonedHelpler
                 .goCompound(doc.Compound)
-            const compoundDoc = clonedHelper.readCompound()
-            if (compoundDoc) {
-                for (const key in compoundTag) {
-                    if (compoundTag.hasOwnProperty(key)) {
-                        const childTag = compoundTag[key]
-                        const field = clonedHelper.readField(key)
-                        if (field) {
-                            compoundTag[Keys][key].description = field.description
-                            clonedHelper.validateField(ans, ctx, childTag, field.nbttype, isPredicate)
-                        } else {
-                            if (ctx.config.lint.nbtCompoundCheckKeys) {
-                                ans.errors.push(new ParsingError(
-                                    tag[NodeRange],
-                                    locale('unknown-key', locale('punc.quote', key)),
-                                    true, getDiagnosticSeverity(ctx.config.lint.nbtCompoundCheckKeys[0])
-                                ))
-                            }
-                        }
-                    }
-                }
-            }
+                .readCompound()
+            clonedHelpler
+                .withTag(compoundTag)
+                .validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
         }
         return ans
     }
@@ -456,16 +610,42 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Double', isPredicate)
         if (shouldValidate && doc.Double.range) {
-            this.validateNumberField(ans, ctx, tag as NbtDoubleNode, doc.Double.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtDoubleNode, doc.Double.range, isPredicate, '')
         }
         return ans
     }
     private validateEnumField(ctx: ParsingContext, tag: NbtNode, doc: EnumDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Enum', isPredicate)
+        const { description, et } = this
+            .goEnum(doc.Enum)
+            .readEnum()
+        const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
+        tag[NodeDescription] = `(${type}) ${description}`
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, type, isPredicate)
         if (shouldValidate) {
-            // TODO
-
+            const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
+            const optionValues: string[] = []
+            for (const key in options) {
+                if (options.hasOwnProperty(key)) {
+                    const { description, value } = options[key]
+                    optionValues.push(value.toString())
+                    // Hover information.
+                    if (tag.valueOf() == value) {
+                        const hoverText = description ? `${key} - ${description}` : key
+                        tag[NodeDescription] += `\n\n${hoverText}`
+                    }
+                }
+            }
+            // Errors.
+            if (!optionValues.includes(tag.valueOf().toString())) {
+                ans.errors.push(new ParsingError(
+                    tag[NodeRange],
+                    locale('expected-got',
+                        arrayToMessage(optionValues, true, 'or'),
+                        locale('punc.quote', tag.valueOf().toString())
+                    ), true, DiagnosticSeverity.Warning
+                ))
+            }
         }
         return ans
     }
@@ -473,45 +653,120 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Float', isPredicate)
         if (shouldValidate && doc.Float.range) {
-            this.validateNumberField(ans, ctx, tag as NbtFloatNode, doc.Float.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtFloatNode, doc.Float.range, isPredicate, '')
         }
         return ans
     }
+    // https://github.com/SPGoding/datapack-language-server/issues/332#issuecomment-590168655
+    private static getIdentityTypeFromRegistry(registry: string) {
+        switch (registry) {
+            case 'minecraft:block':
+            case 'minecraft:enchantment':
+            case 'minecraft:item':
+            case 'minecraft:motive':
+            case 'minecraft:potion':
+            case 'minecraft:villager_profession':
+            case 'minecraft:villager_type':
+                return registry
+            case 'minecraft:block_entity':
+                return 'minecraft:block_entity_type'
+            case 'minecraft:entity':
+                return 'minecraft:entity_type'
+            case 'minecraft:loot_table':
+                return '$lootTables'
+            case 'minecraft:recipe':
+                return '$recipes'
+            case 'minecraft:structure':
+                return 'minecraft:structure_feature'
+            default:
+                throw new Error(`Unknown nbtdoc ID registry: ${registry}`)
+        }
+    }
     private validateIdField(ctx: ParsingContext, tag: NbtNode, doc: IdDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Id', isPredicate)
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'String', isPredicate)
         if (shouldValidate) {
-            // TODO
-
+            const stringTag = tag as NbtStringNode
+            const subCtx = { ...ctx, cursor: getInnerIndex(stringTag.mapping, ctx.cursor) }
+            const reader = new StringReader(stringTag.valueOf())
+            const result = ctx.parsers.get('Identity', [
+                NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
+            ]).parse(reader, subCtx)
+            this.combineResult(ans, result, stringTag)
         }
         return ans
     }
     private validateIndexField(ctx: ParsingContext, tag: NbtNode, doc: IndexDoc, isPredicate: boolean): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Index', isPredicate)
+        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Compound', isPredicate)
         if (shouldValidate) {
-            // TODO
+            const compoundTag = tag as NbtCompoundNode
+            const clonedHelper = this.clone()
+            const idTag = clonedHelper.resolveFieldPath(doc.Index.path)
+            const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
+            let compoundDoc: nbtdoc.CompoundTag | null = null
+            if (doc.Index.target.startsWith('custom:')) {
+                if (id) {
+                    // TODO: support custom Index targets.
+                    // switch (doc.Index.target) {
+                    //     case 'custom:blockitemstates':
 
+                    //         break
+                    //     case 'custom:blockstates':
+                    //         const blockDef = ctx.blocks[id]
+                    //         const properties = blockDef ? blockDef.properties : undefined
+                    //         if (properties) {
+                    //             compoundDoc = { description: '', fields: {}, supers: null }
+                    //             for (const key in properties) {
+                    //                 if (properties.hasOwnProperty(key)) {
+                    //                     const property = properties[key]
+                    //                     compoundDoc.fields[key] = {
+                    //                         description: '',
+                    //                         nbttype: {
+                    //                             Enum: NbtdocHelper.MockEnumIndex
+                    //                         }
+                    //                     }
+                    //                 }
+                    //             }
+                    //         }
+                    //         break
+                    //     case 'custom:spawnitemtag':
+                    //     case 'custom:spawnitementag':
+
+                    //         break
+                    //     default:
+                    //         console.error(`Unknown nbtdoc target registry ${doc.Index.target}`)
+                    //         break
+                    // }
+                }
+            } else {
+                compoundDoc = clonedHelper
+                    .goRegistryCompound(doc.Index.target, id)
+                    .readCompound()
+            }
+            if (compoundDoc) {
+                this.validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
+            }
         }
         return ans
     }
-    private validateIntArrayField(ctx: ParsingContext, tag: NbtNode, doc: IntArrayDoc, isPredicate: boolean): ValidateResult {
+    private validateIntArrayField(ctx: ParsingContext, tag: NbtNode, doc: IntArrayDoc, isPredicate: boolean, description: string): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'IntArray', isPredicate)
         if (shouldValidate) {
-            this.validateNumberArrayField(ans, ctx, tag as NbtIntArrayNode, doc.IntArray, isPredicate)
+            this.validateNumberArrayField(ans, ctx, tag as NbtIntArrayNode, doc.IntArray, isPredicate, description)
         }
         return ans
     }
-    private validateIntField(ctx: ParsingContext, tag: NbtNode, doc: IntDoc, isPredicate: boolean): ValidateResult {
+    private validateIntField(ctx: ParsingContext, tag: NbtNode, doc: IntDoc, isPredicate: boolean, description: string): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Int', isPredicate)
         if (shouldValidate && doc.Int.range) {
-            this.validateNumberField(ans, ctx, tag as NbtIntNode, doc.Int.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtIntNode, doc.Int.range, isPredicate, description)
         }
         return ans
     }
-    private validateListField(ctx: ParsingContext, tag: NbtNode, doc: ListDoc, isPredicate: boolean): ValidateResult {
+    private validateListField(ctx: ParsingContext, tag: NbtNode, doc: ListDoc, isPredicate: boolean, description: string): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'List', isPredicate)
         if (shouldValidate) {
@@ -520,7 +775,7 @@ export default class NbtdocHelper {
                 this.validateCollectionLength(ans, ctx, tag as NbtListNode<NbtNode>, lengthRange, isPredicate)
             }
             for (const item of tag as NbtListNode<NbtNode>) {
-                this.validateField(ans, ctx, item, valueType, isPredicate)
+                this.validateField(ans, ctx, item, valueType, isPredicate, description)
             }
         }
         return ans
@@ -529,7 +784,7 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'LongArray', isPredicate)
         if (shouldValidate) {
-            this.validateNumberArrayField(ans, ctx, tag as NbtLongArrayNode, doc.LongArray, isPredicate)
+            this.validateNumberArrayField(ans, ctx, tag as NbtLongArrayNode, doc.LongArray, isPredicate, '')
         }
         return ans
     }
@@ -537,16 +792,23 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Long', isPredicate)
         if (shouldValidate && doc.Long.range) {
-            this.validateNumberField(ans, ctx, tag as NbtLongNode, doc.Long.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtLongNode, doc.Long.range, isPredicate, '')
         }
         return ans
     }
-    private validateOrField(ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean): ValidateResult {
-        const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
-        const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Or', isPredicate)
-        if (shouldValidate) {
-            // TODO
-
+    private validateOrField(ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): ValidateResult {
+        let ans: ValidateResult = { cache: {}, completions: [], errors: [] }
+        for (let i = 0; i < doc.Or.length; i++) {
+            const childDoc = doc.Or[i]
+            const childAns: ValidateResult = { cache: {}, completions: [], errors: [] }
+            this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
+            if (i === doc.Or.length - 1 || childAns.errors.length === 0) {
+                ans = childAns
+                break
+            }
+        }
+        if (doc.Or.length === 0) {
+            ans.errors.push(new ParsingError(tag[NodeRange], locale('unexpected-nbt'), true, DiagnosticSeverity.Warning))
         }
         return ans
     }
@@ -554,102 +816,61 @@ export default class NbtdocHelper {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Short', isPredicate)
         if (shouldValidate && doc.Short.range) {
-            this.validateNumberField(ans, ctx, tag as NbtShortNode, doc.Short.range, isPredicate)
+            this.validateNumberField(ans, ctx, tag as NbtShortNode, doc.Short.range, isPredicate, '')
         }
         return ans
     }
-    private validateStringField(ctx: ParsingContext, tag: NbtNode, doc: StringDoc, isPredicate: boolean): ValidateResult {
+    private validateStringField(ctx: ParsingContext, tag: NbtNode, doc: StringDoc, isPredicate: boolean, description: string): ValidateResult {
         const ans: ValidateResult = { cache: {}, completions: [], errors: [] }
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'String', isPredicate)
         if (shouldValidate) {
-            // Completions.
-            // TODO
-            // Redirect to argument parser.
-
             // Errors.
+            /// Special cases: https://github.com/SPGoding/datapack-language-server/issues/332#issuecomment-590167678.
+            const stringTag = tag as NbtStringNode
+            const subCtx = { ...ctx, cursor: getInnerIndex(stringTag.mapping, ctx.cursor) }
+            const reader = new StringReader(stringTag.valueOf())
+            const result = this.validateInnerString(reader, subCtx, description)
+            this.combineResult(ans, result, stringTag)
+            /// Quotes.
             const strTag = tag as NbtStringNode
             ans.errors = validateStringQuote(strTag.toString(), strTag.valueOf(), tag[NodeRange], ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType)
         }
         return ans
     }
 
-    // getParserResult(reader: StringReader, ctx: ParsingContext, variables: Variables = { isPredicate: false }): { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } {
-    //     const isParserNode =
-    //         (value: any): value is ParserSuggestionNode => typeof value.parser === 'string'
-    //     const ans: { completions: CompletionItem[], errors: ParsingError[], cache: ClientCache } = { completions: [], errors: [], cache: {} }
-    //     const suggestions: SuggestionNode[] = this.readField().suggestions ? this.readField().suggestions as SuggestionNode[] : []
-    //     suggestions.forEach(
-    //         v => {
-    //             if (typeof v === 'string') {
-    //                 if (reader.cursor === ctx.cursor) {
-    //                     ans.completions.push({ label: v })
-    //                 }
-    //             } else if (isParserNode(v)) {
-    //                 const out = { cursor: ctx.cursor }
-    //                 const subReader = new StringReader(reader.readString(out))
-    //                 const offset = ctx.cursor - out.cursor
+    private validateInnerString(reader: StringReader, ctx: ParsingContext, description: string) {
+        let result: ValidateResultLike | undefined = undefined
+        if (description.match(/command stored/i)) {
+            result = new LineParser(null, 'commands').parse(reader, ctx).data
+        } else if (description.match(/particle the area effect cloud/i)) {
+            result = ctx.parsers.get('Particle').parse(reader, ctx)
+        } else if (description.match(/tags on the entity/i)) {
+            result = ctx.parsers.get('Tag').parse(reader, ctx)
+        } else if (description.match(/team to join/i)) {
+            result = ctx.parsers.get('Team').parse(reader, ctx)
+        } else if (description.match(/line of text/i) ||
+            description.match(/name of th(?:e|is) (?:banner|brewing stand|command block|container|enchanting table|furance)/i) ||
+            description.match(/JSON text component/i) ||
+            description.match(/lore of an item/i)) {
+            result = ctx.parsers.get('TextComponent').parse(reader, ctx)
+        }
+        return result
+    }
 
-    //                 // Replace variables in v.params.
-    //                 /* istanbul ignore next */
-    //                 if (v.params) {
-    //                     const bakParams = [...v.params]
-    //                     v.params = []
-    //                     for (const variable in variables) {
-    //                         /* istanbul ignore next */
-    //                         if (variables.hasOwnProperty(variable)) {
-    //                             for (const param of bakParams) {
-    //                                 if (param === `%${variable}%`) {
-    //                                     v.params.push(variables[variable as keyof Variables])
-    //                                 } else {
-    //                                     v.params.push(param)
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-
-    //                 if (v.parser === '#') {
-    //                     // LineParser
-    //                     const parser = new LineParser(...v.params)
-    //                     const { completions, errors, cache } = parser.parse(subReader, { ...ctx, cursor: out.cursor }).data
-    //                     if (completions) {
-    //                         ans.completions.push(...completions)
-    //                     }
-    //                     /* istanbul ignore next */
-    //                     if (errors) {
-    //                         ans.errors.push(...errors.map(
-    //                             v => new ParsingError({
-    //                                 start: v.range.start + offset,
-    //                                 end: v.range.end + offset
-    //                             }, v.message, true, DiagnosticSeverity.Hint)
-    //                         ))
-    //                     }
-    //                     /* istanbul ignore next */
-    //                     if (cache) {
-    //                         offsetCachePosition(cache, offset)
-    //                         ans.cache = cache
-    //                     }
-    //                 } else {
-    //                     // Regular ArgumentParser
-    //                     const parser = ctx.parsers.get(v.parser, v.params)
-    //                     const { completions, errors, cache: resultCache } = parser.parse(subReader, { ...ctx, cursor: out.cursor })
-    //                     ans.completions.push(...completions)
-    //                     ans.errors.push(...errors.map(
-    //                         v => new ParsingError({
-    //                             start: v.range.start + offset,
-    //                             end: v.range.end + offset
-    //                         }, v.message, true, DiagnosticSeverity.Hint)
-    //                     ))
-    //                     offsetCachePosition(resultCache, offset)
-    //                     ans.cache = resultCache
-    //                 }
-    //             } else {
-    //                 if (reader.cursor === ctx.cursor) {
-    //                     ans.completions.push({ label: v.value as string, documentation: v.description })
-    //                 }
-    //             }
-    //         }
-    //     )
-    //     return ans
-    // }
+    private combineResult(ans: ValidateResult, result: { cache?: ClientCache | undefined, errors?: ParsingError[] | undefined, completions?: CompletionItem[] } | undefined, tag: NbtStringNode) {
+        if (result) {
+            if (result.cache) {
+                remapCachePosition(result.cache, tag.mapping)
+                combineCache(ans.cache, result.cache)
+            }
+            if (result.errors) {
+                const downgradedErrors = downgradeError(result.errors)
+                remapParsingErrors(downgradedErrors, tag.mapping)
+                ans.errors.push(...downgradedErrors)
+            }
+            if (result.completions) {
+                ans.completions.push(...result.completions)
+            }
+        }
+    }
 }

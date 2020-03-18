@@ -8,7 +8,7 @@ import ItemSlotArgumentParser from './ItemSlotArgumentParser'
 import LiteralArgumentParser from './LiteralArgumentParser'
 import Manager from '../types/Manager'
 import MessageArgumentParser from './MessageArgumentParser'
-import NamespacedIDArgumentParser from './NamespacedIDArgumentParser'
+import IdentityArgumentParser from './IdentityArgumentParser'
 import NbtPathArgumentParser from './NbtPathArgumentParser'
 import NbtArgumentParser from './NbtArgumentParser'
 import NumberArgumentParser from './NumberArgumentParser'
@@ -36,7 +36,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         ItemSlotArgumentParser,
         LiteralArgumentParser,
         MessageArgumentParser,
-        NamespacedIDArgumentParser,
+        IdentityArgumentParser,
         NbtPathArgumentParser,
         NbtArgumentParser,
         NumberArgumentParser,
@@ -59,7 +59,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
 
     /**
      * Get an argument parser from specific ID and params.
-     * @param id The name of the class without the suffix (`ArgumentParser`). e.g. `Block`, `NamespacedID`, etc.
+     * @param id The name of the class without the suffix (`ArgumentParser`). e.g. `Block`, `Identity`, etc.
      * @param params Optional params for the constructor.
      */
     get(id: string, params: any[] = []) {

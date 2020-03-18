@@ -1,6 +1,6 @@
 import NumberRange from './NumberRange'
 import { NbtCompoundTag } from './NbtTag'
-import Identity from './Identity'
+import IdentityNode from './nodes/IdentityNode'
 import GameMode from './GameMode'
 import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
@@ -82,14 +82,14 @@ export type SelectorParsedArgument = {
     nameNeg?: string[],
     nbt?: NbtCompoundTag[],
     nbtNeg?: NbtCompoundTag[],
-    predicate?: Identity[],
-    predicateNeg?: Identity[],
+    predicate?: IdentityNode[],
+    predicateNeg?: IdentityNode[],
     tag?: string[],
     tagNeg?: string[],
     team?: string[],
     teamNeg?: string[],
-    type?: Identity[],
-    typeNeg?: Identity[]
+    type?: IdentityNode[],
+    typeNeg?: IdentityNode[]
 }
 
 /**

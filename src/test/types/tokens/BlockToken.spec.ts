@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../../types/Formattable'
-import Identity from '../../../types/Identity'
+import IdentityNode from '../../../types/nodes/IdentityNode'
 import BlockNode from '../../../types/nodes/BlockNode'
 import Vector from '../../../types/Vector'
 import { getNbtCompoundTag, getNbtStringTag } from '../../../types/NbtTag'
@@ -18,7 +18,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone'])
+                new IdentityNode('minecraft', ['stone'])
             )
             const actual = block[ToFormattedString](lint)
             assert(actual === 'minecraft:stone')
@@ -32,7 +32,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true' }
             )
             const actual = block[ToFormattedString](lint)
@@ -47,7 +47,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 undefined,
                 getNbtCompoundTag({ Lock: getNbtStringTag('test') })
             )
@@ -63,7 +63,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '7' },
                 getNbtCompoundTag({ Lock: getNbtStringTag('test') })
             )
@@ -79,7 +79,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
             const actual = block[ToFormattedString](lint)
@@ -94,7 +94,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
             const actual = block[ToFormattedString](lint)
@@ -109,7 +109,7 @@ describe('Block Tests', () => {
                 }
             })
             const block = new BlockToken(
-                new Identity('minecraft', ['stone']),
+                new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '7' }
             )
             const actual = block[ToFormattedString](lint)

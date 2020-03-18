@@ -23,7 +23,7 @@ export default class MapParser<T extends { [key: string]: any }> extends Argumen
     /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext) {
         const ans: ArgumentParserResult<T> = {
-            data: {} as any,
+            data: {} as T,
             cache: {},
             completions: [],
             errors: [],

@@ -3,6 +3,7 @@ import { CompletionItem } from 'vscode-languageserver'
 import ParsingError from './ParsingError'
 import StringReader from '../utils/StringReader'
 import Token from './Token'
+import { downgradeError } from '../utils/utils'
 
 /**
  * Represent an argument parser.
@@ -59,5 +60,5 @@ export function combineArgumentParserResult(base: ArgumentParserResult<any>, ove
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.
-    base.errors = [...base.errors, ...override.errors.map(v => new ParsingError(v.range, v.message, true, v.severity))]
+    base.errors = [...base.errors, ...downgradeError(override.errors)]
 }

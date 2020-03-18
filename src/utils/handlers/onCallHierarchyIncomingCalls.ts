@@ -1,5 +1,5 @@
 import { CacheFile, CacheUnit, getSafeCategory } from '../../types/ClientCache'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { Uri, UrisOfStrings, GetUriFromIdFunction, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 import { Proposed } from 'vscode-languageserver'
 import { getId, getUri, getUriFromId } from './common'
@@ -61,7 +61,7 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
             const { values } = cacheFile.tags.functions[tagIdString]!
             /* istanbul ignore else */
             if (values.includes(id)) {
-                const tagId = Identity.fromString(Identity.TagSymbol + tagIdString)
+                const tagId = IdentityNode.fromString(IdentityNode.TagSymbol + tagIdString)
                 const tagUri = await getUriFromId(pathExists, roots, uris, urisOfIds, tagId, 'tags/functions')
                 /* istanbul ignore else */
                 if (tagUri) {
@@ -88,7 +88,7 @@ export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id
                 const { rewards } = cacheFile.advancements[advIdString]!
                 /* istanbul ignore else */
                 if (rewards && rewards.function === id) {
-                    const advId = Identity.fromString(advIdString)
+                    const advId = IdentityNode.fromString(advIdString)
                     const advUri = await getUriFromId(pathExists, roots, uris, urisOfIds, advId, 'advancements')
                     /* istanbul ignore else */
                     if (advUri) {

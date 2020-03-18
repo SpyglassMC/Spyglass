@@ -1,6 +1,7 @@
 import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
-import TextRange from './TextRange'
+import TextRange, { remapTextRange } from './TextRange'
 import { locale } from '../locales/Locales'
+import IndexMapping from './IndexMapping'
 
 export const enum ActionCode {
     NbtTypeToByte,
@@ -23,24 +24,24 @@ export default class ParsingError {
         /**
          * Range of the error.
          */
-        public readonly range: TextRange,
+        public range: TextRange,
         /**
          * Human-readable error message.
          */
-        public readonly message: string,
+        public message: string,
         /**
          * Whether the error doesn't affect the process of parsing.
          * Default to `true`
          */
-        public readonly tolerable: boolean = true,
+        public tolerable: boolean = true,
         /**
          * The severity of the error.
          */
-        public readonly severity: DiagnosticSeverity = DiagnosticSeverity.Error,
+        public severity: DiagnosticSeverity = DiagnosticSeverity.Error,
         /**
          * The code of the error.
          */
-        public readonly code?: ActionCode
+        public code?: ActionCode
     ) { }
 
     /**
@@ -54,5 +55,23 @@ export default class ParsingError {
             message: this.message + locale('punc.period'),
             ...this.code ? { code: this.code } : {}
         }
+    }
+}
+
+/**
+ * Downgrade specific errors to tolerable ones.
+ * @param errors Input errors.
+ */
+export function downgradeError(errors: ParsingError[]) {
+    return errors.map(v => new ParsingError(v.range, v.message, true, v.severity, v.code))
+}
+
+/**
+ * Remap specific errors according to the mapping.
+ * @param errors Input errors.
+ */
+export function remapParsingErrors(errors: ParsingError[], mapping: IndexMapping) {
+    for (const err of errors) {
+        err.range = remapTextRange(err.range, mapping)
     }
 }

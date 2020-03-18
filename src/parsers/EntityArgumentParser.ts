@@ -2,7 +2,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import ArgumentParser from './ArgumentParser'
 import Entity, { SelectorArgumentKeys, SelectorSortMethod } from '../types/Entity'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 import MapParser from './MapParser'
 import NumberRange from '../types/NumberRange'
 import ParsingContext from '../types/ParsingContext'
@@ -183,7 +183,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                 } else {
                     pushSafely(key, result)
                     if (key === 'type') {
-                        const id = (result.data as Identity).toString()
+                        const id = (result.data as IdentityNode).toString()
                         if (id === 'minecraft:player') {
                             containsNonPlayer = false
                         } else {
@@ -235,13 +235,13 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                             'compound', 'entities', 'base', ctx.nbt, true
                         ]), key)
                     } else if (key === 'predicate') {
-                        dealWithNegativableArray(ctx.parsers.get('NamespacedID', ['$predicates']), key)
+                        dealWithNegativableArray(ctx.parsers.get('Identity', ['$predicates']), key)
                     } else if (key === 'tag') {
                         dealWithNegativableArray(ctx.parsers.get('Tag'), key)
                     } else if (key === 'team') {
                         dealWithNegativableArray(ctx.parsers.get('Team'), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(ctx.parsers.get('NamespacedID', ['minecraft:entity_type', true]), key)
+                        dealWithNegativableArray(ctx.parsers.get('Identity', ['minecraft:entity_type', true]), key)
                     } else if (key === 'distance') {
                         const result = ctx.parsers.get('NumberRange', ['float']).parse(reader, ctx)
                         ans.data.argument[key] = result.data
@@ -255,11 +255,11 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                         ans.data.argument[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
-                        new MapParser<Identity, Entity>(
+                        new MapParser<IdentityNode, Entity>(
                             '{', '=', ',', '}',
                             (_ans, reader, ctx) => {
                                 return ctx.parsers
-                                    .get('NamespacedID', ['$advancements'])
+                                    .get('Identity', ['$advancements'])
                                     .parse(reader, ctx)
                             },
                             (ans, reader, ctx, adv) => {

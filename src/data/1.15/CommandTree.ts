@@ -5,12 +5,12 @@ import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescrip
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
 import Entity from '../../types/Entity'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import ItemSlotArgumentParser from '../../parsers/ItemSlotArgumentParser'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
-import NamespacedIDArgumentParser from '../../parsers/NamespacedIDArgumentParser'
+import IdentityArgumentParser from '../../parsers/IdentityArgumentParser'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import NbtArgumentParser from '../../parsers/NbtArgumentParser'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
@@ -64,7 +64,7 @@ const CommandTree: CommandTreeType = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new NamespacedIDArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancements'),
                                             executable: true,
                                             children: {
                                                 criterion: {
@@ -79,7 +79,7 @@ const CommandTree: CommandTreeType = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new NamespacedIDArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancements'),
                                             executable: true
                                         }
                                     }
@@ -153,7 +153,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbars'),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
@@ -167,7 +167,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('get'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbars'),
                             children: {
                                 max_players_value_visible: {
                                     parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
@@ -185,7 +185,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbars'),
                             executable: true
                         }
                     }
@@ -194,7 +194,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbars'),
                             children: {
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
@@ -594,7 +594,7 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 effect: {
-                                    parser: new NamespacedIDArgumentParser('minecraft:mob_effect'),
+                                    parser: new IdentityArgumentParser('minecraft:mob_effect'),
                                     executable: true
                                 }
                             }
@@ -608,7 +608,7 @@ const CommandTree: CommandTreeType = {
                             parser: new EntityArgumentParser('multiple', 'entities'),
                             children: {
                                 effect: {
-                                    parser: new NamespacedIDArgumentParser('minecraft:mob_effect'),
+                                    parser: new IdentityArgumentParser('minecraft:mob_effect'),
                                     executable: true,
                                     children: {
                                         seconds: {
@@ -642,7 +642,7 @@ const CommandTree: CommandTreeType = {
                     parser: new EntityArgumentParser('multiple', 'players'),
                     children: {
                         enchantment: {
-                            parser: new NamespacedIDArgumentParser('minecraft:enchantment'),
+                            parser: new IdentityArgumentParser('minecraft:enchantment'),
                             executable: true,
                             children: {
                                 level: {
@@ -790,7 +790,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('function'),
             children: {
                 id: {
-                    parser: new NamespacedIDArgumentParser('$functions', true),
+                    parser: new IdentityArgumentParser('$functions', true),
                     executable: true
                 }
             }
@@ -1030,7 +1030,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('playsound'),
             children: {
                 sound: {
-                    parser: new NamespacedIDArgumentParser('minecraft:sound_event'),
+                    parser: new IdentityArgumentParser('minecraft:sound_event'),
                     children: {
                         source: {
                             parser: new LiteralArgumentParser('master', 'music', 'record', 'weather', 'block', 'hostile', 'neutral', 'player', 'ambient', 'voice'),
@@ -1095,7 +1095,7 @@ const CommandTree: CommandTreeType = {
                                     executable: true
                                 },
                                 name: {
-                                    parser: new NamespacedIDArgumentParser('$recipes'),
+                                    parser: new IdentityArgumentParser('$recipes'),
                                     executable: true
                                 }
                             }
@@ -1165,7 +1165,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('function'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$functions', true),
                             children: {
                                 time: {
                                     parser: new TimeArgumentParser(),
@@ -1185,7 +1185,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('clear'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$functions', true),
                             executable: true
                         }
                     }
@@ -1479,7 +1479,7 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 sound: {
-                                    parser: new NamespacedIDArgumentParser('minecraft:sound_event'),
+                                    parser: new IdentityArgumentParser('minecraft:sound_event'),
                                     executable: true
                                 }
                             }
@@ -1497,7 +1497,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('summon'),
             children: {
                 name: {
-                    parser: new NamespacedIDArgumentParser('minecraft:entity_type'),
+                    parser: new IdentityArgumentParser('minecraft:entity_type'),
                     executable: true,
                     children: {
                         pos: {
@@ -1505,7 +1505,7 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(args, 2, new Identity()).toString()),
+                                    parser: ({ args }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(args, 2, new IdentityNode()).toString()),
                                     executable: true
                                 }
                             }
@@ -2116,7 +2116,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('storage'),
             children: {
                 id: {
-                    parser: new NamespacedIDArgumentParser('$storages')
+                    parser: new IdentityArgumentParser('$storages')
                 }
             }
         }
@@ -2152,7 +2152,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('fish'),
             children: {
                 id: {
-                    parser: new NamespacedIDArgumentParser('$lootTables'),
+                    parser: new IdentityArgumentParser('$lootTables'),
                     children: {
                         location: {
                             parser: new VectorArgumentParser(3),
@@ -2174,7 +2174,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('loot'),
             children: {
                 lootTable: {
-                    parser: new NamespacedIDArgumentParser('$lootTables')
+                    parser: new IdentityArgumentParser('$lootTables')
                 }
             }
         },
@@ -2292,7 +2292,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('in'),
             children: {
                 dimension: {
-                    parser: new NamespacedIDArgumentParser('minecraft:dimension_type'),
+                    parser: new IdentityArgumentParser('minecraft:dimension_type'),
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'
@@ -2363,7 +2363,7 @@ const CommandTree: CommandTreeType = {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {
                                 id: {
-                                    parser: new NamespacedIDArgumentParser('$bossbars'),
+                                    parser: new IdentityArgumentParser('$bossbars'),
                                     children: {
                                         max_value: {
                                             parser: new LiteralArgumentParser('max', 'value'),
@@ -2525,7 +2525,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('predicate'),
                     children: {
                         id: {
-                            parser: new NamespacedIDArgumentParser('$predicates'),
+                            parser: new IdentityArgumentParser('$predicates'),
                             executable: true,
                             children: {
                                 subcommand: {

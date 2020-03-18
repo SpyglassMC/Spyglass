@@ -174,7 +174,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                             type: 'string',
                             suggestions: [
                                 {
-                                    parser: 'NamespacedID',
+                                    parser: 'Identity',
                                     params: [
                                         '$storages'
                                     ]
@@ -228,8 +228,6 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
             }
         }
     }
-
-    constructor() { super() }
 
     /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponent> {

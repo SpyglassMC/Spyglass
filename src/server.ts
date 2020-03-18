@@ -5,7 +5,7 @@ import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed } from 'vscode-languageserver'
 import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
-import Identity from './types/Identity'
+import IdentityNode from './types/nodes/IdentityNode'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
 import { getUri, getRel, getSemanticTokensLegend, getRootUri, getUriFromId, getInfo } from './utils/handlers/common'
@@ -185,7 +185,7 @@ connection.onInitialized(() => {
 
         const rel = getRel(uri, roots)
         if (rel) {
-            const result = Identity.fromRel(rel)
+            const result = IdentityNode.fromRel(rel)
             if (result) {
                 cacheFileOperations.fileModified(uri, 'functions', result.id)
                 trimCache(cacheFile.cache)
@@ -224,12 +224,12 @@ connection.onInitialized(() => {
                                     root.fsPath,
                                     uri.fsPath,
                                     async (abs, rel, stat) => {
-                                        const result = Identity.fromRel(rel)
+                                        const result = IdentityNode.fromRel(rel)
                                         if (result) {
                                             const { category, id, ext } = result
                                             const uri = getUri(Uri.file(abs).toString(), uris)
                                             const uriString = uri.toString()
-                                            if (Identity.isExtValid(ext, category)) {
+                                            if (IdentityNode.isExtValid(ext, category)) {
                                                 await cacheFileOperations.fileAdded(uri, category, id)
                                                 cacheFile.files[uriString] = stat.mtimeMs
                                             }
@@ -239,10 +239,10 @@ connection.onInitialized(() => {
                             }
                         }
                     } else {
-                        const result = Identity.fromRel(getRel(uri, roots) as string)
+                        const result = IdentityNode.fromRel(getRel(uri, roots) as string)
                         if (result) {
                             const { category, id, ext } = result
-                            if (Identity.isExtValid(ext, category)) {
+                            if (IdentityNode.isExtValid(ext, category)) {
                                 await cacheFileOperations.fileAdded(uri, category, id)
                                 cacheFile.files[uriString] = stat.mtimeMs
                             }
@@ -259,10 +259,10 @@ connection.onInitialized(() => {
                     // console.log(`Changed : ‘${uriString}’`)
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
-                        const result = Identity.fromRel(getRel(uri, roots)!)
+                        const result = IdentityNode.fromRel(getRel(uri, roots)!)
                         if (result && (result.category === 'tags/functions' || result.category === 'advancements')) {
                             const { category, ext, id } = result
-                            if (Identity.isExtValid(ext, category)) {
+                            if (IdentityNode.isExtValid(ext, category)) {
                                 await cacheFileOperations.fileModified(uri, category, id)
                                 cacheFile.files[uriString] = stat.mtimeMs
                             }
@@ -277,11 +277,11 @@ connection.onInitialized(() => {
                         if (cacheFile.files.hasOwnProperty(fileUriString)) {
                             if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
                                 const fileUri = getUri(fileUriString, uris)
-                                const result = Identity.fromRel(getRel(fileUri, roots)!)
+                                const result = IdentityNode.fromRel(getRel(fileUri, roots)!)
                                 // connection.console.info(`result = ${JSON.stringify(result)}`)
                                 if (result) {
                                     const { category, id, ext } = result
-                                    if (Identity.isExtValid(ext, category)) {
+                                    if (IdentityNode.isExtValid(ext, category)) {
                                         await cacheFileOperations.fileDeleted(fileUri, category, id)
                                         delete cacheFile.files[fileUriString]
                                     }
@@ -576,7 +576,7 @@ const cacheFileOperations = {
             obj instanceof Array &&
             obj.map((v: any) => typeof v === 'string').indexOf(false) === -1
     },
-    updateTagInfo: async (id: Identity, pathExists = fs.pathExists, readJson = fs.readJson) => {
+    updateTagInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
         const idString = id.toString()
         delete cacheFile.tags.functions[idString]
 
@@ -596,7 +596,7 @@ const cacheFileOperations = {
                     const validValues: string[] = []
                     for (const value of content.values) {
                         try {
-                            const id = Identity.fromString(value)
+                            const id = IdentityNode.fromString(value)
                             if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, id.isTag ? 'tags/functions' : 'functions')) {
                                 validValues.push(id.toTagString())
                             }
@@ -621,7 +621,7 @@ const cacheFileOperations = {
 
     //#region advancements
     // ADDED/MODIFIED/DELETED: update the corresponding AdvancementInfo.
-    updateAdvancementInfo: async (id: Identity, pathExists = fs.pathExists, readJson = fs.readJson) => {
+    updateAdvancementInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
         const idString = id.toString()
         delete cacheFile.advancements[idString]
 
@@ -640,7 +640,7 @@ const cacheFileOperations = {
                     }
                     if (content.rewards && typeof content.rewards.function === 'string') {
                         try {
-                            const id = Identity.fromString(content.rewards.function)
+                            const id = IdentityNode.fromString(content.rewards.function)
                             if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, 'functions')) {
                                 ans.rewards = {
                                     function: content.rewards.function
@@ -674,7 +674,7 @@ const cacheFileOperations = {
     //#endregion
 
     // Hooks.
-    fileAdded: async (uri: Uri, type: CacheKey, id: Identity) => {
+    fileAdded: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`Added ${type} ${id}`)
         cacheFileOperations.addDefault(id.toString(), type)
         if (type === 'functions') {
@@ -686,7 +686,7 @@ const cacheFileOperations = {
             await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
-    fileModified: async (uri: Uri, type: CacheKey, id: Identity) => {
+    fileModified: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         if (!uri.toString().startsWith('untitled:') && type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
@@ -697,7 +697,7 @@ const cacheFileOperations = {
             await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
-    fileDeleted: async (uri: Uri, type: CacheKey, id: Identity) => {
+    fileDeleted: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
@@ -739,7 +739,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                 delete cacheFile.files[uriString]
                 continue
             }
-            const result = Identity.fromRel(rel)
+            const result = IdentityNode.fromRel(rel)
             if (result) {
                 const { id, category: key } = result
                 if (!(await fs.pathExists(uri.fsPath))) {
@@ -759,7 +759,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     }
 
     const promises: Promise<void>[] = []
-    const addedFiles: [Uri, CacheKey, Identity][] = []
+    const addedFiles: [Uri, CacheKey, IdentityNode][] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
         const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
@@ -787,10 +787,10 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                             root.fsPath,
                             datapackCategoryPath,
                             (abs, rel, stat) => {
-                                const result = Identity.fromRel(rel)
+                                const result = IdentityNode.fromRel(rel)
                                 const uri = getUri(Uri.file(abs).toString(), uris)
                                 const uriString = uri.toString()
-                                if (result && Identity.isExtValid(result.ext, result.category)) {
+                                if (result && IdentityNode.isExtValid(result.ext, result.category)) {
                                     const { id, category: key } = result
                                     if (cacheFile.files[uriString] === undefined) {
                                         cacheFileOperations.fileAdded(uri, key, id)

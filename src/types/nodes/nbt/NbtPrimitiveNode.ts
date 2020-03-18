@@ -4,12 +4,11 @@ import TextRange from '../../TextRange'
 
 export default abstract class NbtPrimitiveNode<T> extends NbtNode {
     constructor(
-        range: TextRange,
         superNbt: NbtCompoundNode | null,
         public value: T,
         public raw: string
     ) {
-        super(range, superNbt)
+        super(superNbt)
     }
 
     toString() {

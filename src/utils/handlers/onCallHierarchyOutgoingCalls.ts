@@ -1,5 +1,5 @@
 import { CacheFile, getSafeCategory, CacheCategory, CacheKey } from '../../types/ClientCache'
-import Identity from '../../types/Identity'
+import IdentityNode from '../../types/nodes/IdentityNode'
 import { Uri, UrisOfStrings, GetUriFromIdFunction, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 import { Proposed } from 'vscode-languageserver'
 import { getId, getUri, getUriFromId } from './common'
@@ -30,7 +30,7 @@ export default async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id
                 return null
             }
             const rewardIdString = advInfo.rewards.function
-            const rewardId = Identity.fromString(rewardIdString)
+            const rewardId = IdentityNode.fromString(rewardIdString)
             const rewardUri = await getUriFromId(pathExists, roots, uris, urisOfIds, rewardId, 'functions')
             /* istanbul ignore else */
             if (rewardUri) {
@@ -54,13 +54,13 @@ export default async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id
                             const refId = getId(getUri(ref.uri!, uris), roots)
                             /* istanbul ignore else */
                             if (id === refId) {
-                                const outgoingId = Identity.fromString(outgoingIdString)
+                                const outgoingId = IdentityNode.fromString(outgoingIdString)
                                 const outgoingUri = await getUriFromId(pathExists, roots, uris, urisOfIds, outgoingId, type)
                                 /* istanbul ignore else */
                                 if (outgoingUri) {
                                     ans.push({
                                         to: getCallHierarchyItem(
-                                            (type === 'tags/functions' ? Identity.TagSymbol : '') + outgoingId.toString(),
+                                            (type === 'tags/functions' ? IdentityNode.TagSymbol : '') + outgoingId.toString(),
                                             outgoingUri.toString(), 0, 0, 0,
                                             type === 'tags/functions' ? IdentityKind.FunctionTag : IdentityKind.Function
                                         ),
@@ -84,7 +84,7 @@ export default async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id
                 return null
             }
             for (const valueIdString of tagInfo.values) {
-                const valueId = Identity.fromString(valueIdString)
+                const valueId = IdentityNode.fromString(valueIdString)
                 const valueUri = await getUriFromId(pathExists, roots, uris, urisOfIds, valueId, valueId.isTag ? 'tags/functions' : 'functions')
                 /* istanbul ignore else */
                 if (valueUri) {
