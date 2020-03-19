@@ -310,12 +310,17 @@ connection.onInitialized(() => {
     })
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-        if (!info) {
+        try {
+            const uri = getUri(uriString, uris)
+            const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+            if (!info) {
+                return null
+            }
+            return onCompletion({ cacheFile, lineNumber, char, info, reportOptions })
+        } catch (e) {
+            connection.console.error(e)
             return null
         }
-        return onCompletion({ cacheFile, lineNumber, char, info, reportOptions })
     })
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
