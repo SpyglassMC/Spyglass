@@ -7,8 +7,6 @@ import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
-import { getNbtStringTag, getNbtByteTag, getNbtShortTag, getNbtIntTag, getNbtLongTag, getNbtFloatTag, getNbtDoubleTag, getNbtCompoundTag, getNbtListTag, getNbtByteArrayTag, getNbtLongArrayTag, getNbtIntArrayTag } from '../../types/NbtTag'
-import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
 
 describe('NbtTagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -305,7 +303,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return errors for missing keys in a compound tag', async () => {
             const config = constructConfig({
                 lint: {
-                    nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
+                    nameOfNbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
             const ctx = await constructContext({ parsers, config })
@@ -335,7 +333,7 @@ describe('NbtTagArgumentParser Tests', () => {
         it('Should return warnings for invalid keys in a compound tag', async () => {
             const config = constructConfig({
                 lint: {
-                    nameOfSnbtCompoundTagKeys: ['PascalCase', 'camelCase']
+                    nameOfNbtCompoundTagKeys: ['PascalCase', 'camelCase']
                 }
             })
             const ctx = await constructContext({ parsers, config })

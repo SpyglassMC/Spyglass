@@ -4,11 +4,11 @@ import ArgumentParser from './ArgumentParser'
 import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
 import Parser from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { downgradeParsingError } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
-import { toFormattedString, downgradeError } from '../utils/utils'
+import { toFormattedString } from '../utils/utils'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -184,7 +184,7 @@ export default class LineParser implements Parser<Line> {
                             reader.skip()
                             this.parseChildren(reader, ctx, node.children, parsedLine, optional, false)
                             // Downgrade errors.
-                            parsedLine.errors = downgradeError(parsedLine.errors)
+                            parsedLine.errors = downgradeParsingError(parsedLine.errors)
                         } else {
                             parsedLine.errors.push(
                                 new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('space-seperating-arguments'))

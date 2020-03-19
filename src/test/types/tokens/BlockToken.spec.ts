@@ -3,9 +3,6 @@ import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
-import BlockNode from '../../../types/nodes/BlockNode'
-import Vector from '../../../types/Vector'
-import { getNbtCompoundTag, getNbtStringTag } from '../../../types/NbtTag'
 
 describe('Block Tests', () => {
     describe('[ToLintedString]() Tests', () => {

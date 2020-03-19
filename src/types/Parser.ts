@@ -1,9 +1,8 @@
 import { ClientCache, combineCache } from './ClientCache'
 import { CompletionItem } from 'vscode-languageserver'
-import ParsingError from './ParsingError'
+import ParsingError, { downgradeParsingError } from './ParsingError'
 import StringReader from '../utils/StringReader'
 import Token from './Token'
-import { downgradeError } from '../utils/utils'
 
 /**
  * Represent an argument parser.
@@ -60,5 +59,5 @@ export function combineArgumentParserResult(base: ArgumentParserResult<any>, ove
     // Completions.
     base.completions = [...base.completions, ...override.completions]
     // Errors.
-    base.errors = [...base.errors, ...downgradeError(override.errors)]
+    base.errors = [...base.errors, ...downgradeParsingError(override.errors)]
 }

@@ -2,7 +2,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import ArgumentParser from './ArgumentParser'
 import BlockNode from '../types/nodes/BlockNode'
 import IdentityNode from '../types/nodes/IdentityNode'
-import Item from '../types/Item'
+import ItemNode from '../types/nodes/ItemNode'
 import ParsingContext from '../types/ParsingContext'
 import Particle from '../types/Particle'
 import StringReader from '../utils/StringReader'
@@ -79,7 +79,7 @@ export default class ParticleArgumentParser extends ArgumentParser<Particle<any>
                         .expect(' ')
                         .skip()
                     const itemResult = ctx.parsers.get('Item').parse(reader, ctx)
-                    const item = itemResult.data as Item
+                    const item = itemResult.data as ItemNode
                     combineArgumentParserResult(ans, itemResult)
                     ans.data.param = item
                     break

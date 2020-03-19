@@ -2,14 +2,13 @@ import https from 'https'
 import StringReader from './StringReader'
 import { CompletionItem } from 'vscode-languageserver'
 import { ToFormattedString } from '../types/Formattable'
-import Config, { LintConfig } from '../types/Config'
+import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import ParsingError, { ActionCode } from '../types/ParsingError'
 import { EOL } from 'os'
-import TextRange, { remapTextRange } from '../types/TextRange'
-import IndexMapping from '../types/IndexMapping'
+import TextRange from '../types/TextRange'
 
 /**
  * Convert an array to human-readable message.

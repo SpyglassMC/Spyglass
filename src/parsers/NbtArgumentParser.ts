@@ -4,11 +4,10 @@ import NbtdocHelper, { ListDoc as NbtListDoc, CompoundDoc as NbtCompoundDoc } fr
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { arrayToMessage, quoteString, escapeString } from '../utils/utils'
+import { arrayToMessage } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
-import { CompletionItemKind, DiagnosticSeverity, CompletionItem } from 'vscode-languageserver'
-import { ToFormattedString } from '../types/Formattable'
+import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import NbtNode, { NbtNodeTypeName, NbtNodeType } from '../types/nodes/nbt/NbtNode'
@@ -26,10 +25,13 @@ import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
 import NbtListNode, { ChildNbtNodeType } from '../types/nodes/nbt/NbtListNode'
 import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
 import NbtByteArrayNode from '../types/nodes/nbt/NbtByteArrayNode'
-import { start } from 'repl'
 import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
 import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
 import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
+import { Keys } from '../types/nodes/map/MapNode'
+import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import { getDiagnosticSeverity } from '../types/StylisticConfig'
 
 export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     static identity = 'Nbt'
@@ -131,7 +133,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
-        private readonly id: string | undefined = undefined,
+        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null = null,
         private readonly isPredicate = false,
         private readonly isJson = false,
         private readonly superNode: NbtCompoundNode | null = null
@@ -151,7 +153,12 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtNode> {
         let helper: NbtdocHelper | undefined
         let description: string | undefined
-        if (this.id) {
+        if (typeof this.id === 'number') {
+            helper = new NbtdocHelper(ctx.nbt)
+            helper.goCompound(this.id)
+            const doc = helper.readCompound()
+            description = doc ? doc.description : undefined
+        } else if (this.id) {
             helper = new NbtdocHelper(ctx.nbt)
             helper.goRegistryCompound(this.category, this.id)
             const doc = helper.readCompound()
@@ -163,6 +170,9 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             description
         )
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
+            console.log(this.expectedTypes)
+            console.log(ans.data)
+            console.log(ans.data[NbtNodeType])
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',
@@ -200,17 +210,17 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     } else if (NbtdocHelper.isLongArrayDoc(doc)) {
                         ans = this.parsePrimitiveArray(reader, ctx, superNode, helper)
                     } else {
-                        ans = this.parsePrimitiveTag(reader, ctx, superNode, helper)
+                        ans = this.parsePrimitiveTag(reader, superNode, helper)
                     }
                     if (helper && ctx.cursor === reader.cursor) {
                         helper.completeField(ans, ctx, ans.data, doc, this.isPredicate, description || '')
                     }
                 } else {
-                    ans = this.parsePrimitiveTag(reader, ctx, superNode, helper)
+                    ans = this.parsePrimitiveTag(reader, superNode, helper)
                 }
                 break
             default:
-                ans = this.parsePrimitiveTag(reader, ctx, superNode, helper)
+                ans = this.parsePrimitiveTag(reader, superNode, helper)
                 break
         }
         return ans
@@ -229,12 +239,14 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 const start = reader.cursor
                 //#region Completions.
-                if (helper && doc && ctx.cursor === reader.cursor) {
+                if (helper && doc && ctx.cursor === start) {
                     helper.completeCompoundFieldKeys(ans, ctx, ans.data, doc, this.isPredicate)
                 }
                 //#endregion
                 try {
-                    const key = reader.readString()
+                    const out = { mapping: [] }
+                    const key = reader.readString(out)
+                    const end = reader.cursor
                     result.data = key
                     //#region Tokens
                     result.tokens.push(Token.from(start, reader, TokenType.property))
@@ -251,28 +263,33 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         // Check whether the current key follows the naming convention.
                         if (ctx.config.lint.nameOfNbtCompoundTagKeys &&
                             !checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
+                            const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
                             result.errors.push(new ParsingError(
-                                { start, end: start + key.length },
+                                { start, end },
                                 locale(
                                     'key-not-following-convention',
                                     locale('punc.quote', key),
-                                    arrayToMessage(ctx.config.lint.nameOfNbtCompoundTagKeys[0])
+                                    arrayToMessage(value)
                                 ),
                                 true,
-                                DiagnosticSeverity.Warning
+                                getDiagnosticSeverity(severity)
                             ))
                         }
                         // Check duplicate key.
                         if (ans.data[key] !== undefined) {
                             result.errors.push(
                                 new ParsingError(
-                                    { start, end: start + key.length },
+                                    { start, end },
                                     locale('duplicate-key', locale('punc.quote', key)),
                                     true,
                                     DiagnosticSeverity.Warning
                                 )
                             )
                         }
+                        ans.data[Keys][key] = new NbtCompoundKeyNode(
+                            superNode, key, reader.string.slice(start, end), out.mapping
+                        )
+                        ans.data[Keys][key][NodeRange] = { start, end }
                     }
                 } catch (p) {
                     /* istanbul ignore next */
@@ -280,7 +297,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 return result
             },
-            (ans, reader, ctx, key, _keyRange) => {
+            (ans, reader, ctx, key, keyRange) => {
                 // Check whether the schema for the key is available.
                 let isSchemaForKeyAvailable = false
                 let fieldDoc: nbtdoc.Field | null = null
@@ -290,6 +307,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         isSchemaForKeyAvailable = true
                     }
                 }
+                const start = reader.cursor
                 const result = this.parseTag(
                     reader,
                     ctx,
@@ -300,6 +318,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 )
                 if (key) {
                     ans.data[key] = result.data
+                    ans.data[key][NodeRange] = { start, end: reader.cursor }
                 }
                 combineArgumentParserResult(ans, result)
             }
@@ -379,7 +398,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .skipWhiteSpace()
             while (reader.canRead() && reader.peek() !== ']') {
                 const start = reader.cursor
-                const result = this.parsePrimitiveTag(reader, ctx, superNode, helper)
+                const result = this.parsePrimitiveTag(reader, superNode, helper)
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
                 if (reader.peek() === ',') {
@@ -492,7 +511,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
     }
 
-    private parsePrimitiveTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, _helper?: NbtdocHelper): ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> {
+    private parsePrimitiveTag(reader: StringReader, superNode: NbtCompoundNode | null, _helper?: NbtdocHelper): ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> {
         const ans: ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> = {
             data: new NbtStringNode(superNode, '', '', []),
             tokens: [],

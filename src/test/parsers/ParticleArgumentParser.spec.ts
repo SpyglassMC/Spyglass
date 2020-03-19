@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import BlockNode from '../../types/nodes/BlockNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import Item from '../../types/Item'
+import ItemNode from '../../types/nodes/ItemNode'
 import Particle from '../../types/Particle'
 import ParticleArgumentParser from '../../parsers/ParticleArgumentParser'
 import ParsingError from '../../types/ParsingError'
@@ -108,7 +108,7 @@ describe('ParticleArgumentParser Tests', () => {
             assert.deepEqual(actual.errors, [])
             assert.deepEqual(actual.data, new Particle(
                 new IdentityNode('minecraft', ['item']),
-                new Item(
+                new ItemNode(
                     new IdentityNode('minecraft', ['diamond'])
                 )
             ))

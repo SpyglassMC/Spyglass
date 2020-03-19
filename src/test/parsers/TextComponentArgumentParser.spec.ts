@@ -1,13 +1,9 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import TextComponentArgumentParser from '../../parsers/TextComponentArgumentParser'
-import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { constructConfig, VanillaConfig } from '../../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
 import TextComponent from '../../types/TextComponent'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('TextComponentArgumentParser Tests', () => {

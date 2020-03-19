@@ -62,7 +62,7 @@ export default class ParsingError {
  * Downgrade specific errors to tolerable ones.
  * @param errors Input errors.
  */
-export function downgradeError(errors: ParsingError[]) {
+export function downgradeParsingError(errors: ParsingError[]) {
     return errors.map(v => new ParsingError(v.range, v.message, true, v.severity, v.code))
 }
 

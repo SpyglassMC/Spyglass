@@ -3,6 +3,7 @@ import { NodeType, NodeDescription } from '../ArgumentNode'
 import { NbtNodeType } from '../nbt/NbtNode'
 import NbtStringNode from '../nbt/NbtStringNode'
 import NbtCompoundNode from './NbtCompoundNode'
+import IndexMapping from '../../IndexMapping'
 
 export default class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -11,9 +12,9 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
     [NodeDescription]: string
 
     constructor(
-        superNbt: NbtCompoundNode, value: string, raw: string
+        superNbt: NbtCompoundNode | null, value: string, raw: string, mapping: IndexMapping
     ) {
-        super(superNbt, value, raw)
+        super(superNbt, value, raw, mapping)
     }
 
     [ToFormattedString]() {

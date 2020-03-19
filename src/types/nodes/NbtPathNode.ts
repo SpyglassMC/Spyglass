@@ -1,16 +1,19 @@
-import Formattable, { ToFormattedString } from './Formattable'
-import { LintConfig } from './Config'
-import { toFormattedString, quoteString } from '../utils/utils'
-import { NbtCompoundTag, isNbtCompoundTag } from './NbtTag'
+import Formattable, { ToFormattedString } from '../Formattable'
+import { LintConfig } from '../Config'
+import { toFormattedString, quoteString } from '../../utils/utils'
+import NbtCompoundNode from './map/NbtCompoundNode'
+import ArgumentNode, { NodeType } from './ArgumentNode'
 
-export const NbtPathIndexBegin = Symbol('[')
-export const NbtPathIndexEnd = Symbol(']')
-export const NbtPathSep = Symbol('.')
+export const NbtPathIndexBegin = Symbol('NbtPathIndexBegin')
+export const NbtPathIndexEnd = Symbol('NbtPathIndexEnd')
+export const NbtPathSep = Symbol('NbtPathSep')
 type NbtPathIndex = number
-type NbtPathCompoundFilter = NbtCompoundTag
+type NbtPathCompoundFilter = NbtCompoundNode
 type NbtPathKey = string
 
-export default class NbtPath implements Formattable {
+export default class NbtPathNode extends ArgumentNode {
+    readonly [NodeType] = 'NbtPath'
+
     constructor(
         readonly value: (
             | typeof NbtPathIndexBegin
@@ -20,7 +23,9 @@ export default class NbtPath implements Formattable {
             | NbtPathCompoundFilter
             | NbtPathKey
         )[]
-    ) { }
+    ) {
+        super()
+    }
 
     [ToFormattedString](lint: LintConfig): string {
         let ans = ''
@@ -46,7 +51,7 @@ export function isNbtPathIndex(value: any): value is NbtPathIndex {
 }
 
 export function isNbtPathCompoundFilter(value: any): value is NbtPathCompoundFilter {
-    return isNbtCompoundTag(value)
+    return value instanceof NbtCompoundNode
 }
 
 export function isNbtPathKey(value: any): value is NbtPathKey {

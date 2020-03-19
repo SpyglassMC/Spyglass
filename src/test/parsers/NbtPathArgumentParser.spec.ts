@@ -1,14 +1,12 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NbtPath, { NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep } from '../../types/NbtPath'
+import NbtPathNode, { NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep } from '../../types/nodes/NbtPathNode'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { describe, it } from 'mocha'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { getNbtByteTag, getNbtCompoundTag } from '../../types/NbtTag'
-import { NbtSchemaNode, ValueList } from '../../types/NbtSchema'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -29,7 +27,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('foo')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(['foo']))
+            assert.deepEqual(data, new NbtPathNode(['foo']))
             assert.deepEqual(errors, [])
             assert.deepEqual(cache, {})
             assert.deepEqual(completions, [])
@@ -38,7 +36,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('{ foo : 1b }')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 [getNbtCompoundTag({ foo: getNbtByteTag(1) })]
             ))
             assert.deepEqual(errors, [])
@@ -49,7 +47,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('[ -1 ]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 [NbtPathIndexBegin, -1, NbtPathIndexEnd]
             ))
             assert.deepEqual(errors, [])
@@ -60,7 +58,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('[ { foo : 1b } ]')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 [NbtPathIndexBegin, getNbtCompoundTag({ foo: getNbtByteTag(1) }), NbtPathIndexEnd]
             ))
             assert.deepEqual(errors, [])
@@ -71,7 +69,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('foo{ foo : 1b }')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 ['foo', getNbtCompoundTag({ foo: getNbtByteTag(1) })]
             ))
             assert.deepEqual(errors, [])
@@ -82,7 +80,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('foo."crazy key"')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 ['foo', NbtPathSep, 'crazy key']
             ))
             assert.deepEqual(errors, [])
@@ -93,7 +91,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('{ foo : 1b }.foo')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 [getNbtCompoundTag({ foo: getNbtByteTag(1) }), NbtPathSep, 'foo']
             ))
             assert.deepEqual(errors, [])
@@ -104,7 +102,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('blocks')
             const reader = new StringReader('[].foo')
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
-            assert.deepEqual(data, new NbtPath(
+            assert.deepEqual(data, new NbtPathNode(
                 [NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep, 'foo']
             ))
             assert.deepEqual(errors, [])
@@ -150,7 +148,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner/list')
                 const reader = new StringReader('foo')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     ['foo']
                 ))
                 assert.deepEqual(errors, [
@@ -167,7 +165,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner/list')
                 const reader = new StringReader('{  }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     [getNbtCompoundTag({})]
                 ))
                 assert.deepEqual(errors, [
@@ -184,7 +182,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('[]')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     [NbtPathIndexBegin, NbtPathIndexEnd]
                 ))
                 assert.deepEqual(errors, [
@@ -201,7 +199,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     []
                 ))
                 assert.deepEqual(errors, [
@@ -218,7 +216,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     []
                 ))
                 assert.deepEqual(errors, [
@@ -238,7 +236,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('{ }.list[ 1 ].')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     [getNbtCompoundTag({}), NbtPathSep, 'list', NbtPathIndexBegin, 1, NbtPathIndexEnd, NbtPathSep]
                 ))
                 assert.deepEqual(errors, [
@@ -257,7 +255,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('foo')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     ['foo']
                 ))
                 assert.deepEqual(errors, [
@@ -274,7 +272,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner/list/[]')
                 const reader = new StringReader('non-existent')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     ['non-existent']
                 ))
                 assert.deepEqual(errors, [])
@@ -285,7 +283,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('blocks', 'minecraft:banner')
                 const reader = new StringReader('byteArray.[ { } ]')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepEqual(data, new NbtPath(
+                assert.deepEqual(data, new NbtPathNode(
                     ['byteArray', NbtPathSep, NbtPathIndexBegin, getNbtCompoundTag({}), NbtPathIndexEnd]
                 ))
                 assert.deepEqual(errors, [

@@ -7,7 +7,7 @@ import BlockDefinition from '../types/BlockDefinition'
 import { VanillaReportOptions } from '../types/ParsingContext'
 import Registry from '../types/Registry'
 import { requestText } from '../utils/utils'
-import NamespaceSummary from '../types/VanillaSummary'
+import NamespaceSummary from '../types/NamespaceSummary'
 
 const BlockDefinitions: {
     [version: string]: BlockDefinition | undefined
@@ -25,7 +25,7 @@ const Registries: {
     [version: string]: Registry | undefined
 } = {}
 
-type DataType = 'BlockDefinition' | 'VanillaSummary' | 'Nbtdoc' | 'Registry'
+type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
 
 let faildTimes = 0
 const MaxFaildTimes = 5
@@ -34,7 +34,7 @@ function getCache(type: DataType) {
     switch (type) {
         case 'BlockDefinition':
             return BlockDefinitions
-        case 'VanillaSummary':
+        case 'NamespaceSummary':
             return NamespaceSummaries
         case 'Nbtdoc':
             return Nbtdocs
@@ -66,7 +66,7 @@ function getReportUri(type: DataType, version: string, processedVersions: string
             } else {
                 return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/generated/reports/blocks.json`
             }
-        case 'VanillaSummary':
+        case 'NamespaceSummary':
             if (processedVersions.includes(version)) {
                 return `https://raw.githubusercontent.com/Arcensoth/mcdata/${version}/processed/data/minecraft/minecraft.min.json`
             } else {

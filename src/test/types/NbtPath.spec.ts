@@ -3,14 +3,13 @@ import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
 import Entity from '../../types/Entity'
-import NbtPath, {  isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/NbtPath'
-import { getNbtCompoundTag } from '../../types/NbtTag'
+import NbtPathNode, {  isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/nodes/NbtPathNode'
 
 describe('`NbtPath` Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({})
-            const message = new NbtPath(
+            const message = new NbtPathNode(
                 [getNbtCompoundTag({}), NbtPathSep, 'foo', NbtPathIndexBegin, 0, NbtPathIndexEnd, NbtPathSep, '"crazy" name']
             )
             const actual = message[ToFormattedString](lint)

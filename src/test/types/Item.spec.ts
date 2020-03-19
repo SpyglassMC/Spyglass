@@ -3,15 +3,13 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import Item from '../../types/Item'
-import Vector from '../../types/Vector'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
+import ItemNode from '../../types/nodes/ItemNode'
 
 describe('Item Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         it('Should return item ID only', () => {
             const { lint } = VanillaConfig
-            const item = new Item(
+            const item = new ItemNode(
                 new IdentityNode('minecraft', ['diamond_sword'])
             )
             const actual = item[ToFormattedString](lint)
@@ -19,7 +17,7 @@ describe('Item Tests', () => {
         })
         it('Should return item ID and nbt compound tag', () => {
             const { lint } =VanillaConfig
-            const item = new Item(
+            const item = new ItemNode(
                 new IdentityNode('minecraft', ['diamond_sword']),
                 getNbtCompoundTag({ foo: getNbtStringTag('test') })
             )

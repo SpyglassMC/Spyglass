@@ -1,30 +1,22 @@
-import ArgumentNode from './types/ArgumentNode'
 import Entity from './types/Entity'
-import NbtdocHelper from './utils/NbtdocHelper'
-import NbtSchema from './types/NbtSchema'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
+import ArgumentNode from './types/nodes/ArgumentNode'
+import { LineArgumentNode } from './types/Line'
 
-export function getSchemaAnchor(entity: Entity, schema: NbtSchema) {
+export function getNbtdocRegistryId(entity: Entity) {
     if (entity.argument && entity.argument.type) {
         const firstID = entity.argument.type[0]
-        if (!firstID.isTag) {
-            const anchor = firstID.toString()
-            try {
-                new NbtdocHelper(schema)
-                    .goFile('roots/entities.json')
-                    .goAnchor(anchor)
-                    .read()
-                return anchor
-            } catch (ignored) { }
+        if (firstID && !firstID.isTag) {
+            return firstID.toString()
         }
     }
-    return 'base'
+    return null
 }
 
 /**
  * @param lastIndex The index counted from the last, starting from `1`.
  */
-export function getArgOrDefault<T>(args: ArgumentNode<T>[], lastIndex: number, fallback: T): T {
+export function getArgOrDefault<T>(args: LineArgumentNode<T>[], lastIndex: number, fallback: T): T {
     return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
 }
 

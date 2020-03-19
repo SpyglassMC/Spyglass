@@ -1,14 +1,14 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { getChildren, fillSingleTemplate, getArgOrDefault, getSchemaAnchor } from '../CommandTree'
+import { getChildren, fillSingleTemplate, getArgOrDefault, getNbtdocRegistryId } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
-import { NbtSchemaNode, ValueList } from '../types/NbtSchema'
+import {  } from '../types/nbtdoc'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import BlockNode from '../types/nodes/BlockNode'
 import Entity from '../types/Entity'
 import IdentityNode from '../types/nodes/IdentityNode'
 import LineParser from '../parsers/LineParser'
-import NbtPath from '../types/NbtPath'
+import NbtPathNode from '../types/nodes/NbtPathNode'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
@@ -18,11 +18,11 @@ import ParsingContext, { constructContext } from '../types/ParsingContext'
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
         it('Should return the arg data', () => {
-            const actual = getArgOrDefault([{ data: 'foo', parser: 'literal' }], 1, 'bar')
+            const actual = getArgOrDefault<string>([{ data: 'foo', parser: 'literal' }], 1, 'bar')
             assert(actual === 'foo')
         })
         it('Should return the fallback value', () => {
-            const actual = getArgOrDefault([{ data: 'foo', parser: 'literal' }], 2, 'bar')
+            const actual = getArgOrDefault<string>([{ data: 'foo', parser: 'literal' }], 2, 'bar')
             assert(actual === 'bar')
         })
     })
@@ -174,48 +174,10 @@ describe('CommandTree Tests', () => {
         })
     })
     describe('getSchemaAnchor() Tests', () => {
-        const schema: { [key: string]: NbtSchemaNode | ValueList } = {
-            'entity/spgoding.json': {
-                type: 'compound',
-                children: {
-                    Base: {
-                        type: 'int'
-                    }
-                }
-            },
-            'roots/entities.json': {
-                type: 'root',
-                children: {
-                    base: {
-                        type: 'no-nbt'
-                    },
-                    'minecraft:spgoding': {
-                        ref: 'entity/spgoding.json'
-                    }
-                }
-            }
-        }
-        it('Should return base when type does not exist', () => {
-            const entity = new Entity('foo')
-            const actual = getSchemaAnchor(entity, schema)
-            assert(actual === 'base')
-        })
-        it('Should return base when the first type is a tag', () => {
-            const id = new IdentityNode('minecraft', ['spgoding'], true)
-            const entity = new Entity(undefined, 'e', { type: [id] })
-            const actual = getSchemaAnchor(entity, schema)
-            assert(actual === 'base')
-        })
-        it('Should return base when the first type cannot be interpreted as an anchor', () => {
-            const id = new IdentityNode('minecraft', ['qwertyuiop'])
-            const entity = new Entity(undefined, 'e', { type: [id] })
-            const actual = getSchemaAnchor(entity, schema)
-            assert(actual === 'base')
-        })
-        it('Should return the respective schema', () => {
+        it('Should return the respective id', () => {
             const id = new IdentityNode('minecraft', ['spgoding'])
             const entity = new Entity(undefined, 'e', { type: [id] })
-            const actual = getSchemaAnchor(entity, schema)
+            const actual = getNbtdocRegistryId(entity)
             assert(actual === 'minecraft:spgoding')
         })
     })
@@ -348,7 +310,7 @@ describe('CommandTree Tests', () => {
                 { data: 'get', parser: 'literal' },
                 { data: 'block', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new NbtPath(['CustomName']), parser: 'nbtPath' }
+                { data: new NbtPathNode(['CustomName']), parser: 'nbtPath' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['data', 'get', 'block', '<pos: vector3D>', '<path: nbtPath>'],
@@ -366,7 +328,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new BlockToken(new IdentityNode(undefined, ['grass_block'])), parser: 'block' }
+                { data: new BlockNode(new IdentityNode(undefined, ['grass_block'])), parser: 'block' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['setblock', '<pos: vector3D>'],

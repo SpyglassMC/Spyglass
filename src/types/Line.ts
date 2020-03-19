@@ -1,7 +1,6 @@
 import { ClientCache, combineCache } from './ClientCache'
 import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
-import ArgumentNode from './ArgumentNode'
 import { toFormattedString } from '../utils/utils'
 import { LintConfig } from './Config'
 import Token from './Token'
@@ -13,7 +12,7 @@ export default interface Line {
     /**
      * All parsed arguments of the line.
      */
-    args: ArgumentNode<any>[],
+    args: LineArgumentNode<any>[],
     /**
      * Hints.
      */
@@ -52,6 +51,11 @@ export interface SaturatedLine extends Line {
     cache: ClientCache,
     errors: ParsingError[],
     completions: CompletionItem[]
+}
+
+export interface LineArgumentNode<T> {
+    data: T,
+    parser: string
 }
 
 export function combineLine(base: Line, override: Line): Line {
@@ -125,5 +129,5 @@ export function saturatedLineToLine(line: SaturatedLine) {
 }
 
 export function lineToLintedString(line: Line, lint: LintConfig) {
-    return line.args.map(v => toFormattedString(v.data, lint)).join(' ')
+    return line.args.map(v => toFormattedString(v, lint)).join(' ')
 }

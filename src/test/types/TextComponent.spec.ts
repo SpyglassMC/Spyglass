@@ -3,7 +3,6 @@ import { describe, it } from 'mocha'
 import TextComponent from '../../types/TextComponent'
 import { constructConfig } from '../../types/Config'
 import { ToFormattedString } from '../../types/Formattable'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 
 describe('TextComponent Tests', () => {
     describe('[ToLintedString]() Tests', () => {

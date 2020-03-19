@@ -5,7 +5,7 @@ import { lineToLintedString } from '../../types/Line'
 export default function onDocumentFormatting({ info }: { info: FunctionInfo }) {
     const ans: TextEdit[] = []
 
-    if (!info.config.lint.enableFormatting) {
+    if (!info.config.features.formatting) {
         return null
     }
 

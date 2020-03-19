@@ -11,6 +11,7 @@ import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import NamespaceSummary from '../types/NamespaceSummary'
+import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 
 export default class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     static identity = 'Identity'
@@ -274,64 +275,67 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
 
     /* istanbul ignore next: tired of writing tests */
     private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string) {
-        const shouldStrictCheck = (config: StrictCheckConfig) => {
-            switch (config) {
+        const evalStrictCheckConfig = (config: DiagnosticConfig<StrictCheckConfig>): boolean => {
+            if (config === null) {
+                return false
+            }
+            const value = config[1]
+            switch (value) {
                 case 'always':
                     return true
                 case 'only-default-namespace':
                     return namespace === IdentityNode.DefaultNamespace
-                case 'never':
                 default:
                     return false
             }
         }
         switch (key) {
             case '$advancements':
-                return lint.strictAdvancementCheck
+                return lint.strictAdvancementCheck !== null
             case '$functions':
-                return lint.strictFunctionCheck
+                return lint.strictFunctionCheck !== null
             case '$lootTables':
-                return lint.strictLootTableCheck
+                return lint.strictLootTableCheck !== null
             case '$predicates':
-                return lint.strictPredicateCheck
+                return lint.strictPredicateCheck !== null
             case '$recipes':
-                return lint.strictRecipeCheck
+                return lint.strictRecipeCheck !== null
             case '$tags/blocks':
-                return lint.strictBlockTagCheck
+                return lint.strictBlockTagCheck !== null
             case '$tags/entityTypes':
-                return lint.strictEntityTypeTagCheck
+                return lint.strictEntityTypeTagCheck !== null
             case '$tags/fluids':
-                return lint.strictFluidTagCheck
+                return lint.strictFluidTagCheck !== null
             case '$tags/functions':
-                return lint.strictFunctionTagCheck
+                return lint.strictFunctionTagCheck !== null
             case '$tags/items':
-                return lint.strictItemTagCheck
+                return lint.strictItemTagCheck !== null
             case '$bossbars':
-                return lint.strictBossbarCheck
+                return lint.strictBossbarCheck !== null
             case '$storages':
-                return lint.strictStorageCheck
+                return lint.strictStorageCheck !== null
             case 'minecraft:mob_effect':
-                return shouldStrictCheck(lint.strictMobEffectCheck)
+                return evalStrictCheckConfig(lint.strictMobEffectCheck)
             case 'minecraft:enchantment':
-                return shouldStrictCheck(lint.strictEnchantmentCheck)
+                return evalStrictCheckConfig(lint.strictEnchantmentCheck)
             case 'minecraft:sound_event':
-                return shouldStrictCheck(lint.strictSoundEventCheck)
+                return evalStrictCheckConfig(lint.strictSoundEventCheck)
             case 'minecraft:entity_type':
-                return shouldStrictCheck(lint.strictEntityTypeCheck)
+                return evalStrictCheckConfig(lint.strictEntityTypeCheck)
             case 'minecraft:dimension_type':
-                return shouldStrictCheck(lint.strictDimensionTypeCheck)
+                return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
             case 'minecraft:block':
-                return shouldStrictCheck(lint.strictBlockCheck)
+                return evalStrictCheckConfig(lint.strictBlockCheck)
             case 'minecraft:item':
-                return shouldStrictCheck(lint.strictItemCheck)
+                return evalStrictCheckConfig(lint.strictItemCheck)
             case 'minecraft:potion':
-                return shouldStrictCheck(lint.strictPotionCheck)
+                return evalStrictCheckConfig(lint.strictPotionCheck)
             case 'minecraft:motive':
-                return shouldStrictCheck(lint.strictMotiveCheck)
+                return evalStrictCheckConfig(lint.strictMotiveCheck)
             case 'minecraft:fluid':
-                return shouldStrictCheck(lint.strictFluidCheck)
+                return evalStrictCheckConfig(lint.strictFluidCheck)
             case 'minecraft:particle_type':
-                return shouldStrictCheck(lint.strictParticleTypeCheck)
+                return evalStrictCheckConfig(lint.strictParticleTypeCheck)
             default:
                 return false
         }

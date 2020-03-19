@@ -25,7 +25,7 @@ import TeamArgumentParser from '../../parsers/TeamArgumentParser'
 import TextComponentArgumentParser from '../../parsers/TextComponentArgumentParser'
 import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
-import { getArgOrDefault, getSchemaAnchor } from '../../CommandTree'
+import { getArgOrDefault, getNbtdocRegistryId } from '../../CommandTree'
 import Token, { TokenType, TokenModifier } from '../../types/Token'
 import ParsingError from '../../types/ParsingError'
 import { locale } from '../../locales/Locales'
@@ -395,15 +395,15 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtPathArgumentParser('entities', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                         }
                                         else {
-                                            return new NbtPathArgumentParser('blocks')
+                                            return new NbtPathArgumentParser('minecraft:block')
                                         }
                                     },
                                     executable: true,
@@ -425,12 +425,12 @@ const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 nbt: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtArgumentParser('Compound', 'minecraft:entity', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtArgumentParser('Compound', 'minecraft:entity', id)
                                         }
                                         else {
                                             return new NbtArgumentParser('Compound', 'minecraft:block')
@@ -449,15 +449,15 @@ const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 targetPath: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtPathArgumentParser('entities', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                         }
                                         else {
-                                            return new NbtPathArgumentParser('blocks')
+                                            return new NbtPathArgumentParser('minecraft:block')
                                         }
                                     },
                                     children: {
@@ -472,15 +472,15 @@ const CommandTree: CommandTreeType = {
                                                             executable: true,
                                                             children: {
                                                                 sourcePath: {
-                                                                    parser: ({ args }, { nbt }) => {
+                                                                    parser: ({ args }) => {
                                                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                         if (type === 'entity') {
                                                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                                                            const anchor = getSchemaAnchor(entity, nbt)
-                                                                            return new NbtPathArgumentParser('entities', anchor)
+                                                                            const id = getNbtdocRegistryId(entity)
+                                                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                                                         }
                                                                         else {
-                                                                            return new NbtPathArgumentParser('blocks')
+                                                                            return new NbtPathArgumentParser('minecraft:block')
                                                                         }
                                                                     },
                                                                     executable: true
@@ -493,12 +493,12 @@ const CommandTree: CommandTreeType = {
                                                     parser: new LiteralArgumentParser('value'),
                                                     children: {
                                                         nbt: {
-                                                            parser: ({ args }, { nbt }) => {
+                                                            parser: ({ args }) => {
                                                                 const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
                                                                     const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                                                    const anchor = getSchemaAnchor(entity, nbt)
-                                                                    return new NbtArgumentParser(undefined, 'minecraft:entity', anchor)
+                                                                    const id = getNbtdocRegistryId(entity)
+                                                                    return new NbtArgumentParser(undefined, 'minecraft:entity', id)
                                                                 }
                                                                 else {
                                                                     return new NbtArgumentParser(undefined, 'minecraft:block')
@@ -524,15 +524,15 @@ const CommandTree: CommandTreeType = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
                                         if (type === 'block') {
-                                            return new NbtPathArgumentParser('blocks')
+                                            return new NbtPathArgumentParser('minecraft:block')
                                         }
                                         else {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtPathArgumentParser('entities', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                         }
                                     },
                                     executable: true
@@ -2403,15 +2403,15 @@ const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtPathArgumentParser('entities', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                         }
                                         else {
-                                            return new NbtPathArgumentParser('blocks')
+                                            return new NbtPathArgumentParser('minecraft:block')
                                         }
                                     },
                                     children: {
@@ -2494,15 +2494,15 @@ const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new Entity()) as Entity
-                                            const anchor = getSchemaAnchor(entity, nbt)
-                                            return new NbtPathArgumentParser('entities', anchor)
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
                                         }
                                         else {
-                                            return new NbtPathArgumentParser('blocks')
+                                            return new NbtPathArgumentParser('minecraft:block')
                                         }
                                     },
                                     executable: true,

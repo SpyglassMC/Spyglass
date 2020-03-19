@@ -231,7 +231,7 @@ export default class EntityArgumentParser extends ArgumentParser<Entity> {
                     } else if (key === 'name') {
                         dealWithNegativableArray(ctx.parsers.get('QuotableLiteral', [[], false, true]), key)
                     } else if (key === 'nbt') {
-                        dealWithNegativableArray(ctx.parsers.get('NbtTag', [
+                        dealWithNegativableArray(ctx.parsers.get('Nbt', [
                             'compound', 'entities', 'base', ctx.nbt, true
                         ]), key)
                     } else if (key === 'predicate') {

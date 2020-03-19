@@ -3,7 +3,7 @@ import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCa
 import { nbtdoc } from '../types/nbtdoc'
 import LineParser from '../parsers/LineParser'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode, remapParsingErrors, downgradeError } from '../types/ParsingError'
+import ParsingError, { ActionCode, remapParsingErrors, downgradeParsingError } from '../types/ParsingError'
 import StringReader from './StringReader'
 import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
@@ -456,7 +456,7 @@ export default class NbtdocHelper {
         }
     }
 
-    private isInheritFromItemBase(doc: nbtdoc.CompoundTag | null): boolean {
+    public isInheritFromItemBase(doc: nbtdoc.CompoundTag | null): boolean {
         if (!doc) {
             return false
         }
@@ -838,7 +838,7 @@ export default class NbtdocHelper {
                 combineCache(ans.cache, result.cache)
             }
             if (result.errors) {
-                const downgradedErrors = downgradeError(result.errors)
+                const downgradedErrors = downgradeParsingError(result.errors)
                 remapParsingErrors(downgradedErrors, tag.mapping)
                 ans.errors.push(...downgradedErrors)
             }

@@ -53,8 +53,8 @@ export async function constructContext(custom: ParsingContextLike, options?: Van
     ans.blocks = ans.blocks || await getReport('BlockDefinition', ans.config.env.dataVersion, options)
     ans.nbt = ans.nbt || await getReport('Nbtdoc', ans.config.env.dataVersion, options)
     ans.registries = ans.registries || await getReport('Registry', ans.config.env.dataVersion, options)
-    ans.tree = ans.tree || await getCommandTree(ans.config.env.version)
-    ans.vanilla = ans.vanilla || await getReport('VanillaSummary', ans.config.env.dataVersion, options)
+    ans.tree = ans.tree || await getCommandTree(ans.config.env.cmdVersion)
+    ans.vanilla = ans.vanilla || await getReport('NamespaceSummary', ans.config.env.dataVersion, options)
 
     return ans
 }

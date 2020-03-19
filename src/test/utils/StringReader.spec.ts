@@ -208,11 +208,11 @@ describe('StringReader Tests', () => {
             assert(actualResult === 'hahaha')
             assert(actualCursor === 6)
         })
-        it('Should return the out cursor', () => {
+        it('Should return the out mapping', () => {
             const reader = new StringReader('hahaha$')
-            const out = { cursor: 2 }
+            const out = { mapping: [] }
             reader.readUnquotedString(out)
-            assert(out.cursor === 2)
+            assert.deepStrictEqual(out.mapping, [0, 1, 2, 3, 4, 5])
         })
     })
     describe('readQuotedString() Tests', () => {
@@ -270,17 +270,11 @@ describe('StringReader Tests', () => {
                 assert(tolerable === true)
             }
         })
-        it('Should return the out cursor correctly if it is after an escape', () => {
+        it('Should return the out mapping', () => {
             const reader = new StringReader('"foo\\"bar"')
-            const out = { cursor: 6 } // ‘b’ in ‘"foo\"bar"’
+            const out = { mapping: [] }
             reader.readQuotedString(out)
-            assert(out.cursor === 4) // ‘b’ in ‘foo"bar’
-        })
-        it('Should return the out cursor correctly if it is before an escape', () => {
-            const reader = new StringReader('"foo\\"bar"')
-            const out = { cursor: 1 } // ‘f’ in ‘"foo\"bar"’
-            reader.readQuotedString(out)
-            assert(out.cursor === 0) // ‘f’ in ‘foo"bar’
+            assert.deepStrictEqual(out.mapping, [1, 2, 3, 5, 6, 7, 8])
         })
     })
     describe('readUntilOrEnd() Tests', () => {

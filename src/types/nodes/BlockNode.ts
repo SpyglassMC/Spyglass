@@ -26,7 +26,7 @@ export default class BlockNode extends ArgumentNode {
             states = this.states[ToFormattedString](lint)
         }
 
-        const tag = this.tag ? Object.keys(this.tag).length > 0 ? this.tag[ToFormattedString](lint) : '' : ''
+        const tag = Object.keys(this.tag).length > 0 ? this.tag[ToFormattedString](lint) : ''
 
         return `${id}${states}${tag}`
     }

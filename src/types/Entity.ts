@@ -1,10 +1,10 @@
 import NumberRange from './NumberRange'
-import { NbtCompoundTag } from './NbtTag'
 import IdentityNode from './nodes/IdentityNode'
 import GameMode from './GameMode'
 import Formattable, { ToFormattedString } from './Formattable'
 import { LintConfig } from './Config'
 import { toFormattedString } from '../utils/utils'
+import NbtCompoundNode from './nodes/map/NbtCompoundNode'
 
 export type SelectorArgumentKey =
     | 'advancements'
@@ -80,8 +80,8 @@ export type SelectorParsedArgument = {
     gamemodeNeg?: (GameMode | '')[],
     name?: string[],
     nameNeg?: string[],
-    nbt?: NbtCompoundTag[],
-    nbtNeg?: NbtCompoundTag[],
+    nbt?: NbtCompoundNode[],
+    nbtNeg?: NbtCompoundNode[],
     predicate?: IdentityNode[],
     predicateNeg?: IdentityNode[],
     tag?: string[],

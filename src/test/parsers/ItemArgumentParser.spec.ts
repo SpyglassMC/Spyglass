@@ -1,14 +1,13 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import Item from '../../types/Item'
+import ItemNode from '../../types/nodes/ItemNode'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { getNbtCompoundTag, getNbtStringTag } from '../../types/NbtTag'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -38,7 +37,7 @@ describe('ItemArgumentParser Tests', () => {
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stick'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Item(
+            assert.deepEqual(actual.data, new ItemNode(
                 new IdentityNode('minecraft', ['stick'])
             ))
         })
@@ -46,7 +45,7 @@ describe('ItemArgumentParser Tests', () => {
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stick{ foo : "bar" }'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Item(
+            assert.deepEqual(actual.data, new ItemNode(
                 new IdentityNode('minecraft', ['stick']),
                 getNbtCompoundTag({ foo: getNbtStringTag('bar') })
             ))
@@ -56,7 +55,7 @@ describe('ItemArgumentParser Tests', () => {
             const context = await constructContext({ registries, parsers, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.data, new Item(
+            assert.deepEqual(actual.data, new ItemNode(
                 new IdentityNode()
             ))
             assert.deepStrictEqual(actual.completions,

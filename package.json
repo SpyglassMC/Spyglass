@@ -129,13 +129,13 @@
                     "markdownDescription": "%datapack.config.env.dependsOnVanilla%",
                     "default": true
                 },
-                "datapack.env.version": {
+                "datapack.env.cmdVersion": {
                     "type": "string",
                     "enum": [
                         "1.15",
                         "1.16"
                     ],
-                    "markdownDescription": "%datapack.config.env.version%",
+                    "markdownDescription": "%datapack.config.env.cmdVersion%",
                     "default": "1.16"
                 },
                 "datapack.env.dataVersion": {
@@ -215,238 +215,383 @@
                         "summonAec": "summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: [\"${1:tag}\"]}"
                     }
                 },
-                "datapack.lint.enableFormatting": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.enableFormatting%",
-                    "default": false
-                },
-                "datapack.lint.blockStateAppendSpaceAfterComma": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.blockStateAppendSpaceAfterComma%",
-                    "default": false
-                },
-                "datapack.lint.blockStatePutSpacesAroundEqualSign": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.blockStatePutSpacesAroundEqualSign%",
-                    "default": false
-                },
-                "datapack.lint.blockStateSortKeys": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.blockStateSortKeys%",
-                    "default": false
-                },
-                "datapack.lint.entitySelectorAppendSpaceAfterComma": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.entitySelectorAppendSpaceAfterComma%",
-                    "default": false
-                },
-                "datapack.lint.entitySelectorPutSpacesAroundEqualSign": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.entitySelectorPutSpacesAroundEqualSign%",
-                    "default": false
-                },
-                "datapack.lint.entitySelectorKeyOrder": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "enum": [
-                            "sort",
-                            "limit",
-                            "type",
-                            "gamemode",
-                            "gamemodeNeg",
-                            "level",
-                            "team",
-                            "teamNeg",
-                            "typeNeg",
-                            "tag",
-                            "tagNeg",
-                            "name",
-                            "nameNeg",
-                            "predicate",
-                            "predicateNeg",
-                            "scores",
-                            "advancements",
-                            "nbt",
-                            "nbtNeg",
-                            "x",
-                            "y",
-                            "z",
-                            "dx",
-                            "dy",
-                            "dz",
-                            "distance",
-                            "x_rotation",
-                            "y_rotation"
-                        ]
+                "datapack.lint.blockStateBracketSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "inside": {
+                            "type": "number"
+                        },
+                        "zeroValue": {
+                            "type": "number"
+                        },
+                        "oneValue": {
+                            "type": "number"
+                        }
                     },
-                    "uniqueItems": true,
-                    "markdownDescription": "%datapack.config.lint.entitySelectorKeyOrder%",
-                    "default": [
-                        "sort",
-                        "limit",
-                        "type",
-                        "gamemode",
-                        "gamemodeNeg",
-                        "level",
-                        "team",
-                        "teamNeg",
-                        "typeNeg",
-                        "tag",
-                        "tagNeg",
-                        "name",
-                        "nameNeg",
-                        "predicate",
-                        "predicateNeg",
-                        "scores",
-                        "advancements",
-                        "nbt",
-                        "nbtNeg",
-                        "x",
-                        "y",
-                        "z",
-                        "dx",
-                        "dy",
-                        "dz",
-                        "distance",
-                        "x_rotation",
-                        "y_rotation"
-                    ]
+                    "required": [
+                        "inside"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.blockStateBracketSpacing%",
+                    "default": {
+                        "inside": 0
+                    }
                 },
-                "datapack.lint.quoteType": {
+                "datapack.lint.blockStateCommaSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.blockStateCommaSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 0
+                    }
+                },
+                "datapack.lint.blockStateEqualSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.blockStateEqualSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 0
+                    }
+                },
+                "datapack.lint.blockStateTrailingComma": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.lint.blockStateTrailingComma%",
+                    "default": false
+                },
+                "datapack.lint.eol": {
                     "type": "string",
                     "enum": [
-                        "always single",
-                        "always double",
-                        "prefer single",
-                        "prefer double"
+                        "auto",
+                        "CRLF",
+                        "LF"
                     ],
-                    "markdownDescription": "%datapack.config.lint.quoteType%",
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.quoteType.0%",
-                        "%datapack.config.lint.quoteType.1%",
-                        "%datapack.config.lint.quoteType.2%",
-                        "%datapack.config.lint.quoteType.3%"
-                    ],
-                    "default": "prefer double"
+                    "markdownDescription": "%datapack.config.lint.eol%",
+                    "default": "auto"
                 },
-                "datapack.lint.quoteEntitySelectorKeys": {
+                "datapack.lint.nbtArrayBracketSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "inside": {
+                            "type": "number"
+                        },
+                        "zeroValue": {
+                            "type": "number"
+                        },
+                        "oneValue": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "inside"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtArrayBracketSpacing%",
+                    "default": {
+                        "inside": 0
+                    }
+                },
+                "datapack.lint.nbtArrayCommaSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtArrayCommaSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 1
+                    }
+                },
+                "datapack.lint.nbtArraySemicolonSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtArraySemicolonSpacing%",
+                    "default": {
+                        "after": 1
+                    }
+                },
+                "datapack.lint.nbtArrayTrailingComma": {
                     "type": "boolean",
-                    "enum": [
-                        true,
-                        false
-                    ],
-                    "markdownDescription": "%datapack.config.lint.quoteEntitySelectorKeys%",
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.quoteEntitySelectorKeys.0%",
-                        "%datapack.config.lint.quoteEntitySelectorKeys.1%"
-                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtArrayTrailingComma%",
                     "default": false
                 },
-                "datapack.lint.quoteSnbtStringKeys": {
-                    "type": "boolean",
-                    "enum": [
-                        true,
-                        false
-                    ],
-                    "markdownDescription": "%datapack.config.lint.quoteSnbtStringKeys%",
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.quoteSnbtStringKeys.0%",
-                        "%datapack.config.lint.quoteSnbtStringKeys.1%"
-                    ],
-                    "default": false
-                },
-                "datapack.lint.quoteNbtStringValues": {
-                    "type": "boolean",
-                    "enum": [
-                        true,
-                        false
-                    ],
-                    "markdownDescription": "%datapack.config.lint.quoteNbtStringValues%",
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.quoteNbtStringValues.0%",
-                        "%datapack.config.lint.quoteNbtStringValues.1%"
-                    ],
-                    "default": true
-                },
-                "datapack.lint.snbtAppendSpaceAfterColon": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterColon%",
-                    "default": true
-                },
-                "datapack.lint.snbtAppendSpaceAfterComma": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterComma%",
-                    "default": true
-                },
-                "datapack.lint.snbtAppendSpaceAfterSemicolon": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtAppendSpaceAfterSemicolon%",
-                    "default": true
-                },
-                "datapack.lint.snbtByteSuffix": {
+                "datapack.lint.nbtByteSuffix": {
                     "type": "string",
                     "enum": [
                         "b",
                         "B"
                     ],
-                    "markdownDescription": "%datapack.config.lint.snbtByteSuffix%",
+                    "markdownDescription": "%datapack.config.lint.nbtByteSuffix%",
                     "default": "b"
                 },
-                "datapack.lint.snbtUseBooleans": {
+                "datapack.lint.nbtCompoundBracketSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "inside": {
+                            "type": "number"
+                        },
+                        "zeroValue": {
+                            "type": "number"
+                        },
+                        "oneValue": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "inside"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundBracketSpacing%",
+                    "default": {
+                        "inside": 0
+                    }
+                },
+                "datapack.lint.nbtCompoundColonSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundColonSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 1
+                    }
+                },
+                "datapack.lint.nbtCompoundCommaSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundCommaSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 1
+                    }
+                },
+                "datapack.lint.nbtCompoundTrailingComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtUseBooleans%",
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundTrailingComma%",
                     "default": false
                 },
-                "datapack.lint.snbtShortSuffix": {
-                    "type": "string",
-                    "enum": [
-                        "s",
-                        "S"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.snbtShortSuffix%",
-                    "default": "s"
+                "datapack.lint.nbtDoubleOmitSuffix": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.lint.nbtDoubleOmitSuffix%",
+                    "default": false
                 },
-                "datapack.lint.snbtLongSuffix": {
-                    "type": "string",
-                    "enum": [
-                        "l",
-                        "L"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.snbtLongSuffix%",
-                    "default": "L"
-                },
-                "datapack.lint.snbtFloatSuffix": {
-                    "type": "string",
-                    "enum": [
-                        "f",
-                        "F"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.snbtFloatSuffix%",
-                    "default": "f"
-                },
-                "datapack.lint.snbtDoubleSuffix": {
+                "datapack.lint.nbtDoubleSuffix": {
                     "type": "string",
                     "enum": [
                         "d",
                         "D"
                     ],
-                    "markdownDescription": "%datapack.config.lint.snbtDoubleSuffix%",
+                    "markdownDescription": "%datapack.config.lint.nbtDoubleSuffix%",
                     "default": "d"
                 },
-                "datapack.lint.snbtOmitDoubleSuffix": {
+                "datapack.lint.nbtFloatSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "f",
+                        "F"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtFloatSuffix%",
+                    "default": "f"
+                },
+                "datapack.lint.nbtListBracketSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "inside": {
+                            "type": "number"
+                        },
+                        "zeroValue": {
+                            "type": "number"
+                        },
+                        "oneValue": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "inside"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtListBracketSpacing%",
+                    "default": {
+                        "inside": 0
+                    }
+                },
+                "datapack.lint.nbtListCommaSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtListCommaSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 1
+                    }
+                },
+                "datapack.lint.nbtListTrailingComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtOmitDoubleSuffix%",
+                    "markdownDescription": "%datapack.config.lint.nbtListTrailingComma%",
                     "default": false
                 },
-                "datapack.lint.snbtKeepDecimalPlace": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtKeepDecimalPlace%",
-                    "default": true
+                "datapack.lint.nbtLongSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "l",
+                        "L"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtLongSuffix%",
+                    "default": "L"
                 },
-                "datapack.lint.snbtSortKeys": {
+                "datapack.lint.nbtShortSuffix": {
+                    "type": "string",
+                    "enum": [
+                        "s",
+                        "S"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtShortSuffix%",
+                    "default": "s"
+                },
+                "datapack.lint.selectorBracketSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "inside": {
+                            "type": "number"
+                        },
+                        "zeroValue": {
+                            "type": "number"
+                        },
+                        "oneValue": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "inside"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorBracketSpacing%",
+                    "default": {
+                        "inside": 0
+                    }
+                },
+                "datapack.lint.selectorCommaSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorCommaSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 0
+                    }
+                },
+                "datapack.lint.selectorEqualSpacing": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "type": "number"
+                        },
+                        "after": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "before",
+                        "after"
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorEqualSpacing%",
+                    "default": {
+                        "before": 0,
+                        "after": 0
+                    }
+                },
+                "datapack.lint.selectorTrailingComma": {
                     "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.snbtSortKeys%",
+                    "markdownDescription": "%datapack.config.lint.selectorTrailingComma%",
                     "default": false
                 },
                 "datapack.lint.timeOmitTickUnit": {
@@ -454,374 +599,1445 @@
                     "markdownDescription": "%datapack.config.lint.timeOmitTickUnit%",
                     "default": false
                 },
+                "datapack.lint.blockStateSortKeys": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "alphabetically"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.blockStateSortKeys%",
+                    "default": null
+                },
+                "datapack.lint.idOmitDefaultNamespace": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.idOmitDefaultNamespace%",
+                    "default": [
+                        "warning",
+                        false
+                    ]
+                },
                 "datapack.lint.nameOfObjectives": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "camelCase",
-                                "PascalCase",
-                                "snake_case",
-                                "SCREAMING_SNAKE_CASE",
-                                "kebab-case",
-                                "whatever"
-                            ]
+                            "type": "null"
                         },
                         {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "camelCase",
-                                    "PascalCase",
-                                    "snake_case",
-                                    "SCREAMING_SNAKE_CASE",
-                                    "kebab-case",
-                                    "whatever"
-                                ]
-                            }
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "oneOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "camelCase",
+                                                "PascalCase",
+                                                "snake_case",
+                                                "SCREAMING_SNAKE_CASE",
+                                                "kebab-case"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "camelCase",
+                                                    "PascalCase",
+                                                    "snake_case",
+                                                    "SCREAMING_SNAKE_CASE",
+                                                    "kebab-case"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "markdownDescription": "%datapack.config.lint.nameOfObjectives%",
-                    "default": "whatever"
+                    "default": null
                 },
-                "datapack.lint.nameOfSnbtCompoundTagKeys": {
+                "datapack.lint.nameOfNbtCompoundTagKeys": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "camelCase",
-                                "PascalCase",
-                                "snake_case",
-                                "SCREAMING_SNAKE_CASE",
-                                "kebab-case",
-                                "whatever"
-                            ]
+                            "type": "null"
                         },
                         {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "camelCase",
-                                    "PascalCase",
-                                    "snake_case",
-                                    "SCREAMING_SNAKE_CASE",
-                                    "kebab-case",
-                                    "whatever"
-                                ]
-                            }
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "oneOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "camelCase",
+                                                "PascalCase",
+                                                "snake_case",
+                                                "SCREAMING_SNAKE_CASE",
+                                                "kebab-case"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "camelCase",
+                                                    "PascalCase",
+                                                    "snake_case",
+                                                    "SCREAMING_SNAKE_CASE",
+                                                    "kebab-case"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
-                    "markdownDescription": "%datapack.config.lint.nameOfSnbtCompoundTagKeys%",
-                    "default": "whatever"
+                    "markdownDescription": "%datapack.config.lint.nameOfNbtCompoundTagKeys%",
+                    "default": null
                 },
                 "datapack.lint.nameOfTags": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "camelCase",
-                                "PascalCase",
-                                "snake_case",
-                                "SCREAMING_SNAKE_CASE",
-                                "kebab-case",
-                                "whatever"
-                            ]
+                            "type": "null"
                         },
                         {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "camelCase",
-                                    "PascalCase",
-                                    "snake_case",
-                                    "SCREAMING_SNAKE_CASE",
-                                    "kebab-case",
-                                    "whatever"
-                                ]
-                            }
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "oneOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "camelCase",
+                                                "PascalCase",
+                                                "snake_case",
+                                                "SCREAMING_SNAKE_CASE",
+                                                "kebab-case"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "camelCase",
+                                                    "PascalCase",
+                                                    "snake_case",
+                                                    "SCREAMING_SNAKE_CASE",
+                                                    "kebab-case"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "markdownDescription": "%datapack.config.lint.nameOfTags%",
-                    "default": "whatever"
+                    "default": null
                 },
                 "datapack.lint.nameOfTeams": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "camelCase",
-                                "PascalCase",
-                                "snake_case",
-                                "SCREAMING_SNAKE_CASE",
-                                "kebab-case",
-                                "whatever"
-                            ]
+                            "type": "null"
                         },
                         {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "camelCase",
-                                    "PascalCase",
-                                    "snake_case",
-                                    "SCREAMING_SNAKE_CASE",
-                                    "kebab-case",
-                                    "whatever"
-                                ]
-                            }
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "oneOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "camelCase",
+                                                "PascalCase",
+                                                "snake_case",
+                                                "SCREAMING_SNAKE_CASE",
+                                                "kebab-case"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "camelCase",
+                                                    "PascalCase",
+                                                    "snake_case",
+                                                    "SCREAMING_SNAKE_CASE",
+                                                    "kebab-case"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "markdownDescription": "%datapack.config.lint.nameOfTeams%",
-                    "default": "whatever"
+                    "default": null
                 },
-                "datapack.lint.strictBossbarCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictBossbarCheck%",
-                    "default": false
+                "datapack.lint.nbtBoolean": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtBoolean%",
+                    "default": null
                 },
-                "datapack.lint.strictStorageCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictStorageCheck%",
-                    "default": false
+                "datapack.lint.nbtCompoundKeyQuote": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundKeyQuote%",
+                    "default": null
                 },
-                "datapack.lint.strictObjectiveCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictObjectiveCheck%",
-                    "default": false
+                "datapack.lint.nbtCompoundKeyQuoteType": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always single",
+                                        "always double",
+                                        "prefer single",
+                                        "prefer double"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundKeyQuoteType%",
+                    "default": null
                 },
-                "datapack.lint.strictTagCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictTagCheck%",
-                    "default": false
+                "datapack.lint.nbtCompoundSortKeys": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "alphabetically",
+                                        "nbtdoc"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtCompoundSortKeys%",
+                    "default": null
                 },
-                "datapack.lint.strictTeamCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictTeamCheck%",
-                    "default": false
+                "datapack.lint.nbtPathQuote": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtPathQuote%",
+                    "default": null
+                },
+                "datapack.lint.nbtPathQuoteType": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always double"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtPathQuoteType%",
+                    "default": null
+                },
+                "datapack.lint.nbtStringQuote": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtPathQuote%",
+                    "default": [
+                        "warning",
+                        true
+                    ]
+                },
+                "datapack.lint.nbtStringQuoteType": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always single",
+                                        "always double",
+                                        "prefer single",
+                                        "prefer double"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtStringQuoteType%",
+                    "default": [
+                        "warning",
+                        "prefer double"
+                    ]
+                },
+                "datapack.lint.nbtTypeCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "strictly",
+                                        "loosely"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.nbtTypeCheck%",
+                    "default": [
+                        "warning",
+                        "strictly"
+                    ]
+                },
+                "datapack.lint.selectorSortKeys": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "sort",
+                                            "limit",
+                                            "type",
+                                            "gamemode",
+                                            "gamemodeNeg",
+                                            "level",
+                                            "team",
+                                            "teamNeg",
+                                            "typeNeg",
+                                            "tag",
+                                            "tagNeg",
+                                            "name",
+                                            "nameNeg",
+                                            "predicate",
+                                            "predicateNeg",
+                                            "scores",
+                                            "advancements",
+                                            "nbt",
+                                            "nbtNeg",
+                                            "x",
+                                            "y",
+                                            "z",
+                                            "dx",
+                                            "dy",
+                                            "dz",
+                                            "distance",
+                                            "x_rotation",
+                                            "y_rotation"
+                                        ]
+                                    },
+                                    "uniqueItems": true
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorSortKeys%",
+                    "default": null
+                },
+                "datapack.lint.selectorKeyQuote": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorKeyQuote%",
+                    "default": null
+                },
+                "datapack.lint.selectorKeyQuoteType": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always single",
+                                        "always double",
+                                        "prefer single",
+                                        "prefer double"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.selectorKeyQuoteType%",
+                    "default": null
                 },
                 "datapack.lint.strictAdvancementCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictAdvancementCheck%",
-                    "default": false
-                },
-                "datapack.lint.strictFunctionCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictFunctionCheck%",
-                    "default": false
-                },
-                "datapack.lint.strictLootTableCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictLootTableCheck%",
-                    "default": false
-                },
-                "datapack.lint.strictPredicateCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictPredicateCheck%",
-                    "default": false
-                },
-                "datapack.lint.strictRecipeCheck": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.strictRecipeCheck%",
-                    "default": false
+                    "default": null
                 },
                 "datapack.lint.strictBlockTagCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictBlockTagCheck%",
-                    "default": false
+                    "default": null
+                },
+                "datapack.lint.strictBossbarCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictBossbarCheck%",
+                    "default": null
                 },
                 "datapack.lint.strictEntityTypeTagCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictEntityTypeTagCheck%",
-                    "default": false
+                    "default": null
                 },
                 "datapack.lint.strictFluidTagCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictFluidTagCheck%",
-                    "default": false
+                    "default": null
+                },
+                "datapack.lint.strictFunctionCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictFunctionCheck%",
+                    "default": null
                 },
                 "datapack.lint.strictFunctionTagCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictFunctionTagCheck%",
-                    "default": false
+                    "default": null
                 },
                 "datapack.lint.strictItemTagCheck": {
-                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
                     "markdownDescription": "%datapack.config.lint.strictItemTagCheck%",
-                    "default": false
+                    "default": null
                 },
-                "datapack.lint.strictMobEffectCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictLootTableCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictMobEffectCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictLootTableCheck%",
+                    "default": null
                 },
-                "datapack.lint.strictEnchantmentCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictObjectiveCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictEnchantmentCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictObjectiveCheck%",
+                    "default": null
                 },
-                "datapack.lint.strictSoundEventCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictPredicateCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictSoundEventCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictPredicateCheck%",
+                    "default": null
                 },
-                "datapack.lint.strictEntityTypeCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictRecipeCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictEntityTypeCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictRecipeCheck%",
+                    "default": null
                 },
-                "datapack.lint.strictDimensionTypeCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictStorageCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
+                    "markdownDescription": "%datapack.config.lint.strictStorageCheck%",
+                    "default": null
+                },
+                "datapack.lint.strictTagCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownDescription": "%datapack.config.lint.strictDimensionTypeCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictTagCheck%",
+                    "default": null
+                },
+                "datapack.lint.strictTeamCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictTeamCheck%",
+                    "default": null
                 },
                 "datapack.lint.strictBlockCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
-                    ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
                     "markdownDescription": "%datapack.config.lint.strictBlockCheck%",
-                    "default": "only-default-namespace"
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
                 },
-                "datapack.lint.strictItemCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictDimensionTypeCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictItemCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictDimensionTypeCheck%",
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
                 },
-                "datapack.lint.strictPotionCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictEnchantmentCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictPotionCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictEnchantmentCheck%",
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
                 },
-                "datapack.lint.strictMotiveCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
+                "datapack.lint.strictEntityTypeCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
-                    ],
-                    "markdownDescription": "%datapack.config.lint.strictMotiveCheck%",
-                    "default": "only-default-namespace"
+                    "markdownDescription": "%datapack.config.lint.strictEntityTypeCheck%",
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
                 },
                 "datapack.lint.strictFluidCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
-                    ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
                     "markdownDescription": "%datapack.config.lint.strictFluidCheck%",
-                    "default": "only-default-namespace"
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
+                },
+                "datapack.lint.strictItemCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictItemCheck%",
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
+                },
+                "datapack.lint.strictMobEffectCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictMobEffectCheck%",
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
+                },
+                "datapack.lint.strictMotiveCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictMotiveCheck%",
+                    "default": [
+                        "warning",
+                        "only-default-namespace"
+                    ]
                 },
                 "datapack.lint.strictParticleTypeCheck": {
-                    "type": "string",
-                    "enum": [
-                        "always",
-                        "only-default-namespace",
-                        "never"
-                    ],
-                    "markdownEnumDescriptions": [
-                        "%datapack.config.lint.strictCheckOption.0%",
-                        "%datapack.config.lint.strictCheckOption.1%",
-                        "%datapack.config.lint.strictCheckOption.2%"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
                     ],
                     "markdownDescription": "%datapack.config.lint.strictParticleTypeCheck%",
-                    "default": "only-default-namespace"
+                    "default": [
+                        "error",
+                        "only-default-namespace"
+                    ]
                 },
-                "datapack.lint.omitDefaultNamespace": {
-                    "type": "boolean",
-                    "markdownDescription": "%datapack.config.lint.omitDefaultNamespace%",
-                    "default": false
+                "datapack.lint.strictPotionCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictPotionCheck%",
+                    "default": [
+                        "warning",
+                        "only-default-namespace"
+                    ]
+                },
+                "datapack.lint.strictSoundEventCheck": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "hint",
+                                        "information",
+                                        "warning",
+                                        "error"
+                                    ]
+                                },
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "always",
+                                        "only-default-namespace"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "markdownDescription": "%datapack.config.lint.strictSoundEventCheck%",
+                    "default": [
+                        "warning",
+                        "only-default-namespace"
+                    ]
                 }
             }
         },

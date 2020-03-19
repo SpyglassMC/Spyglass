@@ -33,7 +33,7 @@ export interface EnvConfig {
      * The version of the command tree. Only major versions are available.  
      * @default '1.16'
      */
-    version: CommandTreeVersion,
+    cmdVersion: CommandTreeVersion,
     /**
      * The version of the completion data, including registries, block definitions, and nbtdoc.
      * Should be an identity in the [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json)
@@ -99,31 +99,31 @@ export interface LintConfig {
     selectorKeyQuote: DiagnosticConfig<boolean>,
     selectorKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
     strictAdvancementCheck: DiagnosticConfig<true>,
-    strictBlockCheck: DiagnosticConfig<StrictCheckConfig>,
     strictBlockTagCheck: DiagnosticConfig<true>,
     strictBossbarCheck: DiagnosticConfig<true>,
-    strictDimensionTypeCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictEnchantmentCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictEntityTypeCheck: DiagnosticConfig<StrictCheckConfig>,
     strictEntityTypeTagCheck: DiagnosticConfig<true>,
-    strictFluidCheck: DiagnosticConfig<StrictCheckConfig>,
     strictFluidTagCheck: DiagnosticConfig<true>,
     strictFunctionCheck: DiagnosticConfig<true>,
     strictFunctionTagCheck: DiagnosticConfig<true>,
-    strictItemCheck: DiagnosticConfig<StrictCheckConfig>,
     strictItemTagCheck: DiagnosticConfig<true>,
     strictLootTableCheck: DiagnosticConfig<true>,
-    strictMobEffectCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
     strictObjectiveCheck: DiagnosticConfig<true>,
-    strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
     strictPredicateCheck: DiagnosticConfig<true>,
     strictRecipeCheck: DiagnosticConfig<true>,
-    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>,
     strictStorageCheck: DiagnosticConfig<true>,
     strictTagCheck: DiagnosticConfig<true>,
-    strictTeamCheck: DiagnosticConfig<true>
+    strictTeamCheck: DiagnosticConfig<true>,
+    strictBlockCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictDimensionTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictEnchantmentCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictEntityTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictFluidCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictItemCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictMobEffectCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
+    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>
 }
 
 export interface FeaturesConfig {
@@ -176,7 +176,7 @@ export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
         dataVersion: 'Latest snapshot',
-        version: '1.16',
+        cmdVersion: '1.16',
         dependsOnVanilla: true
     },
     lint: {
@@ -190,7 +190,6 @@ export const VanillaConfig: Config = {
         nbtArrayCommaSpacing: { before: 0, after: 1 },
         nbtArraySemicolonSpacing: { after: 1 },
         nbtArrayTrailingComma: false,
-        nbtBoolean: null,
         nbtByteSuffix: 'b',
         nbtCompoundBracketSpacing: { inside: 0 },
         nbtCompoundColonSpacing: { before: 0, after: 1 },
@@ -206,9 +205,8 @@ export const VanillaConfig: Config = {
         nbtShortSuffix: 's',
         selectorBracketSpacing: { inside: 0 },
         selectorCommaSpacing: { before: 0, after: 0 },
-        selectorTrailingComma: false,
         selectorEqualSpacing: { before: 0, after: 0 },
-        selectorSortKeys: null,
+        selectorTrailingComma: false,
         timeOmitTickUnit: false,
         // Diagnostic configs.
         blockStateSortKeys: null,
@@ -217,6 +215,7 @@ export const VanillaConfig: Config = {
         nameOfNbtCompoundTagKeys: null,
         nameOfTags: null,
         nameOfTeams: null,
+        nbtBoolean: null,
         nbtCompoundKeyQuote: null,
         nbtCompoundKeyQuoteType: null,
         nbtCompoundSortKeys: null,
@@ -227,6 +226,7 @@ export const VanillaConfig: Config = {
         nbtTypeCheck: ['warning', 'stirctly'],
         selectorKeyQuote: null,
         selectorKeyQuoteType: null,
+        selectorSortKeys: null,
         strictBossbarCheck: null,
         strictStorageCheck: null,
         strictObjectiveCheck: null,

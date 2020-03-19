@@ -4,14 +4,13 @@ import StringReader from '../utils/StringReader'
 import TextComponent, { TextComponentType } from '../types/TextComponent'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { constructConfig } from '../types/Config'
-import NbtSchema from '../types/NbtSchema'
 import Token, { TokenType } from '../types/Token'
 
 export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     static identity = 'TextComponent'
     readonly identity = 'textComponent'
 
-    private static readonly TextComponentSchema: NbtSchema = {
+    private static readonly TextComponentDoc = {
         'roots/blocks.json': {
             type: 'root',
             children: {
@@ -250,7 +249,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
         }
         if (reader.peek() === '{') {
             const result = ctx.parsers
-                .get('NbtTag', [
+                .get('Nbt', [
                     ['compound'],
                     'blocks',
                     'spgoding:json_object',
@@ -259,7 +258,7 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                 ])
                 .parse(reader, {
                     ...ctx,
-                    nbt: TextComponentArgumentParser.TextComponentSchema,
+                    // nbt: TextComponentArgumentParser.TextComponentDoc,
                     config: jsonConfig
                 })
             ans.data.value = result.data

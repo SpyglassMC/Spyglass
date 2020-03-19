@@ -1,12 +1,12 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { NbtCompoundTag } from '../types/NbtTag'
 import ArgumentParser from './ArgumentParser'
 import IdentityNode from '../types/nodes/IdentityNode'
-import Item from '../types/Item'
+import ItemNode from '../types/nodes/ItemNode'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
+import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 
-export default class ItemArgumentParser extends ArgumentParser<Item> {
+export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     static identity = 'Item'
     readonly identity = 'item'
 
@@ -18,9 +18,9 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
         super()
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Item> {
-        const ans: ArgumentParserResult<Item> = {
-            data: new Item(new IdentityNode()),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<ItemNode> {
+        const ans: ArgumentParserResult<ItemNode> = {
+            data: new ItemNode(new IdentityNode()),
             tokens: [],
             errors: [],
             cache: {},
@@ -37,11 +37,11 @@ export default class ItemArgumentParser extends ArgumentParser<Item> {
         return ans
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<Item>, id: IdentityNode): void {
+    private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<ItemNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for item tags.
-            const tagResult = ctx.parsers.get('NbtTag', ['compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
-            const tag = tagResult.data as NbtCompoundTag
+            const tagResult = ctx.parsers.get('Nbt', ['compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
+            const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.nbt = tag
         }

@@ -1,6 +1,5 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { getNbtCompoundTag, getNbtByteTag } from '../../types/NbtTag'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
 import ParsingError from '../../types/ParsingError'
