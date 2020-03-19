@@ -30,7 +30,7 @@
     },
     "dependencies": {
         "clone": "^2.1.2",
-        "fs-extra": "^8.1.0",
+        "fs-extra": "^9.0.0",
         "python-range": "^1.0.4",
         "vscode-languageclient": "^6.1.0",
         "vscode-languageserver": "^6.1.0",
