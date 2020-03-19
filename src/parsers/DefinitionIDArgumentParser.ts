@@ -5,6 +5,7 @@ import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
 import Token, { TokenModifier, TokenType } from '../types/Token'
+import Identity from '../types/Identity'
 
 export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionID'
@@ -16,7 +17,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
-        const id = reader.readUntilOrEnd(' ')
+        let id = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: id,
             tokens: [],
@@ -27,17 +28,12 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
         let token = TokenType.comment
         if (id) {
             if (isDefinitionType(this.type)) {
-                ans.cache[getCategoryKey(this.type)] = {}
-                const category = ans.cache[getCategoryKey(this.type)] as CacheCategory
-                category[id] = {
-                    def: [{ start, end: start + id.length }],
-                    ref: []
-                }
                 //#region Tokens
                 switch (this.type) {
                     case 'bossbar':
                     case 'storage':
                         token = TokenType.namespacedID
+                        id = Identity.fromString(id).toString()
                         break
                     case 'entity':
                         token = TokenType.entity
@@ -47,6 +43,12 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                         break
                 }
                 //#endregion
+                ans.cache[getCategoryKey(this.type)] = {}
+                const category = ans.cache[getCategoryKey(this.type)] as CacheCategory
+                category[id] = {
+                    def: [{ start, end: start + id.length }],
+                    ref: []
+                }
             }
         } else {
             ans.errors = [

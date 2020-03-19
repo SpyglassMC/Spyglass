@@ -327,6 +327,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Ghoulboy78"><img src="https://avatars1.githubusercontent.com/u/53367549?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Ghoulboy</b></sub></a><br /><a href="#localization-Ghoulboy78" title="Localization">🌍</a></td>
     <td align="center"><a href="https://search.mcbbs.net/home.php?mod=space&uid=2905154"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle" width="100px;" alt=""/><br /><sub><b>missinggo</b></sub></a><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Amissinggo" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256" width="100px;" alt=""/><br /><sub><b>ncfumction</b></sub><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Anphhpn#????" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->

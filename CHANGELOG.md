@@ -1,3 +1,8 @@
+# [v1.13.8](https://github.com/SPGoding/datapack-language-server/compare/v1.13.7...v1.13.8) (2020-03-19)
+
+## 🐛 Bug Fixes
+- [`22c0907`](https://github.com/SPGoding/datapack-language-server/commit/22c0907)  Fix crashing for missing namespaces in #define
+
 # [v1.13.7](https://github.com/SPGoding/datapack-language-server/compare/v1.13.6...v1.13.7) (2020-03-10)
 
 ## 🐛 Bug Fixes
