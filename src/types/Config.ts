@@ -123,7 +123,9 @@ export interface LintConfig {
     strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
     strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
     strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>
+    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>, 
+    stringQuote: DiagnosticConfig<boolean>,
+    stringQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>
 }
 
 export interface FeaturesConfig {
@@ -182,7 +184,7 @@ export const VanillaConfig: Config = {
     lint: {
         // Stylistic configs.
         blockStateBracketSpacing: { inside: 0 },
-        blockStateCommaSpacing: { before: 0, after: 0 },
+        blockStateCommaSpacing: { before: 0, after: 1 },
         blockStateEqualSpacing: { before: 0, after: 0 },
         blockStateTrailingComma: false,
         eol: 'auto',
@@ -204,23 +206,23 @@ export const VanillaConfig: Config = {
         nbtLongSuffix: 'L',
         nbtShortSuffix: 's',
         selectorBracketSpacing: { inside: 0 },
-        selectorCommaSpacing: { before: 0, after: 0 },
+        selectorCommaSpacing: { before: 0, after: 1 },
         selectorEqualSpacing: { before: 0, after: 0 },
         selectorTrailingComma: false,
         timeOmitTickUnit: false,
         // Diagnostic configs.
         blockStateSortKeys: null,
         idOmitDefaultNamespace: ['warning', false],
-        nameOfObjectives: null,
         nameOfNbtCompoundTagKeys: null,
+        nameOfObjectives: null,
         nameOfTags: null,
         nameOfTeams: null,
         nbtBoolean: null,
         nbtCompoundKeyQuote: null,
-        nbtCompoundKeyQuoteType: null,
+        nbtCompoundKeyQuoteType: ['warning', 'prefer double'],
         nbtCompoundSortKeys: null,
         nbtPathQuote: null,
-        nbtPathQuoteType: null,
+        nbtPathQuoteType: ['warning', 'always double'],
         nbtStringQuote: ['warning', true],
         nbtStringQuoteType: ['warning', 'prefer double'],
         nbtTypeCheck: ['warning', 'stirctly'],
@@ -252,7 +254,9 @@ export const VanillaConfig: Config = {
         strictMotiveCheck: ['warning', 'only-default-namespace'],
         strictParticleTypeCheck: ['error', 'only-default-namespace'],
         strictPotionCheck: ['warning', 'only-default-namespace'],
-        strictSoundEventCheck: ['warning', 'only-default-namespace']
+        strictSoundEventCheck: ['warning', 'only-default-namespace'],
+        stringQuote: ['warning', false],
+        stringQuoteType: ['warning', 'prefer double']
     },
     features: {
         colors: true,

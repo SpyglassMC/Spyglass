@@ -521,7 +521,6 @@ const CommandTree: CommandTreeType = {
                     children: {
                         target: {
                             template: 'nbt_holder',
-                            executable: true,
                             children: {
                                 path: {
                                     parser: ({ args }) => {

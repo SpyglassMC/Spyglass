@@ -121,6 +121,8 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                         this.completeFolderOrFile(
                             // Only the first element and the length matter. We don't care
                             // if other elements are also prefixed by `Identity.TagSymbol`.
+                            // Thus we add `IdentityNode.TagSymbol` to all paths to make the
+                            // code easier to write.
                             complPaths.map(v => `${IdentityNode.TagSymbol}${v}`),
                             complFolders,
                             complFiles
