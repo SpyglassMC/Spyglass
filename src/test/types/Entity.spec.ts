@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
-import Entity from '../../types/Entity'
+import EntityNode from '../../types/nodes/EntityNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import NumberRange from '../../types/NumberRange'
 
@@ -46,7 +46,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 'SPGoding'
             )
             const actual = message[ToFormattedString](lint)
@@ -60,7 +60,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 undefined,
                 'a'
             )
@@ -75,7 +75,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 undefined,
                 'a',
                 {
@@ -95,7 +95,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 undefined,
                 'a',
                 {
@@ -115,7 +115,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 undefined,
                 'a',
                 {
@@ -133,7 +133,7 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new Entity(
+            const message = new EntityNode(
                 undefined,
                 'a',
                 {

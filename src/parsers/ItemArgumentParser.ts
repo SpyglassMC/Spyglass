@@ -40,7 +40,7 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<ItemNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for item tags.
-            const tagResult = ctx.parsers.get('Nbt', ['compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
+            const tagResult = ctx.parsers.get('Nbt', ['Compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.nbt = tag

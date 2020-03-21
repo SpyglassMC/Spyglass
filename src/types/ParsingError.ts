@@ -4,16 +4,26 @@ import { locale } from '../locales/Locales'
 import IndexMapping from './IndexMapping'
 
 export const enum ActionCode {
+    IdCompleteDefaultNamespace,
+    IdOmitDefaultNamespace,
     NbtTypeToByte,
+    NbtTypeToByteArray,
     NbtTypeToShort,
     NbtTypeToInt,
+    NbtTypeToIntArray,
+    NbtTypeToList,
     NbtTypeToLong,
+    NbtTypeToLongArray,
     NbtTypeToFloat,
     NbtTypeToDouble,
     NbtByteToLiteral,
     NbtByteToNumber,
-    NbtStringQuote,
-    NbtStringUnquote,
+    /**
+     * If the string is already quoted, switch the type of the quote;  
+     * otherwise, quote it.
+     */
+    StringQuote,
+    StringUnquote,
 }
 
 /**

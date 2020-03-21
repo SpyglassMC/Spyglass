@@ -1160,7 +1160,7 @@ describe('NbtTagArgumentParser Tests', () => {
                         }
                     }
                 }
-                const ctx = await constructContext({ parsers, registries, nbt, cursor: 8 })
+                const ctx = await constructContext({ parsers, registry: registries, nbt, cursor: 8 })
                 const parser = new NbtArgumentParser('compound', 'blocks', 'spgoding:suggestions_test')
                 const reader = new StringReader('{ byte: }')
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)

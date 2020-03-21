@@ -115,9 +115,6 @@ export async function getReport(type: DataType, versionOrLiteral: string, option
             }
         } else {
             const ans = await getDefault(type)
-            if (faildTimes < MaxFaildTimes) {
-                console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
-            }
             return ans
         }
     }

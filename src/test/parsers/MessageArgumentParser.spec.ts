@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import Entity from '../../types/Entity'
+import EntityNode from '../../types/nodes/EntityNode'
 import Message from '../../types/Message'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import StringReader from '../../utils/StringReader'
@@ -36,7 +36,7 @@ describe('MessageArgumentParser Tests', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('@a'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Message([new Entity(undefined, 'a')]))
+            assert.deepEqual(actual.data, new Message([new EntityNode(undefined, 'a')]))
             assert.deepEqual(actual.tokens, [
                 new Token({ start: 0, end: 2 }, TokenType.entity)
             ])
@@ -45,7 +45,7 @@ describe('MessageArgumentParser Tests', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('Hello@A@aWORLD'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Message(['Hello@A', new Entity(undefined, 'a'), 'WORLD']))
+            assert.deepEqual(actual.data, new Message(['Hello@A', new EntityNode(undefined, 'a'), 'WORLD']))
             assert.deepEqual(actual.tokens, [
                 new Token({ start: 0, end: 7 }, TokenType.string),
                 new Token({ start: 7, end: 9 }, TokenType.entity),

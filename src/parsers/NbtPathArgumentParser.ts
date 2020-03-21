@@ -50,7 +50,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         //#region Completions
         if (types.includes('key') && helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
             if (reader.cursor === ctx.cursor) {
-                helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, true)
+                    // TODO: completions for in-quote keys.
+                helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
             }
         }
         //#endregion
@@ -161,7 +162,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
     private parseCompoundFilter(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: NbtCompoundDoc | null) {
         const result = ctx.parsers
-            .get('Nbt', ['compound', this.category, helper ? helper.compoundIndex : null, true])
+            .get('Nbt', ['Compound', this.category, helper ? helper.compoundIndex : null, true])
             .parse(reader, ctx)
         ans.data.value.push(result.data as NbtCompoundNode)
         combineArgumentParserResult(ans, result)

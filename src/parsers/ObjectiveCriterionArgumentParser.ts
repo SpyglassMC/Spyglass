@@ -56,7 +56,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
         if (!subCriteria) {
             subCriteria = []
         } else if (typeof subCriteria === 'string') {
-            subCriteria = Object.keys(ctx.registries[subCriteria].entries).map(v => v.slice(10))
+            subCriteria = Object.keys(ctx.registry[subCriteria].entries).map(v => v.slice(10))
         }
 
         if (subCriteria.length > 0) {

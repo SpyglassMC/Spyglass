@@ -28,7 +28,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ registries, parsers })
+        ctx = await constructContext({ registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data for normal literal slots', () => {
@@ -50,7 +50,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepEqual(actual.errors, [])
         })
         it('Should return completions for categories', async () => {
-            const ctx = await constructContext({ registries, parsers, cursor: 0 })
+            const ctx = await constructContext({ registry: registries, parsers, cursor: 0 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -82,7 +82,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘teamkill’', async () => {
-            const ctx = await constructContext({ registries, parsers, cursor: 9 })
+            const ctx = await constructContext({ registry: registries, parsers, cursor: 9 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('teamkill.'), ctx)
             assert.deepStrictEqual(actual.data, 'teamkill.')
@@ -108,7 +108,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘minecraft.custom:minecraft’', async () => {
-            const ctx = await constructContext({ registries, parsers, cursor: 27 })
+            const ctx = await constructContext({ registry: registries, parsers, cursor: 27 })
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('minecraft.custom:minecraft.'), ctx)
             assert.deepStrictEqual(actual.data, 'minecraft.custom:minecraft.')

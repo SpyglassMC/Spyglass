@@ -1,9 +1,9 @@
-import Entity from './types/Entity'
+import EntityNode from './types/nodes/EntityNode'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import ArgumentNode from './types/nodes/ArgumentNode'
 import { LineArgumentNode } from './types/Line'
 
-export function getNbtdocRegistryId(entity: Entity) {
+export function getNbtdocRegistryId(entity: EntityNode) {
     if (entity.argument && entity.argument.type) {
         const firstID = entity.argument.type[0]
         if (firstID && !firstID.isTag) {

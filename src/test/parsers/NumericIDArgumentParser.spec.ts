@@ -17,7 +17,7 @@ const registries = {
 }
 let ctx: ParsingContext
 before(async () => {
-    ctx = await constructContext({ registries })
+    ctx = await constructContext({ registry: registries })
 })
 describe('NumericIDArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -34,7 +34,7 @@ describe('NumericIDArgumentParser Tests', () => {
             assert(actual.data === 0)
         })
         it('Should return completions', async () => {
-            const ctx = await constructContext({ registries, cursor: 0 })
+            const ctx = await constructContext({ registry: registries, cursor: 0 })
             const parser = new NumericIDArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, NaN)

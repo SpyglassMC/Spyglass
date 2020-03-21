@@ -58,7 +58,7 @@ describe('ParticleArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ blocks, registries, parsers })
+        ctx = await constructContext({ blocks, registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data without extra params', () => {
@@ -115,7 +115,7 @@ describe('ParticleArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { omitDefaultNamespace: true } })
-            const ctx = await constructContext({ parsers, config, registries, cursor: 0 })
+            const ctx = await constructContext({ parsers, config, registry: registries, cursor: 0 })
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepEqual(actual.data, new Particle(

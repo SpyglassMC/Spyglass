@@ -19,7 +19,7 @@ export function locale(key: string, ...params: any[]) {
     }
 
     if (!value) {
-        console.warn(`Unknown locale key ‘${key}’`)
+        console.error(new Error(`Unknown locale key ‘${key}’`))
         value = ''
     }
 

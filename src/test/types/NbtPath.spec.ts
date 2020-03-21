@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
-import Entity from '../../types/Entity'
+import EntityNode from '../../types/nodes/EntityNode'
 import NbtPathNode, {  isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/nodes/NbtPathNode'
 
 describe('`NbtPath` Tests', () => {

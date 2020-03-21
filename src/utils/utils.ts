@@ -113,16 +113,16 @@ export function validateStringQuote(raw: string, inner: string, range: TextRange
     const isQuoted = StringReader.isQuote(firstChar)
 
     if (quoteConfig) {
-        const [severity, expectQuote] = quoteConfig
-        if (expectQuote !== isQuoted) {
+        const [severity, shouldQuoted] = quoteConfig
+        if (shouldQuoted !== isQuoted) {
             ans.push(new ParsingError(
                 range,
                 locale('expected-got',
-                    expectQuote ? locale('quote') : locale('string'),
+                    shouldQuoted ? locale('quote') : locale('string'),
                     locale('punc.quote', firstChar)
                 ),
                 true, getDiagnosticSeverity(severity),
-                expectQuote ? ActionCode.NbtStringQuote : ActionCode.NbtStringUnquote
+                shouldQuoted ? ActionCode.StringQuote : ActionCode.StringUnquote
             ))
         }
     }
@@ -134,7 +134,7 @@ export function validateStringQuote(raw: string, inner: string, range: TextRange
                 range,
                 locale('expected', locale('punc.quote', expectedType)),
                 true, getDiagnosticSeverity(severity),
-                ActionCode.NbtStringQuote
+                ActionCode.StringQuote
             ))
         }
     }

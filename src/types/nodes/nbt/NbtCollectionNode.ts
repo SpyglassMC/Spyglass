@@ -20,7 +20,7 @@ export default abstract class NbtCollectionNode<T extends NbtNode> extends NbtNo
         sep: string
     }
 
-    length: number
+    length = 0
 
     push(...values: T[]) {
         for (const value of values) {

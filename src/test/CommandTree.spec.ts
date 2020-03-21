@@ -5,7 +5,7 @@ import { TestArgumentParser } from './parsers/LineParser.spec'
 import {  } from '../types/nbtdoc'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import BlockNode from '../types/nodes/BlockNode'
-import Entity from '../types/Entity'
+import EntityNode from '../types/nodes/EntityNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import LineParser from '../parsers/LineParser'
 import NbtPathNode from '../types/nodes/NbtPathNode'
@@ -176,7 +176,7 @@ describe('CommandTree Tests', () => {
     describe('getSchemaAnchor() Tests', () => {
         it('Should return the respective id', () => {
             const id = new IdentityNode('minecraft', ['spgoding'])
-            const entity = new Entity(undefined, 'e', { type: [id] })
+            const entity = new EntityNode(undefined, 'e', { type: [id] })
             const actual = getNbtdocRegistryId(entity)
             assert(actual === 'minecraft:spgoding')
         })
@@ -220,7 +220,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new Entity(undefined, 's'), parser: 'entity' },
+                { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'everything', parser: 'literal' }
             ])
             assert.deepEqual(data.hint, {
@@ -238,7 +238,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new Entity(undefined, 's'), parser: 'entity' },
+                { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
                 { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' }
             ])
@@ -261,7 +261,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new Entity(undefined, 's'), parser: 'entity' },
+                { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
                 { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' },
                 { data: 'aaa', parser: 'string' }
@@ -285,7 +285,7 @@ describe('CommandTree Tests', () => {
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'revoke', parser: 'literal' },
-                { data: new Entity(undefined, 's'), parser: 'entity' },
+                { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'through', parser: 'literal' },
                 { data: new IdentityNode(undefined, ['test']), parser: 'namespacedID' }
             ])

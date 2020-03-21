@@ -2,9 +2,8 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
-import ArgumentParser from './ArgumentParser'
 
-export default class MapParser<T extends { [key: string]: any }> extends ArgumentParser<T> {
+export default class MapParser<T extends { [key: string]: any }> {
     readonly identity = 'mapParser'
 
     constructor(
@@ -16,20 +15,10 @@ export default class MapParser<T extends { [key: string]: any }> extends Argumen
         },
         private readonly parseKeyResult: (ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) => ArgumentParserResult<string>,
         private readonly parseValue: (ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext, key: string, keyRange: TextRange) => void
-    ) {
-        super()
-    }
+    ) {}
 
     /* istanbul ignore next */
-    parse(reader: StringReader, ctx: ParsingContext) {
-        const ans: ArgumentParserResult<T> = {
-            data: {} as T,
-            cache: {},
-            completions: [],
-            errors: [],
-            tokens: []
-        }
-
+    parse(ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) {
         let { cursor } = ctx
 
         /**
@@ -94,9 +83,5 @@ export default class MapParser<T extends { [key: string]: any }> extends Argumen
         }
 
         return ans
-    }
-
-    getExamples(): string[] {
-        return []
     }
 }

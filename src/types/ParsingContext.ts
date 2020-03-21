@@ -18,8 +18,8 @@ export default interface ParsingContext {
     cursor: number,
     nbt: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
-    registries: Registry,
-    vanilla: NamespaceSummary,
+    registry: Registry,
+    summary: NamespaceSummary,
     tree: CommandTree
 }
 
@@ -30,8 +30,8 @@ interface ParsingContextLike {
     cursor?: number,
     nbt?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
-    registries?: Registry,
-    vanilla?: NamespaceSummary,
+    registry?: Registry,
+    summary?: NamespaceSummary,
     tree?: CommandTree
 }
 
@@ -52,9 +52,9 @@ export async function constructContext(custom: ParsingContextLike, options?: Van
 
     ans.blocks = ans.blocks || await getReport('BlockDefinition', ans.config.env.dataVersion, options)
     ans.nbt = ans.nbt || await getReport('Nbtdoc', ans.config.env.dataVersion, options)
-    ans.registries = ans.registries || await getReport('Registry', ans.config.env.dataVersion, options)
+    ans.registry = ans.registry || await getReport('Registry', ans.config.env.dataVersion, options)
     ans.tree = ans.tree || await getCommandTree(ans.config.env.cmdVersion)
-    ans.vanilla = ans.vanilla || await getReport('NamespaceSummary', ans.config.env.dataVersion, options)
+    ans.summary = ans.summary || await getReport('NamespaceSummary', ans.config.env.dataVersion, options)
 
     return ans
 }

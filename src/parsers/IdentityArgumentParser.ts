@@ -5,7 +5,7 @@ import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import IdentityNode from '../types/nodes/IdentityNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { ActionCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
@@ -30,7 +30,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor, registries, vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
+    parse(reader: StringReader, { cache, config, cursor, registry: registries, summary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
         const ans: ArgumentParserResult<IdentityNode> = {
             data: new IdentityNode(),
             tokens: [],
@@ -110,14 +110,18 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         let path0 = this.readValidString(reader, ans)
 
         //#region Completions at the beginning
+        const shouldOmit = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
+        const severity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
         if (start <= cursor && cursor <= reader.cursor) {
             if (!isTag && this.allowTag) {
                 // If this ID is not a tag but could be a tag, then provide completions for tags.
                 for (const id of tagPool) {
                     const complNamespace = id.split(':')[0]
                     const complPaths = id.split(':')[1].split('/')
-                    complNamespaces.add(`${IdentityNode.TagSymbol}${complNamespace}`)
-                    if (!this.isPredicate && complNamespace === IdentityNode.DefaultNamespace) {
+                    if (!(shouldOmit === true && complNamespace === IdentityNode.DefaultNamespace)) {
+                        complNamespaces.add(`${IdentityNode.TagSymbol}${complNamespace}`)
+                    }
+                    if (shouldOmit !== false && complNamespace === IdentityNode.DefaultNamespace) {
                         this.completeFolderOrFile(
                             // Only the first element and the length matter. We don't care
                             // if other elements are also prefixed by `Identity.TagSymbol`.
@@ -133,8 +137,10 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
             for (const id of pool) {
                 const namespace = id.split(':')[0]
                 const paths = id.split(':')[1].split('/')
-                complNamespaces.add(namespace)
-                if (!this.isPredicate && namespace === IdentityNode.DefaultNamespace) {
+                if (!(shouldOmit === true && namespace === IdentityNode.DefaultNamespace)) {
+                    complNamespaces.add(namespace)
+                }
+                if (shouldOmit !== false && namespace === IdentityNode.DefaultNamespace) {
                     this.completeFolderOrFile(paths, complFolders, complFiles)
                 }
             }
@@ -158,16 +164,24 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                         this.completeFolderOrFile(complPaths, complFolders, complFiles)
                     }
                 }
+                if (shouldOmit === true && namespace === IdentityNode.DefaultNamespace) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        locale('unexpected-default-namespace'),
+                        undefined, severity, ActionCode.IdOmitDefaultNamespace
+                    ))
+                }
                 //#endregion
             } else {
                 // `path0` is the first element of the paths.
                 pool = pool
                     .filter(v => v.startsWith(`${IdentityNode.DefaultNamespace}:`))
                     .map(v => v.slice(IdentityNode.DefaultNamespace.length + 1))
-                if (this.isPredicate) {
+                if (shouldOmit === false) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        locale('unexpected-omitted-default-namespace')
+                        locale('unexpected-omitted-default-namespace'),
+                        undefined, severity, ActionCode.IdCompleteDefaultNamespace
                     ))
                 }
             }
@@ -276,46 +290,53 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string) {
-        const evalStrictCheckConfig = (config: DiagnosticConfig<StrictCheckConfig>): boolean => {
+    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string): [boolean, DiagnosticSeverity] {
+        const evalTrueConfig = (config: DiagnosticConfig<true>): [boolean, DiagnosticSeverity] => {
             if (config === null) {
-                return false
+                return [false, DiagnosticSeverity.Warning]
             }
-            const value = config[1]
+            const [severity, value] = config
+            return [value, getDiagnosticSeverity(severity)]
+        }
+        const evalStrictCheckConfig = (config: DiagnosticConfig<StrictCheckConfig>): [boolean, DiagnosticSeverity] => {
+            if (config === null) {
+                return [false, DiagnosticSeverity.Warning]
+            }
+            const [severity, value] = config
             switch (value) {
                 case 'always':
-                    return true
+                    return [true, getDiagnosticSeverity(severity)]
                 case 'only-default-namespace':
-                    return namespace === IdentityNode.DefaultNamespace
+                    return [namespace === IdentityNode.DefaultNamespace, getDiagnosticSeverity(severity)]
                 default:
-                    return false
+                    return [false, getDiagnosticSeverity(severity)]
             }
         }
         switch (key) {
             case '$advancements':
-                return lint.strictAdvancementCheck !== null
+                return evalTrueConfig(lint.strictAdvancementCheck)
             case '$functions':
-                return lint.strictFunctionCheck !== null
+                return evalTrueConfig(lint.strictFunctionCheck)
             case '$lootTables':
-                return lint.strictLootTableCheck !== null
+                return evalTrueConfig(lint.strictLootTableCheck)
             case '$predicates':
-                return lint.strictPredicateCheck !== null
+                return evalTrueConfig(lint.strictPredicateCheck)
             case '$recipes':
-                return lint.strictRecipeCheck !== null
+                return evalTrueConfig(lint.strictRecipeCheck)
             case '$tags/blocks':
-                return lint.strictBlockTagCheck !== null
+                return evalTrueConfig(lint.strictBlockTagCheck)
             case '$tags/entityTypes':
-                return lint.strictEntityTypeTagCheck !== null
+                return evalTrueConfig(lint.strictEntityTypeTagCheck)
             case '$tags/fluids':
-                return lint.strictFluidTagCheck !== null
+                return evalTrueConfig(lint.strictFluidTagCheck)
             case '$tags/functions':
-                return lint.strictFunctionTagCheck !== null
+                return evalTrueConfig(lint.strictFunctionTagCheck)
             case '$tags/items':
-                return lint.strictItemTagCheck !== null
+                return evalTrueConfig(lint.strictItemTagCheck)
             case '$bossbars':
-                return lint.strictBossbarCheck !== null
+                return evalTrueConfig(lint.strictBossbarCheck)
             case '$storages':
-                return lint.strictStorageCheck !== null
+                return evalTrueConfig(lint.strictStorageCheck)
             case 'minecraft:mob_effect':
                 return evalStrictCheckConfig(lint.strictMobEffectCheck)
             case 'minecraft:enchantment':
@@ -339,7 +360,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
             case 'minecraft:particle_type':
                 return evalStrictCheckConfig(lint.strictParticleTypeCheck)
             default:
-                return false
+                return [false, DiagnosticSeverity.Warning]
         }
     }
 

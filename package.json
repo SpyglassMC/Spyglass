@@ -24,6 +24,7 @@
         "postinstall": "vscode-install",
         "release": "semantic-release",
         "release:dry": "semantic-release --dry-run",
+        "test:temp": "mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/utils/NbtdocHelper.spec.ts",
         "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/**/*.ts",
         "posttest": "nyc report --reporter=json",
         "watch": "webpack --watch --mode=\"development\""
@@ -652,10 +653,7 @@
                         }
                     ],
                     "markdownDescription": "%datapack.config.lint.idOmitDefaultNamespace%",
-                    "default": [
-                        "warning",
-                        false
-                    ]
+                    "default": null
                 },
                 "datapack.lint.nameOfObjectives": {
                     "oneOf": [

@@ -58,25 +58,25 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         [type: string]: [RegExp, /** @throws {string} */(superNbt: NbtCompoundNode | null, value: string) => NbtPrimitiveNode<string | number | bigint>]
     } = {
             byte: [
-                /^[-+]?(0|[1-9][0-9]*)b$/i,
+                /^([-+]?(?:0|[1-9][0-9]*))b$/i,
                 (superNode, value) => new NbtByteNode(superNode, NbtArgumentParser.parseNumber(
-                    value.slice(0, -1),
+                    value,
                     ['-128', '127'],
                     Number,
                     value => -128 <= value && value <= 127
                 ), value)
             ],
             short: [
-                /^[-+]?(0|[1-9][0-9]*)s$/i,
+                /^([-+]?(?:0|[1-9][0-9]*))s$/i,
                 (superNode, value) => new NbtShortNode(superNode, NbtArgumentParser.parseNumber(
-                    value.slice(0, -1),
+                    value,
                     ['-32,768', '32,767'],
                     Number,
                     value => -32_768 <= value && value <= 32_767
                 ), value)
             ],
             int: [
-                /^[-+]?(0|[1-9][0-9]*)$/i,
+                /^([-+]?(?:0|[1-9][0-9]*))$/i,
                 (superNode, value) => new NbtIntNode(superNode, NbtArgumentParser.parseNumber(
                     value,
                     ['-2,147,483,648', '2,147,483,647'],
@@ -85,36 +85,34 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 ), value)
             ],
             long: [
-                /^[-+]?(0|[1-9][0-9]*)l$/i,
+                /^([-+]?(?:0|[1-9][0-9]*))l$/i,
                 (superNode, value) => new NbtLongNode(superNode, NbtArgumentParser.parseNumber<bigint>(
-                    value.slice(0, -1),
+                    value,
                     ['-9,223,372,036,854,775,808', '9,223,372,036,854,775,807'],
                     str => BigInt(str),
                     value => value >= -9_223_372_036_854_775_808n && value <= 9_223_372_036_854_775_807n
                 ), value)
             ],
             float: [
-                /^[-+]?([0-9]+[.]?|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?f$/i,
+                /^([-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?)f$/i,
                 (superNode, value) => new NbtFloatNode(superNode, NbtArgumentParser.parseNumber(
-                    value.slice(0, -1),
-                    [],
-                    Number
+                    value, [], Number
                 ), value)
             ],
             double: [
-                /^[-+]?([0-9]+[.]?|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?d$/i,
-                (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
-                    value.slice(0, -1), [], Number
-                ), value)
-            ],
-            doubleImplicit: [
-                /^[-+]?([0-9]+[.]|[0-9]*[.][0-9]+)(e[-+]?[0-9]+)?$/i,
+                /^([-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?)d$/i,
                 (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
                     value, [], Number
                 ), value)
             ],
-            false: [/^false$/i, (superNode, value) => new NbtByteNode(superNode, 0, value)],
-            true: [/^true$/i, (superNode, value) => new NbtByteNode(superNode, 1, value)]
+            doubleImplicit: [
+                /^([-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+))?$/i,
+                (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
+                    value, [], Number
+                ), value)
+            ],
+            false: [/^(false)$/i, (superNode, value) => new NbtByteNode(superNode, 0, value)],
+            true: [/^(true)$/i, (superNode, value) => new NbtByteNode(superNode, 1, value)]
         }
 
     /**
@@ -170,9 +168,6 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             description
         )
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
-            console.log(this.expectedTypes)
-            console.log(ans.data)
-            console.log(ans.data[NbtNodeType])
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',
@@ -227,7 +222,12 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: NbtCompoundDoc): ArgumentParserResult<NbtCompoundNode> {
-        const ans = new MapParser<NbtCompoundNode>(
+        const ans: ArgumentParserResult<NbtCompoundNode> = {
+            data: new NbtCompoundNode(superNode),
+            cache: {}, completions: [], errors: [], tokens: []
+        }
+
+        new MapParser<NbtCompoundNode>(
             NbtCompoundNodeChars,
             (ans, reader, ctx) => {
                 const result: ArgumentParserResult<string> = {
@@ -240,7 +240,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 const start = reader.cursor
                 //#region Completions.
                 if (helper && doc && ctx.cursor === start) {
-                    helper.completeCompoundFieldKeys(ans, ctx, ans.data, doc, this.isPredicate)
+                    // TODO: completions for in-quote keys.
+                    helper.completeCompoundFieldKeys(ans, ctx, ans.data, doc, null)
                 }
                 //#endregion
                 try {
@@ -322,7 +323,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 combineArgumentParserResult(ans, result)
             }
-        ).parse(reader, ctx)
+        ).parse(ans, reader, ctx)
 
         return ans
     }
@@ -551,7 +552,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         if (NbtArgumentParser.Patterns.hasOwnProperty(type)) {
                             const [pattern, func] = NbtArgumentParser.Patterns[type]
                             if (pattern.test(value)) {
-                                ans.data = func(superNode, value)
+                                const rawValue = pattern.exec(value)![1]
+                                ans.data = func(superNode, rawValue)
                                 //#region Tokens
                                 ans.tokens.push(Token.from(start, reader, TokenType.number))
                                 //#endregion

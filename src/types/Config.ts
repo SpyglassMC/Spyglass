@@ -1,8 +1,8 @@
-import { SelectorParsedArgument } from './Entity'
 import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
+import SelectorArgumentMapNode from './nodes/map/SelectorArgumentMapNode'
 
 export default interface Config {
     /**
@@ -94,8 +94,8 @@ export interface LintConfig {
     nbtPathQuoteType: DiagnosticConfig<'always double'>,
     nbtStringQuote: DiagnosticConfig<boolean>,
     nbtStringQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
-    nbtTypeCheck: DiagnosticConfig<'stirctly' | 'loosely'>,
-    selectorSortKeys: DiagnosticConfig<(keyof SelectorParsedArgument)[]>,
+    nbtTypeCheck: DiagnosticConfig<'strictly' | 'loosely'>,
+    selectorSortKeys: DiagnosticConfig<string[]>,
     selectorKeyQuote: DiagnosticConfig<boolean>,
     selectorKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
     strictAdvancementCheck: DiagnosticConfig<true>,
@@ -212,7 +212,7 @@ export const VanillaConfig: Config = {
         timeOmitTickUnit: false,
         // Diagnostic configs.
         blockStateSortKeys: null,
-        idOmitDefaultNamespace: ['warning', false],
+        idOmitDefaultNamespace: null,
         nameOfNbtCompoundTagKeys: null,
         nameOfObjectives: null,
         nameOfTags: null,
@@ -225,7 +225,7 @@ export const VanillaConfig: Config = {
         nbtPathQuoteType: ['warning', 'always double'],
         nbtStringQuote: ['warning', true],
         nbtStringQuoteType: ['warning', 'prefer double'],
-        nbtTypeCheck: ['warning', 'stirctly'],
+        nbtTypeCheck: ['warning', 'strictly'],
         selectorKeyQuote: null,
         selectorKeyQuoteType: null,
         selectorSortKeys: null,

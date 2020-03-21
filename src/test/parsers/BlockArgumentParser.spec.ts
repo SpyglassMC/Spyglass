@@ -49,7 +49,7 @@ describe('BlockArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ blocks, registries, parsers })
+        ctx = await constructContext({ blocks, registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data without states or tag', () => {
@@ -107,7 +107,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 0 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 0 })
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode()
@@ -134,7 +134,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return completions for state keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 16 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 16 })
             const actual = parser.parse(new StringReader('minecraft:stone[]'), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode('minecraft', ['stone'])
@@ -148,7 +148,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should not return redundant completions for state keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 27 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 27 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,]'), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode('minecraft', ['stone']),
@@ -162,7 +162,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return completions for state values', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 22 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 22 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=]'), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode('minecraft', ['stone']),
@@ -177,7 +177,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return empty completions if the ID does not have states', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 12 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 12 })
             const actual = parser.parse(new StringReader('grass_block[]'), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode('minecraft', ['grass_block'])
@@ -186,7 +186,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return empty completions if the ID does not exist', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 13 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 13 })
             const actual = parser.parse(new StringReader('spgoding:wtf[]'), context)
             assert.deepEqual(actual.data, new BlockToken(
                 new IdentityNode('spgoding', ['wtf'])
@@ -195,7 +195,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return error for dupliate keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 0 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 0 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,snowy=false]'), context)
             assert.deepStrictEqual(actual.errors,
                 [
@@ -210,7 +210,7 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return error when the end bracket is missing', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registries, parsers, cursor: 0 })
+            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 0 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy='), context)
             assert.deepStrictEqual(actual.errors,
                 [

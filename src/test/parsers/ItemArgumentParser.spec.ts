@@ -30,7 +30,7 @@ describe('ItemArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ registries, parsers })
+        ctx = await constructContext({ registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data without tag', () => {
@@ -52,7 +52,7 @@ describe('ItemArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { omitDefaultNamespace: true } })
-            const context = await constructContext({ registries, parsers, config, cursor: 0 })
+            const context = await constructContext({ registry: registries, parsers, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
             assert.deepEqual(actual.data, new ItemNode(

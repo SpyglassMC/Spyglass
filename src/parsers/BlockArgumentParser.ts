@@ -50,7 +50,12 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             const definition = id.isTag ? undefined : ctx.blocks[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
-            const statesResult = new MapParser<BlockStateNode>(
+            const statesResult: ArgumentParserResult<BlockStateNode> = {
+                data: new BlockStateNode(),
+                cache: {}, completions: [], errors: [], tokens: []
+            }
+
+            new MapParser<BlockStateNode>(
                 BlockStateNodeChars,
                 (ans, reader, ctx) => {
                     const existingKeys = Object.keys(ans.data)
@@ -83,7 +88,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
                     }
                     combineArgumentParserResult(ans, result)
                 }
-            ).parse(reader, ctx)
+            ).parse(statesResult, reader, ctx)
             combineArgumentParserResult(ans, statesResult)
             ans.data.states = statesResult.data
 
@@ -99,7 +104,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
-            const tagResult = ctx.parsers.get('Nbt', ['compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)
+            const tagResult = ctx.parsers.get('Nbt', ['Compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag

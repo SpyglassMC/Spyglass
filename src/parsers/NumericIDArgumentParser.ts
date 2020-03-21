@@ -13,7 +13,7 @@ export default class NumericIDArgumentParser extends ArgumentParser<number> {
     constructor(private readonly type: string) { super() }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<number> {
-        this.registry = ctx.registries[this.type]
+        this.registry = ctx.registry[this.type]
         const ans: ArgumentParserResult<number> = {
             data: NaN,
             tokens: [],

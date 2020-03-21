@@ -27,11 +27,12 @@ export default class QuotableLiteralArgumentParser extends LiteralArgumentParser
         }
         //#region Get completions.
         if (ctx.cursor === reader.cursor) {
-            ans.completions.push(
-                ...arrayToCompletions(
-                    this.literals.map(v => quoteString(v, ctx.config.lint.quoteType, this.shouldQuote))
-                )
-            )
+            // FIXME
+            // ans.completions.push(
+            //     ...arrayToCompletions(
+            //         this.literals.map(v => quoteString(v, ctx.config.lint.quoteType, this.shouldQuote))
+            //     )
+            // )
         }
         if (StringReader.isQuote(reader.peek()) && ctx.cursor === reader.cursor + 1) {
             ans.completions.push(

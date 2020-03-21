@@ -5,7 +5,7 @@ import ParsingError from '../types/ParsingError'
 import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
 import { locale } from '../locales/Locales'
 import Token, { TokenModifier, TokenType } from '../types/Token'
-import Identity from '../types/Identity'
+import IdentityNode from '../types/nodes/IdentityNode'
 
 export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionID'
@@ -33,7 +33,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                     case 'bossbar':
                     case 'storage':
                         token = TokenType.namespacedID
-                        id = Identity.fromString(id).toString()
+                        id = IdentityNode.fromString(id).toString()
                         break
                     case 'entity':
                         token = TokenType.entity
