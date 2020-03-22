@@ -199,6 +199,8 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
 
         onDidCloseTextDocument({ uri, infos })
+
+        updateDiagnostics(uri)
     })
 
     connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
@@ -514,17 +516,16 @@ async function getLatestVersions() {
 
 async function updateDiagnostics(uri: Uri) {
     const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
-    if (!info) {
-        return
-    }
-    const lines = info.lines
     const diagnostics = []
-    let lineNumber = 0
-    for (const line of lines) {
-        if (line.errors) {
-            diagnostics.push(...line.errors.map(v => v.toDiagnostic(lineNumber)))
+    if (info) {
+        const lines = info.lines
+        let lineNumber = 0
+        for (const line of lines) {
+            if (line.errors) {
+                diagnostics.push(...line.errors.map(v => v.toDiagnostic(lineNumber)))
+            }
+            lineNumber++
         }
-        lineNumber++
     }
     connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
 }

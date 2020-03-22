@@ -329,6 +329,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><img src="https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256" width="100px;" alt=""/><br /><sub><b>ncfumction</b></sub><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3Anphhpn#????" title="Bug reports">🐛</a></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/136741373003956224/fb81857fc2e65f6579451ddec680d1db.png?size=256" width="100px;" alt=""/><br /><sub><b>឵!Onnowhere</b></sub><br /><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AOnnowhere#????" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
