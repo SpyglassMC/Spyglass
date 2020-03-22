@@ -2,8 +2,10 @@ import { LintConfig } from '../../Config'
 import { ToFormattedString } from '../../Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
-import ArgumentNode, { NodeType } from '../ArgumentNode'
+import ArgumentNode, { NodeType, GetHoverInformation, NodeRange } from '../ArgumentNode'
 import TextRange from '../../TextRange'
+import HoverInformation from '../../HoverInformation'
+import { Hover } from 'vscode-languageserver'
 
 export const enum BracketType { open, close }
 
@@ -93,5 +95,25 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         }
 
         return `${open}${contentString}${close}`
+    }
+
+    [GetHoverInformation](lineNumber: number, char: number) {
+        for (const key in this[Keys]) {
+            if (this[Keys].hasOwnProperty(key)) {
+                const keyInfo = this[Keys][key]
+                if (keyInfo instanceof ArgumentNode) {
+                    if (keyInfo[NodeRange].start <= char && char <= keyInfo[NodeRange].end) {
+                        return keyInfo[GetHoverInformation](lineNumber, char)
+                    }
+                }
+                const value = this[key]
+                if (value instanceof ArgumentNode) {
+                    if (value[NodeRange].start <= char && char <= value[NodeRange].end) {
+                        return value[GetHoverInformation](lineNumber, char)
+                    }
+                }
+            }
+        }
+        return null
     }
 }

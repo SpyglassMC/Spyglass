@@ -12,6 +12,7 @@
     "datapack.config.features.documentLinks": "Whether DHP should provide document links or not.",
     "datapack.config.features.foldingRanges": "Whether DHP should provide folding ranges or not.",
     "datapack.config.features.formatting": "Whether DHP should provide formatting feature or not.",
+    "datapack.config.features.hover": "Whether DHP should provide hover information or not.",
     "datapack.config.features.semanticColoring": "Whether DHP should provide semantic coloring or not.",
     "datapack.config.features.selectionRanges": "Whether DHP should provide selection ranges or not.",
     "datapack.config.features.signatures": "Whether DHP should provide signature information for commands or not.",

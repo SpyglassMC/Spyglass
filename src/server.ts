@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed } from 'vscode-languageserver'
+import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed, CodeActionKind } from 'vscode-languageserver'
 import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
 import Config, { VanillaConfig } from './types/Config'
 import IdentityNode from './types/nodes/IdentityNode'
@@ -36,6 +36,7 @@ import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
 import onRenameRequest from './utils/handlers/onRenameRequest'
 import { requestText } from './utils/utils'
 import { VanillaReportOptions } from './types/ParsingContext'
+import onHover from './utils/handlers/onHover'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -129,7 +130,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 workDoneProgress: true
             },
             foldingRangeProvider: true,
-            // hoverProvider: true,
+            hoverProvider: true,
+            // codeActionProvider: {
+            //     codeActionKinds: [CodeActionKind.QuickFix]
+            // },
             referencesProvider: true,
             renameProvider: {
                 prepareProvider: true
@@ -340,6 +344,15 @@ connection.onInitialized(() => {
             return null
         }
         return onFoldingRanges({ info })
+    })
+
+    connection.onHover(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
+        const uri = getUri(uriString, uris)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        if (!info || !info.config.features.hover) {
+            return null
+        }
+        return onHover({ info, lineNumber, char, cacheFile })
     })
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
