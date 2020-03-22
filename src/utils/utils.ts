@@ -158,7 +158,7 @@ export function toFormattedString(value: any, lint: LintConfig): string {
     if (value && value[ToFormattedString]) {
         return value[ToFormattedString](lint)
     } else {
-        return `${value}`
+        return value.toString()
     }
 }
 

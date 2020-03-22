@@ -129,5 +129,5 @@ export function saturatedLineToLine(line: SaturatedLine) {
 }
 
 export function lineToLintedString(line: Line, lint: LintConfig) {
-    return line.args.map(v => toFormattedString(v, lint)).join(' ')
+    return line.args.map(v => toFormattedString(v.data, lint)).join(' ')
 }
