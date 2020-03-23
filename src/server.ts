@@ -35,8 +35,9 @@ import onDefOrRef from './utils/handlers/onDefOrRef'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
 import onRenameRequest from './utils/handlers/onRenameRequest'
 import { requestText } from './utils/utils'
-import { VanillaReportOptions } from './types/ParsingContext'
+import { VanillaReportOptions, constructContext } from './types/ParsingContext'
 import onHover from './utils/handlers/onHover'
+import onCodeAction from './utils/handlers/onCodeAction'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -131,9 +132,9 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             },
             foldingRangeProvider: true,
             hoverProvider: true,
-            // codeActionProvider: {
-            //     codeActionKinds: [CodeActionKind.QuickFix]
-            // },
+            codeActionProvider: {
+                codeActionKinds: [CodeActionKind.QuickFix, CodeActionKind.SourceFixAll]
+            },
             referencesProvider: true,
             renameProvider: {
                 prepareProvider: true
@@ -402,6 +403,15 @@ connection.onInitialized(() => {
         }
 
         return onSelectionRanges({ positions, info })
+    })
+
+    connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
+        const uri = getUri(uriString, uris)
+        const info = await getInfo(uri, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        if (!info || !info.config.features.codeActions) {
+            return null
+        }
+        return onCodeAction({ uri, info, diagnostics, range, cacheFile })
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {

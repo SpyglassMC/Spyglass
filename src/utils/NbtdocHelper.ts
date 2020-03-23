@@ -253,6 +253,12 @@ export default class NbtdocHelper {
         if (!ctx.config.lint.nbtBoolean || ctx.config.lint.nbtBoolean[1]) {
             ans.completions.push(...arrayToCompletions(['false', 'true']))
         }
+        if (!ctx.config.lint.nbtBoolean || !ctx.config.lint.nbtBoolean[1]) {
+            ans.completions.push(...arrayToCompletions([
+                NbtdocHelper.getFormattedString(ctx.config.lint, 'Byte', 0),
+                NbtdocHelper.getFormattedString(ctx.config.lint, 'Byte', 1)
+            ]))
+        }
     }
     private completeByteArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ByteArrayDoc) {
         ans.completions.push({ label: new NbtByteArrayNode(null)[ToFormattedString](lint) })
@@ -261,7 +267,7 @@ export default class NbtdocHelper {
         ans.completions.push({ label: new NbtCompoundNode(null)[ToFormattedString](lint) })
     }
     private static handleDescription(str: string) {
-        return str.trim()
+        return str.trim().replace(/\n\s/g, '\n')
     }
     completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, inQuote: 'double' | 'single' | null) {
         const existingKeys = Object.keys(tag)
@@ -271,9 +277,8 @@ export default class NbtdocHelper {
             .readCompoundKeys()
             .filter(v => !existingKeys.includes(v))
         for (const key of pool) {
-            const field = clonedHelper.readField(key)
-            /* istanbul ignore next */
-            const description = field ? NbtdocHelper.handleDescription(field.description) : ''
+            const field = clonedHelper.readField(key)!
+            const description = NbtdocHelper.handleDescription(field.description)
             let insertText: string
             if (inQuote) {
                 insertText = quoteString(key, `always ${inQuote}` as any, true).slice(1, -1)
@@ -285,6 +290,7 @@ export default class NbtdocHelper {
             ans.completions.push({
                 label: key, insertText,
                 kind: CompletionItemKind.Property,
+                detail: NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype)),
                 /* istanbul ignore next */
                 ...description ? { documentation: description } : {}
             })
@@ -302,8 +308,9 @@ export default class NbtdocHelper {
                 const handledDescription = NbtdocHelper.handleDescription(description)
                 ans.completions.push({
                     label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
-                    detail: key,
-                    ...handledDescription ? { documentation: handledDescription } : {}
+                    detail: NbtdocHelper.localeType(type),
+                    documentation: handledDescription ? `${key}  \n${handledDescription}` : key,
+                    kind: CompletionItemKind.EnumMember
                 })
             }
         }
@@ -425,16 +432,12 @@ export default class NbtdocHelper {
     }
 
     private validateCollectionLength(ans: ValidateResult, _ctx: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number, number], _isPredicate: boolean) {
-        if (tag.length < min) {
+        if (!(min <= tag.length && tag.length <= max)) {
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
-                locale('expected', locale('collection-length.>=', min)),
-                true, DiagnosticSeverity.Warning
-            ))
-        } else if (tag.length > max) {
-            ans.errors.push(new ParsingError(
-                tag[NodeRange],
-                locale('expected', locale('collection-length.<=', max)),
+                locale('expected',
+                    min === max ? locale('collection-length.exact', min) : locale('collection-length.between', min, max)
+                ),
                 true, DiagnosticSeverity.Warning
             ))
         }
@@ -464,16 +467,10 @@ export default class NbtdocHelper {
             }
         }
         // Errors.
-        if (tag.valueOf() < min) {
+        if (!(min <= tag.valueOf() && tag.valueOf() <= max)) {
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
-                locale('expected-got', locale('number.>=', min), tag.valueOf()),
-                true, DiagnosticSeverity.Warning
-            ))
-        } else if (tag.valueOf() > max) {
-            ans.errors.push(new ParsingError(
-                tag[NodeRange],
-                locale('expected-got', locale('number.<=', max), tag.valueOf()),
+                locale('expected-got', locale('number.between', min, max), tag.valueOf()),
                 true, DiagnosticSeverity.Warning
             ))
         }
@@ -498,15 +495,22 @@ export default class NbtdocHelper {
                     const field = this.readField(key)
                     if (field) {
                         // Hover information.
-                        tag[Keys][key][NodeDescription] = `(${NbtdocHelper.getValueType(field.nbttype)}) ${NbtdocHelper.handleDescription(field.description)}`
+                        tag[Keys][key][NodeDescription] = `${
+                            NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype))
+                            }\n* * * * * *\n${
+                            NbtdocHelper.handleDescription(field.description)}`
                         this.validateField(ans, ctx, childTag, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
                     } else {
                         // Errors.
                         if (!this.isInheritFromItemBase(doc)) {
+                            let code: ActionCode | undefined
+                            if (['UUIDMost', 'UUIDLeast', 'OwnerUUID', 'TrustedUUIDs', 'target_uuid', 'owner'].includes(key)) {
+                                code = ActionCode.NbtUuidDatafix
+                            }
                             ans.errors.push(new ParsingError(
                                 tag[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),
-                                true, DiagnosticSeverity.Warning
+                                true, DiagnosticSeverity.Warning, code
                             ))
                         }
                     }
@@ -553,6 +557,10 @@ export default class NbtdocHelper {
         } else {
             return Object.keys(value)[0]
         }
+    }
+
+    private static localeType(type: string) {
+        return locale('nbtdoc.type', locale(`nbtdoc.type.${type}`))
     }
 
     private validateBooleanField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, _doc: BooleanDoc, isPredicate: boolean): void {
@@ -614,7 +622,7 @@ export default class NbtdocHelper {
             .readEnum()
         const handledDescription = NbtdocHelper.handleDescription(description)
         const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
-        tag[NodeDescription] = `(${type}) ${handledDescription}`
+        tag[NodeDescription] = `${NbtdocHelper.localeType(type)}\n* * * * * *\n${handledDescription}`
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, type, isPredicate)
         if (shouldValidate) {
             const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]

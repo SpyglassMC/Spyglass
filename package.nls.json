@@ -6,6 +6,7 @@
     "datapack.config.env.dependsOnVanilla": "Whether this datapack depends on the vanilla datapack or not. If this option is enabled, completions for the corresponding data of the vanilla datapack will be provided.",
     "datapack.config.env.permissionLevel": "`function-permission-level` defined in `server.properties`.",
     "datapack.config.env.cmdVersion": "The version of the command tree. Only major versions are available.",
+    "datapack.config.features.codeActions": "Whether DHP should provide code actions or not.",
     "datapack.config.features.colors": "Whether DHP should provide color supports or not.",
     "datapack.config.features.completions": "Whether DHP should provide completions or not.",
     "datapack.config.features.documentHighlighting": "Whether DHP should provide document highlighting or not.",

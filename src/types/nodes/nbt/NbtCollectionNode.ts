@@ -52,7 +52,7 @@ export default abstract class NbtCollectionNode<T extends NbtNode> extends NbtNo
 
         const content: string[] = []
         for (const value of this) {
-            content.push(`${toFormattedString(value, lint)}${sep}`)
+            content.push(toFormattedString(value, lint))
         }
 
         let contentString = content.join(sep)

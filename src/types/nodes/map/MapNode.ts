@@ -2,10 +2,12 @@ import { LintConfig } from '../../Config'
 import { ToFormattedString } from '../../Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
-import ArgumentNode, { NodeType, GetHoverInformation, NodeRange } from '../ArgumentNode'
-import TextRange from '../../TextRange'
+import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions } from '../ArgumentNode'
+import TextRange, { areOverlapped } from '../../TextRange'
 import HoverInformation from '../../HoverInformation'
-import { Hover } from 'vscode-languageserver'
+import { Hover, Diagnostic, CodeAction } from 'vscode-languageserver'
+import FunctionInfo from '../../FunctionInfo'
+import { Uri } from 'vscode'
 
 export const enum BracketType { open, close }
 
@@ -83,6 +85,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         const content: string[] = []
         const keys = sort ? Object.keys(this).sort((a, b) => a <= b ? -1 : 1) : Object.keys(this)
         for (const key of keys) {
+            /* istanbul ignore else */
             if (this.hasOwnProperty(key)) {
                 const value = this[key]
                 content.push(`${toFormattedString(key, lint)}${sep}${toFormattedString(value, lint)}`)
@@ -95,6 +98,27 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         }
 
         return `${open}${contentString}${close}`
+    }
+
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
+        const ans: CodeAction[] = []
+        for (const key in this[Keys]) {
+            if (this[Keys].hasOwnProperty(key)) {
+                const keyInfo = this[Keys][key]
+                if (keyInfo instanceof ArgumentNode) {
+                    if (areOverlapped(keyInfo[NodeRange], range)) {
+                        return keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+                    }
+                }
+                const value = this[key]
+                if (value instanceof ArgumentNode) {
+                    if (areOverlapped(value[NodeRange], range)) {
+                        return value[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+                    }
+                }
+            }
+        }
+        return ans
     }
 
     [GetHoverInformation](lineNumber: number, char: number) {

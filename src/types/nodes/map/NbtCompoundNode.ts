@@ -1,9 +1,7 @@
 import NbtNode, { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
-import { NodeType, NodeRange } from '../ArgumentNode'
-import { ToFormattedString } from '../../Formattable'
+import { NodeType } from '../ArgumentNode'
 import { LintConfig } from '../../Config'
 import MapNode, { Chars, ConfigKeys } from './MapNode'
-import TextRange from '../../TextRange'
 import NbtCompoundKeyNode from './NbtCompoundKeyNode'
 
 export const NbtCompoundNodeChars = {

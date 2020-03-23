@@ -1,5 +1,6 @@
 {
   "boolean": "a boolean",
+  "code-action.nbt-uuid-datafix": "Update UUID to the IntArray format",
   "code-snippets-invalid-for-game": "Code snippets are invalid for the game",
   "collection-length.exact": "a collection with length %0%",
   "collection-length.between": "a collection with length between %0% and %1%",

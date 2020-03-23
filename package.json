@@ -156,6 +156,11 @@
                     "markdownDescription": "%datapack.config.env.dataVersion%",
                     "default": "Latest snapshot"
                 },
+                "datapack.features.codeActions": {
+                    "type": "boolean",
+                    "markdownDescription": "%datapack.config.features.codeActions%",
+                    "default": true
+                },
                 "datapack.features.colors": {
                     "type": "boolean",
                     "markdownDescription": "%datapack.config.features.colors%",

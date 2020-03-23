@@ -130,6 +130,10 @@ export interface LintConfig {
 
 export interface FeaturesConfig {
     /**
+     * Whether DHP should provide code actions or not.
+     */
+    codeActions: boolean,
+    /**
      * Whether DHP should provide color supports or not.
      */
     colors: boolean,
@@ -153,6 +157,10 @@ export interface FeaturesConfig {
      * Whether DHP should provide formatting feature or not.
      */
     formatting: boolean,
+    /**
+     * Whether DHP should provide hover information or not.
+     */
+    hover: boolean,
     /**
      * Whether DHP should provide semantic coloring or not.
      */
@@ -259,12 +267,14 @@ export const VanillaConfig: Config = {
         stringQuoteType: ['warning', 'prefer double']
     },
     features: {
+        codeActions: true,
         colors: true,
         completions: true,
         documentHighlighting: true,
         documentLinks: true,
         foldingRanges: true,
         formatting: true,
+        hover: true,
         semanticColoring: true,
         selectionRanges: true,
         signatures: true

@@ -13,3 +13,7 @@ export default interface TextRange {
 export function remapTextRange<T extends TextRange = TextRange>(range: T, mapping: number[]): T {
     return { ...range, start: getOuterIndex(mapping, range.start), end: getOuterIndex(mapping, range.end) }
 }
+
+export function areOverlapped(a: TextRange, b: TextRange) {
+    return a.start <= b.end && a.end >= b.start
+}

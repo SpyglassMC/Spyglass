@@ -1,4 +1,4 @@
-import ArgumentNode, { NodeType, NodeRange } from '../ArgumentNode'
+import ArgumentNode, { NodeType } from '../ArgumentNode'
 import { ToFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
 import NbtCompoundNode from '../map/NbtCompoundNode'
