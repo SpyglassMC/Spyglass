@@ -56,7 +56,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone'])
             ))
         })
@@ -64,7 +64,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[]'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone'])
             ))
         })
@@ -72,7 +72,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true ]'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true' }
             ))
@@ -81,7 +81,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 3 ]'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '3' }
             ))
@@ -90,7 +90,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone{ foo : "bar" }'), ctx)
             assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 undefined,
                 getNbtCompoundTag({ foo: getNbtStringTag('bar') })
@@ -99,7 +99,7 @@ describe('BlockArgumentParser Tests', () => {
         it('Should return data with both states and tag', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 2 ]{ foo : "bar" }'), ctx)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true', age: '2' },
                 getNbtCompoundTag({ foo: getNbtStringTag('bar') })
@@ -109,7 +109,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 0 })
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode()
             ))
             assert.deepStrictEqual(actual.completions,
@@ -121,13 +121,11 @@ describe('BlockArgumentParser Tests', () => {
                     },
                     {
                         label: 'stone',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'grass_block',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -136,7 +134,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 16 })
             const actual = parser.parse(new StringReader('minecraft:stone[]'), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone'])
             ))
             assert.deepStrictEqual(actual.completions,
@@ -150,7 +148,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 27 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,]'), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 { snowy: 'true' }
             ))
@@ -164,7 +162,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 22 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=]'), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 { snowy: '' }
             ))
@@ -179,7 +177,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 12 })
             const actual = parser.parse(new StringReader('grass_block[]'), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['grass_block'])
             ))
             assert.deepStrictEqual(actual.completions, [])
@@ -188,7 +186,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 13 })
             const actual = parser.parse(new StringReader('spgoding:wtf[]'), context)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('spgoding', ['wtf'])
             ))
             assert.deepStrictEqual(actual.completions, [])
@@ -226,7 +224,7 @@ describe('BlockArgumentParser Tests', () => {
         it('Should not return errors for block tags', () => {
             const parser = new BlockArgumentParser(true)
             const actual = parser.parse(new StringReader('#minecraft:stone[snowy=true]'), ctx)
-            assert.deepEqual(actual.data, new BlockToken(
+            assert.deepEqual(actual.data, new BlockNode(
                 new IdentityNode('minecraft', ['stone'], true),
                 { snowy: 'true' }
             ))

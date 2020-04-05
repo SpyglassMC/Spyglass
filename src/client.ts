@@ -71,7 +71,7 @@ export function activate(context: ExtensionContext) {
         clientOptions
     )
 
-    // client.registerProposedFeatures()
+    client.registerProposedFeatures()
 
     // Start the client. This will also launch the server
     client.start()

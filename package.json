@@ -2084,43 +2084,43 @@
         ],
         "semanticTokenStyleDefaults": [
             {
-                "selector": "annotation",
+                "selector": "annotation:mcfunction",
                 "scope": [
                     "support.type.doc.annotation.mcfunction"
                 ]
             },
             {
-                "selector": "boolean",
+                "selector": "boolean:mcfunction",
                 "scope": [
                     "constant.language.boolean.mcfunction"
                 ]
             },
             {
-                "selector": "entity",
+                "selector": "entity:mcfunction",
                 "scope": [
                     "support.class.entity.mcfunction"
                 ]
             },
             {
-                "selector": "literal",
+                "selector": "literal:mcfunction",
                 "scope": [
                     "keyword.other.mcfunction"
                 ]
             },
             {
-                "selector": "literal.firstArgument",
+                "selector": "literal.firstArgument:mcfunction",
                 "scope": [
                     "keyword.control.mcfunction"
                 ]
             },
             {
-                "selector": "namespacedID",
+                "selector": "namespacedID:mcfunction",
                 "scope": [
                     "entity.name.function.mcfunction"
                 ]
             },
             {
-                "selector": "vector",
+                "selector": "vector:mcfunction",
                 "scope": [
                     "constant.numeric.vector.mcfunction"
                 ]

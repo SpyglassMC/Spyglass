@@ -130,23 +130,19 @@ describe('ParticleArgumentParser Tests', () => {
                     },
                     {
                         label: 'cloud',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'dust',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'block',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'item',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )

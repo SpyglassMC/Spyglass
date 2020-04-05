@@ -48,7 +48,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         if (!checker(value)) {
             throw locale('expected-got',
                 locale('number.between', range[0], range[1]),
-                locale('punc.quote', value)
+                value
             )
         }
         return value
@@ -106,7 +106,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 ), value)
             ],
             doubleImplicit: [
-                /^([-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+))?$/i,
+                /^([-+]?(?:[0-9]+[.]|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?)$/i,
                 (superNode, value) => new NbtDoubleNode(superNode, NbtArgumentParser.parseNumber(
                     value, [], Number
                 ), value)
@@ -183,10 +183,10 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: nbtdoc.NbtValue, description?: string): ArgumentParserResult<NbtNode> {
-        let ans
+        let ans: ArgumentParserResult<NbtNode>
         switch (reader.peek()) {
             case '{':
-                ans = this.parseCompoundTag(reader, ctx, superNode, helper)
+                ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : undefined)
                 break
             case '[':
                 ans = this.parseListOrArray(reader, ctx, superNode, helper, doc && NbtdocHelper.isListDoc(doc) ? doc : undefined, description)
@@ -226,6 +226,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             data: new NbtCompoundNode(superNode),
             cache: {}, completions: [], errors: [], tokens: []
         }
+        const start = reader.cursor
 
         new MapParser<NbtCompoundNode>(
             NbtCompoundNodeChars,
@@ -239,9 +240,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 const start = reader.cursor
                 //#region Completions.
-                if (helper && doc && ctx.cursor === start) {
-                    // TODO: completions for in-quote keys.
-                    helper.completeCompoundFieldKeys(ans, ctx, ans.data, doc, null)
+                if (helper && doc) {
+                    if (ctx.cursor === reader.cursor) {
+                        helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, null)
+                    } else if (StringReader.isQuote(reader.peek()) && ctx.cursor === reader.cursor + 1) {
+                        const inQuote = reader.peek() === "'" ? 'single' : 'double'
+                        helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, inQuote)
+                    }
                 }
                 //#endregion
                 try {
@@ -288,7 +293,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                             )
                         }
                         ans.data[Keys][key] = new NbtCompoundKeyNode(
-                            superNode, key, reader.string.slice(start, end), out.mapping
+                            ans.data, key, reader.string.slice(start, end), out.mapping
                         )
                         ans.data[Keys][key][NodeRange] = { start, end }
                     }
@@ -298,32 +303,28 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 return result
             },
-            (ans, reader, ctx, key, keyRange) => {
+            (ans, reader, ctx, key) => {
                 // Check whether the schema for the key is available.
-                let isSchemaForKeyAvailable = false
                 let fieldDoc: nbtdoc.Field | null = null
                 if (helper && helper.compoundIndex !== null) {
                     fieldDoc = helper.readField(key)
-                    if (fieldDoc) {
-                        isSchemaForKeyAvailable = true
-                    }
                 }
-                const start = reader.cursor
                 const result = this.parseTag(
                     reader,
                     ctx,
-                    superNode,
+                    ans.data,
                     helper,
                     fieldDoc ? fieldDoc.nbttype : undefined,
                     fieldDoc ? fieldDoc.description : undefined
                 )
                 if (key) {
                     ans.data[key] = result.data
-                    ans.data[key][NodeRange] = { start, end: reader.cursor }
                 }
                 combineArgumentParserResult(ans, result)
             }
         ).parse(ans, reader, ctx)
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }
@@ -336,6 +337,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
+        const start = reader.cursor
         try {
             reader.expect('[')
             let result: ArgumentParserResult<NbtCollectionNode<NbtNode>>
@@ -351,12 +353,12 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         } catch (p) {
             ans.errors.push(p)
         } finally {
+            ans.data[NodeRange] = { start, end: reader.cursor }
             return ans
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper,
-        specifiedType: 'ByteArray' | 'IntArray' | 'LongArray' | null = null):
+    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper):
         ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> {
         const ans: ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> = {
             data: new NbtByteArrayNode(superNode),
@@ -365,9 +367,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
-        if (specifiedType) {
-            ans.data[NbtNodeType] = specifiedType
-        }
+        const start = reader.cursor
         try {
             reader
                 .expect('[')
@@ -408,9 +408,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         .skipWhiteSpace()
                 }
                 if (ans.data[NbtNodeType] === 'ByteArray') {
-                    if (isNbtByteNode(result.data)) {
-                        ans.data.push(result.data)
-                    } else {
+                    ans.data.push(result.data as NbtByteNode)
+                    if (!isNbtByteNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
@@ -422,9 +421,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         )
                     }
                 } else if (ans.data[NbtNodeType] === 'IntArray') {
-                    if (isNbtIntNode(result.data)) {
-                        ans.data.push(result.data)
-                    } else {
+                    ans.data.push(result.data as NbtIntNode)
+                    if (!isNbtIntNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
@@ -436,9 +434,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         )
                     }
                 } else {
-                    if (isNbtLongNode(result.data)) {
-                        ans.data.push(result.data)
-                    } else {
+                    ans.data.push(result.data as NbtLongNode)
+                    if (!isNbtLongNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
                                 { start, end: reader.cursor },
@@ -455,8 +452,10 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .expect(']')
                 .skip()
         } catch (p) {
+            /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
+            ans.data[NodeRange] = { start, end: reader.cursor }
             return ans
         }
     }
@@ -469,6 +468,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
+        const start = reader.cursor
         try {
             reader
                 .expect('[')
@@ -506,8 +506,10 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .expect(']')
                 .skip()
         } catch (p) {
+            /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
+            ans.data[NodeRange] = { start, end: reader.cursor }
             return ans
         }
     }
@@ -557,6 +559,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                                 //#region Tokens
                                 ans.tokens.push(Token.from(start, reader, TokenType.number))
                                 //#endregion
+                                ans.data[NodeRange] = { start, end: reader.cursor }
                                 return ans
                             }
                         }
@@ -567,18 +570,16 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     //#region Tokens
                     ans.tokens.push(Token.from(start, reader, TokenType.string))
                     //#endregion
-                    if (s === failedToMatchAllPatterns) {
-                        // Ignore `s`.
-                        ans.data = new NbtStringNode(superNode, value, value, out.mapping)
-                    } else {
-                        ans.data = new NbtStringNode(superNode, value, value, out.mapping)
+                    ans.data = new NbtStringNode(superNode, value, value, out.mapping)
+                    if (s !== failedToMatchAllPatterns) {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, s, true, DiagnosticSeverity.Warning)
+                            new ParsingError({ start, end: reader.cursor }, s, undefined, DiagnosticSeverity.Warning)
                         )
                     }
                 }
             }
         }
+        ans.data[NodeRange] = { start, end: reader.cursor }
         return ans
     }
 

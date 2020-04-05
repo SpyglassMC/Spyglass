@@ -277,8 +277,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         }))
         complFiles.forEach(k => void ans.completions.push({
             label: k,
-            kind: fileKind,
-            commitCharacters: [' ']
+            kind: fileKind
         }))
         //#endregion
 

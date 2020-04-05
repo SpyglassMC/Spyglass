@@ -196,8 +196,7 @@ describe('IdentityArgumentParser Tests', () => {
                 [
                     {
                         label: 'advancement',
-                        kind: CompletionItemKind.Event,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Event
                     }
                 ]
             )
@@ -210,13 +209,11 @@ describe('IdentityArgumentParser Tests', () => {
                 [
                     {
                         label: '1',
-                        kind: CompletionItemKind.Function,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Function
                     },
                     {
                         label: '2',
-                        kind: CompletionItemKind.Function,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Function
                     }
                 ]
             )
@@ -240,18 +237,15 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: '#fluid_tag',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'water',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'lava',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -290,8 +284,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'stick',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -320,8 +313,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'stone',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -346,7 +338,6 @@ describe('IdentityArgumentParser Tests', () => {
                     {
                         label: 'area_effect_cloud',
                         kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
                     }
                 ]
             )
@@ -375,8 +366,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'foo',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -415,8 +405,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'foo',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -435,8 +424,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'bar',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -450,8 +438,7 @@ describe('IdentityArgumentParser Tests', () => {
                 [
                     {
                         label: 'baz',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -470,8 +457,7 @@ describe('IdentityArgumentParser Tests', () => {
                     },
                     {
                         label: 'bar',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )

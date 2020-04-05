@@ -67,13 +67,11 @@ describe('ItemArgumentParser Tests', () => {
                     },
                     {
                         label: 'stick',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     },
                     {
                         label: 'diamond_sword',
-                        kind: CompletionItemKind.Field,
-                        commitCharacters: [' ']
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )

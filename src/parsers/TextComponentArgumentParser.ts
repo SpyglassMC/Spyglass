@@ -236,8 +236,8 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                 quoteType: 'always double',
                 quoteSnbtStringKeys: true,
                 quoteSnbtStringValues: true,
-                snbtUseBooleans: true,
-                snbtOmitDoubleSuffix: true
+                nbtBoolean: true,
+                nbtOmitDoubleSuffix: true
             }
         })
         const ans: ArgumentParserResult<TextComponent> = {

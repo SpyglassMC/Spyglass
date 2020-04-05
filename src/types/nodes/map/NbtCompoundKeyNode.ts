@@ -41,6 +41,7 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
             if (superNbt) {
                 const newSuper = new NbtCompoundNode(superNbt[SuperNbt])
                 for (const key in superNbt) {
+                    /* istanbul ignore else */
                     if (superNbt.hasOwnProperty(key)) {
                         const value = superNbt[key]
                         if (key === 'owner' && value instanceof NbtCompoundNode && value.L instanceof NbtNumberNode && value.M instanceof NbtNumberNode) {
