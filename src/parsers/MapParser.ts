@@ -15,7 +15,7 @@ export default class MapParser<T extends { [key: string]: any }> {
         },
         private readonly parseKeyResult: (ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) => ArgumentParserResult<string>,
         private readonly parseValue: (ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext, key: string, keyRange: TextRange) => void
-    ) {}
+    ) { }
 
     /* istanbul ignore next */
     parse(ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) {
@@ -76,6 +76,7 @@ export default class MapParser<T extends { [key: string]: any }> {
 
             // Close BracketToken.
             reader
+                .skipWhiteSpace()
                 .expect(this.chars.closeBracket)
                 .skip()
         } catch (p) {

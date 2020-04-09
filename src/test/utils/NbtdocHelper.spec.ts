@@ -32,7 +32,9 @@ export const TestNbtdoc: nbtdoc.Root = {
         }, 4],
         'minecraft:item': [{
             'minecraft:boolean': 7,
-            'minecraft:complex': 8
+            'minecraft:complex': 8,
+            'minecraft:list': 9,
+            'minecraft:byte_array': 10
         }, 4]
     },
     compound_arena: [
@@ -130,6 +132,38 @@ export const TestNbtdoc: nbtdoc.Root = {
                 addition: {
                     description: ' The additional complex compound',
                     nbttype: { Compound: 1 }
+                }
+            },
+            supers: { Compound: 6 }
+        },
+        {
+            /* 9 */
+            description: ' The tag for item minecraft:list',
+            fields: {
+                addition: {
+                    description: ' The additional complex list',
+                    nbttype: {
+                        List: {
+                            length_range: null,
+                            value_type: { Compound: 1 }
+                        }
+                    }
+                }
+            },
+            supers: { Compound: 6 }
+        },
+        {
+            /* 10 */
+            description: ' The tag for item minecraft:byte_array',
+            fields: {
+                addition: {
+                    description: ' The additional byte array',
+                    nbttype: {
+                        ByteArray: {
+                            length_range: null,
+                            value_range: null
+                        }
+                    }
                 }
             },
             supers: { Compound: 6 }

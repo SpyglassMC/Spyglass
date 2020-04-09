@@ -4,10 +4,8 @@ import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions } from '../ArgumentNode'
 import TextRange, { areOverlapped } from '../../TextRange'
-import HoverInformation from '../../HoverInformation'
-import { Hover, Diagnostic, CodeAction } from 'vscode-languageserver'
+import {  Diagnostic, CodeAction } from 'vscode-languageserver'
 import FunctionInfo from '../../FunctionInfo'
-import { Uri } from 'vscode'
 
 export const enum BracketType { open, close }
 

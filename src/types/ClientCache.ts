@@ -50,7 +50,7 @@ export interface ClientCache {
     storages?: CacheCategory,
     tags?: CacheCategory,
     teams?: CacheCategory,
-    'colors'?: CacheCategory
+    colors?: CacheCategory
 }
 
 export type CacheKey = keyof ClientCache

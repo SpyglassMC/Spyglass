@@ -1,15 +1,16 @@
-import Formattable, { ToFormattedString } from '../Formattable'
+import { ToFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
 import { toFormattedString, quoteString } from '../../utils/utils'
 import NbtCompoundNode from './map/NbtCompoundNode'
 import ArgumentNode, { NodeType } from './ArgumentNode'
+import NbtCompoundKeyNode from './map/NbtCompoundKeyNode'
 
 export const NbtPathIndexBegin = Symbol('NbtPathIndexBegin')
 export const NbtPathIndexEnd = Symbol('NbtPathIndexEnd')
 export const NbtPathSep = Symbol('NbtPathSep')
 type NbtPathIndex = number
 type NbtPathCompoundFilter = NbtCompoundNode
-type NbtPathKey = string
+type NbtPathKey = NbtCompoundKeyNode
 
 export default class NbtPathNode extends ArgumentNode {
     readonly [NodeType] = 'NbtPath'
@@ -39,7 +40,7 @@ export default class NbtPathNode extends ArgumentNode {
             } else if (isNbtPathCompoundFilter(value) || isNbtPathIndex(value)) {
                 ans += toFormattedString(value, lint)
             } else {
-                ans += quoteString(value as string, 'always double', false)
+                ans += value[ToFormattedString]()
             }
         }
         return ans
