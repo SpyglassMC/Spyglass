@@ -1,4 +1,4 @@
-# Translating
+# Localization
 
 Datapack Helper Plus (MCF) supports multiple languages. If you'd like to help us translate this project, it would be really appreciated!
 

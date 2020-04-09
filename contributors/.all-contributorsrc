@@ -1,0 +1,40 @@
+{
+  "projectName": "datapack-language-server",
+  "projectOwner": "SPGoding",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "next.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "gitmoji",
+  "contributors": [],
+  "contributorsPerLine": 7,
+  "types": {
+    "localization": {
+      "symbol": "🌍",
+      "description": "Localization"
+    },
+    "sponsor": {
+      "symbol": "💝",
+      "description": "Sponsor",
+      "link": "#sponsor"
+    },
+    "bug": {
+      "symbol": "🐛",
+      "description": "Bug reports",
+      "link": "#bugs-<%= contributor.name %>"
+    },
+    "ideas": {
+      "symbol": "🤔",
+      "description": "Ideas, Planning, and Feedback",
+      "link": "#ideas-<%= contributor.name %>"
+    },
+    "dependency": {
+      "symbol": "⬆️",
+      "description": "Dependencies other than NPM modules"
+    }
+  },
+  "skipCi": true
+}
