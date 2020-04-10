@@ -1,6 +1,5 @@
 import NbtNode from './NbtNode'
 import NbtCompoundNode from '../map/NbtCompoundNode'
-import TextRange from '../../TextRange'
 
 export default abstract class NbtPrimitiveNode<T> extends NbtNode {
     /**

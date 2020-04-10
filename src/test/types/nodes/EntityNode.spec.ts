@@ -1,12 +1,13 @@
 import assert = require('power-assert')
-import { constructConfig } from '../../types/Config'
+import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
-import { ToFormattedString } from '../../types/Formattable'
-import EntityNode from '../../types/nodes/EntityNode'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import NumberRange from '../../types/NumberRange'
+import { ToFormattedString } from '../../../types/Formattable'
+import EntityNode from '../../../types/nodes/EntityNode'
+import IdentityNode from '../../../types/nodes/IdentityNode'
+import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
+import SelectorArgumentMapNode from '../../../types/nodes/map/SelectorArgumentMapNode'
 
-describe('Entity Tests', () => {
+describe('EntityNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         const entitySelectorKeyOrder = [
             'sort',
@@ -75,16 +76,20 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new EntityNode(
+
+            const expectedArgument = new SelectorArgumentMapNode()
+            expectedArgument.tag = ['a', 'b', 'c']
+            expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
+            expectedArgument.limit = 1
+
+            const expected = new EntityNode(
                 undefined,
                 'a',
-                {
-                    tag: ['a', 'b', 'c'],
-                    typeNeg: [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])],
-                    limit: 1
-                }
+                expectedArgument
             )
-            const actual = message[ToFormattedString](lint)
+
+            const actual = expected[ToFormattedString](lint)
+
             assert(actual === '@a[limit=1,type=!minecraft:a,type=!minecraft:b,tag=a,tag=b,tag=c]')
         })
         it('Should return extra spaces', () => {
@@ -95,16 +100,20 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new EntityNode(
+
+            const expectedArgument = new SelectorArgumentMapNode()
+            expectedArgument.tag = ['a', 'b', 'c']
+            expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
+            expectedArgument.limit = 1
+
+            const expected = new EntityNode(
                 undefined,
                 'a',
-                {
-                    tag: ['a', 'b', 'c'],
-                    typeNeg: [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])],
-                    limit: 1
-                }
+                expectedArgument
             )
-            const actual = message[ToFormattedString](lint)
+
+            const actual = expected[ToFormattedString](lint)
+
             assert(actual === '@a[limit = 1, type = !minecraft:a, type = !minecraft:b, tag = a, tag = b, tag = c]')
         })
         it('Should return scores', () => {
@@ -115,14 +124,18 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new EntityNode(
+
+            const expectedArgument = new SelectorArgumentMapNode()
+            expectedArgument.scores = { foo: new NumberRangeNode('integer', 0) }
+
+            const expected = new EntityNode(
                 undefined,
                 'a',
-                {
-                    scores: { foo: new NumberRange('integer', 0) }
-                }
+                expectedArgument
             )
-            const actual = message[ToFormattedString](lint)
+
+            const actual = expected[ToFormattedString](lint)
+
             assert(actual === '@a[scores={foo=0..}]')
         })
         it('Should return advancements', () => {
@@ -133,20 +146,21 @@ describe('Entity Tests', () => {
                     entitySelectorKeyOrder
                 }
             })
-            const message = new EntityNode(
+
+            const expectedArgument = new SelectorArgumentMapNode()
+            expectedArgument.advancements = {
+                foo: true,
+                bar: { baz: true, qux: false }
+            }
+
+            const expected = new EntityNode(
                 undefined,
                 'a',
-                {
-                    advancements: {
-                        foo: true,
-                        bar: {
-                            baz: true,
-                            qux: false
-                        }
-                    }
-                }
+                expectedArgument
             )
-            const actual = message[ToFormattedString](lint)
+
+            const actual = expected[ToFormattedString](lint)
+
             assert(actual === '@a[advancements={foo=true,bar={baz=true,qux=false}}]')
         })
     })

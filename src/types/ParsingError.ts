@@ -22,11 +22,8 @@ export const enum ActionCode {
      * Fix UUIDs in NBT compounds: #377
      */
     NbtUuidDatafix,
-    /**
-     * If the string is already quoted, switch the type of the quote;  
-     * otherwise, quote it.
-     */
-    StringQuote,
+    StringSingleQuote,
+    StringDoubleQuote,
     StringUnquote,
 }
 

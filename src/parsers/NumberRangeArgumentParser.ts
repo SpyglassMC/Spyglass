@@ -1,5 +1,5 @@
 import ArgumentParser from './ArgumentParser'
-import NumberRange from '../types/NumberRange'
+import NumberRangeNode from '../types/nodes/NumberRangeNode'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
@@ -7,7 +7,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 
-export default class NumberRangeArgumentParser extends ArgumentParser<NumberRange> {
+export default class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
     static identity = 'NumberRange'
     identity = 'numberRange'
 
@@ -19,9 +19,9 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         this.identity = `${type}Range`
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRange> {
-        const ans: ArgumentParserResult<NumberRange> = {
-            data: new NumberRange(this.type),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRangeNode> {
+        const ans: ArgumentParserResult<NumberRangeNode> = {
+            data: new NumberRangeNode(this.type),
             tokens: [],
             completions: [],
             errors: [],
@@ -72,7 +72,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
                     new ParsingError({ start, end: reader.cursor }, locale('number-range.missing-min-and-max'))
                 )
             }
-            ans.data = new NumberRange(this.type, min, max)
+            ans.data = new NumberRangeNode(this.type, min, max)
         }
         return ans
     }

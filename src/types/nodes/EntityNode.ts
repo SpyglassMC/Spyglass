@@ -1,4 +1,4 @@
-import NumberRange from '../NumberRange'
+import NumberRangeNode from './NumberRangeNode'
 import IdentityNode from './IdentityNode'
 import GameMode from '../GameMode'
 import Formattable, { ToFormattedString } from '../Formattable'

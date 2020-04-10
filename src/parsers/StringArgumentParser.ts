@@ -3,54 +3,85 @@ import ArgumentParser from './ArgumentParser'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import Token, { TokenType } from '../types/Token'
+import StringNode from '../types/nodes/StringNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import { LintConfig } from '../types/Config'
+import { DiagnosticConfig } from '../types/StylisticConfig'
+import QuoteTypeConfig from '../types/QuoteTypeConfig'
+import ParsingContext from '../types/ParsingContext'
+import { quoteString, validateStringQuote } from '../utils/utils'
 
-export default class StringArgumentParser extends ArgumentParser<string> {
+export default class StringArgumentParser extends ArgumentParser<StringNode> {
     static identity = 'String'
     readonly identity = 'string'
 
     constructor(
-        private readonly type: StringArgumentParserType = 'SingleWord'
+        private readonly type: StringType = StringType.String,
+        private readonly options: string[] | null = null,
+        private readonly quote: keyof LintConfig | DiagnosticConfig<boolean> = null,
+        private readonly quoteType: keyof LintConfig | DiagnosticConfig<QuoteTypeConfig> = null
     ) { super() }
 
-    parse(reader: StringReader): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<StringNode> {
+        const ans: ArgumentParserResult<StringNode> = {
+            data: new StringNode('', '', []),
             tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
         const start = reader.cursor
+
+        //#region Data.
         try {
             switch (this.type) {
-                case 'GreedyPhrase':
-                    ans.data = reader.readRemaining()
+                case StringType.Greedy:
+                    ans.data.value = reader.readRemaining()
                     break
-                case 'SingleWord':
-                    ans.data = reader.readUnquotedString()
-                    break
-                case 'QuotablePhrase':
+                case StringType.String:
                 default:
-                    ans.data = reader.readString()
+                    ans.data.value = reader.readString({ mapping: ans.data.mapping })
                     break
             }
         } catch (e) {
             const pe = <ParsingError>e
             ans.errors = [pe]
         }
-        ans.tokens.push(Token.from(start, reader, TokenType.string))
-        return ans
-    }
 
-    getExamples(): string[] {
-        if (this.type === 'SingleWord') {
-            return ['word', 'word_with_underscores']
-        } else if (this.type === 'QuotablePhrase') {
-            return ['word', '"quoted phrase"', '""']
-        } else {
-            return ['word', 'words with spaces', '"and symbols"']
+        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data.raw = reader.string.slice(start, reader.cursor)
+        //#endregion
+
+        //#region Errors.
+        const quote = typeof this.quote === 'string' ? ctx.config.lint[this.quote] as any : this.quote
+        const quoteType = typeof this.quoteType === 'string' ? ctx.config.lint[this.quoteType] as any : this.quoteType
+        validateStringQuote(ans.data.raw, ans.data.value, ans.data[NodeRange], quote, quoteType)
+        //#endregion
+
+        //#region Completions.
+        if (this.options && start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            const firstChar = reader.string.charAt(start)
+            const currentType = StringReader.isQuote(firstChar) ?
+                (firstChar === '"' ? 'always double' : 'always single') :
+                null
+            for (const option of this.options) {
+                let insertText: string
+                if (currentType) {
+                    insertText = quoteString(option, currentType, true).slice(1, -1)
+                } else {
+                    insertText = quoteString(option, quoteType, quote)
+                }
+                ans.completions.push({ insertText, label: option })
+            }
         }
+        //#endregion
+
+        ans.tokens.push(Token.from(start, reader, TokenType.string))
+
+        return ans
     }
 }
 
-export type StringArgumentParserType = 'SingleWord' | 'QuotablePhrase' | 'GreedyPhrase'
+export const enum StringType {
+    String, Greedy
+}

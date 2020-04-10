@@ -55,31 +55,44 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean) {
         let subHelper: NbtdocHelper | undefined = undefined
 
-        //#region Completions
-        if (types.includes('key') && helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
-            if (reader.cursor === ctx.cursor) {
-                // TODO: completions for in-quote keys.
-                helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
-            }
-        }
-        //#endregion
+        const start = reader.cursor
 
-        if (types.includes('key') && this.canParseKey(reader)) {
-            if (helper && doc) {
-                if (NbtdocHelper.isCompoundDoc(doc)) {
-                    subHelper = helper
-                        .clone()
-                        .goCompound(doc.Compound)
-                } else {
-                    ans.errors.push(new ParsingError(
-                        { start: reader.cursor, end: reader.cursor + 1 },
-                        locale('unexpected-nbt-path-key'),
-                        true, DiagnosticSeverity.Warning
-                    ))
+        let isKey = false
+
+        if (types.includes('key')) {
+            if (this.canParseKey(reader)) {
+                isKey = true
+                const firstChar = reader.peek()
+                this.parseKey(ans, reader, ctx, subHelper)
+                //#region Check schema
+                if (helper && doc) {
+                    if (NbtdocHelper.isCompoundDoc(doc)) {
+                        subHelper = helper
+                            .clone()
+                            .goCompound(doc.Compound)
+                        //#region Completions
+                        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+                            if (StringReader.isQuote(firstChar)) {
+                                const quoteType = firstChar === "'" ? 'always single' : 'always double'
+                                helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
+                            } else {
+                                helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
+                            }
+                        }
+                        //#endregion
+                    } else {
+                        ans.errors.push(new ParsingError(
+                            { start: reader.cursor, end: reader.cursor + 1 },
+                            locale('unexpected-nbt-path-key'),
+                            true, DiagnosticSeverity.Warning
+                        ))
+                    }
+                    //#endregion
                 }
             }
-            this.parseKey(ans, reader, ctx, subHelper)
-        } else if (types.includes('filter') && this.canParseCompoundFilter(reader)) {
+        }
+
+        if (!isKey && types.includes('filter') && this.canParseCompoundFilter(reader)) {
             if (helper && doc) {
                 if (NbtdocHelper.isCompoundDoc(doc)) {
                     subHelper = helper

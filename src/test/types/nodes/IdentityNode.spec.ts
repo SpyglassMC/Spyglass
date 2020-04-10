@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import path from 'path'
 import { describe, it } from 'mocha'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { constructConfig } from '../../types/Config'
-import { ToFormattedString } from '../../types/Formattable'
+import IdentityNode from '../../../types/nodes/IdentityNode'
+import { constructConfig } from '../../../types/Config'
+import { ToFormattedString } from '../../../types/Formattable'
 
-describe('Identity Tests', () => {
+describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
         it('Should return correctly', () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'])

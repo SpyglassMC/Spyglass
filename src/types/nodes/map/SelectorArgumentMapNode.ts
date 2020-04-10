@@ -1,7 +1,7 @@
 import MapNode, { ConfigKeys, Chars } from './MapNode'
 import { LintConfig } from '../../Config'
 import { NodeType } from '../ArgumentNode'
-import NumberRange from '../../NumberRange'
+import NumberRangeNode from '../NumberRangeNode'
 import GameMode from '../../GameMode'
 import NbtCompoundNode from './NbtCompoundNode'
 import IdentityNode from '../IdentityNode'
@@ -41,11 +41,11 @@ export default class SelectorArgumentMapNode extends MapNode<string, any> {
     dy?: number
     dz?: number
     limit?: number
-    distance?: NumberRange
-    x_rotation?: NumberRange
-    y_rotation?: NumberRange
-    level?: NumberRange
-    scores?: { [objective: string]: NumberRange }
+    distance?: NumberRangeNode
+    x_rotation?: NumberRangeNode
+    y_rotation?: NumberRangeNode
+    level?: NumberRangeNode
+    scores?: { [objective: string]: NumberRangeNode }
     advancements?: { [id: string]: boolean | { [criterion: string]: boolean } }
     gamemode?: (GameMode | '')[]
     gamemodeNeg?: (GameMode | '')[]

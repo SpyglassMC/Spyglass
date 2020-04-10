@@ -1,6 +1,6 @@
 import https from 'https'
 import StringReader from './StringReader'
-import { CompletionItem } from 'vscode-languageserver'
+import { CompletionItem, CodeActionKind, Diagnostic } from 'vscode-languageserver'
 import { ToFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
@@ -9,6 +9,7 @@ import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfi
 import ParsingError, { ActionCode } from '../types/ParsingError'
 import { EOL } from 'os'
 import TextRange from '../types/TextRange'
+import QuoteTypeConfig from '../types/QuoteTypeConfig'
 
 /**
  * Convert an array to human-readable message.
@@ -69,7 +70,7 @@ export function escapeString(str: string, quote: '"' | "'" = '"') {
  * @param quoteType Which quote to use.
  * @param forced Whether to quote regardless.
  */
-export function quoteString(inner: string, quoteType: 'always single' | 'always double' | 'prefer single' | 'prefer double', forced: boolean) {
+export function quoteString(inner: string, quoteType: QuoteTypeConfig, forced: boolean) {
     const shouldQuote = forced ||
         !StringReader.canInUnquotedString(inner) ||
         inner.toLowerCase() === 'false' ||
@@ -107,10 +108,13 @@ export function quoteString(inner: string, quoteType: 'always single' | 'always 
     }
 }
 
-export function validateStringQuote(raw: string, inner: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>): ParsingError[] {
+export function validateStringQuote(raw: string, value: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>): ParsingError[] {
     const ans: ParsingError[] = []
     const firstChar = raw.charAt(0)
     const isQuoted = StringReader.isQuote(firstChar)
+
+    const expectedChar = quoteString(value, quoteTypeConfig ? quoteTypeConfig[1] : 'prefer double', true).charAt(0)
+    const specificQuoteCode = expectedChar === '"' ? ActionCode.StringDoubleQuote : ActionCode.StringSingleQuote
 
     if (quoteConfig) {
         const [severity, shouldQuoted] = quoteConfig
@@ -122,19 +126,19 @@ export function validateStringQuote(raw: string, inner: string, range: TextRange
                     locale('punc.quote', firstChar)
                 ),
                 true, getDiagnosticSeverity(severity),
-                shouldQuoted ? ActionCode.StringQuote : ActionCode.StringUnquote
+                shouldQuoted ? specificQuoteCode : ActionCode.StringUnquote
             ))
         }
     }
 
     if (isQuoted && quoteTypeConfig) {
-        const [severity, expectedType] = quoteTypeConfig
-        if (quoteString(inner, expectedType, true) !== raw) {
+        const severity = quoteTypeConfig[0]
+        if (raw.charAt(0) !== expectedChar) {
             ans.push(new ParsingError(
                 range,
-                locale('expected', locale('punc.quote', expectedType)),
+                locale('expected', locale('punc.quote', expectedChar)),
                 true, getDiagnosticSeverity(severity),
-                ActionCode.StringQuote
+                specificQuoteCode
             ))
         }
     }
@@ -208,5 +212,27 @@ export function getEol({ eol }: LintConfig) {
         case 'auto':
         default:
             return EOL
+    }
+}
+
+/**
+ * @param titleLocaleKey The locale key of the code action title (without the `code-action.` part).
+ */
+export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[], uri: string, version: number | null, lineNumber: number, range: TextRange, newText: string, kind = CodeActionKind.QuickFix, isPreferred = true) {
+    return {
+        title: locale(`code-action.${titleLocaleKey}`),
+        kind, diagnostics, isPreferred,
+        edit: {
+            documentChanges: [{
+                textDocument: { uri, version },
+                edits: [{
+                    range: {
+                        start: { line: lineNumber, character: range.start },
+                        end: { line: lineNumber, character: range.end }
+                    },
+                    newText
+                }]
+            }]
+        }
     }
 }

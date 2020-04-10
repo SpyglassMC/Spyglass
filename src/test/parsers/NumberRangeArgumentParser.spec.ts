@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NumberRange from '../../types/NumberRange'
+import NumberRangeNode from '../../types/nodes/NumberRangeNode'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
@@ -25,7 +25,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for int range without double periods', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions, errors, cache } = parser.parse(new StringReader('114514'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer', 114514, 114514))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer', 114514, 114514))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -33,7 +33,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for int range without minimum value', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions, errors, cache } = parser.parse(new StringReader('..114514'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer', undefined, 114514))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer', undefined, 114514))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -41,7 +41,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for int range without maximum value', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions, errors, cache } = parser.parse(new StringReader('114514..'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer', 114514))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer', 114514))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -49,7 +49,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for int range with both side values', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions, errors, cache } = parser.parse(new StringReader('114..514'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer', 114, 514))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer', 114, 514))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -57,7 +57,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for float range', () => {
             const parser = new NumberRangeArgumentParser('float')
             const { data, completions, errors, cache } = parser.parse(new StringReader('1.14..51.4'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('float', 1.14, 51.4))
+            assert.deepStrictEqual(data, new NumberRangeNode('float', 1.14, 51.4))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -65,7 +65,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return data for cycle float range', () => {
             const parser = new NumberRangeArgumentParser('float', true)
             const { data, completions, errors, cache } = parser.parse(new StringReader('135..-135'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('float', 135, -135))
+            assert.deepStrictEqual(data, new NumberRangeNode('float', 135, -135))
             assert.deepStrictEqual(completions, [])
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
@@ -74,20 +74,20 @@ describe('NumberRangeArgumentParser Tests', () => {
             const ctx = await constructContext({ parsers, cursor: 0 })
             const parser = new NumberRangeArgumentParser('integer')
             const { data, completions } = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer'))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer'))
             assert.deepStrictEqual(completions, [{ label: '-2147483648..2147483647' }])
         })
         it('Should return empty completions for float range', async () => {
             const ctx = await constructContext({ parsers, cursor: 0 })
             const parser = new NumberRangeArgumentParser('float')
             const { data, completions } = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(data, new NumberRange('float'))
+            assert.deepStrictEqual(data, new NumberRangeNode('float'))
             assert.deepStrictEqual(completions, [])
         })
         it('Should return error when the minimum value is larger than maximum', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, errors } = parser.parse(new StringReader('3..2'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer', 3, 2))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer', 3, 2))
             assert.deepStrictEqual(errors, [
                 new ParsingError({ start: 0, end: 4 }, 'The minimum value 3 is larger than the maximum value 2')
             ])
@@ -95,7 +95,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return error when there is neither a minimum value nor a maximum value', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, errors } = parser.parse(new StringReader('..'), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer'))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer'))
             assert.deepStrictEqual(errors, [
                 new ParsingError({ start: 0, end: 2 }, 'Expected either a minimum value or a maximum value')
             ])
@@ -103,7 +103,7 @@ describe('NumberRangeArgumentParser Tests', () => {
         it('Should return untolerable error when the input is empty', () => {
             const parser = new NumberRangeArgumentParser('integer')
             const { data, errors } = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(data, new NumberRange('integer'))
+            assert.deepStrictEqual(data, new NumberRangeNode('integer'))
             assert.deepStrictEqual(errors, [
                 new ParsingError({ start: 0, end: 1 }, 'Expected a number range but got nothing', false)
             ])

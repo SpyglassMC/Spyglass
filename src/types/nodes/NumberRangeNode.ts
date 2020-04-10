@@ -1,7 +1,7 @@
-import { LintConfig } from './Config'
-import Formattable, { ToFormattedString } from './Formattable'
+import { LintConfig } from '../Config'
+import Formattable, { ToFormattedString } from '../Formattable'
 
-export default class NumberRange implements Formattable {
+export default class NumberRangeNode implements Formattable {
     constructor(
         readonly type: 'integer' | 'float',
         readonly min?: number,

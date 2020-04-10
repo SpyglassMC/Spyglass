@@ -4,7 +4,7 @@ import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import NumberRange from '../../types/NumberRange'
+import NumberRangeNode from '../../types/nodes/NumberRangeNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import EntityNode from '../../types/nodes/EntityNode'
 import { CompletionItemKind } from 'vscode-languageserver'
@@ -160,9 +160,9 @@ describe('EntityArgumentParser Tests', () => {
                 const command = '@a[sort=random,x=1,dx=2.5,limit=1,level=1..,distance=..5,x_rotation=135..-135]'
                 const expected = {
                     sort: 'random', x: 1, dx: 2.5, limit: 1,
-                    level: new NumberRange('integer', 1),
-                    distance: new NumberRange('float', undefined, 5),
-                    x_rotation: new NumberRange('float', 135, -135)
+                    level: new NumberRangeNode('integer', 1),
+                    distance: new NumberRangeNode('float', undefined, 5),
+                    x_rotation: new NumberRangeNode('float', 135, -135)
                 }
                 const actual = parser.parse(new StringReader(command), ctx)
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expected as any))
@@ -211,8 +211,8 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a',
                     {
                         scores: {
-                            foo: new NumberRange('integer', 114),
-                            bar: new NumberRange('integer', undefined, 514)
+                            foo: new NumberRangeNode('integer', 114),
+                            bar: new NumberRangeNode('integer', undefined, 514)
                         }
                     } as any))
                 assert.deepStrictEqual(actual.errors, [])

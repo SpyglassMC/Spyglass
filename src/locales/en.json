@@ -1,6 +1,9 @@
 {
   "boolean": "a boolean",
-  "code-action.nbt-uuid-datafix": "Update UUID to the IntArray format",
+  "code-action.nbt-uuid-datafix": "Update this UUID to the IntArray format",
+  "code-action.string-unquote": "Unquote this string",
+  "code-action.string-single-quote": "Quote this string with single quotation marks",
+  "code-action.string-double-quote": "Quote this string with double quotation marks",
   "code-snippets-invalid-for-game": "Code snippets are invalid for the game",
   "collection-length.exact": "a collection with length %0%",
   "collection-length.between": "a collection with length between %0% and %1%",

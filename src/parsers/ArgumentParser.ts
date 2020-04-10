@@ -34,5 +34,7 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
      * @example
      * return ['true', 'false']
      */
-    abstract getExamples(): string[]
+    getExamples(): string[] {
+        return []
+    }
 }

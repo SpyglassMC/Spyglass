@@ -269,7 +269,7 @@ export default class NbtdocHelper {
     private static handleDescription(str: string) {
         return str.trim().replace(/\n\s/g, '\n')
     }
-    completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, inQuote: 'double' | 'single' | null) {
+    completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, currentType: 'always double' | 'always single' | null) {
         const existingKeys = Object.keys(tag)
         const clonedHelper = this.clone()
         const pool = clonedHelper
@@ -280,8 +280,8 @@ export default class NbtdocHelper {
             const field = clonedHelper.readField(key)!
             const description = NbtdocHelper.handleDescription(field.description)
             let insertText: string
-            if (inQuote) {
-                insertText = quoteString(key, `always ${inQuote}` as any, true).slice(1, -1)
+            if (currentType) {
+                insertText = quoteString(key, currentType, true).slice(1, -1)
             } else {
                 const quoteType = ctx.config.lint.nbtCompoundKeyQuoteType ? ctx.config.lint.nbtCompoundKeyQuoteType[1] : 'prefer double'
                 const quote = ctx.config.lint.nbtCompoundKeyQuote ? ctx.config.lint.nbtCompoundKeyQuote[1] : false

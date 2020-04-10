@@ -3,6 +3,7 @@ import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 import SelectorArgumentMapNode from './nodes/map/SelectorArgumentMapNode'
+import QuoteTypeConfig from './QuoteTypeConfig'
 
 export default interface Config {
     /**
@@ -88,16 +89,16 @@ export interface LintConfig {
     nameOfTeams: DiagnosticConfig<NamingConventionConfig>,
     nbtBoolean: DiagnosticConfig<boolean>,
     nbtCompoundKeyQuote: DiagnosticConfig<boolean>,
-    nbtCompoundKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    nbtCompoundKeyQuoteType: DiagnosticConfig<QuoteTypeConfig>,
     nbtCompoundSortKeys: DiagnosticConfig<'alphabetically' | 'nbtdoc'>,
     nbtPathQuote: DiagnosticConfig<boolean>,
     nbtPathQuoteType: DiagnosticConfig<'always double'>,
     nbtStringQuote: DiagnosticConfig<boolean>,
-    nbtStringQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    nbtStringQuoteType: DiagnosticConfig<QuoteTypeConfig>,
     nbtTypeCheck: DiagnosticConfig<'strictly' | 'loosely'>,
     selectorSortKeys: DiagnosticConfig<string[]>,
     selectorKeyQuote: DiagnosticConfig<boolean>,
-    selectorKeyQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>,
+    selectorKeyQuoteType: DiagnosticConfig<QuoteTypeConfig>,
     strictAdvancementCheck: DiagnosticConfig<true>,
     strictBlockTagCheck: DiagnosticConfig<true>,
     strictBossbarCheck: DiagnosticConfig<true>,
@@ -123,9 +124,9 @@ export interface LintConfig {
     strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
     strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
     strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
-    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>, 
+    strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>,
     stringQuote: DiagnosticConfig<boolean>,
-    stringQuoteType: DiagnosticConfig<'always single' | 'always double' | 'prefer single' | 'prefer double'>
+    stringQuoteType: DiagnosticConfig<QuoteTypeConfig>
 }
 
 export interface FeaturesConfig {

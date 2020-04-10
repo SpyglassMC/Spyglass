@@ -9,11 +9,10 @@ import { Diagnostic, CodeAction, CodeActionKind } from 'vscode-languageserver'
 import { ActionCode } from '../../ParsingError'
 import { locale } from '../../../locales/Locales'
 import FunctionInfo from '../../FunctionInfo'
-import { Uri } from '../../handlers'
-import ParsingContext from '../../ParsingContext'
 import NbtIntArrayNode from '../nbt/NbtIntArrayNode'
 import NbtNumberNode from '../nbt/NbtNumberNode'
 import NbtIntNode from '../nbt/NbtIntNode'
+import { getCodeAction } from '../../../utils/utils'
 
 export default class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -34,7 +33,7 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         return this.toString()
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: TextRange, diagnostics: Diagnostic[]) {
         const ans: CodeAction[] = []
 
         /* NbtUuidDatafix */
@@ -68,24 +67,11 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
                         }
                     }
                 }
-                ans.push({
-                    title: locale('code-action.nbt-uuid-datafix'),
-                    kind: CodeActionKind.QuickFix,
-                    diagnostics: uuidDiagnostics,
-                    isPreferred: true,
-                    edit: {
-                        documentChanges: [{
-                            textDocument: { uri: uri.toString(), version: info.version },
-                            edits: [{
-                                range: {
-                                    start: { line: lineNumber, character: superNbt[NodeRange].start },
-                                    end: { line: lineNumber, character: superNbt[NodeRange].end }
-                                },
-                                newText: newSuper[ToFormattedString](info.config.lint)
-                            }]
-                        }]
-                    }
-                })
+                ans.push(getCodeAction(
+                    'nbt-uuid-datafix', uuidDiagnostics,
+                    uri, info.version, lineNumber, superNbt[NodeRange],
+                    newSuper[ToFormattedString](info.config.lint)
+                ))
             }
         }
 

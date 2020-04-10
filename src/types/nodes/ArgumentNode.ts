@@ -19,6 +19,9 @@ export default abstract class ArgumentNode implements Formattable {
 
     abstract [ToFormattedString](lint: LintConfig): string
 
+    /**
+     * Will only be called when necessary, so there's no need to check the range in this method.
+     */
     [GetCodeActions](_uri: string, _info: FunctionInfo, _lineNumber: number, _range: TextRange, _diagnostics: Diagnostic[]): CodeAction[] {
         return []
     }

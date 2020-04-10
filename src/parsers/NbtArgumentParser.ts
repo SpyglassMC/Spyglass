@@ -4,7 +4,7 @@ import NbtdocHelper, { ListDoc as NbtListDoc, CompoundDoc as NbtCompoundDoc } fr
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import { arrayToMessage } from '../utils/utils'
+import { arrayToMessage, validateStringQuote } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { checkNamingConvention } from '../types/NamingConventionConfig'
 import { DiagnosticSeverity } from 'vscode-languageserver'
@@ -239,21 +239,28 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     errors: []
                 }
                 const start = reader.cursor
-                //#region Completions.
-                if (helper && doc) {
-                    if (ctx.cursor === reader.cursor) {
-                        helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, null)
-                    } else if (StringReader.isQuote(reader.peek()) && ctx.cursor === reader.cursor + 1) {
-                        const inQuote = reader.peek() === "'" ? 'single' : 'double'
-                        helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, inQuote)
-                    }
-                }
-                //#endregion
                 try {
                     const out = { mapping: [] }
+                    const firstChar = reader.peek()
                     const key = reader.readString(out)
                     const end = reader.cursor
+                    const raw = reader.string.slice(start, end)
                     result.data = key
+                    //#region Errors.
+                    validateStringQuote(raw, key, { start, end }, ctx.config.lint.nbtCompoundKeyQuote, ctx.config.lint.nbtCompoundKeyQuoteType)
+                    //#endregion
+                    //#region Completions.
+                    if (helper && doc) {
+                        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+                            if (StringReader.isQuote(firstChar)) {
+                                const quoteType = firstChar === "'" ? 'always single' : 'always double'
+                                helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, quoteType)
+                            } else {
+                                helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, null)
+                            }
+                        }
+                    }
+                    //#endregion
                     //#region Tokens
                     result.tokens.push(Token.from(start, reader, TokenType.property))
                     //#endregion
@@ -272,8 +279,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                             const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
                             result.errors.push(new ParsingError(
                                 { start, end },
-                                locale(
-                                    'key-not-following-convention',
+                                locale('key-not-following-convention',
                                     locale('punc.quote', key),
                                     arrayToMessage(value)
                                 ),
@@ -292,9 +298,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                                 )
                             )
                         }
-                        ans.data[Keys][key] = new NbtCompoundKeyNode(
-                            ans.data, key, reader.string.slice(start, end), out.mapping
-                        )
+                        ans.data[Keys][key] = new NbtCompoundKeyNode(ans.data, key, raw, out.mapping)
                         ans.data[Keys][key][NodeRange] = { start, end }
                     }
                 } catch (p) {

@@ -629,7 +629,7 @@ describe('NbtdocHelper Tests', () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
             const ctx = await constructContext({ config })
-            const inQuote = 'double'
+            const inQuote = 'always double'
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
@@ -645,7 +645,7 @@ describe('NbtdocHelper Tests', () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
             const ctx = await constructContext({ config })
-            const inQuote = 'single'
+            const inQuote = 'always single'
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
