@@ -121,6 +121,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
 
     [GetHoverInformation](lineNumber: number, char: number) {
         for (const key in this[Keys]) {
+            /* istanbul ignore else */
             if (this[Keys].hasOwnProperty(key)) {
                 const keyInfo = this[Keys][key]
                 if (keyInfo instanceof ArgumentNode) {

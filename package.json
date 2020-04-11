@@ -2081,48 +2081,32 @@
                 "description": "The first argument in a command"
             }
         ],
-        "semanticTokenStyleDefaults": [
+        "semanticTokenScopes": [
             {
-                "selector": "annotation:mcfunction",
-                "scope": [
-                    "support.type.doc.annotation.mcfunction"
-                ]
-            },
-            {
-                "selector": "boolean:mcfunction",
-                "scope": [
-                    "constant.language.boolean.mcfunction"
-                ]
-            },
-            {
-                "selector": "entity:mcfunction",
-                "scope": [
-                    "support.class.entity.mcfunction"
-                ]
-            },
-            {
-                "selector": "literal:mcfunction",
-                "scope": [
-                    "keyword.other.mcfunction"
-                ]
-            },
-            {
-                "selector": "literal.firstArgument:mcfunction",
-                "scope": [
-                    "keyword.control.mcfunction"
-                ]
-            },
-            {
-                "selector": "namespacedID:mcfunction",
-                "scope": [
-                    "entity.name.function.mcfunction"
-                ]
-            },
-            {
-                "selector": "vector:mcfunction",
-                "scope": [
-                    "constant.numeric.vector.mcfunction"
-                ]
+                "language": "mcfunction",
+                "scopes": {
+                    "annotation": [
+                        "support.type.doc.annotation.mcfunction"
+                    ],
+                    "boolean": [
+                        "constant.language.boolean.mcfunction"
+                    ],
+                    "entity": [
+                        "support.class.entity.mcfunction"
+                    ],
+                    "literal": [
+                        "keyword.other.mcfunction"
+                    ],
+                    "literal.firstArgument": [
+                        "keyword.control.mcfunction"
+                    ],
+                    "namespacedID": [
+                        "entity.name.function.mcfunction"
+                    ],
+                    "vector": [
+                        "constant.numeric.vector.mcfunction"
+                    ]
+                }
             }
         ]
     },

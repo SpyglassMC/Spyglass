@@ -9,7 +9,8 @@ import { LintConfig } from '../types/Config'
 import { DiagnosticConfig } from '../types/StylisticConfig'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import ParsingContext from '../types/ParsingContext'
-import { quoteString, validateStringQuote } from '../utils/utils'
+import { quoteString, validateStringQuote, arrayToMessage } from '../utils/utils'
+import { locale } from '../locales/Locales'
 
 export default class StringArgumentParser extends ArgumentParser<StringNode> {
     static identity = 'String'
@@ -53,9 +54,22 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
         //#endregion
 
         //#region Errors.
+        /// Quotation marks.
         const quote = typeof this.quote === 'string' ? ctx.config.lint[this.quote] as any : this.quote
         const quoteType = typeof this.quoteType === 'string' ? ctx.config.lint[this.quoteType] as any : this.quoteType
         validateStringQuote(ans.data.raw, ans.data.value, ans.data[NodeRange], quote, quoteType)
+        /// Unknown values.
+        if (this.options && !this.options.includes(ans.data.value)) {
+            ans.errors.push(
+                new ParsingError(
+                    { start, end: reader.cursor },
+                    locale('expected-got',
+                        arrayToMessage(this.options, true, 'or'),
+                        locale('punc.quote', ans.data.value)
+                    )
+                )
+            )
+        }
         //#endregion
 
         //#region Completions.

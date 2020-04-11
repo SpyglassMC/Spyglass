@@ -545,7 +545,13 @@ async function updateDiagnostics(uri: Uri) {
         let lineNumber = 0
         for (const line of lines) {
             if (line.errors) {
-                diagnostics.push(...line.errors.map(v => v.toDiagnostic(lineNumber)))
+                for (const err of line.errors) {
+                    try {
+                        diagnostics.push(err.toDiagnostic(lineNumber))
+                    } catch (ignored) {
+                        console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
+                    }
+                }
             }
             lineNumber++
         }

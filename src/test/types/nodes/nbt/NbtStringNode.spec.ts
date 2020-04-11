@@ -5,13 +5,14 @@ import NbtStringNode from '../../../../types/nodes/nbt/NbtStringNode'
 import { ToFormattedString } from '../../../../types/Formattable'
 
 describe('NbtStringNode Tests', () => {
+    const { lint } = constructConfig({
+        lint: {
+            nbtStringQuote: ['warning', true],
+            nbtStringQuoteType: ['warning', 'prefer double']
+        }
+    })
+    // TODO: GetCodeActions Tests
     describe('[ToLintedString]() Tests', () => {
-        const { lint } = constructConfig({
-            lint: {
-                nbtStringQuote: ['warning', true],
-                nbtStringQuoteType: ['warning', 'prefer double']
-            }
-        })
         it('Should return correctly', () => {
             const node = new NbtStringNode(null, 'foo', '"foo"', [1, 2, 3])
 

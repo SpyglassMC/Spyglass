@@ -314,10 +314,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     fieldDoc = helper.readField(key)
                 }
                 const result = this.parseTag(
-                    reader,
-                    ctx,
-                    ans.data,
-                    helper,
+                    reader, ctx, ans.data, helper,
                     fieldDoc ? fieldDoc.nbttype : undefined,
                     fieldDoc ? fieldDoc.description : undefined
                 )

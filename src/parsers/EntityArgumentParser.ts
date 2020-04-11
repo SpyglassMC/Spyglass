@@ -10,7 +10,10 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
-import SelectorArgumentMapNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod } from '../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentMapNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresArgumentMapNode, SelectorArgumentNodeChars, SelectorAdvancementsArgumentMapNode, SelectorCriteriaArgumentMapNode } from '../types/nodes/map/SelectorArgumentMapNode'
+import { StringType } from './StringArgumentParser'
+import { Keys } from '../types/nodes/map/MapNode'
+import StringNode from '../types/nodes/StringNode'
 
 export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
     static identity = 'Entity'
@@ -156,11 +159,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
         //#endregion
         /// Arguments
         if (reader.peek() === '[') {
-            const pushSafely = (key: any, result: any) => {
-                (ans.data.argument as any)[key] = (ans.data.argument as any)[key] || [];
-                (ans.data.argument as any)[key].push(result.data)
+            const pushSafely = (ans: ArgumentParserResult<SelectorArgumentMapNode>, key: any, result: any) => {
+                ans.data[key] = ans.data[key] || []
+                ans.data[key].push(result.data)
             }
-            const dealWithNegativableArray = (parser: ArgumentParser<any>, key: string) => {
+            const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentMapNode>, parser: ArgumentParser<any>, key: string) => {
                 const keyNeg = `${key}Neg`
                 if (ctx.cursor === reader.cursor) {
                     ans.completions.push({ label: '!' })
@@ -180,9 +183,9 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                     result.errors = []
                 }
                 if (isNegative) {
-                    pushSafely(keyNeg, result)
+                    pushSafely(ans, keyNeg, result)
                 } else {
-                    pushSafely(key, result)
+                    pushSafely(ans, key, result)
                     if (key === 'type') {
                         const id = (result.data as IdentityNode).toString()
                         if (id === 'minecraft:player') {
@@ -194,131 +197,155 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 }
                 combineArgumentParserResult(ans, result)
             }
-            // FIXME
-            // const result = new MapParser<SelectorArgumentMapNode>(
-            //     EntitySelectorNodeChars,
-            //     (_ans, reader, ctx) => {
-            //         const start = reader.cursor
-            //         const result = ctx.parsers
-            //             .get('QuotableLiteral', [SelectorArgumentKeys, ctx.config.lint.quoteEntitySelectorKeys])
-            //             .parse(reader, ctx)
-            //         result.tokens = [Token.from(start, reader, TokenType.property)]
-            //         return result
-            //     },
-            //     (ans, reader, ctx, key) => {
-            //         if (key === 'sort') {
-            //             const start = reader.cursor
-            //             const result = ctx.parsers.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, ctx)
-            //             if (result.data) {
-            //                 ans.data.argument.sort = result.data as SelectorSortMethod
-            //             }
-            //             result.tokens = [Token.from(start, reader, TokenType.string)]
-            //             combineArgumentParserResult(ans, result)
-            //         } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
-            //             const start = reader.cursor
-            //             const value = reader.readFloat()
-            //             ans.data.argument[key] = value
-            //             ans.tokens.push(Token.from(start, reader, TokenType.number))
-            //         } else if (key === 'limit') {
-            //             const result = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
-            //             ans.data.argument.limit = result.data as number
-            //             if (ans.data.argument.limit === 1) {
-            //                 isMultiple = false
-            //             } else {
-            //                 isMultiple = true
-            //             }
-            //             combineArgumentParserResult(ans, result)
-            //         } else if (key === 'gamemode') {
-            //             dealWithNegativableArray(ctx.parsers.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
-            //         } else if (key === 'name') {
-            //             dealWithNegativableArray(ctx.parsers.get('QuotableLiteral', [[], false, true]), key)
-            //         } else if (key === 'nbt') {
-            //             dealWithNegativableArray(ctx.parsers.get('Nbt', [
-            //                 'Compound', 'entities', 'base', ctx.nbt, true
-            //             ]), key)
-            //         } else if (key === 'predicate') {
-            //             dealWithNegativableArray(ctx.parsers.get('Identity', ['$predicates']), key)
-            //         } else if (key === 'tag') {
-            //             dealWithNegativableArray(ctx.parsers.get('Tag'), key)
-            //         } else if (key === 'team') {
-            //             dealWithNegativableArray(ctx.parsers.get('Team'), key)
-            //         } else if (key === 'type') {
-            //             dealWithNegativableArray(ctx.parsers.get('Identity', ['minecraft:entity_type', true]), key)
-            //         } else if (key === 'distance') {
-            //             const result = ctx.parsers.get('NumberRange', ['float']).parse(reader, ctx)
-            //             ans.data.argument[key] = result.data
-            //             combineArgumentParserResult(ans, result)
-            //         } else if (key === 'x_rotation' || key === 'y_rotation') {
-            //             const result = ctx.parsers.get('NumberRange', ['float', true]).parse(reader, ctx)
-            //             ans.data.argument[key] = result.data
-            //             combineArgumentParserResult(ans, result)
-            //         } else if (key === 'level') {
-            //             const result = ctx.parsers.get('NumberRange', ['integer']).parse(reader, ctx)
-            //             ans.data.argument[key] = result.data
-            //             combineArgumentParserResult(ans, result)
-            //         } else if (key === 'advancements') {
-            //             new MapParser<IdentityNode, EntityNode>(
-            //                 '{', '=', ',', '}',
-            //                 (_ans, reader, ctx) => {
-            //                     return ctx.parsers
-            //                         .get('Identity', ['$advancements'])
-            //                         .parse(reader, ctx)
-            //                 },
-            //                 (ans, reader, ctx, adv) => {
-            //                     ans.data.argument.advancements = ans.data.argument.advancements || {}
-            //                     if (reader.peek() === '{') {
-            //                         const criteriaObject: { [crit: string]: boolean } = ans.data.argument.advancements[adv.toString()] = {}
-            //                         new MapParser<string, EntityNode>(
-            //                             '{', '=', ',', '}',
-            //                             (_ans, reader, ctx) => {
-            //                                 const start = reader.cursor
-            //                                 const result = ctx.parsers
-            //                                     .get('String', ['$QuotablePhrase'])
-            //                                     .parse(reader, ctx)
-            //                                 result.tokens = [Token.from(start, reader, TokenType.property)]
-            //                                 return result
-            //                             },
-            //                             (ans, reader, ctx, crit) => {
-            //                                 const start = reader.cursor
-            //                                 const boolResult = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
-            //                                 boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
-            //                                 const bool = boolResult.data === 'true'
-            //                                 combineArgumentParserResult(ans, boolResult)
-            //                                 criteriaObject[crit] = bool
-            //                             }
-            //                         ).parse(ans, reader, ctx)
-            //                     } else {
-            //                         const start = reader.cursor
-            //                         const boolResult = ctx.parsers
-            //                             .get('Literal', ['false', 'true'])
-            //                             .parse(reader, ctx)
-            //                         const bool = boolResult.data === 'true'
-            //                         boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
-            //                         combineArgumentParserResult(ans, boolResult)
 
-            //                         ans.data.argument.advancements[adv.toString()] = bool
-            //                     }
-            //                 }
-            //             ).parse(ans, reader, ctx)
-            //         } else if (key === 'scores') {
-            //             new MapParser<string, EntityNode>(
-            //                 '{', '=', ',', '}',
-            //                 (_ans, reader, ctx) => {
-            //                     return ctx.parsers
-            //                         .get('Objective')
-            //                         .parse(reader, ctx)
-            //                 },
-            //                 (ans, reader, ctx, objective) => {
-            //                     const rangeResult = ctx.parsers.get('NumberRange', ['integer']).parse(reader, ctx) as ArgumentParserResult<NumberRange>
-            //                     combineArgumentParserResult(ans, rangeResult)
-            //                     ans.data.argument.scores = ans.data.argument.scores || {}
-            //                     ans.data.argument.scores[objective] = rangeResult.data
-            //                 }
-            //             ).parse(ans, reader, ctx)
-            //         }
-            //     }
-            // ).parse(reader, ctx)
-            // combineArgumentParserResult(ans, result)
+            const argumentAns: ArgumentParserResult<SelectorArgumentMapNode> = {
+                data: new SelectorArgumentMapNode(),
+                tokens: [], errors: [], cache: {}, completions: []
+            }
+            new MapParser<SelectorArgumentMapNode>(
+                EntitySelectorNodeChars,
+                (ans, reader, ctx) => {
+                    const start = reader.cursor
+                    const result = ctx.parsers
+                        .get('String', [StringType.String, SelectorArgumentKeys, 'selectorKeyQuote', 'selectorKeyQuoteType'])
+                        .parse(reader, ctx) as ArgumentParserResult<StringNode>
+                    const key = result.data.value
+                    ans.data[Keys][key] = result.data
+                    result.tokens = [Token.from(start, reader, TokenType.property)]
+                    return { ...result, data: key }
+                },
+                (ans, reader, ctx, key) => {
+                    if (key === 'sort') {
+                        const start = reader.cursor
+                        const result = ctx.parsers.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, ctx)
+                        if (result.data) {
+                            ans.data.sort = result.data as SelectorSortMethod
+                        }
+                        result.tokens = [Token.from(start, reader, TokenType.string)]
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
+                        const start = reader.cursor
+                        const value = reader.readFloat()
+                        ans.data[key] = value
+                        ans.tokens.push(Token.from(start, reader, TokenType.number))
+                    } else if (key === 'limit') {
+                        const result = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
+                        ans.data.limit = result.data as number
+                        if (ans.data.limit === 1) {
+                            isMultiple = false
+                        } else {
+                            isMultiple = true
+                        }
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'gamemode') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Literal', ['adventure', 'creative', 'spectator', 'survival']), key)
+                    } else if (key === 'name') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('String', [StringType.String, null, 'stringQuote', 'stringQuoteType']), key)
+                    } else if (key === 'nbt') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Nbt', [
+                            'Compound', 'entities', 'base', ctx.nbt, true
+                        ]), key)
+                    } else if (key === 'predicate') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Identity', ['$predicates']), key)
+                    } else if (key === 'tag') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Tag'), key)
+                    } else if (key === 'team') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Team'), key)
+                    } else if (key === 'type') {
+                        dealWithNegativableArray(ans, ctx.parsers.get('Identity', ['minecraft:entity_type', true]), key)
+                    } else if (key === 'distance') {
+                        const result = ctx.parsers.get('NumberRange', ['float']).parse(reader, ctx)
+                        ans.data[key] = result.data
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'x_rotation' || key === 'y_rotation') {
+                        const result = ctx.parsers.get('NumberRange', ['float', true]).parse(reader, ctx)
+                        ans.data[key] = result.data
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'level') {
+                        const result = ctx.parsers.get('NumberRange', ['integer']).parse(reader, ctx)
+                        ans.data[key] = result.data
+                        combineArgumentParserResult(ans, result)
+                    } else if (key === 'advancements') {
+                        const advancementsAns: ArgumentParserResult<SelectorAdvancementsArgumentMapNode> = {
+                            data: new SelectorAdvancementsArgumentMapNode(),
+                            tokens: [], errors: [], cache: {}, completions: []
+                        }
+                        new MapParser<SelectorAdvancementsArgumentMapNode>(
+                            SelectorArgumentNodeChars,
+                            (ans, reader, ctx) => {
+                                const result: ArgumentParserResult<IdentityNode> = ctx.parsers
+                                    .get('Identity', ['$advancements'])
+                                    .parse(reader, ctx)
+                                const adv = result.data.toString()
+                                ans.data[Keys][adv] = result.data
+                                return { ...result, data: adv }
+                            },
+                            (ans, reader, ctx, adv) => {
+                                if (reader.peek() === '{') {
+                                    const criteriaAns: ArgumentParserResult<SelectorCriteriaArgumentMapNode> = {
+                                        data: new SelectorCriteriaArgumentMapNode(),
+                                        tokens: [], errors: [], cache: {}, completions: []
+                                    }
+                                    new MapParser<SelectorCriteriaArgumentMapNode>(
+                                        SelectorArgumentNodeChars,
+                                        (ans, reader, ctx) => {
+                                            const start = reader.cursor
+                                            const result: ArgumentParserResult<StringNode> = ctx.parsers
+                                                .get('String', [StringType.String, null, 'selectorKeyQuote', 'selectorKeyQuoteType'])
+                                                .parse(reader, ctx)
+                                            result.tokens = [Token.from(start, reader, TokenType.property)]
+                                            const crit = result.data.value
+                                            ans.data[Keys][crit] = result.data
+                                            return { ...result, data: crit }
+                                        },
+                                        (ans, reader, ctx, crit) => {
+                                            const start = reader.cursor
+                                            const boolResult: ArgumentParserResult<string> = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
+                                            const bool = boolResult.data.toLowerCase() === 'true'
+                                            boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
+                                            ans.data[crit] = bool
+                                            combineArgumentParserResult(ans, boolResult)
+                                        }
+                                    ).parse(criteriaAns, reader, ctx)
+                                    ans.data[adv] = criteriaAns.data
+                                    combineArgumentParserResult(ans, criteriaAns)
+                                } else {
+                                    const start = reader.cursor
+                                    const boolResult: ArgumentParserResult<string> = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
+                                    const bool = boolResult.data.toLowerCase() === 'true'
+                                    boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
+                                    ans.data[adv] = bool
+                                    combineArgumentParserResult(ans, boolResult)
+                                }
+                            }
+                        ).parse(advancementsAns, reader, ctx)
+                        ans.data.advancements = advancementsAns.data
+                        combineArgumentParserResult(ans, advancementsAns)
+                    } else if (key === 'scores') {
+                        const scoresAns: ArgumentParserResult<SelectorScoresArgumentMapNode> = {
+                            data: new SelectorScoresArgumentMapNode(),
+                            tokens: [], errors: [], cache: {}, completions: []
+                        }
+                        new MapParser<SelectorScoresArgumentMapNode>(
+                            SelectorArgumentNodeChars,
+                            (_ans, reader, ctx) => {
+                                return ctx.parsers
+                                    .get('Objective')
+                                    .parse(reader, ctx)
+                            },
+                            (ans, reader, ctx, objective) => {
+                                const rangeResult: ArgumentParserResult<NumberRangeNode> = ctx.parsers.get('NumberRange', ['integer']).parse(reader, ctx)
+                                ans.data[objective] = rangeResult.data
+                                combineArgumentParserResult(ans, rangeResult)
+                            }
+                        ).parse(scoresAns, reader, ctx)
+                        ans.data.scores = scoresAns.data
+                        combineArgumentParserResult(ans, scoresAns)
+                    }
+                }
+            ).parse(argumentAns, reader, ctx)
+            ans.data.argument = argumentAns.data
+            combineArgumentParserResult(ans, argumentAns)
         }
         //#endregion
 

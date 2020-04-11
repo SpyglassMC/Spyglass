@@ -5,6 +5,7 @@ import NumberRangeNode from '../NumberRangeNode'
 import GameMode from '../../GameMode'
 import NbtCompoundNode from './NbtCompoundNode'
 import IdentityNode from '../IdentityNode'
+import StringNode from '../StringNode'
 
 export const EntitySelectorNodeChars = {
     openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
@@ -21,7 +22,7 @@ export const SelectorArgumentKeys: SelectorArgumentKey[] = [
 
 export type SelectorSortMethod = 'arbitrary' | 'furthest' | 'nearest' | 'random'
 
-export default class SelectorArgumentMapNode extends MapNode<string, any> {
+export default class SelectorArgumentMapNode extends MapNode<StringNode, any> {
     readonly [NodeType] = 'SelectorArgument'
 
     protected readonly [ConfigKeys] = {
@@ -45,8 +46,8 @@ export default class SelectorArgumentMapNode extends MapNode<string, any> {
     x_rotation?: NumberRangeNode
     y_rotation?: NumberRangeNode
     level?: NumberRangeNode
-    scores?: { [objective: string]: NumberRangeNode }
-    advancements?: { [id: string]: boolean | { [criterion: string]: boolean } }
+    scores?: SelectorScoresArgumentMapNode
+    advancements?: SelectorAdvancementsArgumentMapNode
     gamemode?: (GameMode | '')[]
     gamemodeNeg?: (GameMode | '')[]
     name?: string[]
@@ -61,4 +62,47 @@ export default class SelectorArgumentMapNode extends MapNode<string, any> {
     teamNeg?: string[]
     type?: IdentityNode[]
     typeNeg?: IdentityNode[]
+}
+
+export const SelectorArgumentNodeChars = {
+    openBracket: '{', sep: '=', pairSep: ',', closeBracket: '}'
+}
+
+export class SelectorScoresArgumentMapNode extends MapNode<string, NumberRangeNode> {
+    readonly [NodeType] = 'SelectorScoresArgument'
+
+    protected readonly [ConfigKeys] = {
+        bracketSpacing: 'selectorBracketSpacing' as keyof LintConfig,
+        pairSepSpacing: 'selectorCommaSpacing' as keyof LintConfig,
+        sepSpacing: 'selectorEqualSpacing' as keyof LintConfig,
+        trailingPairSep: 'selectorTrailingComma' as keyof LintConfig
+    }
+
+    protected readonly [Chars] = SelectorArgumentNodeChars
+}
+
+export class SelectorAdvancementsArgumentMapNode extends MapNode<IdentityNode, boolean | SelectorCriteriaArgumentMapNode> {
+    readonly [NodeType] = 'SelectorAdvancementsArgument'
+
+    protected readonly [ConfigKeys] = {
+        bracketSpacing: 'selectorBracketSpacing' as keyof LintConfig,
+        pairSepSpacing: 'selectorCommaSpacing' as keyof LintConfig,
+        sepSpacing: 'selectorEqualSpacing' as keyof LintConfig,
+        trailingPairSep: 'selectorTrailingComma' as keyof LintConfig
+    }
+
+    protected readonly [Chars] = SelectorArgumentNodeChars
+}
+
+export class SelectorCriteriaArgumentMapNode extends MapNode<StringNode, boolean> {
+    readonly [NodeType] = 'SelectorCriteriaArgument'
+
+    protected readonly [ConfigKeys] = {
+        bracketSpacing: 'selectorBracketSpacing' as keyof LintConfig,
+        pairSepSpacing: 'selectorCommaSpacing' as keyof LintConfig,
+        sepSpacing: 'selectorEqualSpacing' as keyof LintConfig,
+        trailingPairSep: 'selectorTrailingComma' as keyof LintConfig
+    }
+
+    protected readonly [Chars] = SelectorArgumentNodeChars
 }

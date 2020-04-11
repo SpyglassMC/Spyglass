@@ -1,10 +1,8 @@
 import Formattable, { ToFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
-import { CodeAction, Diagnostic, Hover, MarkupContent } from 'vscode-languageserver'
+import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
 import TextRange from '../TextRange'
-import ParsingContext from '../ParsingContext'
 import FunctionInfo from '../FunctionInfo'
-import { Uri } from 'vscode'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('Range')
