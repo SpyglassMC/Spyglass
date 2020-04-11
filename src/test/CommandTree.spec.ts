@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { getChildren, fillSingleTemplate, getArgOrDefault, getNbtdocRegistryId } from '../CommandTree'
 import { TestArgumentParser } from './parsers/LineParser.spec'
-import {  } from '../types/nbtdoc'
+import { } from '../types/nbtdoc'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import BlockNode from '../types/nodes/BlockNode'
 import EntityNode from '../types/nodes/EntityNode'
@@ -14,6 +14,9 @@ import StringReader from '../utils/StringReader'
 import Vector from '../types/Vector'
 import CommandTree, { CommandTreeNode } from '../types/CommandTree'
 import ParsingContext, { constructContext } from '../types/ParsingContext'
+import SelectorArgumentMapNode from '../types/nodes/map/SelectorArgumentMapNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -176,7 +179,9 @@ describe('CommandTree Tests', () => {
     describe('getSchemaAnchor() Tests', () => {
         it('Should return the respective id', () => {
             const id = new IdentityNode('minecraft', ['spgoding'])
-            const entity = new EntityNode(undefined, 'e', { type: [id] })
+            const argument = new SelectorArgumentMapNode()
+            argument.type = [id]
+            const entity = new EntityNode(undefined, 'e', argument)
             const actual = getNbtdocRegistryId(entity)
             assert(actual === 'minecraft:spgoding')
         })
@@ -235,12 +240,14 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test')
             const { data } = parser.parse(reader, ctx)
+            const expectedId = new IdentityNode('minecraft', ['test'])
+            expectedId[NodeRange] = { start: 26, end: 40 }
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
                 { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' }
+                { data: expectedId[NodeRange], parser: 'namespacedID' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>'],
@@ -258,12 +265,14 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test aaa')
             const { data } = parser.parse(reader, ctx)
+            const expectedId = new IdentityNode('minecraft', ['test'])
+            expectedId[NodeRange] = { start: 26, end: 40 }
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
                 { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: new IdentityNode('minecraft', ['test']), parser: 'namespacedID' },
+                { data: expectedId, parser: 'namespacedID' },
                 { data: 'aaa', parser: 'string' }
             ])
             assert.deepEqual(data.hint, {
@@ -282,12 +291,14 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement revoke @s through minecraft:test')
             const { data } = parser.parse(reader, ctx)
+            const expectedId = new IdentityNode(undefined, ['test'])
+            expectedId[NodeRange] = { start: 30, end: 44 }
             assert.deepEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'revoke', parser: 'literal' },
                 { data: new EntityNode(undefined, 's'), parser: 'entity' },
                 { data: 'through', parser: 'literal' },
-                { data: new IdentityNode(undefined, ['test']), parser: 'namespacedID' }
+                { data: expectedId, parser: 'namespacedID' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespacedID>'],
@@ -305,12 +316,13 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('data get block ~ ~ ~ CustomName')
             const { data } = parser.parse(reader, ctx)
+            const expectedKey = new NbtCompoundKeyNode(null, 'CustomName', 'CustomName', [21, 22, 23, 24, 25, 26, 27, 28, 29, 30])
             assert.deepEqual(data.args, [
                 { data: 'data', parser: 'literal' },
                 { data: 'get', parser: 'literal' },
                 { data: 'block', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new NbtPathNode(['CustomName']), parser: 'nbtPath' }
+                { data: new NbtPathNode([expectedKey]), parser: 'nbtPath' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['data', 'get', 'block', '<pos: vector3D>', '<path: nbtPath>'],
@@ -325,10 +337,12 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
             const { data } = parser.parse(reader, ctx)
+            const expectedId = new IdentityNode('undefined', ['grass_block'])
+            expectedId[NodeRange] = { start: 15, end: 36 }
             assert.deepEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 { data: new Vector([{ type: 'relative', value: '' }, { type: 'relative', value: '' }, { type: 'relative', value: '' }]), parser: 'vector3D' },
-                { data: new BlockNode(new IdentityNode(undefined, ['grass_block'])), parser: 'block' }
+                { data: new BlockNode(expectedId), parser: 'block' }
             ])
             assert.deepEqual(data.hint, {
                 fix: ['setblock', '<pos: vector3D>'],

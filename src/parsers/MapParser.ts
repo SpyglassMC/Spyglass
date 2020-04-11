@@ -59,10 +59,12 @@ export default class MapParser<T extends { [key: string]: any }> {
                     .skipWhiteSpace()
                     .expect(this.chars.sep)
                     .skip()
-                    .skipWhiteSpace()
+                skipWhiteSpace()
 
                 // Value Token.
                 this.parseValue(ans, reader, ctx, key, { start: keyStart, end: keyEnd })
+
+                reader.skipWhiteSpace()
 
                 // Key-value pair SepToken.
                 if (reader.peek() === this.chars.pairSep) {

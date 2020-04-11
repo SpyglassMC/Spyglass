@@ -12,6 +12,7 @@ import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import NamespaceSummary from '../types/NamespaceSummary'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
 export default class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     static identity = 'Identity'
@@ -58,7 +59,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         let stringID: string = ''
         let isTag = false
 
-        //#region Completions
+        //#region Completions.
         const tagPool: string[] = []
         const idPool: string[] = []
         // Set `tagPool`.
@@ -87,7 +88,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         const complFiles = new Set<string>()
         //#endregion
 
-        //#region Data
+        //#region Data.
         let namespace = IdentityNode.DefaultNamespace
         const paths: string[] = []
 
@@ -109,7 +110,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
          */
         let path0 = this.readValidString(reader, ans)
 
-        //#region Completions at the beginning
+        //#region Completions at the beginning.
         const shouldOmit = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
         const severity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
         if (start <= cursor && cursor <= reader.cursor) {
@@ -246,7 +247,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
             }
         }
 
-        //#region Completions
+        //#region Completions.
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
@@ -281,8 +282,12 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         }))
         //#endregion
 
-        //#region Tokens
+        //#region Tokens.
         ans.tokens.push(Token.from(start, reader, TokenType.namespacedID))
+        //#endregion
+
+        //#region Range.
+        ans.data[NodeRange] = { start, end: reader.cursor }
         //#endregion
 
         return ans

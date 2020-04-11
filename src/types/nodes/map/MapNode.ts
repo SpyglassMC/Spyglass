@@ -4,7 +4,7 @@ import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions } from '../ArgumentNode'
 import TextRange, { areOverlapped } from '../../TextRange'
-import {  Diagnostic, CodeAction } from 'vscode-languageserver'
+import { Diagnostic, CodeAction } from 'vscode-languageserver'
 import FunctionInfo from '../../FunctionInfo'
 
 export const enum BracketType { open, close }
@@ -101,8 +101,8 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
         const ans: CodeAction[] = []
         for (const key in this[Keys]) {
-            if (this[Keys].hasOwnProperty(key)) {
-                const keyInfo = this[Keys][key]
+            if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
+                const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
                         return keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics)
@@ -122,8 +122,8 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
     [GetHoverInformation](lineNumber: number, char: number) {
         for (const key in this[Keys]) {
             /* istanbul ignore else */
-            if (this[Keys].hasOwnProperty(key)) {
-                const keyInfo = this[Keys][key]
+            if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
+                const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (keyInfo[NodeRange].start <= char && char <= keyInfo[NodeRange].end) {
                         return keyInfo[GetHoverInformation](lineNumber, char)

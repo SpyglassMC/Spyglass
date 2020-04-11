@@ -4,6 +4,7 @@ import { ClientCache, CacheKey } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { sep } from 'path'
 import ArgumentNode, { NodeType } from './ArgumentNode'
+import TextRange from '../TextRange'
 
 export default class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'

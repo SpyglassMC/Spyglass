@@ -19,7 +19,7 @@ import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
 import ObjectiveCriterionArgumentParser from '../../parsers/ObjectiveCriterionArgumentParser'
 import ParticleArgumentParser from '../../parsers/ParticleArgumentParser'
 import ScoreboardSlotArgumentParser from '../../parsers/ScoreboardSlotArgumentParser'
-import StringArgumentParser from '../../parsers/StringArgumentParser'
+import StringArgumentParser, { StringType } from '../../parsers/StringArgumentParser'
 import TagArgumentParser from '../../parsers/TagArgumentParser'
 import TeamArgumentParser from '../../parsers/TeamArgumentParser'
 import TextComponentArgumentParser from '../../parsers/TextComponentArgumentParser'
@@ -68,7 +68,7 @@ const CommandTree: CommandTreeType = {
                                             executable: true,
                                             children: {
                                                 criterion: {
-                                                    parser: new StringArgumentParser('SingleWord'),
+                                                    parser: new StringArgumentParser(StringType.Unquoted),
                                                     executable: true
                                                 }
                                             }
@@ -343,7 +343,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('disable'),
                     children: {
                         name: {
-                            parser: new StringArgumentParser('QuotablePhrase'),
+                            parser: new StringArgumentParser(StringType.String, null, 'stringQuote', 'stringQuoteType'),
                             executable: true
                         }
                     }
@@ -352,7 +352,7 @@ const CommandTree: CommandTreeType = {
                     parser: new LiteralArgumentParser('enable'),
                     children: {
                         name: {
-                            parser: new StringArgumentParser('QuotablePhrase'),
+                            parser: new StringArgumentParser(StringType.String, null, 'stringQuote', 'stringQuoteType'),
                             executable: true,
                             children: {
                                 first_last: {
@@ -363,7 +363,7 @@ const CommandTree: CommandTreeType = {
                                     parser: new LiteralArgumentParser('before', 'after'),
                                     children: {
                                         existing: {
-                                            parser: new StringArgumentParser('QuotablePhrase'),
+                                            parser: new StringArgumentParser(StringType.String, null, 'stringQuote', 'stringQuoteType'),
                                             executable: true
                                         }
                                     }
@@ -976,7 +976,7 @@ const CommandTree: CommandTreeType = {
             permission: 3,
             children: {
                 address: {
-                    parser: new StringArgumentParser('SingleWord'),
+                    parser: new StringArgumentParser(StringType.Unquoted),
                     executable: true
                 }
             }
@@ -1954,7 +1954,7 @@ const CommandTree: CommandTreeType = {
             executable: true
         },
         unknown: {
-            parser: new StringArgumentParser('SingleWord'),
+            parser: new StringArgumentParser(StringType.Unquoted),
             permission: 0,
             run: ({ args, errors }) => {
                 errors.push(
@@ -1969,7 +1969,7 @@ const CommandTree: CommandTreeType = {
             },
             children: {
                 arguments: {
-                    parser: new StringArgumentParser('GreedyPhrase'),
+                    parser: new StringArgumentParser(StringType.Greedy),
                     executable: true
                 }
             },
@@ -2021,7 +2021,7 @@ const CommandTree: CommandTreeType = {
             }
         },
         unknown: {
-            parser: new StringArgumentParser('SingleWord'),
+            parser: new StringArgumentParser(StringType.Unquoted),
             permission: 0,
             run: ({ args, errors }) => {
                 errors.push(
@@ -2036,7 +2036,7 @@ const CommandTree: CommandTreeType = {
             },
             children: {
                 arguments: {
-                    parser: new StringArgumentParser('GreedyPhrase'),
+                    parser: new StringArgumentParser(StringType.Greedy),
                     executable: true
                 }
             },

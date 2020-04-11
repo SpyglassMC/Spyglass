@@ -110,6 +110,11 @@ export function quoteString(inner: string, quoteType: QuoteTypeConfig, forced: b
 
 export function validateStringQuote(raw: string, value: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>): ParsingError[] {
     const ans: ParsingError[] = []
+
+    if (!quoteConfig && !quoteTypeConfig) {
+        return ans
+    }
+
     const firstChar = raw.charAt(0)
     const isQuoted = StringReader.isQuote(firstChar)
 

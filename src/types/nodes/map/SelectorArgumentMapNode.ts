@@ -1,4 +1,4 @@
-import MapNode, { ConfigKeys, Chars } from './MapNode'
+import MapNode, { ConfigKeys, Chars, Keys } from './MapNode'
 import { LintConfig } from '../../Config'
 import { NodeType } from '../ArgumentNode'
 import NumberRangeNode from '../NumberRangeNode'
@@ -23,7 +23,7 @@ export const SelectorArgumentKeys: SelectorArgumentKey[] = [
 export type SelectorSortMethod = 'arbitrary' | 'furthest' | 'nearest' | 'random'
 
 export default class SelectorArgumentMapNode extends MapNode<StringNode, any> {
-    readonly [NodeType] = 'SelectorArgument'
+    readonly [NodeType] = 'SelectorArgument';
 
     protected readonly [ConfigKeys] = {
         bracketSpacing: 'selectorBracketSpacing' as keyof LintConfig,

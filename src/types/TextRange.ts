@@ -5,6 +5,8 @@ export default interface TextRange {
     end: number
 }
 
+export const EmptyRange = { start: NaN, end: NaN }
+
 /**
  * Remap all the indexes in the specific TextRange object by the specific mapping.
  * @param range The specific TextRange object.

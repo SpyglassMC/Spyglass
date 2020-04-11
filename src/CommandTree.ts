@@ -1,6 +1,5 @@
 import EntityNode from './types/nodes/EntityNode'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
-import ArgumentNode from './types/nodes/ArgumentNode'
 import { LineArgumentNode } from './types/Line'
 
 export function getNbtdocRegistryId(entity: EntityNode) {

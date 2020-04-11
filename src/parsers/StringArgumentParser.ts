@@ -40,8 +40,11 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
                     ans.data.value = reader.readRemaining()
                     break
                 case StringType.String:
-                default:
                     ans.data.value = reader.readString({ mapping: ans.data.mapping })
+                    break
+                case StringType.Unquoted:
+                default:
+                    ans.data.value = reader.readUnquotedString({ mapping: ans.data.mapping })
                     break
             }
         } catch (e) {
@@ -97,5 +100,5 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
 }
 
 export const enum StringType {
-    String, Greedy
+    Unquoted, String, Greedy
 }

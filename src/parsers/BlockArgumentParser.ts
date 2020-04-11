@@ -11,6 +11,7 @@ import Token, { TokenType } from '../types/Token'
 import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateMapNode'
 import { IsMapNodeSorted } from '../types/nodes/map/MapNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
 export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     static identity = 'Block'
@@ -33,6 +34,8 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             completions: []
         }
 
+        const start = reader.cursor
+
         const idResult = ctx.parsers.get('Identity', ['minecraft:block', this.allowTag]).parse(reader, ctx)
         const id = idResult.data as IdentityNode
         combineArgumentParserResult(ans, idResult)
@@ -40,6 +43,8 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
 
         this.parseStates(reader, ctx, ans, id)
         this.parseTag(reader, ctx, ans, id)
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

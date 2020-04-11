@@ -1,4 +1,4 @@
-import MapNode, { ConfigKeys, Chars } from './MapNode'
+import MapNode, { ConfigKeys, Chars, Keys } from './MapNode'
 import { LintConfig } from '../../Config'
 import { NodeType } from '../ArgumentNode'
 
@@ -6,6 +6,9 @@ export const BlockStateNodeChars = {
     openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
 }
 
+/**
+ * The `[Keys]` property is not used in this node.
+ */
 export default class BlockStateNode extends MapNode<string, string> {
     readonly [NodeType] = 'BlockState'
 

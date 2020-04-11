@@ -1,7 +1,7 @@
 import Formattable, { ToFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
-import TextRange from '../TextRange'
+import TextRange, { EmptyRange } from '../TextRange'
 import FunctionInfo from '../FunctionInfo'
 
 export const NodeType = Symbol('NodeType')
@@ -12,7 +12,7 @@ export const GetHoverInformation = Symbol('GetHoverInformation')
 
 export default abstract class ArgumentNode implements Formattable {
     abstract [NodeType]: string
-    [NodeRange]: TextRange = { start: NaN, end: NaN };
+    [NodeRange]: TextRange = EmptyRange;
     [NodeDescription]: string = ''
 
     abstract [ToFormattedString](lint: LintConfig): string

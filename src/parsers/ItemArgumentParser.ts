@@ -5,6 +5,7 @@ import ItemNode from '../types/nodes/ItemNode'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
 export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     static identity = 'Item'
@@ -27,12 +28,16 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
             completions: []
         }
 
+        const start = reader.cursor
+
         const idResult = ctx.parsers.get('Identity', ['minecraft:item', this.allowTag]).parse(reader, ctx)
         const id = idResult.data as IdentityNode
         combineArgumentParserResult(ans, idResult)
         ans.data.id = id
 
         this.parseTag(reader, ctx, ans, id)
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }
