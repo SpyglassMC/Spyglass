@@ -45,7 +45,7 @@
     "datapack.config.lint.nbtListTrailingComma": "NBTリストの最後の要素の後にコンマを必要とする",
     "datapack.config.lint.nbtLongSuffix": "NBTのlong型のタグに使用される接尾辞",
     "datapack.config.lint.nbtPathQuote": "NBTPathのキーに引用符を必要とする",
-    "datapack.config.lint.nbtPathQuoteType": "NBTPathのキーの引用符の種類を強制します。 [MC-175504](https://bugs.mojang.com/browse/MC-175504)のため、NBTPathのキーには_一重引用符を使用しないでください_。",
+    "datapack.config.lint.nbtPathQuoteType": "NBTPathのキーの引用符の種類を強制します。 [MC-175504](https://bugs.mojang.com/browse/MC-175504)のため、NBTPathのキーには*一重引用符を使用しないでください*。",
     "datapack.config.lint.nbtShortSuffix": "NBTのshort型のタグに使用される接尾辞",
     "datapack.config.lint.nbtStringQuote": "文字列の要素に引用符を必要とする",
     "datapack.config.lint.nbtStringQuoteType": "NBT文字列の引用符の種類を強制する",
