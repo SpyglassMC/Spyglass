@@ -7,68 +7,92 @@
     "next.md"
   ],
   "imageSize": 100,
-  "commit": false,
-  "commitConvention": "gitmoji",
+  "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td class=\"details\" align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
   "contributors": [
+    {
+      "name": "Arcensoth",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4",
+      "profile": "https://github.com/Arcensoth",
+      "contributions": [],
+      "details": [
+        { "type": "dependency", "link": "https://github.com/Arcensoth/mcdata", "text": "Maintains mcdata repository" }
+      ]
+    },
+    {
+      "name": "Yurihaia",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4",
+      "profile": "https://github.com/Yurihaia",
+      "contributions": [],
+      "details": [
+        { "type": "dependency", "link": "https://github.com/Arcensoth/mcdata", "text": "Maintains mc-nbtdoc repository" }
+      ]
+    },
     {
       "name": "martin_zzy",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1670389&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1670389",
-      "contributions": [
-        "bug"
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/353", "text": "#353" }
       ]
     },
     {
       "name": "ChenCMD",
       "avatar_url": "https://avatars2.githubusercontent.com/u/46134240?s=400&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4",
       "profile": "https://github.com/ChenCMD",
-      "contributions": [
-        "ideas",
-        "localization",
-        "bug"
+      "contributions": [],
+      "details": [
+        { "type": "ideas", "link": "issues/358", "text": "#358" },
+        { "type": "bug", "link": "issues/369", "text": "#369" },
+        { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
       ]
     },
     {
       "name": "Jerozgen",
       "avatar_url": "https://cdn.discordapp.com/avatars/165678950628982784/3f1093ec653cd58b363e084ef8d0239e.png?size=256",
-      "contributions": [
-        "bug",
-        "ideas"
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/369", "text": "#364" }
       ]
     },
     {
       "name": "Misode",
       "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
       "profile": "https://github.com/Misode",
-      "contributions": [
-        "ideas",
-        "bug"
+      "contributions": [],
+      "details": [
+        { "type": "ideas", "link": "issues/238", "text": "#238" },
+        { "type": "bug", "link": "issues/375", "text": "#375" },
+        { "type": "bug", "link": "issues/386", "text": "#386" }
       ]
     },
     {
       "name": "឵!Onnowhere",
       "avatar_url": "https://cdn.discordapp.com/avatars/136741373003956224/fb81857fc2e65f6579451ddec680d1db.png?size=256",
-      "contributions": [
-        "bug"
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/376", "text": "#376" }
       ]
     },
     {
       "name": "ncfumction",
       "avatar_url": "https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256",
-      "contributions": [
-        "bug"
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/376", "text": "#376" }
       ]
     },
     {
       "name": "00ll00",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
-      "contributions": [
-        "sponsor"
+      "contributions": [],
+      "details": [
+        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md", "text": "Financial support." }
       ]
     }
   ],
-  "contributorsPerLine": 7,
+  "contributorsPerLine": 1,
   "types": {
     "localization": {
       "symbol": "🌍",
@@ -76,19 +100,19 @@
     },
     "sponsor": {
       "symbol": "💝",
-      "description": "Sponsor",
-      "link": "#"
+      "description": "Sponsor"
     },
     "bug": {
       "symbol": "🐛",
-      "description": "Bug reports",
-      "link": "#issues-<%= contributor.name %>"
+      "description": "Bug reports"
     },
     "ideas": {
-      "symbol": "🤔",
-      "description": "Ideas, Planning, and Feedback",
-      "link": "#issues-<%= contributor.name %>"
+      "symbol": "✨",
+      "description": "Ideas, Planning, and Feedback"
+    },
+    "dependency": {
+      "symbol": "⬆️",
+      "description": "Dependency"
     }
-  },
-  "skipCi": true
+  }
 }
