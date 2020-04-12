@@ -1,13 +1,3 @@
-<style>
-table {
-  width: 100%;
-}
-
-td.details {
-  width: 100%;
-}
-</style>
-
 # Thank You
 
 A big _thank you_ goes to these wonderful people:
