@@ -21,7 +21,7 @@ describe('ClientCache Tests', () => {
         it('Should remove the unit', () => {
             const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
             removeCacheUnit(cache, 'entities', 'foo')
-            assert.deepEqual(cache, {
+            assert.deepStrictEqual(cache, {
                 entities: {}
             })
         })
@@ -30,7 +30,7 @@ describe('ClientCache Tests', () => {
         it('Should remove the pos', () => {
             const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, uri: 'file:///data/minecraft/functions/a.mcfunction' }], ref: [] } } }
             removeCachePosition(cache, Uri.parse('file:///data/minecraft/functions/a.mcfunction'))
-            assert.deepEqual(cache, {
+            assert.deepStrictEqual(cache, {
                 entities: { foo: { def: [], ref: [] } }
             })
         })
@@ -215,7 +215,7 @@ describe('ClientCache Tests', () => {
                     }
                 }
             }, 1)
-            assert.deepEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+            assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
         })
         it('Should return ref', () => {
             const actual = getCacheFromChar({
@@ -226,7 +226,7 @@ describe('ClientCache Tests', () => {
                     }
                 }
             }, 1)
-            assert.deepEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+            assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
         })
         it('Should return undefined', () => {
             const actual = getCacheFromChar({

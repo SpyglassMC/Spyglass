@@ -20,8 +20,8 @@ describe('onDidOpenTextDocument() Tests', () => {
 
         assert(info.config === VanillaConfig)
         assert(info.version === 2)
-        assert.deepEqual(info.strings, [''])
-        assert.deepEqual(info.lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
+        assert.deepStrictEqual(info.strings, [''])
+        assert.deepStrictEqual(info.lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
     })
     it('Should set the `lineBreak` to CRLF', async () => {
         const text = '0\r\n1\n2'
@@ -35,7 +35,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.lineBreak === '\r\n')
-        assert.deepEqual(info.strings, ['0', '1', '2'])
+        assert.deepStrictEqual(info.strings, ['0', '1', '2'])
     })
     it('Should set the `lineBreak` to LF', async () => {
         const text = '0\n1\n2'
@@ -49,6 +49,6 @@ describe('onDidOpenTextDocument() Tests', () => {
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.lineBreak === '\n')
-        assert.deepEqual(info.strings, ['0', '1', '2'])
+        assert.deepStrictEqual(info.strings, ['0', '1', '2'])
     })
 })

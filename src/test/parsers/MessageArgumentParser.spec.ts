@@ -13,7 +13,7 @@ describe('MessageArgumentParser Tests', () => {
         it('Should return examples', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.getExamples()
-            assert.deepEqual(actual, ['Hello world!', 'foo', '@e', 'Hello @p :)'])
+            assert.deepStrictEqual(actual, ['Hello world!', 'foo', '@e', 'Hello @p :)'])
         })
     })
 
@@ -26,27 +26,27 @@ describe('MessageArgumentParser Tests', () => {
         it('Should return data without selectors', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('aaaa!@#$'), ctx)
-            assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Message(['aaaa!@#$']))
-            assert.deepEqual(actual.tokens, [
+            assert.deepStrictEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, new Message(['aaaa!@#$']))
+            assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 8 }, TokenType.string)
             ])
         })
         it('Should return data with only one selector', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('@a'), ctx)
-            assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Message([new EntityNode(undefined, 'a')]))
-            assert.deepEqual(actual.tokens, [
+            assert.deepStrictEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, new Message([new EntityNode(undefined, 'a')]))
+            assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 2 }, TokenType.entity)
             ])
         })
         it('Should return data with mixed selectors and strings', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('Hello@A@aWORLD'), ctx)
-            assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new Message(['Hello@A', new EntityNode(undefined, 'a'), 'WORLD']))
-            assert.deepEqual(actual.tokens, [
+            assert.deepStrictEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, new Message(['Hello@A', new EntityNode(undefined, 'a'), 'WORLD']))
+            assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 7 }, TokenType.string),
                 new Token({ start: 7, end: 9 }, TokenType.entity),
                 new Token({ start: 9, end: 14 }, TokenType.string)

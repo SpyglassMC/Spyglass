@@ -3,14 +3,14 @@ import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import Particle from '../../types/Particle'
-import Vector from '../../types/Vector'
+import ParticleNode from '../../types/nodes/ParticleNode'
+import VectorNode from '../../types/nodes/VectorNode'
 
 describe('Particle Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
-            const particle = new Particle(
+            const particle = new ParticleNode(
                 new IdentityNode('minecraft', ['mob_effect'])
             )
             const actual = particle[ToFormattedString](lint)
@@ -18,9 +18,9 @@ describe('Particle Tests', () => {
         })
         it('Should return for extra data', () => {
             const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
-            const particle = new Particle(
+            const particle = new ParticleNode(
                 new IdentityNode('minecraft', ['dust']),
-                new Vector([
+                new VectorNode([
                     { value: '0.93', type: 'absolute' },
                     { value: '0.40', type: 'absolute' },
                     { value: '0.80', type: 'absolute' },

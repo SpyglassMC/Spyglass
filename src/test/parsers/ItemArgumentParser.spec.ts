@@ -8,13 +8,18 @@ import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import { $ } from '../utils'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import { Keys } from '../../types/nodes/map/MapNode'
+import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
+import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
         it('Should return examples', () => {
             const parser = new ItemArgumentParser()
             const actual = parser.getExamples()
-            assert.deepEqual(actual, ['stick', 'minecraft:stick', 'stick{foo:bar}'])
+            assert.deepStrictEqual(actual, ['stick', 'minecraft:stick', 'stick{foo:bar}'])
         })
     })
 
@@ -36,28 +41,29 @@ describe('ItemArgumentParser Tests', () => {
         it('Should return data without tag', () => {
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stick'), ctx)
-            assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new ItemNode(
-                new IdentityNode('minecraft', ['stick'])
-            ))
+            assert.deepStrictEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, $(new ItemNode(
+                $(new IdentityNode('minecraft', ['stick']), [0, 15])
+            ), [0, 15]))
         })
         it('Should return data with tag', () => {
             const parser = new ItemArgumentParser(false)
-            const actual = parser.parse(new StringReader('minecraft:stick{ foo : "bar" }'), ctx)
-            assert.deepEqual(actual.errors, [])
-            assert.deepEqual(actual.data, new ItemNode(
-                new IdentityNode('minecraft', ['stick']),
-                getNbtCompoundTag({ foo: getNbtStringTag('bar') })
-            ))
+            const actual = parser.parse(new StringReader('minecraft:stick{ foo : 1b }'), ctx)
+            assert.deepStrictEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, $(new ItemNode(
+                $(new IdentityNode('minecraft', ['stick']), [0, 15]),
+                $(new NbtCompoundNode(null), [15, 27], v => $(v, {
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [17, 18, 19]), [17, 20]) },
+                    foo: $(new NbtByteNode(v, 1, '1'), [23, 25])
+                }))
+            ), [0, 27]))
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { omitDefaultNamespace: true } })
             const context = await constructContext({ registry: registries, parsers, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.data, new ItemNode(
-                new IdentityNode()
-            ))
+
             assert.deepStrictEqual(actual.completions,
                 [
                     {

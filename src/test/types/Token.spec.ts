@@ -8,7 +8,7 @@ describe('Token Tests', () => {
         it('Should calculate the deltas', () => {
             const token = new Token({ start: 3, end: 5 }, 0, new Set([0]))
             const actual = token.toArray(2)
-            assert.deepEqual(actual, [2, 3, 2, 0, 1])
+            assert.deepStrictEqual(actual, [2, 3, 2, 0, 1])
         })
     })
     describe('static from() Tests', () => {
@@ -16,7 +16,7 @@ describe('Token Tests', () => {
             const reader = new StringReader('0123')
             reader.cursor = 3
             const actual = Token.from(0, reader, TokenType.comment)
-            assert.deepEqual(actual, new Token({ start: 0, end: 3 }, TokenType.comment))
+            assert.deepStrictEqual(actual, new Token({ start: 0, end: 3 }, TokenType.comment))
         })
     })
 })

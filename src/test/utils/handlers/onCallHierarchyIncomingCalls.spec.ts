@@ -60,7 +60,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const id = 'spgoding:callee'
         const calls = await onCallHierarchyIncomingCalls({ cacheFile, pathExists, roots, uris, urisOfIds, id, kind })
 
-        assert.deepEqual(calls, [{
+        assert.deepStrictEqual(calls, [{
             from: {
                 name: 'spgoding:caller',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
@@ -86,7 +86,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const id = 'spgoding:callee'
         const calls = await onCallHierarchyIncomingCalls({ cacheFile, pathExists, roots, uris, urisOfIds, id, kind })
 
-        assert.deepEqual(calls, [{
+        assert.deepStrictEqual(calls, [{
             from: {
                 name: 'spgoding:caller',
                 range: { start: { line: 3, character: 5 }, end: { line: 3, character: 20 } },
@@ -116,7 +116,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const id = 'spgoding:callee'
         const calls = await onCallHierarchyIncomingCalls({ cacheFile, pathExists, roots, uris, urisOfIds, id, kind })
 
-        assert.deepEqual(calls, [{
+        assert.deepStrictEqual(calls, [{
             from: {
                 name: '#spgoding:caller',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
@@ -142,7 +142,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const id = '#spgoding:callee'
         const calls = await onCallHierarchyIncomingCalls({ cacheFile, pathExists, roots, uris, urisOfIds, id, kind })
 
-        assert.deepEqual(calls, [{
+        assert.deepStrictEqual(calls, [{
             from: {
                 name: 'spgoding:caller',
                 range: { start: { line: 3, character: 5 }, end: { line: 3, character: 20 } },
@@ -172,7 +172,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const id = '#spgoding:callee'
         const calls = await onCallHierarchyIncomingCalls({ cacheFile, pathExists, roots, uris, urisOfIds, id, kind })
 
-        assert.deepEqual(calls, [{
+        assert.deepStrictEqual(calls, [{
             from: {
                 name: '#spgoding:caller',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },

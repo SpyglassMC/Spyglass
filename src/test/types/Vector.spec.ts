@@ -1,13 +1,13 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import Vector from '../../types/Vector'
+import VectorNode from '../../types/nodes/VectorNode'
 import { ToFormattedString } from '../../types/Formattable'
 
 describe('Vector Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         it('Should return correctly', () => {
-            const vector = new Vector(
+            const vector = new VectorNode(
                 [
                     { value: '', type: 'local' },
                     { value: '1', type: 'relative' },

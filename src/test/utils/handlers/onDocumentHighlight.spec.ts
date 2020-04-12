@@ -56,7 +56,7 @@ describe('onDocumentHighlight() Tests', () => {
 
         const ranges = onDocumentHighlight({ info, position })
 
-        assert.deepEqual(ranges, [            
+        assert.deepStrictEqual(ranges, [            
             {
                 range: {
                     start: { line: 0, character: 5 },
@@ -79,7 +79,7 @@ describe('onDocumentHighlight() Tests', () => {
 
         const ranges = onDocumentHighlight({ info, position })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 range: {
                     start: { line: 0, character: 0 },

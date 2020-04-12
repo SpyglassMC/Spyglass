@@ -25,13 +25,13 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader('belowName'), ctx)
             assert(actual.data === 'belowName')
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return data for team sidebars', () => {
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader('sidebar.team.red'), ctx)
             assert(actual.data === 'sidebar.team.red')
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for slots', async () => {
             const ctx = await constructContext({ parsers, cursor: 0 })

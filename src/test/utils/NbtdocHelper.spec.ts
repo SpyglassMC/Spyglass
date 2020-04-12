@@ -331,14 +331,14 @@ describe('NbtdocHelper Tests', () => {
             const actual = helper
                 .goCompound(1)
                 .readCompoundKeys()
-            assert.deepEqual(actual, ['foo'])
+            assert.deepStrictEqual(actual, ['foo'])
         })
         it('Should read the keys of a compound with a compound supers', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             const actual = helper
                 .goCompound(2)
                 .readCompoundKeys()
-            assert.deepEqual(actual, ['bar', 'foo'])
+            assert.deepStrictEqual(actual, ['bar', 'foo'])
         })
         it('Should read the keys of a compound with a registry supers', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
@@ -350,7 +350,7 @@ describe('NbtdocHelper Tests', () => {
                 .withTag(compoundNode)
                 .goCompound(3)
                 .readCompoundKeys()
-            assert.deepEqual(actual, ['bar', 'foo'])
+            assert.deepStrictEqual(actual, ['bar', 'foo'])
         })
         it('Should read the keys of a compound with a registry supers when the path field does not exist', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
@@ -360,7 +360,7 @@ describe('NbtdocHelper Tests', () => {
                 .withTag(compoundNode)
                 .goCompound(3)
                 .readCompoundKeys()
-            assert.deepEqual(actual, ['bar'])
+            assert.deepStrictEqual(actual, ['bar'])
         })
     })
     describe('readField() Tests', () => {
@@ -409,7 +409,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: 'false' },
                     { label: 'true' },
                     { label: '0b' },
@@ -428,7 +428,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: 'false' },
                     { label: 'true' }
                 ])
@@ -445,7 +445,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '0b' },
                     { label: '1b' }
                 ])
@@ -461,7 +461,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '[B;]' }
                 ])
             })
@@ -476,7 +476,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '{}' }
                 ])
             })
@@ -491,7 +491,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: String', documentation: 'Red' },
                     { label: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: String', documentation: 'Green' },
                     { label: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: String', documentation: 'Blue' }
@@ -506,7 +506,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: Byte', documentation: 'One  \nThe first positive integer' },
                     { label: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: Byte', documentation: 'Two  \nThe second positive integer' },
                     { label: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: Byte', documentation: 'Three  \nThe third positive integer' }
@@ -523,7 +523,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '"minecraft"', kind: CompletionItemKind.Module, commitCharacters: [':'] },
                     { label: '"one_boolean_field"', kind: CompletionItemKind.Field }
                 ])
@@ -539,7 +539,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '[I;]' }
                 ])
             })
@@ -554,7 +554,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '[]' }
                 ])
             })
@@ -569,7 +569,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '[L;]' }
                 ])
             })
@@ -585,7 +585,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.completions, [
+                assert.deepStrictEqual(ans.completions, [
                     { label: '"fooTag"' }
                 ])
             })
@@ -603,7 +603,7 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepEqual(ans.completions, [
+            assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a normal key' },
                 { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a crazy key with a double quotation mark' },
                 { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'The only field of this compound' }
@@ -620,7 +620,7 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepEqual(ans.completions, [
+            assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a normal key' },
                 { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a crazy key with a double quotation mark' }
             ])
@@ -635,7 +635,7 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepEqual(ans.completions, [
+            assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a normal key' },
                 { label: 'double"quote', insertText: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a crazy key with a double quotation mark' },
                 { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'The only field of this compound' }
@@ -651,7 +651,7 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepEqual(ans.completions, [
+            assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a normal key' },
                 { label: 'double"quote', insertText: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'This is a crazy key with a double quotation mark' },
                 { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: Boolean', documentation: 'The only field of this compound' }
@@ -677,7 +677,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a byte tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -697,7 +697,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors when expecting byte numbers', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
@@ -713,7 +713,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 5 },
                     'Expected a byte tag but got ‘false’',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtByteToNumber
@@ -733,7 +733,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected ‘false’ or ‘true’',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtByteToLiteral
@@ -752,7 +752,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a byte array tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -768,7 +768,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a byte array tag but got an int array tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToByteArray
@@ -784,7 +784,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors when the collection length is too large', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 2], value_range: null } }
@@ -797,7 +797,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a collection with length between 1 and 2',
                     undefined, DiagnosticSeverity.Warning
@@ -817,7 +817,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a collection with length 1',
                     undefined, DiagnosticSeverity.Warning
@@ -837,7 +837,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 3, end: 5 },
                     'Expected a number between 0 and 1 but got 2',
                     undefined, DiagnosticSeverity.Warning
@@ -856,7 +856,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a byte tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -872,7 +872,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a byte tag but got an int tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToByte
@@ -888,7 +888,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors when the value range is too small', async () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
@@ -901,7 +901,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a number between 1 and 2 but got 0',
                     undefined, DiagnosticSeverity.Warning
@@ -918,7 +918,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a number between 1 and 2 but got 3',
                     undefined, DiagnosticSeverity.Warning
@@ -937,7 +937,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a compound tag but got a list tag',
                     undefined, DiagnosticSeverity.Warning
@@ -953,7 +953,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for correct filled tags', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
@@ -973,7 +973,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(customModelDataKey[NodeDescription] === 'Type: Int\n* * * * * *\nThe custom model data for this item')
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for unknown tags in ItemBase', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
@@ -993,7 +993,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(asdfghjklKey[NodeDescription] === '')
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for unknown tags in non-ItemBase compounds', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 1 }
@@ -1013,7 +1013,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(asdfghjklKey[NodeDescription] === '')
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 10 },
                     'Unknown key ‘asdfghjkl’',
                     undefined, DiagnosticSeverity.Warning
@@ -1032,7 +1032,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a double tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1048,7 +1048,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a double tag but got an int tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToDouble
@@ -1064,7 +1064,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Enum Tests', () => {
@@ -1080,7 +1080,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: String\n* * * * * *\nA simple string enum')
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a string tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1098,7 +1098,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: String\n* * * * * *\nA simple string enum')
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 11 },
                     'Expected ‘red’, ‘green’, or ‘blue’ but got ‘asdfghjkl’',
                     undefined, DiagnosticSeverity.Warning
@@ -1116,7 +1116,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: String\n* * * * * *\nA simple string enum\n\nRed')
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for non-byte tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
@@ -1130,7 +1130,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: Byte\n* * * * * *\nA simple byte enum')
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a byte tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1148,7 +1148,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: Byte\n* * * * * *\nA simple byte enum')
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected ‘1’, ‘2’, or ‘3’ but got ‘5’',
                     undefined, DiagnosticSeverity.Warning
@@ -1166,7 +1166,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
                 assert(tag[NodeDescription] === 'Type: Byte\n* * * * * *\nA simple byte enum\n\nTwo - The second positive integer')
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Float Tests', () => {
@@ -1181,7 +1181,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a float tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1197,7 +1197,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a float tag but got an int tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToFloat
@@ -1213,7 +1213,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Id Tests', () => {
@@ -1228,7 +1228,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a string tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1244,7 +1244,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 28 },
                     'Failed to resolve namespaced ID ‘minecraft:asdfghjklqwertyui’ in registry ‘minecraft:block’',
                     undefined, DiagnosticSeverity.Warning
@@ -1260,7 +1260,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Index Tests', () => {
@@ -1277,7 +1277,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a compound tag but got a list tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1293,7 +1293,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for correctly filled tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
@@ -1309,7 +1309,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for unexpected child types', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
@@ -1325,7 +1325,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 7, end: 9 },
                     'Expected a byte tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1344,7 +1344,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected an int array tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1360,7 +1360,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected an int array tag but got a byte array tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToIntArray
@@ -1376,7 +1376,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Int Tests', () => {
@@ -1391,7 +1391,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected an int tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1407,7 +1407,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('List Tests', () => {
@@ -1422,7 +1422,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a list tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1438,7 +1438,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a list tag but got an int array tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToList
@@ -1457,7 +1457,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('LongArray Tests', () => {
@@ -1472,7 +1472,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a long array tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1488,7 +1488,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a long array tag but got an int array tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToLongArray
@@ -1504,7 +1504,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Long Tests', () => {
@@ -1519,7 +1519,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a long tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1535,7 +1535,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a long tag but got an int tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToLong
@@ -1551,7 +1551,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('Or Tests', () => {
@@ -1567,7 +1567,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     "This tag doesn't exist here",
                     undefined, DiagnosticSeverity.Warning
@@ -1583,7 +1583,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for tags that match the second doc', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
@@ -1595,7 +1595,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for the second doc if the tag matches none of them', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
@@ -1607,7 +1607,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a string tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1626,7 +1626,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a short tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1642,7 +1642,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a short tag but got an int tag',
                     undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToShort
@@ -1658,7 +1658,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
         describe('String Tests', () => {
@@ -1673,7 +1673,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [new ParsingError(
+                assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected a string tag but got a compound tag',
                     undefined, DiagnosticSeverity.Warning
@@ -1689,7 +1689,7 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.validateField(ans, ctx, tag, doc, isPredicate, description)
 
-                assert.deepEqual(ans.errors, [])
+                assert.deepStrictEqual(ans.errors, [])
             })
         })
     })

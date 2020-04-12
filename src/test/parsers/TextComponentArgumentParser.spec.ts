@@ -24,19 +24,19 @@ describe('TextComponentArgumentParser Tests', () => {
         it('Should return primitive data', () => {
             const parser = new TextComponentArgumentParser()
             const actual = parser.parse(new StringReader('"bar"'), ctx)
-            assert.deepEqual(actual.data, new TextComponent('"bar"'))
+            assert.deepStrictEqual(actual.data, new TextComponent('"bar"'))
         })
         it('Should return object data', () => {
             const parser = new TextComponentArgumentParser()
             const actual = parser.parse(new StringReader('{ "text": "\\u00a7cFoo" }'), ctx)
-            assert.deepEqual(actual.data, new TextComponent(getNbtCompoundTag({
+            assert.deepStrictEqual(actual.data, new TextComponent(getNbtCompoundTag({
                 text: getNbtStringTag('"\\u00a7cFoo"')
             })))
         })
         it('Should return array data', () => {
             const parser = new TextComponentArgumentParser()
             const actual = parser.parse(new StringReader('[{ "text": "\\u00a7cFoo" }, "bar"]'), ctx)
-            assert.deepEqual(actual.data, new TextComponent([
+            assert.deepStrictEqual(actual.data, new TextComponent([
                 getNbtCompoundTag({
                     text: getNbtStringTag('"\\u00a7cFoo"')
                 }),

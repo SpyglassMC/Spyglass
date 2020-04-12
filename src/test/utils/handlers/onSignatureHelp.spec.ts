@@ -21,7 +21,7 @@ describe('onSignatureHelp() Tests', () => {
 
         const signatures = await onSignatureHelp({ info, cacheFile, lineNumber, char })
 
-        assert.deepEqual(signatures, {
+        assert.deepStrictEqual(signatures, {
             signatures: [{
                 label: 'advancement (grant|revoke) <targets: entity>',
                 parameters: [
@@ -50,7 +50,7 @@ describe('onSignatureHelp() Tests', () => {
 
         const signatures = await onSignatureHelp({ info, cacheFile, lineNumber, char })
 
-        assert.deepEqual(signatures, {
+        assert.deepStrictEqual(signatures, {
             signatures: [{
                 label: 'say <message: message> ',
                 parameters: [

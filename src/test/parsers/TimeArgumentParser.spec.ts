@@ -25,21 +25,21 @@ describe('TimeArgumentParser Tests', () => {
         it('Should return data for time without unit', () => {
             const parser = new TimeArgumentParser()
             const actual = parser.parse(new StringReader('0'), ctx)
-            assert.deepEqual(actual.data, new Time(0, 't'))
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, new Time(0, 't'))
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return data for time with unit', () => {
             const parser = new TimeArgumentParser()
             const actual = parser.parse(new StringReader('0.5d'), ctx)
-            assert.deepEqual(actual.data, new Time(0.5, 'd'))
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.data, new Time(0.5, 'd'))
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for units', async () => {
             const ctx = await constructContext({ parsers, cursor: 4 })
             const parser = new TimeArgumentParser()
             const actual = parser.parse(new StringReader('2.33'), ctx)
-            assert.deepEqual(actual.data, new Time(2.33, 't'))
-            assert.deepEqual(actual.completions,
+            assert.deepStrictEqual(actual.data, new Time(2.33, 't'))
+            assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'd' },
                     { label: 's' },

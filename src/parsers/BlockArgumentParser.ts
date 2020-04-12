@@ -96,6 +96,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             ).parse(statesResult, reader, ctx)
             combineArgumentParserResult(ans, statesResult)
             ans.data.states = statesResult.data
+            ans.data.states[NodeRange] = { start, end: reader.cursor }
 
             if (ctx.config.lint.blockStateSortKeys && !ans.data.states[IsMapNodeSorted]()) {
                 ans.errors.push(new ParsingError(

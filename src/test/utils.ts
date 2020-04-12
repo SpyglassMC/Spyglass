@@ -5,6 +5,10 @@ type Range = TextRange | [number, number]
 type Object = { [key: string]: any }
 type Callback<T> = (e: T) => T
 
+function isTextRange(val: any): val is TextRange {
+    return typeof val.start === 'number' && typeof val.end === 'number'
+}
+
 export function $<T extends ArgumentNode>(node: T, range: Range): T
 export function $<T extends ArgumentNode>(node: T, range: Range, cb: Callback<T>): T
 export function $<T extends ArgumentNode>(node: T, range: Range, addition: Object): T
@@ -35,19 +39,11 @@ export function $<T extends ArgumentNode>(node: T, param1: Range | Object, param
         node[NodeRange] = range
     }
     if (addition) {
-        for (const key in addition) {
-            if (addition.hasOwnProperty(key)) {
-                (node as unknown as any)[key] = addition[key]
-            }
-        }
+        Object.assign(node, addition)
     }
     if (cb) {
         node = cb(node)
     }
 
     return node
-}
-
-function isTextRange(val: any): val is TextRange {
-    return typeof val.start === 'number' && typeof val.end === 'number'
 }

@@ -119,7 +119,7 @@ describe('utils.ts Tests', () => {
         it('Should escape string.', () => {
             const arr = ['a', 2, 'c']
             const actual = arrayToCompletions(arr)
-            assert.deepEqual(actual, [
+            assert.deepStrictEqual(actual, [
                 { label: 'a' },
                 { label: '2' },
                 { label: 'c' }

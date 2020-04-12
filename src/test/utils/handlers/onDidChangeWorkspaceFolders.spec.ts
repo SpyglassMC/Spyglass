@@ -14,11 +14,11 @@ describe('onDidChangeWorkspaceFolders() Tests', () => {
 
         onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
 
-        assert.deepEqual(roots, [
+        assert.deepStrictEqual(roots, [
             Uri.parse('file:///c:/bar/'),
             Uri.parse('file:///c:/foo/')
         ])
-        assert.deepEqual(urisOfIds, new Map())
+        assert.deepStrictEqual(urisOfIds, new Map())
     })
     it('Should deal with null', () => {
         const uri = Uri.parse('file:///c:/foo/')
@@ -30,7 +30,7 @@ describe('onDidChangeWorkspaceFolders() Tests', () => {
 
         onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
 
-        assert.deepEqual(roots, [])
-        assert.deepEqual(urisOfIds, new Map())
+        assert.deepStrictEqual(roots, [])
+        assert.deepStrictEqual(urisOfIds, new Map())
     })
 })

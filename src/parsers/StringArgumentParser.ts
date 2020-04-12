@@ -48,8 +48,8 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
                     break
             }
         } catch (e) {
-            const pe = <ParsingError>e
-            ans.errors = [pe]
+            /* istanbul ignore next */
+            ans.errors = [e]
         }
 
         ans.data[NodeRange] = { start, end: reader.cursor }
@@ -58,7 +58,9 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
 
         //#region Errors.
         /// Quotation marks.
+        /* istanbul ignore next */
         const quote = typeof this.quote === 'string' ? ctx.config.lint[this.quote] as any : this.quote
+        /* istanbul ignore next */
         const quoteType = typeof this.quoteType === 'string' ? ctx.config.lint[this.quoteType] as any : this.quoteType
         validateStringQuote(ans.data.raw, ans.data.value, ans.data[NodeRange], quote, quoteType)
         /// Unknown values.

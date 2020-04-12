@@ -15,7 +15,7 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         private readonly max?: number
     ) {
         super()
-        this.identity = type
+        this.identity = `number.${type}`
     }
 
     parse(reader: StringReader): ArgumentParserResult<number> {

@@ -25,7 +25,7 @@ describe('onColorPresentation() Tests', () => {
 
         const colors = onColorPresentation({ info, r, g, b, a, start, end, lineNumber })
 
-        assert.deepEqual(colors, [{ label: 'dust 1 1 1' }])
+        assert.deepStrictEqual(colors, [{ label: 'dust 1 1 1' }])
     })
     it('Should return correctly for minecraft:dust', () => {
         const r = 1
@@ -45,7 +45,7 @@ describe('onColorPresentation() Tests', () => {
 
         const colors = onColorPresentation({ info, r, g, b, a, start, end, lineNumber })
 
-        assert.deepEqual(colors, [{ label: 'minecraft:dust 1 1 1' }])
+        assert.deepStrictEqual(colors, [{ label: 'minecraft:dust 1 1 1' }])
     })
     it('Should return correctly for minecraft:dust', () => {
         const r = 1
@@ -65,6 +65,6 @@ describe('onColorPresentation() Tests', () => {
 
         const colors = onColorPresentation({ info, r, g, b, a, start, end, lineNumber })
 
-        assert.deepEqual(colors, [{ label: '16777215' }])
+        assert.deepStrictEqual(colors, [{ label: '16777215' }])
     })
 })

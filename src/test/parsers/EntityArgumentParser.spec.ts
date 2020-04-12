@@ -181,7 +181,7 @@ describe('EntityArgumentParser Tests', () => {
                     gamemode: ['']
                 }
                 const actual = parser.parse(new StringReader(command), ctx)
-                assert.deepEqual(actual.data, new EntityNode(undefined, 'a', expected as any))
+                assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expected as any))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with all kinds of negativable array arguments', () => {
@@ -208,7 +208,7 @@ describe('EntityArgumentParser Tests', () => {
 
                 const actual = parser.parse(new StringReader(command), ctx)
 
-                assert.deepEqual(actual.data, new EntityNode(undefined, 'a', expected as any))
+                assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expected as any))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with the same negativable array arguments', () => {

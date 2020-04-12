@@ -31,7 +31,7 @@ describe('onDocumentLinks() Tests', () => {
     it('Should return correctly for functions', async () => {
         const links = await onDocumentLinks({ info, pathExists, roots, uris, urisOfIds })
 
-        assert.deepEqual(links, [{
+        assert.deepStrictEqual(links, [{
             range: {
                 start: { line: 0, character: 3 },
                 end: { line: 0, character: 15 }

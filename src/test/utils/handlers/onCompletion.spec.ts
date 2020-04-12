@@ -21,7 +21,7 @@ describe('onCompletion() Tests', () => {
 
         const completions = await onCompletion({ info, cacheFile, lineNumber, char })
 
-        assert.deepEqual(completions, [
+        assert.deepStrictEqual(completions, [
             { label: 'grant' },
             { label: 'revoke' }
         ])

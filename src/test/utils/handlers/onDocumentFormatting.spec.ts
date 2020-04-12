@@ -25,7 +25,7 @@ describe('onDocumentFormatting() Tests', () => {
 
         const edits = onDocumentFormatting({ info })
 
-        assert.deepEqual(edits, [{
+        assert.deepStrictEqual(edits, [{
             range: { start: { line: 0, character: 0 }, end: { line: 0, character: 10 } },
             newText: 'fake minecraft:stone'
         }])
@@ -47,7 +47,7 @@ describe('onDocumentFormatting() Tests', () => {
 
         const edits = onDocumentFormatting({ info })
 
-        assert.deepEqual(edits, [{
+        assert.deepStrictEqual(edits, [{
             range: { start: { line: 0, character: 0 }, end: { line: 0, character: 15 } },
             newText: '     fake minecraft:stone'
         }])
@@ -82,7 +82,7 @@ describe('onDocumentFormatting() Tests', () => {
 
         const edits = onDocumentFormatting({ info })
 
-        assert.deepEqual(edits, [{
+        assert.deepStrictEqual(edits, [{
             range: { start: { line: 1, character: 0 }, end: { line: 1, character: 10 } },
             newText: 'fake minecraft:stone'
         }])

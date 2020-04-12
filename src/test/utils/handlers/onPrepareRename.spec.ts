@@ -30,7 +30,7 @@ describe('onPrepareRename() Tests', () => {
 
         const range = onPrepareRename({ info, lineNumber, char })
 
-        assert.deepEqual(range, {
+        assert.deepStrictEqual(range, {
             start: { line: 0, character: 0 },
             end: { line: 0, character: 8 }
         })
@@ -62,6 +62,6 @@ describe('onPrepareRename() Tests', () => {
 
         const range = onPrepareRename({ info, lineNumber, char })
 
-        assert.deepEqual(range, null)
+        assert.deepStrictEqual(range, null)
     })
 })

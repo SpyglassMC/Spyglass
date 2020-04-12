@@ -29,7 +29,7 @@ describe('onDocumentColor() Tests', () => {
     it('Should return correctly', () => {
         const colors = onDocumentColor({ info })
 
-        assert.deepEqual(colors, [
+        assert.deepStrictEqual(colors, [
             {
                 range: {
                     start: { line: 0, character: 9 },

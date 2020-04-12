@@ -85,7 +85,7 @@ describe('onRenameRequest() Tests', () => {
 
         const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
-        assert.deepEqual(actual, {
+        assert.deepStrictEqual(actual, {
             documentChanges: [{
                 textDocument: { uri: oldFunction1, version: 4320 },
                 edits: [{
@@ -94,7 +94,7 @@ describe('onRenameRequest() Tests', () => {
                 }]
             }]
         })
-        assert.deepEqual(cacheFile, {
+        assert.deepStrictEqual(cacheFile, {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
@@ -122,7 +122,7 @@ describe('onRenameRequest() Tests', () => {
 
         const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
-        assert.deepEqual(actual, {
+        assert.deepStrictEqual(actual, {
             documentChanges: [
                 {
                     textDocument: { uri: oldFunction1, version: 4320 },
@@ -137,7 +137,7 @@ describe('onRenameRequest() Tests', () => {
                 }
             ]
         })
-        assert.deepEqual(cacheFile, {
+        assert.deepStrictEqual(cacheFile, {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
@@ -162,7 +162,7 @@ describe('onRenameRequest() Tests', () => {
 
         const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
-        assert.deepEqual(actual, {
+        assert.deepStrictEqual(actual, {
             documentChanges: [
                 {
                     textDocument: { uri: oldFunction1, version: 4320 },
@@ -177,7 +177,7 @@ describe('onRenameRequest() Tests', () => {
                 }
             ]
         })
-        assert.deepEqual(cacheFile, {
+        assert.deepStrictEqual(cacheFile, {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
@@ -202,7 +202,7 @@ describe('onRenameRequest() Tests', () => {
 
         const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
 
-        assert.deepEqual(actual, {
+        assert.deepStrictEqual(actual, {
             documentChanges: [
                 {
                     textDocument: { uri: oldFunction2, version: 4320 },
@@ -217,7 +217,7 @@ describe('onRenameRequest() Tests', () => {
                 }
             ]
         })
-        assert.deepEqual(cacheFile, {
+        assert.deepStrictEqual(cacheFile, {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {

@@ -27,7 +27,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const { data, tokens } = parser.parse(reader)
             assert(data === 'foo')
             assert(reader.cursor === 3)
-            assert.deepEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.namespacedID, new Set([TokenModifier.declaration]))])
+            assert.deepStrictEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.namespacedID, new Set([TokenModifier.declaration]))])
         })
         it('Should return entity token for entities', () => {
             const parser = new DefinitionIDArgumentParser('entity')
@@ -35,7 +35,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const { data, tokens } = parser.parse(reader)
             assert(data === 'foo')
             assert(reader.cursor === 3)
-            assert.deepEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.entity, new Set([TokenModifier.declaration]))])
+            assert.deepStrictEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.entity, new Set([TokenModifier.declaration]))])
         })
         it('Should return variable token for other types', () => {
             const parser = new DefinitionIDArgumentParser('objective')
@@ -43,7 +43,7 @@ describe('DefinitionIDArgumentParser Tests', () => {
             const { data, tokens } = parser.parse(reader)
             assert(data === 'foo')
             assert(reader.cursor === 3)
-            assert.deepEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.variable, new Set([TokenModifier.declaration]))])
+            assert.deepStrictEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.variable, new Set([TokenModifier.declaration]))])
         })
         it('Should return data even if it is empty', () => {
             const parser = new DefinitionIDArgumentParser('tag')

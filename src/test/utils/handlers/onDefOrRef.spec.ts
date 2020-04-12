@@ -53,7 +53,7 @@ describe('onDefOrRef() Tests', () => {
     it('Should return definitions', () => {
         const definitions = onDefOrRef({ info, uri, cacheFile, lineNumber, char, type: 'def' })
 
-        assert.deepEqual(definitions, [{
+        assert.deepStrictEqual(definitions, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
             range: {
                 start: { line: 789, character: 14 },
@@ -64,7 +64,7 @@ describe('onDefOrRef() Tests', () => {
     it('Should return references', () => {
         const references = onDefOrRef({ info, uri, cacheFile, lineNumber, char, type: 'ref' })
 
-        assert.deepEqual(references, [{
+        assert.deepStrictEqual(references, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction').toString(),
             range: {
                 start: { line: 0, character: 4 },

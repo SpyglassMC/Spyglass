@@ -8,7 +8,7 @@ export default class ItemNode extends ArgumentNode {
     readonly [NodeType] = 'Item'
 
     constructor(
-        public id: IdentityNode,
+        public id: IdentityNode = new IdentityNode(),
         public nbt: NbtCompoundNode = new NbtCompoundNode(null)
     ) {
         super()

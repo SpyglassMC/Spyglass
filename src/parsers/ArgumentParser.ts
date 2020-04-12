@@ -1,6 +1,7 @@
 import Parser, { ArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
+import { locale } from '../locales/Locales'
 
 /**
  * Base class of argument parsers.
@@ -25,7 +26,7 @@ export default abstract class ArgumentParser<T> implements Parser<T> {
     toHint(name: string, optional: boolean): string {
         const prefix = optional ? '[<' : '<'
         const suffix = optional ? '>]' : '>'
-        return `${prefix}${name}: ${this.identity}${suffix}`
+        return `${prefix}${name}: ${locale(`argument-type.${this.identity}`)}${suffix}`
     }
 
     /**

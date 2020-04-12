@@ -29,7 +29,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepEqual(info, {
+        assert.deepStrictEqual(info, {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
@@ -69,7 +69,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepEqual(info, {
+        assert.deepStrictEqual(info, {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
@@ -113,7 +113,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepEqual(info, {
+        assert.deepStrictEqual(info, {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
@@ -159,7 +159,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepEqual(info, {
+        assert.deepStrictEqual(info, {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [
@@ -201,7 +201,7 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepEqual(info, {
+        assert.deepStrictEqual(info, {
             config: VanillaConfig,
             lineBreak: '\n',
             lines: [

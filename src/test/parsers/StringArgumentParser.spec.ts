@@ -1,36 +1,77 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import StringReader from '../../utils/StringReader'
-import StringArgumentParser from '../../parsers/StringArgumentParser'
+import StringArgumentParser, { StringType } from '../../parsers/StringArgumentParser'
 import ParsingError from '../../types/ParsingError'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import { $ } from '../utils'
+import StringNode from '../../types/nodes/StringNode'
 
 describe('StringArgumentParser Tests', () => {
     describe('parse() Tests', () => {
-        it('Should parse single word', () => {
+        let ctx: ParsingContext
+        before(async () => {
+            ctx = await constructContext({})
+        })
+        it('Should parse unquoted string', () => {
             const reader = new StringReader('foo')
-            const parser = new StringArgumentParser('SingleWord')
-            const { data } = parser.parse(reader)
-            assert(data === 'foo')
+            const parser = new StringArgumentParser(StringType.Unquoted)
+            const { data, errors } = parser.parse(reader, ctx)
+            assert.deepStrictEqual(errors, [])
+            assert.deepStrictEqual(data, $(new StringNode('foo', 'foo', [0, 1, 2]), [0, 3]))
         })
         it('Should parse quotable phrase', () => {
             const reader = new StringReader("'foo'")
-            const parser = new StringArgumentParser('QuotablePhrase')
-            const { data } = parser.parse(reader)
-            assert(data === 'foo')
+            const parser = new StringArgumentParser(StringType.String)
+            const { data, errors } = parser.parse(reader, ctx)
+            assert.deepStrictEqual(errors, [])
+            assert.deepStrictEqual(data, $(new StringNode('foo', "'foo'", [1, 2, 3]), [0, 5]))
         })
         it('Should parse greedy phrase', () => {
             const reader = new StringReader('"#$What is this?')
-            const parser = new StringArgumentParser('GreedyPhrase')
-            const { data } = parser.parse(reader)
-            assert(data === '"#$What is this?')
+            const parser = new StringArgumentParser(StringType.Greedy)
+            const { data, errors } = parser.parse(reader, ctx)
+            assert.deepStrictEqual(errors, [])
+            assert.deepStrictEqual(data, $(new StringNode('"#$What is this?', '"#$What is this?', []), [0, 16]))
         })
-        it('Should throw error', () => {
-            const reader = new StringReader('"haha')
-            const parser = new StringArgumentParser('QuotablePhrase')
-            const { data, errors } = parser.parse(reader)
-            const message = (<ParsingError[]>errors)[0].message
-            assert(data === '')
-            assert(message.match(/Expected an ending quote ‘"’/))
+        it('Should return errors when the string does not exist in the options', () => {
+            const reader = new StringReader('qux')
+            const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"])
+            const { errors } = parser.parse(reader, ctx)
+            assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 3 }, `Expected ‘foo’, ‘dou"ble’, or ‘sin'gle’ but got ‘qux’`)])
+        })
+        it('Should return completions outside the quotation marks', async () => {
+            const reader = new StringReader('')
+            const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
+            const ctx = await constructContext({ cursor: 0 })
+            const actual = parser.parse(reader, ctx)
+            assert.deepStrictEqual(actual.completions, [
+                { label: 'foo', insertText: '"foo"' },
+                { label: 'dou"ble', insertText: `'dou"ble'` },
+                { label: "sin'gle", insertText: `"sin'gle"` },
+            ])
+        })
+        it('Should return completions inside double quotation marks', async () => {
+            const reader = new StringReader('""')
+            const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
+            const ctx = await constructContext({ cursor: 1 })
+            const actual = parser.parse(reader, ctx)
+            assert.deepStrictEqual(actual.completions, [
+                { label: 'foo', insertText: 'foo' },
+                { label: 'dou"ble', insertText: 'dou\\"ble' },
+                { label: "sin'gle", insertText: "sin'gle" },
+            ])
+        })
+        it('Should return completions inside single quotation marks', async () => {
+            const reader = new StringReader("''")
+            const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
+            const ctx = await constructContext({ cursor: 1 })
+            const actual = parser.parse(reader, ctx)
+            assert.deepStrictEqual(actual.completions, [
+                { label: 'foo', insertText: 'foo' },
+                { label: 'dou"ble', insertText: 'dou"ble' },
+                { label: "sin'gle", insertText: "sin\\'gle" },
+            ])
         })
     })
     describe('toHint() Tests', () => {
@@ -46,20 +87,10 @@ describe('StringArgumentParser Tests', () => {
         })
     })
     describe('getExamples() Tests', () => {
-        it('Should return for single word', () => {
+        it('Should return correctly', () => {
             const parser = new StringArgumentParser()
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['word', 'word_with_underscores'])
-        })
-        it('Should return for quotable phrase', () => {
-            const parser = new StringArgumentParser('QuotablePhrase')
-            const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['word', '"quoted phrase"', '""'])
-        })
-        it('Should return for greedy phrase', () => {
-            const parser = new StringArgumentParser('GreedyPhrase')
-            const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['word', 'words with spaces', '"and symbols"'])
+            assert.deepStrictEqual(actual, [])
         })
     })
 })

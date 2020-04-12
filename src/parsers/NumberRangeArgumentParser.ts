@@ -16,7 +16,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
         private readonly isCycle = false
     ) {
         super()
-        this.identity = `${type}Range`
+        this.identity = `numberRange.${type}`
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRangeNode> {

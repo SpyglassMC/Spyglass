@@ -30,7 +30,7 @@ describe('onSelectionRanges() Tests', () => {
 
         const ranges = onSelectionRanges({ info, positions })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 range: {
                     start: { line: 0, character: 3 },

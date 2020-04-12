@@ -21,7 +21,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 startLine: 0,
                 endLine: 2,
@@ -43,7 +43,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [])
+        assert.deepStrictEqual(ranges, [])
     })
     it('Should return for normal comments', () => {
         const info: FunctionInfo = {
@@ -59,7 +59,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 startLine: 0,
                 endLine: 1,
@@ -83,7 +83,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 startLine: 0,
                 endLine: 1,
@@ -115,7 +115,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 startLine: 0,
                 endLine: 4,
@@ -154,7 +154,7 @@ describe('onFoldingRanges() Tests', () => {
 
         const ranges = onFoldingRanges({ info })
 
-        assert.deepEqual(ranges, [
+        assert.deepStrictEqual(ranges, [
             {
                 startLine: 0,
                 endLine: 5,

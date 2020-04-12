@@ -13,7 +13,6 @@ import NbtPathArgumentParser from './NbtPathArgumentParser'
 import NbtArgumentParser from './NbtArgumentParser'
 import NumberArgumentParser from './NumberArgumentParser'
 import NumberRangeArgumentParser from './NumberRangeArgumentParser'
-import NumericIDArgumentParser from './NumericIDArgumentParser'
 import ObjectiveArgumentParser from './ObjectiveArgumentParser'
 import ObjectiveCriterionArgumentParser from './ObjectiveCriterionArgumentParser'
 import ParticleArgumentParser from './ParticleArgumentParser'
@@ -41,7 +40,6 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         NbtArgumentParser,
         NumberArgumentParser,
         NumberRangeArgumentParser,
-        NumericIDArgumentParser,
         ObjectiveArgumentParser,
         ObjectiveCriterionArgumentParser,
         ParticleArgumentParser,

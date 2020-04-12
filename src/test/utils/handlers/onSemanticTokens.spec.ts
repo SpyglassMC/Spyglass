@@ -23,7 +23,7 @@ describe('onSemanticTokens() Tests', () => {
 
         const actual = onSemanticTokens({ info })
 
-        assert.deepEqual(actual.data, [
+        assert.deepStrictEqual(actual.data, [
             0, 0, 8, TokenType.comment, 0,
             1, 0, 8, TokenType.comment, 0
         ])

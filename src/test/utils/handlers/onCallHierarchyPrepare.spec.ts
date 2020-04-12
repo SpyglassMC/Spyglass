@@ -33,7 +33,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
 
         const items = await onCallHierarchyPrepare({ info, lineNumber, char, pathExists, roots, uris, urisOfIds })
 
-        assert.deepEqual(items, [{
+        assert.deepStrictEqual(items, [{
             name: 'spgoding:foo',
             range: {
                 start: { line: 0, character: 3 },
@@ -65,7 +65,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
 
         const items = await onCallHierarchyPrepare({ info, lineNumber, char, pathExists, roots, uris, urisOfIds })
 
-        assert.deepEqual(items, [{
+        assert.deepStrictEqual(items, [{
             name: '#spgoding:foo',
             range: {
                 start: { line: 0, character: 9 },
@@ -97,7 +97,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
 
         const items = await onCallHierarchyPrepare({ info, lineNumber, char, pathExists, roots, uris, urisOfIds })
 
-        assert.deepEqual(items, [{
+        assert.deepStrictEqual(items, [{
             name: 'spgoding:foo',
             range: {
                 start: { line: 0, character: 26 },

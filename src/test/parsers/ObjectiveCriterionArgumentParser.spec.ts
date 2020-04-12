@@ -35,19 +35,19 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('dummy'), ctx)
             assert(actual.data === 'dummy')
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return data for ‘teamkill.*’', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('teamkill.red'), ctx)
             assert(actual.data === 'teamkill.red')
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return data for ‘minecraft.custom:minecraft.*’', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('minecraft.custom:minecraft.custom_stat_1'), ctx)
             assert(actual.data === 'minecraft.custom:minecraft.custom_stat_1')
-            assert.deepEqual(actual.errors, [])
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for categories', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cursor: 0 })

@@ -12,7 +12,7 @@ describe('CodeSnippetArgumentParser Tests', () => {
         it('Should return examples', () => {
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.getExamples()
-            assert.deepEqual(actual, [])
+            assert.deepStrictEqual(actual, [])
         })
     })
     describe('parse() Tests', () => {
@@ -25,7 +25,7 @@ describe('CodeSnippetArgumentParser Tests', () => {
             const context = await constructContext({ config })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.errors, [new ParsingError(
+            assert.deepStrictEqual(actual.errors, [new ParsingError(
                 { start: 0, end: 1 },
                 'Code snippets are invalid for the game',
                 false
@@ -35,7 +35,7 @@ describe('CodeSnippetArgumentParser Tests', () => {
             const context = await constructContext({ config, cursor: 0 })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.completions, [{
+            assert.deepStrictEqual(actual.completions, [{
                 label: 'test',
                 insertText: 'say test',
                 insertTextFormat: InsertTextFormat.Snippet,
@@ -46,7 +46,7 @@ describe('CodeSnippetArgumentParser Tests', () => {
             const context = await constructContext({ config, cursor: -1 })
             const parser = new CodeSnippetArgumentParser()
             const actual = parser.parse(new StringReader(''), context)
-            assert.deepEqual(actual.completions, [])
+            assert.deepStrictEqual(actual.completions, [])
         })
     })
 })

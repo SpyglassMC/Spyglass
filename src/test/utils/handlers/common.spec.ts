@@ -27,14 +27,14 @@ describe('common.ts Tests', () => {
 
             const uri = getRootUri('file:///c:/foo', uris)
 
-            assert.deepEqual(uri, Uri.parse('file:///c:/foo/'))
+            assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
         it('Should not append slash when already exists', () => {
             const uris = new Map()
 
             const uri = getRootUri('file:///c:/foo/', uris)
 
-            assert.deepEqual(uri, Uri.parse('file:///c:/foo/'))
+            assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
     })
     describe('parseString() Tests', () => {
@@ -46,7 +46,7 @@ describe('common.ts Tests', () => {
 
             await parseString(string, lines, config, cacheFile)
 
-            assert.deepEqual(lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
+            assert.deepStrictEqual(lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
         })
         it('Should push parsed line for other input', async () => {
             const string = '# test'
@@ -56,7 +56,7 @@ describe('common.ts Tests', () => {
 
             await parseString(string, lines, config, cacheFile)
 
-            assert.deepEqual(lines, [{ args: [{ data: '# test', parser: 'string' }], tokens: [new Token({ start: 0, end: 6 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }])
+            assert.deepStrictEqual(lines, [{ args: [{ data: '# test', parser: 'string' }], tokens: [new Token({ start: 0, end: 6 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }])
         })
     })
     describe('getRel() Tests', () => {
@@ -123,7 +123,7 @@ describe('common.ts Tests', () => {
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
 
-            assert.deepEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
+            assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri if the file can be found in root[1]', async () => {
             const uris: UrisOfStrings = new Map()
@@ -135,7 +135,7 @@ describe('common.ts Tests', () => {
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
 
-            assert.deepEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
+            assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri under the preferred root[0]', async () => {
             const uris: UrisOfStrings = new Map()
@@ -144,7 +144,7 @@ describe('common.ts Tests', () => {
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[0])
 
-            assert.deepEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
+            assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri under the preferred root[1]', async () => {
             const uris: UrisOfStrings = new Map()
@@ -153,7 +153,7 @@ describe('common.ts Tests', () => {
 
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[1])
 
-            assert.deepEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
+            assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })
     })
     describe('getInfo() Tests', () => {
@@ -185,7 +185,7 @@ describe('common.ts Tests', () => {
             assert(actual.config === VanillaConfig)
             assert(actual.lineBreak === '\n')
             assert(actual.version === null)
-            assert.deepEqual(actual.strings, ['# foo'])
+            assert.deepStrictEqual(actual.strings, ['# foo'])
         })
     })
 })

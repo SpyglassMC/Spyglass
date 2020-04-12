@@ -42,7 +42,7 @@ describe('NumberArgumentParser Tests', () => {
             const { data, errors } = parser.parse(reader)
             assert(data === 2333)
             assert.deepStrictEqual(errors, [
-                new ParsingError({ start: 0, end: 4 }, 'Expected a number larger than or equal to 114514 but got 2333')
+                new ParsingError({ start: 0, end: 4 }, 'Expected a number greater than or equal to 114514 but got 2333')
             ])
         })
     })

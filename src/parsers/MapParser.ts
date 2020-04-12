@@ -4,7 +4,8 @@ import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
 
 export default class MapParser<T extends { [key: string]: any }> {
-    readonly identity = 'mapParser'
+    static readonly identity = 'Map'
+    readonly identity = 'map'
 
     constructor(
         private readonly chars: {
