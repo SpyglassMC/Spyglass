@@ -64,6 +64,7 @@
     "datapack.config.lint.strictStorageCheck": "是否为未定义的数据储存显示警告。",
     "datapack.config.lint.strictTagCheck": "是否为未定义的标签显示警告。",
     "datapack.config.lint.strictTeamCheck": "是否为未定义的队伍显示警告。",
+    "datapack.config.lint.stringQuoteType": "字符串参数的引号类型",
     "datapack.config.lint.timeOmitTickUnit": "是否省略时间参数中刻的单位（`t`）",
     "datapack.config.snippets": "代码片段。",
     "datapack.description": "为 MCFunction 文件提供重量级语言特性",
