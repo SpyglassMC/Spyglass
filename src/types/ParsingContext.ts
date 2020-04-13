@@ -16,6 +16,10 @@ export default interface ParsingContext {
     cache: ClientCache,
     config: Config,
     cursor: number,
+    /**
+     * Only exists for signature information provider and completion provider.
+     */
+    lineNumber: number,
     nbt: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
     registry: Registry,
@@ -28,6 +32,7 @@ interface ParsingContextLike {
     cache?: ClientCache,
     config?: Config,
     cursor?: number,
+    lineNumber?: number,
     nbt?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
     registry?: Registry,
@@ -46,6 +51,7 @@ export async function constructContext(custom: ParsingContextLike, options?: Van
         cache: {},
         config: VanillaConfig,
         cursor: -1,
+        lineNumber: 0,
         parsers: new ArgumentParserManager(),
         ...custom
     } as ParsingContext

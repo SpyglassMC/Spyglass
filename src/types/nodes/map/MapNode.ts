@@ -105,13 +105,13 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
                 const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
-                        ans.concat(keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                        ans.push(...keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics))
                     }
                 }
                 const value = this[key]
                 if (value instanceof ArgumentNode) {
                     if (areOverlapped(value[NodeRange], range)) {
-                        ans.concat(value[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                        ans.push(...value[GetCodeActions](uri, info, lineNumber, range, diagnostics))
                     }
                 }
             }

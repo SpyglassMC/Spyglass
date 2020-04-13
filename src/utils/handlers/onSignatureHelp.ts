@@ -13,7 +13,8 @@ export default async function onSignatureHelp({ char, lineNumber, info, cacheFil
     const { data: { hint: { fix, options } } } = parser.parse(reader, await constructContext({
         cursor: char,
         cache: cacheFile.cache,
-        config: info.config
+        config: info.config,
+        lineNumber
     }, reportOptions))
 
     const fixLabel = fix.join(' ')

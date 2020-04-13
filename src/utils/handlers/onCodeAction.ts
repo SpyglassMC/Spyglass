@@ -17,7 +17,7 @@ export default function onCodeAction({ uri, info, diagnostics, range }: { uri: U
             if (data instanceof ArgumentNode) {
                 const nodeRange = data[NodeRange]
                 if (areOverlapped(selectedRange, nodeRange)) {
-                    ans.concat(data[GetCodeActions](uri.toString(), info, i, selectedRange, diagnostics))
+                    ans.push(...data[GetCodeActions](uri.toString(), info, i, selectedRange, diagnostics))
                 }
             }
         }

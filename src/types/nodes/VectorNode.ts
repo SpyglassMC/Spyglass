@@ -54,7 +54,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         const ans: CodeAction[] = []
         for (const element of this) {
             if (areOverlapped(element[NodeRange], range)) {
-                ans.concat(element[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                ans.push(...element[GetCodeActions](uri, info, lineNumber, range, diagnostics))
             }
         }
         return ans

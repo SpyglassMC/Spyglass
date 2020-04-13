@@ -10,6 +10,7 @@ import ParsingError, { ActionCode } from '../types/ParsingError'
 import { EOL } from 'os'
 import TextRange from '../types/TextRange'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
+import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
 
 /**
  * Convert an array to human-readable message.
@@ -240,4 +241,25 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
             }]
         }
     }
+}
+
+/**
+ * Remap all the indexes in the specific TextRange object by the specific mapping.
+ * @param completion The specific TextRange object.
+ * @param param1 The mapping used to offset.
+ */
+export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
+export function remapCompletionItem(completion: CompletionItem, lineNumber: number): CompletionItem
+export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | number) {
+    const textEdit = completion.textEdit
+    if (textEdit) {
+        if (typeof param1 === 'number') {
+            textEdit.range.start.line = param1
+            textEdit.range.end.line = param1
+        } else {
+            textEdit.range.start.character = getOuterIndex(param1, textEdit.range.start.character)
+            textEdit.range.end.character = getOuterIndex(param1, textEdit.range.end.character)
+        }
+    }
+    return completion
 }

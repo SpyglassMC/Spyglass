@@ -35,7 +35,7 @@ import onDefOrRef from './utils/handlers/onDefOrRef'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
 import onRenameRequest from './utils/handlers/onRenameRequest'
 import { requestText } from './utils/utils'
-import { VanillaReportOptions, constructContext } from './types/ParsingContext'
+import { VanillaReportOptions } from './types/ParsingContext'
 import onHover from './utils/handlers/onHover'
 import onCodeAction from './utils/handlers/onCodeAction'
 

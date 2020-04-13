@@ -10,7 +10,8 @@ export default async function onCompletion({ char, lineNumber, info, cacheFile, 
     const { data: { completions } } = parser.parse(reader, await constructContext({
         cursor: char,
         cache: cacheFile.cache,
-        config: info.config
+        config: info.config,
+        lineNumber
     }, reportOptions))
 
     return completions

@@ -19,7 +19,7 @@ export default class LineParser implements Parser<Line> {
          * `false` - Shouldn't. Will throw untolerable errors if the line doesn't match.  
          * `null` - Not care.
          */
-        private readonly beginningSlash: boolean | null = false,
+        private readonly leadingSlash: boolean | null = false,
         /**
          * The entry point will be used to access `tree`.
          */
@@ -43,7 +43,7 @@ export default class LineParser implements Parser<Line> {
         //#region Check leading slash.
         if (reader.peek() === '/') {
             // Find a leading slash...
-            if (this.beginningSlash === false) {
+            if (this.leadingSlash === false) {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
@@ -54,7 +54,7 @@ export default class LineParser implements Parser<Line> {
             reader.skip()
         } else {
             // Don't find a leading slash...
-            if (this.beginningSlash === true) {
+            if (this.leadingSlash === true) {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },

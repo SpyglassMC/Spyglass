@@ -12,7 +12,7 @@ import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { locale } from '../locales/Locales'
-import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString } from './utils'
+import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString, remapCompletionItem } from './utils'
 import { NodeRange, NodeDescription } from '../types/nodes/ArgumentNode'
 import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
 import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
@@ -867,7 +867,7 @@ export default class NbtdocHelper {
                 ans.errors.push(...downgradedErrors)
             }
             if (result.completions) {
-                ans.completions.push(...result.completions)
+                ans.completions.push(...result.completions.map(v => remapCompletionItem(v, tag.mapping)))
             }
         }
     }

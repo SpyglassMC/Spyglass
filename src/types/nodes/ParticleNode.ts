@@ -17,11 +17,11 @@ export default class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
         const ans: CodeAction[] = []
         if (areOverlapped(range, this.id[NodeRange])) {
-            ans.concat(this.id[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+            ans.push(...this.id[GetCodeActions](uri, info, lineNumber, range, diagnostics))
         } else if (this.param && areOverlapped(range, this.param[NodeRange])) {
-            ans.concat(this.param[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+            ans.push(...this.param[GetCodeActions](uri, info, lineNumber, range, diagnostics))
         }
-        ans.concat(super[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+        ans.push(...super[GetCodeActions](uri, info, lineNumber, range, diagnostics))
         return ans
     }
 
