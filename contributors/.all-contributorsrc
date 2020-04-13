@@ -81,7 +81,8 @@
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/376", "text": "#376" },
-        { "type": "bug", "link": "issues/392", "text": "#392" }
+        { "type": "bug", "link": "issues/392", "text": "#392" },
+        { "type": "ideas", "link": "issues/393", "text": "#393" }
       ]
     },
     {

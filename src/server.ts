@@ -4,7 +4,7 @@ import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed, CodeActionKind } from 'vscode-languageserver'
 import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
-import Config, { VanillaConfig } from './types/Config'
+import Config, { VanillaConfig, isUriIncluded } from './types/Config'
 import IdentityNode from './types/nodes/IdentityNode'
 import { loadLocale, locale } from './locales/Locales'
 import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
@@ -172,10 +172,10 @@ connection.onInitialized(() => {
     connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {
         const uri = getUri(uriString, uris)
         const config = await fetchConfig(uri)
-
-        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile, reportOptions })
-
-        updateDiagnostics(uri)
+        if (isUriIncluded(uri, config)) {
+            await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile, reportOptions })
+            updateDiagnostics(uri)
+        }
     })
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
@@ -710,6 +710,9 @@ const cacheFileOperations = {
     // Hooks.
     fileAdded: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`Added ${type} ${id}`)
+        if (!isUriIncluded(uri, await fetchConfig(uri))) {
+            return
+        }
         cacheFileOperations.addDefault(id.toString(), type)
         if (type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
@@ -722,6 +725,9 @@ const cacheFileOperations = {
     },
     fileModified: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`Modified ${rel} ${type}`)
+        if (!isUriIncluded(uri, await fetchConfig(uri))) {
+            return
+        }
         if (!uri.toString().startsWith('untitled:') && type === 'functions') {
             cacheFileOperations.removeCachePositionsWith(uri)
             await cacheFileOperations.combineCacheOfLines(uri)

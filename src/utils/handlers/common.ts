@@ -1,7 +1,7 @@
 import path from 'path'
 import { URI as Uri } from 'vscode-uri'
 import Line from '../../types/Line'
-import Config from '../../types/Config'
+import Config, { isUriIncluded } from '../../types/Config'
 import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
 import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
@@ -102,10 +102,12 @@ export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile
 
     if (!info) {
         try {
-            const text = await readFile(uri.fsPath, 'utf8')
             const config = await fetchConfig(uri)
-            await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null, reportOptions })
-            info = infos.get(uri)
+            if (isUriIncluded(uri, config)) {
+                const text = await readFile(uri.fsPath, 'utf8')
+                await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null, reportOptions })
+                info = infos.get(uri)
+            }
         } catch (ignored) {
             // Ignored.
         }

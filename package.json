@@ -159,6 +159,22 @@
                     "markdownDescription": "%datapack.config.env.dataVersion%",
                     "default": "Latest snapshot"
                 },
+                "datapack.env.include": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "markdownDescription": "%datapack.config.env.include%",
+                    "default": []
+                },
+                "datapack.env.exclude": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "markdownDescription": "%datapack.config.env.exclude%",
+                    "default": []
+                },
                 "datapack.features.codeActions": {
                     "type": "boolean",
                     "markdownDescription": "%datapack.config.features.codeActions%",

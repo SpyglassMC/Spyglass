@@ -4,6 +4,7 @@ import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 import SelectorArgumentMapNode from './nodes/map/SelectorArgumentMapNode'
 import QuoteTypeConfig from './QuoteTypeConfig'
+import { Uri } from './handlers'
 
 export default interface Config {
     /**
@@ -48,7 +49,16 @@ export interface EnvConfig {
      * completions for the corresponding data of the vanilla datapack will be provided.
      * @default true
      */
-    dependsOnVanilla: boolean
+    dependsOnVanilla: boolean,
+    /**
+     * Files that should be excluded from validation. Each string in this array will be interpreted as a regular expression to test the absolute file paths.
+     */
+    exclude: string[],
+    /**
+     * Files that should be included from validation. Each string in this array will be interpreted as a regular expression to test the absolute file paths.  
+     * This option takes priority over `exclude`.
+     */
+    include: string[]
 }
 
 export interface LintConfig {
@@ -188,7 +198,9 @@ export const VanillaConfig: Config = {
         permissionLevel: 2,
         dataVersion: 'Latest snapshot',
         cmdVersion: '1.16',
-        dependsOnVanilla: true
+        dependsOnVanilla: true,
+        exclude: [],
+        include: []
     },
     lint: {
         // Stylistic configs.
@@ -308,4 +320,20 @@ export function constructConfig(custom: { [key: string]: any }, base = VanillaCo
         },
         snippets: custom.snippets || base.snippets
     }
+}
+
+export function isUriIncluded(uri: Uri, { env: { include, exclude } }: Config) {
+    for (const str of include) {
+        const regex = new RegExp(str)
+        if (regex.test(uri.fsPath)) {
+            return true
+        }
+    }
+    for (const str of exclude) {
+        const regex = new RegExp(str)
+        if (regex.test(uri.fsPath)) {
+            return false
+        }
+    }
+    return true
 }
