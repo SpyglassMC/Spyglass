@@ -3,6 +3,8 @@
     "datapack.config.env.cmdVersion": "命令树的版本。只能选择正式版本号。",
     "datapack.config.env.dataVersion": "补全数据（包括注册表、方块定义、NBTDOC）的版本。应当是 [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) 中定义的一个晚于 `19w40a` 的版本。除了填写版本标识符以外，你还可以填写 `Latest release`（最新正式版）或 `Latest snapshot`（最新快照），大小写不敏感。",
     "datapack.config.env.dependsOnVanilla": "当前数据包是否依赖于原版数据包。当启用该选项时，大憨批将会提供原版数据包中相应数据的补全提示。",
+    "datapack.config.env.exclude": "不应当被大憨批验证的文件。该数组中的每一个字符串都会被解析为正则表达式，并用于测试文件的绝对路径。",
+    "datapack.config.env.include": "应当被大憨批验证的文件。该数组中的每一个字符串都会被解析为正则表达式，并用于测试文件的绝对路径。  \n该选项的优先级高于 `exclude`。",
     "datapack.config.env.permissionLevel": "`server.properties` 中定义的 `function-permission-level`。",
     "datapack.config.features.codeActions": "大憨批是否应该提供源代码操作。",
     "datapack.config.features.colors": "大憨批是否应该提供颜色支持。",
