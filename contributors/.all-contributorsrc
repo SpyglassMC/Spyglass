@@ -52,7 +52,8 @@
       "avatar_url": "https://cdn.discordapp.com/avatars/165678950628982784/3f1093ec653cd58b363e084ef8d0239e.png?size=256",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/369", "text": "#364" }
+        { "type": "bug", "link": "issues/364", "text": "#364" },
+        { "type": "bug", "link": "issues/365", "text": "#365" }
       ]
     },
     {
@@ -91,7 +92,16 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
       "contributions": [],
       "details": [
-        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md", "text": "Financial support." }
+        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Financial support." }
+      ]
+    },
+    {
+      "name": "kakagRou",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
+      "contributions": [],
+      "details": [
+        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Financial support." }
       ]
     }
   ],
