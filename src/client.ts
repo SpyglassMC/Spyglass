@@ -4,9 +4,11 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, Memento, window, commands, Uri } from 'vscode'
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
+
+export const ExtensionVersion = require('../package.json').version
 
 let client: LanguageClient
 
@@ -75,6 +77,27 @@ export function activate(context: ExtensionContext) {
 
     // Start the client. This will also launch the server
     client.start()
+
+    client.onReady().then(() => {
+        client.onNotification('datapackLanguageServer/checkVersion', ({ currentVersion, title, action, url }) => {
+            const lastVersion = context.globalState.get('lastVersion')
+            if (lastVersion !== currentVersion) {
+                window
+                    .showInformationMessage(title, { title: action })
+                    .then(
+                        value => {
+                            if (value && value.title === action) {
+                                commands.executeCommand('vscode.open', Uri.parse(url))
+                            }
+                        },
+                        reason => {
+                            console.warn(`Errors occurred while indicating new version: ${reason}`)
+                        }
+                    )
+            }
+            context.globalState.update('lastVersion', currentVersion)
+        })
+    })
 }
 
 export function deactivate(): Thenable<void> | undefined {

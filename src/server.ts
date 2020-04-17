@@ -3,7 +3,7 @@ import path from 'path'
 import clone from 'clone'
 import { URI as Uri } from 'vscode-uri'
 import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed, CodeActionKind } from 'vscode-languageserver'
-import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, LatestCacheFileVersion, DefaultCacheFile } from './types/ClientCache'
+import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, CacheVersion, DefaultCacheFile } from './types/ClientCache'
 import Config, { VanillaConfig, isUriIncluded } from './types/Config'
 import IdentityNode from './types/nodes/IdentityNode'
 import { loadLocale, locale } from './locales/Locales'
@@ -39,6 +39,8 @@ import { VanillaReportOptions } from './types/ParsingContext'
 import onHover from './utils/handlers/onHover'
 import onCodeAction from './utils/handlers/onCodeAction'
 
+export const LangServerVersion = require('../package.json').version
+
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
 const uris: UrisOfStrings = new Map<string, Uri>()
@@ -58,7 +60,7 @@ let cacheFile: CacheFile = clone(DefaultCacheFile)
 let reportOptions: VanillaReportOptions | undefined
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath } }, _, progress) => {
-    await loadLocale(connection.console as any)
+    await loadLocale(connection.console as unknown as Console)
 
     progress.begin(locale('server.initializing'))
 
@@ -68,10 +70,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         for (let i = workspaceFolders.length - 1; i >= 0; i--) {
             const { uri: uriString } = workspaceFolders[i]
             const uri = getRootUri(uriString, uris)
-            // if (
-            //     await fs.pathExists(path.join(uri.fsPath, 'pack.mcmeta')) &&
-            //     await fs.pathExists(path.join(uri.fsPath, 'data'))
-            // ) {
             roots.push(uri)
             connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
@@ -79,15 +77,15 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             if (await fs.pathExists(legacyDotPath)) {
                 connection.window.showInformationMessage(locale('server.remove-cache-file'))
             }
-            // } else {
-            //     connection.console.info(`invalidDatapackRoot - ${uri.toString()}`)
-            // }
         }
 
         globalStoragePath = gsPath
         if (!await fs.pathExists(globalStoragePath)) {
             await fs.mkdirp(globalStoragePath)
         }
+        connection.console.info(`CacheVersion = ‘${CacheVersion}’`)
+        connection.console.info(`LangServerVersion = ‘${LangServerVersion}’`)
+
         connection.console.info(`globalStoragePath = ‘${globalStoragePath}’`)
 
         if (!await fs.pathExists(storagePath)) {
@@ -105,7 +103,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 connection.console.error(`Error occurred while reading cache (‘${cachePath}’): ${e}`)
                 cacheFile = clone(DefaultCacheFile)
             }
-            if (cacheFile.version !== LatestCacheFileVersion) {
+            if (cacheFile.version !== CacheVersion) {
                 cacheFile = clone(DefaultCacheFile)
             }
         }
@@ -169,6 +167,13 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 })
 
 connection.onInitialized(() => {
+    connection.sendNotification('datapackLanguageServer/checkVersion', {
+        currentVersion: LangServerVersion,
+        title: locale('server.new-version', LangServerVersion),
+        action: locale('server.show-release-notes'),
+        url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${LangServerVersion}`
+    })
+
     connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {
         const uri = getUri(uriString, uris)
         const config = await fetchConfig(uri)
