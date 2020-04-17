@@ -46,6 +46,9 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         // Completions
         if (ctx.cursor === start) {
+            if (this.isScoreHolder) {
+                ans.completions.push(...getCompletions(ctx.cache, 'score_holders'))
+            }
             ans.completions.push(...getCompletions(ctx.cache, 'entities'))
             ans.completions.push(
                 { label: '@a', commitCharacters: ['[', ' '] },

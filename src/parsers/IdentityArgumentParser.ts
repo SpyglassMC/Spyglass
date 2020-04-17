@@ -47,7 +47,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 case 'minecraft:block':
                     return 'tags/blocks'
                 case 'minecraft:entity_type':
-                    return 'tags/entityTypes'
+                    return 'tags/entity_types'
                 case 'minecraft:fluid':
                     return 'tags/fluids'
                 case 'minecraft:item':
@@ -332,7 +332,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 return evalTrueConfig(lint.strictAdvancementCheck)
             case '$functions':
                 return evalTrueConfig(lint.strictFunctionCheck)
-            case '$lootTables':
+            case '$loot_tables':
                 return evalTrueConfig(lint.strictLootTableCheck)
             case '$predicates':
                 return evalTrueConfig(lint.strictPredicateCheck)
@@ -340,7 +340,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 return evalTrueConfig(lint.strictRecipeCheck)
             case '$tags/blocks':
                 return evalTrueConfig(lint.strictBlockTagCheck)
-            case '$tags/entityTypes':
+            case '$tags/entity_types':
                 return evalTrueConfig(lint.strictEntityTypeTagCheck)
             case '$tags/fluids':
                 return evalTrueConfig(lint.strictFluidTagCheck)
@@ -384,13 +384,13 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         switch (type) {
             case 'advancements':
                 return vanilla.advancements
-            case 'lootTables':
+            case 'loot_tables':
                 return vanilla.loot_tables
             case 'recipes':
                 return vanilla.recipes
             case 'tags/blocks':
                 return vanilla.tags.blocks
-            case 'tags/entityTypes':
+            case 'tags/entity_types':
                 return vanilla.tags.entity_types
             case 'tags/fluids':
                 return vanilla.tags.fluids

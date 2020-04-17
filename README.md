@@ -140,7 +140,7 @@ DHP provides some helpful code snippets. See [VSCode's official docs](https://co
 
 ## Definition Comments
 
-You can use `#define (bossbar|entity|objective|storage|tag|team) <id: string> [<description: string>]` to define a bossbar, an entity, an objective, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions by DHP. The game will treat definition comments as normal comments and simply ignore them.
+You can use `#define (bossbar|entity|objective|score_holder|storage|tag|team) <id: string> [<description: string>]` to define a bossbar, an entity name, an objective, a score holder (fake player) name, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions by DHP. The game will treat definition comments as normal comments and simply ignore them.
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 

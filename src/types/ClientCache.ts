@@ -5,7 +5,7 @@ import AdvancementInfo from './AdvancementInfo'
 import TagInfo from './TagInfo'
 import IndexMapping from './IndexMapping'
 
-export const CacheVersion = 6
+export const CacheVersion = 7
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
@@ -28,25 +28,26 @@ export interface CacheFile {
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
  * 
- * For advancements, functions, lootTables, predicates, recipes and tags/*: Should rename files.  
- * For entities, storages and tags: Should use #define comments to define.  
- * For bossbars, objectives and teams: Should use respective `add` commands to define.  
- * For colors/*: Simply ignores.
+ * For advancements, functions, loot_tables, predicates, recipes, and tags/*: Should rename files.  
+ * For entities, score_holders, storages, and tags: Should use #define comments to define.  
+ * For bossbars, objectives, and teams: Should use respective `add` commands to define.  
+ * For colors: Simply ignores.
  */
 export interface ClientCache {
     advancements?: CacheCategory,
     functions?: CacheCategory,
-    lootTables?: CacheCategory,
+    loot_tables?: CacheCategory,
     predicates?: CacheCategory,
     recipes?: CacheCategory,
     'tags/blocks'?: CacheCategory,
-    'tags/entityTypes'?: CacheCategory,
+    'tags/entity_types'?: CacheCategory,
     'tags/fluids'?: CacheCategory,
     'tags/functions'?: CacheCategory,
     'tags/items'?: CacheCategory,
     bossbars?: CacheCategory,
     entities?: CacheCategory,
     objectives?: CacheCategory,
+    score_holders?: CacheCategory,
     storages?: CacheCategory,
     tags?: CacheCategory,
     teams?: CacheCategory,
@@ -192,6 +193,7 @@ export function trimCache(cache: ClientCache) {
             type === 'objectives' ||
             type === 'tags' ||
             type === 'teams' ||
+            type === 'score_holders' ||
             type === 'storages' ||
             type === 'colors'
         ) {
@@ -227,7 +229,7 @@ export function getCompletions(cache: ClientCache, type: CacheKey) {
     return ans
 }
 
-type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'storage'
+type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'score_holder' | 'storage'
 
 export function isDefinitionType(value: string): value is DefinitionType {
     return (
@@ -236,6 +238,7 @@ export function isDefinitionType(value: string): value is DefinitionType {
         value === 'objective' ||
         value === 'tag' ||
         value === 'team' ||
+        value === 'score_holder' ||
         value === 'storage'
     )
 }
@@ -249,6 +252,8 @@ export function getCategoryKey(type: DefinitionType): CacheKey {
         return 'objectives'
     } else if (type === 'team') {
         return 'teams'
+    } else if (type === 'score_holder') {
+        return 'score_holders'
     } else if (type === 'storage') {
         return 'storages'
     } else {
@@ -256,19 +261,19 @@ export function getCategoryKey(type: DefinitionType): CacheKey {
     }
 }
 
-type TagType = 'tags/blocks' | 'tags/entityTypes' | 'tags/functions' | 'tags/fluids' | 'tags/items'
+type TagType = 'tags/blocks' | 'tags/entity_types' | 'tags/functions' | 'tags/fluids' | 'tags/items'
 
 export function isTagType(type: CacheKey): type is TagType {
     return type.startsWith('tags/')
 }
 
-type FileType = 'advancements' | 'functions' | 'lootTables' | 'predicates' | 'recipes' | TagType
+type FileType = 'advancements' | 'functions' | 'loot_tables' | 'predicates' | 'recipes' | TagType
 
 export function isFileType(type: string): type is FileType {
     return (
         type === 'advancements' ||
         type === 'functions' ||
-        type === 'lootTables' ||
+        type === 'loot_tables' ||
         type === 'predicates' ||
         type === 'recipes' ||
         isTagType(type as CacheKey)

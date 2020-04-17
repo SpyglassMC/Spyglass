@@ -699,7 +699,7 @@ const cacheFileOperations = {
     },
     //#endregion
 
-    //#region advancements, functions, lootTables, predicates, tags/*, recipes:
+    //#region advancements, functions, loot_tables, predicates, tags/*, recipes:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: CacheKey) => {

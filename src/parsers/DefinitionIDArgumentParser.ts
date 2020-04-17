@@ -36,6 +36,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                         id = IdentityNode.fromString(id).toString()
                         break
                     case 'entity':
+                    case 'score_holder':
                         token = TokenType.entity
                         break
                     default:

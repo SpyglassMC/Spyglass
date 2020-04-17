@@ -59,7 +59,7 @@ describe('IdentityNode Tests', () => {
     describe('toRel() Tests', () => {
         it('Should return correctly for entity_types tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('tags/entityTypes')
+            const actual = id.toRel('tags/entity_types')
             assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for other tags', () => {
@@ -69,7 +69,7 @@ describe('IdentityNode Tests', () => {
         })
         it('Should return correctly for loot tables', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('lootTables')
+            const actual = id.toRel('loot_tables')
             assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for functions', () => {

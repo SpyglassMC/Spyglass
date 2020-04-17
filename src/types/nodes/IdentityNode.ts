@@ -52,15 +52,8 @@ export default class IdentityNode extends ArgumentNode {
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
     toRel(category: keyof ClientCache, side: 'assets' | 'data' = 'data') {
-        let datapackCategory: string
+        const datapackCategory = category.replace(/\//g, sep)
         let ext: string
-        if (category === 'tags/entityTypes') {
-            datapackCategory = `tags${sep}entity_types`
-        } else if (category === 'lootTables') {
-            datapackCategory = 'loot_tables'
-        } else {
-            datapackCategory = category.replace(/\//g, sep)
-        }
         if (category === 'functions') {
             ext = '.mcfunction'
         } else {
@@ -91,7 +84,7 @@ export default class IdentityNode extends ArgumentNode {
                 if (datapackCategory === 'tags') {
                     switch (paths[0]) {
                         case 'entity_types':
-                            category = 'tags/entityTypes'
+                            category = 'tags/entity_types'
                             break
                         case 'blocks':
                         case 'fluids':
@@ -104,7 +97,7 @@ export default class IdentityNode extends ArgumentNode {
                     }
                     paths.splice(0, 1)
                 } else if (datapackCategory === 'loot_tables') {
-                    category = 'lootTables'
+                    category = 'loot_tables'
                 } else if (
                     datapackCategory === 'advancements' ||
                     datapackCategory === 'functions' ||

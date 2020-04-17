@@ -1998,7 +1998,7 @@ const CommandTree: CommandTreeType = {
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'storage', 'tag', 'team'),
+                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'score_holder', 'storage', 'tag', 'team'),
                     description: 'Type of the definition',
                     run: parsedLine => {
                         if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
@@ -2162,7 +2162,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('fish'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$lootTables'),
+                    parser: new IdentityArgumentParser('$loot_tables'),
                     children: {
                         location: {
                             parser: new VectorArgumentParser(3),
@@ -2184,7 +2184,7 @@ const CommandTree: CommandTreeType = {
             parser: new LiteralArgumentParser('loot'),
             children: {
                 lootTable: {
-                    parser: new IdentityArgumentParser('$lootTables')
+                    parser: new IdentityArgumentParser('$loot_tables')
                 }
             }
         },

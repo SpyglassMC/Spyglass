@@ -32,7 +32,7 @@ describe('EntityArgumentParser Tests', () => {
             foo: { def: [], ref: [] },
             bar: { def: [], ref: [], doc: 'The doc of **bar**' }
         },
-        'tags/entityTypes': {
+        'tags/entity_types': {
             'spgoding:mobs': { def: [], ref: [] }
         },
         predicates: {

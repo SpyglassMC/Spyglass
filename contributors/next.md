@@ -28,6 +28,7 @@ A big _thank you_ goes to these wonderful people:
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Foobin"><img src="https://avatars0.githubusercontent.com/u/22305295?s=460&v=4" width="64px;" alt=""/><br /><sub><b>Foobin</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/398" target="_blank" title="Bug reports">🐛 #398</a></td>
+    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/382" target="_blank" title="Ideas, Planning, and Feedback">✨ #382</a></td>
   </tr>
 </table>
 

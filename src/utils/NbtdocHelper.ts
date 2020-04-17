@@ -675,7 +675,7 @@ export default class NbtdocHelper {
             case 'minecraft:entity':
                 return 'minecraft:entity_type'
             case 'minecraft:loot_table':
-                return '$lootTables'
+                return '$loot_tables'
             case 'minecraft:recipe':
                 return '$recipes'
             case 'minecraft:structure':

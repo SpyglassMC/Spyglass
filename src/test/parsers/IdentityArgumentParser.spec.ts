@@ -83,7 +83,7 @@ describe('IdentityArgumentParser Tests', () => {
         'tags/fluids': {
             'minecraft:fluid_tag': { def: [], ref: [] }
         },
-        'tags/entityTypes': {
+        'tags/entity_types': {
             'spgoding:entity_type/1': { def: [], ref: [] },
             'spgoding:entity_type/2': { def: [], ref: [] }
         },
@@ -94,7 +94,7 @@ describe('IdentityArgumentParser Tests', () => {
             'spgoding:item/1': { def: [], ref: [] },
             'spgoding:item/2': { def: [], ref: [] }
         },
-        lootTables: {
+        loot_tables: {
             'spgoding:loot_table/foo': { def: [], ref: [] }
         }
     }
@@ -494,11 +494,11 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return warning when the id cannot be resolved in loot table cache', async () => {
             const config = constructConfig({ lint: { strictLootTableCheck: true, omitDefaultNamespace: true } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
-            const parser = new IdentityArgumentParser('$lootTables')
+            const parser = new IdentityArgumentParser('$loot_tables')
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['foo']))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘lootTables’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_tables’', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', async () => {
