@@ -133,7 +133,6 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
         private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null = null,
         private readonly isPredicate = false,
-        private readonly isJson = false,
         private readonly superNode: NbtCompoundNode | null = null
     ) {
         super()
@@ -528,7 +527,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             try {
-                const value = reader.readQuotedString(out, this.isJson)
+                const value = reader.readQuotedString(out)
                 ans.data = new NbtStringNode(superNode, value, reader.string.slice(start, reader.cursor), out.mapping)
             } catch (p) {
                 ans.data = new NbtStringNode(superNode, '', '', [])

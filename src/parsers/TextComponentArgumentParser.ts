@@ -9,31 +9,42 @@ import { SynchronousPromise } from 'synchronous-promise'
 import ParsingError from '../types/ParsingError'
 import { remapCompletionItem } from '../utils/utils'
 
-export default class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
+class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     static identity = 'TextComponent'
     readonly identity = 'textComponent'
 
     /* istanbul ignore next */
+    static readonly Service = getLanguageService({
+        contributions: [],
+        promiseConstructor: SynchronousPromise
+    })
+
+    /* istanbul ignore next */
+    static initialize() {
+        TextComponentArgumentParser.Service.configure({
+            validate: true, allowComments: false,
+            schemas: [{ uri: schema['$id'], fileMatch: ['*.json'], schema: schema as any }]
+        })
+    }
+
+    /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponent> {
         const ans: ArgumentParserResult<TextComponent> = {
-            data: new TextComponent([]),
+            data: new TextComponent(reader.readRemaining()),
             tokens: [], errors: [], cache: {}, completions: []
         }
 
-        const service = getLanguageService({
-            contributions: [],
-            promiseConstructor: SynchronousPromise
-        })
-        service.configure({
-            validate: true, allowComments: false,
-            schemas: [{ uri: schema['$id'], fileMatch: ['*.json'], schema: schema as unknown as JSONSchema }]
-        })
-
         const text = ' '.repeat(reader.cursor) + reader.readRemaining()
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
-        const jsonDocument = service.parseJSONDocument(document)
+        const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
 
-        service.doValidation(document, jsonDocument, undefined).then(diagnostics => {
+        //#region Data.
+        ans.data.document = document
+        ans.data.jsonDocument = jsonDocument
+        //#endregion
+
+        //#region Errors.
+        TextComponentArgumentParser.Service.doValidation(document, jsonDocument, undefined).then(diagnostics => {
             for (const diag of diagnostics) {
                 ans.errors.push(new ParsingError(
                     { start: diag.range.start.character, end: diag.range.end.character },
@@ -43,12 +54,15 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
                 ))
             }
         })
+        //#endregion
 
-        service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
+        //#region Completions.
+        TextComponentArgumentParser.Service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
             if (completions) {
                 ans.completions.push(...completions.items.map(v => remapCompletionItem(v, ctx.lineNumber)))
             }
         })
+        //#endregion
 
         return ans
     }
@@ -58,3 +72,10 @@ export default class TextComponentArgumentParser extends ArgumentParser<TextComp
         return ['"hello world"', '""', '{"text":"hello world"}', '[""]']
     }
 }
+
+module TextComponentArgumentParser {
+    /* istanbul ignore next */
+    TextComponentArgumentParser.initialize()
+}
+
+export default TextComponentArgumentParser 

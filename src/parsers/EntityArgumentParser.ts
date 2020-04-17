@@ -242,6 +242,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                     } else if (key === 'name') {
                         dealWithNegativableArray(ans, ctx.parsers.get('String', [StringType.String, null, 'stringQuote', 'stringQuoteType']), key)
                     } else if (key === 'nbt') {
+                        // FIXME
                         dealWithNegativableArray(ans, ctx.parsers.get('Nbt', [
                             'Compound', 'entities', 'base', ctx.nbt, true
                         ]), key)

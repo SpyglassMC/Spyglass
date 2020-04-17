@@ -4,11 +4,11 @@ import { ClientCache, CacheKey } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { sep } from 'path'
 import ArgumentNode, { NodeType } from './ArgumentNode'
-import TextRange from '../TextRange'
 
 export default class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
-    static readonly Sep = '/'
+    static readonly NamespaceDelimiter = ':'
+    static readonly PathSep = '/'
     static readonly TagSymbol = '#'
 
     readonly [NodeType] = 'Identity'
@@ -24,25 +24,25 @@ export default class IdentityNode extends ArgumentNode {
     [ToFormattedString](lint: LintConfig): string {
         let id
         if (lint.idOmitDefaultNamespace && this.namespace === IdentityNode.DefaultNamespace) {
-            id = this.path.join(IdentityNode.Sep)
+            id = this.path.join(IdentityNode.PathSep)
         } else {
-            id = `${this.namespace}:${this.path.join(IdentityNode.Sep)}`
+            id = `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
         }
         return `${this.isTag ? IdentityNode.TagSymbol : ''}${id}`
     }
 
     /**
-     * Convert the ID to a string in form of `${namespace}:${path}`. Will NOT begin with TagSymbol (`#`) if the ID is a tag.
+     * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. Will NOT begin with TagSymbol (`#`) if the ID is a tag.
      */
     toString() {
-        return `${this.namespace}:${this.path.join(IdentityNode.Sep)}`
+        return `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
     }
 
     /**
-     * Convert the ID to a string in form of `${namespace}:${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
+     * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
      */
     toTagString() {
-        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace}:${this.path.join(IdentityNode.Sep)}`
+        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
     }
 
     /**
@@ -126,11 +126,11 @@ export default class IdentityNode extends ArgumentNode {
         if (isTag) {
             str = str.slice(1)
         }
-        const parts = str.split(':')
+        const parts = str.split(IdentityNode.NamespaceDelimiter)
         if (parts.length === 1) {
-            return new IdentityNode(undefined, parts[0].split(IdentityNode.Sep), isTag)
+            return new IdentityNode(undefined, parts[0].split(IdentityNode.PathSep), isTag)
         } else {
-            return new IdentityNode(parts[0], parts[1].split(IdentityNode.Sep), isTag)
+            return new IdentityNode(parts[0], parts[1].split(IdentityNode.PathSep), isTag)
         }
     }
 

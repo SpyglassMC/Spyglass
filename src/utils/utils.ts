@@ -156,8 +156,8 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
  * Convert an array of any to an array of `CompletionItem`.
  * @param array An array
  */
-export function arrayToCompletions(array: any[]): CompletionItem[] {
-    return array.map(v => ({ label: v.toString() }))
+export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c): CompletionItem[] {
+    return array.map(v => cb({ label: v.toString() }))
 }
 
 /**

@@ -6,7 +6,7 @@ export default class StringReader {
     public cursor = 0
 
     constructor(
-        public readonly string: string
+        public string: string
     ) { }
 
     get passedString() {
@@ -171,18 +171,15 @@ export default class StringReader {
      * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readQuotedString(out: { mapping: IndexMapping } = { mapping: [] }, isReadingJson = false) {
+    readQuotedString(out: { mapping: IndexMapping } = { mapping: [] }) {
         let ans = ''
         if (!this.canRead()) {
             return ''
         }
         const quote = this.peek()
         if (StringReader.isQuote(quote)) {
-            if (isReadingJson) {
-                ans += quote
-            }
             this.skip()
-            ans += this.readUntilQuote(quote, out, isReadingJson)
+            ans += this.readUntilQuote(quote, out)
         } else {
             const start = this.cursor
             const end = this.cursor + 1
@@ -200,7 +197,7 @@ export default class StringReader {
      * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }, isReadingJson: boolean) {
+    private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -208,7 +205,7 @@ export default class StringReader {
         while (this.canRead()) {
             const c = this.read()
             if (escaped) {
-                if (isReadingJson || c === escapeChar || c === terminator) {
+                if (c === escapeChar || c === terminator) {
                     out.mapping.push(this.cursor - 1)
                     ans += c
                     escaped = false
@@ -222,16 +219,8 @@ export default class StringReader {
                 }
             } else {
                 if (c === escapeChar) {
-                    if (isReadingJson) {
-                        out.mapping.push(this.cursor - 1)
-                        ans += c
-                    }
                     escaped = true
                 } else if (c === terminator) {
-                    if (isReadingJson) {
-                        out.mapping.push(this.cursor - 1)
-                        ans += c
-                    }
                     return ans
                 } else {
                     out.mapping.push(this.cursor - 1)
@@ -253,11 +242,11 @@ export default class StringReader {
     /**
      * @param terminator Endding character. Will not be included in the result.
      */
-    readUntilOrEnd(terminator: string) {
+    readUntilOrEnd(...terminators: string[]) {
         let ans = ''
         while (this.canRead()) {
             const c = this.peek()
-            if (terminator === c) {
+            if (terminators.includes(c)) {
                 return ans
             } else {
                 ans += c
@@ -272,13 +261,13 @@ export default class StringReader {
      * @param out Stores a mapping from in-string indexes to real indexes. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readString(out: { mapping: IndexMapping } = { mapping: [] }, isReadingJson = false) {
+    readString(out: { mapping: IndexMapping } = { mapping: [] }) {
         if (!this.canRead()) {
             return ''
         }
         const c = this.peek()
         if (StringReader.isQuote(c)) {
-            return this.readQuotedString(out, isReadingJson)
+            return this.readQuotedString(out)
         } else {
             return this.readUnquotedString(out)
         }

@@ -5,9 +5,9 @@ import AdvancementInfo from './AdvancementInfo'
 import TagInfo from './TagInfo'
 import IndexMapping from './IndexMapping'
 
-export const LatestCacheFileVersion = 6
+export const CacheVersion = 6
 
-export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: LatestCacheFileVersion }
+export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
 export interface CacheFile {
     cache: ClientCache,
