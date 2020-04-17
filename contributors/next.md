@@ -26,6 +26,9 @@ A big _thank you_ goes to these wonderful people:
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1316165"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle" width="64px;" alt=""/><br /><sub><b>00ll00</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Sponsor">💝 Financial support.</a></td>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Sponsor">💝 Financial support.</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/Foobin"><img src="https://avatars0.githubusercontent.com/u/22305295?s=460&v=4" width="64px;" alt=""/><br /><sub><b>Foobin</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/398" target="_blank" title="Bug reports">🐛 #398</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->

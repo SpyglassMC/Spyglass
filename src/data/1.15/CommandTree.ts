@@ -854,6 +854,17 @@ const CommandTree: CommandTreeType = {
                 }
             }
         },
+        help: {
+            parser: new LiteralArgumentParser('help'),
+            permission: 0,
+            executable: true,
+            children: {
+                command: {
+                    parser: new StringArgumentParser(StringType.Greedy),
+                    executable: true
+                }
+            }
+        },
         kick: {
             parser: new LiteralArgumentParser('kick'),
             permission: 3,

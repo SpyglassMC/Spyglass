@@ -103,6 +103,15 @@
       "details": [
         { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Financial support." }
       ]
+    },
+    {
+      "name": "Foobin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/22305295?s=460&v=4",
+      "profile": "https://github.com/Foobin",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/398", "text": "#398" }
+      ]
     }
   ],
   "contributorsPerLine": 2,
