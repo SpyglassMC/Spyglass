@@ -15,7 +15,7 @@ import { NodeRange } from '../../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import { Keys } from '../../types/nodes/map/MapNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import SelectorArgumentMapNode from '../../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode from '../../types/nodes/map/SelectorArgumentMapNode'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -315,7 +315,7 @@ describe('EntityArgumentParser Tests', () => {
                 const ctx = await constructContext({ parsers, cache, cursor: 22 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[gamemode=adventure,]'), ctx)
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.gamemode = ['adventure']
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expectedArguments))
                 assert.deepStrictEqual(actual.completions, [
@@ -367,7 +367,7 @@ describe('EntityArgumentParser Tests', () => {
                 const ctx = await constructContext({ parsers, cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ]'), ctx)
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.gamemode = ['']
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expectedArguments))
                 assert.deepStrictEqual(actual.completions, [
@@ -382,7 +382,7 @@ describe('EntityArgumentParser Tests', () => {
                 const ctx = await constructContext({ parsers, cache, cursor: 17 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), ctx)
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.gamemodeNeg = ['']
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'a', expectedArguments))
                 assert.deepStrictEqual(actual.completions, [
@@ -426,7 +426,7 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return multiple-entity error for @r[limit=2]', () => {
                 const parser = new EntityArgumentParser('single', 'entities')
                 const actual = parser.parse(new StringReader('@r[limit=2]'), ctx)
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.limit = 2
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'r', expectedArguments))
                 assert.deepStrictEqual(actual.errors, [
@@ -442,7 +442,7 @@ describe('EntityArgumentParser Tests', () => {
             it('Should not return multiple-entity error for @e[limit=1]', () => {
                 const parser = new EntityArgumentParser('single', 'entities')
                 const actual = parser.parse(new StringReader('@e[limit=1]'), ctx)
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.limit = 1
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'e', expectedArguments))
                 assert.deepStrictEqual(actual.errors, [])
@@ -463,7 +463,7 @@ describe('EntityArgumentParser Tests', () => {
 
                 const expectedIdentity = new IdentityNode(undefined, ['zombie'])
                 expectedIdentity[NodeRange] = { start: 8, end: 14 }
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.type = [expectedIdentity]
 
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'e', expectedArguments))
@@ -477,7 +477,7 @@ describe('EntityArgumentParser Tests', () => {
 
                 const expectedIdentity = new IdentityNode(undefined, ['player'])
                 expectedIdentity[NodeRange] = { start: 8, end: 14 }
-                const expectedArguments = new SelectorArgumentMapNode()
+                const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.type = [expectedIdentity]
 
                 assert.deepStrictEqual(actual.data, new EntityNode(undefined, 'e', expectedArguments))

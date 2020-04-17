@@ -5,7 +5,8 @@ import { ToFormattedString } from '../../../types/Formattable'
 import EntityNode from '../../../types/nodes/EntityNode'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
-import SelectorArgumentMapNode from '../../../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode, { SelectorScoresNode, SelectorAdvancementsNode, SelectorCriteriaNode } from '../../../types/nodes/map/SelectorArgumentMapNode'
+import { $ } from '../../utils'
 
 describe('EntityNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -77,7 +78,7 @@ describe('EntityNode Tests', () => {
                 }
             })
 
-            const expectedArgument = new SelectorArgumentMapNode()
+            const expectedArgument = new SelectorArgumentsNode()
             expectedArgument.tag = ['a', 'b', 'c']
             expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
             expectedArgument.limit = 1
@@ -101,7 +102,7 @@ describe('EntityNode Tests', () => {
                 }
             })
 
-            const expectedArgument = new SelectorArgumentMapNode()
+            const expectedArgument = new SelectorArgumentsNode()
             expectedArgument.tag = ['a', 'b', 'c']
             expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
             expectedArgument.limit = 1
@@ -125,8 +126,10 @@ describe('EntityNode Tests', () => {
                 }
             })
 
-            const expectedArgument = new SelectorArgumentMapNode()
-            expectedArgument.scores = { foo: new NumberRangeNode('integer', 0) }
+            const expectedArgument = new SelectorArgumentsNode()
+            expectedArgument.scores = $(new SelectorScoresNode(), {
+                foo: new NumberRangeNode('integer', 0, undefined)
+            })
 
             const expected = new EntityNode(
                 undefined,
@@ -147,11 +150,14 @@ describe('EntityNode Tests', () => {
                 }
             })
 
-            const expectedArgument = new SelectorArgumentMapNode()
-            expectedArgument.advancements = {
+            const expectedArgument = new SelectorArgumentsNode()
+            expectedArgument.advancements = $(new SelectorAdvancementsNode(), {
                 foo: true,
-                bar: { baz: true, qux: false }
-            }
+                bar: $(new SelectorCriteriaNode(), {
+                    baz: true,
+                    qux: false
+                })
+            })
 
             const expected = new EntityNode(
                 undefined,

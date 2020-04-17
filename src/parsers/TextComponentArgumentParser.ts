@@ -1,15 +1,16 @@
 import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import TextComponent from '../types/TextComponent'
+import TextComponentNode from '../types/nodes/TextComponent'
 import { ArgumentParserResult } from '../types/Parser'
 import schema from 'datapack-json/src/shared/text_component.json'
 import { getLanguageService, JSONSchema, TextDocument } from 'vscode-json-languageservice'
 import { SynchronousPromise } from 'synchronous-promise'
 import ParsingError from '../types/ParsingError'
 import { remapCompletionItem } from '../utils/utils'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
-class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
+class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
     static identity = 'TextComponent'
     readonly identity = 'textComponent'
 
@@ -28,9 +29,10 @@ class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
     }
 
     /* istanbul ignore next */
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponent> {
-        const ans: ArgumentParserResult<TextComponent> = {
-            data: new TextComponent(reader.readRemaining()),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponentNode> {
+        const start = reader.cursor
+        const ans: ArgumentParserResult<TextComponentNode> = {
+            data: new TextComponentNode(reader.readRemaining()),
             tokens: [], errors: [], cache: {}, completions: []
         }
 
@@ -41,6 +43,7 @@ class TextComponentArgumentParser extends ArgumentParser<TextComponent> {
         //#region Data.
         ans.data.document = document
         ans.data.jsonDocument = jsonDocument
+        ans.data[NodeRange] = { start, end: reader.cursor }
         //#endregion
 
         //#region Errors.

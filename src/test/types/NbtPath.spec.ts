@@ -3,15 +3,22 @@ import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
 import { ToFormattedString } from '../../types/Formattable'
 import EntityNode from '../../types/nodes/EntityNode'
-import NbtPathNode, {  isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/nodes/NbtPathNode'
+import NbtPathNode, { isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/nodes/NbtPathNode'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 
 describe('`NbtPath` Tests', () => {
     describe('[ToLintedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({})
-            const message = new NbtPathNode(
-                [getNbtCompoundTag({}), NbtPathSep, 'foo', NbtPathIndexBegin, 0, NbtPathIndexEnd, NbtPathSep, '"crazy" name']
-            )
+            const message = new NbtPathNode([
+                new NbtCompoundNode(null),
+                NbtPathSep,
+                new NbtCompoundKeyNode(null, 'foo', 'foo', []),
+                NbtPathIndexBegin, 0, NbtPathIndexEnd,
+                NbtPathSep,
+                new NbtCompoundKeyNode(null, '"crazy" name', '"\\"crazy\\" name"', [])
+            ])
             const actual = message[ToFormattedString](lint)
             assert(actual === '{}.foo[0]."\\"crazy\\" name"')
         })
@@ -28,7 +35,7 @@ describe('`NbtPath` Tests', () => {
     })
     describe('isNbtPathCompoundFilter() Tests', () => {
         it('Should return true', () => {
-            const actual = isNbtPathCompoundFilter(getNbtCompoundTag({}))
+            const actual = isNbtPathCompoundFilter(new NbtCompoundNode(null))
             assert(actual === true)
         })
         it('Should return false', () => {

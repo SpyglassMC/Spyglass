@@ -2,7 +2,6 @@ import CommandTreeVersion from './CommandTreeVersion'
 import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
-import SelectorArgumentMapNode from './nodes/map/SelectorArgumentMapNode'
 import QuoteTypeConfig from './QuoteTypeConfig'
 import { Uri } from './handlers'
 

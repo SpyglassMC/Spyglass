@@ -315,20 +315,6 @@ describe('StringReader Tests', () => {
             assert(actualResult === 'foobar')
             assert(actualCursor === 6)
         })
-        it('Should read unquoted JSON string', () => {
-            const reader = new StringReader('foobar')
-            const actualResult = reader.readString(undefined, true)
-            const actualCursor = reader.cursor
-            assert(actualResult === 'foobar')
-            assert(actualCursor === 6)
-        })
-        it('Should read quoted JSON string', () => {
-            const reader = new StringReader('"foo\\"bar\\n"')
-            const actualResult = reader.readString(undefined, true)
-            const actualCursor = reader.cursor
-            assert(actualResult === '"foo\\"bar\\n"')
-            assert(actualCursor === 12)
-        })
     })
     describe('readBoolean() Tests', () => {
         it('Should return true correctly', () => {

@@ -10,7 +10,7 @@ import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
-import SelectorArgumentMapNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresArgumentMapNode, SelectorArgumentNodeChars, SelectorAdvancementsArgumentMapNode, SelectorCriteriaArgumentMapNode } from '../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresNode, SelectorArgumentNodeChars, SelectorAdvancementsNode, SelectorCriteriaNode } from '../types/nodes/map/SelectorArgumentMapNode'
 import { StringType } from './StringArgumentParser'
 import { Keys } from '../types/nodes/map/MapNode'
 import StringNode from '../types/nodes/StringNode'
@@ -162,11 +162,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
         //#endregion
         /// Arguments
         if (reader.peek() === '[') {
-            const pushSafely = (ans: ArgumentParserResult<SelectorArgumentMapNode>, key: any, result: any) => {
+            const pushSafely = (ans: ArgumentParserResult<SelectorArgumentsNode>, key: any, result: any) => {
                 ans.data[key] = ans.data[key] || []
                 ans.data[key].push(result.data)
             }
-            const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentMapNode>, parser: ArgumentParser<any>, key: string) => {
+            const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentsNode>, parser: ArgumentParser<any>, key: string) => {
                 const keyNeg = `${key}Neg`
                 if (ctx.cursor === reader.cursor) {
                     ans.completions.push({ label: '!' })
@@ -201,11 +201,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 combineArgumentParserResult(ans, result)
             }
 
-            const argumentAns: ArgumentParserResult<SelectorArgumentMapNode> = {
-                data: new SelectorArgumentMapNode(),
+            const argumentAns: ArgumentParserResult<SelectorArgumentsNode> = {
+                data: new SelectorArgumentsNode(),
                 tokens: [], errors: [], cache: {}, completions: []
             }
-            new MapParser<SelectorArgumentMapNode>(
+            new MapParser<SelectorArgumentsNode>(
                 EntitySelectorNodeChars,
                 (ans, reader, ctx) => {
                     const start = reader.cursor
@@ -270,11 +270,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         ans.data[key] = result.data
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'advancements') {
-                        const advancementsAns: ArgumentParserResult<SelectorAdvancementsArgumentMapNode> = {
-                            data: new SelectorAdvancementsArgumentMapNode(),
+                        const advancementsAns: ArgumentParserResult<SelectorAdvancementsNode> = {
+                            data: new SelectorAdvancementsNode(),
                             tokens: [], errors: [], cache: {}, completions: []
                         }
-                        new MapParser<SelectorAdvancementsArgumentMapNode>(
+                        new MapParser<SelectorAdvancementsNode>(
                             SelectorArgumentNodeChars,
                             (ans, reader, ctx) => {
                                 const result: ArgumentParserResult<IdentityNode> = ctx.parsers
@@ -286,11 +286,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                             },
                             (ans, reader, ctx, adv) => {
                                 if (reader.peek() === '{') {
-                                    const criteriaAns: ArgumentParserResult<SelectorCriteriaArgumentMapNode> = {
-                                        data: new SelectorCriteriaArgumentMapNode(),
+                                    const criteriaAns: ArgumentParserResult<SelectorCriteriaNode> = {
+                                        data: new SelectorCriteriaNode(),
                                         tokens: [], errors: [], cache: {}, completions: []
                                     }
-                                    new MapParser<SelectorCriteriaArgumentMapNode>(
+                                    new MapParser<SelectorCriteriaNode>(
                                         SelectorArgumentNodeChars,
                                         (ans, reader, ctx) => {
                                             const start = reader.cursor
@@ -326,11 +326,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         ans.data.advancements = advancementsAns.data
                         combineArgumentParserResult(ans, advancementsAns)
                     } else if (key === 'scores') {
-                        const scoresAns: ArgumentParserResult<SelectorScoresArgumentMapNode> = {
-                            data: new SelectorScoresArgumentMapNode(),
+                        const scoresAns: ArgumentParserResult<SelectorScoresNode> = {
+                            data: new SelectorScoresNode(),
                             tokens: [], errors: [], cache: {}, completions: []
                         }
-                        new MapParser<SelectorScoresArgumentMapNode>(
+                        new MapParser<SelectorScoresNode>(
                             SelectorArgumentNodeChars,
                             (_ans, reader, ctx) => {
                                 return ctx.parsers

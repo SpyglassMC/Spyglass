@@ -14,7 +14,7 @@ import StringReader from '../utils/StringReader'
 import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
 import CommandTree, { CommandTreeNode } from '../types/CommandTree'
 import ParsingContext, { constructContext } from '../types/ParsingContext'
-import SelectorArgumentMapNode from '../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentMapNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
 import { $ } from './utils'
@@ -180,7 +180,7 @@ describe('CommandTree Tests', () => {
     describe('getSchemaAnchor() Tests', () => {
         it('Should return the respective id', () => {
             const id = new IdentityNode('minecraft', ['spgoding'])
-            const argument = new SelectorArgumentMapNode()
+            const argument = new SelectorArgumentsNode()
             argument.type = [id]
             const entity = new EntityNode(undefined, 'e', argument)
             const actual = getNbtdocRegistryId(entity)

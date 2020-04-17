@@ -7,7 +7,7 @@ import { toFormattedString } from '../../utils/utils'
 import NbtCompoundNode from './map/NbtCompoundNode'
 import MapNode, { Chars, ConfigKeys } from './map/MapNode'
 import ArgumentNode, { NodeType } from './ArgumentNode'
-import SelectorArgumentMapNode from './map/SelectorArgumentMapNode'
+import SelectorArgumentsNode from './map/SelectorArgumentMapNode'
 
 
 
@@ -29,7 +29,7 @@ export default class EntityNode extends ArgumentNode {
         /**
          * Arguments of this entity selector.
          */
-        public argument = new SelectorArgumentMapNode()
+        public argument = new SelectorArgumentsNode()
     ) {
         super()
     }

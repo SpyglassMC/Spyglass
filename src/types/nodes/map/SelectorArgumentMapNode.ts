@@ -22,8 +22,8 @@ export const SelectorArgumentKeys: SelectorArgumentKey[] = [
 
 export type SelectorSortMethod = 'arbitrary' | 'furthest' | 'nearest' | 'random'
 
-export default class SelectorArgumentMapNode extends MapNode<StringNode, any> {
-    readonly [NodeType] = 'SelectorArgument';
+export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
+    readonly [NodeType] = 'SelectorArgument'
 
     protected readonly [ConfigKeys] = {
         bracketSpacing: 'selectorBracketSpacing' as keyof LintConfig,
@@ -46,8 +46,8 @@ export default class SelectorArgumentMapNode extends MapNode<StringNode, any> {
     x_rotation?: NumberRangeNode
     y_rotation?: NumberRangeNode
     level?: NumberRangeNode
-    scores?: SelectorScoresArgumentMapNode
-    advancements?: SelectorAdvancementsArgumentMapNode
+    scores?: SelectorScoresNode
+    advancements?: SelectorAdvancementsNode
     gamemode?: (GameMode | '')[]
     gamemodeNeg?: (GameMode | '')[]
     name?: string[]
@@ -68,7 +68,7 @@ export const SelectorArgumentNodeChars = {
     openBracket: '{', sep: '=', pairSep: ',', closeBracket: '}'
 }
 
-export class SelectorScoresArgumentMapNode extends MapNode<string, NumberRangeNode> {
+export class SelectorScoresNode extends MapNode<string, NumberRangeNode> {
     readonly [NodeType] = 'SelectorScoresArgument'
 
     protected readonly [ConfigKeys] = {
@@ -81,7 +81,7 @@ export class SelectorScoresArgumentMapNode extends MapNode<string, NumberRangeNo
     protected readonly [Chars] = SelectorArgumentNodeChars
 }
 
-export class SelectorAdvancementsArgumentMapNode extends MapNode<IdentityNode, boolean | SelectorCriteriaArgumentMapNode> {
+export class SelectorAdvancementsNode extends MapNode<IdentityNode, boolean | SelectorCriteriaNode> {
     readonly [NodeType] = 'SelectorAdvancementsArgument'
 
     protected readonly [ConfigKeys] = {
@@ -94,7 +94,7 @@ export class SelectorAdvancementsArgumentMapNode extends MapNode<IdentityNode, b
     protected readonly [Chars] = SelectorArgumentNodeChars
 }
 
-export class SelectorCriteriaArgumentMapNode extends MapNode<StringNode, boolean> {
+export class SelectorCriteriaNode extends MapNode<StringNode, boolean> {
     readonly [NodeType] = 'SelectorCriteriaArgument'
 
     protected readonly [ConfigKeys] = {

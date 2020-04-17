@@ -30,6 +30,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
     readonly [NodeType] = 'Vector';
 
     [index: number]: VectorElementNode
+    
     length = 0
 
     constructor() {
