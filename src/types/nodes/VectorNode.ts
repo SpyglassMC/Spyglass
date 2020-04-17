@@ -1,7 +1,7 @@
 import { LintConfig } from '../Config'
 import { ToFormattedString } from '../Formattable'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange } from './ArgumentNode'
+import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import NumberNode from './NumberNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange, { areOverlapped } from '../TextRange'
@@ -51,7 +51,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         }
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         for (const element of this) {
             if (areOverlapped(element[NodeRange], range)) {
@@ -61,7 +61,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         return ans
     }
 
-    [ToFormattedString](_lint: LintConfig) {
+    [ToFormattedString]() {
         return Array.prototype.map.call(this, (v: VectorElementNode) => v[ToFormattedString]()).join(' ')
     }
 }

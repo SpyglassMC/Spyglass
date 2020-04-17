@@ -1,5 +1,5 @@
 import { ToFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange } from './ArgumentNode'
+import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import IndexMapping from '../IndexMapping'
 import { Diagnostic, CodeAction } from 'vscode-languageserver'
 import { ActionCode } from '../ParsingError'
@@ -32,44 +32,28 @@ export default class StringNode extends ArgumentNode {
     /**
      * Return code actions for changing quotation marks when relevant diagnostics exist.
      */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: unknown, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: unknown, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
 
-        const unquoteDiagnostics: Diagnostic[] = []
-        const doubleQuoteDiagnostics: Diagnostic[] = []
-        const singleQuoteDiagnostics: Diagnostic[] = []
+        const unquoteDiagnostics = diagnostics[ActionCode.StringUnquote]
+        const doubleQuoteDiagnostics = diagnostics[ActionCode.StringDoubleQuote]
+        const singleQuoteDiagnostics = diagnostics[ActionCode.StringSingleQuote]
 
-        for (const diag of diagnostics) {
-            switch (diag.code) {
-                case ActionCode.StringUnquote:
-                    unquoteDiagnostics.push(diag)
-                    break
-                case ActionCode.StringDoubleQuote:
-                    doubleQuoteDiagnostics.push(diag)
-                    break
-                case ActionCode.StringSingleQuote:
-                    singleQuoteDiagnostics.push(diag)
-                    break
-                default:
-                    break
-            }
-        }
-
-        if (unquoteDiagnostics.length > 0) {
+        if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-unquote', unquoteDiagnostics,
                 uri, info.version, lineNumber, this[NodeRange],
                 this.value
             ))
         }
-        if (doubleQuoteDiagnostics.length > 0) {
+        if (doubleQuoteDiagnostics && doubleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-double-quote', doubleQuoteDiagnostics,
                 uri, info.version, lineNumber, this[NodeRange],
                 quoteString(this.value, 'always double', true)
             ))
         }
-        if (singleQuoteDiagnostics.length > 0) {
+        if (singleQuoteDiagnostics && singleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-single-quote', singleQuoteDiagnostics,
                 uri, info.version, lineNumber, this[NodeRange],

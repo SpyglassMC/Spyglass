@@ -1,4 +1,4 @@
-import MapNode, { ConfigKeys, Chars, Keys } from './MapNode'
+import MapNode, { ConfigKeys, Chars } from './MapNode'
 import { LintConfig } from '../../Config'
 import { NodeType } from '../ArgumentNode'
 import NumberRangeNode from '../NumberRangeNode'

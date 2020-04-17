@@ -3,7 +3,10 @@ import { ToFormattedString } from '../Formattable'
 import { ClientCache, CacheKey } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { sep } from 'path'
-import ArgumentNode, { NodeType } from './ArgumentNode'
+import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap } from './ArgumentNode'
+import { Diagnostic, CodeAction } from 'vscode-languageserver'
+import FunctionInfo from '../FunctionInfo'
+import TextRange from '../TextRange'
 
 export default class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
@@ -14,35 +17,41 @@ export default class IdentityNode extends ArgumentNode {
     readonly [NodeType] = 'Identity'
 
     constructor(
-        public namespace = IdentityNode.DefaultNamespace,
+        public namespace: string | undefined = undefined,
         public path: string[] = [],
         public isTag = false
     ) {
         super()
     }
 
-    [ToFormattedString](lint: LintConfig): string {
+    [ToFormattedString](_lint?: LintConfig): string {
         let id
-        if (lint.idOmitDefaultNamespace && this.namespace === IdentityNode.DefaultNamespace) {
-            id = this.path.join(IdentityNode.PathSep)
-        } else {
+        if (this.namespace) {
             id = `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
+        } else {
+            id = this.path.join(IdentityNode.PathSep)
         }
         return `${this.isTag ? IdentityNode.TagSymbol : ''}${id}`
+    }
+
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+        
+        return ans
     }
 
     /**
      * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. Will NOT begin with TagSymbol (`#`) if the ID is a tag.
      */
     toString() {
-        return `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
+        return `${this.namespace || IdentityNode.DefaultNamespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
     }
 
     /**
      * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
      */
     toTagString() {
-        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
+        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace || IdentityNode.DefaultNamespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
     }
 
     /**
@@ -59,7 +68,7 @@ export default class IdentityNode extends ArgumentNode {
         } else {
             ext = '.json'
         }
-        return `${side}${sep}${this.namespace}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
+        return `${side}${sep}${this.namespace || IdentityNode.DefaultNamespace}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
     }
 
     /**

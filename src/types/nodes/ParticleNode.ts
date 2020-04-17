@@ -1,7 +1,7 @@
 import { LintConfig } from '../Config'
 import IdentityNode from './IdentityNode'
 import { ToFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange } from './ArgumentNode'
+import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange, { areOverlapped } from '../TextRange'
 import { Diagnostic, CodeAction } from 'vscode-languageserver'
@@ -14,7 +14,7 @@ export default class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
         public param?: T
     ) { super() }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         if (areOverlapped(range, this.id[NodeRange])) {
             ans.push(...this.id[GetCodeActions](uri, info, lineNumber, range, diagnostics))

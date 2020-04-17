@@ -1,5 +1,5 @@
 import { ToFormattedString } from '../../Formattable'
-import { NodeType, NodeDescription, GetCodeActions, NodeRange } from '../ArgumentNode'
+import { NodeType, NodeDescription, GetCodeActions, NodeRange, DiagnosticMap } from '../ArgumentNode'
 import { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
 import NbtStringNode from '../nbt/NbtStringNode'
 import NbtCompoundNode from './NbtCompoundNode'
@@ -33,12 +33,13 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         return this.toString()
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: TextRange, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
 
         /* NbtUuidDatafix */
-        const uuidDiagnostics = diagnostics.filter(v => v.code === ActionCode.NbtUuidDatafix)
-        if (uuidDiagnostics.length > 0) {
+        // FIXME
+        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafix]
+        if (uuidDiagnostics && uuidDiagnostics.length > 0) {
             const superNbt = this[SuperNbt]
             if (superNbt) {
                 const newSuper = new NbtCompoundNode(superNbt[SuperNbt])

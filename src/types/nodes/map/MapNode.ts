@@ -2,7 +2,7 @@ import { LintConfig } from '../../Config'
 import { ToFormattedString } from '../../Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
-import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions } from '../ArgumentNode'
+import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions, DiagnosticMap } from '../ArgumentNode'
 import TextRange, { areOverlapped } from '../../TextRange'
 import { Diagnostic, CodeAction } from 'vscode-languageserver'
 import FunctionInfo from '../../FunctionInfo'
@@ -98,7 +98,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return `${open}${contentString}${close}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: Diagnostic[]) {
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         for (const key in this[Keys]) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
