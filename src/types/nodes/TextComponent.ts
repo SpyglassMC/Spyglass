@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import NbtCompoundNode from './map/NbtCompoundNode'
 import { TextDocument } from 'vscode-languageserver'
 import { JSONDocument } from 'vscode-json-languageservice'
@@ -17,7 +17,7 @@ export default class TextComponentNode extends ArgumentNode {
         super()
     }
 
-    [ToFormattedString](): string {
+    [GetFormattedString](): string {
         return this.raw
     }
 }

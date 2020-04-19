@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../../types/Config'
 import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
-import { ToFormattedString } from '../../../../types/Formattable'
+import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtByteNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -10,7 +10,7 @@ describe('NbtByteNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtByteSuffix: 'b' } })
             const node = new NbtByteNode(null, 0, '0')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '0b')
         })
@@ -18,7 +18,7 @@ describe('NbtByteNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtByteSuffix: 'B' } })
             const node = new NbtByteNode(null, 0, '0')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '0B')
         })
@@ -26,7 +26,7 @@ describe('NbtByteNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtByteSuffix: 'b' } })
             const node = new NbtByteNode(null, 1, 'True')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === 'true')
         })
@@ -34,7 +34,7 @@ describe('NbtByteNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtByteSuffix: 'b' } })
             const node = new NbtByteNode(null, 0, 'False')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === 'false')
         })

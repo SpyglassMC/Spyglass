@@ -94,7 +94,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         //#endregion
 
         //#region Data.
-        let namespace = IdentityNode.DefaultNamespace
+        let namespace: string | undefined
         const paths: string[] = []
 
         // Whether this is a tag ID.
@@ -157,12 +157,12 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
             // `path0` is the namespace.
             reader.skip()
             const start = reader.cursor
-            namespace = path0 || IdentityNode.DefaultNamespace
+            namespace = path0
             path0 = this.readValidString(reader, ans)
             //#region Completions
             pool = pool
                 .filter(v => v.startsWith(`${namespace}${IdentityNode.NamespaceDelimiter}`))
-                .map(v => v.slice(namespace.length + 1))
+                .map(v => v.slice(namespace!.length + 1))
             if (start <= cursor && cursor <= reader.cursor) {
                 for (const id of pool) {
                     const complPaths = id.split(IdentityNode.PathSep)
@@ -302,7 +302,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace: string): [boolean, DiagnosticSeverity] {
+    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity] {
         if (this.allowUnknown) {
             return [false, DiagnosticSeverity.Warning]
         }
@@ -438,7 +438,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
      * @param stringID The stringified ID.
      * @param start The start of the whole parsing process of this ID.
      */
-    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheKey, namespace: string, stringID: string, start: number, config: Config, cache: ClientCache) {
+    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheKey, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache) {
         const category = getSafeCategory(cache, type)
         const canResolve = Object.keys(category).includes(stringID)
 

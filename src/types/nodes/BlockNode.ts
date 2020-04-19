@@ -1,7 +1,7 @@
 import { LintConfig } from '../Config'
 import IdentityNode from './IdentityNode'
 import ArgumentNode, { NodeType, NodeRange } from './ArgumentNode'
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import BlockStateNode from './map/BlockStateMapNode'
 import NbtCompoundNode from './map/NbtCompoundNode'
 import TextRange from '../TextRange'
@@ -18,15 +18,15 @@ export default class BlockNode extends ArgumentNode {
         super()
     }
 
-    [ToFormattedString](lint: LintConfig): string {
-        const id = this.id[ToFormattedString](lint)
+    [GetFormattedString](lint: LintConfig): string {
+        const id = this.id[GetFormattedString](lint)
 
         let states = ''
         if (Object.keys(this.states).length > 0) {
-            states = this.states[ToFormattedString](lint)
+            states = this.states[GetFormattedString](lint)
         }
 
-        const tag = Object.keys(this.tag).length > 0 ? this.tag[ToFormattedString](lint) : ''
+        const tag = Object.keys(this.tag).length > 0 ? this.tag[GetFormattedString](lint) : ''
 
         return `${id}${states}${tag}`
     }

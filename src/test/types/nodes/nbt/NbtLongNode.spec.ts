@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../../types/Config'
 import NbtLongNode from '../../../../types/nodes/nbt/NbtLongNode'
-import { ToFormattedString } from '../../../../types/Formattable'
+import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtLongNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -10,7 +10,7 @@ describe('NbtLongNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtLongSuffix: 'l' } })
             const node = new NbtLongNode(null, BigInt(0), '0')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '0l')
         })
@@ -18,7 +18,7 @@ describe('NbtLongNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtLongSuffix: 'L' } })
             const node = new NbtLongNode(null, BigInt(0), '0')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '0L')
         })

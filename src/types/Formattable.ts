@@ -1,7 +1,11 @@
 import { LintConfig } from './Config'
 
-export const ToFormattedString = Symbol()
+export const GetFormattedString = Symbol()
 
 export default interface Formattable {
-    [ToFormattedString](lint: LintConfig): string
+    [GetFormattedString](lint: LintConfig): string
+}
+
+export function isFormattable(value: unknown): value is Formattable {
+    return value && (value as any)[GetFormattedString] instanceof Function
 }

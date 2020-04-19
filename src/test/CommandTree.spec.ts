@@ -292,7 +292,7 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement revoke @s through minecraft:test')
             const { data } = parser.parse(reader, ctx)
-            const expectedId = new IdentityNode(undefined, ['test'])
+            const expectedId = new IdentityNode('minecraft', ['test'])
             expectedId[NodeRange] = { start: 30, end: 44 }
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },

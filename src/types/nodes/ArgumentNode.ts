@@ -1,4 +1,4 @@
-import Formattable, { ToFormattedString } from '../Formattable'
+import Formattable, { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
 import TextRange, { EmptyRange } from '../TextRange'
@@ -26,7 +26,7 @@ export default abstract class ArgumentNode implements Formattable, CodeActionabl
     [NodeRange]: TextRange = EmptyRange;
     [NodeDescription]: string = ''
 
-    abstract [ToFormattedString](lint: LintConfig): string
+    abstract [GetFormattedString](lint: LintConfig): string
 
     /**
      * Will only be called when necessary, so there's no need to check the range in this method.

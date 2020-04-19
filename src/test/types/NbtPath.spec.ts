@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToFormattedString } from '../../types/Formattable'
+import { GetFormattedString } from '../../types/Formattable'
 import EntityNode from '../../types/nodes/EntityNode'
 import NbtPathNode, { isNbtPathIndex, isNbtPathCompoundFilter, isNbtPathKey, NbtPathSep, NbtPathIndexBegin, NbtPathIndexEnd } from '../../types/nodes/NbtPathNode'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
@@ -19,7 +19,7 @@ describe('`NbtPath` Tests', () => {
                 NbtPathSep,
                 new NbtCompoundKeyNode(null, '"crazy" name', '"\\"crazy\\" name"', [])
             ])
-            const actual = message[ToFormattedString](lint)
+            const actual = message[GetFormattedString](lint)
             assert(actual === '{}.foo[0]."\\"crazy\\" name"')
         })
     })

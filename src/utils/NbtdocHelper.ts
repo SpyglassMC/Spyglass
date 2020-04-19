@@ -28,7 +28,7 @@ import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
 import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
 import NbtListNode from '../types/nodes/nbt/NbtListNode'
 import { Keys } from '../types/nodes/map/MapNode'
-import { ToFormattedString } from '../types/Formattable'
+import { GetFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { getInnerIndex } from '../types/IndexMapping'
 
@@ -261,10 +261,10 @@ export default class NbtdocHelper {
         }
     }
     private completeByteArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ByteArrayDoc) {
-        ans.completions.push({ label: new NbtByteArrayNode(null)[ToFormattedString](lint) })
+        ans.completions.push({ label: new NbtByteArrayNode(null)[GetFormattedString](lint) })
     }
     private completeCompoundField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: CompoundDoc) {
-        ans.completions.push({ label: new NbtCompoundNode(null)[ToFormattedString](lint) })
+        ans.completions.push({ label: new NbtCompoundNode(null)[GetFormattedString](lint) })
     }
     private static handleDescription(str: string) {
         return str.trim().replace(/\n\s/g, '\n')
@@ -329,13 +329,13 @@ export default class NbtdocHelper {
         }
     }
     private completeIntArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: IntArrayDoc) {
-        ans.completions.push({ label: new NbtIntArrayNode(null)[ToFormattedString](lint) })
+        ans.completions.push({ label: new NbtIntArrayNode(null)[GetFormattedString](lint) })
     }
     private completeListField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ListDoc) {
-        ans.completions.push({ label: new NbtListNode(null)[ToFormattedString](lint) })
+        ans.completions.push({ label: new NbtListNode(null)[GetFormattedString](lint) })
     }
     private completeLongArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: LongArrayDoc) {
-        ans.completions.push({ label: new NbtLongArrayNode(null)[ToFormattedString](lint) })
+        ans.completions.push({ label: new NbtLongArrayNode(null)[GetFormattedString](lint) })
     }
     private completeStringField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, _doc: StringDoc, _isPredicate: boolean, description: string) {
         const subCtx = { ...ctx, cursor: 0 }
@@ -548,7 +548,7 @@ export default class NbtdocHelper {
                 tag = new NbtStringNode(null, value as string, raw, [])
                 break
         }
-        return tag[ToFormattedString](lint)
+        return tag[GetFormattedString](lint)
     }
 
     private static getValueType(value: nbtdoc.NbtValue | nbtdoc.EnumType) {

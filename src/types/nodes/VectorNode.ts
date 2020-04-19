@@ -1,5 +1,5 @@
 import { LintConfig } from '../Config'
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import NumberNode from './NumberNode'
@@ -61,7 +61,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         return ans
     }
 
-    [ToFormattedString]() {
-        return Array.prototype.map.call(this, (v: VectorElementNode) => v[ToFormattedString]()).join(' ')
+    [GetFormattedString]() {
+        return Array.prototype.map.call(this, (v: VectorElementNode) => v[GetFormattedString]()).join(' ')
     }
 }

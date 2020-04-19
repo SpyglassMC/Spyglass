@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import { NodeType, NodeDescription, GetCodeActions, NodeRange, DiagnosticMap } from '../ArgumentNode'
 import { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
 import NbtStringNode from '../nbt/NbtStringNode'
@@ -29,7 +29,7 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         super(superNbt, value, raw, mapping)
     }
 
-    [ToFormattedString]() {
+    [GetFormattedString]() {
         return this.toString()
     }
 
@@ -71,7 +71,7 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
                     uri, info.version, lineNumber, superNbt[NodeRange],
-                    newSuper[ToFormattedString](info.config.lint)
+                    newSuper[GetFormattedString](info.config.lint)
                 ))
             }
         }

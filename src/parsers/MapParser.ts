@@ -2,6 +2,7 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
+import MapNode, { UnsortedKeys } from '../types/nodes/map/MapNode'
 
 export default class MapParser<T extends { [key: string]: any }> {
     static readonly identity = 'Map'
@@ -64,6 +65,9 @@ export default class MapParser<T extends { [key: string]: any }> {
 
                 // Value Token.
                 this.parseValue(ans, reader, ctx, key, { start: keyStart, end: keyEnd })
+                if (ans.data instanceof MapNode) {
+                    ans.data[UnsortedKeys].push(key)
+                }
 
                 reader.skipWhiteSpace()
 

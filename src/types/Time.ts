@@ -1,4 +1,4 @@
-import Formattable, { ToFormattedString } from './Formattable'
+import Formattable, { GetFormattedString } from './Formattable'
 import { LintConfig } from './Config'
 
 export default class Time implements Formattable {
@@ -7,7 +7,7 @@ export default class Time implements Formattable {
         public unit: 'd' | 's' | 't'
     ) { }
 
-    [ToFormattedString](lint: LintConfig) {
+    [GetFormattedString](lint: LintConfig) {
         if (this.unit === 't' && lint.timeOmitTickUnit) {
             return `${this.value}`
         } else {

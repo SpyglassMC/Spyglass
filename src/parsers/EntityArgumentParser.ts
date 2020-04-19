@@ -12,8 +12,11 @@ import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
 import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresNode, SelectorArgumentNodeChars, SelectorAdvancementsNode, SelectorCriteriaNode } from '../types/nodes/map/SelectorArgumentMapNode'
 import { StringType } from './StringArgumentParser'
-import { Keys } from '../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys } from '../types/nodes/map/MapNode'
 import StringNode from '../types/nodes/StringNode'
+import { arrayToCompletions } from '../utils/utils'
+import { LintConfig } from '../types/Config'
+import { getDiagnosticSeverity } from '../types/StylisticConfig'
 
 export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
     static identity = 'Entity'
@@ -50,13 +53,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 ans.completions.push(...getCompletions(ctx.cache, 'score_holders'))
             }
             ans.completions.push(...getCompletions(ctx.cache, 'entities'))
-            ans.completions.push(
-                { label: '@a', commitCharacters: ['[', ' '] },
-                { label: '@e', commitCharacters: ['[', ' '] },
-                { label: '@p', commitCharacters: ['[', ' '] },
-                { label: '@r', commitCharacters: ['[', ' '] },
-                { label: '@s', commitCharacters: ['[', ' '] }
-            )
+            ans.completions.push(...arrayToCompletions(['@a', '@e', '@p', '@r', '@s']))
         }
 
         // Data
@@ -127,13 +124,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         //#region Completions
         if (ctx.cursor === start + 1) {
-            ans.completions.push(
-                { label: 'a', commitCharacters: ['[', ' '] },
-                { label: 'e', commitCharacters: ['[', ' '] },
-                { label: 'p', commitCharacters: ['[', ' '] },
-                { label: 'r', commitCharacters: ['[', ' '] },
-                { label: 's', commitCharacters: ['[', ' '] }
-            )
+            ans.completions.push(...arrayToCompletions(['a', 'e', 'p', 'r', 's']))
         }
         //#endregion
 
@@ -350,6 +341,18 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
             ).parse(argumentAns, reader, ctx)
             ans.data.argument = argumentAns.data
             combineArgumentParserResult(ans, argumentAns)
+
+            const severity = EntityArgumentParser.getUnsortedSeverity(ctx.config.lint, ans.data.argument[UnsortedKeys])
+            if (severity !== null) {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    locale('diagnostic-rule',
+                        locale('unsorted-keys'),
+                        locale('punc.quote', 'selectorSortKeys')
+                    ),
+                    undefined, severity
+                ))
+            }
         }
         //#endregion
 
@@ -371,13 +374,23 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
     }
 
     private static isVariable(value: string): value is 'p' | 'a' | 'r' | 's' | 'e' {
-        return (
-            value === 'p' ||
-            value === 'a' ||
-            value === 'r' ||
-            value === 's' ||
-            value === 'e'
-        )
+        return (value === 'p' || value === 'a' || value === 'r' || value === 's' || value === 'e')
+    }
+
+    static getUnsortedSeverity(lint: LintConfig, actual: (keyof SelectorArgumentsNode)[]) {
+        if (lint.selectorSortKeys) {
+            const [severity, expected] = lint.selectorSortKeys
+            let i = 0
+            for (const actualKey of actual) {
+                while (actualKey !== expected[i]) {
+                    i++
+                    if (i >= expected.length) {
+                        return getDiagnosticSeverity(severity)
+                    }
+                }
+            }
+        }
+        return null
     }
 
     getExamples(): string[] {

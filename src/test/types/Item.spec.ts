@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig, VanillaConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToFormattedString } from '../../types/Formattable'
+import { GetFormattedString } from '../../types/Formattable'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import ItemNode from '../../types/nodes/ItemNode'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
@@ -15,7 +15,7 @@ describe('Item Tests', () => {
             const item = new ItemNode(
                 new IdentityNode('minecraft', ['diamond_sword'])
             )
-            const actual = item[ToFormattedString](lint)
+            const actual = item[GetFormattedString](lint)
             assert(actual === 'minecraft:diamond_sword')
         })
         it('Should return item ID and nbt compound tag', () => {
@@ -26,7 +26,7 @@ describe('Item Tests', () => {
                     foo: new NbtStringNode(null, 'test', '"test"', [1, 2, 3, 4])
                 })
             )
-            const actual = item[ToFormattedString](lint)
+            const actual = item[GetFormattedString](lint)
             assert(actual === 'minecraft:diamond_sword{foo: "test"}')
         })
     })

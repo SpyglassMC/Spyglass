@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType } from './ArgumentNode'
 
 export default class NumberNode extends ArgumentNode {
@@ -19,7 +19,7 @@ export default class NumberNode extends ArgumentNode {
         return this.value
     }
 
-    [ToFormattedString]() {
+    [GetFormattedString]() {
         return this.toString()
     }
 }

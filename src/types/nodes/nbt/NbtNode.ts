@@ -1,5 +1,5 @@
 import ArgumentNode, { NodeType } from '../ArgumentNode'
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
 import NbtCompoundNode from '../map/NbtCompoundNode'
 import TextRange from '../../TextRange'
@@ -21,7 +21,7 @@ export default abstract class NbtNode extends ArgumentNode {
         this[SuperNbt] = superNbt
     }
 
-    abstract [ToFormattedString](lint: LintConfig): string
+    abstract [GetFormattedString](lint: LintConfig): string
 }
 
 export function isNbtNodeTypeStrictlyMatched(actual: NbtNodeTypeName, expected: NbtNodeTypeName) {

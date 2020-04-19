@@ -1,11 +1,16 @@
 import MapNode, { ConfigKeys, Chars } from './MapNode'
 import { LintConfig } from '../../Config'
-import { NodeType } from '../ArgumentNode'
+import { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from '../ArgumentNode'
 import NumberRangeNode from '../NumberRangeNode'
 import GameMode from '../../GameMode'
 import NbtCompoundNode from './NbtCompoundNode'
 import IdentityNode from '../IdentityNode'
 import StringNode from '../StringNode'
+import FunctionInfo from '../../FunctionInfo'
+import TextRange from '../../TextRange'
+import { ActionCode } from '../../ParsingError'
+import { getCodeAction } from '../../../utils/utils'
+import { GetFormattedString } from '../../Formattable'
 
 export const EntitySelectorNodeChars = {
     openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
@@ -32,7 +37,20 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
         trailingPairSep: 'selectorTrailingComma' as keyof LintConfig
     }
 
-    protected readonly [Chars] = EntitySelectorNodeChars
+    protected readonly [Chars] = EntitySelectorNodeChars;
+
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+        const relevantDiagnostics = diagnostics[ActionCode.SelectorSortKeys]
+        if (relevantDiagnostics && info.config.lint.selectorSortKeys) {
+            ans.push(getCodeAction(
+                'selector-sort-keys', relevantDiagnostics,
+                uri, info.version, lineNumber, this[NodeRange],
+                this[GetFormattedString](info.config.lint, info.config.lint.selectorSortKeys[1])
+            ))
+        }
+        return ans  
+    }
 
     sort?: SelectorSortMethod
     x?: number

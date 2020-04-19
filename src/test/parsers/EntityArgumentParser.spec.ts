@@ -475,7 +475,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'players')
                 const actual = parser.parse(new StringReader('@e[type=minecraft:player]'), ctx)
 
-                const expectedIdentity = new IdentityNode(undefined, ['player'])
+                const expectedIdentity = new IdentityNode('minecraft', ['player'])
                 expectedIdentity[NodeRange] = { start: 8, end: 14 }
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments.type = [expectedIdentity]

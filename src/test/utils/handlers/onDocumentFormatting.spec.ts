@@ -15,7 +15,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
+                    { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
                 ]
             }],
             strings: [
@@ -37,7 +37,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
+                    { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
                 ]
             }],
             strings: [
@@ -60,7 +60,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'wrong' },
-                        { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
+                        { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
                     ],
                     errors: [
                         new ParsingError({ start: 0, end: 5 }, '')
@@ -70,7 +70,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'fake' },
-                        { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
+                        { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
                     ]
                 }
             ],
@@ -86,25 +86,5 @@ describe('onDocumentFormatting() Tests', () => {
             range: { start: { line: 1, character: 0 }, end: { line: 1, character: 10 } },
             newText: 'fake minecraft:stone'
         }])
-    })
-    it('Should return null when the feature is disabled', () => {
-        const info: FunctionInfo = {
-            version: 0, lineBreak: '\n',
-            config: VanillaConfig,
-            lines: [{
-                hint: { fix: [], options: [] }, tokens: [],
-                args: [
-                    { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new IdentityNode(undefined, ['stone']) }
-                ]
-            }],
-            strings: [
-                'fake stone'
-            ]
-        }
-
-        const edits = onDocumentFormatting({ info })
-
-        assert(edits === null)
     })
 })

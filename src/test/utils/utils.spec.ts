@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import os from 'os'
-import Formattable, { ToFormattedString } from '../../types/Formattable'
+import Formattable, { GetFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
 import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString, getEol } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
@@ -127,20 +127,25 @@ describe('utils.ts Tests', () => {
         })
     })
     describe('toLintedString() Tests', () => {
-        it('Should return for lintable object', () => {
+        it('Should return for Formattable', () => {
             const { lint } = constructConfig({})
             const object = new class implements Formattable {
-                [ToFormattedString](_lint: LintConfig) {
+                [GetFormattedString](_lint: LintConfig) {
                     return 'aaa'
                 }
             }
             const actual = toFormattedString(object, lint)
             assert(actual === 'aaa')
         })
-        it('Should return for non-lintable object', () => {
+        it('Should return for non-Formattable', () => {
+            const { lint } = constructConfig({})
+            const actual = toFormattedString({}, lint)
+            assert(actual === '[object Object]')
+        })
+        it('Should return for undefined', () => {
             const { lint } = constructConfig({})
             const actual = toFormattedString(undefined, lint)
-            assert(actual === 'undefined')
+            assert(actual === '')
         })
     })
     describe('getEol() Tests', () => {

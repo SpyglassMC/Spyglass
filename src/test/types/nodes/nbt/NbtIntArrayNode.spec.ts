@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../../types/Config'
 import NbtIntArrayNode from '../../../../types/nodes/nbt/NbtIntArrayNode'
-import { ToFormattedString } from '../../../../types/Formattable'
+import { GetFormattedString } from '../../../../types/Formattable'
 import NbtIntNode from '../../../../types/nodes/nbt/NbtIntNode'
 
 describe('NbtIntArrayNode Tests', () => {
@@ -18,7 +18,7 @@ describe('NbtIntArrayNode Tests', () => {
         it('Should return correctly for empty collection', () => {
             const node = new NbtIntArrayNode(null)
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '[I;]')
         })
@@ -27,7 +27,7 @@ describe('NbtIntArrayNode Tests', () => {
 
             node.push(new NbtIntNode(null, 0, '0'))
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '[I; 0]')
         })
@@ -38,7 +38,7 @@ describe('NbtIntArrayNode Tests', () => {
             node.push(new NbtIntNode(null, 1, '1'))
             node.push(new NbtIntNode(null, 2, '2'))
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '[I; 0, 1, 2]')
         })

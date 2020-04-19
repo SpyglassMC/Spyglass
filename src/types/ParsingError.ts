@@ -22,6 +22,7 @@ export const enum ActionCode {
      * Fix UUIDs in NBT compounds: #377
      */
     NbtUuidDatafix,
+    SelectorSortKeys,
     StringSingleQuote,
     StringDoubleQuote,
     StringUnquote,

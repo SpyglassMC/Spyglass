@@ -1,6 +1,6 @@
 import { LintConfig } from '../Config'
 import IdentityNode from './IdentityNode'
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange, { areOverlapped } from '../TextRange'
@@ -25,7 +25,7 @@ export default class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
         return ans
     }
 
-    [ToFormattedString](lint: LintConfig) {
-        return `${this.id[ToFormattedString](lint)}${this.param ? ` ${this.param[ToFormattedString](lint)}` : ''}`
+    [GetFormattedString](lint: LintConfig) {
+        return `${this.id[GetFormattedString](lint)}${this.param ? ` ${this.param[GetFormattedString](lint)}` : ''}`
     }
 }

@@ -1,7 +1,7 @@
 import NbtNode, { NbtNodeType, NbtNodeTypeName } from './NbtNode'
 import { NodeType } from '../ArgumentNode'
 import NbtNumberNode from './NbtNumberNode'
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
 
 export default class NbtByteNode extends NbtNumberNode {
@@ -9,12 +9,12 @@ export default class NbtByteNode extends NbtNumberNode {
     readonly [NbtNodeType]: NbtNodeTypeName = 'Byte'
     protected readonly suffixConfigKey = 'nbtByteSuffix';
 
-    [ToFormattedString](lint: LintConfig): string {
+    [GetFormattedString](lint: LintConfig): string {
         const lowerCasedString = this.toString().toLowerCase()
         if (lowerCasedString === 'false' || lowerCasedString === 'true') {
             return lowerCasedString
         }
-        return super[ToFormattedString](lint)
+        return super[GetFormattedString](lint)
     }
 }
 

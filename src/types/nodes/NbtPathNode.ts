@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
 import { toFormattedString, quoteString } from '../../utils/utils'
 import NbtCompoundNode from './map/NbtCompoundNode'
@@ -28,7 +28,7 @@ export default class NbtPathNode extends ArgumentNode {
         super()
     }
 
-    [ToFormattedString](lint: LintConfig): string {
+    [GetFormattedString](lint: LintConfig): string {
         let ans = ''
         for (const value of this.value) {
             if (value === NbtPathIndexBegin) {
@@ -40,7 +40,7 @@ export default class NbtPathNode extends ArgumentNode {
             } else if (isNbtPathCompoundFilter(value) || isNbtPathIndex(value)) {
                 ans += toFormattedString(value, lint)
             } else {
-                ans += value[ToFormattedString]()
+                ans += value[GetFormattedString]()
             }
         }
         return ans

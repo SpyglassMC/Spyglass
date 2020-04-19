@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../../types/Config'
 import NbtFloatNode from '../../../../types/nodes/nbt/NbtFloatNode'
-import { ToFormattedString } from '../../../../types/Formattable'
+import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtFloatNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
@@ -10,7 +10,7 @@ describe('NbtFloatNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtFloatSuffix: 'f' } })
             const node = new NbtFloatNode(null, 1, '1.00')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '1.00f')
         })
@@ -18,7 +18,7 @@ describe('NbtFloatNode Tests', () => {
             const { lint } = constructConfig({ lint: { nbtFloatSuffix: 'F' } })
             const node = new NbtFloatNode(null, 1, '1.00')
 
-            const actual = node[ToFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '1.00F')
         })

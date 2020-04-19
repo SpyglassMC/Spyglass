@@ -3,7 +3,7 @@ import path from 'path'
 import { describe, it } from 'mocha'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import { constructConfig } from '../../../types/Config'
-import { ToFormattedString } from '../../../types/Formattable'
+import { GetFormattedString } from '../../../types/Formattable'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
@@ -32,27 +32,23 @@ describe('IdentityNode Tests', () => {
     })
     describe('[ToLintedString]() Tests', () => {
         it('Should omit default namespace', () => {
-            const { lint } = constructConfig({ lint: { omitDefaultNamespace: true } })
-            const id = new IdentityNode('minecraft', ['foo', 'bar'])
-            const actual = id[ToFormattedString](lint)
+            const id = new IdentityNode(undefined, ['foo', 'bar'])
+            const actual = id[GetFormattedString]()
             assert(actual === 'foo/bar')
         })
         it('Should not omit default namespace', () => {
-            const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
             const id = new IdentityNode('minecraft', ['foo', 'bar'])
-            const actual = id[ToFormattedString](lint)
+            const actual = id[GetFormattedString]()
             assert(actual === 'minecraft:foo/bar')
         })
         it('Should deal with other namespaces', () => {
-            const { lint } = constructConfig({ lint: { omitDefaultNamespace: true } })
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id[ToFormattedString](lint)
+            const actual = id[GetFormattedString]()
             assert(actual === 'spgoding:foo/bar')
         })
         it('Should contain the tag symbol', () => {
-            const { lint } = constructConfig({ lint: { omitDefaultNamespace: false } })
             const id = new IdentityNode('spgoding', ['foo', 'bar'], true)
-            const actual = id[ToFormattedString](lint)
+            const actual = id[GetFormattedString]()
             assert(actual === '#spgoding:foo/bar')
         })
     })

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import VectorNode from '../../types/nodes/VectorNode'
-import { ToFormattedString } from '../../types/Formattable'
+import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
+import { GetFormattedString } from '../../types/Formattable'
 import { $ } from '../utils'
 
 describe('Vector Tests', () => {
@@ -9,11 +9,11 @@ describe('Vector Tests', () => {
         it('Should return correctly', () => {
             const vector = $(new VectorNode(), {
                 length: 3,
-                0: { value: '', type: 'local' },
-                1: { value: '1', type: 'relative' },
-                2: { value: '-.5', type: 'absolute' }
+                0: new VectorElementNode(VectorElementType.Local, 0, ''),
+                1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                2: new VectorElementNode(VectorElementType.Absolute, -0.5, '-.5'),
             })
-            const actual = vector[ToFormattedString]({} as any)
+            const actual = vector[GetFormattedString]()
             assert(actual === '^ ~1 -.5')
         })
     })

@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, Memento, window, commands, Uri } from 'vscode'
+import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, window, commands, Uri } from 'vscode'
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
 

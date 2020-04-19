@@ -1,5 +1,5 @@
 import { LintConfig } from '../Config'
-import Formattable, { ToFormattedString } from '../Formattable'
+import Formattable, { GetFormattedString } from '../Formattable'
 
 export default class NumberRangeNode implements Formattable {
     constructor(
@@ -8,7 +8,7 @@ export default class NumberRangeNode implements Formattable {
         readonly max?: number
     ) { }
 
-    [ToFormattedString](_lint: LintConfig) {
+    [GetFormattedString](_lint: LintConfig) {
         if (this.min !== undefined && this.min === this.max) {
             return this.min.toString()
         } else {

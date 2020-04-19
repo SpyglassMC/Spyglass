@@ -1,7 +1,7 @@
 import https from 'https'
 import StringReader from './StringReader'
 import { CompletionItem, CodeActionKind, Diagnostic } from 'vscode-languageserver'
-import { ToFormattedString } from '../types/Formattable'
+import { GetFormattedString, isFormattable } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { ToJsonString } from '../types/JsonConvertible'
 import { locale } from '../locales/Locales'
@@ -165,10 +165,12 @@ export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c):
  * @param value Any value.
  */
 export function toFormattedString(value: any, lint: LintConfig): string {
-    if (value && value[ToFormattedString]) {
-        return value[ToFormattedString](lint)
-    } else {
+    if (isFormattable(value)) {
+        return value[GetFormattedString](lint)
+    } else if (value) {
         return value.toString()
+    } else {
+        return ''
     }
 }
 

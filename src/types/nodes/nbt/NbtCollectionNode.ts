@@ -1,5 +1,5 @@
 import NbtNode from './NbtNode'
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
 import MapNode, { BracketType } from '../map/MapNode'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
@@ -41,7 +41,7 @@ export default abstract class NbtCollectionNode<T extends NbtNode> extends NbtNo
         return MapNode.getFormattedBracket(this.chars.openBracket, BracketType.open, bracketSpacingConfig)
     }
 
-    [ToFormattedString](lint: LintConfig) {
+    [GetFormattedString](lint: LintConfig) {
         const bracketSpacingConfig = lint[this.configKeys.bracketSpacing] as BracketSpacingConfig
         const sepSpacingConfig = lint[this.configKeys.sepSpacing] as SepSpacingConfig
         const trailingPairSepConfig = lint[this.configKeys.trailingPairSep] as boolean

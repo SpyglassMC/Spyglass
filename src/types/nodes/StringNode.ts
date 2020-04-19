@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import IndexMapping from '../IndexMapping'
 import { Diagnostic, CodeAction } from 'vscode-languageserver'
@@ -25,7 +25,7 @@ export default class StringNode extends ArgumentNode {
         return this.value
     }
 
-    [ToFormattedString]() {
+    [GetFormattedString]() {
         return this.toString()
     }
 

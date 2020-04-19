@@ -1,4 +1,4 @@
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import NbtPrimitiveNode from './NbtPrimitiveNode'
 import { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from '../ArgumentNode'
 import { NbtNodeType } from './NbtNode'
@@ -19,7 +19,7 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> implements S
         super(superNbt, value, raw)
     }
 
-    [ToFormattedString]() {
+    [GetFormattedString]() {
         return this.toString()
     }
 

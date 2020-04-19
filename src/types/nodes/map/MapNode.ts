@@ -1,5 +1,5 @@
 import { LintConfig } from '../../Config'
-import { ToFormattedString } from '../../Formattable'
+import { GetFormattedString } from '../../Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions, DiagnosticMap } from '../ArgumentNode'
@@ -15,6 +15,7 @@ export const IsMapNodeSorted = Symbol('IsMapNodeSorted')
 export const ConfigKeys = Symbol('ConfigKeys')
 export const Chars = Symbol('Chars')
 export const Keys = Symbol('KeysData')
+export const UnsortedKeys = Symbol('UnsortedKeys')
 
 export default abstract class MapNode<KI, V> extends ArgumentNode {
     [key: string]: V
@@ -22,6 +23,8 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
     readonly [NodeType]: string = 'Map'
 
     readonly [Keys]: { [key: string]: KI } = {}
+
+    readonly [UnsortedKeys]: (keyof this)[] = []
 
     protected abstract [ConfigKeys]: {
         bracketSpacing: keyof LintConfig,
@@ -69,7 +72,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return keys.slice(1).every((v, i) => v.toLowerCase() >= keys[i].toLowerCase())
     }
 
-    [ToFormattedString](lint: LintConfig, sort = false) {
+    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys]) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
         const sepSpacingConfig = lint[this[ConfigKeys].sepSpacing] as SepSpacingConfig
         const pairSepSpacingConfig = lint[this[ConfigKeys].pairSepSpacing] as SepSpacingConfig
@@ -81,11 +84,17 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         const pairSep = MapNode.getFormattedSep(this[Chars].pairSep, pairSepSpacingConfig)
 
         const content: string[] = []
-        const keys = sort ? Object.keys(this).sort((a, b) => a <= b ? -1 : 1) : Object.keys(this)
+        const arrayValueCursor: { [key in keyof this]?: number } = {}
         for (const key of keys) {
             /* istanbul ignore else */
             if (this.hasOwnProperty(key)) {
-                const value = this[key]
+                let value = this[key]
+                if (value instanceof Array) {
+                    if (arrayValueCursor[key] === undefined) {
+                        arrayValueCursor[key] = 0
+                    }
+                    value = value[arrayValueCursor[key]!++]
+                }
                 content.push(`${toFormattedString(key, lint)}${sep}${toFormattedString(value, lint)}`)
             }
         }

@@ -1,5 +1,5 @@
 import path from 'path'
-import { ToFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import { ClientCache, CacheKey } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { sep } from 'path'
@@ -24,7 +24,7 @@ export default class IdentityNode extends ArgumentNode {
         super()
     }
 
-    [ToFormattedString](_lint?: LintConfig): string {
+    [GetFormattedString](_lint?: LintConfig): string {
         let id
         if (this.namespace) {
             id = `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`

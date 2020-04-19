@@ -1,10 +1,10 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../types/Config'
 import { describe, it } from 'mocha'
-import { ToFormattedString } from '../../types/Formattable'
+import { GetFormattedString } from '../../types/Formattable'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import ParticleNode from '../../types/nodes/ParticleNode'
-import VectorNode from '../../types/nodes/VectorNode'
+import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
 import { $ } from '../utils'
 
 describe('Particle Tests', () => {
@@ -14,7 +14,7 @@ describe('Particle Tests', () => {
             const particle = new ParticleNode(
                 new IdentityNode('minecraft', ['mob_effect'])
             )
-            const actual = particle[ToFormattedString](lint)
+            const actual = particle[GetFormattedString](lint)
             assert(actual === 'minecraft:mob_effect')
         })
         it('Should return for extra data', () => {
@@ -23,13 +23,13 @@ describe('Particle Tests', () => {
                 new IdentityNode('minecraft', ['dust']),
                 $(new VectorNode(), {
                     length: 4,
-                    0: { value: '0.93', type: 'absolute' },
-                    1: { value: '0.40', type: 'absolute' },
-                    2: { value: '0.80', type: 'absolute' },
-                    3: { value: '1.00', type: 'absolute' }
+                    0: new VectorElementNode(VectorElementType.Absolute, 0.93, '0.93'),
+                    1: new VectorElementNode(VectorElementType.Absolute, 0.40, '0.40'),
+                    2: new VectorElementNode(VectorElementType.Absolute, 0.80, '0.80'),
+                    3: new VectorElementNode(VectorElementType.Absolute, 1.00, '1.00'),
                 })
             )
-            const actual = particle[ToFormattedString](lint)
+            const actual = particle[GetFormattedString](lint)
             assert(actual === 'minecraft:dust 0.93 0.40 0.80 1.00')
         })
     })

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
-import { ToFormattedString } from '../../../types/Formattable'
+import { GetFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import BlockNode from '../../../types/nodes/BlockNode'
 import BlockStateNode from '../../../types/nodes/map/BlockStateMapNode'
@@ -22,7 +22,7 @@ describe('BlockNode Tests', () => {
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone'])
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone')
         })
         it('Should return block ID and block states', () => {
@@ -39,7 +39,7 @@ describe('BlockNode Tests', () => {
                     snowy: 'true'
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true]')
         })
         it('Should return block ID and nbt compound tag', () => {
@@ -57,7 +57,7 @@ describe('BlockNode Tests', () => {
                     Lock: new NbtStringNode(null, 'test', '"test"', [])
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone{Lock: "test"}')
         })
         it('Should return block ID, block states and nbt compound tag', () => {
@@ -77,7 +77,7 @@ describe('BlockNode Tests', () => {
                     Lock: new NbtStringNode(null, 'test', '"test"', [])
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true,age=7]{Lock: "test"}')
         })
         it('Should append spaces after the comma in block states', () => {
@@ -94,7 +94,7 @@ describe('BlockNode Tests', () => {
                     snowy: 'true', age: '7'
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true, age=7]')
         })
         it('Should put spaces around the equal sign in block states', () => {
@@ -111,7 +111,7 @@ describe('BlockNode Tests', () => {
                     snowy: 'true', age: '7'
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy = true,age = 7]')
         })
         it('Should sort keys in block states', () => {
@@ -128,7 +128,7 @@ describe('BlockNode Tests', () => {
                     snowy: 'true', age: '7'
                 })
             )
-            const actual = block[ToFormattedString](lint)
+            const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[age=7,snowy=true]')
         })
     })
