@@ -45,7 +45,7 @@ function getCache(type: DataType) {
 }
 
 function getDefault(type: DataType) {
-    return import(`./${type}.json`)
+    return require(`./${type}.json`)
 }
 
 function getVersion(version: string, options: VanillaReportOptions) {
@@ -109,12 +109,12 @@ export async function getReport(type: DataType, versionOrLiteral: string, option
                 }
             } catch (e) {
                 console.warn(`[${type}] Error occurred: ${e} (${++faildTimes}/${MaxFaildTimes})`)
-                const ans = await getDefault(type)
+                const ans = getDefault(type)
                 console.info(`[${type}] Used the default one for ${versionOrLiteral}.`)
                 return ans
             }
         } else {
-            const ans = await getDefault(type)
+            const ans = getDefault(type)
             return ans
         }
     }
