@@ -32,7 +32,7 @@ export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
                 switch (this.type) {
                     case 'bossbar':
                     case 'storage':
-                        token = TokenType.namespacedID
+                        token = TokenType.identity
                         id = IdentityNode.fromString(id).toString()
                         break
                     case 'entity':

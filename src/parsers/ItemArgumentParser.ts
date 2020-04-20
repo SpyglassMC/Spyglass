@@ -48,7 +48,7 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
             const tagResult = ctx.parsers.get('Nbt', ['Compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
-            ans.data.nbt = tag
+            ans.data.tag = tag
         }
     }
 

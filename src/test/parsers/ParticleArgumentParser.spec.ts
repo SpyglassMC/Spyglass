@@ -116,7 +116,7 @@ describe('ParticleArgumentParser Tests', () => {
             ), [0, 32]))
         })
         it('Should return completions at the beginning of input', async () => {
-            const config = constructConfig({ lint: { omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
             const ctx = await constructContext({ parsers, config, registry: registries, cursor: 0 })
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
@@ -124,8 +124,7 @@ describe('ParticleArgumentParser Tests', () => {
                 [
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'cloud',

@@ -670,8 +670,12 @@ export default class NbtdocHelper {
             case 'minecraft:villager_profession':
             case 'minecraft:villager_type':
                 return registry
+            case 'minecraft:attribute':
+                return 'minecraft:attributes'
             case 'minecraft:block_entity':
                 return 'minecraft:block_entity_type'
+            case 'minecraft:dimension':
+                return 'minecraft:dimension_type'
             case 'minecraft:entity':
                 return 'minecraft:entity_type'
             case 'minecraft:loot_table':

@@ -1,5 +1,6 @@
 import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType } from './ArgumentNode'
+import { LintConfig } from '../Config'
 
 export default class NumberNode extends ArgumentNode {
     readonly [NodeType]: string = 'Number'
@@ -19,7 +20,7 @@ export default class NumberNode extends ArgumentNode {
         return this.value
     }
 
-    [GetFormattedString]() {
+    [GetFormattedString](_lint: LintConfig) {
         return this.toString()
     }
 }

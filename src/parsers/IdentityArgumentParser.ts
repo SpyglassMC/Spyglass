@@ -81,7 +81,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
             const type = this.type.slice(1) as CacheKey
             idPool.push(...Object.keys(getSafeCategory(cache, type)))
             if (config.env.dependsOnVanilla) {
-                tagPool.push(...this.getVanillaPool(type, vanilla))
+                idPool.push(...this.getVanillaPool(type, vanilla))
             }
         } else {
             const registry = registries[this.type]
@@ -173,7 +173,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unexpected-default-namespace'),
-                    undefined, severity, ActionCode.IdOmitDefaultNamespace
+                    undefined, severity, ActionCode.IdentityOmitDefaultNamespace
                 ))
             }
             //#endregion
@@ -186,7 +186,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unexpected-omitted-default-namespace'),
-                    undefined, severity, ActionCode.IdCompleteDefaultNamespace
+                    undefined, severity, ActionCode.IdentityCompleteDefaultNamespace
                 ))
             }
         }
@@ -276,13 +276,11 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         }
         complNamespaces.forEach(k => void ans.completions.push({
             label: k,
-            kind: CompletionItemKind.Module,
-            commitCharacters: [IdentityNode.NamespaceDelimiter]
+            kind: CompletionItemKind.Module
         }))
         complFolders.forEach(k => void ans.completions.push({
             label: k,
-            kind: CompletionItemKind.Folder,
-            commitCharacters: ['/']
+            kind: CompletionItemKind.Folder
         }))
         complFiles.forEach(k => void ans.completions.push({
             label: k,
@@ -291,12 +289,23 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         //#endregion
 
         //#region Tokens.
-        ans.tokens.push(Token.from(start, reader, TokenType.namespacedID))
+        ans.tokens.push(Token.from(start, reader, TokenType.identity))
         //#endregion
 
         //#region Range.
         ans.data[NodeRange] = { start, end: reader.cursor }
         //#endregion
+
+        if (reader.cursor === start) {
+            ans.errors.push(new ParsingError(
+                { start, end: start + 1 },
+                locale('expected-got',
+                    locale('identity'),
+                    locale('nothing')
+                ),
+                false
+            ))
+        }
 
         return ans
     }

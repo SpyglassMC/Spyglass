@@ -6,17 +6,20 @@ import IdentityNode from '../types/nodes/IdentityNode'
 import MapParser from './MapParser'
 import NumberRangeNode from '../types/nodes/NumberRangeNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { ActionCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
-import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresNode, SelectorArgumentNodeChars, SelectorAdvancementsNode, SelectorCriteriaNode } from '../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresNode, SelectorArgumentNodeChars, SelectorAdvancementsNode, SelectorCriteriaNode } from '../types/nodes/map/SelectorArgumentsNode'
 import { StringType } from './StringArgumentParser'
-import { Keys, UnsortedKeys } from '../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys, IsMapSorted } from '../types/nodes/map/MapNode'
 import StringNode from '../types/nodes/StringNode'
 import { arrayToCompletions } from '../utils/utils'
 import { LintConfig } from '../types/Config'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import NumberNode from '../types/nodes/NumberNode'
+import { getNbtdocRegistryId } from '../CommandTree'
 
 export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
     static identity = 'Entity'
@@ -107,6 +110,8 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
             }
         }
 
+        ans.data[NodeRange] = { start, end: reader.cursor }
+
         return ans
     }
 
@@ -156,6 +161,8 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
             const pushSafely = (ans: ArgumentParserResult<SelectorArgumentsNode>, key: any, result: any) => {
                 ans.data[key] = ans.data[key] || []
                 ans.data[key].push(result.data)
+                ans.data[UnsortedKeys].pop()
+                ans.data[UnsortedKeys].push(key)
             }
             const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentsNode>, parser: ArgumentParser<any>, key: string) => {
                 const keyNeg = `${key}Neg`
@@ -204,7 +211,9 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         .get('String', [StringType.String, SelectorArgumentKeys, 'selectorKeyQuote', 'selectorKeyQuoteType'])
                         .parse(reader, ctx) as ArgumentParserResult<StringNode>
                     const key = result.data.value
-                    ans.data[Keys][key] = result.data
+                    if (key) {
+                        ans.data[Keys][key] = result.data
+                    }
                     result.tokens = [Token.from(start, reader, TokenType.property)]
                     return { ...result, data: key }
                 },
@@ -218,14 +227,13 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         result.tokens = [Token.from(start, reader, TokenType.string)]
                         combineArgumentParserResult(ans, result)
                     } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
-                        const start = reader.cursor
-                        const value = reader.readFloat()
-                        ans.data[key] = value
-                        ans.tokens.push(Token.from(start, reader, TokenType.number))
+                        const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float']).parse(reader, ctx)
+                        ans.data[key] = result.data
+                        combineArgumentParserResult(ans, result)
                     } else if (key === 'limit') {
-                        const result = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
-                        ans.data.limit = result.data as number
-                        if (ans.data.limit === 1) {
+                        const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['integer', 1]).parse(reader, ctx)
+                        ans.data.limit = result.data
+                        if (ans.data.limit.valueOf() === 1) {
                             isMultiple = false
                         } else {
                             isMultiple = true
@@ -236,9 +244,8 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                     } else if (key === 'name') {
                         dealWithNegativableArray(ans, ctx.parsers.get('String', [StringType.String, null, 'stringQuote', 'stringQuoteType']), key)
                     } else if (key === 'nbt') {
-                        // FIXME
                         dealWithNegativableArray(ans, ctx.parsers.get('Nbt', [
-                            'Compound', 'entities', 'base', ctx.nbt, true
+                            'Compound', 'minecraft:entity', getNbtdocRegistryId(ans.data), true
                         ]), key)
                     } else if (key === 'predicate') {
                         dealWithNegativableArray(ans, ctx.parsers.get('Identity', ['$predicates']), key)
@@ -272,7 +279,9 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                     .get('Identity', ['$advancements'])
                                     .parse(reader, ctx)
                                 const adv = result.data.toString()
-                                ans.data[Keys][adv] = result.data
+                                if (adv) {
+                                    ans.data[Keys][adv] = result.data
+                                }
                                 return { ...result, data: adv }
                             },
                             (ans, reader, ctx, adv) => {
@@ -290,7 +299,9 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                                 .parse(reader, ctx)
                                             result.tokens = [Token.from(start, reader, TokenType.property)]
                                             const crit = result.data.value
-                                            ans.data[Keys][crit] = result.data
+                                            if (crit) {
+                                                ans.data[Keys][crit] = result.data
+                                            }
                                             return { ...result, data: crit }
                                         },
                                         (ans, reader, ctx, crit) => {
@@ -342,15 +353,15 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
             ans.data.argument = argumentAns.data
             combineArgumentParserResult(ans, argumentAns)
 
-            const severity = EntityArgumentParser.getUnsortedSeverity(ctx.config.lint, ans.data.argument[UnsortedKeys])
-            if (severity !== null) {
+            if (ctx.config.lint.selectorSortKeys && !ans.data.argument[IsMapSorted](ctx.config.lint)) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
-                        locale('punc.quote', 'selectorSortKeys')
+                        locale('punc.quote', 'datapack.lint.selectorSortKeys')
                     ),
-                    undefined, severity
+                    undefined, getDiagnosticSeverity(ctx.config.lint.selectorSortKeys[0]),
+                    ActionCode.SelectorSortKeys
                 ))
             }
         }
@@ -370,27 +381,13 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
             ))
         }
 
+        ans.data[NodeRange] = { start, end: reader.cursor }
+
         return ans
     }
 
     private static isVariable(value: string): value is 'p' | 'a' | 'r' | 's' | 'e' {
         return (value === 'p' || value === 'a' || value === 'r' || value === 's' || value === 'e')
-    }
-
-    static getUnsortedSeverity(lint: LintConfig, actual: (keyof SelectorArgumentsNode)[]) {
-        if (lint.selectorSortKeys) {
-            const [severity, expected] = lint.selectorSortKeys
-            let i = 0
-            for (const actualKey of actual) {
-                while (actualKey !== expected[i]) {
-                    i++
-                    if (i >= expected.length) {
-                        return getDiagnosticSeverity(severity)
-                    }
-                }
-            }
-        }
-        return null
     }
 
     getExamples(): string[] {

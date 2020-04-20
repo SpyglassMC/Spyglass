@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NbtPathNode, { NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep } from '../../types/nodes/NbtPathNode'
+import NbtPathNode from '../../types/nodes/NbtPathNode'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
@@ -11,8 +11,10 @@ import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
 import { NodeRange } from '../../types/nodes/ArgumentNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
-import { Keys } from '../../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
+import { $ } from '../utils'
+import NumberNode from '../../types/nodes/NumberNode'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -24,9 +26,7 @@ describe('NbtPathArgumentParser Tests', () => {
     })
 
     const parsers = new ArgumentParserManager()
-    let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ parsers })
     })
     describe('parse() Tests', () => {
         it('Should parse a simple key', () => {
@@ -35,8 +35,9 @@ describe('NbtPathArgumentParser Tests', () => {
 
             const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [0, 1, 2])
             expectedKey[NodeRange] = { start: 0, end: 3 }
-            const expected = new NbtPathNode([expectedKey])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 3 }
+            expected.push(expectedKey)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -49,20 +50,16 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('{ foo : 1b }')
 
-            const expectedCompound = new NbtCompoundNode(null)
-            expectedCompound[NodeRange] = { start: 0, end: 12 }
-            const expectedFoo = new NbtByteNode(expectedCompound, 1, '1')
-            expectedFoo[NodeRange] = { start: 8, end: 10 }
-            expectedCompound.foo = expectedFoo
-            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [2, 3, 4])
-            expectedFooKey[NodeRange] = { start: 2, end: 5 }
-            expectedCompound[Keys].foo = expectedFooKey
-            const expected = new NbtPathNode([expectedCompound])
-            expected[NodeRange] = { start: 0, end: 12 }
-
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
-            assert.deepStrictEqual(data, expected)
+            assert.deepStrictEqual(data, $(new NbtPathNode(), [0, 12], {
+                length: 1,
+                0: $(new NbtCompoundNode(null), [0, 12], v => $(v, {
+                    [UnsortedKeys]: ['foo'],
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [2, 3, 4]), [2, 5]) },
+                    foo: $(new NbtByteNode(v, 1, '1'), [8, 10])
+                }))
+            }))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
             assert.deepStrictEqual(completions, [])
@@ -71,8 +68,11 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('[ -1 ]')
 
-            const expected = new NbtPathNode([NbtPathIndexBegin, -1, NbtPathIndexEnd])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 6 }
+            expected.push(NbtPathNode.IndexBegin)
+            expected.push($(new NumberNode(-1, '-1'), [2, 4]))
+            expected.push(NbtPathNode.IndexEnd)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -93,8 +93,12 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [4, 5, 6])
             expectedFooKey[NodeRange] = { start: 4, end: 7 }
             expectedCompound[Keys].foo = expectedFooKey
-            const expected = new NbtPathNode([NbtPathIndexBegin, expectedCompound, NbtPathIndexEnd])
+            expectedCompound[UnsortedKeys].push('foo')
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 16 }
+            expected.push(NbtPathNode.IndexBegin)
+            expected.push(expectedCompound)
+            expected.push(NbtPathNode.IndexEnd)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -118,9 +122,12 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [5, 6, 7])
             expectedFooKey[NodeRange] = { start: 5, end: 8 }
             expectedCompound[Keys].foo = expectedFooKey
+            expectedCompound[UnsortedKeys].push('foo')
 
-            const expected = new NbtPathNode([expectedKey, expectedCompound])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 15 }
+            expected.push(expectedKey)
+            expected.push(expectedCompound)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -138,8 +145,11 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedKey2 = new NbtCompoundKeyNode(null, 'crazy key', '"crazy key"', [5, 6, 7, 8, 9, 10, 11, 12, 13])
             expectedKey2[NodeRange] = { start: 4, end: 15 }
 
-            const expected = new NbtPathNode([expectedKey1, NbtPathSep, expectedKey2])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 15 }
+            expected.push(expectedKey1)
+            expected.push(NbtPathNode.Sep)
+            expected.push(expectedKey2)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -163,9 +173,13 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [2, 3, 4])
             expectedFooKey[NodeRange] = { start: 2, end: 5 }
             expectedCompound[Keys].foo = expectedFooKey
+            expectedCompound[UnsortedKeys].push('foo')
 
-            const expected = new NbtPathNode([expectedCompound, NbtPathSep, expectedKey])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 16 }
+            expected.push(expectedCompound)
+            expected.push(NbtPathNode.Sep)
+            expected.push(expectedKey)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepStrictEqual(data, expected)
@@ -180,8 +194,12 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [3, 4, 5])
             expectedKey[NodeRange] = { start: 3, end: 6 }
 
-            const expected = new NbtPathNode([NbtPathIndexBegin, NbtPathIndexEnd, NbtPathSep, expectedKey])
+            const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 6 }
+            expected.push(NbtPathNode.IndexBegin)
+            expected.push(NbtPathNode.IndexEnd)
+            expected.push(NbtPathNode.Sep)
+            expected.push(expectedKey)
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
             assert.deepStrictEqual(data, expected)
@@ -205,14 +223,17 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', [9, 10, 11])
                 expectedKey2[NodeRange] = { start: 9, end: 12 }
 
-                const expected = new NbtPathNode([expectedKey1, NbtPathSep, expectedKey2])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 12 }
+                expected.push(expectedKey1)
+                expected.push(NbtPathNode.Sep)
+                expected.push(expectedKey2)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(data, expected)
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
-                        { start: 9, end: 10 },
+                        { start: 9, end: 12 },
                         'Keys are only used for compound tags',
                         true, DiagnosticSeverity.Warning
                     )
@@ -230,8 +251,10 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 8, end: 12 }
 
-                const expected = new NbtPathNode([expectedKey, expectedCompound])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 12 }
+                expected.push(expectedKey)
+                expected.push(expectedCompound)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -253,8 +276,11 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', [0, 1, 2, 3, 4, 5, 6, 7])
                 expectedKey[NodeRange] = { start: 0, end: 8 }
 
-                const expected = new NbtPathNode([expectedKey, NbtPathIndexBegin, NbtPathIndexEnd])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 10 }
+                expected.push(expectedKey)
+                expected.push(NbtPathNode.IndexBegin)
+                expected.push(NbtPathNode.IndexEnd)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(data, expected)
@@ -272,11 +298,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('')
 
-                const expected = new NbtPathNode([])
-                expected[NodeRange] = { start: 0, end: 0 }
-
-                const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepStrictEqual(data, expected)
+                const { errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
@@ -291,11 +313,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('')
 
-                const expected = new NbtPathNode([])
-                expected[NodeRange] = { start: 0, end: 0 }
-
-                const { data, errors, cache, completions } = parser.parse(reader, ctx)
-                assert.deepStrictEqual(data, expected)
+                const { errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 1 },
@@ -306,14 +324,14 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [
                     {
                         label: 'addition',
-                        detail: 'Type: Boolean',
+                        detail: 'Type: boolean',
                         documentation: 'The additional boolean',
                         insertText: 'addition',
                         kind: CompletionItemKind.Property
                     },
                     {
                         label: 'CustomModelData',
-                        detail: 'Type: Int',
+                        detail: 'Type: int',
                         documentation: 'The custom model data for this item',
                         insertText: 'CustomModelData',
                         kind: CompletionItemKind.Property
@@ -331,8 +349,15 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 0, end: 3 }
 
-                const expected = new NbtPathNode([expectedCompound, NbtPathSep, expectedKey, NbtPathIndexBegin, 1, NbtPathIndexEnd, NbtPathSep])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 18 }
+                expected.push(expectedCompound)
+                expected.push(NbtPathNode.Sep)
+                expected.push(expectedKey)
+                expected.push(NbtPathNode.IndexBegin)
+                expected.push($(new NumberNode(1, '1'), [14, 15]))
+                expected.push(NbtPathNode.IndexEnd)
+                expected.push(NbtPathNode.Sep)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
@@ -347,7 +372,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [
                     {
                         label: 'foo',
-                        detail: 'Type: Boolean',
+                        detail: 'Type: boolean',
                         documentation: 'The only field of this compound',
                         insertText: 'foo',
                         kind: CompletionItemKind.Property
@@ -361,8 +386,9 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedKey = new NbtCompoundKeyNode(null, 'bar', 'bar', [0, 1, 2])
                 expectedKey[NodeRange] = { start: 0, end: 3 }
 
-                const expected = new NbtPathNode([expectedKey])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 3 }
+                expected.push(expectedKey)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(data, expected)
@@ -383,8 +409,9 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedKey = new NbtCompoundKeyNode(null, 'non-existent', 'non-existent', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
                 expectedKey[NodeRange] = { start: 0, end: 12 }
 
-                const expected = new NbtPathNode([expectedKey])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 12 }
+                expected.push(expectedKey)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(data, expected)
@@ -402,8 +429,9 @@ describe('NbtPathArgumentParser Tests', () => {
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 11, end: 14 }
 
-                const expected = new NbtPathNode([expectedKey, NbtPathSep, NbtPathIndexBegin, expectedCompound, NbtPathIndexEnd])
+                const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 16 }
+                expected.push(expectedKey, NbtPathNode.Sep, NbtPathNode.IndexBegin, expectedCompound, NbtPathNode.IndexEnd)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
 

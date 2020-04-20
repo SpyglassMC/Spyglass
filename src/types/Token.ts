@@ -8,7 +8,7 @@ export enum TokenType {
     entity,
     keyword,
     literal,
-    namespacedID,
+    identity,
     number,
     operator,
     property,

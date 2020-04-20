@@ -1,60 +1,45 @@
 import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
-import { toFormattedString, quoteString } from '../../utils/utils'
+import { toFormattedString } from '../../utils/utils'
 import NbtCompoundNode from './map/NbtCompoundNode'
 import ArgumentNode, { NodeType } from './ArgumentNode'
 import NbtCompoundKeyNode from './map/NbtCompoundKeyNode'
+import NumberNode from './NumberNode'
 
-export const NbtPathIndexBegin = Symbol('NbtPathIndexBegin')
-export const NbtPathIndexEnd = Symbol('NbtPathIndexEnd')
-export const NbtPathSep = Symbol('NbtPathSep')
-type NbtPathIndex = number
-type NbtPathCompoundFilter = NbtCompoundNode
-type NbtPathKey = NbtCompoundKeyNode
+type NbtPathElement =
+    | typeof NbtPathNode.IndexBegin
+    | typeof NbtPathNode.IndexEnd
+    | typeof NbtPathNode.Sep
+    | NumberNode
+    | NbtCompoundNode
+    | NbtCompoundKeyNode
 
-export default class NbtPathNode extends ArgumentNode {
+export default class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPathElement> {
+    [index: number]: NbtPathElement
+
+    static readonly IndexBegin = '['
+    static readonly IndexEnd = ']'
+    static readonly Sep = '.'
+
     readonly [NodeType] = 'NbtPath'
 
-    constructor(
-        readonly value: (
-            | typeof NbtPathIndexBegin
-            | typeof NbtPathIndexEnd
-            | typeof NbtPathSep
-            | NbtPathIndex
-            | NbtPathCompoundFilter
-            | NbtPathKey
-        )[]
-    ) {
-        super()
+    length = 0
+
+    push(...values: NbtPathElement[]) {
+        for (const value of values) {
+            this[this.length++] = value
+        }
+    }
+
+    *[Symbol.iterator](): Iterator<NbtPathElement, any, undefined> {
+        // You want me to call myself for iterating? Stupid!
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < this.length; i++) {
+            yield this[i]
+        }
     }
 
     [GetFormattedString](lint: LintConfig): string {
-        let ans = ''
-        for (const value of this.value) {
-            if (value === NbtPathIndexBegin) {
-                ans += '['
-            } else if (value === NbtPathIndexEnd) {
-                ans += ']'
-            } else if (value === NbtPathSep) {
-                ans += '.'
-            } else if (isNbtPathCompoundFilter(value) || isNbtPathIndex(value)) {
-                ans += toFormattedString(value, lint)
-            } else {
-                ans += value[GetFormattedString]()
-            }
-        }
-        return ans
+        return Array.prototype.map.call(this, (ele: NbtPathElement) => toFormattedString(ele, lint)).join('')
     }
-}
-
-export function isNbtPathIndex(value: any): value is NbtPathIndex {
-    return typeof value === 'number'
-}
-
-export function isNbtPathCompoundFilter(value: any): value is NbtPathCompoundFilter {
-    return value instanceof NbtCompoundNode
-}
-
-export function isNbtPathKey(value: any): value is NbtPathKey {
-    return typeof value === 'string'
 }

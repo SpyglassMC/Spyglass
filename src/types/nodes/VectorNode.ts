@@ -27,10 +27,10 @@ export class VectorElementNode extends NumberNode {
 }
 
 export default class VectorNode extends ArgumentNode implements ArrayLike<VectorElementNode> {
-    readonly [NodeType] = 'Vector';
-
     [index: number]: VectorElementNode
-    
+
+    readonly [NodeType] = 'Vector'
+
     length = 0
 
     constructor() {
@@ -61,7 +61,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         return ans
     }
 
-    [GetFormattedString]() {
-        return Array.prototype.map.call(this, (v: VectorElementNode) => v[GetFormattedString]()).join(' ')
+    [GetFormattedString](lint: LintConfig) {
+        return Array.prototype.map.call(this, (v: VectorElementNode) => v[GetFormattedString](lint)).join(' ')
     }
 }

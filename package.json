@@ -24,8 +24,8 @@
         "postinstall": "vscode-install",
         "release": "semantic-release",
         "release:dry": "semantic-release --dry-run",
-        "test:temp": "mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/parsers/StringArgumentParser.spec.ts",
-        "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register --timeout 10000 src/test/**/*.ts",
+        "test": "nyc mocha",
+        "test:w": "mocha --watch",
         "posttest": "nyc report --reporter=json",
         "watch": "webpack --watch --mode=\"development\""
     },
@@ -2087,7 +2087,7 @@
                 "description": "A literal argument"
             },
             {
-                "id": "namespacedID",
+                "id": "identity",
                 "description": "A namespaced ID"
             },
             {
@@ -2120,7 +2120,7 @@
                     "literal.firstArgument": [
                         "keyword.control.mcfunction"
                     ],
-                    "namespacedID": [
+                    "identity": [
                         "entity.name.function.mcfunction"
                     ],
                     "vector": [

@@ -13,7 +13,7 @@
     "expected-got": "Aspettato %0% ma ricevuto %1%",
     "failed-to-resolve-cache-id": "Fallito a risolvere namespace d'identificazione %1% in categoria cache %0%",
     "failed-to-resolve-registry-id": "Fallito a risolvere namespace d'identificazione %1% in registro %0%",
-    "id": "un namespace d'identificazione",
+    "identity": "un namespace d'identificazione",
     "integer": "un numero intero",
     "integer.between": "un numero intero da %0% a %1%",
     "key": "une chiave",

@@ -15,7 +15,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
+                    { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                 ]
             }],
             strings: [
@@ -37,7 +37,7 @@ describe('onDocumentFormatting() Tests', () => {
                 hint: { fix: [], options: [] }, tokens: [],
                 args: [
                     { parser: 'literal', data: 'fake' },
-                    { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
+                    { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                 ]
             }],
             strings: [
@@ -60,7 +60,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'wrong' },
-                        { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ],
                     errors: [
                         new ParsingError({ start: 0, end: 5 }, '')
@@ -70,7 +70,7 @@ describe('onDocumentFormatting() Tests', () => {
                     hint: { fix: [], options: [] }, tokens: [],
                     args: [
                         { parser: 'literal', data: 'fake' },
-                        { parser: 'namespacedID', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
                 }
             ],

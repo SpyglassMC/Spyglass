@@ -5,141 +5,90 @@ import { GetFormattedString } from '../../../types/Formattable'
 import EntityNode from '../../../types/nodes/EntityNode'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
-import SelectorArgumentsNode, { SelectorScoresNode, SelectorAdvancementsNode, SelectorCriteriaNode } from '../../../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode, { SelectorScoresNode, SelectorAdvancementsNode, SelectorCriteriaNode } from '../../../types/nodes/map/SelectorArgumentsNode'
 import { $ } from '../../utils'
+import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
+import NumberNode from '../../../types/nodes/NumberNode'
 
 describe('EntityNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
+        const { lint } = constructConfig({
+            lint: {
+                selectorBracketSpacing: { inside: 0 },
+                selectorCommaSpacing: { before: 0, after: 1 },
+                selectorEqualSpacing: { before: 0, after: 0 },
+                selectorTrailingComma: false
+            }
+        })
         it('Should return for plain entity', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    selectorBracketSpacing: { inside: 0 },
-                    selectorCommaSpacing: { before: 0, after: 1 },
-                    selectorEqualSpacing: { before: 0, after: 0 },
-                    selectorTrailingComma: false
-                }
-            })
-            const message = new EntityNode(
+            const node = new EntityNode(
                 'SPGoding'
             )
-            const actual = message[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
             assert(actual === 'SPGoding')
         })
-        it('Should return when the argument is empty', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    selectorBracketSpacing: { inside: 0 },
-                    selectorCommaSpacing: { before: 0, after: 1 },
-                    selectorEqualSpacing: { before: 0, after: 0 },
-                    selectorTrailingComma: false
-                }
-            })
-            const message = new EntityNode(
+        it('Should return correctly when the argument is empty', () => {
+            const node = new EntityNode(
                 undefined,
                 'a'
             )
-            const actual = message[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
             assert(actual === '@a')
         })
-        it('Should return according to entitySelectorKeyOrder', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    entitySelectorAppendSpaceAfterComma: false,
-                    entitySelectorPutSpacesAroundEqualSign: false,
-                    entitySelectorKeyOrder
-                }
-            })
-
-            const expectedArgument = new SelectorArgumentsNode()
-            expectedArgument.tag = ['a', 'b', 'c']
-            expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
-            expectedArgument.limit = 1
-
-            const expected = new EntityNode(
+        it('Should return correctly as the original order', () => {
+            const node = new EntityNode(
                 undefined,
                 'a',
-                expectedArgument
+                $(new SelectorArgumentsNode(), {
+                    tag: ['a', 'b', 'c'],
+                    typeNeg: [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])],
+                    limit: 1,
+                    [UnsortedKeys]: ['limit', 'tag', 'typeNeg', 'tag', 'typeNeg', 'tag']
+                })
             )
 
-            const actual = expected[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
-            assert(actual === '@a[limit=1,type=!minecraft:a,type=!minecraft:b,tag=a,tag=b,tag=c]')
-        })
-        it('Should return extra spaces', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    entitySelectorAppendSpaceAfterComma: true,
-                    entitySelectorPutSpacesAroundEqualSign: true,
-                    entitySelectorKeyOrder
-                }
-            })
-
-            const expectedArgument = new SelectorArgumentsNode()
-            expectedArgument.tag = ['a', 'b', 'c']
-            expectedArgument.typeNeg = [new IdentityNode('minecraft', ['a']), new IdentityNode('minecraft', ['b'])]
-            expectedArgument.limit = 1
-
-            const expected = new EntityNode(
-                undefined,
-                'a',
-                expectedArgument
-            )
-
-            const actual = expected[GetFormattedString](lint)
-
-            assert(actual === '@a[limit = 1, type = !minecraft:a, type = !minecraft:b, tag = a, tag = b, tag = c]')
+            assert(actual === '@a[limit=1, tag=a, type=!minecraft:a, tag=b, type=!minecraft:b, tag=c]')
         })
         it('Should return scores', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    entitySelectorAppendSpaceAfterComma: false,
-                    entitySelectorPutSpacesAroundEqualSign: false,
-                    entitySelectorKeyOrder
-                }
-            })
-
-            const expectedArgument = new SelectorArgumentsNode()
-            expectedArgument.scores = $(new SelectorScoresNode(), {
-                foo: new NumberRangeNode('integer', 0, undefined)
-            })
-
-            const expected = new EntityNode(
+            const node = new EntityNode(
                 undefined,
                 'a',
-                expectedArgument
+                $(new SelectorArgumentsNode(), {
+                    scores: $(new SelectorScoresNode(), {
+                        foo: new NumberRangeNode('integer', new NumberNode(0, '0'), undefined),
+                        [UnsortedKeys]: ['foo']
+                    }),
+                    [UnsortedKeys]: ['scores']
+                })
             )
 
-            const actual = expected[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
             assert(actual === '@a[scores={foo=0..}]')
         })
         it('Should return advancements', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    entitySelectorAppendSpaceAfterComma: false,
-                    entitySelectorPutSpacesAroundEqualSign: false,
-                    entitySelectorKeyOrder
-                }
-            })
-
-            const expectedArgument = new SelectorArgumentsNode()
-            expectedArgument.advancements = $(new SelectorAdvancementsNode(), {
-                foo: true,
-                bar: $(new SelectorCriteriaNode(), {
-                    baz: true,
-                    qux: false
-                })
-            })
-
-            const expected = new EntityNode(
+            const node = new EntityNode(
                 undefined,
                 'a',
-                expectedArgument
+                $(new SelectorArgumentsNode(), {
+                    advancements: $(new SelectorAdvancementsNode(), {
+                        foo: true,
+                        bar: $(new SelectorCriteriaNode(), {
+                            baz: true,
+                            qux: false,
+                            [UnsortedKeys]: ['baz', 'qux']
+                        }),
+                        [UnsortedKeys]: ['foo', 'bar']
+                    }),
+                    [UnsortedKeys]: ['advancements']
+                })
             )
 
-            const actual = expected[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
 
-            assert(actual === '@a[advancements={foo=true,bar={baz=true,qux=false}}]')
+            assert(actual === '@a[advancements={foo=true, bar={baz=true, qux=false}}]')
         })
     })
 })

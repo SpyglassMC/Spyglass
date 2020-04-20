@@ -1,4 +1,4 @@
-import MapNode, { ConfigKeys, Chars } from './MapNode'
+import MapNode, { ConfigKeys, Chars, UnsortedKeys, IsMapSorted } from './MapNode'
 import { LintConfig } from '../../Config'
 import { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from '../ArgumentNode'
 import NumberRangeNode from '../NumberRangeNode'
@@ -9,13 +9,13 @@ import StringNode from '../StringNode'
 import FunctionInfo from '../../FunctionInfo'
 import TextRange from '../../TextRange'
 import { ActionCode } from '../../ParsingError'
-import { getCodeAction } from '../../../utils/utils'
+import { getCodeAction, toFormattedString } from '../../../utils/utils'
 import { GetFormattedString } from '../../Formattable'
+import NumberNode from '../NumberNode'
 
 export const EntitySelectorNodeChars = {
     openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
 }
-
 export type SelectorArgumentKey =
     | 'advancements' | 'distance' | 'dx' | 'dy' | 'dz' | 'gamemode' | 'level' | 'limit' | 'name' | 'nbt'
     | 'predicate' | 'scores' | 'sort' | 'tag' | 'team' | 'type' | 'x' | 'x_rotation' | 'y' | 'y_rotation' | 'z'
@@ -37,7 +37,34 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
         trailingPairSep: 'selectorTrailingComma' as keyof LintConfig
     }
 
-    protected readonly [Chars] = EntitySelectorNodeChars;
+    protected readonly [Chars] = EntitySelectorNodeChars
+
+    kvPair(lint: LintConfig, key: string, sep: string, value: any) {
+        if (key.endsWith('Neg')) {
+            return `${key.slice(0, -3)}${sep}!${toFormattedString(value, lint)}`
+        }
+        return `${key}${sep}${toFormattedString(value, lint)}`
+    }
+
+    [IsMapSorted](lint: LintConfig): boolean {
+        if (lint.selectorSortKeys) {
+            const expected = lint.selectorSortKeys[1]
+            let i = 0
+            for (const actualKey of this[UnsortedKeys]) {
+                while (actualKey !== expected[i]) {
+                    i++
+                    if (i >= expected.length) {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys]) {
+        return super[GetFormattedString](lint, keys, this.kvPair)
+    }
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
@@ -49,17 +76,17 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
                 this[GetFormattedString](info.config.lint, info.config.lint.selectorSortKeys[1])
             ))
         }
-        return ans  
+        return ans
     }
 
     sort?: SelectorSortMethod
-    x?: number
-    y?: number
-    z?: number
-    dx?: number
-    dy?: number
-    dz?: number
-    limit?: number
+    x?: NumberNode
+    y?: NumberNode
+    z?: NumberNode
+    dx?: NumberNode
+    dy?: NumberNode
+    dz?: NumberNode
+    limit?: NumberNode
     distance?: NumberRangeNode
     x_rotation?: NumberRangeNode
     y_rotation?: NumberRangeNode

@@ -14,10 +14,12 @@ import StringReader from '../utils/StringReader'
 import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
 import CommandTree, { CommandTreeNode } from '../types/CommandTree'
 import ParsingContext, { constructContext } from '../types/ParsingContext'
-import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentMapNode'
+import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentsNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
 import { $ } from './utils'
+import StringNode from '../types/nodes/StringNode'
+import BlockStateNode from '../types/nodes/map/BlockStateNode'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -226,7 +228,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new EntityNode(undefined, 's'), parser: 'entity' },
+                { data: $(new EntityNode(undefined, 's'), [18, 20]), parser: 'entity' },
                 { data: 'everything', parser: 'literal' }
             ])
             assert.deepStrictEqual(data.hint, {
@@ -237,21 +239,19 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.errors, undefined)
             assert.deepStrictEqual(data.completions, undefined)
         })
-        it('advancement (grant|revoke) <targets> only <advancement>', () => {
+        it('advancemen t (grant|revoke) <targets> only <advancement>', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test')
             const { data } = parser.parse(reader, ctx)
-            const expectedId = new IdentityNode('minecraft', ['test'])
-            expectedId[NodeRange] = { start: 26, end: 40 }
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new EntityNode(undefined, 's'), parser: 'entity' },
+                { data: $(new EntityNode(undefined, 's'), [18, 20]), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: expectedId[NodeRange], parser: 'namespacedID' }
+                { data: $(new IdentityNode('minecraft', ['test']), [26, 40]), parser: 'identity' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>'],
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespaced ID>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -271,13 +271,13 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'grant', parser: 'literal' },
-                { data: new EntityNode(undefined, 's'), parser: 'entity' },
+                { data: $(new EntityNode(undefined, 's'), [18, 20]), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: expectedId, parser: 'namespacedID' },
-                { data: 'aaa', parser: 'string' }
+                { data: expectedId, parser: 'identity' },
+                { data: $(new StringNode('aaa', 'aaa', [41, 42, 43]), [41, 44]), parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespacedID>', '<criterion: string>'],
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespaced ID>', '<criterion: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -297,12 +297,12 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
                 { data: 'revoke', parser: 'literal' },
-                { data: new EntityNode(undefined, 's'), parser: 'entity' },
+                { data: $(new EntityNode(undefined, 's'), [19, 21]), parser: 'entity' },
                 { data: 'through', parser: 'literal' },
-                { data: expectedId, parser: 'namespacedID' }
+                { data: expectedId, parser: 'identity' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespacedID>'],
+                fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespaced ID>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -318,6 +318,7 @@ describe('CommandTree Tests', () => {
             const reader = new StringReader('data get block ~ ~ ~ CustomName')
             const { data } = parser.parse(reader, ctx)
             const expectedKey = new NbtCompoundKeyNode(null, 'CustomName', 'CustomName', [21, 22, 23, 24, 25, 26, 27, 28, 29, 30])
+            expectedKey[NodeRange] = { start: 21, end: 31 }
             assert.deepStrictEqual(data.args, [
                 { data: 'data', parser: 'literal' },
                 { data: 'get', parser: 'literal' },
@@ -331,7 +332,13 @@ describe('CommandTree Tests', () => {
                     }),
                     parser: 'vector.3D'
                 },
-                { data: new NbtPathNode([expectedKey]), parser: 'nbtPath' }
+                {
+                    data: $(new NbtPathNode(), [21, 31], v => {
+                        v.push(expectedKey)
+                        return v
+                    }),
+                    parser: 'nbtPath'
+                }
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['data', 'get', 'block', '<pos: 3D vector>', '<path: NBT path>'],
@@ -346,20 +353,26 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
             const { data } = parser.parse(reader, ctx)
-            const expectedId = new IdentityNode('undefined', ['grass_block'])
-            expectedId[NodeRange] = { start: 15, end: 36 }
             assert.deepStrictEqual(data.args, [
                 { data: 'setblock', parser: 'literal' },
                 {
-                    data: $(new VectorNode(), [15, 20], {
-                        length: 3,
-                        0: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [15, 16]),
-                        1: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [17, 18]),
-                        2: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [19, 20])
+                    data: $(new VectorNode(), [9, 14], v => {
+                        v.push(
+                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [9, 10]),
+                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [11, 12]),
+                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [13, 14])
+                        )
+                        return v
                     }),
                     parser: 'vector.3D'
                 },
-                { data: new BlockNode(expectedId), parser: 'block' }
+                {
+                    data: $(new BlockNode(
+                        $(new IdentityNode('minecraft', ['grass_block']), [15, 36]),
+                        $(new BlockStateNode(), [36, 38])
+                    ), [15, 38]),
+                    parser: 'block'
+                }
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['setblock', '<pos: 3D vector>'],
@@ -379,7 +392,7 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['#define', '(bossbar|entity|objective|storage|tag|team)', '<id: string>'],
+                fix: ['#define', '(bossbar|entity|objective|score_holder|storage|tag|team)', '<id: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {

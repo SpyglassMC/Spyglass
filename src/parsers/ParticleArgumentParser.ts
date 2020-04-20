@@ -8,6 +8,7 @@ import ParticleNode from '../types/nodes/ParticleNode'
 import StringReader from '../utils/StringReader'
 import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import NumberNode from '../types/nodes/NumberNode'
 
 export default class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
     static identity = 'Particle'
@@ -57,9 +58,8 @@ export default class ParticleArgumentParser extends ArgumentParser<ParticleNode<
                         .expect(' ')
                         .skip()
                     const sizeStart = reader.cursor
-                    const sizeResult = ctx.parsers.get('Number', ['float']).parse(reader, ctx)
-                    const size = sizeResult.data as number
-                    const sizeNode = new VectorElementNode(VectorElementType.Absolute, size, reader.string.slice(sizeStart, reader.cursor))
+                    const sizeResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float']).parse(reader, ctx)
+                    const sizeNode = new VectorElementNode(VectorElementType.Absolute, sizeResult.data.valueOf(), sizeResult.data.toString())
                     sizeNode[NodeRange] = { start: sizeStart, end: reader.cursor }
                     combineArgumentParserResult(ans, colorResult)
                     color.push(sizeNode)

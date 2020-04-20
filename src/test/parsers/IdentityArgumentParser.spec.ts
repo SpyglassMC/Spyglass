@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import IdentityArgumentParser from '../../parsers/IdentityArgumentParser'
-import ParsingError from '../../types/ParsingError'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../types/Config'
@@ -11,6 +11,7 @@ import { fail } from 'assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import NamespaceSummary from '../../types/NamespaceSummary'
+import { $ } from '../utils'
 
 describe('IdentityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -99,11 +100,10 @@ describe('IdentityArgumentParser Tests', () => {
         }
     }
     const config = constructConfig({
-        lint: {
-            omitDefaultNamespace: true
-        }
+        env: { dependsOnVanilla: false },
+        lint: { idOmitDefaultNamespace: null }
     })
-    const vanilla: NamespaceSummary = {
+    const summary: NamespaceSummary = {
         advancements: ['minecraft:adventure/root'],
         loot_tables: [],
         recipes: [],
@@ -117,34 +117,32 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return data with single path', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('spgoding:a'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['a']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a']), [0, 10]))
         })
         it('Should return data with multiple paths', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('spgoding:a/b/c'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['a', 'b', 'c']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a', 'b', 'c']), [0, 14]))
         })
         it('Should return data without namespace', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('a/b'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('minecraft', ['a', 'b']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['a', 'b']), [0, 3]))
         })
         it('Should return data with tag ID', () => {
             const parser = new IdentityArgumentParser('minecraft:fluid', true)
             const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('minecraft', ['fluid_tag'], true))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['fluid_tag'], true), [0, 20]))
         })
         it('Should return completions for registry entries', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     }
                 ]
             )
@@ -153,37 +151,33 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$bossbars')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     }
                 ]
             )
         })
         it('Should return completions in the vanilla datapack', async () => {
-            const ctx = await constructContext({ registry: registries, parsers, summary: vanilla, cache, cursor: 9 })
+            const config = constructConfig({ env: { dependsOnVanilla: true }, lint: { idOmitDefaultNamespace: null } })
+            const ctx = await constructContext({ registry: registries, parsers, config, summary, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$advancements')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'adventure',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     }
                 ]
             )
@@ -219,21 +213,18 @@ describe('IdentityArgumentParser Tests', () => {
             )
         })
         it('Should return completions for fluid and fluid tags', async () => {
-            const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:fluid', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: '#minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: '#fluid_tag',
@@ -254,13 +245,11 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$functions', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: '#spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     }
                 ]
             )
@@ -269,18 +258,15 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:item', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: '#spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'stick',
@@ -293,23 +279,19 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:block', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: '#minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: '#block',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'stone',
@@ -322,22 +304,19 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:entity_type', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: '#spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'area_effect_cloud',
-                        kind: CompletionItemKind.Field,
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -346,23 +325,19 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'foo',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'foo',
@@ -375,18 +350,15 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test', undefined, true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     }
                 ]
             )
@@ -395,13 +367,12 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 9 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader('spgoding:'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['']), [0, 9]))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'foo',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'foo',
@@ -414,13 +385,12 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 13 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader('spgoding:foo/'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['foo', '']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', '']), [0, 13]))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'bar',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'bar',
@@ -433,7 +403,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 17 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader('spgoding:foo/bar/'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['foo', 'bar', '']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', 'bar', '']), [0, 17]))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
@@ -447,13 +417,12 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 4 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader('foo/'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['foo', '']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo', '']), [0, 4]))
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'bar',
-                        kind: CompletionItemKind.Folder,
-                        commitCharacters: ['/']
+                        kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'bar',
@@ -466,66 +435,81 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode())
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'Expected a namespaced ID but got nothing', false)
             ])
         })
         it('Should return errors for non [a-z0-9/._-] characters', async () => {
-            const config = constructConfig({ lint: { strictBossbarCheck: false, omitDefaultNamespace: false } })
+            const config = constructConfig({ lint: { strictBossbarCheck: null, idOmitDefaultNamespace: ['warning', false] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$bossbars')
             const actual = parser.parse(new StringReader('spgoding:QwQ'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['QwQ']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['QwQ']), [0, 12]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 9, end: 12 }, 'Found non [a-z0-9/._-] character(s)')
             ])
         })
         it('Should return warning when the id cannot be resolved in cache category', async () => {
-            const config = constructConfig({ lint: { strictBossbarCheck: true, omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { strictBossbarCheck: ['warning', true], idOmitDefaultNamespace: null } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$bossbars')
             const actual = parser.parse(new StringReader('foo'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['foo']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’',
+                    undefined, DiagnosticSeverity.Warning
+                )
             ])
         })
         it('Should return warning when the id cannot be resolved in loot table cache', async () => {
-            const config = constructConfig({ lint: { strictLootTableCheck: true, omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { strictLootTableCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$loot_tables')
             const actual = parser.parse(new StringReader('foo'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['foo']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_tables’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_tables’',
+                    undefined, DiagnosticSeverity.Warning
+                )
             ])
         })
         it('Should return warning when the id cannot be resolved in tag cache category', async () => {
-            const config = constructConfig({ lint: { strictFunctionTagCheck: true, omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { strictFunctionTagCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$functions', true)
-            const actual = parser.parse(new StringReader('#spgoding:function/114514'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['function', '114514'], true))
+            const actual = parser.parse(new StringReader('#spgoding:function/42'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['function', '42'], true), [0, 21]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 25 }, 'Failed to resolve namespaced ID ‘spgoding:function/114514’ in cache category ‘tags/functions’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError(
+                    { start: 0, end: 21 },
+                    'Failed to resolve namespaced ID ‘spgoding:function/42’ in cache category ‘tags/functions’',
+                    undefined, DiagnosticSeverity.Warning
+                )
             ])
         })
         it('Should return warning when the id cannot be resolved in registry', async () => {
-            const config = constructConfig({ lint: { strictBlockCheck: 'always', omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { strictBlockCheck: ['error', 'only-default-namespace'], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block')
             const actual = parser.parse(new StringReader('qux'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['qux']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’',
+                    undefined, DiagnosticSeverity.Error
+                )
             ])
         })
         it('Should return cache when the id is already defined', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$bossbars')
             const actual = parser.parse(new StringReader('spgoding:bossbar/a'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['bossbar', 'a']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'a']), [0, 18]))
             assert.deepStrictEqual(actual.cache, {
                 bossbars: {
                     'spgoding:bossbar/a': {
@@ -539,7 +523,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$bossbars')
             const actual = parser.parse(new StringReader('spgoding:bossbar/c'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['bossbar', 'c']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c']), [0, 18]))
             assert.deepStrictEqual(actual.cache, {})
         })
         it('Should throw error when the type does not have a corresponding tag type', async () => {
@@ -556,18 +540,23 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('minecraft:entity_type')
             const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode('spgoding', ['entity_type', '1'], true))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['entity_type', '1'], true), [0, 23]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'Tags are not allowed here')
             ])
         })
         it('Should throw error when namespace cannot be omitted here', async () => {
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: ['warning', false] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block', undefined, true)
             const actual = parser.parse(new StringReader('stone'), ctx)
-            assert.deepStrictEqual(actual.data, new IdentityNode(undefined, ['stone']))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['stone']), [0, 5]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 5 }, 'Default namespace cannot be omitted here')
+                new ParsingError(
+                    { start: 0, end: 5 }, "Default namespace shouldn't be omitted here",
+                    undefined, DiagnosticSeverity.Warning,
+                    ActionCode.IdentityCompleteDefaultNamespace
+                )
             ])
         })
     })

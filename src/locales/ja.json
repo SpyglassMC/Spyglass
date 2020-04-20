@@ -20,7 +20,7 @@
     "expected-got": "%0%が必要ですが%1%が確認されました",
     "failed-to-resolve-cache-id": "キャッシュカテゴリ%0%の名前空間%1%の解析に失敗しました",
     "failed-to-resolve-registry-id": "レジストリ%0%の名前空間%1%の解析に失敗しました",
-    "id": "名前空間",
+    "identity": "名前空間",
     "integer": "int型",
     "integer.between": "int型は%0% ~ %1%の範囲の値",
     "key": "キー",

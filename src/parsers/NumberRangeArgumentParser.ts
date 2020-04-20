@@ -6,6 +6,8 @@ import StringReader from '../utils/StringReader'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import { NodeRange } from '../types/nodes/ArgumentNode'
+import NumberNode from '../types/nodes/NumberNode'
 
 export default class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
     static identity = 'NumberRange'
@@ -44,10 +46,10 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
                 false
             ))
         } else {
-            let min: number | undefined
-            let max: number | undefined
+            let min: NumberNode | undefined
+            let max: NumberNode | undefined
             if (!isDoublePeriods()) {
-                const result = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
                 min = result.data
                 combineArgumentParserResult(ans, result)
             }
@@ -55,7 +57,7 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
                 ans.tokens.push(new Token({ start: reader.cursor, end: reader.cursor + 2 }, TokenType.keyword))
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
-                    const result = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                    const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
                     max = result.data
                     combineArgumentParserResult(ans, result)
                 }
@@ -74,6 +76,9 @@ export default class NumberRangeArgumentParser extends ArgumentParser<NumberRang
             }
             ans.data = new NumberRangeNode(this.type, min, max)
         }
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
+
         return ans
     }
 

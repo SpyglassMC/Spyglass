@@ -1,9 +1,7 @@
-import Formattable, { GetFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
 import ArgumentNode, { NodeType } from './ArgumentNode'
-import SelectorArgumentsNode from './map/SelectorArgumentMapNode'
-
-
+import SelectorArgumentsNode from './map/SelectorArgumentsNode'
 
 /**
  * Represent an entity.

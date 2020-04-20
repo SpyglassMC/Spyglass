@@ -21,13 +21,13 @@ describe('DefinitionIDArgumentParser Tests', () => {
             assert(data === 'foo')
             assert(reader.cursor === 3)
         })
-        it('Should return namespacedID token for bossbars or storages', () => {
+        it('Should return identity token for bossbars or storages', () => {
             const parser = new DefinitionIDArgumentParser('bossbar')
             const reader = new StringReader('foo')
             const { data, tokens } = parser.parse(reader)
             assert(data === 'foo')
             assert(reader.cursor === 3)
-            assert.deepStrictEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.namespacedID, new Set([TokenModifier.declaration]))])
+            assert.deepStrictEqual(tokens, [new Token({ start: 0, end: 3 }, TokenType.identity, new Set([TokenModifier.declaration]))])
         })
         it('Should return entity token for entities', () => {
             const parser = new DefinitionIDArgumentParser('entity')

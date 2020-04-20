@@ -1,18 +1,25 @@
 import { LintConfig } from '../Config'
-import Formattable, { GetFormattedString } from '../Formattable'
+import { GetFormattedString } from '../Formattable'
+import ArgumentNode, { NodeType } from './ArgumentNode'
+import NumberNode from './NumberNode'
+import { toFormattedString } from '../../utils/utils'
 
-export default class NumberRangeNode implements Formattable {
+export default class NumberRangeNode extends ArgumentNode {
+    readonly [NodeType] = 'NumberRange'
+
     constructor(
         readonly type: 'integer' | 'float',
-        readonly min?: number,
-        readonly max?: number
-    ) { }
+        readonly min?: NumberNode,
+        readonly max?: NumberNode
+    ) {
+        super()
+    }
 
-    [GetFormattedString](_lint: LintConfig) {
-        if (this.min !== undefined && this.min === this.max) {
-            return this.min.toString()
+    [GetFormattedString](lint: LintConfig) {
+        if (this.min && this.max && this.min.valueOf() === this.max.valueOf()) {
+            return this.min[GetFormattedString](lint)
         } else {
-            return `${this.min !== undefined ? this.min : ''}..${this.max !== undefined ? this.max : ''}`
+            return `${toFormattedString(this.min, lint)}..${toFormattedString(this.max, lint)}`
         }
     }
 }

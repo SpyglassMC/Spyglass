@@ -13,7 +13,7 @@
     "expected-got": "%0% erwartet, aber %1% erhalten",
     "failed-to-resolve-cache-id": "Konnte die ID %1% in der Cachekategorie %0% nicht auflösen",
     "failed-to-resolve-registry-id": "Konnte die ID %1% im Register %0% nicht auflösen",
-    "id": "eine ID",
+    "identity": "eine ID",
     "integer": "eine Ganzzahl",
     "integer.between": "eine Ganzzahl zwischen %0% und %1%",
     "key": "einen Schlüssel",

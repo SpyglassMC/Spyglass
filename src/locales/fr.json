@@ -13,7 +13,7 @@
     "expected-got": "Attendu %0% mais obtenu %1%",
     "failed-to-resolve-cache-id": "Impossible de résoudre l'id d'espace de noms %1% dans la catégorie de cache %0%",
     "failed-to-resolve-registry-id": "Impossible de résoudre l'id d'espace de noms %1% dans le registre %0%",
-    "id": "un id d'espace de noms",
+    "identity": "un id d'espace de noms",
     "integer": "un integer",
     "integer.between": "un integer entre %0% et %1%",
     "key": "une clé",

@@ -8,14 +8,15 @@ import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import BlockStateNode from '../../types/nodes/map/BlockStateMapNode'
+import BlockStateNode from '../../types/nodes/map/BlockStateNode'
 import { $ } from '../utils'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import { Keys } from '../../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import { ClientCache } from '../../types/ClientCache'
+import { constructConfig } from '../../types/Config'
 
 describe('BlockArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -82,7 +83,10 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 }),
-                $(new BlockStateNode(), { start: 15, end: 31 }, { snowy: 'true' })
+                $(new BlockStateNode(), { start: 15, end: 31 }, {
+                    snowy: 'true',
+                    [UnsortedKeys]: ['snowy']
+                })
             ), { start: 0, end: 31 }))
         })
         it('Should return data with multiple states', () => {
@@ -91,7 +95,11 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 }),
-                $(new BlockStateNode(), { start: 15, end: 41 }, { snowy: 'true', age: '3' })
+                $(new BlockStateNode(), { start: 15, end: 41 }, {
+                    snowy: 'true',
+                    age: '3',
+                    [UnsortedKeys]: ['snowy', 'age']
+                })
             ), { start: 0, end: 41 }))
         })
         it('Should return data with tag', () => {
@@ -103,7 +111,8 @@ describe('BlockArgumentParser Tests', () => {
                 undefined,
                 $(new NbtCompoundNode(null), [15, 30], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [17, 18, 19]), [17, 20]) },
-                    foo: $(new NbtStringNode(v, 'bar', '"bar"', [24, 25, 26]), [23, 28])
+                    foo: $(new NbtStringNode(v, 'bar', '"bar"', [24, 25, 26]), [23, 28]),
+                    [UnsortedKeys]: ['foo']
                 }))
             ), [0, 30]))
         })
@@ -112,23 +121,28 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 2 ]{ foo : 1b }'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), [0, 15]),
-                $(new BlockStateNode(), [15, 41], { snowy: 'true', age: '2' }),
+                $(new BlockStateNode(), [15, 41], {
+                    snowy: 'true',
+                    age: '2',
+                    [UnsortedKeys]: ['snowy', 'age']
+                }),
                 $(new NbtCompoundNode(null), [41, 53], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [43, 44, 45]), [43, 46]) },
-                    foo: $(new NbtByteNode(v, 1, '1'), [49, 51])
+                    foo: $(new NbtByteNode(v, 1, '1'), [49, 51]),
+                    [UnsortedKeys]: ['foo']
                 }))
             ), [0, 53]))
         })
         it('Should return completions at the beginning of input', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = await constructContext({ blocks, registry: registries, parsers, cursor: 0 })
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
+            const context = await constructContext({ blocks, registry: registries, parsers, config, cursor: 0 })
             const actual = parser.parse(new StringReader(''), context)
             assert.deepStrictEqual(actual.completions,
                 [
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'stone',
@@ -160,7 +174,10 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,]'), context)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), [0, 15]),
-                $(new BlockStateNode(), [15, 28], { snowy: 'true' })
+                $(new BlockStateNode(), [15, 28], {
+                    snowy: 'true',
+                    [UnsortedKeys]: ['snowy']
+                })
             ), [0, 28]))
             assert.deepStrictEqual(actual.completions, [
                 { label: 'age' }
@@ -170,10 +187,6 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 22 })
             const actual = parser.parse(new StringReader('minecraft:stone[snowy=]'), context)
-            assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), [0, 15]),
-                $(new BlockStateNode(), [15, 23], { snowy: '' })
-            ), [0, 23]))
             assert.deepStrictEqual(actual.completions,
                 [
                     { label: 'true' },
@@ -186,7 +199,7 @@ describe('BlockArgumentParser Tests', () => {
             const context = await constructContext({ blocks, registry: registries, parsers, cursor: 12 })
             const actual = parser.parse(new StringReader('grass_block[]'), context)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['grass_block']), [0, 11]),
+                $(new IdentityNode(undefined, ['grass_block']), [0, 11]),
                 $(new BlockStateNode(), [11, 13])
             ), [0, 13]))
             assert.deepStrictEqual(actual.completions, [])
@@ -238,7 +251,10 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('#minecraft:stone[snowy=true]'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone'], true), [0, 16]),
-                $(new BlockStateNode(), [16, 28], { snowy: 'true' })
+                $(new BlockStateNode(), [16, 28], {
+                    snowy: 'true',
+                    [UnsortedKeys]: ['snowy']
+                })
             ), [0, 28]))
             assert.deepStrictEqual(actual.errors, [])
         })

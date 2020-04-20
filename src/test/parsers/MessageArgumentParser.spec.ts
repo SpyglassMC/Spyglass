@@ -2,11 +2,12 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import EntityNode from '../../types/nodes/EntityNode'
-import Message from '../../types/Message'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import StringReader from '../../utils/StringReader'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import Token, { TokenType } from '../../types/Token'
+import { $ } from '../utils'
+import MessageNode from '../../types/nodes/MessageNode'
 
 describe('MessageArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -27,7 +28,10 @@ describe('MessageArgumentParser Tests', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('aaaa!@#$'), ctx)
             assert.deepStrictEqual(actual.errors, [])
-            assert.deepStrictEqual(actual.data, new Message(['aaaa!@#$']))
+            assert.deepStrictEqual(actual.data, $(new MessageNode(), [0, 8], {
+                length: 1,
+                0: 'aaaa!@#$'
+            }))
             assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 8 }, TokenType.string)
             ])
@@ -36,7 +40,10 @@ describe('MessageArgumentParser Tests', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('@a'), ctx)
             assert.deepStrictEqual(actual.errors, [])
-            assert.deepStrictEqual(actual.data, new Message([new EntityNode(undefined, 'a')]))
+            assert.deepStrictEqual(actual.data, $(new MessageNode(), [0, 2], {
+                length: 1,
+                0: $(new EntityNode(undefined, 'a', undefined), [0, 2])
+            }))
             assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 2 }, TokenType.entity)
             ])
@@ -45,7 +52,12 @@ describe('MessageArgumentParser Tests', () => {
             const parser = new MessageArgumentParser()
             const actual = parser.parse(new StringReader('Hello@A@aWORLD'), ctx)
             assert.deepStrictEqual(actual.errors, [])
-            assert.deepStrictEqual(actual.data, new Message(['Hello@A', new EntityNode(undefined, 'a'), 'WORLD']))
+            assert.deepStrictEqual(actual.data, $(new MessageNode(), [0, 14], {
+                length: 3,
+                0: 'Hello@A',
+                1: $(new EntityNode(undefined, 'a', undefined), [7, 9]),
+                2: 'WORLD'
+            }))
             assert.deepStrictEqual(actual.tokens, [
                 new Token({ start: 0, end: 7 }, TokenType.string),
                 new Token({ start: 7, end: 9 }, TokenType.entity),

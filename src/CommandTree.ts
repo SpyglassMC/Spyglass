@@ -1,10 +1,16 @@
 import EntityNode from './types/nodes/EntityNode'
 import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import { LineArgumentNode } from './types/Line'
+import SelectorArgumentsNode from './types/nodes/map/SelectorArgumentsNode'
 
-export function getNbtdocRegistryId(entity: EntityNode) {
-    if (entity.argument && entity.argument.type) {
-        const firstID = entity.argument.type[0]
+export function getNbtdocRegistryId(entity: EntityNode): null | string
+export function getNbtdocRegistryId(selectorArguments: SelectorArgumentsNode): null | string
+export function getNbtdocRegistryId(param: EntityNode | SelectorArgumentsNode): null | string {
+    if (param instanceof EntityNode) {
+        param = param.argument
+    }
+    if (param && param.type) {
+        const firstID = param.type[0]
         if (firstID && !firstID.isTag) {
             return firstID.toString()
         }

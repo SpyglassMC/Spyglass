@@ -164,13 +164,13 @@ export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c):
  * Convert specific value to a linted string.
  * @param value Any value.
  */
-export function toFormattedString(value: any, lint: LintConfig): string {
+export function toFormattedString(value: unknown, lint: LintConfig): string {
     if (isFormattable(value)) {
         return value[GetFormattedString](lint)
-    } else if (value) {
-        return value.toString()
-    } else {
+    } else if (value === undefined || value === null) {
         return ''
+    } else {
+        return String(value)
     }
 }
 

@@ -1,37 +1,38 @@
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ArgumentParser from './ArgumentParser'
-import Message from '../types/Message'
+import MessageNode from '../types/nodes/MessageNode'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import Token, { TokenType } from '../types/Token'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
-export default class MessageArgumentParser extends ArgumentParser<Message> {
+export default class MessageArgumentParser extends ArgumentParser<MessageNode> {
     static identity = 'Message'
     readonly identity = 'message'
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Message> {
-        const ans: ArgumentParserResult<Message> = {
-            data: new Message([]),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<MessageNode> {
+        const ans: ArgumentParserResult<MessageNode> = {
+            data: new MessageNode(),
             tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
-        const value = ans.data.value
+        const start = reader.cursor
 
         while (reader.canRead()) {
             if (reader.peek() === '@' &&
                 (reader.peek(1) === 'p' || reader.peek(1) === 'a' || reader.peek(1) === 'r' || reader.peek(1) === 's' || reader.peek(1) === 'e')
             ) {
                 const entityResult = ctx.parsers.get('Entity').parse(reader, ctx)
-                value.push(entityResult.data)
+                ans.data.push(entityResult.data)
                 combineArgumentParserResult(ans, entityResult)
             } else {
                 const start = reader.cursor
-                if (typeof value[value.length - 1] === 'string') {
-                    value[value.length - 1] += reader.read()
+                if (typeof ans.data[ans.data.length - 1] === 'string') {
+                    ans.data[ans.data.length - 1] += reader.read()
                 } else {
-                    value.push(reader.read())
+                    ans.data.push(reader.read())
                 }
                 const lastToken = ans.tokens[ans.tokens.length - 1]
                 if (lastToken && lastToken.type === TokenType.string) {
@@ -41,6 +42,8 @@ export default class MessageArgumentParser extends ArgumentParser<Message> {
                 }
             }
         }
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

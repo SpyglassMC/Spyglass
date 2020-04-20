@@ -1,0 +1,8 @@
+{
+    "require": [
+        "espower-typescript/guess",
+        "source-map-support/register"
+    ],
+    "timeout": 10000,
+    "spec": "src/test/**/*.spec.ts"
+}

@@ -4,14 +4,15 @@ import BlockNode from '../types/nodes/BlockNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import StringReader from '../utils/StringReader'
 import MapParser from './MapParser'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { ActionCode } from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
-import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateMapNode'
-import { IsMapNodeSorted } from '../types/nodes/map/MapNode'
+import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateNode'
+import { IsMapSorted } from '../types/nodes/map/MapNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import { getDiagnosticSeverity } from '../types/StylisticConfig'
 
 export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     static identity = 'Block'
@@ -98,10 +99,15 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
             ans.data.states = statesResult.data
             ans.data.states[NodeRange] = { start, end: reader.cursor }
 
-            if (ctx.config.lint.blockStateSortKeys && !ans.data.states[IsMapNodeSorted]()) {
+            if (ctx.config.lint.blockStateSortKeys && !ans.data.states[IsMapSorted]()) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
-                    locale('unsorted-keys', 'datapack.lint.stateSortKeys')
+                    locale('diagnostic-rule',
+                        locale('unsorted-keys'),
+                        locale('punc.quote', 'datapack.lint.blockStateSortKeys')
+                    ),
+                    undefined, getDiagnosticSeverity(ctx.config.lint.blockStateSortKeys[0]),
+                    ActionCode.BlockStateSortKeys
                 ))
             }
         }

@@ -51,7 +51,7 @@
     "expected-got": "期望%0%，但得到了%1%",
     "failed-to-resolve-cache-id": "无法在缓存类别%0%中解析命名空间 ID%1%",
     "failed-to-resolve-registry-id": "无法在注册表%0%中解析命名空间 ID%1%",
-    "id": "一个命名空间 ID",
+    "identity": "一个命名空间 ID",
     "integer": "一个整型数字",
     "integer.between": "一个处于 %0% 与 %1% 之间的整型数字",
     "key": "一个键",

@@ -4,11 +4,13 @@ import ArgumentParser from './ArgumentParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import Time from '../types/Time'
+import TimeNode from '../types/nodes/TimeNode'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import NumberNode from '../types/nodes/NumberNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
-export default class TimeArgumentParser extends ArgumentParser<Time> {
+export default class TimeArgumentParser extends ArgumentParser<TimeNode> {
     static identity = 'Time'
     static readonly Units = ['d', 's', 't']
 
@@ -18,19 +20,21 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
         super()
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<Time> {
-        const ans: ArgumentParserResult<Time> = {
-            data: new Time(NaN, 't'),
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TimeNode> {
+        const ans: ArgumentParserResult<TimeNode> = {
+            data: new TimeNode(NaN, '', 't'),
             tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
 
-        const numberResult = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
-        const number = numberResult.data as number
+        const start = reader.cursor
+
+        const numberResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
         combineArgumentParserResult(ans, numberResult)
-        ans.data.value = number
+        ans.data.value = numberResult.data.valueOf()
+        ans.data.raw = numberResult.data.toString()
 
         if (ctx.cursor === reader.cursor) {
             ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
@@ -52,6 +56,8 @@ export default class TimeArgumentParser extends ArgumentParser<Time> {
                 ))
             }
         }
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

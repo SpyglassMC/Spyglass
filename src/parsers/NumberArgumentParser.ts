@@ -4,8 +4,10 @@ import { ArgumentParserResult } from '../types/Parser'
 import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
+import NumberNode from '../types/nodes/NumberNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
-export default class NumberArgumentParser extends ArgumentParser<number> {
+export default class NumberArgumentParser extends ArgumentParser<NumberNode> {
     static identity = 'Number'
     identity = 'number'
 
@@ -18,9 +20,9 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         this.identity = `number.${type}`
     }
 
-    parse(reader: StringReader): ArgumentParserResult<number> {
-        const ans: ArgumentParserResult<number> = {
-            data: NaN,
+    parse(reader: StringReader): ArgumentParserResult<NumberNode> {
+        const ans: ArgumentParserResult<NumberNode> = {
+            data: new NumberNode(NaN, ''),
             tokens: [],
             completions: [],
             errors: [],
@@ -28,14 +30,16 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
         }
         const start = reader.cursor
         try {
-            ans.data = this.type === 'integer' ? reader.readInt() : reader.readFloat()
+            const value = this.type === 'integer' ? reader.readInt() : reader.readFloat()
+            ans.data.value = value
+            ans.data.raw = reader.string.slice(start, reader.cursor)
         } catch (p) {
             ans.errors.push(p)
         }
         //#region Tokens
         ans.tokens.push(Token.from(start, reader, TokenType.number))
         //#endregion
-        if (this.min !== undefined && !(ans.data >= this.min)) {
+        if (this.min !== undefined && !(ans.data.valueOf() >= this.min)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',
@@ -44,7 +48,7 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
                 )
             ))
         }
-        if (this.max !== undefined && !(ans.data <= this.max)) {
+        if (this.max !== undefined && !(ans.data.valueOf() <= this.max)) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('expected-got',
@@ -53,6 +57,9 @@ export default class NumberArgumentParser extends ArgumentParser<number> {
                 )
             ))
         }
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
+        
         return ans
     }
 

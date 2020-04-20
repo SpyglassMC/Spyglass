@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import MapParser from './MapParser'
 import NbtdocHelper, { ListDoc as NbtListDoc, CompoundDoc as NbtCompoundDoc } from '../utils/NbtdocHelper'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
+import ParsingError, { ActionCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, validateStringQuote } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
@@ -28,7 +28,7 @@ import NbtByteArrayNode from '../types/nodes/nbt/NbtByteArrayNode'
 import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
 import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
 import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
-import { Keys } from '../types/nodes/map/MapNode'
+import { Keys, IsMapSorted } from '../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
@@ -325,6 +325,18 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         ).parse(ans, reader, ctx)
 
         ans.data[NodeRange] = { start, end: reader.cursor }
+
+        if (ctx.config.lint.nbtCompoundSortKeys && !ans.data[IsMapSorted]()) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                locale('diagnostic-rule',
+                    locale('unsorted-keys'),
+                    locale('punc.quote', 'datapack.lint.nbtCompoundSortKeys')
+                ),
+                undefined, getDiagnosticSeverity(ctx.config.lint.nbtCompoundSortKeys[0]),
+                ActionCode.NbtCompoundSortKeys
+            ))
+        }
 
         return ans
     }

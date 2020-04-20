@@ -4,8 +4,10 @@ import { locale } from '../locales/Locales'
 import IndexMapping from './IndexMapping'
 
 export const enum ActionCode {
-    IdCompleteDefaultNamespace,
-    IdOmitDefaultNamespace,
+    BlockStateSortKeys,
+    IdentityCompleteDefaultNamespace,
+    IdentityOmitDefaultNamespace,
+    NbtCompoundSortKeys,
     NbtTypeToByte,
     NbtTypeToByteArray,
     NbtTypeToShort,

@@ -5,6 +5,7 @@ import ObjectiveCriterionArgumentParser from '../../parsers/ObjectiveCriterionAr
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 describe('ObjectiveCriterionArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -56,6 +57,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, '')
             assert.deepStrictEqual(actual.completions,
                 [
+                    { label: 'minecraft', kind: CompletionItemKind.Module },
                     { label: 'air' },
                     { label: 'armor' },
                     { label: 'deathCount' },
@@ -63,21 +65,21 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                     { label: 'food' },
                     { label: 'health' },
                     { label: 'level' },
-                    { label: 'minecraft.custom:minecraft' },
-                    { label: 'minecraft.crafted:minecraft' },
-                    { label: 'minecraft.used:minecraft' },
-                    { label: 'minecraft.broken:minecraft' },
-                    { label: 'minecraft.mined:minecraft' },
-                    { label: 'minecraft.killed:minecraft' },
-                    { label: 'minecraft.killed_by:minecraft' },
-                    { label: 'minecraft.picked_up:minecraft' },
-                    { label: 'minecraft.dropped:minecraft' },
                     { label: 'playerKillCount' },
                     { label: 'teamkill' },
                     { label: 'killedByTeam' },
                     { label: 'totalKillCount' },
                     { label: 'trigger' },
-                    { label: 'xp' }
+                    { label: 'xp' },
+                    { label: 'custom', kind: CompletionItemKind.Field },
+                    { label: 'crafted', kind: CompletionItemKind.Field },
+                    { label: 'used', kind: CompletionItemKind.Field },
+                    { label: 'broken', kind: CompletionItemKind.Field },
+                    { label: 'mined', kind: CompletionItemKind.Field },
+                    { label: 'killed', kind: CompletionItemKind.Field },
+                    { label: 'killed_by', kind: CompletionItemKind.Field },
+                    { label: 'picked_up', kind: CompletionItemKind.Field },
+                    { label: 'dropped', kind: CompletionItemKind.Field }
                 ]
             )
         })
@@ -107,6 +109,20 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should return completions for sub values of ‘minecraft.custom:', async () => {
+            const ctx = await constructContext({ registry: registries, parsers, cursor: 17 })
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('minecraft.custom:'), ctx)
+            assert.deepStrictEqual(actual.data, 'minecraft.custom:')
+            assert.deepStrictEqual(actual.completions,
+                [
+                    { label: 'minecraft', kind: CompletionItemKind.Module },
+                    { label: 'custom_stat_1', kind: CompletionItemKind.Field },
+                    { label: 'custom_stat_2', kind: CompletionItemKind.Field },
+                    { label: 'custom_stat_3', kind: CompletionItemKind.Field }
+                ]
+            )
+        })
         it('Should return completions for sub values of ‘minecraft.custom:minecraft’', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cursor: 27 })
             const parser = new ObjectiveCriterionArgumentParser()
@@ -114,9 +130,9 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, 'minecraft.custom:minecraft.')
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: 'custom_stat_1' },
-                    { label: 'custom_stat_2' },
-                    { label: 'custom_stat_3' }
+                    { label: 'custom_stat_1', kind: CompletionItemKind.Field },
+                    { label: 'custom_stat_2', kind: CompletionItemKind.Field },
+                    { label: 'custom_stat_3', kind: CompletionItemKind.Field }
                 ]
             )
         })

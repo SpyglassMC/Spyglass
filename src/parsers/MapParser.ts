@@ -3,8 +3,9 @@ import StringReader from '../utils/StringReader'
 import TextRange from '../types/TextRange'
 import ParsingContext from '../types/ParsingContext'
 import MapNode, { UnsortedKeys } from '../types/nodes/map/MapNode'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 
-export default class MapParser<T extends { [key: string]: any }> {
+export default class MapParser<T extends MapNode<any, any>> {
     static readonly identity = 'Map'
     readonly identity = 'map'
 
@@ -22,6 +23,8 @@ export default class MapParser<T extends { [key: string]: any }> {
     /* istanbul ignore next */
     parse(ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) {
         let { cursor } = ctx
+
+        const start = reader.cursor
 
         /**
          * Move cursor to the end of the white spaces, so that we can provide
@@ -64,10 +67,8 @@ export default class MapParser<T extends { [key: string]: any }> {
                 skipWhiteSpace()
 
                 // Value Token.
+                ans.data[UnsortedKeys].push(key)
                 this.parseValue(ans, reader, ctx, key, { start: keyStart, end: keyEnd })
-                if (ans.data instanceof MapNode) {
-                    ans.data[UnsortedKeys].push(key)
-                }
 
                 reader.skipWhiteSpace()
 
@@ -89,6 +90,8 @@ export default class MapParser<T extends { [key: string]: any }> {
         } catch (p) {
             ans.errors.push(p)
         }
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

@@ -10,7 +10,7 @@ import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { $ } from '../utils'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import { Keys } from '../../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 
@@ -54,12 +54,13 @@ describe('ItemArgumentParser Tests', () => {
                 $(new IdentityNode('minecraft', ['stick']), [0, 15]),
                 $(new NbtCompoundNode(null), [15, 27], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [17, 18, 19]), [17, 20]) },
-                    foo: $(new NbtByteNode(v, 1, '1'), [23, 25])
+                    foo: $(new NbtByteNode(v, 1, '1'), [23, 25]),
+                    [UnsortedKeys]: ['foo']
                 }))
             ), [0, 27]))
         })
         it('Should return completions at the beginning of input', async () => {
-            const config = constructConfig({ lint: { omitDefaultNamespace: true } })
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
             const context = await constructContext({ registry: registries, parsers, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
@@ -68,8 +69,7 @@ describe('ItemArgumentParser Tests', () => {
                 [
                     {
                         label: 'minecraft',
-                        kind: CompletionItemKind.Module,
-                        commitCharacters: [':']
+                        kind: CompletionItemKind.Module
                     },
                     {
                         label: 'stick',

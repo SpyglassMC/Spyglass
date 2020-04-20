@@ -8,6 +8,7 @@ import { arrayToCompletions, arrayToMessage } from '../utils/utils'
 import { CompletionItemKind } from 'vscode-languageserver'
 import ParsingError from '../types/ParsingError'
 import { locale } from '../locales/Locales'
+import IdentityNode from '../types/nodes/IdentityNode'
 
 const RegularSep = '.'
 const StatsSep = ':'
@@ -60,12 +61,12 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
         const pool = ['', 'minecraft', ...Object.keys(Category)]
         //#region Completions.
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            ans.completions.push({ label: 'minecraft', kind: CompletionItemKind.Module })
             ans.completions.push(...arrayToCompletions(
                 Object.keys(Category),
                 c => typeof Category[c.label] === 'string' ?
                     { ...c, kind: CompletionItemKind.Field } : c
             ))
-            ans.completions.push({ label: 'minecraft', kind: CompletionItemKind.Module })
         }
         //#endregion
         //#region Errors.
@@ -122,7 +123,7 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
                     subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
                 } else {
                     const newReader = reader.clone()
-                    newReader.string = newReader.string.replace(new RegExp(`\\${RegularSep}`, 'g'), StatsSep)
+                    newReader.string = newReader.string.replace(new RegExp(`\\${RegularSep}`, 'g'), IdentityNode.NamespaceDelimiter)
                     subResult = ctx.parsers.get('Identity', [subCriteria]).parse(newReader, ctx)
                     reader.cursor = newReader.cursor
                 }

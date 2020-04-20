@@ -18,7 +18,7 @@ import NbtDoubleNode from '../../types/nodes/nbt/NbtDoubleNode'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
 import { TestRegistry, TestNbtdoc } from '../utils/NbtdocHelper.spec'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import { Keys } from '../../types/nodes/map/MapNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtListNode, { ChildNbtNodeType } from '../../types/nodes/nbt/NbtListNode'
 import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
 import NbtIntArrayNode from '../../types/nodes/nbt/NbtIntArrayNode'
@@ -283,7 +283,7 @@ describe('NbtArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [{
                     label: 'foo', insertText: 'foo',
                     kind: CompletionItemKind.Property,
-                    detail: 'Type: Boolean',
+                    detail: 'Type: boolean',
                     documentation: 'The only field of this compound'
                 }])
             })
@@ -297,7 +297,7 @@ describe('NbtArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [{
                     label: 'foo', insertText: 'foo',
                     kind: CompletionItemKind.Property,
-                    detail: 'Type: Boolean',
+                    detail: 'Type: boolean',
                     documentation: 'The only field of this compound'
                 }])
             })
@@ -342,8 +342,9 @@ describe('NbtArgumentParser Tests', () => {
                 expected.foo = expectedChild
                 const expectedKey = new NbtCompoundKeyNode(expected, 'foo', 'foo', [1, 2, 3])
                 expectedKey[NodeRange] = { start: 1, end: 4 }
-                expectedKey[NodeDescription] = 'Type: Boolean\n* * * * * *\nThe only field of this compound'
+                expectedKey[NodeDescription] = 'Type: boolean\n* * * * * *\nThe only field of this compound'
                 expected[Keys].foo = expectedKey
+                expected[UnsortedKeys].push('foo')
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
 

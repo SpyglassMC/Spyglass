@@ -4,14 +4,14 @@ import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions, DiagnosticMap } from '../ArgumentNode'
 import TextRange, { areOverlapped } from '../../TextRange'
-import { Diagnostic, CodeAction } from 'vscode-languageserver'
+import { CodeAction } from 'vscode-languageserver'
 import FunctionInfo from '../../FunctionInfo'
 
 export const enum BracketType { open, close }
 
 export type ShouldInsertSpacesPredicate = (lint: LintConfig, data?: any) => boolean
 
-export const IsMapNodeSorted = Symbol('IsMapNodeSorted')
+export const IsMapSorted = Symbol('IsMapSorted')
 export const ConfigKeys = Symbol('ConfigKeys')
 export const Chars = Symbol('Chars')
 export const Keys = Symbol('KeysData')
@@ -24,7 +24,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
 
     readonly [Keys]: { [key: string]: KI } = {}
 
-    readonly [UnsortedKeys]: (keyof this)[] = []
+    readonly [UnsortedKeys]: (keyof this & string)[] = []
 
     protected abstract [ConfigKeys]: {
         bracketSpacing: keyof LintConfig,
@@ -67,12 +67,12 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return `${before}${char}${after}`
     }
 
-    [IsMapNodeSorted](): boolean {
-        const keys = Object.keys(this)
+    [IsMapSorted](..._params: any[]): boolean {
+        const keys = this[UnsortedKeys]
         return keys.slice(1).every((v, i) => v.toLowerCase() >= keys[i].toLowerCase())
     }
 
-    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys]) {
+    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys], kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
         const sepSpacingConfig = lint[this[ConfigKeys].sepSpacing] as SepSpacingConfig
         const pairSepSpacingConfig = lint[this[ConfigKeys].pairSepSpacing] as SepSpacingConfig
@@ -95,7 +95,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
                     }
                     value = value[arrayValueCursor[key]!++]
                 }
-                content.push(`${toFormattedString(key, lint)}${sep}${toFormattedString(value, lint)}`)
+                content.push(kvPair(lint, key, sep, value))
             }
         }
 

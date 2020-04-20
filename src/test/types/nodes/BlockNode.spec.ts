@@ -4,21 +4,27 @@ import { describe, it } from 'mocha'
 import { GetFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import BlockNode from '../../../types/nodes/BlockNode'
-import BlockStateNode from '../../../types/nodes/map/BlockStateMapNode'
+import BlockStateNode from '../../../types/nodes/map/BlockStateNode'
 import { $ } from '../../utils'
 import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
 import NbtStringNode from '../../../types/nodes/nbt/NbtStringNode'
+import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
 
 describe('BlockNode Tests', () => {
     describe('[ToLintedString]() Tests', () => {
+        const { lint } = constructConfig({
+            lint: {
+                blockStateBracketSpacing: { inside: 0 },
+                blockStateCommaSpacing: { before: 0, after: 1 },
+                blockStateEqualSpacing: { before: 0, after: 0 },
+                blockStateTrailingComma: false,
+                nbtCompoundBracketSpacing: { inside: 0 },
+                nbtCompoundColonSpacing: { before: 0, after: 1 },
+                nbtCompoundCommaSpacing: { before: 0, after: 1 },
+                nbtCompoundTrailingComma: false
+            }
+        })
         it('Should return block ID only', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: false
-                }
-            })
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone'])
             )
@@ -26,110 +32,61 @@ describe('BlockNode Tests', () => {
             assert(actual === 'minecraft:stone')
         })
         it('Should return block ID and block states', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: false
-                }
-            })
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 $(new BlockStateNode(), {
-                    snowy: 'true'
+                    snowy: 'true',
+                    [UnsortedKeys]: ['snowy']
                 })
             )
             const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone[snowy=true]')
         })
         it('Should return block ID and nbt compound tag', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: false
-                }
-            })
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 undefined,
                 $(new NbtCompoundNode(null), {
-                    Lock: new NbtStringNode(null, 'test', '"test"', [])
+                    Lock: new NbtStringNode(null, 'test', '"test"', []),
+                    [UnsortedKeys]: ['Lock']
                 })
             )
             const actual = block[GetFormattedString](lint)
             assert(actual === 'minecraft:stone{Lock: "test"}')
         })
-        it('Should return block ID, block states and nbt compound tag', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: false
-                }
-            })
+        it('Should return block ID, block states, and nbt compound tag', () => {
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 $(new BlockStateNode(), {
-                    snowy: 'true', age: '7'
+                    snowy: 'true', age: '7',
+                    [UnsortedKeys]: ['snowy', 'age']
                 }),
                 $(new NbtCompoundNode(null), {
-                    Lock: new NbtStringNode(null, 'test', '"test"', [])
+                    Lock: new NbtStringNode(null, 'test', '"test"', []),
+                    [UnsortedKeys]: ['Lock']
                 })
             )
             const actual = block[GetFormattedString](lint)
-            assert(actual === 'minecraft:stone[snowy=true,age=7]{Lock: "test"}')
-        })
-        it('Should append spaces after the comma in block states', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: true,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: false
-                }
-            })
-            const block = new BlockNode(
-                new IdentityNode('minecraft', ['stone']),
-                $(new BlockStateNode(), {
-                    snowy: 'true', age: '7'
-                })
-            )
-            const actual = block[GetFormattedString](lint)
-            assert(actual === 'minecraft:stone[snowy=true, age=7]')
+            assert(actual === 'minecraft:stone[snowy=true, age=7]{Lock: "test"}')
         })
         it('Should put spaces around the equal sign in block states', () => {
             const { lint } = constructConfig({
                 lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: true,
-                    blockStateSortKeys: false
+                    blockStateBracketSpacing: { inside: 0 },
+                    blockStateCommaSpacing: { before: 0, after: 1 },
+                    blockStateEqualSpacing: { before: 1, after: 1 },
+                    blockStateTrailingComma: false
                 }
             })
             const block = new BlockNode(
                 new IdentityNode('minecraft', ['stone']),
                 $(new BlockStateNode(), {
-                    snowy: 'true', age: '7'
+                    snowy: 'true', age: '7',
+                    [UnsortedKeys]: ['snowy', 'age']
                 })
             )
             const actual = block[GetFormattedString](lint)
-            assert(actual === 'minecraft:stone[snowy = true,age = 7]')
-        })
-        it('Should sort keys in block states', () => {
-            const { lint } = constructConfig({
-                lint: {
-                    blockStateAppendSpaceAfterComma: false,
-                    blockStatePutSpacesAroundEqualSign: false,
-                    blockStateSortKeys: true
-                }
-            })
-            const block = new BlockNode(
-                new IdentityNode('minecraft', ['stone']),
-                $(new BlockStateNode(), {
-                    snowy: 'true', age: '7'
-                })
-            )
-            const actual = block[GetFormattedString](lint)
-            assert(actual === 'minecraft:stone[age=7,snowy=true]')
+            assert(actual === 'minecraft:stone[snowy = true, age = 7]')
         })
     })
 })
