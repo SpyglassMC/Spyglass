@@ -45,7 +45,7 @@ function getCache(type: DataType) {
 }
 
 function getDefault(type: DataType) {
-    return require(`./${type}.json`)
+    return import(`./${type}.json`)
 }
 
 function getVersion(version: string, options: VanillaReportOptions) {
