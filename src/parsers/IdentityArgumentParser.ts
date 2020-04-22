@@ -155,26 +155,26 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
 
         if (reader.peek() === IdentityNode.NamespaceDelimiter) {
             // `path0` is the namespace.
+            if (shouldOmit === true && path0 === IdentityNode.DefaultNamespace) {
+                ans.errors.push(new ParsingError(
+                    { start, end: reader.cursor },
+                    locale('unexpected-default-namespace'),
+                    undefined, severity, ActionCode.IdentityOmitDefaultNamespace
+                ))
+            }
             reader.skip()
-            const start = reader.cursor
+            const pathStart = reader.cursor
             namespace = path0
             path0 = this.readValidString(reader, ans)
             //#region Completions
             pool = pool
                 .filter(v => v.startsWith(`${namespace}${IdentityNode.NamespaceDelimiter}`))
                 .map(v => v.slice(namespace!.length + 1))
-            if (start <= cursor && cursor <= reader.cursor) {
+            if (pathStart <= cursor && cursor <= reader.cursor) {
                 for (const id of pool) {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles)
                 }
-            }
-            if (shouldOmit === true && namespace === IdentityNode.DefaultNamespace) {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    locale('unexpected-default-namespace'),
-                    undefined, severity, ActionCode.IdentityOmitDefaultNamespace
-                ))
             }
             //#endregion
         } else {
@@ -220,8 +220,8 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 const tagType = getCacheTagType()
                 this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
             } else {
-                // For normal IDs.
                 if (this.type instanceof Array) {
+                    // For array IDs.
                     //#region Errors
                     if (!this.allowUnknown && !this.type.includes(stringID)) {
                         ans.errors.push(new ParsingError(
@@ -229,8 +229,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                             locale('expected-got',
                                 arrayToMessage(this.type, true, 'or'),
                                 locale('punc.quote', stringID)
-                            ),
-                            undefined, DiagnosticSeverity.Warning
+                            )
                         ))
                     }
                     //#endregion

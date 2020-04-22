@@ -134,9 +134,30 @@ describe('IdentityArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['fluid_tag'], true), [0, 20]))
         })
+        it('Should return data under array registry', async () => {
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config })
+            const parser = new IdentityArgumentParser(['minecraft:qux'])
+            const actual = parser.parse(new StringReader('qux'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux']), [0, 3]))
+            assert.deepStrictEqual(actual.errors, [])
+        })
         it('Should return completions for registry entries', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module
+                    }
+                ]
+            )
+        })
+        it('Should return completions for array registry', async () => {
+            const ctx = await constructContext({ registry: registries, parsers, cache, cursor: 0 })
+            const parser = new IdentityArgumentParser(['spgoding:foo'])
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -321,6 +342,31 @@ describe('IdentityArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should not return completions for namespaces when should omit namespaces for tags', async () => {
+            const config = constructConfig({
+                env: { dependsOnVanilla: false },
+                lint: { idOmitDefaultNamespace: ['warning', true] }
+            })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
+            const parser = new IdentityArgumentParser('minecraft:fluid', true)
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: '#fluid_tag',
+                        kind: CompletionItemKind.Field
+                    },
+                    {
+                        label: 'water',
+                        kind: CompletionItemKind.Field
+                    },
+                    {
+                        label: 'lava',
+                        kind: CompletionItemKind.Field
+                    }
+                ]
+            )
+        })
         it('Should return completions for namespaces and the first path in default namespace', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
@@ -359,6 +405,28 @@ describe('IdentityArgumentParser Tests', () => {
                     {
                         label: 'minecraft',
                         kind: CompletionItemKind.Module
+                    }
+                ]
+            )
+        })
+        it('Should not only return completions for namespaces when should omit namespaces', async () => {
+            const config = constructConfig({ lint: { strictBossbarCheck: null, idOmitDefaultNamespace: ['warning', true] } })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config, cursor: 0 })
+            const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    {
+                        label: 'spgoding',
+                        kind: CompletionItemKind.Module
+                    },
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Folder
+                    },
+                    {
+                        label: 'foo',
+                        kind: CompletionItemKind.Field
                     }
                 ]
             )
@@ -449,7 +517,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError({ start: 9, end: 12 }, 'Found non [a-z0-9/._-] character(s)')
             ])
         })
-        it('Should return warning when the id cannot be resolved in cache category', async () => {
+        it('Should return errors when the id cannot be resolved in cache category', async () => {
             const config = constructConfig({ lint: { strictBossbarCheck: ['warning', true], idOmitDefaultNamespace: null } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$bossbars')
@@ -463,7 +531,7 @@ describe('IdentityArgumentParser Tests', () => {
                 )
             ])
         })
-        it('Should return warning when the id cannot be resolved in loot table cache', async () => {
+        it('Should return errors when the id cannot be resolved in loot table cache', async () => {
             const config = constructConfig({ lint: { strictLootTableCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$loot_tables')
@@ -477,7 +545,7 @@ describe('IdentityArgumentParser Tests', () => {
                 )
             ])
         })
-        it('Should return warning when the id cannot be resolved in tag cache category', async () => {
+        it('Should return errors when the id cannot be resolved in tag cache category', async () => {
             const config = constructConfig({ lint: { strictFunctionTagCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('$functions', true)
@@ -491,7 +559,7 @@ describe('IdentityArgumentParser Tests', () => {
                 )
             ])
         })
-        it('Should return warning when the id cannot be resolved in registry', async () => {
+        it('Should return errors when the id cannot be resolved in registry', async () => {
             const config = constructConfig({ lint: { strictBlockCheck: ['error', 'only-default-namespace'], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = await constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block')
@@ -501,6 +569,20 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 3 },
                     'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’',
+                    undefined, DiagnosticSeverity.Error
+                )
+            ])
+        })
+        it('Should return warnings when the id cannot be resolved in the array registry', async () => {
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config })
+            const parser = new IdentityArgumentParser(['spgoding:foo'])
+            const actual = parser.parse(new StringReader('qux'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux']), [0, 3]))
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    'Expected ‘spgoding:foo’ but got ‘minecraft:qux’',
                     undefined, DiagnosticSeverity.Error
                 )
             ])
@@ -543,6 +625,20 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['entity_type', '1'], true), [0, 23]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'Tags are not allowed here')
+            ])
+        })
+        it('Should throw error when namespace should be omitted here', async () => {
+            const config = constructConfig({ lint: { idOmitDefaultNamespace: ['warning', true] } })
+            const ctx = await constructContext({ registry: registries, parsers, cache, config })
+            const parser = new IdentityArgumentParser('minecraft:block')
+            const actual = parser.parse(new StringReader('minecraft:stone'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['stone']), [0, 15]))
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 0, end: 9 }, "Default namespace should be omitted here",
+                    undefined, DiagnosticSeverity.Warning,
+                    ActionCode.IdentityOmitDefaultNamespace
+                )
             ])
         })
         it('Should throw error when namespace cannot be omitted here', async () => {

@@ -154,11 +154,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             helper = new NbtdocHelper(ctx.nbt)
             helper.goCompound(this.id)
             const doc = helper.readCompound()
+            /* istanbul ignore next */
             description = doc ? doc.description : undefined
         } else if (this.id) {
             helper = new NbtdocHelper(ctx.nbt)
             helper.goRegistryCompound(this.category, this.id)
             const doc = helper.readCompound()
+            /* istanbul ignore next */
             description = doc ? doc.description : undefined
         }
         const start = reader.cursor
@@ -182,7 +184,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: nbtdoc.NbtValue, description?: string): ArgumentParserResult<NbtNode> {
-        let ans: ArgumentParserResult<NbtNode>
+        let ans: ArgumentParserResult<NbtNode> 
         switch (reader.peek()) {
             case '{':
                 ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : undefined)
@@ -193,21 +195,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             case '':
             case '}':
                 if (doc) {
-                    if (NbtdocHelper.isCompoundDoc(doc)) {
-                        ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc)
-                    } else if (NbtdocHelper.isListDoc(doc)) {
-                        ans = this.parseListOrArray(reader, ctx, superNode, helper, doc, description)
-                    } else if (NbtdocHelper.isByteArrayDoc(doc)) {
-                        ans = this.parsePrimitiveArray(reader, ctx, superNode, helper)
-                    } else if (NbtdocHelper.isIntArrayDoc(doc)) {
-                        ans = this.parsePrimitiveArray(reader, ctx, superNode, helper)
-                    } else if (NbtdocHelper.isLongArrayDoc(doc)) {
-                        ans = this.parsePrimitiveArray(reader, ctx, superNode, helper)
-                    } else {
-                        ans = this.parsePrimitiveTag(reader, superNode, helper)
+                    ans = {
+                        data: new NbtStringNode(null, '', '', []),
+                        cache: {}, completions: [], errors: [], tokens: []
                     }
+                    /* istanbul ignore next */
                     if (helper && ctx.cursor === reader.cursor) {
-                        helper.completeField(ans, ctx, ans.data, doc, this.isPredicate, description || '')
+                        helper.completeField(ans, ctx, doc, this.isPredicate, description || '')
                     }
                 } else {
                     ans = this.parsePrimitiveTag(reader, superNode, helper)
@@ -363,6 +357,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             ans.data = result.data
             combineArgumentParserResult(ans, result)
         } catch (p) {
+            /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
             ans.data[NodeRange] = { start, end: reader.cursor }
@@ -488,6 +483,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .skipWhiteSpace()
             while (reader.canRead() && reader.peek() !== ']') {
                 const start = reader.cursor
+                /* istanbul ignore next */
                 const result = this.parseTag(reader, ctx, superNode, helper, doc ? doc.List.value_type : undefined, description)
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
@@ -542,7 +538,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 const value = reader.readQuotedString(out)
                 ans.data = new NbtStringNode(superNode, value, reader.string.slice(start, reader.cursor), out.mapping)
             } catch (p) {
-                ans.data = new NbtStringNode(superNode, '', '', [])
+                /* istanbul ignore next */
                 ans.errors.push(p)
             }
             //#region Tokens

@@ -1,6 +1,7 @@
 import NbtNode from './NbtNode'
 import NbtCollectionNode from './NbtCollectionNode'
 import { LintConfig } from '../../Config'
+import { GetFormattedOpen } from '../map/MapNode'
 
 export default abstract class NbtArrayNode<T extends NbtNode> extends NbtCollectionNode<T> {
     protected abstract chars: {
@@ -15,9 +16,9 @@ export default abstract class NbtArrayNode<T extends NbtNode> extends NbtCollect
         semicolonSpacing: 'nbtArraySemicolonSpacing',
         sepSpacing: 'nbtArrayCommaSpacing',
         trailingPairSep: 'nbtArrayTrailingComma'
-    }
+    };
 
-    protected getFormattedOpenBracket(lint: LintConfig) {
+    [GetFormattedOpen](lint: LintConfig) {
         const { after } = lint[this.configKeys.semicolonSpacing] as { after: number }
         return `${this.chars.openBracket}${this.chars.type}${this.length > 0 ? `;${' '.repeat(after)}` : ';'}`
     }

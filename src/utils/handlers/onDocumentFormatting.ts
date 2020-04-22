@@ -5,10 +5,6 @@ import { lineToLintedString } from '../../types/Line'
 export default function onDocumentFormatting({ info }: { info: FunctionInfo }) {
     const ans: TextEdit[] = []
 
-    if (!info.config.features.formatting) {
-        return null
-    }
-
     for (let i = 0; i < info.lines.length; i++) {
         const string = info.strings[i]
         const line = info.lines[i]

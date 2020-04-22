@@ -2,12 +2,12 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
-import ParsingError from '../../types/ParsingError'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import NumberRangeNode from '../../types/nodes/NumberRangeNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import EntityNode from '../../types/nodes/EntityNode'
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
@@ -34,6 +34,9 @@ describe('EntityArgumentParser Tests', () => {
         entities: {
             foo: { def: [], ref: [] },
             bar: { def: [], ref: [], doc: 'The doc of **bar**' }
+        },
+        score_holders: {
+            '#holder': { def: [], ref: [] }
         },
         'tags/entity_types': {
             'spgoding:mobs': { def: [], ref: [] }
@@ -124,6 +127,24 @@ describe('EntityArgumentParser Tests', () => {
                     { label: '@s' }
                 ])
             })
+            it('Should return completions for score holders', async () => {
+                const ctx = await constructContext({ parsers, cache, cursor: 0 })
+                const parser = new EntityArgumentParser('multiple', 'entities', true)
+                const actual = parser.parse(new StringReader(''), ctx)
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'foo' },
+                    {
+                        label: 'bar',
+                        documentation: { kind: 'markdown', value: 'The doc of **bar**' }
+                    },
+                    { label: '#holder' },
+                    { label: '@a' },
+                    { label: '@e' },
+                    { label: '@p' },
+                    { label: '@r' },
+                    { label: '@s' }
+                ])
+            })
             it('Should return cache when the entity is a plain name', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('foo'), ctx)
@@ -182,8 +203,6 @@ describe('EntityArgumentParser Tests', () => {
                     [UnsortedKeys]: ['sort', 'x', 'dx', 'limit', 'level', 'distance', 'x_rotation']
                 })
                 const actual = parser.parse(new StringReader(command), ctx)
-                console.log(require('util').inspect(actual.data, true, null))
-                console.log(require('util').inspect($(new EntityNode(undefined, 'a', expected), [0, 78]), true, null))
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', expected), [0, 78]))
                 assert.deepStrictEqual(actual.errors, [])
@@ -540,6 +559,27 @@ describe('EntityArgumentParser Tests', () => {
                 expectedArguments[UnsortedKeys].push('type')
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 25]))
+                assert.deepStrictEqual(actual.errors, [])
+            })
+            it('Should return error for unsorted keys', async () => {
+                const config = constructConfig({ lint: { selectorSortKeys: ['warning', ['tagNeg', 'tag']] } })
+                const ctx = await constructContext({ parsers, config, cache })
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@a[tag=foo,tag=!bar]'), ctx)
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError(
+                        { start: 2, end: 20 },
+                        'Unsorted keys (rule: ‘datapack.lint.selectorSortKeys’)',
+                        undefined, DiagnosticSeverity.Warning,
+                        ActionCode.SelectorSortKeys
+                    )
+                ])
+            })
+            it('Should not return error when the keys are already sorted', async () => {
+                const config = constructConfig({ lint: { selectorSortKeys: ['warning', ['tag', 'tagNeg']] } })
+                const ctx = await constructContext({ parsers, config, cache })
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@a[tag=foo,tag=!bar]'), ctx)
                 assert.deepStrictEqual(actual.errors, [])
             })
         })

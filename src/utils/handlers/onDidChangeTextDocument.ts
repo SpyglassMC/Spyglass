@@ -34,9 +34,10 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
                 }
                 info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
             } catch (e) {
+                /* istanbul ignore next */
                 console.error(e)
-                console.error(`info.strings = ${info.strings.join('\n')}`)
-                console.error(`range = ${JSON.stringify(range)}`)
+                /* istanbul ignore next */
+                console.error(`info.strings = ${info.strings.join('\n')}\n* * * * * *\nrange = ${JSON.stringify(range)}`)
             }
         } else {
             // Full update.

@@ -10,7 +10,7 @@ import { constructConfig } from '../../types/Config'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
 import Registry from '../../types/Registry'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { ClientCache } from '../../types/ClientCache'
 import { NodeRange, NodeDescription } from '../../types/nodes/ArgumentNode'
 import ParsingError, { ActionCode } from '../../types/ParsingError'
@@ -407,7 +407,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: 'false' },
@@ -426,7 +426,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: 'false' },
@@ -443,7 +443,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: '0b' },
@@ -459,10 +459,10 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '[B;]' }
+                    { label: '[B;]', insertText: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -474,10 +474,10 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '{}' }
+                    { label: '{}', insertText: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -489,7 +489,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
@@ -504,7 +504,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
@@ -521,7 +521,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config, registry: TestRegistry })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: '"minecraft"', kind: CompletionItemKind.Module },
@@ -537,10 +537,10 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '[I;]' }
+                    { label: '[I;]', insertText: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -552,10 +552,10 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '[]' }
+                    { label: '[]', insertText: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -567,10 +567,10 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '[L;]' }
+                    { label: '[L;]', insertText: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -583,7 +583,7 @@ describe('NbtdocHelper Tests', () => {
                 const description = ' The tags on the entity'
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, tag, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
                     { label: '"fooTag"' }

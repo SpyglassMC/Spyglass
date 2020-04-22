@@ -52,10 +52,10 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         // Completions
         if (ctx.cursor === start) {
+            ans.completions.push(...getCompletions(ctx.cache, 'entities'))
             if (this.isScoreHolder) {
                 ans.completions.push(...getCompletions(ctx.cache, 'score_holders'))
             }
-            ans.completions.push(...getCompletions(ctx.cache, 'entities'))
             ans.completions.push(...arrayToCompletions(['@a', '@e', '@p', '@r', '@s']))
         }
 
@@ -211,6 +211,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         .get('String', [StringType.String, SelectorArgumentKeys, 'selectorKeyQuote', 'selectorKeyQuoteType'])
                         .parse(reader, ctx) as ArgumentParserResult<StringNode>
                     const key = result.data.value
+                    /* istanbul ignore else */
                     if (key) {
                         ans.data[Keys][key] = result.data
                     }
@@ -279,6 +280,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                     .get('Identity', ['$advancements'])
                                     .parse(reader, ctx)
                                 const adv = result.data.toString()
+                                /* istanbul ignore else */
                                 if (adv) {
                                     ans.data[Keys][adv] = result.data
                                 }
@@ -299,6 +301,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                                 .parse(reader, ctx)
                                             result.tokens = [Token.from(start, reader, TokenType.property)]
                                             const crit = result.data.value
+                                            /* istanbul ignore else */
                                             if (crit) {
                                                 ans.data[Keys][crit] = result.data
                                             }
@@ -355,7 +358,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
             if (ctx.config.lint.selectorSortKeys && !ans.data.argument[IsMapSorted](ctx.config.lint)) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
+                    ans.data.argument[NodeRange],
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
                         locale('punc.quote', 'datapack.lint.selectorSortKeys')

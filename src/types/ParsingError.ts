@@ -67,7 +67,7 @@ export default class ParsingError {
             severity: this.severity,
             source: 'datapack',
             message: this.message + locale('punc.period'),
-            ...this.code ? { code: this.code } : {}
+            ...this.code !== undefined ? { code: this.code } : {}
         }
     }
 }

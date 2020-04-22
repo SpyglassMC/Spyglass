@@ -76,8 +76,8 @@ class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
     }
 }
 
+/* istanbul ignore next */
 module TextComponentArgumentParser {
-    /* istanbul ignore next */
     TextComponentArgumentParser.initialize()
 }
 

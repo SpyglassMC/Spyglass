@@ -179,7 +179,7 @@ describe('CommandTree Tests', () => {
             })
         })
     })
-    describe('getSchemaAnchor() Tests', () => {
+    describe('getNbtdocRegistryId() Tests', () => {
         it('Should return the respective id', () => {
             const id = new IdentityNode('minecraft', ['spgoding'])
             const argument = new SelectorArgumentsNode()
@@ -187,6 +187,11 @@ describe('CommandTree Tests', () => {
             const entity = new EntityNode(undefined, 'e', argument)
             const actual = getNbtdocRegistryId(entity)
             assert(actual === 'minecraft:spgoding')
+        })
+        it('Should return null', () => {
+            const argument = new SelectorArgumentsNode()
+            const actual = getNbtdocRegistryId(argument)
+            assert(actual === null)
         })
     })
     const parsers = new ArgumentParserManager()

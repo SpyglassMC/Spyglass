@@ -3,12 +3,13 @@ import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
 import { getUri, parseString, getRel, getId, getRootUri, getUriFromId, getInfo } from '../../../utils/handlers/common'
 import FunctionInfo from '../../../types/FunctionInfo'
-import { VanillaConfig } from '../../../types/Config'
+import { VanillaConfig, constructConfig } from '../../../types/Config'
 import Line from '../../../types/Line'
 import Token, { TokenType } from '../../../types/Token'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from '../../../types/handlers'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import { CacheFile } from '../../../types/ClientCache'
+import { fail } from 'assert'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -186,6 +187,15 @@ describe('common.ts Tests', () => {
             assert(actual.lineBreak === '\n')
             assert(actual.version === null)
             assert.deepStrictEqual(actual.strings, ['# foo'])
+        })
+        it('Should return undefined when the file is excluded', async () => {
+            const fetchConfig = async () => constructConfig({ env: { exclude: ['.'] } })
+            const readFile = async () => fail()
+            const infos: InfosOfUris = new Map()
+
+            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+
+            assert(actual === undefined)
         })
     })
 })

@@ -3,10 +3,10 @@ import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import BlockNode from '../../types/nodes/BlockNode'
 import BlockArgumentParser from '../../parsers/BlockArgumentParser'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import ParsingError from '../../types/ParsingError'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import BlockStateNode from '../../types/nodes/map/BlockStateNode'
 import { $ } from '../utils'
@@ -256,6 +256,27 @@ describe('BlockArgumentParser Tests', () => {
                     [UnsortedKeys]: ['snowy']
                 })
             ), [0, 28]))
+            assert.deepStrictEqual(actual.errors, [])
+        })
+        it('Should return error when the states are not sorted', async () => {
+            const parser = new BlockArgumentParser(false)
+            const config = constructConfig({ lint: { blockStateSortKeys: ['warning', true] } })
+            const ctx = await constructContext({ blocks, config, registry: registries, parsers, cursor: 0 })
+            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,age=1]'), ctx)
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 15, end: 33 },
+                    'Unsorted keys (rule: ‘datapack.lint.blockStateSortKeys’)',
+                    undefined, DiagnosticSeverity.Warning,
+                    ActionCode.BlockStateSortKeys
+                )
+            ])
+        })
+        it('Should not return error when the states are sorted', async () => {
+            const parser = new BlockArgumentParser(false)
+            const config = constructConfig({ lint: { blockStateSortKeys: ['warning', true] } })
+            const ctx = await constructContext({ blocks, config, registry: registries, parsers, cursor: 0 })
+            const actual = parser.parse(new StringReader('minecraft:stone[age=1,snowy=true]'), ctx)
             assert.deepStrictEqual(actual.errors, [])
         })
     })

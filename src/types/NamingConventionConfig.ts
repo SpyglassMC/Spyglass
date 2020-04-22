@@ -1,4 +1,4 @@
-import { DiagnosticConfig } from "./StylisticConfig"
+import { DiagnosticConfig } from './StylisticConfig'
 
 export type NamingConvention = 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'kebab-case'
 export type NamingConventionConfig = NamingConvention | NamingConvention[]

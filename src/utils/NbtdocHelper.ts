@@ -1,4 +1,4 @@
-import { CompletionItem, DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItem, DiagnosticSeverity, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
 import { nbtdoc } from '../types/nbtdoc'
 import LineParser from '../parsers/LineParser'
@@ -27,7 +27,7 @@ import NbtDoubleNode from '../types/nodes/nbt/NbtDoubleNode'
 import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
 import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
 import NbtListNode from '../types/nodes/nbt/NbtListNode'
-import { Keys } from '../types/nodes/map/MapNode'
+import { Keys, GetFormattedOpen, GetFormattedClose } from '../types/nodes/map/MapNode'
 import { GetFormattedString } from '../types/Formattable'
 import { LintConfig } from '../types/Config'
 import { getInnerIndex } from '../types/IndexMapping'
@@ -220,28 +220,28 @@ export default class NbtdocHelper {
         return null
     }
 
-    completeField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string) {
+    completeField(ans: ValidateResult, ctx: ParsingContext, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string) {
         /* istanbul ignore else */
         if (doc) {
             /* istanbul ignore else */
             if (NbtdocHelper.isBooleanDoc(doc)) {
-                this.completeBooleanField(ans, ctx, tag, doc)
+                this.completeBooleanField(ans, ctx, doc)
             } else if (NbtdocHelper.isByteArrayDoc(doc)) {
-                this.completeByteArrayField(ans, ctx, tag, doc)
+                this.completeByteArrayField(ans, ctx, doc)
             } else if (NbtdocHelper.isCompoundDoc(doc)) {
-                this.completeCompoundField(ans, ctx, tag, doc)
+                this.completeCompoundField(ans, ctx, doc)
             } else if (NbtdocHelper.isEnumDoc(doc)) {
-                this.completeEnumField(ans, ctx, tag, doc)
+                this.completeEnumField(ans, ctx, doc)
             } else if (NbtdocHelper.isIdDoc(doc)) {
-                this.completeIdField(ans, ctx, tag, doc, isPredicate)
+                this.completeIdField(ans, ctx, doc, isPredicate)
             } else if (NbtdocHelper.isIntArrayDoc(doc)) {
-                this.completeIntArrayField(ans, ctx, tag, doc)
+                this.completeIntArrayField(ans, ctx, doc)
             } else if (NbtdocHelper.isListDoc(doc)) {
-                this.completeListField(ans, ctx, tag, doc)
+                this.completeListField(ans, ctx, doc)
             } else if (NbtdocHelper.isLongArrayDoc(doc)) {
-                this.completeLongArrayField(ans, ctx, tag, doc)
+                this.completeLongArrayField(ans, ctx, doc)
             } else if (NbtdocHelper.isStringDoc(doc)) {
-                this.completeStringField(ans, ctx, tag, doc, isPredicate, description)
+                this.completeStringField(ans, ctx, doc, isPredicate, description)
             }
             // TODO: completions for OR
             // TODO: completions for compound keys in OR
@@ -249,7 +249,31 @@ export default class NbtdocHelper {
         }
     }
 
-    private completeBooleanField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, _doc: BooleanDoc) {
+    private completeOpenCloseField(ans: ValidateResult, lint: LintConfig, node: NbtCollectionNode<NbtNode> | NbtCompoundNode) {
+        const open = node[GetFormattedOpen](lint)
+        const close = node[GetFormattedClose](lint)
+        ans.completions.push({
+            label: `${open}${close}`,
+            insertText: `${open}$1${close}`,
+            insertTextFormat: InsertTextFormat.Snippet
+        })
+    }
+    private completeByteArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _doc: ByteArrayDoc) {
+        this.completeOpenCloseField(ans, lint, new NbtByteArrayNode(null))
+    }
+    private completeCompoundField(ans: ValidateResult, { config: { lint } }: ParsingContext, _doc: CompoundDoc) {
+        this.completeOpenCloseField(ans, lint, new NbtCompoundNode(null))
+    }
+    private completeIntArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _doc: IntArrayDoc) {
+        this.completeOpenCloseField(ans, lint, new NbtIntArrayNode(null))
+    }
+    private completeListField(ans: ValidateResult, { config: { lint } }: ParsingContext, _doc: ListDoc) {
+        this.completeOpenCloseField(ans, lint, new NbtListNode(null))
+    }
+    private completeLongArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _doc: LongArrayDoc) {
+        this.completeOpenCloseField(ans, lint, new NbtLongArrayNode(null))
+    }
+    private completeBooleanField(ans: ValidateResult, ctx: ParsingContext, _doc: BooleanDoc) {
         if (!ctx.config.lint.nbtBoolean || ctx.config.lint.nbtBoolean[1]) {
             ans.completions.push(...arrayToCompletions(['false', 'true']))
         }
@@ -259,12 +283,6 @@ export default class NbtdocHelper {
                 NbtdocHelper.getFormattedString(ctx.config.lint, 'Byte', 1)
             ]))
         }
-    }
-    private completeByteArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ByteArrayDoc) {
-        ans.completions.push({ label: new NbtByteArrayNode(null)[GetFormattedString](lint) })
-    }
-    private completeCompoundField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: CompoundDoc) {
-        ans.completions.push({ label: new NbtCompoundNode(null)[GetFormattedString](lint) })
     }
     private static handleDescription(str: string) {
         return str.trim().replace(/\n\s/g, '\n')
@@ -296,7 +314,7 @@ export default class NbtdocHelper {
             })
         }
     }
-    private completeEnumField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: EnumDoc) {
+    private completeEnumField(ans: ValidateResult, ctx: ParsingContext, doc: EnumDoc) {
         const { et } = this
             .goEnum(doc.Enum)
             .readEnum()
@@ -315,7 +333,7 @@ export default class NbtdocHelper {
             }
         }
     }
-    private completeIdField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, doc: IdDoc, isPredicate: boolean) {
+    private completeIdField(ans: ValidateResult, ctx: ParsingContext, doc: IdDoc, isPredicate: boolean) {
         const subCtx = { ...ctx, cursor: 0 }
         const reader = new StringReader('')
         const result = ctx.parsers.get('Identity', [
@@ -328,16 +346,7 @@ export default class NbtdocHelper {
             })
         }
     }
-    private completeIntArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: IntArrayDoc) {
-        ans.completions.push({ label: new NbtIntArrayNode(null)[GetFormattedString](lint) })
-    }
-    private completeListField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: ListDoc) {
-        ans.completions.push({ label: new NbtListNode(null)[GetFormattedString](lint) })
-    }
-    private completeLongArrayField(ans: ValidateResult, { config: { lint } }: ParsingContext, _tag: NbtNode, _doc: LongArrayDoc) {
-        ans.completions.push({ label: new NbtLongArrayNode(null)[GetFormattedString](lint) })
-    }
-    private completeStringField(ans: ValidateResult, ctx: ParsingContext, _tag: NbtNode, _doc: StringDoc, _isPredicate: boolean, description: string) {
+    private completeStringField(ans: ValidateResult, ctx: ParsingContext, _doc: StringDoc, _isPredicate: boolean, description: string) {
         const subCtx = { ...ctx, cursor: 0 }
         const reader = new StringReader('')
         const result = this.validateInnerString(reader, subCtx, description)

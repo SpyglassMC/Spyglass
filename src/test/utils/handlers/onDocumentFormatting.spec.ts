@@ -2,12 +2,12 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onDocumentFormatting from '../../../utils/handlers/onDocumentFormatting'
-import { VanillaConfig, constructConfig } from '../../../types/Config'
+import { constructConfig } from '../../../types/Config'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import ParsingError from '../../../types/ParsingError'
 
 describe('onDocumentFormatting() Tests', () => {
-    const config = constructConfig({ lint: { enableFormatting: true } })
+    const config = constructConfig({})
     it('Should return correctly', () => {
         const info: FunctionInfo = {
             config, version: 0, lineBreak: '\n',
@@ -19,14 +19,14 @@ describe('onDocumentFormatting() Tests', () => {
                 ]
             }],
             strings: [
-                'fake stone'
+                'fake minecraft:stone'
             ]
         }
 
         const edits = onDocumentFormatting({ info })
 
         assert.deepStrictEqual(edits, [{
-            range: { start: { line: 0, character: 0 }, end: { line: 0, character: 10 } },
+            range: { start: { line: 0, character: 0 }, end: { line: 0, character: 20 } },
             newText: 'fake minecraft:stone'
         }])
     })
@@ -41,14 +41,14 @@ describe('onDocumentFormatting() Tests', () => {
                 ]
             }],
             strings: [
-                '     fake stone'
+                '     fake minecraft:stone'
             ]
         }
 
         const edits = onDocumentFormatting({ info })
 
         assert.deepStrictEqual(edits, [{
-            range: { start: { line: 0, character: 0 }, end: { line: 0, character: 15 } },
+            range: { start: { line: 0, character: 0 }, end: { line: 0, character: 25 } },
             newText: '     fake minecraft:stone'
         }])
     })
@@ -75,15 +75,15 @@ describe('onDocumentFormatting() Tests', () => {
                 }
             ],
             strings: [
-                'wrong stone',
-                'fake stone'
+                'wrong minecraft:stone',
+                'fake minecraft:stone'
             ]
         }
 
         const edits = onDocumentFormatting({ info })
 
         assert.deepStrictEqual(edits, [{
-            range: { start: { line: 1, character: 0 }, end: { line: 1, character: 10 } },
+            range: { start: { line: 1, character: 0 }, end: { line: 1, character: 20 } },
             newText: 'fake minecraft:stone'
         }])
     })

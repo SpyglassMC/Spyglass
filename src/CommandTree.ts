@@ -9,7 +9,7 @@ export function getNbtdocRegistryId(param: EntityNode | SelectorArgumentsNode): 
     if (param instanceof EntityNode) {
         param = param.argument
     }
-    if (param && param.type) {
+    if (param.type) {
         const firstID = param.type[0]
         if (firstID && !firstID.isTag) {
             return firstID.toString()

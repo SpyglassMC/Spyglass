@@ -93,5 +93,24 @@ describe('NamingConventionConfig Tests', () => {
                 assert(actual === true)
             }
         })
+        it('Should return true for [camelCase, PascalCase]', () => {
+            const identities = [
+                'l', 'lower', 'lowerC', 'lowerIP', 'lowerCamel', 'camelCase',
+                'U', 'Upper', 'UpperC', 'PascalCase'
+            ]
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', ['camelCase', 'PascalCase']]
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === true)
+            }
+        })
+        it('Should return false for [camelCase, PascalCase]', () => {
+            const identities = ['', '---']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', ['camelCase', 'PascalCase']]
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === false)
+            }
+        })
     })
 })

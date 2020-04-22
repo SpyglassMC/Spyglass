@@ -16,6 +16,8 @@ export const ConfigKeys = Symbol('ConfigKeys')
 export const Chars = Symbol('Chars')
 export const Keys = Symbol('KeysData')
 export const UnsortedKeys = Symbol('UnsortedKeys')
+export const GetFormattedOpen = Symbol('GetFormattedOpen')
+export const GetFormattedClose = Symbol('GetFormattedClose')
 
 export default abstract class MapNode<KI, V> extends ArgumentNode {
     [key: string]: V
@@ -72,14 +74,23 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return keys.slice(1).every((v, i) => v.toLowerCase() >= keys[i].toLowerCase())
     }
 
-    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys], kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
+    [GetFormattedOpen](lint: LintConfig) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
+        return MapNode.getFormattedBracket(this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
+    }
+
+    [GetFormattedClose](lint: LintConfig) {
+        const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
+        return MapNode.getFormattedBracket(this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
+    }
+
+    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys], kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
         const sepSpacingConfig = lint[this[ConfigKeys].sepSpacing] as SepSpacingConfig
         const pairSepSpacingConfig = lint[this[ConfigKeys].pairSepSpacing] as SepSpacingConfig
         const trailingPairSepConfig = lint[this[ConfigKeys].trailingPairSep] as boolean
 
-        const open = MapNode.getFormattedBracket(this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
-        const close = MapNode.getFormattedBracket(this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
+        const open = this[GetFormattedOpen](lint)
+        const close = this[GetFormattedClose](lint)
         const sep = MapNode.getFormattedSep(this[Chars].sep, sepSpacingConfig)
         const pairSep = MapNode.getFormattedSep(this[Chars].pairSep, pairSepSpacingConfig)
 

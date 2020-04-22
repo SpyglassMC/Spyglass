@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtArgumentParser from '../../parsers/NbtArgumentParser'
-import ParsingError from '../../types/ParsingError'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
@@ -39,6 +39,22 @@ describe('NbtArgumentParser Tests', () => {
         ctx = await constructContext({ parsers, registry: TestRegistry, nbt: TestNbtdoc })
     })
     describe('parse() Tests', () => {
+        it('Should report errors when the type does not match', () => {
+            const parser = new NbtArgumentParser('String', 'minecraft:block')
+            const reader = new StringReader('5b')
+            const expected = new NbtByteNode(null, 5, '5')
+            expected[NodeRange] = { start: 0, end: 2 }
+
+            const { data, errors, cache, completions } = parser.parse(reader, ctx)
+
+            assert.deepStrictEqual(data, expected)
+            assert.deepStrictEqual(errors, [new ParsingError(
+                { start: 0, end: 2 },
+                'Expected a string tag but got a byte tag'
+            )])
+            assert.deepStrictEqual(cache, {})
+            assert.deepStrictEqual(completions, [])
+        })
         it('Should parse quoted string tags', () => {
             const parser = new NbtArgumentParser('String', 'minecraft:block')
             const reader = new StringReader('"bar\\""}')
@@ -258,7 +274,9 @@ describe('NbtArgumentParser Tests', () => {
 
                 const { completions } = parser.parse(reader, { ...ctx, cursor })
 
-                assert.deepStrictEqual(completions, [{ label: '{}' }])
+                assert.deepStrictEqual(completions, [
+                    { label: '{}', insertText: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
+                ])
             })
             it('Should parse empty compound tags', async () => {
                 const parser = new NbtArgumentParser('Compound', 'minecraft:block', 'minecraft:one_boolean_field')
@@ -287,9 +305,23 @@ describe('NbtArgumentParser Tests', () => {
                     documentation: 'The only field of this compound'
                 }])
             })
-            it('Should provide completions for quoted compound keys', () => {
+            it('Should provide completions for double quoted compound keys', () => {
                 const parser = new NbtArgumentParser('Compound', 'minecraft:block', 'minecraft:one_boolean_field')
                 const reader = new StringReader('{""}')
+                const cursor = 2
+
+                const { completions } = parser.parse(reader, { ...ctx, cursor })
+
+                assert.deepStrictEqual(completions, [{
+                    label: 'foo', insertText: 'foo',
+                    kind: CompletionItemKind.Property,
+                    detail: 'Type: boolean',
+                    documentation: 'The only field of this compound'
+                }])
+            })
+            it('Should provide completions for single quoted compound keys', () => {
+                const parser = new NbtArgumentParser('Compound', 'minecraft:block', 'minecraft:one_boolean_field')
+                const reader = new StringReader("{''}")
                 const cursor = 2
 
                 const { completions } = parser.parse(reader, { ...ctx, cursor })
@@ -365,6 +397,54 @@ describe('NbtArgumentParser Tests', () => {
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
+            it('Should report errors for unsorted keys', () => {
+                const config = constructConfig({ lint: { nbtCompoundSortKeys: ['warning', true] } })
+                const parser = new NbtArgumentParser('Compound', 'minecraft:item', 'minecraft:boolean')
+                const reader = new StringReader('{CustomModelData: 1, addition: 1b}')
+
+                const { errors } = parser.parse(reader, { ...ctx, config })
+
+                assert.deepStrictEqual(errors, [new ParsingError(
+                    { start: 0, end: 34 },
+                    "Unsorted keys (rule: ‘datapack.lint.nbtCompoundSortKeys’)",
+                    undefined, DiagnosticSeverity.Warning,
+                    ActionCode.NbtCompoundSortKeys
+                )])
+            })
+            it('Should not report errors for sorted keys', () => {
+                const config = constructConfig({ lint: { nbtCompoundSortKeys: ['warning', true] } })
+                const parser = new NbtArgumentParser('Compound', 'minecraft:item', 'minecraft:boolean')
+                const reader = new StringReader('{addition: 1b, CustomModelData: 1}')
+
+                const { errors } = parser.parse(reader, { ...ctx, config })
+
+                assert.deepStrictEqual(errors, [])
+            })
+            it('Should provide completions for list tag brackets in the end of a compound', () => {
+                const parser = new NbtArgumentParser('Compound', 'minecraft:item', 'minecraft:list')
+                const reader = new StringReader('{addition: }')
+                const cursor = 11
+
+                const { completions } = parser.parse(reader, { ...ctx, cursor })
+
+                assert.deepStrictEqual(completions, [{
+                    label: '[]', insertText: '[$1]', insertTextFormat: InsertTextFormat.Snippet
+                }])
+            })
+            it('Should provide completions for compound tags in list tags', () => {
+                const parser = new NbtArgumentParser('Compound', 'minecraft:item', 'minecraft:list')
+                const reader = new StringReader('{addition: [{}]}')
+                const cursor = 13
+
+                const { completions } = parser.parse(reader, { ...ctx, cursor })
+
+                assert.deepStrictEqual(completions, [{
+                    label: 'foo', insertText: 'foo',
+                    kind: CompletionItemKind.Property,
+                    detail: 'Type: boolean',
+                    documentation: 'The only field of this compound'
+                }])
+            })
         })
         describe('List and Array Tests', () => {
             it('Should parse empty byte array tags', async () => {
@@ -385,6 +465,22 @@ describe('NbtArgumentParser Tests', () => {
                 const reader = new StringReader('[B; 1b]')
                 const expected = new NbtByteArrayNode(null)
                 expected[NodeRange] = { start: 0, end: 7 }
+                const expectedChild = new NbtByteNode(null, 1, '1')
+                expectedChild[NodeRange] = { start: 4, end: 6 }
+                expected.push(expectedChild)
+
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
+
+                assert.deepStrictEqual(data, expected)
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should parse filled byte array tags with trailing comma', async () => {
+                const parser = new NbtArgumentParser('ByteArray', 'minecraft:block')
+                const reader = new StringReader('[B; 1b,]')
+                const expected = new NbtByteArrayNode(null)
+                expected[NodeRange] = { start: 0, end: 8 }
                 const expectedChild = new NbtByteNode(null, 1, '1')
                 expectedChild[NodeRange] = { start: 4, end: 6 }
                 expected.push(expectedChild)
@@ -540,7 +636,7 @@ describe('NbtArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should parse filled list tags', async () => {
+            it('Should parse list tags with single element', async () => {
                 const parser = new NbtArgumentParser('List', 'minecraft:block')
                 const reader = new StringReader('[1L]')
                 const expected = new NbtListNode(null)
@@ -549,6 +645,26 @@ describe('NbtArgumentParser Tests', () => {
                 const expectedChild = new NbtLongNode(null, BigInt(1), '1')
                 expectedChild[NodeRange] = { start: 1, end: 3 }
                 expected.push(expectedChild)
+
+                const { data, errors, cache, completions } = parser.parse(reader, ctx)
+
+                assert.deepStrictEqual(data, expected)
+                assert.deepStrictEqual(errors, [])
+                assert.deepStrictEqual(cache, {})
+                assert.deepStrictEqual(completions, [])
+            })
+            it('Should parse list tags with multiple elements', async () => {
+                const parser = new NbtArgumentParser('List', 'minecraft:block')
+                const reader = new StringReader('[1L, 2L]')
+                const expected = new NbtListNode(null)
+                expected[NodeRange] = { start: 0, end: 8 }
+                expected[ChildNbtNodeType] = 'Long'
+                const expectedChild1 = new NbtLongNode(null, BigInt(1), '1')
+                expectedChild1[NodeRange] = { start: 1, end: 3 }
+                const expectedChild2 = new NbtLongNode(null, BigInt(2), '2')
+                expectedChild2[NodeRange] = { start: 5, end: 7 }
+                expected.push(expectedChild1)
+                expected.push(expectedChild2)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
 
