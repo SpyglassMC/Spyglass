@@ -51,6 +51,9 @@ export interface ClientCache {
     storages?: CacheCategory,
     tags?: CacheCategory,
     teams?: CacheCategory,
+    'aliases/entity'?: CacheCategory,
+    'aliases/uuid'?: CacheCategory,
+    'aliases/vector'?: CacheCategory,
     colors?: CacheCategory
 }
 
@@ -185,18 +188,35 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
     return ans
 }
 
+/* istanbul ignore next */
+export function isAliasType(type: CacheKey) {
+    return type.startsWith('aliases/')
+}
+
+/* istanbul ignore next */
+export function canBeRenamed(type: CacheKey) {
+    return !isAliasType(type) && type !== 'colors'
+}
+
+/* istanbul ignore next */
+export function shouldHaveDef(type: CacheKey) {
+    return (
+        type === 'bossbars' ||
+        type === 'entities' ||
+        type === 'objectives' ||
+        type === 'tags' ||
+        type === 'teams' ||
+        type === 'score_holders' ||
+        type === 'storages' ||
+        isAliasType(type) ||
+        type === 'colors'
+    )
+}
+
 export function trimCache(cache: ClientCache) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
-        if (type === 'bossbars' ||
-            type === 'entities' ||
-            type === 'objectives' ||
-            type === 'tags' ||
-            type === 'teams' ||
-            type === 'score_holders' ||
-            type === 'storages' ||
-            type === 'colors'
-        ) {
+        if (shouldHaveDef(type as CacheKey)) {
             for (const id in category) {
                 const unit = category[id] as CacheUnit
                 if (unit.def.length === 0 && unit.ref.length === 0) {

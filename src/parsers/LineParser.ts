@@ -9,6 +9,7 @@ import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
 import { toFormattedString } from '../utils/utils'
+import { CacheKey } from '../types/ClientCache'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -119,6 +120,18 @@ export default class LineParser implements Parser<Line> {
             const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine, ctx)
             const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
+            //#region Aliases.
+            if (start === reader.cursor) {
+                const category = ctx.cache[`aliases/${parser.identity.split('.')[0]}` as CacheKey]
+                for (const alias in category) {
+                    /* istanbul ignore else */
+                    if (category.hasOwnProperty(alias)) {
+                        const unit = category[alias]!
+                        completions.push({ label: alias, insertText: unit.doc })
+                    }
+                }
+            }
+            //#endregion
             combineSaturatedLine(parsedLine, {
                 args: [{ data, parser: parser.identity }],
                 hint: { fix: [], options: [] },

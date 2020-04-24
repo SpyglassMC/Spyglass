@@ -1,7 +1,7 @@
 import path from 'path'
 import FunctionInfo from '../../types/FunctionInfo'
 import { TextDocumentEdit, RenameFile, WorkspaceEdit } from 'vscode-languageserver'
-import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheFile, removeCachePosition } from '../../types/ClientCache'
+import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheFile, removeCachePosition, canBeRenamed } from '../../types/ClientCache'
 import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris, FetchConfigFunction, ReadFileFunction } from '../../types/handlers'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import { getUriFromId, getUri, getInfo } from './common'
@@ -13,7 +13,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
 
     /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)
-    if (result && result.type !== 'colors') {
+    if (result && canBeRenamed(result.type)) {
         const documentChanges: (TextDocumentEdit | RenameFile)[] = []
         const category = getSafeCategory(cacheFile.cache, result.type)
         const unit = category[result.id]

@@ -64,7 +64,17 @@ export class TestArgumentParser extends ArgumentParser<string> {
         }
         return ans
     }
-    getExamples = () => []
+}
+
+/**
+ * Argument parser for testing aliases.
+ */
+export class TestUuidArgumentParser extends ArgumentParser<string> {
+    readonly identity = 'uuid'
+    parse(reader: StringReader): ArgumentParserResult<string> {
+        const ans: ArgumentParserResult<string> = { data: reader.readRemaining(), tokens: [], cache: {}, completions: [], errors: [] }
+        return ans
+    }
 }
 
 const parsers = new ArgumentParserManager()
@@ -86,6 +96,27 @@ describe('LineParser Tests', () => {
                 const { message } = e
                 assert(message === 'unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
             }
+        })
+        it('Should return aliases in completions', async () => {
+            const input = ''
+            const parser = new LineParser()
+            const node: CommandTreeNode<string> = { parser: new TestUuidArgumentParser(), executable: true }
+            const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
+            const ctx = await constructContext({
+                parsers, cursor: 0,
+                cache: {
+                    'aliases/uuid': {
+                        MyCustomUUID: {
+                            doc: '12345678-90ab-cdef-1234-567890abcdef',
+                            def: [{ start: -1, end: -1 }], ref: []
+                        }
+                    }
+                }
+            })
+            parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
+            assert.deepStrictEqual(line.completions, [
+                { label: 'MyCustomUUID', insertText: '12345678-90ab-cdef-1234-567890abcdef' }
+            ])
         })
         it('Should parse when parser specified', () => {
             const input = 'foo'

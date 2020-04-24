@@ -32,6 +32,8 @@ import IdentityNode from '../../types/nodes/IdentityNode'
 import ParsingError from '../../types/ParsingError'
 import Token, { TokenType } from '../../types/Token'
 import { toFormattedString } from '../../utils/utils'
+import { CacheKey } from '../../types/ClientCache'
+import StringNode from '../../types/nodes/StringNode'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -2118,11 +2120,6 @@ const CommandTree: CommandTreeType = {
                 type: {
                     parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'score_holder', 'storage', 'tag', 'team'),
                     description: 'Type of the definition',
-                    run: parsedLine => {
-                        if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
-                            parsedLine.completions = []
-                        }
-                    },
                     children: {
                         id: {
                             parser: ({ args }) => new DefinitionIDArgumentParser(getArgOrDefault(args, 1, '')),
@@ -2133,6 +2130,52 @@ const CommandTree: CommandTreeType = {
                                     parser: ({ args }) => new DefinitionDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
                                     description: 'Description of the definition',
                                     executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        // #alias <parser: string> <alias: string> <value: string>
+        '#alias': {
+            parser: new LiteralArgumentParser('#alias'),
+            run: ({ tokens, args }) => {
+                if (getArgOrDefault(args, 1, undefined) === '#alias') {
+                    const lastToken = tokens[tokens.length - 1]
+                    tokens.push(new Token(
+                        { start: lastToken.range.start + 1, end: lastToken.range.end },
+                        lastToken.type, lastToken.modifiers
+                    ))
+                    lastToken.range.end = lastToken.range.start + 1
+                    lastToken.type = TokenType.comment
+                }
+            },
+            children: {
+                parser: {
+                    parser: new LiteralArgumentParser('entity', 'uuid', 'vector'),
+                    children: {
+                        alias: {
+                            parser: new StringArgumentParser(),
+                            children: {
+                                value: {
+                                    parser: new StringArgumentParser(StringType.Greedy),
+                                    executable: true,
+                                    run: parsedLine => {
+                                        if (parsedLine.errors.length === 0) {
+                                            const parser = getArgOrDefault<string>(parsedLine.args, 3, '')
+                                            const alias = getArgOrDefault<StringNode | null>(parsedLine.args, 2, null)
+                                            const value = getArgOrDefault<StringNode | null>(parsedLine.args, 1, null)
+                                            if (parser && alias && value) {
+                                                const key = `aliases/${parser}` as CacheKey
+                                                parsedLine.cache = {
+                                                    [key]: {
+                                                        [alias.valueOf()]: { doc: value.valueOf(), def: [{ start: -1, end: -1 }], ref: [] }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
