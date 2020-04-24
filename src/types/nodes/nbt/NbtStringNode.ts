@@ -8,8 +8,9 @@ import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
 import NbtCompoundNode from '../map/NbtCompoundNode'
 import StringNode from '../StringNode'
-import { NbtNodeType } from './NbtNode'
+import { NbtNodeType, SuperNode } from './NbtNode'
 import NbtPrimitiveNode from './NbtPrimitiveNode'
+import { attributeNameToIdentity } from '../../../utils/datafixers/attributeName'
 
 export default class NbtStringNode extends NbtPrimitiveNode<string> implements StringNode {
     readonly [NodeType]: string = 'NbtString'
@@ -33,15 +34,26 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> implements S
         const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixCompound]
         if (uuidDiagnostics) {
             try {
-                const newArrayNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
+                const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
                     uri, info.version, lineNumber, this[NodeRange],
-                    newArrayNode[GetFormattedString](info.config.lint)
+                    newNode[GetFormattedString](info.config.lint)
                 ))
             } catch (ignored) {
                 // Ignored.
             }
+        }
+        //#endregion
+
+        //#region Attribute name datafix: #381
+        const attributeDiagnostics = diagnostics[ActionCode.NbtStringAttributeDatafix]
+        if (attributeDiagnostics) {
+                ans.push(getCodeAction(
+                'id-attribute-datafix', attributeDiagnostics,
+                uri, info.version, lineNumber, this[NodeRange],
+                `"${attributeNameToIdentity(this.valueOf())}"`
+            ))
         }
         //#endregion
 

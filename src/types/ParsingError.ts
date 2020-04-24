@@ -7,7 +7,12 @@ export const enum ActionCode {
     BlockStateSortKeys,
     IdentityCompleteDefaultNamespace,
     IdentityOmitDefaultNamespace,
+    NbtByteToLiteral,
+    NbtByteToNumber,
     NbtCompoundSortKeys,
+    //#region Attribute name datafix: #381
+    NbtStringAttributeDatafix,
+    //#endregion
     NbtTypeToByte,
     NbtTypeToByteArray,
     NbtTypeToShort,
@@ -18,13 +23,11 @@ export const enum ActionCode {
     NbtTypeToLongArray,
     NbtTypeToFloat,
     NbtTypeToDouble,
-    NbtByteToLiteral,
-    NbtByteToNumber,
     //#region UUID datafix: #377
     NbtUuidDatafixCompound,
     NbtUuidDatafixString,
     NbtUuidDatafixUnknownKey,
-    ////#endregion
+    //#endregion
     SelectorSortKeys,
     StringSingleQuote,
     StringDoubleQuote,

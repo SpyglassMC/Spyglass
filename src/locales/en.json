@@ -1,10 +1,11 @@
 {
     "boolean": "a boolean",
     "code-action.block-state-sort-keys": "Sort block state keys",
+    "code-action.id-attribute-datafix": "Update this attribute name to 1.16",
     "code-action.id-complete-default-namespace": "Complete default namespace",
     "code-action.id-omit-default-namespace": "Omit default namespace",
     "code-action.nbt-compound-sort-keys": "Sort NBT compound keys",
-    "code-action.nbt-uuid-datafix": "Update this UUID to the IntArray format",
+    "code-action.nbt-uuid-datafix": "Update this UUID to 1.16",
     "code-action.selector-sort-keys": "Sort selector argument keys",
     "code-action.string-double-quote": "Quote this string with double quotation marks",
     "code-action.string-single-quote": "Quote this string with single quotation marks",

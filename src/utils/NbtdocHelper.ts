@@ -713,6 +713,15 @@ export default class NbtdocHelper {
             const result = ctx.parsers.get('Identity', [
                 NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
             ]).parse(reader, subCtx)
+            //#region Attribute name datafix: #381
+            if (doc.Id === 'minecraft:attribute') {
+                for (const error of result.errors) {
+                    if (error.code === undefined) {
+                        error.code = ActionCode.NbtStringAttributeDatafix
+                    }
+                }
+            }
+            //#endregion
             this.combineResult(ans, result, strTag)
             /// Quotes.
             ans.errors.push(...validateStringQuote(
