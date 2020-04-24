@@ -1,18 +1,17 @@
+import { getArgOrDefault, getNbtdocRegistryId } from '../../CommandTree'
+import { locale } from '../../locales/Locales'
 import BlockArgumentParser from '../../parsers/BlockArgumentParser'
 import CodeSnippetArgumentParser from '../../parsers/CodeSnippetArgumentParser'
-import CommandTreeType from '../../types/CommandTree'
 import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
-import EntityNode from '../../types/nodes/EntityNode'
 import EntityArgumentParser from '../../parsers/EntityArgumentParser'
-import IdentityNode from '../../types/nodes/IdentityNode'
+import IdentityArgumentParser from '../../parsers/IdentityArgumentParser'
 import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import ItemSlotArgumentParser from '../../parsers/ItemSlotArgumentParser'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import MessageArgumentParser from '../../parsers/MessageArgumentParser'
-import IdentityArgumentParser from '../../parsers/IdentityArgumentParser'
-import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import NbtArgumentParser from '../../parsers/NbtArgumentParser'
+import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
 import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
 import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
@@ -24,13 +23,15 @@ import TagArgumentParser from '../../parsers/TagArgumentParser'
 import TeamArgumentParser from '../../parsers/TeamArgumentParser'
 import TextComponentArgumentParser from '../../parsers/TextComponentArgumentParser'
 import TimeArgumentParser from '../../parsers/TimeArgumentParser'
+import UuidArgumentParser from '../../parsers/UuidArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
-import { getArgOrDefault, getNbtdocRegistryId } from '../../CommandTree'
-import Token, { TokenType, TokenModifier } from '../../types/Token'
-import ParsingError from '../../types/ParsingError'
-import { locale } from '../../locales/Locales'
-import { toFormattedString } from '../../utils/utils'
+import CommandTreeType from '../../types/CommandTree'
 import { VanillaConfig } from '../../types/Config'
+import EntityNode from '../../types/nodes/EntityNode'
+import IdentityNode from '../../types/nodes/IdentityNode'
+import ParsingError from '../../types/ParsingError'
+import Token, { TokenType } from '../../types/Token'
+import { toFormattedString } from '../../utils/utils'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -81,6 +82,114 @@ const CommandTree: CommandTreeType = {
                                         advancement: {
                                             parser: new IdentityArgumentParser('$advancements'),
                                             executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        attribute: {
+            parser: new LiteralArgumentParser('attribute'),
+            description: 'Operate entity attributes and attribute modifiers.',
+            children: {
+                target: {
+                    parser: new EntityArgumentParser('single', 'entities'),
+                    children: {
+                        attribute: {
+                            parser: new IdentityArgumentParser('minecraft:attributes'),
+                            children: {
+                                base: {
+                                    parser: new LiteralArgumentParser('base'),
+                                    children: {
+                                        get: {
+                                            parser: new LiteralArgumentParser('get'),
+                                            executable: true,
+                                            children: {
+                                                scale: {
+                                                    parser: new NumberArgumentParser('float'),
+                                                    executable: true
+                                                }
+                                            }
+                                        },
+                                        set: {
+                                            parser: new LiteralArgumentParser('set'),
+                                            children: {
+                                                value: {
+                                                    parser: new NumberArgumentParser('float'),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                get: {
+                                    parser: new LiteralArgumentParser('get'),
+                                    executable: true,
+                                    children: {
+                                        scale: {
+                                            parser: new NumberArgumentParser('float'),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                modifier: {
+                                    parser: new LiteralArgumentParser('modifier'),
+                                    children: {
+                                        add: {
+                                            parser: new LiteralArgumentParser('add'),
+                                            children: {
+                                                uuid: {
+                                                    parser: new UuidArgumentParser(),
+                                                    children: {
+                                                        name: {
+                                                            parser: new StringArgumentParser(StringType.String, null, 'stringQuote', 'stringQuoteType'),
+                                                            children: {
+                                                                value: {
+                                                                    parser: new NumberArgumentParser('float'),
+                                                                    children: {
+                                                                        operation: {
+                                                                            parser: new LiteralArgumentParser('add', 'multiply', 'multiply_base'),
+                                                                            executable: true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        remove: {
+                                            parser: new LiteralArgumentParser('remove'),
+                                            children: {
+                                                uuid: {
+                                                    parser: new UuidArgumentParser(),
+                                                    executable: true
+                                                }
+                                            }
+                                        },
+                                        value: {
+                                            parser: new LiteralArgumentParser('value'),
+                                            children: {
+                                                get: {
+                                                    parser: new LiteralArgumentParser('get'),
+                                                    children: {
+                                                        uuid: {
+                                                            parser: new UuidArgumentParser(),
+                                                            executable: true,
+                                                            children: {
+                                                                scale: {
+                                                                    parser: new NumberArgumentParser('float'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1988,7 +2097,7 @@ const CommandTree: CommandTreeType = {
         }
     },
     comments: {
-        // #define (bossbar|entity|objective|storage|tag|team) <id: string>
+        // #define bossbar|entity|objective|storage|tag|team <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             run: ({ tokens, args }) => {

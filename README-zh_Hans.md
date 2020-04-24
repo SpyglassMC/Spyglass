@@ -117,7 +117,7 @@ function spgoding:foo
 
 ## 定义注释
 
-你可以使用形如 `#define (bossbar|entity|objective|storage|tag|team) <标识符: string> [<描述: string>]` 的格式来定义一个 bossbar、实体、记分项、数据储存、记分板标签或队伍。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
+你可以使用形如 `#define bossbar|entity|objective|score_holder|storage|tag|team <标识符: string> [<描述: string>]` 的格式来定义一个 bossbar、实体、记分项、记分假名、数据储存、记分板标签或队伍。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 

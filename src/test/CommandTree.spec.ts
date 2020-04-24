@@ -217,7 +217,7 @@ describe('CommandTree Tests', () => {
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['advancement'],
-                options: [['(grant|revoke)', ['<targets: entity>']]]
+                options: [['grant|revoke', ['<targets: entity>']]]
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, [
@@ -226,7 +226,7 @@ describe('CommandTree Tests', () => {
             ])
             assert.deepStrictEqual(data.completions, [{ label: 'grant' }])
         })
-        it('advancement (grant|revoke) <targets> everything', () => {
+        it('advancement grant|revoke <targets> everything', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s everything')
             const { data } = parser.parse(reader, ctx)
@@ -237,14 +237,14 @@ describe('CommandTree Tests', () => {
                 { data: 'everything', parser: 'literal' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'everything'],
+                fix: ['advancement', 'grant|revoke', '<targets: entity>', 'everything'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, undefined)
             assert.deepStrictEqual(data.completions, undefined)
         })
-        it('advancemen t (grant|revoke) <targets> only <advancement>', () => {
+        it('advancemen t grant|revoke <targets> only <advancement>', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test')
             const { data } = parser.parse(reader, ctx)
@@ -256,7 +256,7 @@ describe('CommandTree Tests', () => {
                 { data: $(new IdentityNode('minecraft', ['test']), [26, 40]), parser: 'identity' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespaced ID>'],
+                fix: ['advancement', 'grant|revoke', '<targets: entity>', 'only', '<advancement: namespaced ID>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -267,7 +267,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.errors, undefined)
             assert.deepStrictEqual(data.completions, undefined)
         })
-        it('advancement (grant|revoke) <targets> only <advancement> <criterion>', () => {
+        it('advancement grant|revoke <targets> only <advancement> <criterion>', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test aaa')
             const { data } = parser.parse(reader, ctx)
@@ -282,7 +282,7 @@ describe('CommandTree Tests', () => {
                 { data: $(new StringNode('aaa', 'aaa', { start: 41 }), [41, 44]), parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespaced ID>', '<criterion: string>'],
+                fix: ['advancement', 'grant|revoke', '<targets: entity>', 'only', '<advancement: namespaced ID>', '<criterion: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -293,7 +293,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.errors, undefined)
             assert.deepStrictEqual(data.completions, undefined)
         })
-        it('advancement (grant|revoke) <targets> (from|through|until) <advancement>', () => {
+        it('advancement grant|revoke <targets> from|through|until <advancement>', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement revoke @s through minecraft:test')
             const { data } = parser.parse(reader, ctx)
@@ -307,7 +307,7 @@ describe('CommandTree Tests', () => {
                 { data: expectedId, parser: 'identity' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['advancement', '(grant|revoke)', '<targets: entity>', '(from|through|until)', '<advancement: namespaced ID>'],
+                fix: ['advancement', 'grant|revoke', '<targets: entity>', 'from|through|until', '<advancement: namespaced ID>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
@@ -397,7 +397,7 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['#define', '(bossbar|entity|objective|score_holder|storage|tag|team)', '<id: string>'],
+                fix: ['#define', 'bossbar|entity|objective|score_holder|storage|tag|team', '<id: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {

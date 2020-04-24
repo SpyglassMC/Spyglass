@@ -26,7 +26,7 @@ describe('LiteralArgumentParser Tests', () => {
         it('Should return correctly for multiple literals', () => {
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.toHint('', false)
-            assert.strictEqual(actual, '(foo|bar)')
+            assert.strictEqual(actual, 'foo|bar')
         })
         it('Should return correctly for optional single literal', () => {
             const parser = new LiteralArgumentParser('foo')

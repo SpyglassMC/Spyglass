@@ -98,7 +98,7 @@ export default class LiteralArgumentParser extends ArgumentParser<string> {
             if (this.literals.length === 1) {
                 ans = this.literals[0]
             } else {
-                ans = `(${this.literals.join('|')})`
+                ans = this.literals.join('|')
             }
         }
 

@@ -22,6 +22,7 @@ import TagArgumentParser from './TagArgumentParser'
 import TeamArgumentParser from './TeamArgumentParser'
 import TextComponentArgumentParser from './TextComponentArgumentParser'
 import TimeArgumentParser from './TimeArgumentParser'
+import UuidArgumentParser from './UuidArgumentParser'
 import VectorArgumentParser from './VectorArgumentParser'
 
 export default class ArgumentParserManager implements Manager<ArgumentParser<any>> {
@@ -48,6 +49,7 @@ export default class ArgumentParserManager implements Manager<ArgumentParser<any
         TeamArgumentParser,
         TextComponentArgumentParser,
         TimeArgumentParser,
+        UuidArgumentParser,
         VectorArgumentParser
     ]
 

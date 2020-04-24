@@ -23,11 +23,11 @@ describe('onSignatureHelp() Tests', () => {
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
-                label: 'advancement (grant|revoke) <targets: entity>',
+                label: 'advancement grant|revoke <targets: entity>',
                 parameters: [
                     { label: [0, 11] },
-                    { label: [12, 26] },
-                    { label: [27, 44] }
+                    { label: [12, 24] },
+                    { label: [25, 42] }
                 ]
             }],
             activeParameter: 1,

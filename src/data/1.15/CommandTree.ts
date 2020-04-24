@@ -1979,7 +1979,7 @@ const CommandTree: CommandTreeType = {
         }
     },
     comments: {
-        // #define (bossbar|entity|objective|storage|tag|team) <id: string>
+        // #define bossbar|entity|objective|storage|tag|team <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
             run: ({ tokens, args }) => {

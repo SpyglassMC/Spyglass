@@ -109,6 +109,7 @@
     "argument-type.test": "test",
     "argument-type.textComponent": "text component",
     "argument-type.time": "time",
+    "argument-type.uuid": "UUID",
     "argument-type.vector": "vector",
     "argument-type.vector.2D": "2D vector",
     "argument-type.vector.3D": "3D vector",
@@ -154,5 +155,6 @@
     "unknown-command": "Unknown command %0%",
     "unknown-key": "Unknown key %0%",
     "unsorted-keys": "Unsorted keys",
+    "uuid": "a UUID",
     "vector": "a vector"
 }
