@@ -2157,6 +2157,12 @@ const CommandTree: CommandTreeType = {
                     children: {
                         alias: {
                             parser: new StringArgumentParser(),
+                            run: ({ tokens }) => {
+                                const lastToken = tokens[tokens.length - 1]
+                                if (lastToken) {
+                                    lastToken.type = TokenType.identity
+                                }
+                            },
                             children: {
                                 value: {
                                     parser: new StringArgumentParser(StringType.Greedy),
