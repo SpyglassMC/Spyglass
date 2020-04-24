@@ -30,7 +30,7 @@ describe('ItemNode Tests', () => {
             const item = new ItemNode(
                 new IdentityNode('minecraft', ['diamond_sword']),
                 $(new NbtCompoundNode(null), {
-                    foo: new NbtStringNode(null, 'test', '"test"', []),
+                    foo: new NbtStringNode(null, 'test', '"test"', {}),
                     [UnsortedKeys]: ['foo']
                 })
             )

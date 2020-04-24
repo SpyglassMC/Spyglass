@@ -210,9 +210,9 @@ describe('StringReader Tests', () => {
         })
         it('Should return the out mapping', () => {
             const reader = new StringReader('hahaha$')
-            const out = { mapping: [] }
+            const out = { mapping: {} }
             reader.readUnquotedString(out)
-            assert.deepStrictEqual(out.mapping, [0, 1, 2, 3, 4, 5])
+            assert.deepStrictEqual(out.mapping, { start: 0 })
         })
     })
     describe('readQuotedString() Tests', () => {
@@ -272,9 +272,9 @@ describe('StringReader Tests', () => {
         })
         it('Should return the out mapping', () => {
             const reader = new StringReader('"foo\\"bar"')
-            const out = { mapping: [] }
+            const out = { mapping: {} }
             reader.readQuotedString(out)
-            assert.deepStrictEqual(out.mapping, [1, 2, 3, 5, 6, 7, 8])
+            assert.deepStrictEqual(out.mapping, { start: 1, skipAt: [3] })
         })
     })
     describe('readUntilOrEnd() Tests', () => {

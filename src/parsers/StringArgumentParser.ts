@@ -25,7 +25,7 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<StringNode> {
         const ans: ArgumentParserResult<StringNode> = {
-            data: new StringNode('', '', []),
+            data: new StringNode('', '', {}),
             tokens: [],
             errors: [],
             cache: {},

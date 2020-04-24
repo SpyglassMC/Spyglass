@@ -1,7 +1,9 @@
 import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
-import ArgumentNode, { NodeType } from './ArgumentNode'
+import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap, NodeRange, GetHoverInformation } from './ArgumentNode'
 import SelectorArgumentsNode from './map/SelectorArgumentsNode'
+import FunctionInfo from '../FunctionInfo'
+import TextRange, { areOverlapped, isInRange } from '../TextRange'
 
 /**
  * Represent an entity.

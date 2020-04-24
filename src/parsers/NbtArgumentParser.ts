@@ -196,7 +196,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             case '}':
                 if (doc) {
                     ans = {
-                        data: new NbtStringNode(null, '', '', []),
+                        data: new NbtStringNode(null, '', '', {}),
                         cache: {}, completions: [], errors: [], tokens: []
                     }
                     /* istanbul ignore next */
@@ -233,7 +233,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 const start = reader.cursor
                 try {
-                    const out = { mapping: [] }
+                    const out: { mapping: IndexMapping } = { mapping: {} }
                     const firstChar = reader.peek()
                     const key = reader.readString(out)
                     const end = reader.cursor
@@ -524,14 +524,14 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
 
     private parsePrimitiveTag(reader: StringReader, superNode: NbtCompoundNode | null, _helper?: NbtdocHelper): ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> {
         const ans: ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> = {
-            data: new NbtStringNode(superNode, '', '', []),
+            data: new NbtStringNode(superNode, '', '', {}),
             tokens: [],
             errors: [],
             cache: {},
             completions: []
         }
         const start = reader.cursor
-        const out: { mapping: IndexMapping } = { mapping: [] }
+        const out: { mapping: IndexMapping } = { mapping: {} }
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             try {
@@ -548,7 +548,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             // Parse as an unquoted string or a number.
             const value = reader.readUnquotedString(out)
             if (value.length === 0) {
-                ans.data = new NbtStringNode(superNode, '', '', [])
+                ans.data = new NbtStringNode(superNode, '', '', {})
                 ans.errors.push(new ParsingError({ start, end: start + 1 }, locale('expected-got',
                     locale('nbt-tag'),
                     locale('nothing')

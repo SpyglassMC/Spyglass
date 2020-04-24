@@ -279,7 +279,7 @@ describe('CommandTree Tests', () => {
                 { data: $(new EntityNode(undefined, 's'), [18, 20]), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
                 { data: expectedId, parser: 'identity' },
-                { data: $(new StringNode('aaa', 'aaa', [41, 42, 43]), [41, 44]), parser: 'string' }
+                { data: $(new StringNode('aaa', 'aaa', { start: 41 }), [41, 44]), parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['advancement', '(grant|revoke)', '<targets: entity>', 'only', '<advancement: namespaced ID>', '<criterion: string>'],
@@ -322,7 +322,7 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('data get block ~ ~ ~ CustomName')
             const { data } = parser.parse(reader, ctx)
-            const expectedKey = new NbtCompoundKeyNode(null, 'CustomName', 'CustomName', [21, 22, 23, 24, 25, 26, 27, 28, 29, 30])
+            const expectedKey = new NbtCompoundKeyNode(null, 'CustomName', 'CustomName', { start: 21 })
             expectedKey[NodeRange] = { start: 21, end: 31 }
             assert.deepStrictEqual(data.args, [
                 { data: 'data', parser: 'literal' },

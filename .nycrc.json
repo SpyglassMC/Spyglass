@@ -1,5 +1,6 @@
 {
     "extends": "@istanbuljs/nyc-config-typescript",
+    "skip-full": true,
     "all": true,
     "include": [
         "src/**/*.ts"

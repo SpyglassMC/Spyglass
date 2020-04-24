@@ -144,13 +144,13 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         const start = reader.cursor
         let key: string = ''
         let doc: nbtdoc.NbtValue | null = null
-        const out: { mapping: IndexMapping } = { mapping: [] }
+        const out: { mapping: IndexMapping } = { mapping: {} }
         try {
             if (reader.peek() === '"') {
                 key = reader.readQuotedString(out)
             } else {
+                out.mapping.start = reader.cursor
                 while (reader.canRead() && StringReader.canInUnquotedString(reader.peek()) && reader.peek() !== '.') {
-                    out.mapping.push(reader.cursor)
                     key += reader.read()
                 }
             }

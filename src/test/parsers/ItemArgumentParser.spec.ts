@@ -13,6 +13,8 @@ import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
+import { SuperNode } from '../../types/nodes/nbt/NbtNode'
+import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -53,9 +55,12 @@ describe('ItemArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, $(new ItemNode(
                 $(new IdentityNode('minecraft', ['stick']), [0, 15]),
                 $(new NbtCompoundNode(null), [15, 27], v => $(v, {
-                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [17, 18, 19]), [17, 20]) },
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 17 }), [17, 20]) },
                     foo: $(new NbtByteNode(v, 1, '1'), [23, 25]),
-                    [UnsortedKeys]: ['foo']
+                    [UnsortedKeys]: ['foo'],
+                    [SuperNode]: $(new NbtCompoundNode(null), {}, v => $(v, {
+                        id: new NbtStringNode(v, 'minecraft:stick', 'minecraft:stick', {})
+                    }))
                 }))
             ), [0, 27]))
         })

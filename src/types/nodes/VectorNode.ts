@@ -53,12 +53,6 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        for (const element of this) {
-            /* istanbul ignore next: simple triage */
-            if (areOverlapped(element[NodeRange], range)) {
-                ans.push(...element[GetCodeActions](uri, info, lineNumber, range, diagnostics))
-            }
-        }
         if (Array.prototype.some.call(this, (v: VectorElementNode) => !v.raw.includes('.'))) {
             ans.push(
                 getCodeAction(

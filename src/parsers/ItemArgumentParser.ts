@@ -6,6 +6,8 @@ import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
+import { UnsortedKeys } from '../types/nodes/map/MapNode'
 
 export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     static identity = 'Item'
@@ -45,7 +47,11 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<ItemNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for item tags.
-            const tagResult = ctx.parsers.get('Nbt', ['Compound', 'items', id.toString(), this.isPredicate]).parse(reader, ctx)
+            const dummySuperNode = new NbtCompoundNode(null)
+            dummySuperNode.id = new NbtStringNode(dummySuperNode, ans.data.id.toString(), ans.data.id.toString(), {})
+            const tagResult = ctx.parsers.get('Nbt', [
+                'Compound', 'minecraft:item', id.toString(), this.isPredicate, dummySuperNode
+            ]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag

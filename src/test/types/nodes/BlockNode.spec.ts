@@ -47,7 +47,7 @@ describe('BlockNode Tests', () => {
                 new IdentityNode('minecraft', ['stone']),
                 undefined,
                 $(new NbtCompoundNode(null), {
-                    Lock: new NbtStringNode(null, 'test', '"test"', []),
+                    Lock: new NbtStringNode(null, 'test', '"test"', {}),
                     [UnsortedKeys]: ['Lock']
                 })
             )
@@ -62,7 +62,7 @@ describe('BlockNode Tests', () => {
                     [UnsortedKeys]: ['snowy', 'age']
                 }),
                 $(new NbtCompoundNode(null), {
-                    Lock: new NbtStringNode(null, 'test', '"test"', []),
+                    Lock: new NbtStringNode(null, 'test', '"test"', {}),
                     [UnsortedKeys]: ['Lock']
                 })
             )

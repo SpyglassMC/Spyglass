@@ -16,12 +16,12 @@ describe('NbtPathNode Tests', () => {
                 length: 8,
                 0: new NbtCompoundNode(null),
                 1: NbtPathNode.Sep,
-                2: new NbtCompoundKeyNode(null, 'foo', 'foo', []),
+                2: new NbtCompoundKeyNode(null, 'foo', 'foo', {}),
                 3: NbtPathNode.IndexBegin,
                 4: new NumberNode(0, '0'),
                 5: NbtPathNode.IndexEnd,
                 6: NbtPathNode.Sep,
-                7: new NbtCompoundKeyNode(null, '"crazy" name', '"\\"crazy\\" name"', [])
+                7: new NbtCompoundKeyNode(null, '"crazy" name', '"\\"crazy\\" name"', {})
             })
             const actual = node[GetFormattedString](lint)
             assert(actual === '{}.foo[0]."\\"crazy\\" name"')

@@ -197,7 +197,7 @@ describe('utils.ts Tests', () => {
                     range: { start: { line: 0, character: 1 }, end: { line: 0, character: 3 } },
                     newText: 'foo'
                 }
-            }, [1, 2, 3, 4, 5])
+            }, { start: 1 })
             assert.deepStrictEqual(actual, {
                 label: 'foo',
                 textEdit: {

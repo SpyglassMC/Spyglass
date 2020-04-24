@@ -344,7 +344,7 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             const superNode = new NbtCompoundNode(null)
             const compoundNode = new NbtCompoundNode(superNode)
-            const idNode = new NbtStringNode(superNode, 'minecraft:one_boolean_field', 'minecraft:one_boolean_field', [])
+            const idNode = new NbtStringNode(superNode, 'minecraft:one_boolean_field', 'minecraft:one_boolean_field', {})
             superNode.Id = idNode
             const actual = helper
                 .withTag(compoundNode)
@@ -962,7 +962,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 21 }
-                const customModelDataKey = new NbtCompoundKeyNode(null, 'CustomModelData', 'CustomModelData', [])
+                const customModelDataKey = new NbtCompoundKeyNode(null, 'CustomModelData', 'CustomModelData', {})
                 customModelDataKey[NodeRange] = { start: 1, end: 16 }
                 tag[Keys].CustomModelData = customModelDataKey
                 const customModelDataTag = new NbtIntNode(null, 1, '1')
@@ -982,7 +982,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 15 }
-                const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', [])
+                const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', {})
                 asdfghjklKey[NodeRange] = { start: 1, end: 10 }
                 tag[Keys].asdfghjkl = asdfghjklKey
                 const asdfghjklTag = new NbtIntNode(null, 1, '1')
@@ -1002,7 +1002,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = await constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 15 }
-                const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', [])
+                const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', {})
                 asdfghjklKey[NodeRange] = { start: 1, end: 10 }
                 tag[Keys].asdfghjkl = asdfghjklKey
                 const asdfghjklTag = new NbtIntNode(null, 1, '1')
@@ -1091,7 +1091,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config })
-                const tag = new NbtStringNode(null, 'asdfghjkl', '"asdfghjkl"', [1, 2, 3])
+                const tag = new NbtStringNode(null, 'asdfghjkl', '"asdfghjkl"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 11 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1109,7 +1109,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config })
-                const tag = new NbtStringNode(null, 'red', '"red"', [1, 2, 3])
+                const tag = new NbtStringNode(null, 'red', '"red"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1238,7 +1238,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config, registry: TestRegistry })
-                const tag = new NbtStringNode(null, 'minecraft:asdfghjklqwertyui', '"minecraft:asdfghjklqwertyui"', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
+                const tag = new NbtStringNode(null, 'minecraft:asdfghjklqwertyui', '"minecraft:asdfghjklqwertyui"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 29 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1254,7 +1254,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config, registry: TestRegistry })
-                const tag = new NbtStringNode(null, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
+                const tag = new NbtStringNode(null, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 29 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1266,7 +1266,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Index Tests', () => {
             const doc: nbtdoc.NbtValue = { Index: { target: 'minecraft:block', path: ['Super', { Child: 'Id' }] } }
             const superTag = new NbtCompoundNode(null)
-            superTag.Id = new NbtStringNode(superTag, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', [])
+            superTag.Id = new NbtStringNode(superTag, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', {})
             it('Should report errors for non-compound tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
@@ -1303,7 +1303,7 @@ describe('NbtdocHelper Tests', () => {
                 tag[NodeRange] = { start: 0, end: 20 }
                 tag.foo = new NbtByteNode(superTag, 0, 'false')
                 tag.foo[NodeRange] = { start: 7, end: 12 }
-                tag[Keys].foo = new NbtCompoundKeyNode(null, 'foo', 'foo', [])
+                tag[Keys].foo = new NbtCompoundKeyNode(null, 'foo', 'foo', {})
                 tag[Keys].foo[NodeRange] = { start: 3, end: 6 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1319,7 +1319,7 @@ describe('NbtdocHelper Tests', () => {
                 tag[NodeRange] = { start: 0, end: 20 }
                 tag.foo = new NbtCompoundNode(superTag)
                 tag.foo[NodeRange] = { start: 7, end: 9 }
-                tag[Keys].foo = new NbtCompoundKeyNode(null, 'foo', 'foo', [])
+                tag[Keys].foo = new NbtCompoundKeyNode(null, 'foo', 'foo', {})
                 tag[Keys].foo[NodeRange] = { start: 3, end: 6 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1338,7 +1338,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config })
-                const tag = new NbtListNode(null)
+                const tag = new NbtByteNode(null, 0, '0b')
                 tag[NodeRange] = { start: 0, end: 2 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1346,7 +1346,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected an int array tag but got a compound tag',
+                    'Expected an int array tag but got a byte tag',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1589,7 +1589,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config })
-                const tag = new NbtStringNode(null, 'foo', '"foo"', [1, 2, 3])
+                const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -1683,7 +1683,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config, registry: TestRegistry })
-                const tag = new NbtStringNode(null, 'foo', '"foo"', [1, 2, 3])
+                const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)

@@ -23,7 +23,7 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> implements S
         super(superNbt, value, raw)
     }
 
-    /* istanbul ignore next: simple triage & datafix */
+    /* istanbul ignore next: datafix */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const node = new StringNode(this.value, this.raw, this.mapping)
         node[NodeRange] = this[NodeRange]

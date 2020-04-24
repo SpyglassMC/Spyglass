@@ -176,7 +176,7 @@ describe('ClientCache Tests', () => {
     describe('remapCachePosition() Tests', () => {
         it('Should remap positions', () => {
             const cache = { tags: { foo: { def: [{ start: 1, end: 3 }], ref: [{ start: 1, end: 3 }] } } }
-            remapCachePosition(cache, [1, 2, 3, 4, 5])
+            remapCachePosition(cache, { start: 1 })
             assert.deepStrictEqual(cache, { tags: { foo: { def: [{ start: 2, end: 4 }], ref: [{ start: 2, end: 4 }] } } })
         })
     })

@@ -192,13 +192,13 @@ describe('EntityArgumentParser Tests', () => {
                     distance: $(new NumberRangeNode('float', undefined, $(new NumberNode(5, '5'), [55, 56])), [53, 56]),
                     x_rotation: $(new NumberRangeNode('float', $(new NumberNode(135, '135'), [68, 71]), $(new NumberNode(-135, '-135'), [73, 77])), [68, 77]),
                     [Keys]: {
-                        sort: $(new StringNode('sort', 'sort', [3, 4, 5, 6]), [3, 7]),
-                        x: $(new StringNode('x', 'x', [15]), [15, 16]),
-                        dx: $(new StringNode('dx', 'dx', [19, 20]), [19, 21]),
-                        limit: $(new StringNode('limit', 'limit', [26, 27, 28, 29, 30]), [26, 31]),
-                        level: $(new StringNode('level', 'level', [34, 35, 36, 37, 38]), [34, 39]),
-                        distance: $(new StringNode('distance', 'distance', [44, 45, 46, 47, 48, 49, 50, 51]), [44, 52]),
-                        x_rotation: $(new StringNode('x_rotation', 'x_rotation', [57, 58, 59, 60, 61, 62, 63, 64, 65, 66]), [57, 67])
+                        sort: $(new StringNode('sort', 'sort', { start: 3 }), [3, 7]),
+                        x: $(new StringNode('x', 'x', { start: 15 }), [15, 16]),
+                        dx: $(new StringNode('dx', 'dx', { start: 19 }), [19, 21]),
+                        limit: $(new StringNode('limit', 'limit', { start: 26 }), [26, 31]),
+                        level: $(new StringNode('level', 'level', { start: 34 }), [34, 39]),
+                        distance: $(new StringNode('distance', 'distance', { start: 44 }), [44, 52]),
+                        x_rotation: $(new StringNode('x_rotation', 'x_rotation', { start: 57 }), [57, 67])
                     },
                     [UnsortedKeys]: ['sort', 'x', 'dx', 'limit', 'level', 'distance', 'x_rotation']
                 })
@@ -213,7 +213,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expected = $(new SelectorArgumentsNode(), [2, 13], {
                     gamemode: [''],
                     [Keys]: {
-                        gamemode: $(new StringNode('gamemode', 'gamemode', [3, 4, 5, 6, 7, 8, 9, 10]), [3, 11])
+                        gamemode: $(new StringNode('gamemode', 'gamemode', { start: 3 }), [3, 11])
                     },
                     [UnsortedKeys]: ['gamemode']
                 })
@@ -227,7 +227,7 @@ describe('EntityArgumentParser Tests', () => {
 
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 113, end: 122 }
-                const expectedCompoundKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [114, 115, 116])
+                const expectedCompoundKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', { start: 114 })
                 expectedCompoundKey[NodeRange] = { start: 114, end: 117 }
                 expectedCompound[Keys].foo = expectedCompoundKey
                 const expectedByte = new NbtByteNode(expectedCompound, 1, '1')
@@ -236,20 +236,20 @@ describe('EntityArgumentParser Tests', () => {
                 expectedCompound[UnsortedKeys].push('foo')
                 const expected = $(new SelectorArgumentsNode(), [2, 123], {
                     gamemode: ['adventure'],
-                    nameNeg: [$(new StringNode('SPGoding', 'SPGoding', [28, 29, 30, 31, 32, 33, 34, 35]), [28, 36])],
+                    nameNeg: [$(new StringNode('SPGoding', 'SPGoding', { start: 28 }), [28, 36])],
                     predicate: [$(new IdentityNode('spgoding', ['test', 'predicate']), [47, 70])],
                     tag: ['foo'],
                     teamNeg: ['red'],
                     type: [$(new IdentityNode('spgoding', ['mobs'], true), [94, 108])],
                     nbt: [expectedCompound],
                     [Keys]: {
-                        gamemode: $(new StringNode('gamemode', 'gamemode', [3, 4, 5, 6, 7, 8, 9, 10]), [3, 11]),
-                        name: $(new StringNode('name', 'name', [22, 23, 24, 25]), [22, 26]),
-                        predicate: $(new StringNode('predicate', 'predicate', [37, 38, 39, 40, 41, 42, 43, 44, 45]), [37, 46]),
-                        tag: $(new StringNode('tag', 'tag', [71, 72, 73]), [71, 74]),
-                        team: $(new StringNode('team', 'team', [79, 80, 81, 82]), [79, 83]),
-                        type: $(new StringNode('type', 'type', [89, 90, 91, 92]), [89, 93]),
-                        nbt: $(new StringNode('nbt', 'nbt', [109, 110, 111]), [109, 112]),
+                        gamemode: $(new StringNode('gamemode', 'gamemode', { start: 3 }), [3, 11]),
+                        name: $(new StringNode('name', 'name', { start: 22 }), [22, 26]),
+                        predicate: $(new StringNode('predicate', 'predicate', { start: 37 }), [37, 46]),
+                        tag: $(new StringNode('tag', 'tag', { start: 71 }), [71, 74]),
+                        team: $(new StringNode('team', 'team', { start: 79 }), [79, 83]),
+                        type: $(new StringNode('type', 'type', { start: 89 }), [89, 93]),
+                        nbt: $(new StringNode('nbt', 'nbt', { start: 109 }), [109, 112]),
                     },
                     [UnsortedKeys]: ['gamemode', 'nameNeg', 'predicate', 'tag', 'teamNeg', 'type', 'nbt']
                 })
@@ -267,7 +267,7 @@ describe('EntityArgumentParser Tests', () => {
                     gamemode: ['adventure'],
                     gamemodeNeg: ['creative', 'spectator'],
                     [Keys]: {
-                        gamemode: $(new StringNode('gamemode', 'gamemode', [41, 42, 43, 44, 45, 46, 47, 48]), [41, 49])
+                        gamemode: $(new StringNode('gamemode', 'gamemode', { start: 41 }), [41, 49])
                     },
                     [UnsortedKeys]: ['gamemode', 'gamemodeNeg', 'gamemodeNeg']
                 })), [0, 61]))
@@ -283,7 +283,7 @@ describe('EntityArgumentParser Tests', () => {
                         [UnsortedKeys]: ['foo', 'bar']
                     }),
                     [Keys]: {
-                        scores: $(new StringNode('scores', 'scores', [4, 5, 6, 7, 8, 9]), [4, 10])
+                        scores: $(new StringNode('scores', 'scores', { start: 4 }), [4, 10])
                     },
                     [UnsortedKeys]: ['scores']
                 })), [0, 44]))
@@ -299,8 +299,8 @@ describe('EntityArgumentParser Tests', () => {
                             critA: false,
                             critB: true,
                             [Keys]: {
-                                'critA': $(new StringNode('critA', 'critA', [80, 81, 82, 83, 84]), [80, 85]),
-                                'critB': $(new StringNode('critB', 'critB', [96, 97, 98, 99, 100]), [96, 101])
+                                'critA': $(new StringNode('critA', 'critA', { start: 80 }), [80, 85]),
+                                'critB': $(new StringNode('critB', 'critB', { start: 96 }), [96, 101])
                             },
                             [UnsortedKeys]: ['critA', 'critB']
                         }),
@@ -313,7 +313,7 @@ describe('EntityArgumentParser Tests', () => {
                         [UnsortedKeys]: ['spgoding:advancement/a', 'spgoding:advancement/b', 'spgoding:advancement/c']
                     }),
                     [Keys]: {
-                        advancements: $(new StringNode('advancements', 'advancements', [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]), [4, 16])
+                        advancements: $(new StringNode('advancements', 'advancements', { start: 4 }), [4, 16])
                     },
                     [UnsortedKeys]: ['advancements']
                 })), [0, 145]))
@@ -390,7 +390,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 23 }
                 expectedArguments.gamemode = ['adventure']
-                expectedArguments[Keys].gamemode = $(new StringNode('gamemode', 'gamemode', [3, 4, 5, 6, 7, 8, 9, 10]), [3, 11])
+                expectedArguments[Keys].gamemode = $(new StringNode('gamemode', 'gamemode', { start: 3 }), [3, 11])
                 expectedArguments[UnsortedKeys].push('gamemode')
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', expectedArguments), [0, 23]))
@@ -495,7 +495,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 11 }
                 expectedArguments.limit = $(new NumberNode(2, '2'), [9, 10])
-                expectedArguments[Keys].limit = $(new StringNode('limit', 'limit', [3, 4, 5, 6, 7]), [3, 8])
+                expectedArguments[Keys].limit = $(new StringNode('limit', 'limit', { start: 3 }), [3, 8])
                 expectedArguments[UnsortedKeys].push('limit')
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'r', expectedArguments), [0, 11]))
                 assert.deepStrictEqual(actual.errors, [
@@ -514,7 +514,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 11 }
                 expectedArguments.limit = $(new NumberNode(1, '1'), [9, 10])
-                expectedArguments[Keys].limit = $(new StringNode('limit', 'limit', [3, 4, 5, 6, 7]), [3, 8])
+                expectedArguments[Keys].limit = $(new StringNode('limit', 'limit', { start: 3 }), [3, 8])
                 expectedArguments[UnsortedKeys].push('limit')
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 11]))
                 assert.deepStrictEqual(actual.errors, [])
@@ -538,7 +538,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 15 }
                 expectedArguments.type = [expectedIdentity]
-                expectedArguments[Keys].type = $(new StringNode('type', 'type', [3, 4, 5, 6]), [3, 7])
+                expectedArguments[Keys].type = $(new StringNode('type', 'type', { start: 3 }), [3, 7])
                 expectedArguments[UnsortedKeys].push('type')
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 15]))
@@ -555,7 +555,7 @@ describe('EntityArgumentParser Tests', () => {
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 25 }
                 expectedArguments.type = [expectedIdentity]
-                expectedArguments[Keys].type = $(new StringNode('type', 'type', [3, 4, 5, 6]), [3, 7])
+                expectedArguments[Keys].type = $(new StringNode('type', 'type', { start: 3 }), [3, 7])
                 expectedArguments[UnsortedKeys].push('type')
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 25]))

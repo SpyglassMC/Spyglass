@@ -1,19 +1,16 @@
-import { GetFormattedString } from '../../Formattable'
-import { NodeType, NodeDescription, GetCodeActions, NodeRange, DiagnosticMap } from '../ArgumentNode'
-import { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
-import NbtStringNode from '../nbt/NbtStringNode'
-import NbtCompoundNode from './NbtCompoundNode'
-import IndexMapping from '../../IndexMapping'
-import TextRange from '../../TextRange'
-import { ActionCode } from '../../ParsingError'
-import FunctionInfo from '../../FunctionInfo'
-import NbtIntArrayNode from '../nbt/NbtIntArrayNode'
-import NbtNumberNode from '../nbt/NbtNumberNode'
-import NbtIntNode from '../nbt/NbtIntNode'
+import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../../../utils/datafixers/nbtUuid'
 import { getCodeAction } from '../../../utils/utils'
-import { bufferFromNbtLongs, nbtIntArrayFromBuffer, bufferFromNbtString, bufferFromNbtCompound } from '../../../utils/datafixers/nbtUuid'
-import { UnsortedKeys } from './MapNode'
+import { GetFormattedString } from '../../Formattable'
+import FunctionInfo from '../../FunctionInfo'
+import IndexMapping from '../../IndexMapping'
+import { ActionCode } from '../../ParsingError'
+import TextRange from '../../TextRange'
+import { DiagnosticMap, GetCodeActions, NodeDescription, NodeRange, NodeType } from '../ArgumentNode'
 import NbtListNode from '../nbt/NbtListNode'
+import { NbtNodeType, SuperNode } from '../nbt/NbtNode'
+import NbtStringNode from '../nbt/NbtStringNode'
+import { UnsortedKeys } from './MapNode'
+import NbtCompoundNode from './NbtCompoundNode'
 
 export default class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -37,9 +34,9 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixUnknownKey]
         if (uuidDiagnostics && uuidDiagnostics.length > 0) {
-            const oldSuper = this[SuperNbt]
+            const oldSuper = this[SuperNode]
             if (oldSuper) {
-                const newSuper = new NbtCompoundNode(oldSuper[SuperNbt])
+                const newSuper = new NbtCompoundNode(oldSuper[SuperNode])
                 for (const key of oldSuper[UnsortedKeys]) {
                     try {
                         if (key === 'ConversionPlayerLeast' || key === 'ConversionPlayerMost') {

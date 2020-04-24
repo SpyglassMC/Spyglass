@@ -33,7 +33,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('foo')
 
-            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [0, 1, 2])
+            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 0 })
             expectedKey[NodeRange] = { start: 0, end: 3 }
             const expected = new NbtPathNode()
             expected[NodeRange] = { start: 0, end: 3 }
@@ -56,7 +56,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 length: 1,
                 0: $(new NbtCompoundNode(null), [0, 12], v => $(v, {
                     [UnsortedKeys]: ['foo'],
-                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [2, 3, 4]), [2, 5]) },
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 2 }), [2, 5]) },
                     foo: $(new NbtByteNode(v, 1, '1'), [8, 10])
                 }))
             }))
@@ -90,7 +90,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFoo = new NbtByteNode(expectedCompound, 1, '1')
             expectedFoo[NodeRange] = { start: 10, end: 12 }
             expectedCompound.foo = expectedFoo
-            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [4, 5, 6])
+            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', { start: 4 })
             expectedFooKey[NodeRange] = { start: 4, end: 7 }
             expectedCompound[Keys].foo = expectedFooKey
             expectedCompound[UnsortedKeys].push('foo')
@@ -111,7 +111,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('foo{ foo : 1b }')
 
-            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [0, 1, 2])
+            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 0 })
             expectedKey[NodeRange] = { start: 0, end: 3 }
 
             const expectedCompound = new NbtCompoundNode(null)
@@ -119,7 +119,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFoo = new NbtByteNode(expectedCompound, 1, '1')
             expectedFoo[NodeRange] = { start: 11, end: 13 }
             expectedCompound.foo = expectedFoo
-            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [5, 6, 7])
+            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', { start: 5 })
             expectedFooKey[NodeRange] = { start: 5, end: 8 }
             expectedCompound[Keys].foo = expectedFooKey
             expectedCompound[UnsortedKeys].push('foo')
@@ -140,9 +140,9 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('foo."crazy key"')
 
-            const expectedKey1 = new NbtCompoundKeyNode(null, 'foo', 'foo', [0, 1, 2])
+            const expectedKey1 = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 0 })
             expectedKey1[NodeRange] = { start: 0, end: 3 }
-            const expectedKey2 = new NbtCompoundKeyNode(null, 'crazy key', '"crazy key"', [5, 6, 7, 8, 9, 10, 11, 12, 13])
+            const expectedKey2 = new NbtCompoundKeyNode(null, 'crazy key', '"crazy key"', { start: 5 })
             expectedKey2[NodeRange] = { start: 4, end: 15 }
 
             const expected = new NbtPathNode()
@@ -162,7 +162,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('{ foo : 1b }.foo')
 
-            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [13, 14, 15])
+            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 13 })
             expectedKey[NodeRange] = { start: 13, end: 16 }
 
             const expectedCompound = new NbtCompoundNode(null)
@@ -170,7 +170,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const expectedFoo = new NbtByteNode(expectedCompound, 1, '1')
             expectedFoo[NodeRange] = { start: 8, end: 10 }
             expectedCompound.foo = expectedFoo
-            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', [2, 3, 4])
+            const expectedFooKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', { start: 2 })
             expectedFooKey[NodeRange] = { start: 2, end: 5 }
             expectedCompound[Keys].foo = expectedFooKey
             expectedCompound[UnsortedKeys].push('foo')
@@ -191,7 +191,7 @@ describe('NbtPathArgumentParser Tests', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
             const reader = new StringReader('[].foo')
 
-            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', [3, 4, 5])
+            const expectedKey = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 3 })
             expectedKey[NodeRange] = { start: 3, end: 6 }
 
             const expected = new NbtPathNode()
@@ -217,10 +217,10 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('addition.foo')
 
-                const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', [0, 1, 2, 3, 4, 5, 6, 7])
+                const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey1[NodeRange] = { start: 0, end: 8 }
 
-                const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', [9, 10, 11])
+                const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 9 })
                 expectedKey2[NodeRange] = { start: 9, end: 12 }
 
                 const expected = new NbtPathNode()
@@ -245,7 +245,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('addition{  }')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', [0, 1, 2, 3, 4, 5, 6, 7])
+                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
 
                 const expectedCompound = new NbtCompoundNode(null)
@@ -273,7 +273,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('addition[]')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', [0, 1, 2, 3, 4, 5, 6, 7])
+                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
 
                 const expected = new NbtPathNode()
@@ -376,7 +376,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:list')
                 const reader = new StringReader('{ }.addition[ 1 ].')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', [4, 5, 6, 7, 8, 9, 10, 11])
+                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 4 })
                 expectedKey[NodeRange] = { start: 4, end: 12 }
 
                 const expectedCompound = new NbtCompoundNode(null)
@@ -416,7 +416,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
                 const reader = new StringReader('bar')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'bar', 'bar', [0, 1, 2])
+                const expectedKey = new NbtCompoundKeyNode(null, 'bar', 'bar', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 3 }
 
                 const expected = new NbtPathNode()
@@ -439,7 +439,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('non-existent')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'non-existent', 'non-existent', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+                const expectedKey = new NbtCompoundKeyNode(null, 'non-existent', 'non-existent', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 12 }
 
                 const expected = new NbtPathNode()
@@ -456,7 +456,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:byte_array')
                 const reader = new StringReader('addition.[ { } ]')
 
-                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', [0, 1, 2, 3, 4, 5, 6, 7])
+                const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
 
                 const expectedCompound = new NbtCompoundNode(null)

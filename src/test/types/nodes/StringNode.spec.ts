@@ -12,21 +12,21 @@ import { $ } from '../../utils.spec'
 describe('StringNode Tests', () => {
     describe('toString() Tests', () => {
         it('Should return the raw content', () => {
-            const node = new StringNode('foo', '"foo"', [1, 2, 3])
+            const node = new StringNode('foo', '"foo"', { start: 1 })
             const actual = node.toString()
             assert(actual === '"foo"')
         })
     })
     describe('valueOf() Tests', () => {
         it('Should return the value', () => {
-            const node = new StringNode('foo', '"foo"', [1, 2, 3])
+            const node = new StringNode('foo', '"foo"', { start: 1 })
             const actual = node.valueOf()
             assert(actual === 'foo')
         })
     })
     describe('[GetFormattedString]() Tests', () => {
         it('Should return the raw content', () => {
-            const node = new StringNode('foo', '"foo"', [1, 2, 3])
+            const node = new StringNode('foo', '"foo"', { start: 1 })
             const actual = node[GetFormattedString]()
             assert(actual === '"foo"')
         })
@@ -41,7 +41,7 @@ describe('StringNode Tests', () => {
             const diagnostics = {
                 [ActionCode.StringUnquote]: diags
             }
-            const node = $(new StringNode('foo', '"foo"', [1, 2, 3]), range)
+            const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 
             const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
@@ -54,7 +54,7 @@ describe('StringNode Tests', () => {
             const diagnostics = {
                 [ActionCode.StringDoubleQuote]: diags
             }
-            const node = $(new StringNode('foo', "'foo'", [1, 2, 3]), range)
+            const node = $(new StringNode('foo', "'foo'", { start: 1 }), range)
 
             const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
@@ -67,7 +67,7 @@ describe('StringNode Tests', () => {
             const diagnostics = {
                 [ActionCode.StringSingleQuote]: diags
             }
-            const node = $(new StringNode('foo', '"foo"', [1, 2, 3]), range)
+            const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 
             const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(

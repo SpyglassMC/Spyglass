@@ -105,13 +105,12 @@ describe('BlockArgumentParser Tests', () => {
         it('Should return data with tag', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone{ foo : "bar" }'), ctx)
-            assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), [0, 15]),
                 undefined,
                 $(new NbtCompoundNode(null), [15, 30], v => $(v, {
-                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [17, 18, 19]), [17, 20]) },
-                    foo: $(new NbtStringNode(v, 'bar', '"bar"', [24, 25, 26]), [23, 28]),
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 17 }), [17, 20]) },
+                    foo: $(new NbtStringNode(v, 'bar', '"bar"', { start: 24 }), [23, 28]),
                     [UnsortedKeys]: ['foo']
                 }))
             ), [0, 30]))
@@ -127,7 +126,7 @@ describe('BlockArgumentParser Tests', () => {
                     [UnsortedKeys]: ['snowy', 'age']
                 }),
                 $(new NbtCompoundNode(null), [41, 53], v => $(v, {
-                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', [43, 44, 45]), [43, 46]) },
+                    [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 43 }), [43, 46]) },
                     foo: $(new NbtByteNode(v, 1, '1'), [49, 51]),
                     [UnsortedKeys]: ['foo']
                 }))

@@ -6,7 +6,7 @@ import FunctionInfo from '../../FunctionInfo'
 import { ActionCode } from '../../ParsingError'
 import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
-import NbtNode, { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
+import NbtNode, { NbtNodeType, SuperNode } from '../nbt/NbtNode'
 import MapNode, { Chars, ConfigKeys, UnsortedKeys } from './MapNode'
 import NbtCompoundKeyNode from './NbtCompoundKeyNode'
 
@@ -18,11 +18,11 @@ export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode
     readonly [NodeType] = 'NbtCompound'
     readonly [NbtNodeType] = 'Compound';
 
-    [SuperNbt]: NbtCompoundNode | null
+    [SuperNode]: NbtCompoundNode | null
 
     constructor(superNbt: NbtCompoundNode | null) {
         super()
-        this[SuperNbt] = superNbt
+        this[SuperNode] = superNbt
     }
 
     protected [ConfigKeys] = {

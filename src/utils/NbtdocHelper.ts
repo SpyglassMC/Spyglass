@@ -5,7 +5,7 @@ import LineParser from '../parsers/LineParser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError, { ActionCode, remapParsingErrors, downgradeParsingError } from '../types/ParsingError'
 import StringReader from './StringReader'
-import NbtNode, { SuperNbt, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
+import NbtNode, { SuperNode, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
@@ -172,14 +172,14 @@ export default class NbtdocHelper {
         while (paths.length > 0 && tag && tag instanceof NbtCompoundNode) {
             const path = paths.shift()!
             if (path === 'Super') {
-                tag = tag[SuperNbt]
+                tag = tag[SuperNode]
             } else {
                 const key = path.Child
                 tag = tag[key]
             }
             if (paths.length === 0) {
                 if (tag && tag instanceof NbtStringNode) {
-                    this.tag = tag[SuperNbt]
+                    this.tag = tag[SuperNode]
                     return tag
                 } else {
                     return null
@@ -560,7 +560,7 @@ export default class NbtdocHelper {
                 const quote = lint.nbtStringQuote ? lint.nbtStringQuote[1] : true
                 const quoteType = lint.nbtStringQuoteType ? lint.nbtStringQuoteType[1] : 'prefer double'
                 const raw = quoteString(value.toString(), quoteType, quote)
-                tag = new NbtStringNode(null, value as string, raw, [])
+                tag = new NbtStringNode(null, value as string, raw, {})
                 break
         }
         return tag[GetFormattedString](lint)
@@ -870,6 +870,8 @@ export default class NbtdocHelper {
             description.match(/JSON text component/i) ||
             description.match(/lore of an item/i)) {
             result = ctx.parsers.get('TextComponent').parse(reader, ctx)
+        } else if (description.match(/can be placed on/i) || description.match(/can be destroyed/i)) {
+            result = ctx.parsers.get('Block', [true, true]).parse(reader, ctx)
         }
         return result
     }

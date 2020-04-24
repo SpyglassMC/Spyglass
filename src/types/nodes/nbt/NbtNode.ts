@@ -9,16 +9,16 @@ export type NbtNodeTypeName =
     | 'ByteArray' | 'IntArray' | 'LongArray' | 'Compound' | 'List'
 
 export const NbtNodeType = Symbol('NbtNodeType')
-export const SuperNbt = Symbol('SuperNbt')
+export const SuperNode = Symbol('SuperNode')
 
 export default abstract class NbtNode extends ArgumentNode {
     abstract [NodeType]: string
     abstract [NbtNodeType]: NbtNodeTypeName
 
-    [SuperNbt]: NbtCompoundNode | null
+    [SuperNode]: NbtCompoundNode | null
     constructor(superNbt: NbtCompoundNode | null) {
         super()
-        this[SuperNbt] = superNbt
+        this[SuperNode] = superNbt
     }
 }
 

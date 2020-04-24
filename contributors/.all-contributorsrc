@@ -43,6 +43,8 @@
       "contributions": [],
       "details": [
         { "type": "ideas", "link": "issues/358", "text": "#358" },
+        { "type": "bug", "link": "issues/379", "text": "#379" },
+        { "type": "bug", "link": "issues/368", "text": "#368" },
         { "type": "bug", "link": "issues/369", "text": "#369" },
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
       ]
@@ -119,7 +121,16 @@
       "profile": "https://github.com/mathaym25",
       "contributions": [],
       "details": [
-        { "type": "ideas", "link": "issues/382", "text": "#382" }
+        { "type": "ideas", "link": "issues/382", "text": "#382" },
+        { "type": "bug", "link": "issues/385", "text": "#385" }
+      ]
+    },
+    {
+      "name": "MulverineX",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/401", "text": "#401" }
       ]
     }
   ],

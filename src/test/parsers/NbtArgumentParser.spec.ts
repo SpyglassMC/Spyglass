@@ -58,7 +58,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should parse quoted string tags', () => {
             const parser = new NbtArgumentParser('String', 'minecraft:block')
             const reader = new StringReader('"bar\\""}')
-            const expected = new NbtStringNode(null, 'bar"', '"bar\\""', [1, 2, 3, 5])
+            const expected = new NbtStringNode(null, 'bar"', '"bar\\""', { start: 1, skipAt: [3] })
             expected[NodeRange] = { start: 0, end: 7 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -71,7 +71,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should parse unquoted string tags', () => {
             const parser = new NbtArgumentParser('String', 'minecraft:block')
             const reader = new StringReader('bar')
-            const expected = new NbtStringNode(null, 'bar', 'bar', [0, 1, 2])
+            const expected = new NbtStringNode(null, 'bar', 'bar', { start: 0 })
             expected[NodeRange] = { start: 0, end: 3 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -123,7 +123,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should treat overflow byte tags as string tags', () => {
             const parser = new NbtArgumentParser(['Byte', 'String'], 'minecraft:block')
             const reader = new StringReader('1234b')
-            const expected = new NbtStringNode(null, '1234b', '1234b', [0, 1, 2, 3, 4])
+            const expected = new NbtStringNode(null, '1234b', '1234b', { start: 0 })
             expected[NodeRange] = { start: 0, end: 5 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -153,7 +153,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should treat overflow short tags as string tags', () => {
             const parser = new NbtArgumentParser(['Short', 'String'], 'minecraft:block')
             const reader = new StringReader('123456s')
-            const expected = new NbtStringNode(null, '123456s', '123456s', [0, 1, 2, 3, 4, 5, 6])
+            const expected = new NbtStringNode(null, '123456s', '123456s', { start: 0 })
             expected[NodeRange] = { start: 0, end: 7 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -183,7 +183,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should treat overflow int tags as string tags', () => {
             const parser = new NbtArgumentParser(['Int', 'String'], 'minecraft:block')
             const reader = new StringReader('12345678901')
-            const expected = new NbtStringNode(null, '12345678901', '12345678901', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+            const expected = new NbtStringNode(null, '12345678901', '12345678901', { start: 0 })
             expected[NodeRange] = { start: 0, end: 11 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -213,7 +213,7 @@ describe('NbtArgumentParser Tests', () => {
         it('Should treat overflow long tags as string tags', () => {
             const parser = new NbtArgumentParser(['Long', 'String'], 'minecraft:block')
             const reader = new StringReader('12345678901234567890L')
-            const expected = new NbtStringNode(null, '12345678901234567890L', '12345678901234567890L', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+            const expected = new NbtStringNode(null, '12345678901234567890L', '12345678901234567890L', { start: 0 })
             expected[NodeRange] = { start: 0, end: 21 }
 
             const { data, errors, cache, completions } = parser.parse(reader, ctx)
@@ -372,7 +372,7 @@ describe('NbtArgumentParser Tests', () => {
                 const expectedChild = new NbtByteNode(expected, 1, 'true')
                 expectedChild[NodeRange] = { start: 6, end: 10 }
                 expected.foo = expectedChild
-                const expectedKey = new NbtCompoundKeyNode(expected, 'foo', 'foo', [1, 2, 3])
+                const expectedKey = new NbtCompoundKeyNode(expected, 'foo', 'foo', { start: 1 })
                 expectedKey[NodeRange] = { start: 1, end: 4 }
                 expectedKey[NodeDescription] = 'Type: boolean\n* * * * * *\nThe only field of this compound'
                 expected[Keys].foo = expectedKey

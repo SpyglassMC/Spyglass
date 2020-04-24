@@ -31,19 +31,21 @@ class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
     /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponentNode> {
         const start = reader.cursor
+        const raw = reader.readRemaining()
+        const end = reader.cursor
         const ans: ArgumentParserResult<TextComponentNode> = {
-            data: new TextComponentNode(reader.readRemaining()),
+            data: new TextComponentNode(raw),
             tokens: [], errors: [], cache: {}, completions: []
         }
 
-        const text = ' '.repeat(reader.cursor) + reader.readRemaining()
+        const text = ' '.repeat(start) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
         const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
 
         //#region Data.
         ans.data.document = document
         ans.data.jsonDocument = jsonDocument
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end }
         //#endregion
 
         //#region Errors.

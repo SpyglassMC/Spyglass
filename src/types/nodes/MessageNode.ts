@@ -32,17 +32,6 @@ export default class MessageNode extends ArgumentNode implements ArrayLike<strin
         }
     }
 
-    /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        for (const element of this) {
-            if (element instanceof ArgumentNode && areOverlapped(element[NodeRange], range)) {
-                ans.push(...element[GetCodeActions](uri, info, lineNumber, range, diagnostics))
-            }
-        }
-        return ans
-    }
-
     [GetFormattedString](lint: LintConfig) {
         return Array.prototype.map.call(this, (v: string | EntityNode) => toFormattedString(v, lint)).join('')
     }

@@ -19,7 +19,7 @@ describe('nbtUuid.ts Tests', () => {
         })
         it('Should convert full UUID strings', () => {
             const node = new NbtCompoundNode(null)
-            node.OwnerUUID = new NbtStringNode(node, '5ec136fb-93d7-4dd1-8b2c-7808bbb8fc4c', '"5ec136fb-93d7-4dd1-8b2c-7808bbb8fc4c"', [])
+            node.OwnerUUID = new NbtStringNode(node, '5ec136fb-93d7-4dd1-8b2c-7808bbb8fc4c', '"5ec136fb-93d7-4dd1-8b2c-7808bbb8fc4c"', {})
             const actual = nbtIntArrayFromBuffer(bufferFromNbtString(node, 'OwnerUUID'))
             assert(actual[0].valueOf() === 1589720827)
             assert(actual[1].valueOf() === -1814606383)
@@ -28,7 +28,7 @@ describe('nbtUuid.ts Tests', () => {
         })
         it('Should convert short UUID strings', () => {
             const node = new NbtCompoundNode(null)
-            node.OwnerUUID = new NbtStringNode(node, '1-2-3-4-5', '"1-2-3-4-5"', [])
+            node.OwnerUUID = new NbtStringNode(node, '1-2-3-4-5', '"1-2-3-4-5"', {})
             const actual = nbtIntArrayFromBuffer(bufferFromNbtString(node, 'OwnerUUID'))
             assert(actual[0].valueOf() === 1)
             assert(actual[1].valueOf() === 131075)

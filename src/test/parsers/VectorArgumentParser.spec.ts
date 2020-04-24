@@ -47,7 +47,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '^ ^', insertText: '^$1 ^$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
+                    { label: '^ ^', sortText: '2', insertText: '^$1 ^$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
                     { label: '^', sortText: '2' }
                 ]
             )
@@ -58,7 +58,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
-                    { label: '~ ~', insertText: '~$1 ~$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
+                    { label: '~ ~', sortText: '1', insertText: '~$1 ~$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
                     { label: '~', sortText: '1' }
                 ]
             )

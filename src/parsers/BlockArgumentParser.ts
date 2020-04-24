@@ -116,7 +116,9 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             // FIXME: NBT schema for block tags.
-            const tagResult = ctx.parsers.get('Nbt', ['Compound', 'blocks', id.toString(), this.isPredicate]).parse(reader, ctx)
+            const tagResult = ctx.parsers.get('Nbt', [
+                'Compound', 'minecraft:block', id.toString(), this.isPredicate
+            ]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag

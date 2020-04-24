@@ -12,6 +12,7 @@ import TextRange from '../types/TextRange'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
 import IdentityNode from '../types/nodes/IdentityNode'
+import clone from 'clone'
 
 /**
  * Convert an array to human-readable message.
@@ -258,15 +259,16 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
 export function remapCompletionItem(completion: CompletionItem, lineNumber: number): CompletionItem
 export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | number) {
-    const textEdit = completion.textEdit
-    if (textEdit) {
+    const ans = clone(completion)
+    if (ans.textEdit) {
+        const range = ans.textEdit.range
         if (typeof param1 === 'number') {
-            textEdit.range.start.line = param1
-            textEdit.range.end.line = param1
+            range.start.line = param1
+            range.end.line = param1
         } else {
-            textEdit.range.start.character = getOuterIndex(param1, textEdit.range.start.character)
-            textEdit.range.end.character = getOuterIndex(param1, textEdit.range.end.character)
+            range.start.character = getOuterIndex(param1, range.start.character)
+            range.end.character = getOuterIndex(param1, range.end.character)
         }
     }
-    return completion
+    return ans
 }

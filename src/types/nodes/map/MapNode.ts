@@ -1,10 +1,10 @@
+import { toFormattedString } from '../../../utils/utils'
 import { LintConfig } from '../../Config'
 import { GetFormattedString } from '../../Formattable'
-import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
-import { toFormattedString } from '../../../utils/utils'
-import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions, DiagnosticMap } from '../ArgumentNode'
-import TextRange, { areOverlapped } from '../../TextRange'
 import FunctionInfo from '../../FunctionInfo'
+import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
+import TextRange, { areOverlapped } from '../../TextRange'
+import ArgumentNode, { DiagnosticMap, GetCodeActions, GetHoverInformation, NodeRange, NodeType, GetPlainKeys } from '../ArgumentNode'
 
 export const enum BracketType { open, close }
 
@@ -25,7 +25,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
 
     readonly [Keys]: { [key: string]: KI } = {}
 
-    readonly [UnsortedKeys]: (keyof this & string)[] = []
+    readonly [UnsortedKeys]: string[] = []
 
     protected abstract [ConfigKeys]: {
         bracketSpacing: keyof LintConfig,
@@ -67,22 +67,26 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return `${before}${char}${after}`
     }
 
+    [GetPlainKeys](): string[] {
+        return this[UnsortedKeys].length > 0 ? this[UnsortedKeys] : super[GetPlainKeys]()
+    }
+
     [IsMapSorted](..._params: any[]): boolean {
-        const keys = this[UnsortedKeys]
+        const keys = this[GetPlainKeys]()
         return keys.slice(1).every((v, i) => v.toLowerCase() >= keys[i].toLowerCase())
     }
 
     [GetFormattedOpen](lint: LintConfig) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this[UnsortedKeys].length, this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this[GetPlainKeys]().length, this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
     }
 
     [GetFormattedClose](lint: LintConfig) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this[UnsortedKeys].length, this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this[GetPlainKeys]().length, this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
     }
 
-    [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys], kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
+    [GetFormattedString](lint: LintConfig, keys = this[GetPlainKeys](), kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
         const sepSpacingConfig = lint[this[ConfigKeys].sepSpacing] as SepSpacingConfig
         const pairSepSpacingConfig = lint[this[ConfigKeys].pairSepSpacing] as SepSpacingConfig
         const trailingPairSepConfig = lint[this[ConfigKeys].trailingPairSep] as boolean
@@ -93,7 +97,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         const pairSep = MapNode.getFormattedSep(this[Chars].pairSep, pairSepSpacingConfig)
 
         const content: string[] = []
-        const arrayValueCursor: { [key in keyof this]?: number } = {}
+        const arrayValueCursor: { [key: string]: number | undefined } = {}
         for (const key of keys) {
             /* istanbul ignore else */
             if (this.hasOwnProperty(key)) {
@@ -119,18 +123,12 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
     /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        for (const key in this[Keys]) {
+        for (const key in this[GetPlainKeys]) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                 const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
                         ans.push(...keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics))
-                    }
-                }
-                const value = this[key]
-                if (value instanceof ArgumentNode) {
-                    if (areOverlapped(value[NodeRange], range)) {
-                        ans.push(...value[GetCodeActions](uri, info, lineNumber, range, diagnostics))
                     }
                 }
             }
@@ -147,12 +145,6 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
                 if (keyInfo instanceof ArgumentNode) {
                     if (keyInfo[NodeRange].start <= char && char <= keyInfo[NodeRange].end) {
                         return keyInfo[GetHoverInformation](lineNumber, char)
-                    }
-                }
-                const value = this[key]
-                if (value instanceof ArgumentNode) {
-                    if (value[NodeRange].start <= char && char <= value[NodeRange].end) {
-                        return value[GetHoverInformation](lineNumber, char)
                     }
                 }
             }
