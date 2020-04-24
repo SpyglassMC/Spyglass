@@ -10,6 +10,7 @@ import { locale } from '../locales/Locales'
 import Token, { TokenType, TokenModifier } from '../types/Token'
 import { toFormattedString } from '../utils/utils'
 import { CacheKey } from '../types/ClientCache'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 export default class LineParser implements Parser<Line> {
     /* istanbul ignore next */
@@ -127,7 +128,7 @@ export default class LineParser implements Parser<Line> {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(alias)) {
                         const unit = category[alias]!
-                        completions.push({ label: alias, insertText: unit.doc })
+                        completions.push({ label: alias, insertText: unit.doc, kind: CompletionItemKind.Snippet })
                     }
                 }
             }

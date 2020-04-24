@@ -9,6 +9,7 @@ import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import { CompletionItemKind } from 'vscode-languageserver'
 
 /**
  * Argument parser for testing.
@@ -115,7 +116,7 @@ describe('LineParser Tests', () => {
             })
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.completions, [
-                { label: 'MyCustomUUID', insertText: '12345678-90ab-cdef-1234-567890abcdef' }
+                { label: 'MyCustomUUID', insertText: '12345678-90ab-cdef-1234-567890abcdef', kind: CompletionItemKind.Snippet }
             ])
         })
         it('Should parse when parser specified', () => {
