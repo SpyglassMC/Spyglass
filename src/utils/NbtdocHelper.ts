@@ -408,34 +408,38 @@ export default class NbtdocHelper {
         const config = ctx.config.lint.nbtTypeCheck
         const actual = tag[NbtNodeType]
         const isLooselyMatched = isNbtNodeTypeLooselyMatched(actual, expected)
-        if (config) {
-            const [severity, value] = config
-            if (
-                !isLooselyMatched ||
-                ((isPredicate || value === 'strictly') && !isNbtNodeTypeStrictlyMatched(actual, expected))
-            ) {
-                //#region Action codes of converting to similar types
-                let actionCode: ActionCode | undefined = undefined
-                if (actual === 'Byte' || actual === 'Short' || actual === 'Int' || actual === 'Long' || actual === 'Float' || actual === 'Double') {
-                    if (expected === 'Byte') actionCode = ActionCode.NbtTypeToByte
-                    else if (expected === 'Short') actionCode = ActionCode.NbtTypeToShort
-                    else if (expected === 'Int') actionCode = ActionCode.NbtTypeToInt
-                    else if (expected === 'Long') actionCode = ActionCode.NbtTypeToLong
-                    else if (expected === 'Float') actionCode = ActionCode.NbtTypeToFloat
-                    else if (expected === 'Double') actionCode = ActionCode.NbtTypeToDouble
-                } else if (actual === 'ByteArray' || actual === 'IntArray' || actual === 'LongArray' || actual === 'List') {
-                    if (expected === 'ByteArray') actionCode = ActionCode.NbtTypeToByteArray
-                    else if (expected === 'IntArray') actionCode = ActionCode.NbtTypeToIntArray
-                    else if (expected === 'LongArray') actionCode = ActionCode.NbtTypeToLongArray
-                    else if (expected === 'List') actionCode = ActionCode.NbtTypeToList
-                }
-                //#endregion
-                ans.errors.push(new ParsingError(
-                    tag[NodeRange],
-                    locale('expected-got', locale(`nbt-tag.${expected}`), locale(`nbt-tag.${actual}`)),
-                    true, getDiagnosticSeverity(severity), actionCode
-                ))
+        if (
+            !isLooselyMatched ||
+            ((isPredicate || (config && config[1] === 'strictly')) && !isNbtNodeTypeStrictlyMatched(actual, expected))
+        ) {
+            //#region Action codes of converting to similar types
+            let code: ActionCode | undefined = undefined
+            if (actual === 'Byte' || actual === 'Short' || actual === 'Int' || actual === 'Long' || actual === 'Float' || actual === 'Double') {
+                if (expected === 'Byte') code = ActionCode.NbtTypeToByte
+                else if (expected === 'Short') code = ActionCode.NbtTypeToShort
+                else if (expected === 'Int') code = ActionCode.NbtTypeToInt
+                else if (expected === 'Long') code = ActionCode.NbtTypeToLong
+                else if (expected === 'Float') code = ActionCode.NbtTypeToFloat
+                else if (expected === 'Double') code = ActionCode.NbtTypeToDouble
+            } else if (actual === 'ByteArray' || actual === 'IntArray' || actual === 'LongArray' || actual === 'List') {
+                if (expected === 'ByteArray') code = ActionCode.NbtTypeToByteArray
+                else if (expected === 'IntArray') code = ActionCode.NbtTypeToIntArray
+                else if (expected === 'LongArray') code = ActionCode.NbtTypeToLongArray
+                else if (expected === 'List') code = ActionCode.NbtTypeToList
             }
+            //#endregion
+            //#region UUID datafix: #377
+            if (expected === 'IntArray' && actual === 'String') {
+                code = ActionCode.NbtUuidDatafixString
+            } else if (expected === 'IntArray' && actual === 'Compound') {
+                code = ActionCode.NbtUuidDatafixCompound
+            }
+            //#endregion
+            ans.errors.push(new ParsingError(
+                tag[NodeRange],
+                locale('expected-got', locale(`nbt-tag.${expected}`), locale(`nbt-tag.${actual}`)),
+                true, getDiagnosticSeverity(config ? config[0] : 'warning'), code
+            ))
         }
         return isLooselyMatched
     }
@@ -513,9 +517,11 @@ export default class NbtdocHelper {
                         // Errors.
                         if (!this.isInheritFromItemBase(doc)) {
                             let code: ActionCode | undefined
-                            if (['UUIDMost', 'UUIDLeast', 'OwnerUUID', 'TrustedUUIDs', 'target_uuid', 'owner'].includes(key)) {
-                                code = ActionCode.NbtUuidDatafix
+                            //#region UUID datafix: #377
+                            if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
+                                code = ActionCode.NbtUuidDatafixUnknownKey
                             }
+                            //#endregion
                             ans.errors.push(new ParsingError(
                                 tag[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),

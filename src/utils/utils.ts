@@ -11,6 +11,7 @@ import { EOL } from 'os'
 import TextRange from '../types/TextRange'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
+import IdentityNode from '../types/nodes/IdentityNode'
 
 /**
  * Convert an array to human-readable message.
@@ -142,7 +143,10 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
         if (raw.charAt(0) !== expectedChar) {
             ans.push(new ParsingError(
                 range,
-                locale('expected', locale('punc.quote', expectedChar)),
+                locale('expected-got',
+                    locale('punc.quote', expectedChar),
+                    locale('punc.quote', firstChar)
+                ),
                 true, getDiagnosticSeverity(severity),
                 specificQuoteCode
             ))
@@ -226,6 +230,7 @@ export function getEol({ eol }: LintConfig) {
 /**
  * @param titleLocaleKey The locale key of the code action title (without the `code-action.` part).
  */
+/* istanbul ignore next */
 export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[], uri: string, version: number | null, lineNumber: number, range: TextRange, newText: string, kind = CodeActionKind.QuickFix, isPreferred = true) {
     return {
         title: locale(`code-action.${titleLocaleKey}`),

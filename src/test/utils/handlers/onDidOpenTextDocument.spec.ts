@@ -10,12 +10,13 @@ describe('onDidOpenTextDocument() Tests', () => {
     it('Should set basic values correctly', async () => {
         const text = ''
         const uri = Uri.parse('file:///c:/foo')
+        const rel = 'foo'
         const version = 2
         const config = VanillaConfig
         const infos: InfosOfUris = new Map()
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
+        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.config === VanillaConfig)
@@ -26,12 +27,13 @@ describe('onDidOpenTextDocument() Tests', () => {
     it('Should set the `lineBreak` to CRLF', async () => {
         const text = '0\r\n1\n2'
         const uri = Uri.parse('file:///c:/foo')
+        const rel = 'foo'
         const version = 2
         const infos: InfosOfUris = new Map()
         const config = VanillaConfig
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
+        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.lineBreak === '\r\n')
@@ -40,12 +42,13 @@ describe('onDidOpenTextDocument() Tests', () => {
     it('Should set the `lineBreak` to LF', async () => {
         const text = '0\n1\n2'
         const uri = Uri.parse('file:///c:/foo')
+        const rel = 'foo'
         const version = 2
         const infos: InfosOfUris = new Map()
         const config = VanillaConfig
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-        await onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile })
+        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.lineBreak === '\n')

@@ -1,10 +1,10 @@
 import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import IndexMapping from '../IndexMapping'
-import { Diagnostic, CodeAction } from 'vscode-languageserver'
 import { ActionCode } from '../ParsingError'
 import FunctionInfo from '../FunctionInfo'
 import { getCodeAction, quoteString } from '../../utils/utils'
+import TextRange from '../TextRange'
 
 export default class StringNode extends ArgumentNode {
     readonly [NodeType]: string = 'String'
@@ -25,15 +25,11 @@ export default class StringNode extends ArgumentNode {
         return this.value
     }
 
-    [GetFormattedString]() {
-        return this.toString()
-    }
-
     /**
      * Return code actions for changing quotation marks when relevant diagnostics exist.
      */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: unknown, diagnostics: DiagnosticMap) {
-        const ans: CodeAction[] = []
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
         const unquoteDiagnostics = diagnostics[ActionCode.StringUnquote]
         const doubleQuoteDiagnostics = diagnostics[ActionCode.StringDoubleQuote]

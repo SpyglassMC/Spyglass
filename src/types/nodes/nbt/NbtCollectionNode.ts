@@ -38,12 +38,12 @@ export default abstract class NbtCollectionNode<T extends NbtNode> extends NbtNo
 
     [GetFormattedOpen](lint: LintConfig) {
         const bracketSpacingConfig = lint[this.configKeys.bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this.chars.openBracket, BracketType.open, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this.length, this.chars.openBracket, BracketType.open, bracketSpacingConfig)
     }
 
     [GetFormattedClose](lint: LintConfig) {
         const bracketSpacingConfig = lint[this.configKeys.bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this.chars.closeBracket, BracketType.close, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this.length, this.chars.closeBracket, BracketType.close, bracketSpacingConfig)
     }
 
     [GetFormattedString](lint: LintConfig) {

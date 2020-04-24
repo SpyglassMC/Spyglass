@@ -6,7 +6,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import TimeNode from '../../types/nodes/TimeNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 
 describe('TimeArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

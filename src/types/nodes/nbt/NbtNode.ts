@@ -20,8 +20,6 @@ export default abstract class NbtNode extends ArgumentNode {
         super()
         this[SuperNbt] = superNbt
     }
-
-    abstract [GetFormattedString](lint: LintConfig): string
 }
 
 export function isNbtNodeTypeStrictlyMatched(actual: NbtNodeTypeName, expected: NbtNodeTypeName) {

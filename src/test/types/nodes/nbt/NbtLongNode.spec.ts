@@ -5,7 +5,7 @@ import NbtLongNode from '../../../../types/nodes/nbt/NbtLongNode'
 import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtLongNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return with lower-cased suffix', () => {
             const { lint } = constructConfig({ lint: { nbtLongSuffix: 'l' } })
             const node = new NbtLongNode(null, BigInt(0), '0')

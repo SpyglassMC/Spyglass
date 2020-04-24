@@ -2,8 +2,12 @@ import assert = require('power-assert')
 import os from 'os'
 import Formattable, { GetFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
-import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString, getEol } from '../../utils/utils'
+import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString, getEol, remapCompletionItem, validateStringQuote } from '../../utils/utils'
 import { constructConfig, LintConfig } from '../../types/Config'
+import { DiagnosticConfig } from '../../types/StylisticConfig'
+import QuoteTypeConfig from '../../types/QuoteTypeConfig'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
+import { DiagnosticSeverity } from 'vscode-languageserver'
 
 describe('utils.ts Tests', () => {
     describe('arrayToMessage() Tests', () => {
@@ -13,8 +17,8 @@ describe('utils.ts Tests', () => {
             assert(actual === 'nothing')
         })
         it('Should return message for a string', () => {
-            const arr = 'foo'
-            const actual = arrayToMessage(arr)
+            const str = 'foo'
+            const actual = arrayToMessage(str)
             assert(actual === '‘foo’')
         })
         it('Should return message for an one-element array', () => {
@@ -163,6 +167,156 @@ describe('utils.ts Tests', () => {
             const { lint } = constructConfig({ lint: { eol: 'auto' } })
             const actual = getEol(lint)
             assert(actual === os.EOL)
+        })
+    })
+    describe('remapCompletionItem() Tests', () => {
+        it('Should return as-is if the completion item does not contain any TextEdits', () => {
+            const actual = remapCompletionItem({ label: 'foo' }, 0)
+            assert.deepStrictEqual(actual, { label: 'foo' })
+        })
+        it('Should return remap the lineNumber as needed', () => {
+            const actual = remapCompletionItem({
+                label: 'foo',
+                textEdit: {
+                    range: { start: { line: 0, character: 12 }, end: { line: 0, character: 16 } },
+                    newText: 'foo'
+                }
+            }, 42)
+            assert.deepStrictEqual(actual, {
+                label: 'foo',
+                textEdit: {
+                    range: { start: { line: 42, character: 12 }, end: { line: 42, character: 16 } },
+                    newText: 'foo'
+                }
+            })
+        })
+        it('Should return remap the characters as needed', () => {
+            const actual = remapCompletionItem({
+                label: 'foo',
+                textEdit: {
+                    range: { start: { line: 0, character: 1 }, end: { line: 0, character: 3 } },
+                    newText: 'foo'
+                }
+            }, [1, 2, 3, 4, 5])
+            assert.deepStrictEqual(actual, {
+                label: 'foo',
+                textEdit: {
+                    range: { start: { line: 0, character: 2 }, end: { line: 0, character: 4 } },
+                    newText: 'foo'
+                }
+            })
+        })
+    })
+    describe('validateStringQuote() Tests', () => {
+        it('Should return nothing when there are no regulations', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = null
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return nothing when should not quote', () => {
+            const raw = 'foo'
+            const value = 'foo'
+            const range = { start: 0, end: 3 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', false]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return errors when should not quote', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', false]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected a string but got ‘"’`,
+                undefined, DiagnosticSeverity.Information,
+                ActionCode.StringUnquote
+            )])
+        })
+        it('Should return nothing when should quote', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return errors when should quote', () => {
+            const raw = 'foo'
+            const value = 'foo'
+            const range = { start: 0, end: 3 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected a quote (‘'’ or ‘"’) but got ‘f’`,
+                undefined, DiagnosticSeverity.Information,
+                ActionCode.StringDoubleQuote
+            )])
+        })
+        it('Should return nothing when should quote with single quotation marks', () => {
+            const raw = "'foo'"
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always single']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return errors when should quote with single quotation marks', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always single']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected ‘'’ but got ‘"’`,
+                undefined, DiagnosticSeverity.Information,
+                ActionCode.StringSingleQuote
+            )])
+        })
+        it('Should return nothing when should quote with double quotation marks', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should return errors when should quote with double quotation marks', () => {
+            const raw = "'foo'"
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected ‘"’ but got ‘'’`,
+                undefined, DiagnosticSeverity.Information,
+                ActionCode.StringDoubleQuote
+            )])
+        })
+        it('Should return nothing when may use double quotation marks', () => {
+            const raw = 'foo'
+            const value = 'foo'
+            const range = { start: 0, end: 3 }
+            const quoteConfig: DiagnosticConfig<boolean> = null
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            assert.deepStrictEqual(actual, [])
         })
     })
 })

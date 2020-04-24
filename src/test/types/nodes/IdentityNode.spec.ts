@@ -1,40 +1,88 @@
 import assert = require('power-assert')
-import path from 'path'
 import { describe, it } from 'mocha'
-import IdentityNode from '../../../types/nodes/IdentityNode'
-import { constructConfig } from '../../../types/Config'
+import path from 'path'
+import { VanillaConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
+import FunctionInfo from '../../../types/FunctionInfo'
+import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
+import IdentityNode from '../../../types/nodes/IdentityNode'
+import { ActionCode } from '../../../types/ParsingError'
+import { getCodeAction } from '../../../utils/utils'
+import { $ } from '../../utils.spec'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
-        it('Should return correctly', () => {
+        it('Should return correctly when the namespace is empty', () => {
+            const id = new IdentityNode('', ['foo', 'bar'])
+            assert(id.toString() === 'minecraft:foo/bar')
+        })
+        it('Should return correctly when the namespace is undefined', () => {
+            const id = new IdentityNode(undefined, ['foo', 'bar'])
+            assert(id.toString() === 'minecraft:foo/bar')
+        })
+        it('Should return correctly when the namespace is minecraft', () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'])
-            assert(`${id}` === 'minecraft:foo/bar')
+            assert(id.toString() === 'minecraft:foo/bar')
         })
         it("Should return without tag symbol even if it's a tag", () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'], true)
-            assert(`${id}` === 'minecraft:foo/bar')
+            assert(id.toString() === 'minecraft:foo/bar')
         })
         it('Should return empty identity', () => {
             const id = new IdentityNode()
-            assert(`${id}` === 'minecraft:')
+            assert(id.toString() === 'minecraft:')
         })
     })
     describe('toTagString() Tests', () => {
-        it('Should return without tag symbol', () => {
+        it('Should return correctly when the namespace is empty', () => {
+            const id = new IdentityNode('', ['foo', 'bar'])
+            assert(id.toTagString() === 'minecraft:foo/bar')
+        })
+        it('Should return correctly when the namespace is undefined', () => {
+            const id = new IdentityNode(undefined, ['foo', 'bar'])
+            assert(id.toTagString() === 'minecraft:foo/bar')
+        })
+        it('Should return correctly when the namespace is minecraft', () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'])
             assert(id.toTagString() === 'minecraft:foo/bar')
         })
-        it('Should return with tag symbol', () => {
+        it('Should return the tag symbol', () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'], true)
             assert(id.toTagString() === '#minecraft:foo/bar')
         })
     })
-    describe('[ToLintedString]() Tests', () => {
+    describe('toShortestTagString() Tests', () => {
+        it('Should return correctly when the namespace is empty', () => {
+            const id = new IdentityNode('', ['foo', 'bar'])
+            assert(id.toShortestTagString() === 'foo/bar')
+        })
+        it('Should return correctly when the namespace is undefined', () => {
+            const id = new IdentityNode(undefined, ['foo', 'bar'])
+            assert(id.toShortestTagString() === 'foo/bar')
+        })
+        it('Should return correctly when the namespace is minecraft', () => {
+            const id = new IdentityNode('minecraft', ['foo', 'bar'])
+            assert(id.toShortestTagString() === 'foo/bar')
+        })
+        it('Should return correctly when the namespace is spgoding', () => {
+            const id = new IdentityNode('spgoding', ['foo', 'bar'])
+            assert(id.toShortestTagString() === 'spgoding:foo/bar')
+        })
+        it('Should return the tag symbol', () => {
+            const id = new IdentityNode('spgoding', ['foo', 'bar'], true)
+            assert(id.toShortestTagString() === '#spgoding:foo/bar')
+        })
+    })
+    describe('[GetFormattedString]() Tests', () => {
         it('Should omit default namespace', () => {
             const id = new IdentityNode(undefined, ['foo', 'bar'])
             const actual = id[GetFormattedString]()
             assert(actual === 'foo/bar')
+        })
+        it('Should not omit empty namespace', () => {
+            const id = new IdentityNode('', ['foo', 'bar'])
+            const actual = id[GetFormattedString]()
+            assert(actual === ':foo/bar')
         })
         it('Should not omit default namespace', () => {
             const id = new IdentityNode('minecraft', ['foo', 'bar'])
@@ -50,6 +98,38 @@ describe('IdentityNode Tests', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'], true)
             const actual = id[GetFormattedString]()
             assert(actual === '#spgoding:foo/bar')
+        })
+    })
+    describe('[GetCodeActions]() Tests', () => {
+        const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
+        const lineNumber = 10
+        const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+        const diags: any[] = [{ message: 'A diagnostic message' }]
+        it('Should complete the namespace', () => {
+            const range = { start: 0, end: 7 }
+            const diagnostics = {
+                [ActionCode.IdentityCompleteDefaultNamespace]: diags
+            }
+            const node = $(new IdentityNode(undefined, ['foo', 'bar']), range)
+
+            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            assert.deepStrictEqual(actual, [getCodeAction(
+                'id-complete-default-namespace', diags, uri, info.version, lineNumber, range,
+                'minecraft:foo/bar'
+            )])
+        })
+        it('Should omit the namespace', () => {
+            const range = { start: 0, end: 17 }
+            const diagnostics = {
+                [ActionCode.IdentityOmitDefaultNamespace]: diags
+            }
+            const node = $(new IdentityNode('minecraft', ['foo', 'bar']), range)
+
+            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            assert.deepStrictEqual(actual, [getCodeAction(
+                'id-omit-default-namespace', diags, uri, info.version, lineNumber, range,
+                'foo/bar'
+            )])
         })
     })
     describe('toRel() Tests', () => {

@@ -16,7 +16,7 @@ import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import SelectorArgumentsNode, { SelectorAdvancementsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../types/nodes/map/SelectorArgumentsNode'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import NumberNode from '../../types/nodes/NumberNode'
 import StringNode from '../../types/nodes/StringNode'
 

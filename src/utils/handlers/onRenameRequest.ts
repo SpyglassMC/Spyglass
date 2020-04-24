@@ -29,7 +29,7 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
                         for (const pos of unit[key]) {
                             // CHECKME
                             // const info = infos.get(getUri(pos.uri!, uris))
-                            const info = await getInfo(getUri(pos.uri!, uris), infos, cacheFile, fetchConfig, readFile, reportOptions)
+                            const info = await getInfo(getUri(pos.uri!, uris), roots, infos, cacheFile, fetchConfig, readFile, reportOptions)
                             /* istanbul ignore else */
                             if (info) {
                                 documentChanges.push({

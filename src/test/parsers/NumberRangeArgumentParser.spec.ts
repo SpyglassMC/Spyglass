@@ -6,7 +6,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import NumberNode from '../../types/nodes/NumberNode'
 
 describe('NumberRangeArgumentParser Tests', () => {

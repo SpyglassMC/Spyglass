@@ -87,22 +87,22 @@ export default class ObjectiveCriterionArgumentParser extends ArgumentParser<str
                     .expect(RegularSep)
                     .skip()
                 const start = reader.cursor
-                const pool = Object.keys(StatsCategory)
+                const statsPool = Object.keys(StatsCategory)
                 category = reader.readUntilOrEnd(' ', StatsSep)
                 //#region Completions.
                 if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                     ans.completions.push(...arrayToCompletions(
-                        pool,
+                        statsPool,
                         c => ({ ...c, kind: CompletionItemKind.Field })
                     ))
                 }
                 //#endregion
                 //#region Errors.
-                if (!pool.includes(category)) {
+                if (!statsPool.includes(category)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         locale('expected-got',
-                            arrayToMessage(pool, true, 'or'),
+                            arrayToMessage(statsPool, true, 'or'),
                             locale('punc.quote', category)
                         )
                     ))

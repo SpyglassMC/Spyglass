@@ -19,8 +19,4 @@ export default class NumberNode extends ArgumentNode {
     valueOf() {
         return this.value
     }
-
-    [GetFormattedString](_lint: LintConfig) {
-        return this.toString()
-    }
 }

@@ -1,13 +1,14 @@
-import NbtNode, { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
-import { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from '../ArgumentNode'
+import { bufferFromNbtLongs, nbtIntArrayFromBuffer } from '../../../utils/datafixers/nbtUuid'
+import { getCodeAction } from '../../../utils/utils'
 import { LintConfig } from '../../Config'
+import { GetFormattedString } from '../../Formattable'
+import FunctionInfo from '../../FunctionInfo'
+import { ActionCode } from '../../ParsingError'
+import TextRange from '../../TextRange'
+import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
+import NbtNode, { NbtNodeType, SuperNbt } from '../nbt/NbtNode'
 import MapNode, { Chars, ConfigKeys, UnsortedKeys } from './MapNode'
 import NbtCompoundKeyNode from './NbtCompoundKeyNode'
-import FunctionInfo from '../../FunctionInfo'
-import TextRange from '../../TextRange'
-import { ActionCode } from '../../ParsingError'
-import { getCodeAction } from '../../../utils/utils'
-import { GetFormattedString } from '../../Formattable'
 
 export const NbtCompoundNodeChars = {
     openBracket: '{', sep: ':', pairSep: ',', closeBracket: '}'
@@ -16,7 +17,7 @@ export const NbtCompoundNodeChars = {
 export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implements NbtNode {
     readonly [NodeType] = 'NbtCompound'
     readonly [NbtNodeType] = 'Compound';
-    
+
     [SuperNbt]: NbtCompoundNode | null
 
     constructor(superNbt: NbtCompoundNode | null) {
@@ -35,16 +36,35 @@ export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        const relevantDiagnostics = diagnostics[ActionCode.NbtCompoundSortKeys]
-        if (relevantDiagnostics && info.config.lint.nbtCompoundSortKeys) {
+        const sortKeysDiagnostics = diagnostics[ActionCode.NbtCompoundSortKeys]
+        if (sortKeysDiagnostics && info.config.lint.nbtCompoundSortKeys) {
+            /* istanbul ignore next */
             const keys = info.config.lint.nbtCompoundSortKeys[1] === 'alphabetically' ?
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
-                'nbt-compound-sort-keys', relevantDiagnostics,
+                'nbt-compound-sort-keys', sortKeysDiagnostics,
                 uri, info.version, lineNumber, this[NodeRange],
                 this[GetFormattedString](info.config.lint, keys)
             ))
         }
+        //#region UUID datafix: #377
+        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixCompound]
+        if (uuidDiagnostics) {
+            try {
+                const newArrayNode = nbtIntArrayFromBuffer(bufferFromNbtLongs(this,
+                    this[UnsortedKeys].includes('OwnerUUIDMost') ? 'OwnerUUIDMost' : 'M',
+                    this[UnsortedKeys].includes('OwnerUUIDLeast') ? 'OwnerUUIDLeast' : 'L'
+                ))
+                ans.push(getCodeAction(
+                    'nbt-uuid-datafix', uuidDiagnostics,
+                    uri, info.version, lineNumber, this[NodeRange],
+                    newArrayNode[GetFormattedString](info.config.lint)
+                ))
+            } catch (ignored) {
+                // Ignored.
+            }
+        }
+        //#endregion
         return ans
     }
 }

@@ -20,14 +20,16 @@ export const enum ActionCode {
     NbtTypeToDouble,
     NbtByteToLiteral,
     NbtByteToNumber,
-    /**
-     * Fix UUIDs in NBT compounds: #377
-     */
-    NbtUuidDatafix,
+    //#region UUID datafix: #377
+    NbtUuidDatafixCompound,
+    NbtUuidDatafixString,
+    NbtUuidDatafixUnknownKey,
+    ////#endregion
     SelectorSortKeys,
     StringSingleQuote,
     StringDoubleQuote,
     StringUnquote,
+    VectorCenterCorrect,
 }
 
 /**

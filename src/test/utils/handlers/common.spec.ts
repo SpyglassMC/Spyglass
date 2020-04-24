@@ -9,7 +9,7 @@ import Token, { TokenType } from '../../../types/Token'
 import { UrisOfIds, UrisOfStrings, InfosOfUris } from '../../../types/handlers'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import { CacheFile } from '../../../types/ClientCache'
-import { fail } from 'assert'
+import { fail } from 'power-assert'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -159,6 +159,7 @@ describe('common.ts Tests', () => {
     })
     describe('getInfo() Tests', () => {
         const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
+        const roots = [Uri.parse('file:///c:/bar/')]
         const fetchConfig = async () => VanillaConfig
         const readFile = async () => { throw 'Fake readFile() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
@@ -166,14 +167,14 @@ describe('common.ts Tests', () => {
             const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
             const infos: InfosOfUris = new Map([[uri, info]])
 
-            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile)
 
             assert(actual === info)
         })
         it('Should return undefined when exceptions are thrown during reading file', async () => {
             const infos: InfosOfUris = new Map()
 
-            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile)
 
             assert(actual === undefined)
         })
@@ -181,7 +182,7 @@ describe('common.ts Tests', () => {
             const readFile = async () => '# foo'
             const infos: InfosOfUris = new Map()
 
-            const actual = (await getInfo(uri, infos, cacheFile, fetchConfig, readFile))!
+            const actual = (await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile))!
 
             assert(actual.config === VanillaConfig)
             assert(actual.lineBreak === '\n')
@@ -189,12 +190,16 @@ describe('common.ts Tests', () => {
             assert.deepStrictEqual(actual.strings, ['# foo'])
         })
         it('Should return undefined when the file is excluded', async () => {
-            const fetchConfig = async () => constructConfig({ env: { exclude: ['.'] } })
-            const readFile = async () => fail()
+            let hasReadFile = false
+            const fetchConfig = async () => constructConfig({ env: { exclude: ['**'] } })
+            const readFile = async () => hasReadFile = true
             const infos: InfosOfUris = new Map()
 
-            const actual = await getInfo(uri, infos, cacheFile, fetchConfig, readFile)
+            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile as any)
 
+            if (hasReadFile) {
+                fail()
+            }
             assert(actual === undefined)
         })
     })

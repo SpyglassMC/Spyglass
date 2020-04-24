@@ -1,7 +1,7 @@
 import path from 'path'
 import { URI as Uri } from 'vscode-uri'
 import Line from '../../types/Line'
-import Config, { isUriIncluded } from '../../types/Config'
+import Config, { isRelIncluded } from '../../types/Config'
 import LineParser from '../../parsers/LineParser'
 import StringReader from '../StringReader'
 import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
@@ -97,15 +97,16 @@ export function getId(uri: Uri, roots: Uri[]) {
     return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
-export async function getInfo(uri: Uri, infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction, reportOptions?: VanillaReportOptions): Promise<FunctionInfo | undefined> {
+export async function getInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction, reportOptions?: VanillaReportOptions): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
         try {
             const config = await fetchConfig(uri)
-            if (isUriIncluded(uri, config)) {
+            const rel = getRel(uri, roots)!
+            if (isRelIncluded(rel, config)) {
                 const text = await readFile(uri.fsPath, 'utf8')
-                await onDidOpenTextDocument({ text, uri, infos, config, cacheFile, version: null, reportOptions })
+                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, reportOptions })
                 info = infos.get(uri)
             }
         } catch (ignored) {

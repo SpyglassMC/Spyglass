@@ -19,6 +19,7 @@ export default class BlockNode extends ArgumentNode {
         super()
     }
 
+    /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         if (areOverlapped(range, this.id[NodeRange])) {

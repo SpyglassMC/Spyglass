@@ -4,7 +4,6 @@ import { BracketSpacingConfig, SepSpacingConfig } from '../../StylisticConfig'
 import { toFormattedString } from '../../../utils/utils'
 import ArgumentNode, { NodeType, GetHoverInformation, NodeRange, GetCodeActions, DiagnosticMap } from '../ArgumentNode'
 import TextRange, { areOverlapped } from '../../TextRange'
-import { CodeAction } from 'vscode-languageserver'
 import FunctionInfo from '../../FunctionInfo'
 
 export const enum BracketType { open, close }
@@ -42,19 +41,18 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         sep: string
     }
 
-    static getBracketSpacingAmount(config: BracketSpacingConfig) {
-        const num = Object.keys(this).length
-        if (num === 0 && config.zeroValue !== undefined) {
+    static getBracketSpacingAmount(length: number, config: BracketSpacingConfig) {
+        if (length === 0 && config.zeroValue !== undefined) {
             return config.zeroValue
-        } else if (num === 1 && config.oneValue !== undefined) {
+        } else if (length === 1 && config.oneValue !== undefined) {
             return config.oneValue
         } else {
             return config.inside
         }
     }
 
-    static getFormattedBracket(char: string, type: BracketType, config: BracketSpacingConfig) {
-        const amount = MapNode.getBracketSpacingAmount(config)
+    static getFormattedBracket(length: number, char: string, type: BracketType, config: BracketSpacingConfig) {
+        const amount = MapNode.getBracketSpacingAmount(length, config)
         const spacing = ' '.repeat(amount)
         if (type === BracketType.open) {
             return `${char}${spacing}`
@@ -76,12 +74,12 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
 
     [GetFormattedOpen](lint: LintConfig) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this[UnsortedKeys].length, this[Chars].openBracket, BracketType.open, bracketSpacingConfig)
     }
 
     [GetFormattedClose](lint: LintConfig) {
         const bracketSpacingConfig = lint[this[ConfigKeys].bracketSpacing] as BracketSpacingConfig
-        return MapNode.getFormattedBracket(this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
+        return MapNode.getFormattedBracket(this[UnsortedKeys].length, this[Chars].closeBracket, BracketType.close, bracketSpacingConfig)
     }
 
     [GetFormattedString](lint: LintConfig, keys = this[UnsortedKeys], kvPair = (lint: LintConfig, key: string, sep: string, value: V) => `${key}${sep}${toFormattedString(value, lint)}`) {
@@ -118,8 +116,9 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return `${open}${contentString}${close}`
     }
 
+    /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans: CodeAction[] = []
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         for (const key in this[Keys]) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                 const keyInfo = this[Keys]![key]
@@ -139,6 +138,7 @@ export default abstract class MapNode<KI, V> extends ArgumentNode {
         return ans
     }
 
+    /* istanbul ignore next: simple triage */
     [GetHoverInformation](lineNumber: number, char: number) {
         for (const key in this[Keys]) {
             /* istanbul ignore else */

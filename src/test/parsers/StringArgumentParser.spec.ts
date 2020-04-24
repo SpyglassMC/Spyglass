@@ -4,7 +4,7 @@ import StringReader from '../../utils/StringReader'
 import StringArgumentParser, { StringType } from '../../parsers/StringArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import StringNode from '../../types/nodes/StringNode'
 
 describe('StringArgumentParser Tests', () => {

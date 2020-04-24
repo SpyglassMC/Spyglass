@@ -5,7 +5,7 @@ import NbtIntNode from '../../../../types/nodes/nbt/NbtIntNode'
 import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtIntNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({})
             const node = new NbtIntNode(null, 0, '0')

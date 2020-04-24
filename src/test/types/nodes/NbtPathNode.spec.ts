@@ -5,14 +5,14 @@ import { GetFormattedString } from '../../../types/Formattable'
 import NbtPathNode from '../../../types/nodes/NbtPathNode'
 import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
 import NbtCompoundKeyNode from '../../../types/nodes/map/NbtCompoundKeyNode'
-import { $ } from '../../utils'
+import { $ } from '../../utils.spec'
 import NumberNode from '../../../types/nodes/NumberNode'
 
 describe('NbtPathNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({})
-            const message = $(new NbtPathNode(), {
+            const node = $(new NbtPathNode(), {
                 length: 8,
                 0: new NbtCompoundNode(null),
                 1: NbtPathNode.Sep,
@@ -23,7 +23,7 @@ describe('NbtPathNode Tests', () => {
                 6: NbtPathNode.Sep,
                 7: new NbtCompoundKeyNode(null, '"crazy" name', '"\\"crazy\\" name"', [])
             })
-            const actual = message[GetFormattedString](lint)
+            const actual = node[GetFormattedString](lint)
             assert(actual === '{}.foo[0]."\\"crazy\\" name"')
         })
     })

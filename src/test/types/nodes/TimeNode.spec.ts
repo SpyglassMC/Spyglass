@@ -5,7 +5,7 @@ import { GetFormattedString } from '../../../types/Formattable'
 import TimeNode from '../../../types/nodes/TimeNode'
 
 describe('TimeNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should not omit non-tick units', () => {
             const { lint } = constructConfig({ lint: { timeOmitTickUnit: true } })
             const id = new TimeNode(0, '0', 's')

@@ -1,14 +1,15 @@
 import { LintConfig } from '../Config'
-import NbtCompoundNode from './map/NbtCompoundNode'
-import IdentityNode from './IdentityNode'
 import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from './ArgumentNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange, { areOverlapped } from '../TextRange'
+import ArgumentNode, { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
+import IdentityNode from './IdentityNode'
+import NbtCompoundNode from './map/NbtCompoundNode'
 
 export default class ItemNode extends ArgumentNode {
     readonly [NodeType] = 'Item'
 
+    /* istanbul ignore next */
     constructor(
         public id: IdentityNode = new IdentityNode(),
         public tag: NbtCompoundNode = new NbtCompoundNode(null)
@@ -16,6 +17,7 @@ export default class ItemNode extends ArgumentNode {
         super()
     }
 
+    /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         if (areOverlapped(range, this.id[NodeRange])) {

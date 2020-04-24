@@ -6,7 +6,7 @@ import { GetFormattedString } from '../../../../types/Formattable'
 import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
 
 describe('NbtByteArrayNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         const { lint } = constructConfig({
             lint: {
                 nbtArrayBracketSpacing: { inside: 0 },
@@ -41,6 +41,24 @@ describe('NbtByteArrayNode Tests', () => {
             const actual = node[GetFormattedString](lint)
 
             assert(actual === '[B; 0b, 1b, 2b]')
+        })
+        it('Should return correctly for changed configuration', () => {
+            const { lint } = constructConfig({
+                lint: {
+                    nbtArrayBracketSpacing: { inside: 2 },
+                    nbtArrayCommaSpacing: { before: 3, after: 4 },
+                    nbtArraySemicolonSpacing: { after: 5 },
+                    nbtArrayTrailingComma: true
+                }
+            })
+            const node = new NbtByteArrayNode(null)
+
+            node.push(new NbtByteNode(null, 0, '0'))
+            node.push(new NbtByteNode(null, 1, '1'))
+
+            const actual = node[GetFormattedString](lint)
+            /*                    12345  123 1234  123 12 */
+            assert(actual === '[B;     0b   ,    1b   ,  ]')
         })
     })
 })

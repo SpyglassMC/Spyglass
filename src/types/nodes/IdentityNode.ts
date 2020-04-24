@@ -3,10 +3,11 @@ import { GetFormattedString } from '../Formattable'
 import { ClientCache, CacheKey } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { sep } from 'path'
-import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap } from './ArgumentNode'
-import { Diagnostic, CodeAction } from 'vscode-languageserver'
+import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from './ArgumentNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange from '../TextRange'
+import { ActionCode } from '../ParsingError'
+import { getCodeAction } from '../../utils/utils'
 
 export default class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
@@ -24,34 +25,87 @@ export default class IdentityNode extends ArgumentNode {
         super()
     }
 
+    private getTagSymbolPart() {
+        return this.isTag ? IdentityNode.TagSymbol : ''
+    }
+
+    private getLongestNamespacePart() {
+        return `${this.getNamespace()}${IdentityNode.NamespaceDelimiter}`
+    }
+
+    private getShortestNamespacePart() {
+        /* istanbul ignore next */
+        return this.isDefaultNamespace() ? '' : this.getLongestNamespacePart()
+    }
+
+    private getPathPart() {
+        return this.path.join(IdentityNode.PathSep)
+    }
+
+    private isDefaultNamespace() {
+        return this.getNamespace() === IdentityNode.DefaultNamespace
+    }
+
+    /**
+     * Return the standardized namespace of this identity.
+     */
+    getNamespace() {
+        return this.namespace || IdentityNode.DefaultNamespace
+    }
+
+    /**
+     * Convert the ID to a stringified ID. Will NOT begin with TagSymbol (`#`) even if the ID is a tag.
+     */
+    toString() {
+        return `${this.getLongestNamespacePart()}${this.getPathPart()}`
+    }
+
+    /**
+     * Convert the ID to a stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag.
+     */
+    toTagString() {
+        return `${this.getTagSymbolPart()}${this.getLongestNamespacePart()}${this.getPathPart()}`
+    }
+
+    /**
+     * Convert the ID to the shortest stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
+     */
+    toShortestTagString() {
+        return `${this.getTagSymbolPart()}${this.getShortestNamespacePart()}${this.getPathPart()}`
+    }
+
     [GetFormattedString](_lint?: LintConfig): string {
         let id
-        if (this.namespace) {
+        if (this.namespace !== undefined) {
             id = `${this.namespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
         } else {
             id = this.path.join(IdentityNode.PathSep)
         }
-        return `${this.isTag ? IdentityNode.TagSymbol : ''}${id}`
+        return `${this.getTagSymbolPart()}${id}`
     }
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        
+
+        const completeDiagnostics = diagnostics[ActionCode.IdentityCompleteDefaultNamespace]
+        const omitDiagnostics = diagnostics[ActionCode.IdentityOmitDefaultNamespace]
+
+        if (completeDiagnostics && completeDiagnostics.length > 0) {
+            ans.push(getCodeAction(
+                'id-complete-default-namespace', completeDiagnostics,
+                uri, info.version, lineNumber, this[NodeRange],
+                this.toTagString()
+            ))
+        }
+        if (omitDiagnostics && omitDiagnostics.length > 0) {
+            ans.push(getCodeAction(
+                'id-omit-default-namespace', omitDiagnostics,
+                uri, info.version, lineNumber, this[NodeRange],
+                this.toShortestTagString()
+            ))
+        }
+
         return ans
-    }
-
-    /**
-     * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. Will NOT begin with TagSymbol (`#`) if the ID is a tag.
-     */
-    toString() {
-        return `${this.namespace || IdentityNode.DefaultNamespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
-    }
-
-    /**
-     * Convert the ID to a string in form of `${namespace}${IdentityNode.NamespaceDelimiter}${path}`. WILL begin with TagSymbol (`#`) if the ID is a tag.
-     */
-    toTagString() {
-        return `${this.isTag ? IdentityNode.TagSymbol : ''}${this.namespace || IdentityNode.DefaultNamespace}${IdentityNode.NamespaceDelimiter}${this.path.join(IdentityNode.PathSep)}`
     }
 
     /**
@@ -68,7 +122,7 @@ export default class IdentityNode extends ArgumentNode {
         } else {
             ext = '.json'
         }
-        return `${side}${sep}${this.namespace || IdentityNode.DefaultNamespace}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
+        return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
     }
 
     /**

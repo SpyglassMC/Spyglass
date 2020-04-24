@@ -5,10 +5,10 @@ import { GetFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import ParticleNode from '../../../types/nodes/ParticleNode'
 import VectorNode, { VectorElementNode, VectorElementType } from '../../../types/nodes/VectorNode'
-import { $ } from '../../utils'
+import { $ } from '../../utils.spec'
 
 describe('ParticleNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly', () => {
             const { lint } = constructConfig({})
             const particle = new ParticleNode(

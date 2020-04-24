@@ -1,16 +1,16 @@
 import assert = require('power-assert')
-import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
+import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import ItemNode from '../../../types/nodes/ItemNode'
-import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
-import { $ } from '../../utils'
-import NbtStringNode from '../../../types/nodes/nbt/NbtStringNode'
 import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
+import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
+import NbtStringNode from '../../../types/nodes/nbt/NbtStringNode'
+import { $ } from '../../utils.spec'
 
 describe('ItemNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         const { lint } = constructConfig({
             lint: {
                 nbtCompoundBracketSpacing: { inside: 0 },

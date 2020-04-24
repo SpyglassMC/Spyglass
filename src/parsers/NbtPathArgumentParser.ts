@@ -57,6 +57,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         let isKey = false
 
         if (types.includes('key')) {
+            const firstChar = reader.peek()
             let range: TextRange = { start: reader.cursor, end: reader.cursor }
             if (this.canParseKey(reader)) {
                 isKey = true
@@ -73,13 +74,14 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             }
             //#region Completions.
             if (helper && doc) {
-                const firstChar = reader.peek()
                 const clonedHelper = helper.clone()
                 if (NbtdocHelper.isCompoundDoc(doc)) {
                     clonedHelper.goCompound(doc.Compound)
                     if (range.start <= ctx.cursor && ctx.cursor <= range.end) {
                         if (StringReader.isQuote(firstChar)) {
-                            const quoteType = firstChar === "'" ? 'always single' : 'always double'
+                            // FIXME: after MC-175504 is fixed.
+                            /* istanbul ignore next */
+                            const quoteType = firstChar === '"' ? 'always double' : 'always single'
                             clonedHelper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
                         } else {
                             clonedHelper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
@@ -221,7 +223,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         if (this.canParseCompoundFilter(reader)) {
             checkSchema()
-            this.parseCompoundFilter(ans, reader, ctx, helper, isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null)
+            this.parseCompoundFilter(ans, reader, ctx, helper,
+                /* istanbul ignore next */
+                isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null
+            )
         } else if (this.canParseIndexNumber(reader)) {
             this.parseIndexNumber(ans, reader, ctx)
         }
@@ -234,11 +239,16 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             this.parseSep(ans, reader)
             this.parseSpecifiedTypes(ans, reader, ctx, helper, isListDoc(doc) ? doc.List.value_type : null, ['key', 'index'], false)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, helper, isListDoc(doc) ? doc.List.value_type : null, ['index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper,
+                /* istanbul ignore next */
+                isListDoc(doc) ? doc.List.value_type : null,
+                ['index'], true
+            )
         }
     }
 
     private canParseKey(reader: StringReader) {
+        // FIXME: after MC-175504 is fixed.
         return reader.peek() === '"' || StringReader.canInUnquotedString(reader.peek())
     }
 

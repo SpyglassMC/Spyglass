@@ -1,14 +1,14 @@
 import { InfosOfUris, Uri } from '../../types/handlers'
 import { parseString } from './common'
-import Config, { isUriIncluded } from '../../types/Config'
+import Config, { isRelIncluded } from '../../types/Config'
 import { CacheFile } from '../../types/ClientCache'
 import { VanillaReportOptions } from '../../types/ParsingContext'
 
-export default async function onDidOpenTextDocument({ text, uri, version, infos, config, cacheFile, reportOptions }: { text: string, uri: Uri, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
+export default async function onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, reportOptions }: { text: string, uri: Uri, rel: string, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
     const info: any = {}
     
     /* istanbul ignore next */
-    if (!isUriIncluded(uri, config)) {
+    if (!isRelIncluded(rel, config)) {
         return
     }
 

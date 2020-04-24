@@ -6,7 +6,7 @@ import { GetFormattedString } from '../../../../types/Formattable'
 import NbtIntNode from '../../../../types/nodes/nbt/NbtIntNode'
 
 describe('NbtIntArrayNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         const { lint } = constructConfig({
             lint: {
                 nbtArrayBracketSpacing: { inside: 0 },

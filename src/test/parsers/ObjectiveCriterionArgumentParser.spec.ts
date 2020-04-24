@@ -83,6 +83,25 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should return completions for sub values of ‘minecraft’', async () => {
+            const ctx = await constructContext({ registry: registries, parsers, cursor: 10 })
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('minecraft.'), ctx)
+            assert.deepStrictEqual(actual.data, 'minecraft.')
+            assert.deepStrictEqual(actual.completions,
+                [
+                    { label: 'custom', kind: CompletionItemKind.Field },
+                    { label: 'crafted', kind: CompletionItemKind.Field },
+                    { label: 'used', kind: CompletionItemKind.Field },
+                    { label: 'broken', kind: CompletionItemKind.Field },
+                    { label: 'mined', kind: CompletionItemKind.Field },
+                    { label: 'killed', kind: CompletionItemKind.Field },
+                    { label: 'killed_by', kind: CompletionItemKind.Field },
+                    { label: 'picked_up', kind: CompletionItemKind.Field },
+                    { label: 'dropped', kind: CompletionItemKind.Field }
+                ]
+            )
+        })
         it('Should return completions for sub values of ‘teamkill’', async () => {
             const ctx = await constructContext({ registry: registries, parsers, cursor: 9 })
             const parser = new ObjectiveCriterionArgumentParser()
@@ -135,6 +154,26 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                     { label: 'custom_stat_3', kind: CompletionItemKind.Field }
                 ]
             )
+        })
+        it('Should return error for unknown category', () => {
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('foobar'), ctx)
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 0, end: 6 },
+                    'Expected ‘’, ‘minecraft’, ‘air’, ‘armor’, ‘deathCount’, ‘dummy’, ‘food’, ‘health’, ‘level’, ‘playerKillCount’, ‘teamkill’, ‘killedByTeam’, ‘totalKillCount’, ‘trigger’, ‘xp’, ‘custom’, ‘crafted’, ‘used’, ‘broken’, ‘mined’, ‘killed’, ‘killed_by’, ‘picked_up’, or ‘dropped’ but got ‘foobar’'
+                )
+            ])
+        })
+        it('Should return error for unknown stats category', () => {
+            const parser = new ObjectiveCriterionArgumentParser()
+            const actual = parser.parse(new StringReader('minecraft.foobar'), ctx)
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 10, end: 16 },
+                    'Expected ‘custom’, ‘crafted’, ‘used’, ‘broken’, ‘mined’, ‘killed’, ‘killed_by’, ‘picked_up’, or ‘dropped’ but got ‘foobar’'
+                )
+            ])
         })
         it('Should return error when the sep symbol is missing', () => {
             const parser = new ObjectiveCriterionArgumentParser()

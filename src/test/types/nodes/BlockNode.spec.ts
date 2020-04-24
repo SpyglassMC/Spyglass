@@ -5,13 +5,13 @@ import { GetFormattedString } from '../../../types/Formattable'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import BlockNode from '../../../types/nodes/BlockNode'
 import BlockStateNode from '../../../types/nodes/map/BlockStateNode'
-import { $ } from '../../utils'
+import { $ } from '../../utils.spec'
 import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
 import NbtStringNode from '../../../types/nodes/nbt/NbtStringNode'
 import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
 
 describe('BlockNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         const { lint } = constructConfig({
             lint: {
                 blockStateBracketSpacing: { inside: 0 },

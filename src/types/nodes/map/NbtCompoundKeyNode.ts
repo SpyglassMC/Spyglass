@@ -5,14 +5,15 @@ import NbtStringNode from '../nbt/NbtStringNode'
 import NbtCompoundNode from './NbtCompoundNode'
 import IndexMapping from '../../IndexMapping'
 import TextRange from '../../TextRange'
-import { Diagnostic, CodeAction, CodeActionKind } from 'vscode-languageserver'
 import { ActionCode } from '../../ParsingError'
-import { locale } from '../../../locales/Locales'
 import FunctionInfo from '../../FunctionInfo'
 import NbtIntArrayNode from '../nbt/NbtIntArrayNode'
 import NbtNumberNode from '../nbt/NbtNumberNode'
 import NbtIntNode from '../nbt/NbtIntNode'
 import { getCodeAction } from '../../../utils/utils'
+import { bufferFromNbtLongs, nbtIntArrayFromBuffer, bufferFromNbtString, bufferFromNbtCompound } from '../../../utils/datafixers/nbtUuid'
+import { UnsortedKeys } from './MapNode'
+import NbtListNode from '../nbt/NbtListNode'
 
 export default class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -29,52 +30,58 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         super(superNbt, value, raw, mapping)
     }
 
-    [GetFormattedString]() {
-        return this.toString()
-    }
+    /* istanbul ignore next: datafix */
+    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, _range: TextRange, diagnostics: DiagnosticMap) {
-        const ans: CodeAction[] = []
-
-        /* NbtUuidDatafix */
-        // FIXME
-        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafix]
+        //#region UUID datafix: #377
+        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixUnknownKey]
         if (uuidDiagnostics && uuidDiagnostics.length > 0) {
-            const superNbt = this[SuperNbt]
-            if (superNbt) {
-                const newSuper = new NbtCompoundNode(superNbt[SuperNbt])
-                for (const key in superNbt) {
-                    /* istanbul ignore else */
-                    if (superNbt.hasOwnProperty(key)) {
-                        const value = superNbt[key]
-                        if (key === 'owner' && value instanceof NbtCompoundNode && value.L instanceof NbtNumberNode && value.M instanceof NbtNumberNode) {
-                            const most64: string = value.M.valueOf().toString(2)
-                            const least64: string = value.L.valueOf().toString(2)
-                            const newValue = new NbtIntArrayNode(newSuper)
-                            const getInt32 = (str: string) => str[0] === '1' ? -parseInt(str.slice(1), 2) : parseInt(str.slice(1), 2)
-                            const ele0 = getInt32(most64.slice(0, most64.length - 32))
-                            const ele1 = getInt32(most64.slice(-32))
-                            const ele2 = getInt32(least64.slice(0, least64.length - 32))
-                            const ele3 = getInt32(least64.slice(-32))
-                            if (ele0 && ele1 && ele2 && ele3) {
-                                newValue.push(new NbtIntNode(newSuper, ele0, ele0.toString()))
-                                newValue.push(new NbtIntNode(newSuper, ele1, ele1.toString()))
-                                newValue.push(new NbtIntNode(newSuper, ele2, ele2.toString()))
-                                newValue.push(new NbtIntNode(newSuper, ele3, ele3.toString()))
-                                newSuper.Owner = newValue
+            const oldSuper = this[SuperNbt]
+            if (oldSuper) {
+                const newSuper = new NbtCompoundNode(oldSuper[SuperNbt])
+                for (const key of oldSuper[UnsortedKeys]) {
+                    try {
+                        if (key === 'ConversionPlayerLeast' || key === 'ConversionPlayerMost') {
+                            newSuper['ConversionPlayer'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'ConversionPlayer'))
+                        } else if (key === 'UUIDLeast' || key === 'UUIDMost') {
+                            newSuper['UUID'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'UUID'))
+                        } else if (key === 'LoveCauseLeast' || key === 'LoveCauseMost') {
+                            newSuper['LoveCause'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'LoveCause'))
+                        } else if (key === 'owner') {
+                            newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtCompound(oldSuper, 'owner'))
+                        } else if (key === 'OwnerUUID') {
+                            newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtString(oldSuper, 'OwnerUUID'))
+                        } else if (key === 'OwnerUUIDLeast' || key === 'OwnerUUIDMost') {
+                            newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'OwnerUUID'))
+                        } else if (key === 'target_uuid') {
+                            newSuper['Target'] = nbtIntArrayFromBuffer(bufferFromNbtCompound(oldSuper, 'target_uuid'))
+                        } else if (key === 'TrustedUUIDs') {
+                            const oldList = oldSuper['TrustedUUIDs']
+                            if (oldList instanceof NbtListNode) {
+                                const newList = new NbtListNode(newSuper)
+                                for (const oldElement of oldList) {
+                                    newList.push(nbtIntArrayFromBuffer(bufferFromNbtLongs(oldElement, 'M', 'L')))
+                                }
+                            } else {
+                                throw new Error('Expected a list node for ‘TrustedUUIDs’')
                             }
+                            newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'OwnerUUID'))
                         } else {
-                            newSuper[key] = value
+                            newSuper[key] = oldSuper[key]
                         }
+                    } catch (ignored) {
+                        newSuper[key] = oldSuper[key]
                     }
                 }
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    uri, info.version, lineNumber, superNbt[NodeRange],
+                    uri, info.version, lineNumber, oldSuper[NodeRange],
                     newSuper[GetFormattedString](info.config.lint)
                 ))
             }
         }
+        //#endregion
 
         return ans
     }

@@ -6,7 +6,7 @@ import MessageArgumentParser from '../../parsers/MessageArgumentParser'
 import StringReader from '../../utils/StringReader'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import Token, { TokenType } from '../../types/Token'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import MessageNode from '../../types/nodes/MessageNode'
 
 describe('MessageArgumentParser Tests', () => {

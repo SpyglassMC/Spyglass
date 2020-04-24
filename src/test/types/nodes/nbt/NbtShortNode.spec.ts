@@ -5,7 +5,7 @@ import NbtShortNode from '../../../../types/nodes/nbt/NbtShortNode'
 import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtShortNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return with lower-cased suffix', () => {
             const { lint } = constructConfig({ lint: { nbtShortSuffix: 's' } })
             const node = new NbtShortNode(null, 0, '0')

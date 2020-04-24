@@ -17,7 +17,7 @@ import ParsingContext, { constructContext } from '../types/ParsingContext'
 import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentsNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
-import { $ } from './utils'
+import { $ } from './utils.spec'
 import StringNode from '../types/nodes/StringNode'
 import BlockStateNode from '../types/nodes/map/BlockStateNode'
 

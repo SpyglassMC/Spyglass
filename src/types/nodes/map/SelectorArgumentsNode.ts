@@ -47,6 +47,7 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
     }
 
     [IsMapSorted](lint: LintConfig): boolean {
+        /* istanbul ignore else */
         if (lint.selectorSortKeys) {
             const expected = lint.selectorSortKeys[1]
             let i = 0
@@ -66,6 +67,17 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
         return super[GetFormattedString](lint, keys, this.kvPair)
     }
 
+    private getSortedKeys(config: string[]) {
+        const ans: string[] = []
+        const pool = [...this[UnsortedKeys]]
+        for (const key of config) {
+            while (pool.includes(key)) {
+                ans.push(pool.splice(pool.indexOf(key), 1)[0])
+            }
+        }
+        return ans
+    }
+
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         const relevantDiagnostics = diagnostics[ActionCode.SelectorSortKeys]
@@ -73,7 +85,7 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
             ans.push(getCodeAction(
                 'selector-sort-keys', relevantDiagnostics,
                 uri, info.version, lineNumber, this[NodeRange],
-                this[GetFormattedString](info.config.lint, info.config.lint.selectorSortKeys[1])
+                this[GetFormattedString](info.config.lint, this.getSortedKeys(info.config.lint.selectorSortKeys[1]))
             ))
         }
         return ans

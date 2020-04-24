@@ -7,11 +7,11 @@ import { constructConfig } from '../../types/Config'
 import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
 import Registry from '../../types/Registry'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import { fail } from 'assert'
+import { fail } from 'power-assert'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import NamespaceSummary from '../../types/NamespaceSummary'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 
 describe('IdentityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

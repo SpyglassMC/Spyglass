@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, remapCachePosition } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 
@@ -173,6 +173,13 @@ describe('ClientCache Tests', () => {
             ])
         })
     })
+    describe('remapCachePosition() Tests', () => {
+        it('Should remap positions', () => {
+            const cache = { tags: { foo: { def: [{ start: 1, end: 3 }], ref: [{ start: 1, end: 3 }] } } }
+            remapCachePosition(cache, [1, 2, 3, 4, 5])
+            assert.deepStrictEqual(cache, { tags: { foo: { def: [{ start: 2, end: 4 }], ref: [{ start: 2, end: 4 }] } } })
+        })
+    })
     describe('getCategoryKey() Tests', () => {
         it('Should return "bossbars" for "bossbar"', () => {
             const type = 'bossbar'
@@ -188,6 +195,11 @@ describe('ClientCache Tests', () => {
             const type = 'objective'
             const actual = getCategoryKey(type)
             assert(actual === 'objectives')
+        })
+        it('Should return "score_holders" for "score_holder"', () => {
+            const type = 'score_holder'
+            const actual = getCategoryKey(type)
+            assert(actual === 'score_holders')
         })
         it('Should return "storages" for "storage"', () => {
             const type = 'storage'

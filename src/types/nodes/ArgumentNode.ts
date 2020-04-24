@@ -13,23 +13,17 @@ export const GetHoverInformation = Symbol('GetHoverInformation')
 
 export type DiagnosticMap = { [code in ActionCode]?: Diagnostic[] }
 
-interface CodeActionable {
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap): CodeAction[]
-}
-
-interface Hoverable {
-
-}
-
-export default abstract class ArgumentNode implements Formattable, CodeActionable, Hoverable {
+export default abstract class ArgumentNode implements Formattable {
     abstract [NodeType]: string
     [NodeRange]: TextRange = EmptyRange;
-    [NodeDescription]: string = ''
+    [NodeDescription]: string = '';
 
-    abstract [GetFormattedString](lint: LintConfig): string
+    [GetFormattedString](_lint?: LintConfig) {
+        return this.toString()
+    }
 
     /**
-     * Will only be called when necessary, so there's no need to check the range in this method.
+     * Will only be called when necessary, so there's no need to check the range within this method.
      */
     [GetCodeActions](_uri: string, _info: FunctionInfo, _lineNumber: number, _range: TextRange, _diagnostics: DiagnosticMap): CodeAction[] {
         return []

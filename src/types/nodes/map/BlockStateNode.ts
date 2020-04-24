@@ -30,6 +30,7 @@ export default class BlockStateNode extends MapNode<string, string> {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         const relevantDiagnostics = diagnostics[ActionCode.BlockStateSortKeys]
         if (relevantDiagnostics && info.config.lint.blockStateSortKeys) {
+            /* istanbul ignore next */
             const keys = info.config.lint.blockStateSortKeys[1] === 'alphabetically' ?
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(

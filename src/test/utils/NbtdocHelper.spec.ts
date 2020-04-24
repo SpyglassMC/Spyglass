@@ -1338,7 +1338,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
                 const ctx = await constructContext({ config })
-                const tag = new NbtCompoundNode(null)
+                const tag = new NbtListNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
                 const helper = new NbtdocHelper(TestNbtdoc)

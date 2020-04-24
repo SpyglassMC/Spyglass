@@ -5,7 +5,7 @@ import { GetFormattedString } from '../../../types/Formattable'
 import NumberNode from '../../../types/nodes/NumberNode'
 
 describe('NumberRangeNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly when min === max', () => {
             const range = new NumberRangeNode('integer', new NumberNode(1, '1'), new NumberNode(1, '1'))
             const actual = range[GetFormattedString]({} as any)

@@ -12,7 +12,7 @@ import VectorNode, { VectorElementNode, VectorElementType } from '../../types/no
 import { CompletionItemKind } from 'vscode-languageserver'
 import { constructConfig } from '../../types/Config'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 
 describe('ParticleArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

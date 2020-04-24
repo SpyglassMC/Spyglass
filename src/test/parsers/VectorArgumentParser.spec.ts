@@ -4,7 +4,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
 import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 
@@ -41,7 +41,7 @@ describe('VectorArgumentParser Tests', () => {
                 1: $(new VectorElementNode(VectorElementType.Relative, -0.5, '-0.5'), [2, 7]),
             }))
         })
-        it('Should return completions at the beginning of input', async () => {
+        it('Should return completions at the beginning of input for local vectors', async () => {
             const ctx = await constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, true, false)
             const actual = parser.parse(new StringReader(''), ctx)
@@ -49,6 +49,17 @@ describe('VectorArgumentParser Tests', () => {
                 [
                     { label: '^ ^', insertText: '^$1 ^$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
                     { label: '^', sortText: '2' }
+                ]
+            )
+        })
+        it('Should return completions at the beginning of input for relative vectors', async () => {
+            const ctx = await constructContext({ cursor: 0 })
+            const parser = new VectorArgumentParser(2, false, true)
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    { label: '~ ~', insertText: '~$1 ~$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet },
+                    { label: '~', sortText: '1' }
                 ]
             )
         })

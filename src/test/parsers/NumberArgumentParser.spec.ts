@@ -4,7 +4,7 @@ import StringReader from '../../utils/StringReader'
 import NumberArgumentParser from '../../parsers/NumberArgumentParser'
 import ParsingError from '../../types/ParsingError'
 import NumberNode from '../../types/nodes/NumberNode'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 
 describe('NumberArgumentParser Tests', () => {
     describe('parse() Tests', () => {

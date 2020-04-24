@@ -3,7 +3,7 @@ import NamingConventionConfig from './NamingConventionConfig'
 import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 import QuoteTypeConfig from './QuoteTypeConfig'
-import { Uri } from './handlers'
+import minimatch from 'minimatch'
 
 export default interface Config {
     /**
@@ -50,11 +50,11 @@ export interface EnvConfig {
      */
     dependsOnVanilla: boolean,
     /**
-     * Files that should be excluded from validation. Each string in this array will be interpreted as a regular expression to test the absolute file paths.
+     * Files that should be excluded from validation. Each string in this array will be interpreted as a glob pattern to test the relative file paths from the root of the datapack.
      */
     exclude: string[],
     /**
-     * Files that should be included from validation. Each string in this array will be interpreted as a regular expression to test the absolute file paths.  
+     * Files that should be included from validation. Each string in this array will be interpreted as a glob pattern to test the relative file paths from the root of the datapack.  
      * This option takes priority over `exclude`.
      */
     include: string[]
@@ -321,16 +321,15 @@ export function constructConfig(custom: { [key: string]: any }, base = VanillaCo
     }
 }
 
-export function isUriIncluded(uri: Uri, { env: { include, exclude } }: Config) {
+/* istanbul ignore next */
+export function isRelIncluded(rel = '', { env: { include, exclude } }: Config) {
     for (const str of include) {
-        const regex = new RegExp(str)
-        if (regex.test(uri.fsPath)) {
+        if (minimatch(rel, str)) {
             return true
         }
     }
     for (const str of exclude) {
-        const regex = new RegExp(str)
-        if (regex.test(uri.fsPath)) {
+        if (minimatch(rel, str)) {
             return false
         }
     }

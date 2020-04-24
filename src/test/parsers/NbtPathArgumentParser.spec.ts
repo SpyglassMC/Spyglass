@@ -13,7 +13,7 @@ import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import { $ } from '../utils'
+import { $ } from '../utils.spec'
 import NumberNode from '../../types/nodes/NumberNode'
 
 describe('NbtPathArgumentParser Tests', () => {
@@ -334,6 +334,39 @@ describe('NbtPathArgumentParser Tests', () => {
                         detail: 'Type: int',
                         documentation: 'The custom model data for this item',
                         insertText: 'CustomModelData',
+                        kind: CompletionItemKind.Property
+                    }
+                ])
+            })
+            // FIXME: after MC-175504 is fixed.
+            // it('Should return completions for key in single quotation marks', async () => {
+            //     const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 1 })
+            //     const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
+            //     const reader = new StringReader("''")
+
+            //     const { completions } = parser.parse(reader, ctx)
+            //     assert.deepStrictEqual(completions, [
+            //         {
+            //             label: 'foo',
+            //             detail: 'Type: boolean',
+            //             documentation: 'The only field of this compound',
+            //             insertText: 'foo',
+            //             kind: CompletionItemKind.Property
+            //         }
+            //     ])
+            // })
+            it('Should return completions for key in double quotation marks', async () => {
+                const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 1 })
+                const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
+                const reader = new StringReader('""')
+
+                const { completions } = parser.parse(reader, ctx)
+                assert.deepStrictEqual(completions, [
+                    {
+                        label: 'foo',
+                        detail: 'Type: boolean',
+                        documentation: 'The only field of this compound',
+                        insertText: 'foo',
                         kind: CompletionItemKind.Property
                     }
                 ])

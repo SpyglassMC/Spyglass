@@ -31,6 +31,7 @@ export default class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPa
         }
     }
 
+    /* istanbul ignore next */
     *[Symbol.iterator](): Iterator<NbtPathElement, any, undefined> {
         // You want me to call myself for iterating? Stupid!
         // eslint-disable-next-line @typescript-eslint/prefer-for-of

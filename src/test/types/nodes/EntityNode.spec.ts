@@ -6,12 +6,12 @@ import EntityNode from '../../../types/nodes/EntityNode'
 import IdentityNode from '../../../types/nodes/IdentityNode'
 import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
 import SelectorArgumentsNode, { SelectorScoresNode, SelectorAdvancementsNode, SelectorCriteriaNode } from '../../../types/nodes/map/SelectorArgumentsNode'
-import { $ } from '../../utils'
+import { $ } from '../../utils.spec'
 import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
 import NumberNode from '../../../types/nodes/NumberNode'
 
 describe('EntityNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         const { lint } = constructConfig({
             lint: {
                 selectorBracketSpacing: { inside: 0 },

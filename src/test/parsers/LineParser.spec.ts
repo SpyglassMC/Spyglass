@@ -6,7 +6,7 @@ import StringReader from '../../utils/StringReader'
 import LineParser from '../../parsers/LineParser'
 import { ArgumentParserResult } from '../../types/Parser'
 import { describe, it } from 'mocha'
-import { fail } from 'assert'
+import { fail } from 'power-assert'
 import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 

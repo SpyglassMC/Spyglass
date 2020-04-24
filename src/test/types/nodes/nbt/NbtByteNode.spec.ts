@@ -5,7 +5,7 @@ import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
 import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtByteNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return with lower-cased suffix', () => {
             const { lint } = constructConfig({ lint: { nbtByteSuffix: 'b' } })
             const node = new NbtByteNode(null, 0, '0')

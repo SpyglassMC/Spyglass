@@ -23,6 +23,7 @@ export default class MessageNode extends ArgumentNode implements ArrayLike<strin
         }
     }
 
+    /* istanbul ignore next */
     *[Symbol.iterator](): Iterator<string | EntityNode, any, undefined> {
         // You want me to call myself for iterating? Stupid!
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -31,6 +32,7 @@ export default class MessageNode extends ArgumentNode implements ArrayLike<strin
         }
     }
 
+    /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         for (const element of this) {

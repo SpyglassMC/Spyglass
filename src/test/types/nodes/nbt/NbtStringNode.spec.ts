@@ -12,7 +12,7 @@ describe('NbtStringNode Tests', () => {
         }
     })
     // TODO: GetCodeActions Tests
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly', () => {
             const node = new NbtStringNode(null, 'foo', '"foo"', [1, 2, 3])
 

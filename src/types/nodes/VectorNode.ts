@@ -1,11 +1,10 @@
 import { LintConfig } from '../Config'
 import { GetFormattedString } from '../Formattable'
-import VectorArgumentParser from '../../parsers/VectorArgumentParser'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import NumberNode from './NumberNode'
 import FunctionInfo from '../FunctionInfo'
 import TextRange, { areOverlapped } from '../TextRange'
-import { Diagnostic, CodeAction } from 'vscode-languageserver'
+import { getCodeAction } from '../../utils/utils'
 
 export const enum VectorElementType {
     Absolute = '',
@@ -43,6 +42,7 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
         }
     }
 
+    /* istanbul ignore next */
     *[Symbol.iterator](): Iterator<VectorElementNode, any, undefined> {
         // You want me to call myself for iterating? Stupid!
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -52,11 +52,28 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
     }
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans: CodeAction[] = []
+        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
         for (const element of this) {
+            /* istanbul ignore next: simple triage */
             if (areOverlapped(element[NodeRange], range)) {
                 ans.push(...element[GetCodeActions](uri, info, lineNumber, range, diagnostics))
             }
+        }
+        if (Array.prototype.some.call(this, (v: VectorElementNode) => !v.raw.includes('.'))) {
+            ans.push(
+                getCodeAction(
+                    'vector-align-0.0', [], uri, info.version, lineNumber, range,
+                    Array.prototype.map.call(this,
+                        (v: VectorElementNode) => v.raw.includes('.') ? v.raw : `${v.raw}.0`
+                    ).join(' ')
+                ),
+                getCodeAction(
+                    'vector-align-0.5', [], uri, info.version, lineNumber, range,
+                    Array.prototype.map.call(this,
+                        (v: VectorElementNode) => v.raw.includes('.') ? v.raw : `${v.raw}.5`
+                    ).join(' ')
+                )
+            )
         }
         return ans
     }

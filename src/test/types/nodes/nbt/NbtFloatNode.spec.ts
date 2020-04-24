@@ -5,7 +5,7 @@ import NbtFloatNode from '../../../../types/nodes/nbt/NbtFloatNode'
 import { GetFormattedString } from '../../../../types/Formattable'
 
 describe('NbtFloatNode Tests', () => {
-    describe('[ToLintedString]() Tests', () => {
+    describe('[GetFormattedString]() Tests', () => {
         it('Should return with lower-cased suffix', () => {
             const { lint } = constructConfig({ lint: { nbtFloatSuffix: 'f' } })
             const node = new NbtFloatNode(null, 1, '1.00')
