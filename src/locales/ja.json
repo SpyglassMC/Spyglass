@@ -16,7 +16,7 @@
     "duplicate-key": "キー %0% は重複してます",
     "ending-quote": "文字列を閉じる引用符 %0% ",
     "entity": "エンティティ",
-    "expected": "%0%が必要",
+    "expected": "%0%が必要です",
     "expected-got": "%0%が必要ですが%1%が確認されました",
     "failed-to-resolve-cache-id": "キャッシュカテゴリ%0%の名前空間%1%の解析に失敗しました",
     "failed-to-resolve-registry-id": "レジストリ%0%の名前空間%1%の解析に失敗しました",
