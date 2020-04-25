@@ -4,11 +4,8 @@
  * ------------------------------------------------------------------------------------------*/
 
 import { join } from 'path'
-import { workspace, ExtensionContext, RelativePattern, FileSystemWatcher, window, commands, Uri } from 'vscode'
-
+import { commands, DocumentSemanticTokensProvider, ExtensionContext, FileSystemWatcher, languages, RelativePattern, SemanticTokens, SemanticTokensEdits, SemanticTokensLegend, TextDocument, Uri, window, workspace } from 'vscode'
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient'
-
-export const ExtensionVersion = require('../package.json').version
 
 let client: LanguageClient
 
@@ -38,12 +35,12 @@ export function activate(context: ExtensionContext) {
     // Options to control the language client
     const clientOptions: LanguageClientOptions & { synchronize: { fileEvents: FileSystemWatcher[] } } = {
         documentSelector: [
-            { language: 'mcfunction' },
-            { language: 'json', pattern: 'data/*/advancements/**.json' },
-            { language: 'json', pattern: 'data/*/loot_tables/**.json' },
-            { language: 'json', pattern: 'data/*/predicates/**.json' },
-            { language: 'json', pattern: 'data/*/recipes/**.json' },
-            { language: 'json', pattern: 'data/*/tags/{block,entity_types,fluids,functions,items}/**.json' }
+            { language: 'mcfunction' }
+            // { language: 'json', pattern: 'data/*/advancements/**.json' },
+            // { language: 'json', pattern: 'data/*/loot_tables/**.json' },
+            // { language: 'json', pattern: 'data/*/predicates/**.json' },
+            // { language: 'json', pattern: 'data/*/recipes/**.json' },
+            // { language: 'json', pattern: 'data/*/tags/{block,entity_types,fluids,functions,items}/**.json' }
         ],
         synchronize: {
             fileEvents: []
@@ -73,8 +70,6 @@ export function activate(context: ExtensionContext) {
         clientOptions
     )
 
-    client.registerProposedFeatures()
-
     // Start the client. This will also launch the server
     client.start()
 
@@ -97,7 +92,35 @@ export function activate(context: ExtensionContext) {
             }
             context.globalState.update('lastVersion', currentVersion)
         })
+
+        context.subscriptions.push(
+            languages.registerDocumentSemanticTokensProvider(
+                { language: 'mcfunction' },
+                new LspSemanticTokensProvider(),
+                new SemanticTokensLegend(
+                    ['annotation', 'boolean', 'comment', 'entity', 'keyword', 'literal', 'identity', 'number', 'operator', 'property', 'string', 'type', 'variable', 'vector'],
+                    ['declaration', 'deprecated', 'documentation', 'firstArgument']
+                )
+            )
+        )
     })
+}
+
+class LspSemanticTokensProvider implements DocumentSemanticTokensProvider {
+    async provideDocumentSemanticTokens(document: TextDocument): Promise<SemanticTokens> {
+        const response = await client.sendRequest<{ resultId?: string, data: number[] }>('textDocument/semanticTokens', { textDocument: { uri: document.uri.toString() } })
+        return { resultId: response.resultId, data: new Uint32Array(response.data) }
+    }
+    async provideDocumentSemanticTokensEdits(document: TextDocument, previousResultId: string): Promise<SemanticTokens | SemanticTokensEdits> {
+        type LspSemanticTokens = { resultId?: string, data: number[] }
+        type LspSemanticTokensEdits = { resultId?: string, edits: { start: number, deleteCount: number, data?: number[] }[] }
+        const response = await client.sendRequest<LspSemanticTokens | LspSemanticTokensEdits>('textDocument/semanticTokens/edits', { textDocument: { uri: document.uri.toString() }, previousResultId })
+        if ((response as LspSemanticTokens).data) {
+            return { resultId: response.resultId, data: new Uint32Array((response as LspSemanticTokens).data) }
+        } else {
+            return { resultId: response.resultId, edits: (response as LspSemanticTokensEdits).edits.map(v => ({ start: v.start, deleteCount: v.deleteCount, data: v.data ? new Uint32Array(v.data) : undefined })) }
+        }
+    }
 }
 
 export function deactivate(): Thenable<void> | undefined {
