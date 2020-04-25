@@ -31,7 +31,7 @@
     },
     "dependencies": {
         "clone": "^2.1.2",
-        "datapack-json": "^2.0.8",
+        "datapack-json": "^2.0.9",
         "fs-extra": "^9.0.0",
         "python-range": "^1.0.4",
         "synchronous-promise": "^2.0.10",
