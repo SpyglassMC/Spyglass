@@ -410,11 +410,6 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 const result = this.parsePrimitiveTag(reader, superNode, helper)
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
-                if (reader.peek() === ',') {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
-                }
                 if (ans.data[NbtNodeType] === 'ByteArray') {
                     ans.data.push(result.data as NbtByteNode)
                     if (!isNbtByteNode(result.data)) {
@@ -455,6 +450,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         )
                     }
                 }
+                if (reader.peek() === ',') {
+                    reader
+                        .skip()
+                        .skipWhiteSpace()
+                    continue
+                }
+                break
             }
             reader
                 .expect(']')
