@@ -1,6 +1,6 @@
 # 💛 Thank You
 
-A big _thank you_ goes to these wonderful people! (sorted alphabetically)
+A big _thank you_ goes to these wonderful people! (sorted by the Unicode of names)
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -8,7 +8,7 @@ A big _thank you_ goes to these wonderful people! (sorted alphabetically)
 <table>
   <tr>
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/136741373003956224/fb81857fc2e65f6579451ddec680d1db.png?size=256" width="64px;" alt=""/><br /><sub><b>឵!Onnowhere</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/376" target="_blank" title="Bug reports">🐛 #376</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1316165"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle" width="64px;" alt=""/><br /><sub><b>00ll00</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Sponsor">💝 Financial support.</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1316165"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle" width="64px;" alt=""/><br /><sub><b>00ll00</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Financial support">☕ Donate coffee</a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mcdata repository</a></td>
@@ -19,19 +19,19 @@ A big _thank you_ goes to these wonderful people! (sorted alphabetically)
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/165678950628982784/3f1093ec653cd58b363e084ef8d0239e.png?size=256" width="64px;" alt=""/><br /><sub><b>Jerozgen</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/364" target="_blank" title="Bug reports">🐛 #364</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/365" target="_blank" title="Bug reports">🐛 #365</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Sponsor">💝 Financial support.</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1670389"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1670389&size=middle" width="64px;" alt=""/><br /><sub><b>martin_zzy</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/353" target="_blank" title="Bug reports">🐛 #353</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/382" target="_blank" title="Ideas, Planning, and Feedback">✨ #382</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/385" target="_blank" title="Bug reports">🐛 #385</a></td>
     <td align="center"><a href="https://github.com/Misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/238" target="_blank" title="Ideas, Planning, and Feedback">✨ #238</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/375" target="_blank" title="Bug reports">🐛 #375</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/384" target="_blank" title="Bug reports">🐛 #384</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/386" target="_blank" title="Bug reports">🐛 #386</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href=""><img src="https://avatars2.githubusercontent.com/u/12068027?v=4" width="64px;" alt=""/><br /><sub><b>MulverineX</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/401" target="_blank" title="Bug reports">🐛 #401</a></td>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256" width="64px;" alt=""/><br /><sub><b>ncfumction</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/376" target="_blank" title="Bug reports">🐛 #376</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/392" target="_blank" title="Bug reports">🐛 #392</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/393" target="_blank" title="Ideas, Planning, and Feedback">✨ #393</a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md#sponsor" target="_blank" title="Financial support">☕ Donate coffee</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1670389"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1670389&size=middle" width="64px;" alt=""/><br /><sub><b>martin_zzy</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/353" target="_blank" title="Bug reports">🐛 #353</a></td>
+    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/382" target="_blank" title="Ideas, Planning, and Feedback">✨ #382</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/385" target="_blank" title="Bug reports">🐛 #385</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256" width="64px;" alt=""/><br /><sub><b>ncfumction</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/376" target="_blank" title="Bug reports">🐛 #376</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/392" target="_blank" title="Bug reports">🐛 #392</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/393" target="_blank" title="Ideas, Planning, and Feedback">✨ #393</a></td>
   </tr>
 </table>
 

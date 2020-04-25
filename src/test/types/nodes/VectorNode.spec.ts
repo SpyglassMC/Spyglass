@@ -29,7 +29,7 @@ describe('VectorNode Tests', () => {
         const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
         it('Should return align actions', () => {
             const range = { start: 1, end: 2 }
-            const node = $(new VectorNode(), {
+            const node = $(new VectorNode(), [0, 7], {
                 length: 3,
                 0: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
                 1: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
@@ -38,11 +38,11 @@ describe('VectorNode Tests', () => {
             const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
             assert.deepStrictEqual(actual, [
                 getCodeAction(
-                    'vector-align-0.0', [], uri, info.version, lineNumber, range,
+                    'vector-align-0.0', [], uri, info.version, lineNumber, { start: 0, end: 7 },
                     '1.0 1.0 1.2'
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], uri, info.version, lineNumber, range,
+                    'vector-align-0.5', [], uri, info.version, lineNumber, { start: 0, end: 7 },
                     '1.5 1.5 1.2'
                 )
             ])

@@ -23,7 +23,7 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
       "contributions": [],
       "details": [
-        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Financial support." }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Donate coffee" }
       ]
     },
     {
@@ -70,12 +70,41 @@
       ]
     },
     {
+      "name": "Misode",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
+      "profile": "https://github.com/Misode",
+      "contributions": [],
+      "details": [
+        { "type": "ideas", "link": "issues/238", "text": "#238" },
+        { "type": "bug", "link": "issues/375", "text": "#375" },
+        { "type": "bug", "link": "issues/384", "text": "#384" },
+        { "type": "bug", "link": "issues/386", "text": "#386" }
+      ]
+    },
+    {
+      "name": "MulverineX",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/401", "text": "#401" }
+      ]
+    },
+    {
+      "name": "Yurihaia",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4",
+      "profile": "https://github.com/Yurihaia",
+      "contributions": [],
+      "details": [
+        { "type": "dependency", "link": "https://github.com/Arcensoth/mcdata", "text": "Maintains mc-nbtdoc repository" }
+      ]
+    },
+    {
       "name": "kakagRou",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
       "contributions": [],
       "details": [
-        { "type": "sponsor", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Financial support." }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Donate coffee" }
       ]
     },
     {
@@ -98,26 +127,6 @@
       ]
     },
     {
-      "name": "Misode",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
-      "profile": "https://github.com/Misode",
-      "contributions": [],
-      "details": [
-        { "type": "ideas", "link": "issues/238", "text": "#238" },
-        { "type": "bug", "link": "issues/375", "text": "#375" },
-        { "type": "bug", "link": "issues/384", "text": "#384" },
-        { "type": "bug", "link": "issues/386", "text": "#386" }
-      ]
-    },
-    {
-      "name": "MulverineX",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/401", "text": "#401" }
-      ]
-    },
-    {
       "name": "ncfumction",
       "avatar_url": "https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256",
       "contributions": [],
@@ -126,26 +135,21 @@
         { "type": "bug", "link": "issues/392", "text": "#392" },
         { "type": "ideas", "link": "issues/393", "text": "#393" }
       ]
-    },
-    {
-      "name": "Yurihaia",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4",
-      "profile": "https://github.com/Yurihaia",
-      "contributions": [],
-      "details": [
-        { "type": "dependency", "link": "https://github.com/Arcensoth/mcdata", "text": "Maintains mc-nbtdoc repository" }
-      ]
     }
   ],
   "contributorsPerLine": 2,
   "types": {
+    "coffee": {
+      "symbol": "☕",
+      "description": "Financial support"
+    },
+    "pizza": {
+      "symbol": "🍕",
+      "description": "Financial support"
+    },
     "localization": {
       "symbol": "🌍",
       "description": "Localization"
-    },
-    "sponsor": {
-      "symbol": "💝",
-      "description": "Sponsor"
     },
     "bug": {
       "symbol": "🐛",
