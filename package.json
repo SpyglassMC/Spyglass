@@ -1078,7 +1078,7 @@
                             ]
                         }
                     ],
-                    "markdownDescription": "%datapack.config.lint.nbtPathQuote%",
+                    "markdownDescription": "%datapack.config.lint.nbtStringQuote%",
                     "default": [
                         "warning",
                         true
