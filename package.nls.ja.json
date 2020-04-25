@@ -3,6 +3,8 @@
     "datapack.config.env.cmdVersion": "コマンドツリーのバージョン (一般的なバージョンのみが利用可能です)",
     "datapack.config.env.dataVersion": "レジストリ, ブロック定義, nbtdocを含むデータのバージョン `19w40a`の後にリリースされた[version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) のIDである必要があります。バージョンIDとは別に`Latest release` または `Latest snapshot`を入力することも可能です (大文字と小文字は区別されません)",
     "datapack.config.env.dependsOnVanilla": "このデータパックをVanillaデータパックに依存させる 有効にするとVanillaデータパックのデータ補完が提供されます。",
+    "datapack.config.env.exclude": "検証から除外するファイル ここに記載される文字列はグロブパターンとして、データパックのルートからの相対ファイルパスとして指定します。",
+    "datapack.config.env.include": "検証に含めるファイル ここに記載される文字列はグロブパターンとして、データパックのルートからの相対ファイルパスとして指定します。\nこの設定は`除外`よりも優先されます。",
     "datapack.config.env.permissionLevel": "`server.properties`で定義される`function-permission-level`",
     "datapack.config.features.codeActions": "DHPのコードアクション機能を提供する",
     "datapack.config.features.colors": "DHPのカラーサポート機能を提供する",

@@ -1,6 +1,8 @@
 {
     "boolean": "boolean型",
-    "code-action.nbt-uuid-datafix": "このUUIDをIntArray形式に更新する",
+    "code-action.block-state-sort-keys": "block stateをソートする",
+    "code-action.id-attribute-datafix": "このattributeのnameを1.16に更新する",
+    "code-action.nbt-uuid-datafix": "このUUIDを1.16に更新する",
     "code-action.string-double-quote": "この文字列を二重引用符で囲む",
     "code-action.string-single-quote": "この文字列を一重引用符で囲む",
     "code-action.string-unquote": "この文字列の引用符を外す",
@@ -110,6 +112,6 @@
     "unexpected-selector-variable": "%0%は不明なセレクター引数です",
     "unknown-command": "%0%は不明なコマンドです",
     "unknown-key": "%0%は不明なキーです",
-    "unsorted-keys": "ソートされていないキー (規則: 「%0%」)",
+    "unsorted-keys": "ソートされていないキー",
     "vector": "座標の値"
 }
