@@ -267,7 +267,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         ))
                     } else {
                         // Check whether the current key follows the naming convention.
-                        if (ctx.config.lint.nameOfNbtCompoundTagKeys &&
+                        const isCustomKey = !(helper && doc) || (helper.readField(key) === null)
+                        if (isCustomKey && ctx.config.lint.nameOfNbtCompoundTagKeys &&
                             !checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
                             const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
                             result.errors.push(new ParsingError(

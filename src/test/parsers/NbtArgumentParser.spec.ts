@@ -349,7 +349,7 @@ describe('NbtArgumentParser Tests', () => {
             })
             it('Should report errors for keys that do not follow the convention', () => {
                 const parser = new NbtArgumentParser('Compound', 'minecraft:block', 'minecraft:one_boolean_field')
-                const reader = new StringReader('{foo: 1b}')
+                const reader = new StringReader('{this_is_a_custom_key: 1b}')
                 const config = constructConfig({
                     lint: {
                         nameOfNbtCompoundTagKeys: ['warning', 'PascalCase']
@@ -358,11 +358,18 @@ describe('NbtArgumentParser Tests', () => {
 
                 const { errors } = parser.parse(reader, { ...ctx, config })
 
-                assert.deepStrictEqual(errors, [new ParsingError(
-                    { start: 1, end: 4 },
-                    "Invalid key ‘foo’ which doesn't follow ‘PascalCase’ convention",
-                    undefined, DiagnosticSeverity.Warning
-                )])
+                assert.deepStrictEqual(errors, [
+                    new ParsingError(
+                        { start: 1, end: 21 },
+                        "Invalid key ‘this_is_a_custom_key’ which doesn't follow ‘PascalCase’ convention",
+                        undefined, DiagnosticSeverity.Warning
+                    ),
+                    new ParsingError(
+                        { start: 1, end: 21 },
+                        "Unknown key ‘this_is_a_custom_key’",
+                        undefined, DiagnosticSeverity.Warning
+                    )
+                ])
             })
             it('Should parse correctly filled compound tags', async () => {
                 const parser = new NbtArgumentParser('Compound', 'minecraft:block', 'minecraft:one_boolean_field')
