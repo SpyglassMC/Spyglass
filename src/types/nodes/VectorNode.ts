@@ -58,13 +58,23 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
                 getCodeAction(
                     'vector-align-0.0', [], uri, info.version, lineNumber, this[NodeRange],
                     Array.prototype.map.call(this,
-                        (v: VectorElementNode) => v.raw.includes('.') ? v.raw : `${v.raw}.0`
+                        (v: VectorElementNode) => {
+                            if (v.type === VectorElementType.Absolute) {
+                                return v.raw.includes('.') ? v.raw : `${v.raw}.0`
+                            }
+                            return v.toString()
+                        }
                     ).join(' ')
                 ),
                 getCodeAction(
                     'vector-align-0.5', [], uri, info.version, lineNumber, this[NodeRange],
                     Array.prototype.map.call(this,
-                        (v: VectorElementNode) => v.raw.includes('.') ? v.raw : `${v.raw}.5`
+                        (v: VectorElementNode) => {
+                            if (v.type === VectorElementType.Absolute) {
+                                return v.raw.includes('.') ? v.raw : `${v.raw}.5`
+                            }
+                            return v.toString()
+                        }
                     ).join(' ')
                 )
             )
