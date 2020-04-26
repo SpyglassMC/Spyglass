@@ -1,18 +1,17 @@
-import https from 'https'
-import StringReader from './StringReader'
-import { CompletionItem, CodeActionKind, Diagnostic } from 'vscode-languageserver'
-import { GetFormattedString, isFormattable } from '../types/Formattable'
-import { LintConfig } from '../types/Config'
-import { ToJsonString } from '../types/JsonConvertible'
-import { locale } from '../locales/Locales'
-import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
-import ParsingError, { ActionCode } from '../types/ParsingError'
-import { EOL } from 'os'
-import TextRange from '../types/TextRange'
-import QuoteTypeConfig from '../types/QuoteTypeConfig'
-import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
-import IdentityNode from '../types/nodes/IdentityNode'
 import clone from 'clone'
+import https from 'https'
+import { EOL } from 'os'
+import { CodeActionKind, CompletionItem, Diagnostic } from 'vscode-languageserver'
+import { locale } from '../locales/Locales'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString, isFormattable } from '../types/Formattable'
+import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
+import { ToJsonString } from '../types/JsonConvertible'
+import ParsingError, { ActionCode } from '../types/ParsingError'
+import QuoteTypeConfig from '../types/QuoteTypeConfig'
+import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
+import TextRange from '../types/TextRange'
+import StringReader from './StringReader'
 
 /**
  * Convert an array to human-readable message.
@@ -113,7 +112,6 @@ export function quoteString(inner: string, quoteType: QuoteTypeConfig, forced: b
 
 export function validateStringQuote(raw: string, value: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>): ParsingError[] {
     const ans: ParsingError[] = []
-
     if (!quoteConfig && !quoteTypeConfig) {
         return ans
     }
@@ -141,7 +139,7 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
 
     if (isQuoted && quoteTypeConfig) {
         const severity = quoteTypeConfig[0]
-        if (raw.charAt(0) !== expectedChar) {
+        if (firstChar !== expectedChar) {
             ans.push(new ParsingError(
                 range,
                 locale('expected-got',

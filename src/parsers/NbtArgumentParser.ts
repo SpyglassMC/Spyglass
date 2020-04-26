@@ -184,7 +184,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: nbtdoc.NbtValue, description?: string): ArgumentParserResult<NbtNode> {
-        let ans: ArgumentParserResult<NbtNode> 
+        let ans: ArgumentParserResult<NbtNode>
         switch (reader.peek()) {
             case '{':
                 ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : undefined)
@@ -240,7 +240,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     const raw = reader.string.slice(start, end)
                     result.data = key
                     //#region Errors.
-                    validateStringQuote(raw, key, { start, end }, ctx.config.lint.nbtCompoundKeyQuote, ctx.config.lint.nbtCompoundKeyQuoteType)
+                    ans.errors.push(...validateStringQuote(raw, key, { start, end }, ctx.config.lint.nbtCompoundKeyQuote, ctx.config.lint.nbtCompoundKeyQuoteType))
                     //#endregion
                     //#region Completions.
                     if (helper && doc) {
