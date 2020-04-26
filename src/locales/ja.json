@@ -87,7 +87,7 @@
     "nbt-tag.LongArray": "long型の配列",
     "nbt-tag.Short": "short型のタグ",
     "nbt-tag.String": "string型のタグ",
-    "nbtdoc.type": "種類:",
+    "nbtdoc.type": "種類：%0%",
     "nbtdoc.type.Boolean": "boolean型",
     "nbtdoc.type.Byte": "byte型",
     "nbtdoc.type.ByteArray": "byte array型",
