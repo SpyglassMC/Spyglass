@@ -24,7 +24,8 @@
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" },
-        { "type": "bug", "link": "issues/408", "text": "#408" }
+        { "type": "bug", "link": "issues/408", "text": "#408" },
+        { "type": "bug", "link": "issues/422", "text": "#422" }
       ]
     },
     {
