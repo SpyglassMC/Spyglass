@@ -308,7 +308,8 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     fieldDoc = helper.readField(key)
                 }
                 const result = this.parseTag(
-                    reader, ctx, ans.data, helper,
+                    reader, ctx, ans.data,
+                    this.moveHelperIfCompound(helper, fieldDoc ? fieldDoc.nbttype : undefined),
                     fieldDoc ? fieldDoc.nbttype : undefined,
                     fieldDoc ? fieldDoc.description : undefined
                 )
@@ -470,6 +471,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
     }
 
+    private moveHelperIfCompound(helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | undefined) {
+        if (helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
+            return helper.clone().goCompound(doc.Compound)
+        }
+        return helper
+    }
+
     private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: NbtListDoc, description?: string): ArgumentParserResult<NbtListNode<NbtNode>> {
         const ans: ArgumentParserResult<NbtListNode<NbtNode>> = {
             data: new NbtListNode<NbtNode>(superNode),
@@ -487,7 +495,12 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
             while (reader.canRead() && reader.peek() !== ']') {
                 const start = reader.cursor
                 /* istanbul ignore next */
-                const result = this.parseTag(reader, ctx, superNode, helper, doc ? doc.List.value_type : undefined, description)
+                const result = this.parseTag(
+                    reader, ctx, superNode,
+                    this.moveHelperIfCompound(helper, doc ? doc.List.value_type : undefined),
+                    doc ? doc.List.value_type : undefined,
+                    description
+                )
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
