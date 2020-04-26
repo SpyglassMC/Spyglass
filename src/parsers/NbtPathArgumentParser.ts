@@ -1,21 +1,21 @@
-import { arrayToMessage } from '../utils/utils'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import ArgumentParser from './ArgumentParser'
-import NbtPathNode from '../types/nodes/NbtPathNode'
-import NbtdocHelper, { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc, ListDoc } from '../utils/NbtdocHelper'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import IndexMapping from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
-import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
-import IndexMapping from '../types/IndexMapping'
-import TextRange from '../types/TextRange'
+import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
+import NbtPathNode from '../types/nodes/NbtPathNode'
 import NumberNode from '../types/nodes/NumberNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError from '../types/ParsingError'
+import TextRange from '../types/TextRange'
+import Token, { TokenType } from '../types/Token'
+import NbtdocHelper, { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc } from '../utils/NbtdocHelper'
+import StringReader from '../utils/StringReader'
+import { arrayToMessage, validateStringQuote } from '../utils/utils'
+import ArgumentParser from './ArgumentParser'
 
 export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     static identity = 'NbtPath'
@@ -161,6 +161,14 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         const keyNode = new NbtCompoundKeyNode(null, key, reader.string.slice(start, reader.cursor), out.mapping)
         keyNode[NodeRange] = { start, end: reader.cursor }
         ans.data.push(keyNode)
+
+        //#region Errors.
+        ans.errors.push(...validateStringQuote(
+            reader.string.slice(start, reader.cursor), key,
+            { start, end: reader.cursor },
+            ctx.config.lint.nbtPathQuote, ctx.config.lint.nbtPathQuoteType
+        ))
+        //#endregion
 
         //#region Tokens
         ans.tokens.push(Token.from(start, reader, TokenType.property))
