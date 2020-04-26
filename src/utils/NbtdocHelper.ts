@@ -1,36 +1,36 @@
-import { CompletionItem, DiagnosticSeverity, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
-import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
-import { nbtdoc } from '../types/nbtdoc'
-import LineParser from '../parsers/LineParser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode, remapParsingErrors, downgradeParsingError } from '../types/ParsingError'
-import StringReader from './StringReader'
-import NbtNode, { SuperNode, NbtNodeTypeName, NbtNodeType, isNbtNodeTypeStrictlyMatched, isNbtNodeTypeLooselyMatched } from '../types/nodes/nbt/NbtNode'
-import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
-import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
-import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
-import IdentityNode from '../types/nodes/IdentityNode'
-import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
-import { arrayToMessage, arrayToCompletions, validateStringQuote, quoteString, remapCompletionItem } from './utils'
-import { NodeRange, NodeDescription } from '../types/nodes/ArgumentNode'
+import LineParser from '../parsers/LineParser'
+import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
+import { getInnerIndex } from '../types/IndexMapping'
+import { nbtdoc } from '../types/nbtdoc'
+import { NodeDescription, NodeRange } from '../types/nodes/ArgumentNode'
+import IdentityNode from '../types/nodes/IdentityNode'
+import { GetFormattedClose, GetFormattedOpen, Keys } from '../types/nodes/map/MapNode'
+import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
-import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
-import NbtNumberNode from '../types/nodes/nbt/NbtNumberNode'
 import NbtByteArrayNode from '../types/nodes/nbt/NbtByteArrayNode'
-import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
-import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
 import NbtByteNode from '../types/nodes/nbt/NbtByteNode'
-import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
-import NbtLongNode from '../types/nodes/nbt/NbtLongNode'
+import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
 import NbtDoubleNode from '../types/nodes/nbt/NbtDoubleNode'
 import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
+import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
 import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
 import NbtListNode from '../types/nodes/nbt/NbtListNode'
-import { Keys, GetFormattedOpen, GetFormattedClose } from '../types/nodes/map/MapNode'
-import { GetFormattedString } from '../types/Formattable'
-import { LintConfig } from '../types/Config'
-import { getInnerIndex } from '../types/IndexMapping'
+import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
+import NbtLongNode from '../types/nodes/nbt/NbtLongNode'
+import NbtNode, { isNbtNodeTypeLooselyMatched, isNbtNodeTypeStrictlyMatched, NbtNodeType, NbtNodeTypeName, SuperNode } from '../types/nodes/nbt/NbtNode'
+import NbtNumberNode from '../types/nodes/nbt/NbtNumberNode'
+import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
+import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
+import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError, { ActionCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
+import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import StringReader from './StringReader'
+import { arrayToCompletions, arrayToMessage, quoteString, remapCompletionItem, validateStringQuote } from './utils'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -467,7 +467,7 @@ export default class NbtdocHelper {
         }
     }
 
-    private validateNumberField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, [min, max]: [number, number], _isPredicate: boolean, description: string) {
+    private validateNumberField(ans: ValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, range: [number, number] | null, _isPredicate: boolean, description: string) {
         // Cache.
         /// Color information.
         if (description.match(/RED << 16 \| GREEN << 8 \| BLUE/i)) {
@@ -480,12 +480,15 @@ export default class NbtdocHelper {
             }
         }
         // Errors.
-        if (!(min <= tag.valueOf() && tag.valueOf() <= max)) {
-            ans.errors.push(new ParsingError(
-                tag[NodeRange],
-                locale('expected-got', locale('number.between', min, max), tag.valueOf()),
-                true, DiagnosticSeverity.Warning
-            ))
+        if (range) {
+            const [min, max] = range
+            if (!(min <= tag.valueOf() && tag.valueOf() <= max)) {
+                ans.errors.push(new ParsingError(
+                    tag[NodeRange],
+                    locale('expected-got', locale('number.between', min, max), tag.valueOf()),
+                    true, DiagnosticSeverity.Warning
+                ))
+            }
         }
     }
 
@@ -608,7 +611,7 @@ export default class NbtdocHelper {
     }
     private validateByteField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: ByteDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Byte', isPredicate)
-        if (shouldValidate && doc.Byte.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtByteNode, doc.Byte.range, isPredicate, '')
         }
     }
@@ -627,7 +630,7 @@ export default class NbtdocHelper {
     }
     private validateDoubleField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: DoubleDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Double', isPredicate)
-        if (shouldValidate && doc.Double.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtDoubleNode, doc.Double.range, isPredicate, '')
         }
     }
@@ -669,7 +672,7 @@ export default class NbtdocHelper {
     }
     private validateFloatField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: FloatDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Float', isPredicate)
-        if (shouldValidate && doc.Float.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtFloatNode, doc.Float.range, isPredicate, '')
         }
     }
@@ -795,7 +798,7 @@ export default class NbtdocHelper {
     }
     private validateIntField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: IntDoc, isPredicate: boolean, description: string): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Int', isPredicate)
-        if (shouldValidate && doc.Int.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtIntNode, doc.Int.range, isPredicate, description)
         }
     }
@@ -819,7 +822,7 @@ export default class NbtdocHelper {
     }
     private validateLongField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: LongDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Long', isPredicate)
-        if (shouldValidate && doc.Long.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtLongNode, doc.Long.range, isPredicate, '')
         }
     }
@@ -841,7 +844,7 @@ export default class NbtdocHelper {
     }
     private validateShortField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: ShortDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Short', isPredicate)
-        if (shouldValidate && doc.Short.range) {
+        if (shouldValidate) {
             this.validateNumberField(ans, ctx, tag as NbtShortNode, doc.Short.range, isPredicate, '')
         }
     }
