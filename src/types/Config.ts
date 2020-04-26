@@ -50,11 +50,13 @@ export interface EnvConfig {
      */
     dependsOnVanilla: boolean,
     /**
-     * Files that should be excluded from validation. Each string in this array will be interpreted as a glob pattern to test the relative file paths from the root of the datapack.
+     * Files that should be excluded from validation. Each string in this array will be interpreted as a 
+     * glob pattern to test the relative file paths from the root of the datapack.
      */
     exclude: string[],
     /**
-     * Files that should be included from validation. Each string in this array will be interpreted as a glob pattern to test the relative file paths from the root of the datapack.  
+     * Files that should be included from validation. Each string in this array will be interpreted as a 
+     * glob pattern to test the relative file paths from the root of the datapack.  
      * This option takes priority over `exclude`.
      */
     include: string[]

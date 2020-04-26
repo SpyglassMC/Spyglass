@@ -23,7 +23,7 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Donate coffee" },
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" },
         { "type": "bug", "link": "issues/408", "text": "#408" }
       ]
     },
@@ -43,13 +43,21 @@
       "contributions": [],
       "details": [
         { "type": "ideas", "link": "issues/358", "text": "#358" },
-        { "type": "bug", "link": "issues/379", "text": "#379" },
         { "type": "bug", "link": "issues/368", "text": "#368" },
         { "type": "bug", "link": "issues/369", "text": "#369" },
+        { "type": "bug", "link": "issues/379", "text": "#379" },
         { "type": "bug", "link": "issues/409", "text": "#409" },
         { "type": "bug", "link": "issues/411", "text": "#411" },
         { "type": "bug", "link": "issues/413", "text": "#413" },
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
+      ]
+    },
+    {
+      "name": "Feierwoerx",
+      "avatar_url": "https://camo.githubusercontent.com/e36bd065c49b5d8942f4d7b8788a3a5e8b1b6c90/68747470733a2f2f322e67726176617461722e636f6d2f6176617461722f32626664636334353931663439626231366531303134653966623036653266663f643d68747470732533412532462532466769746875622e6769746875626173736574732e636f6d253246696d6167657325324667726176617461727325324667726176617461722d757365722d3432302e706e6726723d6726733d3634",
+      "contributions": [],
+      "details": [
+        { "type": "localization", "link": "commits?author=Feierwoerx", "text": "for German (de)" }
       ]
     },
     {
@@ -96,7 +104,7 @@
       "profile": "https://github.com/Yurihaia",
       "contributions": [],
       "details": [
-        { "type": "dependency", "link": "https://github.com/Arcensoth/mcdata", "text": "Maintains mc-nbtdoc repository" }
+        { "type": "dependency", "link": "https://github.com/Yurihaia/mc-nbtdoc", "text": "Maintains mc-nbtdoc repository" }
       ]
     },
     {
@@ -105,7 +113,7 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md#sponsor", "text": "Donate coffee" }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
       ]
     },
     {
@@ -135,6 +143,15 @@
         { "type": "bug", "link": "issues/376", "text": "#376" },
         { "type": "bug", "link": "issues/392", "text": "#392" },
         { "type": "ideas", "link": "issues/393", "text": "#393" }
+      ]
+    },
+    {
+      "name": "龙腾猫跃",
+      "avatar_url": "https://pic1.afdiancdn.com/user/df2dfad2960911e89c5252540025c377/avatar/31c78ee63d5dce8ac4848c837fb04204_w160_h160_s35.jpg?imageView2/1/w/240/h/240",
+      "profile": "https://afdian.net/@LTCat",
+      "contributions": [],
+      "details": [
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
       ]
     }
   ],

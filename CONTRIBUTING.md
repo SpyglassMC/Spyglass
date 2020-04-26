@@ -1,11 +1,3 @@
-- [📝 Attribution](#%f0%9f%93%9d-attribution)
-- [🚧 Ways to Contribute](#%f0%9f%9a%a7-ways-to-contribute)
-    - [🐛 Bugs & 🤔 Ideas](#%f0%9f%90%9b-bugs--%f0%9f%a4%94-ideas)
-    - [🌐 Localization](#%f0%9f%8c%90-localization)
-        - [Steps](#steps)
-        - [Note](#note)
-    - [💰 Sponsor](#%f0%9f%92%b0-sponsor)
-
 # 📝 Attribution
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
