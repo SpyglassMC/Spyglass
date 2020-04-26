@@ -199,7 +199,7 @@ export default class NbtdocHelper {
                     .clone()
                     .goSupers(doc.supers)
                     .readCompoundKeys()
-            ]
+            ].filter((v, i, a) => a.indexOf(v) === i)
         }
         return []
     }
