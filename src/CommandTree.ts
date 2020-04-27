@@ -1,5 +1,5 @@
 import EntityNode from './types/nodes/EntityNode'
-import CommandTreeType, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
+import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import { LineArgumentNode } from './types/Line'
 import SelectorArgumentsNode from './types/nodes/map/SelectorArgumentsNode'
 
@@ -28,7 +28,7 @@ export function getArgOrDefault<T>(args: LineArgumentNode<T>[], lastIndex: numbe
 /**
  * Get the `children` of specific `CommandTreeNode`.
  */
-export function getChildren(tree: CommandTreeType, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
+export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
     let children: CommandTreeNodeChildren | undefined
     if (node && node.children) {
         children = node.children

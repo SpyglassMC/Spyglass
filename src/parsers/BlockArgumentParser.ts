@@ -53,7 +53,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '[') {
             const start = reader.cursor
-            const definition = id.isTag ? undefined : ctx.blocks[id.toString()]
+            const definition = id.isTag ? undefined : ctx.blockDefinition[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
             const statesResult: ArgumentParserResult<BlockStateNode> = {

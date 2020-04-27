@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Uri, UrisOfStrings, UrisOfIds } from '../../../types/handlers'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onCallHierarchyPrepare, { IdentityKind } from '../../../utils/handlers/onCallHierarchyPrepare'
 import { VanillaConfig } from '../../../types/Config'
+import FunctionInfo from '../../../types/FunctionInfo'
+import { Uri, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
+import onCallHierarchyPrepare, { IdentityKind } from '../../../utils/handlers/onCallHierarchyPrepare'
 
 describe('onCallHierarchyPrepare() Tests', () => {
     const pathExists = async () => false

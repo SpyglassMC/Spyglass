@@ -1,11 +1,11 @@
 import assert = require('power-assert')
+import { describe, it } from 'mocha'
+import { DiagnosticSeverity } from 'vscode-languageserver'
 import ObjectiveArgumentParser from '../../parsers/ObjectiveArgumentParser'
+import { constructConfig } from '../../types/Config'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { describe, it } from 'mocha'
-import { constructConfig } from '../../types/Config'
-import { DiagnosticSeverity } from 'vscode-languageserver'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 describe('ObjectiveArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -24,7 +24,7 @@ describe('ObjectiveArgumentParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ cache })
+        ctx = constructContext({ cache })
     })
     describe('parse() Tests', () => {
         it('Should return data', () => {
@@ -33,7 +33,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             assert(actual.data === 'expected')
         })
         it('Should return completions', async () => {
-            const ctx = await constructContext({ cache, cursor: 0 })
+            const ctx = constructContext({ cache, cursor: 0 })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -68,7 +68,7 @@ describe('ObjectiveArgumentParser Tests', () => {
         })
         it('Should not return warning when the strict objective check pass', async () => {
             const config = constructConfig({ lint: { strictObjectiveCheck: true } })
-            const ctx = await constructContext({ cache, config })
+            const ctx = constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
@@ -76,7 +76,7 @@ describe('ObjectiveArgumentParser Tests', () => {
         })
         it('Should return warning when the strict objective check fail', async () => {
             const config = constructConfig({ lint: { strictObjectiveCheck: true } })
-            const ctx = await constructContext({ cache, config })
+            const ctx = constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')

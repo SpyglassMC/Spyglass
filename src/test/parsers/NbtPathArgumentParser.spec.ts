@@ -1,20 +1,20 @@
 import assert = require('power-assert')
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NbtPathNode from '../../types/nodes/NbtPathNode'
-import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { describe, it } from 'mocha'
-import { DiagnosticSeverity, CompletionItemKind } from 'vscode-languageserver'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
 import { NodeRange } from '../../types/nodes/ArgumentNode'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import { $ } from '../utils.spec'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
+import NbtPathNode from '../../types/nodes/NbtPathNode'
 import NumberNode from '../../types/nodes/NumberNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import ParsingError from '../../types/ParsingError'
+import StringReader from '../../utils/StringReader'
+import { $ } from '../utils.spec'
+import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -210,7 +210,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
         let ctx: ParsingContext
         before(async () => {
-            ctx = await constructContext({ parsers, nbt: TestNbtdoc })
+            ctx = constructContext({ parsers, nbtdoc: TestNbtdoc })
         })
         describe('schema Tests', () => {
             it('Should return warning when the key is not in compound tags', () => {
@@ -309,7 +309,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return completions for key', async () => {
-                const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 0 })
+                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 0 })
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('')
 
@@ -340,7 +340,7 @@ describe('NbtPathArgumentParser Tests', () => {
             })
             // FIXME: after MC-175504 is fixed.
             // it('Should return completions for key in single quotation marks', async () => {
-            //     const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 1 })
+            //     const ctx = constructContext({ parsers, nbt: TestNbtdoc, cursor: 1 })
             //     const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
             //     const reader = new StringReader("''")
 
@@ -356,7 +356,7 @@ describe('NbtPathArgumentParser Tests', () => {
             //     ])
             // })
             it('Should return completions for key in double quotation marks', async () => {
-                const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 1 })
+                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 1 })
                 const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
                 const reader = new StringReader('""')
 
@@ -372,7 +372,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for sub keys under list tag', async () => {
-                const ctx = await constructContext({ parsers, nbt: TestNbtdoc, cursor: 18 })
+                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 18 })
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:list')
                 const reader = new StringReader('{ }.addition[ 1 ].')
 

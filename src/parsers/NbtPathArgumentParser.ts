@@ -40,7 +40,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         let helper: NbtdocHelper | undefined
         if (this.id) {
-            helper = new NbtdocHelper(ctx.nbt)
+            helper = new NbtdocHelper(ctx.nbtdoc)
             helper.goRegistryCompound(this.category, this.id)
         }
 

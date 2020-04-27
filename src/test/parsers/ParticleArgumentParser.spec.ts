@@ -1,17 +1,17 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
+import { CompletionItemKind } from 'vscode-languageserver'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import ParticleArgumentParser from '../../parsers/ParticleArgumentParser'
+import { constructConfig } from '../../types/Config'
 import BlockNode from '../../types/nodes/BlockNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import ItemNode from '../../types/nodes/ItemNode'
 import ParticleNode from '../../types/nodes/ParticleNode'
-import ParticleArgumentParser from '../../parsers/ParticleArgumentParser'
+import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
-import { CompletionItemKind } from 'vscode-languageserver'
-import { constructConfig } from '../../types/Config'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { $ } from '../utils.spec'
 
 describe('ParticleArgumentParser Tests', () => {
@@ -59,7 +59,7 @@ describe('ParticleArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ blocks, registry: registries, parsers })
+        ctx = constructContext({ blockDefinition: blocks, registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data without extra params', () => {
@@ -117,7 +117,7 @@ describe('ParticleArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
-            const ctx = await constructContext({ parsers, config, registry: registries, cursor: 0 })
+            const ctx = constructContext({ parsers, config, registry: registries, cursor: 0 })
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,

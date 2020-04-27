@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
+import { VanillaConfig } from '../../../types/Config'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onPrepareRename from '../../../utils/handlers/onPrepareRename'
-import { VanillaConfig } from '../../../types/Config'
 
 describe('onPrepareRename() Tests', () => {
     it('Should return the range of the cache stuff', () => {

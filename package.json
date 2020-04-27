@@ -143,6 +143,15 @@
                     "markdownDescription": "%datapack.config.env.cmdVersion%",
                     "default": "1.16"
                 },
+                "datapack.env.dataSource": {
+                    "type": "string",
+                    "enum": [
+                        "GitHub",
+                        "码云"
+                    ],
+                    "markdownDescription": "%datapack.config.env.dataSource%",
+                    "default": "GitHub"
+                },
                 "datapack.env.dataVersion": {
                     "anyOf": [
                         {

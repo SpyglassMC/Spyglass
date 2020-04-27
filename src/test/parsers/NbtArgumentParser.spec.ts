@@ -1,28 +1,28 @@
 import assert = require('power-assert')
+import { describe, it } from 'mocha'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtArgumentParser from '../../parsers/NbtArgumentParser'
+import { constructConfig } from '../../types/Config'
+import { NodeDescription, NodeRange } from '../../types/nodes/ArgumentNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
+import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
+import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
+import NbtDoubleNode from '../../types/nodes/nbt/NbtDoubleNode'
+import NbtFloatNode from '../../types/nodes/nbt/NbtFloatNode'
+import NbtIntArrayNode from '../../types/nodes/nbt/NbtIntArrayNode'
+import NbtIntNode from '../../types/nodes/nbt/NbtIntNode'
+import NbtListNode, { ChildNbtNodeType } from '../../types/nodes/nbt/NbtListNode'
+import NbtLongArrayNode from '../../types/nodes/nbt/NbtLongArrayNode'
+import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
+import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
+import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError, { ActionCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { constructConfig } from '../../types/Config'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
-import { describe, it } from 'mocha'
-import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
-import NbtIntNode from '../../types/nodes/nbt/NbtIntNode'
-import { NodeRange, NodeDescription } from '../../types/nodes/ArgumentNode'
-import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
-import NbtFloatNode from '../../types/nodes/nbt/NbtFloatNode'
-import NbtDoubleNode from '../../types/nodes/nbt/NbtDoubleNode'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import { TestRegistry, TestNbtdoc } from '../utils/NbtdocHelper.spec'
-import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
-import NbtListNode, { ChildNbtNodeType } from '../../types/nodes/nbt/NbtListNode'
-import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
-import NbtIntArrayNode from '../../types/nodes/nbt/NbtIntArrayNode'
-import NbtLongArrayNode from '../../types/nodes/nbt/NbtLongArrayNode'
+import { TestNbtdoc, TestRegistry } from '../utils/NbtdocHelper.spec'
 
 describe('NbtArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -36,7 +36,7 @@ describe('NbtArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ parsers, registry: TestRegistry, nbt: TestNbtdoc })
+        ctx = constructContext({ parsers, registry: TestRegistry, nbtdoc: TestNbtdoc })
     })
     describe('parse() Tests', () => {
         it('Should report errors when the type does not match', () => {

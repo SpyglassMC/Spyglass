@@ -1,20 +1,20 @@
 import assert = require('power-assert')
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import ItemNode from '../../types/nodes/ItemNode'
-import ItemArgumentParser from '../../parsers/ItemArgumentParser'
-import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import ItemArgumentParser from '../../parsers/ItemArgumentParser'
 import { constructConfig } from '../../types/Config'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils.spec'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import IdentityNode from '../../types/nodes/IdentityNode'
+import ItemNode from '../../types/nodes/ItemNode'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import { SuperNode } from '../../types/nodes/nbt/NbtNode'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import StringReader from '../../utils/StringReader'
+import { $ } from '../utils.spec'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -37,7 +37,7 @@ describe('ItemArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ registry: registries, parsers })
+        ctx = constructContext({ registry: registries, parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data without tag', () => {
@@ -66,7 +66,7 @@ describe('ItemArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
-            const context = await constructContext({ registry: registries, parsers, config, cursor: 0 })
+            const context = constructContext({ registry: registries, parsers, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
 

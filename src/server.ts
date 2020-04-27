@@ -1,43 +1,45 @@
+import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import clone from 'clone'
-import { URI as Uri } from 'vscode-uri'
-import { createConnection, ProposedFeatures, TextDocumentSyncKind, FileChangeType, InitializeResult, Proposed, CodeActionKind } from 'vscode-languageserver'
-import { getSafeCategory, CacheFile, ClientCache, combineCache, CacheKey, removeCacheUnit, removeCachePosition, trimCache, CacheVersion, DefaultCacheFile } from './types/ClientCache'
-import Config, { VanillaConfig, isRelIncluded } from './types/Config'
-import IdentityNode from './types/nodes/IdentityNode'
-import { loadLocale, locale } from './locales/Locales'
-import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import { getUri, getRel, getSemanticTokensLegend, getRootUri, getUriFromId, getInfo } from './utils/handlers/common'
-import FunctionInfo from './types/FunctionInfo'
-import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
-import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
-import onSemanticTokens from './utils/handlers/onSemanticTokens'
-import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
-import onCompletion from './utils/handlers/onCompletion'
-import TagInfo from './types/TagInfo'
-import onSignatureHelp from './utils/handlers/onSignatureHelp'
-import onFoldingRanges from './utils/handlers/onFoldingRanges'
+import { CodeActionKind, createConnection, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
-import onSelectionRanges from './utils/handlers/onSelectionRanges'
-import onDocumentHighlight from './utils/handlers/onDocumentHighlight'
-import onDidChangeWorkspaceFolders from './utils/handlers/onDidChangeWorkspaceFolders'
-import onDocumentColor from './utils/handlers/onDocumentColor'
-import onColorPresentation from './utils/handlers/onColorPresentation'
-import onPrepareRename from './utils/handlers/onPrepareRename'
+import { URI as Uri } from 'vscode-uri'
+import { getCommandTree } from './data/CommandTree'
+import { getVanillaData } from './data/VanillaData'
+import { loadLocale, locale } from './locales/Locales'
 import AdvancementInfo from './types/AdvancementInfo'
-import onCallHierarchyPrepare from './utils/handlers/onCallHierarchyPrepare'
+import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import Config, { isRelIncluded, VanillaConfig } from './types/Config'
+import FunctionInfo from './types/FunctionInfo'
+import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
+import IdentityNode from './types/nodes/IdentityNode'
+import TagInfo from './types/TagInfo'
+import VersionInformation from './types/VersionInformation'
+import { getInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers/common'
 import onCallHierarchyIncomingCalls from './utils/handlers/onCallHierarchyIncomingCalls'
 import onCallHierarchyOutgoingCalls from './utils/handlers/onCallHierarchyOutgoingCalls'
-import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
-import onDocumentLinks from './utils/handlers/onDocumentLinks'
-import onDefOrRef from './utils/handlers/onDefOrRef'
-import { UrisOfIds, UrisOfStrings, InfosOfUris } from './types/handlers'
-import onRenameRequest from './utils/handlers/onRenameRequest'
-import { requestText } from './utils/utils'
-import { VanillaReportOptions } from './types/ParsingContext'
-import onHover from './utils/handlers/onHover'
+import onCallHierarchyPrepare from './utils/handlers/onCallHierarchyPrepare'
 import onCodeAction from './utils/handlers/onCodeAction'
+import onColorPresentation from './utils/handlers/onColorPresentation'
+import onCompletion from './utils/handlers/onCompletion'
+import onDefOrRef from './utils/handlers/onDefOrRef'
+import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
+import onDidChangeWorkspaceFolders from './utils/handlers/onDidChangeWorkspaceFolders'
+import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
+import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
+import onDocumentColor from './utils/handlers/onDocumentColor'
+import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
+import onDocumentHighlight from './utils/handlers/onDocumentHighlight'
+import onDocumentLinks from './utils/handlers/onDocumentLinks'
+import onFoldingRanges from './utils/handlers/onFoldingRanges'
+import onHover from './utils/handlers/onHover'
+import onPrepareRename from './utils/handlers/onPrepareRename'
+import onRenameRequest from './utils/handlers/onRenameRequest'
+import onSelectionRanges from './utils/handlers/onSelectionRanges'
+import onSemanticTokens from './utils/handlers/onSemanticTokens'
+import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
+import onSignatureHelp from './utils/handlers/onSignatureHelp'
+import { requestText } from './utils/utils'
 
 export const LangServerVersion = require('../package.json').version
 
@@ -57,7 +59,7 @@ let globalStoragePath: string
 let cachePath: string | undefined
 let cacheFile: CacheFile = clone(DefaultCacheFile)
 
-let reportOptions: VanillaReportOptions | undefined
+let versionInformation: VersionInformation | undefined
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath } }, _, progress) => {
     await loadLocale(connection.console as unknown as Console)
@@ -179,20 +181,24 @@ connection.onInitialized(() => {
         const config = await fetchConfig(uri)
         const rel = getRel(uri, roots)!
         if (isRelIncluded(rel, config)) {
-            await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, reportOptions })
+            const commandTree = await getCommandTree(config.env.cmdVersion)
+            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+            await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData })
             updateDiagnostics(uri)
         }
     })
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return
         }
-        const config = info.config
 
-        await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, reportOptions })
+        await onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, commandTree, vanillaData })
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -325,9 +331,14 @@ connection.onInitialized(() => {
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         try {
             const uri = getUri(uriString, uris)
-            const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+            const config = await fetchConfig(uri)
+            const commandTree = await getCommandTree(config.env.cmdVersion)
+            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+            const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
             if (info && info.config.features.completions) {
-                return onCompletion({ cacheFile, lineNumber, char, info, reportOptions })
+                const commandTree = await getCommandTree(info.config.env.cmdVersion)
+                const vanillaData = await getVanillaData(info.config.env.dataVersion, info.config.env.dataSource, versionInformation, globalStoragePath)
+                return onCompletion({ cacheFile, lineNumber, char, info, commandTree, vanillaData })
             }
         } catch (e) {
             connection.console.error(e)
@@ -337,16 +348,22 @@ connection.onInitialized(() => {
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.signatures) {
             return null
         }
-        return onSignatureHelp({ cacheFile, lineNumber, char, info, reportOptions })
+        return onSignatureHelp({ cacheFile, lineNumber, char, info, commandTree, vanillaData })
     })
 
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.foldingRanges) {
             return null
         }
@@ -355,7 +372,10 @@ connection.onInitialized(() => {
 
     connection.onHover(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.hover) {
             return null
         }
@@ -364,7 +384,10 @@ connection.onInitialized(() => {
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.formatting) {
             return null
         }
@@ -374,7 +397,10 @@ connection.onInitialized(() => {
 
     connection.onDefinition(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return null
         }
@@ -383,7 +409,10 @@ connection.onInitialized(() => {
     })
     connection.onReferences(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return null
         }
@@ -393,7 +422,10 @@ connection.onInitialized(() => {
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.documentHighlighting) {
             return null
         }
@@ -403,7 +435,10 @@ connection.onInitialized(() => {
 
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.selectionRanges) {
             return null
         }
@@ -413,7 +448,10 @@ connection.onInitialized(() => {
 
     connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.codeActions) {
             return null
         }
@@ -422,7 +460,10 @@ connection.onInitialized(() => {
 
     connection.languages.callHierarchy.onPrepare(async ({ position: { character: char, line: lineNumber }, textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return null
         }
@@ -440,7 +481,10 @@ connection.onInitialized(() => {
 
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return null
         }
@@ -449,17 +493,23 @@ connection.onInitialized(() => {
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position: { line: lineNumber, character: char }, newName }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info) {
             return null
         }
 
-        return onRenameRequest({ infos, cacheFile, info, lineNumber, char, newName, roots, uris, urisOfIds, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+        return onRenameRequest({ infos, cacheFile, info, lineNumber, char, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
     })
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.documentLinks) {
             return null
         }
@@ -469,7 +519,10 @@ connection.onInitialized(() => {
 
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.colors) {
             return null
         }
@@ -482,7 +535,10 @@ connection.onInitialized(() => {
         range: { start: { character: start, line: lineNumber }, end: { character: end } }
     }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.colors) {
             return null
         }
@@ -492,7 +548,10 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.semanticColoring) {
             return { data: [] }
         }
@@ -502,7 +561,10 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (!info || !info.config.features.semanticColoring) {
             return { edits: [] }
         }
@@ -536,15 +598,18 @@ async function getLatestVersions() {
         const processedVersion = '20w10a'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
-        reportOptions = (release && snapshot) ? { globalStoragePath, latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
+        versionInformation = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
         connection.console.warn(`[LatestVersions] Error occurred: ${e}`)
     }
-    connection.console.info(`[LatestVersions] reportOptions = ${JSON.stringify(reportOptions)}`)
+    connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(versionInformation)}`)
 }
 
 async function updateDiagnostics(uri: Uri) {
-    const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+    const config = await fetchConfig(uri)
+    const commandTree = await getCommandTree(config.env.cmdVersion)
+    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+    const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
     const diagnostics = []
     if (info) {
         const lines = info.lines
@@ -596,7 +661,10 @@ const cacheFileOperations = {
     combineCacheOfLines: async (uri: Uri) => {
         // CHECKME
         // const info = infos.get(uri)
-        const info = await getInfo(uri, roots, infos, cacheFile, fetchConfig, fs.readFile, reportOptions)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
@@ -758,18 +826,16 @@ const cacheFileOperations = {
 
 async function walk(workspaceRootPath: string, abs: string, cb: (abs: string, rel: string, stat: fs.Stats) => any) {
     const names = await fs.readdir(abs)
-    await Promise.all(
-        names.map(async name => {
-            const newAbs = path.join(abs, name)
-            const stat = await fs.stat(newAbs)
-            if (stat.isDirectory()) {
-                await walk(workspaceRootPath, newAbs, cb)
-            } else {
-                const rel = path.relative(workspaceRootPath, newAbs)
-                await cb(newAbs, rel, stat)
-            }
-        })
-    )
+    for (const name of names) {
+        const newAbs = path.join(abs, name)
+        const stat = await fs.stat(newAbs)
+        if (stat.isDirectory()) {
+            await walk(workspaceRootPath, newAbs, cb)
+        } else {
+            const rel = path.relative(workspaceRootPath, newAbs)
+            await cb(newAbs, rel, stat)
+        }
+    }
 }
 
 async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
@@ -804,7 +870,6 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
         }
     }
 
-    const promises: Promise<void>[] = []
     const addedFiles: [Uri, CacheKey, IdentityNode][] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
@@ -828,35 +893,31 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             ]
             for (const datapackCategoryPath of datapackCategoryPaths) {
                 if (await fs.pathExists(datapackCategoryPath)) {
-                    promises.push(
-                        walk(
-                            root.fsPath,
-                            datapackCategoryPath,
-                            (abs, rel, stat) => {
-                                const result = IdentityNode.fromRel(rel)
-                                const uri = getUri(Uri.file(abs).toString(), uris)
-                                const uriString = uri.toString()
-                                if (result && IdentityNode.isExtValid(result.ext, result.category)) {
-                                    const { id, category: key } = result
-                                    if (cacheFile.files[uriString] === undefined) {
-                                        cacheFileOperations.fileAdded(uri, key, id)
-                                        cacheFile.files[uriString] = stat.mtimeMs
-                                        addedFiles.push([uri, key, id])
-                                    }
+                    await walk(
+                        root.fsPath,
+                        datapackCategoryPath,
+                        (abs, rel, stat) => {
+                            const result = IdentityNode.fromRel(rel)
+                            const uri = getUri(Uri.file(abs).toString(), uris)
+                            const uriString = uri.toString()
+                            if (result && IdentityNode.isExtValid(result.ext, result.category)) {
+                                const { id, category: key } = result
+                                if (cacheFile.files[uriString] === undefined) {
+                                    cacheFileOperations.fileAdded(uri, key, id)
+                                    cacheFile.files[uriString] = stat.mtimeMs
+                                    addedFiles.push([uri, key, id])
                                 }
                             }
-                        )
+                        }
                     )
                 }
             }
         }
     }
-    await Promise.all(promises)
-    await Promise.all(
-        addedFiles.map(
-            ([uri, key, id]) => cacheFileOperations.fileModified(uri, key, id)
-        )
-    )
+
+    await Promise.all(addedFiles.map(
+        ([uri, key, id]) => cacheFileOperations.fileModified(uri, key, id)
+    ))
 
     trimCache(cacheFile.cache)
 }

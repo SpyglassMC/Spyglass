@@ -1,15 +1,15 @@
 import assert = require('power-assert')
-import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
-import { getUri, parseString, getRel, getId, getRootUri, getUriFromId, getInfo } from '../../../utils/handlers/common'
-import FunctionInfo from '../../../types/FunctionInfo'
-import { VanillaConfig, constructConfig } from '../../../types/Config'
-import Line from '../../../types/Line'
-import Token, { TokenType } from '../../../types/Token'
-import { UrisOfIds, UrisOfStrings, InfosOfUris } from '../../../types/handlers'
-import IdentityNode from '../../../types/nodes/IdentityNode'
-import { CacheFile } from '../../../types/ClientCache'
 import { fail } from 'power-assert'
+import { URI as Uri } from 'vscode-uri'
+import { CacheFile } from '../../../types/ClientCache'
+import { constructConfig, VanillaConfig } from '../../../types/Config'
+import FunctionInfo from '../../../types/FunctionInfo'
+import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
+import Line from '../../../types/Line'
+import IdentityNode from '../../../types/nodes/IdentityNode'
+import Token, { TokenType } from '../../../types/Token'
+import { getId, getInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers/common'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -160,21 +160,21 @@ describe('common.ts Tests', () => {
     describe('getInfo() Tests', () => {
         const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
         const roots = [Uri.parse('file:///c:/bar/')]
-        const fetchConfig = async () => VanillaConfig
+        const config = VanillaConfig
         const readFile = async () => { throw 'Fake readFile() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
             const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
             const infos: InfosOfUris = new Map([[uri, info]])
 
-            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile)
+            const actual = await getInfo(uri, roots, infos, cacheFile, config, readFile)
 
             assert(actual === info)
         })
         it('Should return undefined when exceptions are thrown during reading file', async () => {
             const infos: InfosOfUris = new Map()
 
-            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile)
+            const actual = await getInfo(uri, roots, infos, cacheFile, config, readFile)
 
             assert(actual === undefined)
         })
@@ -182,7 +182,7 @@ describe('common.ts Tests', () => {
             const readFile = async () => '# foo'
             const infos: InfosOfUris = new Map()
 
-            const actual = (await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile))!
+            const actual = (await getInfo(uri, roots, infos, cacheFile, config, readFile))!
 
             assert(actual.config === VanillaConfig)
             assert(actual.lineBreak === '\n')
@@ -191,11 +191,11 @@ describe('common.ts Tests', () => {
         })
         it('Should return undefined when the file is excluded', async () => {
             let hasReadFile = false
-            const fetchConfig = async () => constructConfig({ env: { exclude: ['**'] } })
+            const config = constructConfig({ env: { exclude: ['**'] } })
             const readFile = async () => hasReadFile = true
             const infos: InfosOfUris = new Map()
 
-            const actual = await getInfo(uri, roots, infos, cacheFile, fetchConfig, readFile as any)
+            const actual = await getInfo(uri, roots, infos, cacheFile, config, readFile as any)
 
             if (hasReadFile) {
                 fail()

@@ -74,7 +74,7 @@ export default class LineParser implements Parser<Line> {
         //#endregion
 
         if (line.errors.length === 0) {
-            this.parseChildren(reader, ctx, ctx.tree[this.entryPoint], line, false, true)
+            this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], line, false, true)
         }
         saturatedLineToLine(line)
 
@@ -98,23 +98,23 @@ export default class LineParser implements Parser<Line> {
         if (node.redirect) {
             if (!node.redirect.includes('.')) {
                 // Redirect to children.
-                const redirect = ctx.tree[node.redirect]
+                const redirect = ctx.commandTree[node.redirect]
                 this.parseChildren(reader, ctx, redirect, parsedLine, optional, node.redirect === 'commands')
             } else {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
-                const redirect = ctx.tree[seg[0]][seg[1]]
+                const redirect = ctx.commandTree[seg[0]][seg[1]]
                 this.parseSingle(reader, ctx, seg[1], redirect, parsedLine, isTheLastElement, optional)
             }
         } else if (node.template) {
             if (!node.template.includes('.')) {
                 // Use `children` as the template.
-                const template = fillChildrenTemplate(node, ctx.tree[node.template])
+                const template = fillChildrenTemplate(node, ctx.commandTree[node.template])
                 this.parseChildren(reader, ctx, template, parsedLine, optional, node.redirect === 'commands')
             } else {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
-                const template = fillSingleTemplate(node, ctx.tree[seg[0]][seg[1]])
+                const template = fillSingleTemplate(node, ctx.commandTree[seg[0]][seg[1]])
                 this.parseSingle(reader, ctx, seg[1], template, parsedLine, isTheLastElement, optional)
             }
         } else if (node.parser) {

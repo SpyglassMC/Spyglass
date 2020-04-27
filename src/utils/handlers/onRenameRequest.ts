@@ -1,13 +1,15 @@
 import path from 'path'
+import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
+import { CacheFile, canBeRenamed, getCacheFromChar, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
 import FunctionInfo from '../../types/FunctionInfo'
-import { TextDocumentEdit, RenameFile, WorkspaceEdit } from 'vscode-languageserver'
-import { isFileType, getCacheFromChar, getSafeCategory, isNamespacedType, CacheFile, removeCachePosition, canBeRenamed } from '../../types/ClientCache'
-import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri, InfosOfUris, FetchConfigFunction, ReadFileFunction } from '../../types/handlers'
+import { FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import IdentityNode from '../../types/nodes/IdentityNode'
-import { getUriFromId, getUri, getInfo } from './common'
-import { VanillaReportOptions } from '../../types/ParsingContext'
+import { getInfo, getUri, getUriFromId } from './common'
+import { getCommandTree } from '../../data/CommandTree'
+import { getVanillaData } from '../../data/VanillaData'
+import VersionInformation from '../../types/VersionInformation'
 
-export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, reportOptions, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, reportOptions?: VanillaReportOptions, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
+export default async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
     const line = info.lines[lineNumber]
 
@@ -27,13 +29,15 @@ export default async function onRenameRequest({ info, roots, uris, urisOfIds, pa
                     /* istanbul ignore else */
                     if (key === 'def' || key === 'ref') {
                         for (const pos of unit[key]) {
-                            // CHECKME
-                            // const info = infos.get(getUri(pos.uri!, uris))
-                            const info = await getInfo(getUri(pos.uri!, uris), roots, infos, cacheFile, fetchConfig, readFile, reportOptions)
+                            const affectedUri = getUri(pos.uri!, uris)
+                            const affectedConfig = await fetchConfig(affectedUri)
+                            const commandTree = await getCommandTree(affectedConfig.env.cmdVersion)
+                            const vanillaData = await getVanillaData(affectedConfig.env.dataVersion, affectedConfig.env.dataSource, versionInformation, globalStoragePath)
+                            const affectedInfo = await getInfo(affectedUri, roots, infos, cacheFile, affectedConfig, readFile, commandTree, vanillaData)
                             /* istanbul ignore else */
-                            if (info) {
+                            if (affectedInfo) {
                                 documentChanges.push({
-                                    textDocument: { uri: pos.uri!, version: info.version },
+                                    textDocument: { uri: pos.uri!, version: affectedInfo.version },
                                     edits: [{
                                         newText: newName,
                                         range: {

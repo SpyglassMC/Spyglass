@@ -1,17 +1,17 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import StringReader from '../../utils/StringReader'
 import StringArgumentParser, { StringType } from '../../parsers/StringArgumentParser'
-import ParsingError from '../../types/ParsingError'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import { $ } from '../utils.spec'
 import StringNode from '../../types/nodes/StringNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import ParsingError from '../../types/ParsingError'
+import StringReader from '../../utils/StringReader'
+import { $ } from '../utils.spec'
 
 describe('StringArgumentParser Tests', () => {
     describe('parse() Tests', () => {
         let ctx: ParsingContext
         before(async () => {
-            ctx = await constructContext({})
+            ctx = constructContext({})
         })
         it('Should parse unquoted string', () => {
             const reader = new StringReader('foo')
@@ -43,7 +43,7 @@ describe('StringArgumentParser Tests', () => {
         it('Should return completions outside the quotation marks', async () => {
             const reader = new StringReader('')
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
-            const ctx = await constructContext({ cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'foo', insertText: '"foo"' },
@@ -54,7 +54,7 @@ describe('StringArgumentParser Tests', () => {
         it('Should return completions inside double quotation marks', async () => {
             const reader = new StringReader('""')
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
-            const ctx = await constructContext({ cursor: 1 })
+            const ctx = constructContext({ cursor: 1 })
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'foo', insertText: 'foo' },
@@ -65,7 +65,7 @@ describe('StringArgumentParser Tests', () => {
         it('Should return completions inside single quotation marks', async () => {
             const reader = new StringReader("''")
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
-            const ctx = await constructContext({ cursor: 1 })
+            const ctx = constructContext({ cursor: 1 })
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.completions, [
                 { label: 'foo', insertText: 'foo' },

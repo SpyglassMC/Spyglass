@@ -1,12 +1,12 @@
 import assert = require('power-assert')
+import { describe, it } from 'mocha'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
+import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { describe, it } from 'mocha'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { $ } from '../utils.spec'
-import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
-import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 
 describe('VectorArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -29,7 +29,7 @@ describe('VectorArgumentParser Tests', () => {
 
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({})
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data', () => {
@@ -42,7 +42,7 @@ describe('VectorArgumentParser Tests', () => {
             }))
         })
         it('Should return completions at the beginning of input for local vectors', async () => {
-            const ctx = await constructContext({ cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, true, false)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -53,7 +53,7 @@ describe('VectorArgumentParser Tests', () => {
             )
         })
         it('Should return completions at the beginning of input for relative vectors', async () => {
-            const ctx = await constructContext({ cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, false, true)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -64,7 +64,7 @@ describe('VectorArgumentParser Tests', () => {
             )
         })
         it('Should return completions at the beginning of an element', async () => {
-            const ctx = await constructContext({ cursor: 2 })
+            const ctx = constructContext({ cursor: 2 })
             const parser = new VectorArgumentParser(2, false, true)
             const actual = parser.parse(new StringReader('~ '), ctx)
             assert.deepStrictEqual(actual.completions,

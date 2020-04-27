@@ -1,52 +1,59 @@
+import FallbackCommandTree from '../data/1.16/CommandTree'
+import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import ArgumentParser from '../parsers/ArgumentParser'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
 import BlockDefinitions from './BlockDefinition'
+import { ClientCache } from './ClientCache'
 import CommandTree from './CommandTree'
 import Config, { VanillaConfig } from './Config'
 import Manager from './Manager'
+import NamespaceSummary from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import Registry from './Registry'
-import { ClientCache } from './ClientCache'
-import { getReport } from '../data/VanillaData'
-import { getCommandTree } from '../data/CommandTree'
-import NamespaceSummary from './NamespaceSummary'
 
 export default interface ParsingContext {
-    blocks: BlockDefinitions,
+    blockDefinition: BlockDefinitions,
     cache: ClientCache,
+    commandTree: CommandTree,
     config: Config,
     cursor: number,
     /**
      * Only exists for signature information provider and completion provider.
      */
     lineNumber: number,
-    nbt: nbtdoc.Root,
+    namespaceSummary: NamespaceSummary,
+    nbtdoc: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
-    registry: Registry,
-    summary: NamespaceSummary,
-    tree: CommandTree
+    registry: Registry
 }
 
 interface ParsingContextLike {
-    blocks?: BlockDefinitions,
+    blockDefinition?: BlockDefinitions,
     cache?: ClientCache,
+    commandTree?: CommandTree,
     config?: Config,
     cursor?: number,
     lineNumber?: number,
-    nbt?: nbtdoc.Root,
+    namespaceSummary?: NamespaceSummary,
+    nbtdoc?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
-    registry?: Registry,
-    summary?: NamespaceSummary,
-    tree?: CommandTree
+    registry?: Registry
 }
-
-export type VanillaReportOptions = { globalStoragePath: string, latestRelease: string, latestSnapshot: string, processedVersions: string[] }
 
 /**
  * Construct a `ParsingContext`.
  */
 /* istanbul ignore next */
-export async function constructContext(custom: ParsingContextLike, options?: VanillaReportOptions): Promise<ParsingContext> {
+export function constructContext(
+    custom: ParsingContextLike,
+    commandTree: CommandTree = FallbackCommandTree,
+    vanillaData: VanillaData = {
+        BlockDefinition: FallbackBlockDefinition,
+        NamespaceSummary: FallbackNamespaceSummary,
+        Nbtdoc: FallbackNbtdoc,
+        Registry: FallbackRegistry
+    }
+): ParsingContext {
     const ans = {
         cache: {},
         config: VanillaConfig,
@@ -56,11 +63,11 @@ export async function constructContext(custom: ParsingContextLike, options?: Van
         ...custom
     } as ParsingContext
 
-    ans.blocks = ans.blocks || await getReport('BlockDefinition', ans.config.env.dataVersion, options)
-    ans.nbt = ans.nbt || await getReport('Nbtdoc', ans.config.env.dataVersion, options)
-    ans.registry = ans.registry || await getReport('Registry', ans.config.env.dataVersion, options)
-    ans.tree = ans.tree || await getCommandTree(ans.config.env.cmdVersion)
-    ans.summary = ans.summary || await getReport('NamespaceSummary', ans.config.env.dataVersion, options)
+    ans.commandTree = ans.commandTree || commandTree
+    ans.blockDefinition = ans.blockDefinition || vanillaData.BlockDefinition
+    ans.nbtdoc = ans.nbtdoc || vanillaData.Nbtdoc
+    ans.registry = ans.registry || vanillaData.Registry
+    ans.namespaceSummary = ans.namespaceSummary || vanillaData.NamespaceSummary
 
     return ans
 }

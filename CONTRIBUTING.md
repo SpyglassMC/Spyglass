@@ -1,4 +1,4 @@
-# 📝 Attribution
+# Attribution
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
@@ -6,7 +6,7 @@ From DHP 2.0.0 on, contributors for each version will be attributed in the relea
 
 Should you find that you're missing in the contributors list or you want to change your recorded username / profile link / avatar, please reply at [#161](https://github.com/SPGoding/datapack-language-server/issues/161) or [contact SPGoding](https://github.com/SPGoding/datapack-language-server/wiki/Contact-SPGoding) directly.
 
-# 🚧 Ways to Contribute
+# Ways to Contribute
 
 ## 🐛 Bugs & 🤔 Ideas
 
@@ -39,5 +39,5 @@ Datapack Helper Plus supports multiple languages. If you'd like to help us trans
 
 If you're interested in donating:
 
-- 🌎 For global users -> [Patreon](https://patreon.com/SPGoding).
-- 🇨🇳 For Mainland China users -> [爱发电](https://afdian.net/@SPGoding).
+- For global users -> [Patreon](https://patreon.com/SPGoding).
+- For Mainland China users -> [爱发电](https://afdian.net/@SPGoding).

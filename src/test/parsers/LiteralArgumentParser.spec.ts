@@ -1,13 +1,13 @@
 import assert = require('power-assert')
+import { describe, it } from 'mocha'
 import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
-import { describe, it } from 'mocha'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 
 let ctx: ParsingContext
 before(async () => {
-    ctx = await constructContext({})
+    ctx = constructContext({})
 })
 describe('LiteralArgumentParser Tests', () => {
     describe('constructor() Tests', () => {
@@ -68,7 +68,7 @@ describe('LiteralArgumentParser Tests', () => {
             assert(actual.data === 'fooB')
         })
         it('Should return completions', async () => {
-            const ctx = await constructContext({ cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
@@ -79,7 +79,7 @@ describe('LiteralArgumentParser Tests', () => {
             )
         })
         it('Should return partial completions', async () => {
-            const ctx = await constructContext({ cursor: 1 })
+            const ctx = constructContext({ cursor: 1 })
             const parser = new LiteralArgumentParser('foo', 'bar', 'baz')
             const actual = parser.parse(new StringReader('b'), ctx)
             assert.deepStrictEqual(actual.completions,

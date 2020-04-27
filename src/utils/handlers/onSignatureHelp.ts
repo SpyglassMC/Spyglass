@@ -1,21 +1,23 @@
-import FunctionInfo from '../../types/FunctionInfo'
-import { CacheFile } from '../../types/ClientCache'
-import LineParser from '../../parsers/LineParser'
-import StringReader from '../StringReader'
-import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
 import { SignatureInformation } from 'vscode-languageserver'
+import { VanillaData } from '../../data/VanillaData'
+import LineParser from '../../parsers/LineParser'
+import { CacheFile } from '../../types/ClientCache'
+import CommandTree from '../../types/CommandTree'
+import FunctionInfo from '../../types/FunctionInfo'
+import { constructContext } from '../../types/ParsingContext'
+import StringReader from '../StringReader'
 
-export default async function onSignatureHelp({ char, lineNumber, info, cacheFile, reportOptions }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, reportOptions?: VanillaReportOptions }) {
+export default async function onSignatureHelp({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const signatures: SignatureInformation[] = []
 
     const parser = new LineParser(false, 'line')
     const reader = new StringReader(info.strings[lineNumber])
-    const { data: { hint: { fix, options } } } = parser.parse(reader, await constructContext({
+    const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
         cursor: char,
         cache: cacheFile.cache,
         config: info.config,
         lineNumber
-    }, reportOptions))
+    }, commandTree, vanillaData))
 
     const fixLabel = fix.join(' ')
 

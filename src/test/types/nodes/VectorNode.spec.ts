@@ -1,13 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import VectorNode, { VectorElementNode, VectorElementType } from '../../../types/nodes/VectorNode'
-import { GetFormattedString } from '../../../types/Formattable'
-import { $ } from '../../utils.spec'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
-import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
+import { GetFormattedString } from '../../../types/Formattable'
 import FunctionInfo from '../../../types/FunctionInfo'
-import { ActionCode } from '../../../types/ParsingError'
+import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
+import VectorNode, { VectorElementNode, VectorElementType } from '../../../types/nodes/VectorNode'
 import { getCodeAction } from '../../../utils/utils'
+import { $ } from '../../utils.spec'
 
 describe('VectorNode Tests', () => {
     const { lint } = constructConfig({})
@@ -32,18 +31,18 @@ describe('VectorNode Tests', () => {
             const node = $(new VectorNode(), [0, 7], {
                 length: 3,
                 0: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
-                1: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
                 2: new VectorElementNode(VectorElementType.Absolute, 1.2, '1.2'),
             })
             const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
             assert.deepStrictEqual(actual, [
                 getCodeAction(
                     'vector-align-0.0', [], uri, info.version, lineNumber, { start: 0, end: 7 },
-                    '1.0 1.0 1.2'
+                    '1.0 ~1 1.2'
                 ),
                 getCodeAction(
                     'vector-align-0.5', [], uri, info.version, lineNumber, { start: 0, end: 7 },
-                    '1.5 1.5 1.2'
+                    '1.5 ~1 1.2'
                 )
             ])
         })

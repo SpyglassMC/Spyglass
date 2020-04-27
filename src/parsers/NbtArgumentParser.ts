@@ -151,13 +151,13 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
         let helper: NbtdocHelper | undefined
         let description: string | undefined
         if (typeof this.id === 'number') {
-            helper = new NbtdocHelper(ctx.nbt)
+            helper = new NbtdocHelper(ctx.nbtdoc)
             helper.goCompound(this.id)
             const doc = helper.readCompound()
             /* istanbul ignore next */
             description = doc ? doc.description : undefined
         } else if (this.id) {
-            helper = new NbtdocHelper(ctx.nbt)
+            helper = new NbtdocHelper(ctx.nbtdoc)
             helper.goRegistryCompound(this.category, this.id)
             const doc = helper.readCompound()
             /* istanbul ignore next */

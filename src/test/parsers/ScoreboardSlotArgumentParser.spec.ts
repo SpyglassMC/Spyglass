@@ -1,10 +1,10 @@
 import assert = require('power-assert')
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import ParsingError from '../../types/ParsingError'
-import ScoreboardSlotArgumentParser from '../../parsers/ScoreboardSlotArgumentParser'
-import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import ScoreboardSlotArgumentParser from '../../parsers/ScoreboardSlotArgumentParser'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import ParsingError from '../../types/ParsingError'
+import StringReader from '../../utils/StringReader'
 
 describe('ScoreboardSlotArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -18,7 +18,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
     const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ parsers })
+        ctx = constructContext({ parsers })
     })
     describe('parse() Tests', () => {
         it('Should return data for normal literal slots', () => {
@@ -34,7 +34,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for slots', async () => {
-            const ctx = await constructContext({ parsers, cursor: 0 })
+            const ctx = constructContext({ parsers, cursor: 0 })
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -47,7 +47,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for teams under ‘sidebar’', async () => {
-            const ctx = await constructContext({ parsers, cursor: 8 })
+            const ctx = constructContext({ parsers, cursor: 8 })
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader('sidebar.team.'), ctx)
             assert.deepStrictEqual(actual.data, 'sidebar.team.')

@@ -5,7 +5,7 @@ import { SaturatedLine } from './Line'
 /**
  * Represent a command tree.
  */
-export default interface CommandTreeType {
+export default interface CommandTree {
     [path: string]: CommandTreeNodeChildren
 }
 

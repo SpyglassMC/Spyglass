@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
+import { VanillaConfig } from '../../../types/Config'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onColorPresentation from '../../../utils/handlers/onColorPresentation'
-import { VanillaConfig } from '../../../types/Config'
 
 describe('onColorPresentation() Tests', () => {
     it('Should return correctly for dust', () => {

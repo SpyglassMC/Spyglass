@@ -1,15 +1,15 @@
 import assert = require('power-assert')
-import ArgumentParser from '../../parsers/ArgumentParser'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
-import LineParser from '../../parsers/LineParser'
-import { ArgumentParserResult } from '../../types/Parser'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import { CompletionItemKind } from 'vscode-languageserver'
+import ArgumentParser from '../../parsers/ArgumentParser'
+import ArgumentParserManager from '../../parsers/ArgumentParserManager'
+import LineParser from '../../parsers/LineParser'
+import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
+import { ArgumentParserResult } from '../../types/Parser'
+import ParsingContext, { constructContext } from '../../types/ParsingContext'
+import ParsingError from '../../types/ParsingError'
+import StringReader from '../../utils/StringReader'
 
 /**
  * Argument parser for testing.
@@ -81,7 +81,7 @@ export class TestUuidArgumentParser extends ArgumentParser<string> {
 const parsers = new ArgumentParserManager()
 let ctx: ParsingContext
 before(async () => {
-    ctx = await constructContext({ parsers })
+    ctx = constructContext({ parsers })
 })
 describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
@@ -103,7 +103,7 @@ describe('LineParser Tests', () => {
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { parser: new TestUuidArgumentParser(), executable: true }
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
-            const ctx = await constructContext({
+            const ctx = constructContext({
                 parsers, cursor: 0,
                 cache: {
                     'aliases/uuid': {
@@ -137,7 +137,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect' }
             const line = { args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -154,7 +154,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
             const line = { args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -170,7 +170,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template', executable: true }
             const line = { args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -186,7 +186,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
             const line = { args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -202,7 +202,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -224,7 +224,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -247,7 +247,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -269,7 +269,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
@@ -288,7 +288,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -315,7 +315,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree, cursor: 4 })
+            const ctx = constructContext({ parsers, commandTree: tree, cursor: 4 })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -337,7 +337,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -369,7 +369,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
@@ -389,7 +389,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
@@ -399,7 +399,7 @@ describe('LineParser Tests', () => {
     describe('parseChildren() Tests', () => {
         it('Should throw error when the children is empty', async () => {
             const tree: CommandTree = {}
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const children: CommandTreeNodeChildren = {}
@@ -425,7 +425,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -445,7 +445,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -470,7 +470,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -490,7 +490,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [], tokens: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'Old error')], cache: {}, completions: [] }
@@ -515,7 +515,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree })
+            const ctx = constructContext({ parsers, commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -558,7 +558,7 @@ describe('LineParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({ parsers, tree })
+        ctx = constructContext({ parsers, commandTree: tree })
     })
     describe('parse() Test', () => {
         it('Should parse a line', () => {
@@ -609,7 +609,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = await constructContext({ parsers, tree, cursor: 9 })
+            const ctx = constructContext({ parsers, commandTree: tree, cursor: 9 })
             const reader = new StringReader('first second')
             const parser = new LineParser()
             const actual = parser.parse(reader, ctx)
@@ -674,7 +674,7 @@ describe('LineParser Tests', () => {
             })
         })
         it('Should return completions for the leading slash', async () => {
-            const ctx = await constructContext({ parsers, tree, cursor: 0 })
+            const ctx = constructContext({ parsers, commandTree: tree, cursor: 0 })
             const parser = new LineParser(true)
             const reader = new StringReader('')
             const actual = parser.parse(reader, ctx)

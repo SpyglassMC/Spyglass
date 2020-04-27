@@ -25,7 +25,7 @@ import TextComponentArgumentParser from '../../parsers/TextComponentArgumentPars
 import TimeArgumentParser from '../../parsers/TimeArgumentParser'
 import UuidArgumentParser from '../../parsers/UuidArgumentParser'
 import VectorArgumentParser from '../../parsers/VectorArgumentParser'
-import CommandTreeType from '../../types/CommandTree'
+import CommandTree from '../../types/CommandTree'
 import { VanillaConfig } from '../../types/Config'
 import EntityNode from '../../types/nodes/EntityNode'
 import IdentityNode from '../../types/nodes/IdentityNode'
@@ -39,7 +39,7 @@ import StringNode from '../../types/nodes/StringNode'
  * Command tree of Minecraft Java Edition 19w41a commands.
  */
 /* istanbul ignore next */
-const CommandTree: CommandTreeType = {
+const CommandTree: CommandTree = {
     line: {
         command: {
             redirect: 'commands'

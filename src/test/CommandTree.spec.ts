@@ -1,25 +1,25 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { getChildren, fillSingleTemplate, getArgOrDefault, getNbtdocRegistryId } from '../CommandTree'
-import { TestArgumentParser } from './parsers/LineParser.spec'
-import { } from '../types/nbtdoc'
+import { fillSingleTemplate, getArgOrDefault, getChildren, getNbtdocRegistryId } from '../CommandTree'
 import ArgumentParserManager from '../parsers/ArgumentParserManager'
+import LineParser from '../parsers/LineParser'
+import CommandTree, { CommandTreeNode } from '../types/CommandTree'
+import { } from '../types/nbtdoc'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 import BlockNode from '../types/nodes/BlockNode'
 import EntityNode from '../types/nodes/EntityNode'
 import IdentityNode from '../types/nodes/IdentityNode'
-import LineParser from '../parsers/LineParser'
+import BlockStateNode from '../types/nodes/map/BlockStateNode'
+import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
+import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentsNode'
 import NbtPathNode from '../types/nodes/NbtPathNode'
+import StringNode from '../types/nodes/StringNode'
+import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
+import ParsingContext, { constructContext } from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
-import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
-import CommandTree, { CommandTreeNode } from '../types/CommandTree'
-import ParsingContext, { constructContext } from '../types/ParsingContext'
-import SelectorArgumentsNode from '../types/nodes/map/SelectorArgumentsNode'
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
+import { TestArgumentParser } from './parsers/LineParser.spec'
 import { $ } from './utils.spec'
-import StringNode from '../types/nodes/StringNode'
-import BlockStateNode from '../types/nodes/map/BlockStateNode'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -202,12 +202,12 @@ describe('CommandTree Tests', () => {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
-        ctx = await constructContext({ parsers, cache })
+        ctx = constructContext({ parsers, cache })
     })
     describe('Just fucking parse', () => {
         const parsers = new ArgumentParserManager()
         it('advancement g', async () => {
-            const ctx = await constructContext({ parsers, cursor: 13 })
+            const ctx = constructContext({ parsers, cursor: 13 })
             const parser = new LineParser(false)
             const reader = new StringReader('advancement g')
             const { data } = parser.parse(reader, ctx)
@@ -354,7 +354,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.completions, undefined)
         })
         it('setblock ~ ~ ~ minecraft:grass_block[]', async () => {
-            const ctx = await constructContext({ parsers, cursor: 37 })
+            const ctx = constructContext({ parsers, cursor: 37 })
             const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
             const { data } = parser.parse(reader, ctx)

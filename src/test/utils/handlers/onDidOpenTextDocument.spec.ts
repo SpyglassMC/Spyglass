@@ -1,10 +1,10 @@
 import assert = require('power-assert')
-import { URI as Uri } from 'vscode-uri'
 import { describe, it } from 'mocha'
+import { URI as Uri } from 'vscode-uri'
+import { VanillaConfig } from '../../../types/Config'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { InfosOfUris } from '../../../types/handlers'
 import onDidOpenTextDocument from '../../../utils/handlers/onDidOpenTextDocument'
-import { VanillaConfig } from '../../../types/Config'
 
 describe('onDidOpenTextDocument() Tests', () => {
     it('Should set basic values correctly', async () => {

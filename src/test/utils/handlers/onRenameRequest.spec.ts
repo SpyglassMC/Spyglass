@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import onRenameRequest from '../../../utils/handlers/onRenameRequest'
-import { Uri, UrisOfIds, InfosOfUris, PathExistsFunction } from '../../../types/handlers'
-import FunctionInfo from '../../../types/FunctionInfo'
 import { VanillaConfig } from '../../../types/Config'
+import FunctionInfo from '../../../types/FunctionInfo'
+import { InfosOfUris, PathExistsFunction, Uri, UrisOfIds } from '../../../types/handlers'
+import onRenameRequest from '../../../utils/handlers/onRenameRequest'
 
 describe('onRenameRequest() Tests', () => {
     const pathExists: PathExistsFunction = async abs => !!(
@@ -66,7 +66,7 @@ describe('onRenameRequest() Tests', () => {
         const char = 2
         const newName = 'ruhuasiyu:foo'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert(actual === null)
     })
@@ -83,7 +83,7 @@ describe('onRenameRequest() Tests', () => {
         const char = 28
         const newName = 'newObjective'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [{
@@ -120,7 +120,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -160,7 +160,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -200,7 +200,7 @@ describe('onRenameRequest() Tests', () => {
         const newName = 'ruhuasiyu:bar'
         const newFunction = Uri.parse('file:///d:/data/ruhuasiyu/functions/bar.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName, fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [

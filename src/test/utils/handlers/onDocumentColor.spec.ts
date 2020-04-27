@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
+import { VanillaConfig } from '../../../types/Config'
 import FunctionInfo from '../../../types/FunctionInfo'
 import onDocumentColor from '../../../utils/handlers/onDocumentColor'
-import { VanillaConfig } from '../../../types/Config'
 
 describe('onDocumentColor() Tests', () => {
     const info: FunctionInfo = {

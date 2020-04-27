@@ -1,17 +1,19 @@
 import path from 'path'
-import { URI as Uri } from 'vscode-uri'
-import Line from '../../types/Line'
-import Config, { isRelIncluded } from '../../types/Config'
-import LineParser from '../../parsers/LineParser'
-import StringReader from '../StringReader'
-import { constructContext, VanillaReportOptions } from '../../types/ParsingContext'
-import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { Proposed } from 'vscode-languageserver'
-import { TokenType, TokenModifier } from '../../types/Token'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { UrisOfStrings, PathExistsFunction, UrisOfIds, FetchConfigFunction, ReadFileFunction, InfosOfUris } from '../../types/handlers'
+import { URI as Uri } from 'vscode-uri'
+import LineParser from '../../parsers/LineParser'
+import { CacheFile, CacheKey } from '../../types/ClientCache'
+import Config, { isRelIncluded } from '../../types/Config'
 import FunctionInfo from '../../types/FunctionInfo'
+import { FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import Line from '../../types/Line'
+import IdentityNode from '../../types/nodes/IdentityNode'
+import { constructContext } from '../../types/ParsingContext'
+import { TokenModifier, TokenType } from '../../types/Token'
+import StringReader from '../StringReader'
 import onDidOpenTextDocument from './onDidOpenTextDocument'
+import CommandTree from '../../types/CommandTree'
+import { VanillaData } from '../../data/VanillaData'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -65,16 +67,16 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1, reportOptions?: VanillaReportOptions) {
+export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     if (string.match(/^[\s\t]*$/)) {
         lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
     } else {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(string)
-        const { data } = parser.parse(reader, await constructContext({
+        const { data } = parser.parse(reader, constructContext({
             cache: cacheFile.cache,
             config, cursor
-        }, reportOptions))
+        }, commandTree, vanillaData))
         lines.push(data)
     }
 }
@@ -97,16 +99,15 @@ export function getId(uri: Uri, roots: Uri[]) {
     return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
-export async function getInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction, reportOptions?: VanillaReportOptions): Promise<FunctionInfo | undefined> {
+export async function getInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
         try {
-            const config = await fetchConfig(uri)
             const rel = getRel(uri, roots)!
             if (isRelIncluded(rel, config)) {
                 const text = await readFile(uri.fsPath, 'utf8')
-                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, reportOptions })
+                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, commandTree, vanillaData })
                 info = infos.get(uri)
             }
         } catch (ignored) {

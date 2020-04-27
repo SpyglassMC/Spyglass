@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import onDidChangeWorkspaceFolders from '../../../utils/handlers/onDidChangeWorkspaceFolders'
 import { URI as Uri } from 'vscode-uri'
+import onDidChangeWorkspaceFolders from '../../../utils/handlers/onDidChangeWorkspaceFolders'
 
 describe('onDidChangeWorkspaceFolders() Tests', () => {
     it('Should update correctly', () => {

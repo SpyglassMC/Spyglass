@@ -1,29 +1,28 @@
 import assert = require('power-assert')
-import NbtdocHelper from '../../utils/NbtdocHelper'
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
-import { constructContext } from '../../types/ParsingContext'
-import { nbtdoc } from '../../types/nbtdoc'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
-import { constructConfig } from '../../types/Config'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
-import Registry from '../../types/Registry'
 import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { ClientCache } from '../../types/ClientCache'
-import { NodeRange, NodeDescription } from '../../types/nodes/ArgumentNode'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
-import NbtIntArrayNode from '../../types/nodes/nbt/NbtIntArrayNode'
-import NbtLongArrayNode from '../../types/nodes/nbt/NbtLongArrayNode'
-import NbtIntNode from '../../types/nodes/nbt/NbtIntNode'
-import NbtDoubleNode from '../../types/nodes/nbt/NbtDoubleNode'
-import NbtFloatNode from '../../types/nodes/nbt/NbtFloatNode'
-import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
-import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
-import NbtListNode from '../../types/nodes/nbt/NbtListNode'
+import { constructConfig } from '../../types/Config'
+import { nbtdoc } from '../../types/nbtdoc'
+import { NodeDescription, NodeRange } from '../../types/nodes/ArgumentNode'
 import { Keys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
+import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
+import NbtByteArrayNode from '../../types/nodes/nbt/NbtByteArrayNode'
+import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
+import NbtDoubleNode from '../../types/nodes/nbt/NbtDoubleNode'
+import NbtFloatNode from '../../types/nodes/nbt/NbtFloatNode'
+import NbtIntArrayNode from '../../types/nodes/nbt/NbtIntArrayNode'
+import NbtIntNode from '../../types/nodes/nbt/NbtIntNode'
+import NbtListNode from '../../types/nodes/nbt/NbtListNode'
+import NbtLongArrayNode from '../../types/nodes/nbt/NbtLongArrayNode'
+import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
+import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
+import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
+import { constructContext } from '../../types/ParsingContext'
+import ParsingError, { ActionCode } from '../../types/ParsingError'
+import Registry from '../../types/Registry'
+import NbtdocHelper from '../../utils/NbtdocHelper'
 
 export const TestNbtdoc: nbtdoc.Root = {
     registries: {
@@ -404,7 +403,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: null
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -423,7 +422,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: ['warning', true]
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -440,7 +439,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: ['warning', false]
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -456,7 +455,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -471,7 +470,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -486,7 +485,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -501,7 +500,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -518,7 +517,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Id: 'minecraft:block' }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config, registry: TestRegistry })
+                const ctx = constructContext({ config, registry: TestRegistry })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -534,7 +533,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -549,7 +548,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -564,7 +563,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
@@ -579,7 +578,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should complete correctly', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config, cache: TestCache })
+                const ctx = constructContext({ config, cache: TestCache })
                 const description = ' The tags on the entity'
 
                 const helper = new NbtdocHelper(TestNbtdoc)
@@ -596,7 +595,7 @@ describe('NbtdocHelper Tests', () => {
         it('Should return all keys', async () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
-            const ctx = await constructContext({ config })
+            const ctx = constructContext({ config })
             const inQuote = null
             const tag = new NbtCompoundNode(null)
 
@@ -612,7 +611,7 @@ describe('NbtdocHelper Tests', () => {
         it('Should not include existing keys', async () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
-            const ctx = await constructContext({ config })
+            const ctx = constructContext({ config })
             const inQuote = null
             const tag = new NbtCompoundNode(null)
             tag.foo = new NbtByteNode(null, 1, 'true')
@@ -628,7 +627,7 @@ describe('NbtdocHelper Tests', () => {
         it('Should return correctly for in-double-quote cases', async () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
-            const ctx = await constructContext({ config })
+            const ctx = constructContext({ config })
             const inQuote = 'always double'
             const tag = new NbtCompoundNode(null)
 
@@ -644,7 +643,7 @@ describe('NbtdocHelper Tests', () => {
         it('Should return correctly for in-single-quote cases', async () => {
             const ans = { cache: {}, completions: [], errors: [] }
             const config = constructConfig({})
-            const ctx = await constructContext({ config })
+            const ctx = constructContext({ config })
             const inQuote = 'always single'
             const tag = new NbtCompoundNode(null)
 
@@ -670,7 +669,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: null
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -690,7 +689,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: null
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, 'false')
                 tag[NodeRange] = { start: 0, end: 5 }
 
@@ -706,7 +705,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: ['warning', false]
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, 'false')
                 tag[NodeRange] = { start: 0, end: 5 }
 
@@ -726,7 +725,7 @@ describe('NbtdocHelper Tests', () => {
                         nbtBoolean: ['warning', true]
                     }
                 })
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -745,7 +744,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-byte-array tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -761,7 +760,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should include action codes for similar tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -777,7 +776,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -790,7 +789,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 2], value_range: null } }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -807,7 +806,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 1], value_range: null } }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
                 tag.push(new NbtByteNode(null, 0, '0'))
@@ -827,7 +826,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: [0, 1] } }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 6 }
                 const eleTag = new NbtByteNode(null, 2, '2')
@@ -849,7 +848,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-byte tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -865,7 +864,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -881,7 +880,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -894,7 +893,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -911,7 +910,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 3, '3')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -930,7 +929,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-compound tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -946,7 +945,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct empty tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -959,7 +958,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 21 }
                 const customModelDataKey = new NbtCompoundKeyNode(null, 'CustomModelData', 'CustomModelData', {})
@@ -979,7 +978,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 15 }
                 const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', {})
@@ -999,7 +998,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Compound: 1 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 15 }
                 const asdfghjklKey = new NbtCompoundKeyNode(null, 'asdfghjkl', 'asdfghjkl', {})
@@ -1025,7 +1024,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-double tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1041,7 +1040,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -1057,7 +1056,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtDoubleNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1072,7 +1071,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1090,7 +1089,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'asdfghjkl', '"asdfghjkl"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 11 }
 
@@ -1108,7 +1107,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'red', '"red"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 
@@ -1122,7 +1121,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1140,7 +1139,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 5, '5b')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1158,7 +1157,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 2, '2b')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1174,7 +1173,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-float tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1190,7 +1189,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -1206,7 +1205,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtFloatNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1221,7 +1220,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-string tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1237,7 +1236,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should remap range indexes', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config, registry: TestRegistry })
+                const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:asdfghjklqwertyui', '"minecraft:asdfghjklqwertyui"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 29 }
 
@@ -1253,7 +1252,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config, registry: TestRegistry })
+                const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 29 }
 
@@ -1270,7 +1269,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-compound tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1286,7 +1285,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct empty tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
                 tag[NodeRange] = { start: 0, end: 20 }
 
@@ -1298,7 +1297,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correctly filled tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
                 tag[NodeRange] = { start: 0, end: 20 }
                 tag.foo = new NbtByteNode(superTag, 0, 'false')
@@ -1314,7 +1313,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for unexpected child types', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
                 tag[NodeRange] = { start: 0, end: 20 }
                 tag.foo = new NbtCompoundNode(superTag)
@@ -1337,7 +1336,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-int-array tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0b')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1353,7 +1352,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should include action codes for similar tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -1369,7 +1368,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -1384,7 +1383,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-int tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1400,7 +1399,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -1415,7 +1414,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-list tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1431,7 +1430,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should include action codes for similar tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -1447,7 +1446,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
                 tag[NodeRange] = { start: 0, end: 7 }
                 const childTag = new NbtByteNode(null, 0, 'false')
@@ -1465,7 +1464,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-long-array tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1481,7 +1480,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should include action codes for similar tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -1497,7 +1496,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtLongArrayNode(null)
                 tag[NodeRange] = { start: 0, end: 4 }
 
@@ -1512,7 +1511,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-long tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1528,7 +1527,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -1544,7 +1543,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtLongNode(null, BigInt(0), '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1560,7 +1559,7 @@ describe('NbtdocHelper Tests', () => {
                 const doc: nbtdoc.NbtValue = { Or: [] }
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1576,7 +1575,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for tags that match the first doc', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, 'false')
                 tag[NodeRange] = { start: 0, end: 5 }
 
@@ -1588,7 +1587,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for tags that match the second doc', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 
@@ -1600,7 +1599,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for the second doc if the tag matches none of them', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1619,7 +1618,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-short tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1635,7 +1634,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
 
@@ -1651,7 +1650,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtShortNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1666,7 +1665,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report errors for non-string tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config })
+                const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
                 tag[NodeRange] = { start: 0, end: 2 }
 
@@ -1682,7 +1681,7 @@ describe('NbtdocHelper Tests', () => {
             it('Should report nothing for correct tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
                 const config = constructConfig({})
-                const ctx = await constructContext({ config, registry: TestRegistry })
+                const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
                 tag[NodeRange] = { start: 0, end: 5 }
 

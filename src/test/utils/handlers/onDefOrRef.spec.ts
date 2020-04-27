@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onDefOrRef from '../../../utils/handlers/onDefOrRef'
 import { VanillaConfig } from '../../../types/Config'
+import FunctionInfo from '../../../types/FunctionInfo'
 import { Uri } from '../../../types/handlers'
+import onDefOrRef from '../../../utils/handlers/onDefOrRef'
 
 describe('onDefOrRef() Tests', () => {
     const uri = Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction')

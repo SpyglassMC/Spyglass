@@ -8,7 +8,7 @@ import StringReader from '../../utils/StringReader'
 describe('UuidArgumentParser Tests', () => {
     let ctx: ParsingContext
     before(async () => {
-        ctx = await constructContext({})
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should parse full UUID', () => {

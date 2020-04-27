@@ -34,7 +34,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor, registry: registries, summary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
+    parse(reader: StringReader, { cache, config, cursor, registry: registries, namespaceSummary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
         const ans: ArgumentParserResult<IdentityNode> = {
             data: new IdentityNode(),
             tokens: [],

@@ -4,6 +4,7 @@ import StrictCheckConfig from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
 import QuoteTypeConfig from './QuoteTypeConfig'
 import minimatch from 'minimatch'
+import { DataSource } from '../data/VanillaData'
 
 export default interface Config {
     /**
@@ -25,40 +26,12 @@ export default interface Config {
 }
 
 export interface EnvConfig {
-    /**
-     * `function-permission-level` defined in `server.properties`.  
-     * @default 2
-     */
     permissionLevel: 1 | 2 | 3 | 4,
-    /**
-     * The version of the command tree. Only major versions are available.  
-     * @default '1.16'
-     */
     cmdVersion: CommandTreeVersion,
-    /**
-     * The version of the completion data, including registries, block definitions, and nbtdoc.
-     * Should be an identity in the [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json)
-     * which was released after `19w40a`.
-     * Apart from a version identity, you can also input `Latest release` or `Latest snapshot` here (case-insensitive).
-     * @default 'Latest snapshot'
-     */
+    dataSource: DataSource,
     dataVersion: string,
-    /**
-     * Whether this datapack depends on the vanilla datapack or not. If this option is enabled, 
-     * completions for the corresponding data of the vanilla datapack will be provided.
-     * @default true
-     */
     dependsOnVanilla: boolean,
-    /**
-     * Files that should be excluded from validation. Each string in this array will be interpreted as a 
-     * glob pattern to test the relative file paths from the root of the datapack.
-     */
     exclude: string[],
-    /**
-     * Files that should be included from validation. Each string in this array will be interpreted as a 
-     * glob pattern to test the relative file paths from the root of the datapack.  
-     * This option takes priority over `exclude`.
-     */
     include: string[]
 }
 
@@ -197,6 +170,7 @@ export interface SnippetsConfig {
 export const VanillaConfig: Config = {
     env: {
         permissionLevel: 2,
+        dataSource: 'GitHub',
         dataVersion: 'Latest snapshot',
         cmdVersion: '1.16',
         dependsOnVanilla: true,

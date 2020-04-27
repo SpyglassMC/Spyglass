@@ -1,6 +1,7 @@
 {
     "datapack.commands.regenerateCache.title": "重新生成缓存",
     "datapack.config.env.cmdVersion": "命令树的版本。只能选择正式版本号。",
+    "datapack.config.env.dataSource": "补全数据的下载源。建议选择「码云」，否则可能导致下载不畅。",
     "datapack.config.env.dataVersion": "补全数据（包括注册表、方块定义、NBTDOC）的版本。应当是 [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) 中定义的一个晚于 `19w40a` 的版本。除了填写版本标识符以外，你还可以填写 `Latest release`（最新正式版）或 `Latest snapshot`（最新快照），大小写不敏感。",
     "datapack.config.env.dependsOnVanilla": "当前数据包是否依赖于原版数据包。当启用该选项时，大憨批将会提供原版数据包中相应数据的补全提示。",
     "datapack.config.env.exclude": "不应当被大憨批验证的文件。该数组中的每一个字符串都会被解析为 glob pattern，用于匹配文件从数据包根目录起的相对路径。",

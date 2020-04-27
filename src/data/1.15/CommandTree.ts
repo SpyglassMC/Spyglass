@@ -1,6 +1,6 @@
 import BlockArgumentParser from '../../parsers/BlockArgumentParser'
 import CodeSnippetArgumentParser from '../../parsers/CodeSnippetArgumentParser'
-import CommandTreeType from '../../types/CommandTree'
+import CommandTree from '../../types/CommandTree'
 import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescriptionArgumentParser'
 import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
 import EntityNode from '../../types/nodes/EntityNode'
@@ -36,7 +36,7 @@ import { VanillaConfig } from '../../types/Config'
  * Command tree of Minecraft Java Edition 19w41a commands.
  */
 /* istanbul ignore next */
-const CommandTree: CommandTreeType = {
+const CommandTree: CommandTree = {
     line: {
         command: {
             redirect: 'commands'
@@ -425,7 +425,7 @@ const CommandTree: CommandTreeType = {
                             template: 'nbt_holder',
                             children: {
                                 nbt: {
-                                    parser: ({ args }, { nbt }) => {
+                                    parser: ({ args }, { nbtdoc: nbt }) => {
                                         const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault(args, 1, new EntityNode()) as EntityNode
