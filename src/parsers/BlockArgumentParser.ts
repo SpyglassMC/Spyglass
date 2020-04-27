@@ -4,7 +4,7 @@ import BlockNode from '../types/nodes/BlockNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import StringReader from '../utils/StringReader'
 import MapParser from './MapParser'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import ParsingContext from '../types/ParsingContext'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
@@ -107,7 +107,7 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
                         locale('punc.quote', 'datapack.lint.blockStateSortKeys')
                     ),
                     undefined, getDiagnosticSeverity(ctx.config.lint.blockStateSortKeys[0]),
-                    ActionCode.BlockStateSortKeys
+                    ErrorCode.BlockStateSortKeys
                 ))
             }
         }

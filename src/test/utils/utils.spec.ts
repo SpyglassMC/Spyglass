@@ -6,7 +6,7 @@ import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormat
 import { constructConfig, LintConfig } from '../../types/Config'
 import { DiagnosticConfig } from '../../types/StylisticConfig'
 import QuoteTypeConfig from '../../types/QuoteTypeConfig'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 
 describe('utils.ts Tests', () => {
@@ -237,7 +237,7 @@ describe('utils.ts Tests', () => {
                 range,
                 `Expected a string but got ‘"’`,
                 undefined, DiagnosticSeverity.Information,
-                ActionCode.StringUnquote
+                ErrorCode.StringUnquote
             )])
         })
         it('Should return nothing when should quote', () => {
@@ -260,7 +260,7 @@ describe('utils.ts Tests', () => {
                 range,
                 `Expected a quote (‘'’ or ‘"’) but got ‘f’`,
                 undefined, DiagnosticSeverity.Information,
-                ActionCode.StringDoubleQuote
+                ErrorCode.StringDoubleQuote
             )])
         })
         it('Should return nothing when should quote with single quotation marks', () => {
@@ -283,7 +283,7 @@ describe('utils.ts Tests', () => {
                 range,
                 `Expected ‘'’ but got ‘"’`,
                 undefined, DiagnosticSeverity.Information,
-                ActionCode.StringSingleQuote
+                ErrorCode.StringSingleQuote
             )])
         })
         it('Should return nothing when should quote with double quotation marks', () => {
@@ -306,7 +306,7 @@ describe('utils.ts Tests', () => {
                 range,
                 `Expected ‘"’ but got ‘'’`,
                 undefined, DiagnosticSeverity.Information,
-                ActionCode.StringDoubleQuote
+                ErrorCode.StringDoubleQuote
             )])
         })
         it('Should return nothing when may use double quotation marks', () => {

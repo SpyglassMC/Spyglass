@@ -20,7 +20,7 @@ import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
 import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 import { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import Registry from '../../types/Registry'
 import NbtdocHelper from '../../utils/NbtdocHelper'
 
@@ -715,7 +715,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 5 },
                     'Expected a byte tag but got ‘false’',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtByteToNumber
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToNumber
                 )])
             })
             it('Should report errors when expecting boolean literals', async () => {
@@ -735,7 +735,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
                     'Expected ‘false’ or ‘true’',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtByteToLiteral
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToLiteral
                 )])
             })
         })
@@ -770,7 +770,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a byte array tag but got an int array tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToByteArray
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByteArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -874,7 +874,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a byte tag but got an int tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToByte
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByte
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1050,7 +1050,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a double tag but got an int tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToDouble
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToDouble
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1199,7 +1199,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a float tag but got an int tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToFloat
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToFloat
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1362,7 +1362,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected an int array tag but got a byte array tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToIntArray
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToIntArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1440,7 +1440,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a list tag but got an int array tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToList
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToList
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1490,7 +1490,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
                     'Expected a long array tag but got an int array tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToLongArray
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLongArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1537,7 +1537,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a long tag but got an int tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToLong
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLong
                 )])
             })
             it('Should report nothing for correct tags', async () => {
@@ -1644,7 +1644,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
                     'Expected a short tag but got an int tag',
-                    undefined, DiagnosticSeverity.Warning, ActionCode.NbtTypeToShort
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToShort
                 )])
             })
             it('Should report nothing for correct tags', async () => {

@@ -3,7 +3,7 @@ import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
 import { GetFormattedString } from '../../../types/Formattable'
 import StringNode from '../../../types/nodes/StringNode'
-import { ActionCode } from '../../../types/ParsingError'
+import { ErrorCode } from '../../../types/ParsingError'
 import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { getCodeAction } from '../../../utils/utils'
@@ -39,7 +39,7 @@ describe('StringNode Tests', () => {
         it('Should unquote the string', () => {
             const range = { start: 0, end: 5 }
             const diagnostics = {
-                [ActionCode.StringUnquote]: diags
+                [ErrorCode.StringUnquote]: diags
             }
             const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 
@@ -52,7 +52,7 @@ describe('StringNode Tests', () => {
         it('Should quote the string with double quotation marks', () => {
             const range = { start: 0, end: 5 }
             const diagnostics = {
-                [ActionCode.StringDoubleQuote]: diags
+                [ErrorCode.StringDoubleQuote]: diags
             }
             const node = $(new StringNode('foo', "'foo'", { start: 1 }), range)
 
@@ -65,7 +65,7 @@ describe('StringNode Tests', () => {
         it('Should quote the string with single quotation marks', () => {
             const range = { start: 0, end: 5 }
             const diagnostics = {
-                [ActionCode.StringSingleQuote]: diags
+                [ErrorCode.StringSingleQuote]: diags
             }
             const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 

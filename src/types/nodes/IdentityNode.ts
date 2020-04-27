@@ -4,7 +4,7 @@ import { CacheKey, ClientCache } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { GetFormattedString } from '../Formattable'
 import FunctionInfo from '../FunctionInfo'
-import { ActionCode } from '../ParsingError'
+import { ErrorCode } from '../ParsingError'
 import TextRange from '../TextRange'
 import ArgumentNode, { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
@@ -86,8 +86,8 @@ export default class IdentityNode extends ArgumentNode {
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
-        const completeDiagnostics = diagnostics[ActionCode.IdentityCompleteDefaultNamespace]
-        const omitDiagnostics = diagnostics[ActionCode.IdentityOmitDefaultNamespace]
+        const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]
+        const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
 
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(

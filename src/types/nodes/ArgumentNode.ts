@@ -3,7 +3,7 @@ import { LintConfig } from '../Config'
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
 import TextRange, { EmptyRange, areOverlapped, isInRange } from '../TextRange'
 import FunctionInfo from '../FunctionInfo'
-import { ActionCode } from '../ParsingError'
+import { ErrorCode } from '../ParsingError'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('Range')
@@ -12,7 +12,7 @@ export const GetCodeActions = Symbol('GetCodeActions')
 export const GetHoverInformation = Symbol('GetHoverInformation')
 export const GetPlainKeys = Symbol('GetPlainKeys')
 
-export type DiagnosticMap = { [code in ActionCode]?: Diagnostic[] }
+export type DiagnosticMap = { [code in ErrorCode]?: Diagnostic[] }
 
 const Triage = Symbol('Triage')
 

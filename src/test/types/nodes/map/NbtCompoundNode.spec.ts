@@ -4,7 +4,7 @@ import { $ } from '../../../utils.spec'
 import { constructConfig } from '../../../../types/Config'
 import FunctionInfo from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { ActionCode } from '../../../../types/ParsingError'
+import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils/utils'
 import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
 import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
@@ -39,7 +39,7 @@ describe('NbtCompoundNode Tests', () => {
         it('Should return sort actions', () => {
             const range = { start: 3, end: 3 }
             const diagnostics = {
-                [ActionCode.NbtCompoundSortKeys]: diags
+                [ErrorCode.NbtCompoundSortKeys]: diags
             }
             const node = $(new NbtCompoundNode(null), [0, 7], {
                 foo: new NbtByteNode(null, 1, '1'),
@@ -55,7 +55,7 @@ describe('NbtCompoundNode Tests', () => {
         it('Should return UUID datafix actions for L and M', () => {
             const range = { start: 3, end: 3 }
             const diagnostics = {
-                [ActionCode.NbtUuidDatafixCompound]: diags
+                [ErrorCode.NbtUuidDatafixCompound]: diags
             }
             const node = $(new NbtCompoundNode(null), [0, 7], {
                 M: new NbtLongNode(null, BigInt(1234567890123), '1234567890123L'),
@@ -71,7 +71,7 @@ describe('NbtCompoundNode Tests', () => {
         it('Should return UUID datafix actions for OwnerUUIDLeast and OwnerUUIDMost', () => {
             const range = { start: 3, end: 3 }
             const diagnostics = {
-                [ActionCode.NbtUuidDatafixCompound]: diags
+                [ErrorCode.NbtUuidDatafixCompound]: diags
             }
             const node = $(new NbtCompoundNode(null), [0, 7], {
                 OwnerUUIDMost: new NbtLongNode(null, BigInt(1234567890123), '1234567890123L'),

@@ -3,7 +3,7 @@ import { getCodeAction } from '../../../utils/utils'
 import { LintConfig } from '../../Config'
 import { GetFormattedString } from '../../Formattable'
 import FunctionInfo from '../../FunctionInfo'
-import { ActionCode } from '../../ParsingError'
+import { ErrorCode } from '../../ParsingError'
 import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
 import NbtNode, { NbtNodeType, SuperNode } from '../nbt/NbtNode'
@@ -36,7 +36,7 @@ export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        const sortKeysDiagnostics = diagnostics[ActionCode.NbtCompoundSortKeys]
+        const sortKeysDiagnostics = diagnostics[ErrorCode.NbtCompoundSortKeys]
         if (sortKeysDiagnostics && info.config.lint.nbtCompoundSortKeys) {
             /* istanbul ignore next */
             const keys = info.config.lint.nbtCompoundSortKeys[1] === 'alphabetically' ?
@@ -48,7 +48,7 @@ export default class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode
             ))
         }
         //#region UUID datafix: #377
-        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixCompound]
+        const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
         if (uuidDiagnostics) {
             try {
                 const newArrayNode = nbtIntArrayFromBuffer(bufferFromNbtLongs(this,

@@ -6,7 +6,7 @@ import IdentityNode from '../types/nodes/IdentityNode'
 import MapParser from './MapParser'
 import NumberRangeNode from '../types/nodes/NumberRangeNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { locale } from '../locales/Locales'
 import Token, { TokenType } from '../types/Token'
@@ -364,7 +364,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         locale('punc.quote', 'datapack.lint.selectorSortKeys')
                     ),
                     undefined, getDiagnosticSeverity(ctx.config.lint.selectorSortKeys[0]),
-                    ActionCode.SelectorSortKeys
+                    ErrorCode.SelectorSortKeys
                 ))
             }
         }

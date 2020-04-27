@@ -1,7 +1,7 @@
 import { GetFormattedString } from '../Formattable'
 import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
 import IndexMapping from '../IndexMapping'
-import { ActionCode } from '../ParsingError'
+import { ErrorCode } from '../ParsingError'
 import FunctionInfo from '../FunctionInfo'
 import { getCodeAction, quoteString } from '../../utils/utils'
 import TextRange from '../TextRange'
@@ -31,9 +31,9 @@ export default class StringNode extends ArgumentNode {
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
-        const unquoteDiagnostics = diagnostics[ActionCode.StringUnquote]
-        const doubleQuoteDiagnostics = diagnostics[ActionCode.StringDoubleQuote]
-        const singleQuoteDiagnostics = diagnostics[ActionCode.StringSingleQuote]
+        const unquoteDiagnostics = diagnostics[ErrorCode.StringUnquote]
+        const doubleQuoteDiagnostics = diagnostics[ErrorCode.StringDoubleQuote]
+        const singleQuoteDiagnostics = diagnostics[ErrorCode.StringSingleQuote]
 
         if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
             ans.push(getCodeAction(

@@ -4,7 +4,7 @@ import FunctionInfo from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
 import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
 import SelectorArgumentsNode from '../../../../types/nodes/map/SelectorArgumentsNode'
-import { ActionCode } from '../../../../types/ParsingError'
+import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils/utils'
 import { $ } from '../../../utils.spec'
 
@@ -37,7 +37,7 @@ describe('SelectorArgumentsNode Tests', () => {
         it('Should return sort actions', () => {
             const range = { start: 3, end: 3 }
             const diagnostics = {
-                [ActionCode.SelectorSortKeys]: diags
+                [ErrorCode.SelectorSortKeys]: diags
             }
             const node = $(new SelectorArgumentsNode(), [0, 7], {
                 tag: ['foo'],

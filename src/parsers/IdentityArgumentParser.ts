@@ -5,7 +5,7 @@ import ArgumentParser from './ArgumentParser'
 import Config from '../types/Config'
 import IdentityNode from '../types/nodes/IdentityNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import StrictCheckConfig from '../types/StrictCheckConfig'
 import { locale } from '../locales/Locales'
@@ -159,7 +159,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unexpected-default-namespace'),
-                    undefined, severity, ActionCode.IdentityOmitDefaultNamespace
+                    undefined, severity, ErrorCode.IdentityOmitDefaultNamespace
                 ))
             }
             reader.skip()
@@ -186,7 +186,7 @@ export default class IdentityArgumentParser extends ArgumentParser<IdentityNode>
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unexpected-omitted-default-namespace'),
-                    undefined, severity, ActionCode.IdentityCompleteDefaultNamespace
+                    undefined, severity, ErrorCode.IdentityCompleteDefaultNamespace
                 ))
             }
         }

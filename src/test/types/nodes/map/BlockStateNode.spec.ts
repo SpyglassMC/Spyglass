@@ -4,7 +4,7 @@ import { $ } from '../../../utils.spec'
 import { constructConfig } from '../../../../types/Config'
 import FunctionInfo from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { ActionCode } from '../../../../types/ParsingError'
+import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils/utils'
 import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
 import { GetFormattedString } from '../../../../types/Formattable'
@@ -85,7 +85,7 @@ describe('BlockStateNode Tests', () => {
         it('Should return sort actions', () => {
             const range = { start: 3, end: 3 }
             const diagnostics = {
-                [ActionCode.BlockStateSortKeys]: diags
+                [ErrorCode.BlockStateSortKeys]: diags
             }
             const node = $(new BlockStateNode(), [0, 7], {
                 foo: 'bar',

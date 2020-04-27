@@ -1,8 +1,14 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { constructConfig } from '../../../../types/Config'
+import { constructConfig, VanillaConfig } from '../../../../types/Config'
 import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
 import { GetFormattedString } from '../../../../types/Formattable'
+import FunctionInfo from '../../../../types/FunctionInfo'
+import { ErrorCode } from '../../../../types/ParsingError'
+import IdentityNode from '../../../../types/nodes/IdentityNode'
+import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
+import { getCodeAction } from '../../../../utils/utils'
+import { $ } from '../../../utils.spec'
 
 describe('NbtByteNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
@@ -37,6 +43,24 @@ describe('NbtByteNode Tests', () => {
             const actual = node[GetFormattedString](lint)
 
             assert(actual === 'false')
+        })
+    })
+    describe('[GetCodeActions]() Tests', () => {
+        const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
+        const lineNumber = 10
+        const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+        const diags: any[] = [{ message: 'A diagnostic message' }]
+        it('Should convert it to short', () => {
+            const diagnostics = {
+                [ErrorCode.NbtTypeToShort]: diags
+            }
+            const node = $(new NbtByteNode(null, 17, '17'), [0, 3])
+
+            const actual = node[GetCodeActions](uri, info, lineNumber, { start: 1, end: 1 }, diagnostics)
+            assert.deepStrictEqual(actual, [getCodeAction(
+                'nbt-type-to-short', diags, uri, info.version, lineNumber, { start: 0, end: 3 },
+                '17s'
+            )])
         })
     })
 })

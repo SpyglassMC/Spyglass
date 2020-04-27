@@ -3,7 +3,7 @@ import { LintConfig } from '../../Config'
 import { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from '../ArgumentNode'
 import FunctionInfo from '../../FunctionInfo'
 import TextRange from '../../TextRange'
-import { ActionCode } from '../../ParsingError'
+import { ErrorCode } from '../../ParsingError'
 import { getCodeAction } from '../../../utils/utils'
 import { GetFormattedString } from '../../Formattable'
 
@@ -28,7 +28,7 @@ export default class BlockStateNode extends MapNode<string, string> {
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        const relevantDiagnostics = diagnostics[ActionCode.BlockStateSortKeys]
+        const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
         if (relevantDiagnostics && info.config.lint.blockStateSortKeys) {
             /* istanbul ignore next */
             const keys = info.config.lint.blockStateSortKeys[1] === 'alphabetically' ?

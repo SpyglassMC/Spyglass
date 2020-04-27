@@ -6,7 +6,7 @@ import { GetFormattedString } from '../../../types/Formattable'
 import FunctionInfo from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
 import IdentityNode from '../../../types/nodes/IdentityNode'
-import { ActionCode } from '../../../types/ParsingError'
+import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils/utils'
 import { $ } from '../../utils.spec'
 
@@ -108,7 +108,7 @@ describe('IdentityNode Tests', () => {
         it('Should complete the namespace', () => {
             const range = { start: 0, end: 7 }
             const diagnostics = {
-                [ActionCode.IdentityCompleteDefaultNamespace]: diags
+                [ErrorCode.IdentityCompleteDefaultNamespace]: diags
             }
             const node = $(new IdentityNode(undefined, ['foo', 'bar']), range)
 
@@ -121,7 +121,7 @@ describe('IdentityNode Tests', () => {
         it('Should omit the namespace', () => {
             const range = { start: 0, end: 17 }
             const diagnostics = {
-                [ActionCode.IdentityOmitDefaultNamespace]: diags
+                [ErrorCode.IdentityOmitDefaultNamespace]: diags
             }
             const node = $(new IdentityNode('minecraft', ['foo', 'bar']), range)
 

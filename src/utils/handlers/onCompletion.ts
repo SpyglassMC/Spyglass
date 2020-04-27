@@ -21,6 +21,7 @@ export default async function onCompletion({ char, lineNumber, info, cacheFile, 
     // Escape for TextMate: #431
     if (completions) {
         completions = completions.map(comp => {
+            /* istanbul ignore next */
             if (comp.insertTextFormat === InsertTextFormat.Snippet) {
                 return handleCompletionText(comp, str => escapeString(str, null))
             }

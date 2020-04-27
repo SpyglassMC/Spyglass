@@ -1,5 +1,5 @@
 import assert = require('power-assert')
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
 
@@ -20,7 +20,7 @@ describe('ParsingError Tests', () => {
         it('Should return diagnostic with action code', () => {
             const pe = new ParsingError(
                 { start: 0, end: 5 }, 'Expected a number but got nothing',
-                undefined, undefined, ActionCode.BlockStateSortKeys
+                undefined, undefined, ErrorCode.BlockStateSortKeys
             )
             const actual = pe.toDiagnostic(1)
             assert(actual.range.start.line === 1)
@@ -30,7 +30,7 @@ describe('ParsingError Tests', () => {
             assert(actual.source === 'datapack')
             assert(actual.severity === DiagnosticSeverity.Error)
             assert(actual.message.match(/Expected a number but got nothing./))
-            assert(actual.code === ActionCode.BlockStateSortKeys)
+            assert(actual.code === ErrorCode.BlockStateSortKeys)
         })
     })
 })

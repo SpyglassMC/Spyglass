@@ -2,7 +2,7 @@ import ArgumentParser from './ArgumentParser'
 import MapParser from './MapParser'
 import NbtdocHelper, { ListDoc as NbtListDoc, CompoundDoc as NbtCompoundDoc } from '../utils/NbtdocHelper'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import StringReader from '../utils/StringReader'
 import { arrayToMessage, validateStringQuote } from '../utils/utils'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
@@ -331,7 +331,7 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     locale('punc.quote', 'datapack.lint.nbtCompoundSortKeys')
                 ),
                 undefined, getDiagnosticSeverity(ctx.config.lint.nbtCompoundSortKeys[0]),
-                ActionCode.NbtCompoundSortKeys
+                ErrorCode.NbtCompoundSortKeys
             ))
         }
 

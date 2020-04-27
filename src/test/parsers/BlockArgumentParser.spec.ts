@@ -14,7 +14,7 @@ import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
 import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
@@ -267,7 +267,7 @@ describe('BlockArgumentParser Tests', () => {
                     { start: 15, end: 33 },
                     'Unsorted keys (rule: ‘datapack.lint.blockStateSortKeys’)',
                     undefined, DiagnosticSeverity.Warning,
-                    ActionCode.BlockStateSortKeys
+                    ErrorCode.BlockStateSortKeys
                 )
             ])
         })

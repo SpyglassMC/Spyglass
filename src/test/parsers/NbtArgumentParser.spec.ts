@@ -20,7 +20,7 @@ import NbtLongNode from '../../types/nodes/nbt/NbtLongNode'
 import NbtShortNode from '../../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { TestNbtdoc, TestRegistry } from '../utils/NbtdocHelper.spec'
 
@@ -415,7 +415,7 @@ describe('NbtArgumentParser Tests', () => {
                     { start: 0, end: 34 },
                     "Unsorted keys (rule: ‘datapack.lint.nbtCompoundSortKeys’)",
                     undefined, DiagnosticSeverity.Warning,
-                    ActionCode.NbtCompoundSortKeys
+                    ErrorCode.NbtCompoundSortKeys
                 )])
             })
             it('Should not report errors for sorted keys', () => {

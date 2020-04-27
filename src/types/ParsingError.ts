@@ -3,7 +3,7 @@ import TextRange, { remapTextRange } from './TextRange'
 import { locale } from '../locales/Locales'
 import IndexMapping from './IndexMapping'
 
-export const enum ActionCode {
+export const enum ErrorCode {
     BlockStateSortKeys,
     IdentityCompleteDefaultNamespace,
     IdentityOmitDefaultNamespace,
@@ -60,7 +60,7 @@ export default class ParsingError {
         /**
          * The code of the error.
          */
-        public code?: ActionCode
+        public code?: ErrorCode
     ) { }
 
     /**

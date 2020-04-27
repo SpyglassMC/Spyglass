@@ -3,7 +3,7 @@ import { getCodeAction } from '../../../utils/utils'
 import { GetFormattedString } from '../../Formattable'
 import FunctionInfo from '../../FunctionInfo'
 import IndexMapping from '../../IndexMapping'
-import { ActionCode } from '../../ParsingError'
+import { ErrorCode } from '../../ParsingError'
 import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
 import NbtCompoundNode from '../map/NbtCompoundNode'
@@ -31,7 +31,7 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> implements S
         const ans = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
         //#region UUID datafix: #377
-        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixCompound]
+        const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
         if (uuidDiagnostics) {
             try {
                 const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
@@ -47,7 +47,7 @@ export default class NbtStringNode extends NbtPrimitiveNode<string> implements S
         //#endregion
 
         //#region Attribute name datafix: #381
-        const attributeDiagnostics = diagnostics[ActionCode.NbtStringAttributeDatafix]
+        const attributeDiagnostics = diagnostics[ErrorCode.NbtStringAttributeDatafix]
         if (attributeDiagnostics) {
                 ans.push(getCodeAction(
                 'id-attribute-datafix', attributeDiagnostics,

@@ -27,7 +27,7 @@ import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
 import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ActionCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
+import ParsingError, { ErrorCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import StringReader from './StringReader'
@@ -416,26 +416,26 @@ export default class NbtdocHelper {
             ((isPredicate || (config && config[1] === 'strictly')) && !isNbtNodeTypeStrictlyMatched(actual, expected))
         ) {
             //#region Action codes of converting to similar types
-            let code: ActionCode | undefined = undefined
+            let code: ErrorCode | undefined = undefined
             if (actual === 'Byte' || actual === 'Short' || actual === 'Int' || actual === 'Long' || actual === 'Float' || actual === 'Double') {
-                if (expected === 'Byte') code = ActionCode.NbtTypeToByte
-                else if (expected === 'Short') code = ActionCode.NbtTypeToShort
-                else if (expected === 'Int') code = ActionCode.NbtTypeToInt
-                else if (expected === 'Long') code = ActionCode.NbtTypeToLong
-                else if (expected === 'Float') code = ActionCode.NbtTypeToFloat
-                else if (expected === 'Double') code = ActionCode.NbtTypeToDouble
+                if (expected === 'Byte') code = ErrorCode.NbtTypeToByte
+                else if (expected === 'Short') code = ErrorCode.NbtTypeToShort
+                else if (expected === 'Int') code = ErrorCode.NbtTypeToInt
+                else if (expected === 'Long') code = ErrorCode.NbtTypeToLong
+                else if (expected === 'Float') code = ErrorCode.NbtTypeToFloat
+                else if (expected === 'Double') code = ErrorCode.NbtTypeToDouble
             } else if (actual === 'ByteArray' || actual === 'IntArray' || actual === 'LongArray' || actual === 'List') {
-                if (expected === 'ByteArray') code = ActionCode.NbtTypeToByteArray
-                else if (expected === 'IntArray') code = ActionCode.NbtTypeToIntArray
-                else if (expected === 'LongArray') code = ActionCode.NbtTypeToLongArray
-                else if (expected === 'List') code = ActionCode.NbtTypeToList
+                if (expected === 'ByteArray') code = ErrorCode.NbtTypeToByteArray
+                else if (expected === 'IntArray') code = ErrorCode.NbtTypeToIntArray
+                else if (expected === 'LongArray') code = ErrorCode.NbtTypeToLongArray
+                else if (expected === 'List') code = ErrorCode.NbtTypeToList
             }
             //#endregion
             //#region UUID datafix: #377
             if (expected === 'IntArray' && actual === 'String') {
-                code = ActionCode.NbtUuidDatafixString
+                code = ErrorCode.NbtUuidDatafixString
             } else if (expected === 'IntArray' && actual === 'Compound') {
-                code = ActionCode.NbtUuidDatafixCompound
+                code = ErrorCode.NbtUuidDatafixCompound
             }
             //#endregion
             ans.errors.push(new ParsingError(
@@ -519,10 +519,10 @@ export default class NbtdocHelper {
                     } else {
                         // Errors.
                         if (!this.isInheritFromItemBase(doc)) {
-                            let code: ActionCode | undefined
+                            let code: ErrorCode | undefined
                             //#region UUID datafix: #377
                             if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
-                                code = ActionCode.NbtUuidDatafixUnknownKey
+                                code = ErrorCode.NbtUuidDatafixUnknownKey
                             }
                             //#endregion
                             ans.errors.push(new ParsingError(
@@ -613,7 +613,7 @@ export default class NbtdocHelper {
                 const message = expectedLiteral ?
                     locale('expected', arrayToMessage(['false', 'true'], true, 'or')) :
                     locale('expected-got', locale('nbt-tag.Byte'), locale('punc.quote', actualString))
-                const code = expectedLiteral ? ActionCode.NbtByteToLiteral : ActionCode.NbtByteToNumber
+                const code = expectedLiteral ? ErrorCode.NbtByteToLiteral : ErrorCode.NbtByteToNumber
                 if (isBooleanLiteral !== expectedLiteral) {
                     ans.errors.push(new ParsingError(
                         tag[NodeRange], message, undefined,
@@ -740,7 +740,7 @@ export default class NbtdocHelper {
             if (doc.Id === 'minecraft:attribute') {
                 for (const error of result.errors) {
                     if (error.code === undefined) {
-                        error.code = ActionCode.NbtStringAttributeDatafix
+                        error.code = ErrorCode.NbtStringAttributeDatafix
                     }
                 }
             }

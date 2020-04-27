@@ -8,7 +8,7 @@ import { constructConfig } from '../../types/Config'
 import NamespaceSummary from '../../types/NamespaceSummary'
 import IdentityNode from '../../types/nodes/IdentityNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import Registry from '../../types/Registry'
 import StringReader from '../../utils/StringReader'
 import { $ } from '../utils.spec'
@@ -637,7 +637,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 9 }, "Default namespace should be omitted here",
                     undefined, DiagnosticSeverity.Warning,
-                    ActionCode.IdentityOmitDefaultNamespace
+                    ErrorCode.IdentityOmitDefaultNamespace
                 )
             ])
         })
@@ -651,7 +651,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 5 }, "Default namespace shouldn't be omitted here",
                     undefined, DiagnosticSeverity.Warning,
-                    ActionCode.IdentityCompleteDefaultNamespace
+                    ErrorCode.IdentityCompleteDefaultNamespace
                 )
             ])
         })

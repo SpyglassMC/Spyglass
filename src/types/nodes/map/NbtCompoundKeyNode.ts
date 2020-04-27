@@ -3,7 +3,7 @@ import { getCodeAction } from '../../../utils/utils'
 import { GetFormattedString } from '../../Formattable'
 import FunctionInfo from '../../FunctionInfo'
 import IndexMapping from '../../IndexMapping'
-import { ActionCode } from '../../ParsingError'
+import { ErrorCode } from '../../ParsingError'
 import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeDescription, NodeRange, NodeType } from '../ArgumentNode'
 import NbtListNode from '../nbt/NbtListNode'
@@ -32,7 +32,7 @@ export default class NbtCompoundKeyNode extends NbtStringNode {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
 
         //#region UUID datafix: #377
-        const uuidDiagnostics = diagnostics[ActionCode.NbtUuidDatafixUnknownKey]
+        const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixUnknownKey]
         if (uuidDiagnostics && uuidDiagnostics.length > 0) {
             const oldSuper = this[SuperNode]
             if (oldSuper) {

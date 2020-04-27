@@ -7,7 +7,7 @@ import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
 import IndexMapping, { getOuterIndex } from '../types/IndexMapping'
 import { ToJsonString } from '../types/JsonConvertible'
-import ParsingError, { ActionCode } from '../types/ParsingError'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import TextRange from '../types/TextRange'
@@ -120,7 +120,7 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
     const isQuoted = StringReader.isQuote(firstChar)
 
     const expectedChar = quoteString(value, quoteTypeConfig ? quoteTypeConfig[1] : 'prefer double', true).charAt(0)
-    const specificQuoteCode = expectedChar === '"' ? ActionCode.StringDoubleQuote : ActionCode.StringSingleQuote
+    const specificQuoteCode = expectedChar === '"' ? ErrorCode.StringDoubleQuote : ErrorCode.StringSingleQuote
 
     if (quoteConfig) {
         const [severity, shouldQuoted] = quoteConfig
@@ -132,7 +132,7 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
                     locale('punc.quote', firstChar)
                 ),
                 true, getDiagnosticSeverity(severity),
-                shouldQuoted ? specificQuoteCode : ActionCode.StringUnquote
+                shouldQuoted ? specificQuoteCode : ErrorCode.StringUnquote
             ))
         }
     }

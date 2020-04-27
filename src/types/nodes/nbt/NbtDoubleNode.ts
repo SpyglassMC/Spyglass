@@ -1,10 +1,11 @@
-import { NbtNodeType } from './NbtNode'
-import { NodeType } from '../ArgumentNode'
-import NbtNumberNode from './NbtNumberNode'
-import { GetFormattedString } from '../../Formattable'
 import { LintConfig } from '../../Config'
+import { GetFormattedString } from '../../Formattable'
+import { ErrorCode } from '../../ParsingError'
+import { NodeType } from '../ArgumentNode'
+import { NbtNodeType } from './NbtNode'
+import NbtNumberNode from './NbtNumberNode'
 
-export default class NbtDoubleNode extends NbtNumberNode {
+class NbtDoubleNode extends NbtNumberNode {
     readonly [NodeType] = 'NbtDouble'
     readonly [NbtNodeType] = 'Double'
     protected readonly suffixConfigKey = 'nbtDoubleSuffix';
@@ -16,3 +17,10 @@ export default class NbtDoubleNode extends NbtNumberNode {
         return super[GetFormattedString](lint)
     }
 }
+
+/* istanbul ignore next */
+module NbtDoubleNode {
+    NbtNumberNode.actionProviders.push([ErrorCode.NbtTypeToDouble, 'double', (s, v, r) => new NbtDoubleNode(s, Number(v), r)])
+}
+
+export default NbtDoubleNode

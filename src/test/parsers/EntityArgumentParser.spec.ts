@@ -16,7 +16,7 @@ import NumberNode from '../../types/nodes/NumberNode'
 import NumberRangeNode from '../../types/nodes/NumberRangeNode'
 import StringNode from '../../types/nodes/StringNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ActionCode } from '../../types/ParsingError'
+import ParsingError, { ErrorCode } from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
@@ -571,7 +571,7 @@ describe('EntityArgumentParser Tests', () => {
                         { start: 2, end: 20 },
                         'Unsorted keys (rule: ‘datapack.lint.selectorSortKeys’)',
                         undefined, DiagnosticSeverity.Warning,
-                        ActionCode.SelectorSortKeys
+                        ErrorCode.SelectorSortKeys
                     )
                 ])
             })

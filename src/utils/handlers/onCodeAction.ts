@@ -4,7 +4,7 @@ import ArgumentNode, { NodeRange, GetCodeActions, DiagnosticMap } from '../../ty
 import { CacheFile } from '../../types/ClientCache'
 import { areOverlapped } from '../../types/TextRange'
 import { Uri } from 'vscode'
-import { ActionCode } from '../../types/ParsingError'
+import { ErrorCode } from '../../types/ParsingError'
 
 export default function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: FunctionInfo, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
     const ans: CodeAction[] = []
@@ -20,8 +20,8 @@ export default function onCodeAction({ uri, info, diagnostics, range }: { uri: U
                     const diagnosticsMap: DiagnosticMap = {}
                     for (const diag of diagnostics) {
                         if (diag.code !== undefined) {
-                            diagnosticsMap[diag.code as ActionCode] = diagnosticsMap[diag.code as ActionCode] || []
-                            diagnosticsMap[diag.code as ActionCode]!.push(diag)
+                            diagnosticsMap[diag.code as ErrorCode] = diagnosticsMap[diag.code as ErrorCode] || []
+                            diagnosticsMap[diag.code as ErrorCode]!.push(diag)
                         }
                     }
                     ans.push(...data[GetCodeActions](uri.toString(), info, i, selectedRange, diagnosticsMap))

@@ -3,7 +3,7 @@ import { LintConfig } from '../../Config'
 import { GetFormattedString } from '../../Formattable'
 import FunctionInfo from '../../FunctionInfo'
 import GameMode from '../../GameMode'
-import { ActionCode } from '../../ParsingError'
+import { ErrorCode } from '../../ParsingError'
 import TextRange from '../../TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from '../ArgumentNode'
 import IdentityNode from '../IdentityNode'
@@ -80,7 +80,7 @@ export default class SelectorArgumentsNode extends MapNode<StringNode, any> {
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        const relevantDiagnostics = diagnostics[ActionCode.SelectorSortKeys]
+        const relevantDiagnostics = diagnostics[ErrorCode.SelectorSortKeys]
         if (relevantDiagnostics && info.config.lint.selectorSortKeys) {
             ans.push(getCodeAction(
                 'selector-sort-keys', relevantDiagnostics,
