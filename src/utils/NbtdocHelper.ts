@@ -1,4 +1,4 @@
-import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat, TextEdit } from 'vscode-languageserver'
+import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
 import LineParser from '../parsers/LineParser'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
@@ -28,10 +28,10 @@ import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError, { ActionCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
-import { getDiagnosticSeverity, DiagnosticConfig } from '../types/StylisticConfig'
-import StringReader from './StringReader'
-import { arrayToCompletions, arrayToMessage, quoteString, remapCompletionItem, validateStringQuote, handleCompletionText } from './utils'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
+import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
+import StringReader from './StringReader'
+import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from './utils'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -340,7 +340,12 @@ export default class NbtdocHelper {
             NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
         ]).parse(reader, subCtx)
         for (const com of result.completions) {
-            ans.completions.push(NbtdocHelper.escapeCompletion(com, ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null))
+            ans.completions.push(
+                NbtdocHelper.escapeCompletion(
+                    { ...com, insertText: com.insertText || com.label },
+                    ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null
+                )
+            )
         }
     }
     private completeStringField(ans: ValidateResult, ctx: ParsingContext, _doc: StringDoc, _isPredicate: boolean, description: string) {
@@ -349,7 +354,12 @@ export default class NbtdocHelper {
         const result = this.validateInnerString(reader, subCtx, description)
         if (result && result.completions) {
             for (const com of result.completions) {
-                ans.completions.push(NbtdocHelper.escapeCompletion(com, ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null))
+                ans.completions.push(
+                    NbtdocHelper.escapeCompletion(
+                        { ...com, insertText: com.insertText || com.label },
+                        ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null
+                    )
+                )
             }
         }
     }

@@ -6,6 +6,7 @@ import FunctionInfo from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import StringReader from '../StringReader'
 import { handleCompletionText, escapeString } from '../utils'
+import { InsertTextFormat } from 'vscode-languageserver'
 
 export default async function onCompletion({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const parser = new LineParser(false, 'line')
@@ -19,7 +20,12 @@ export default async function onCompletion({ char, lineNumber, info, cacheFile, 
 
     // Escape for TextMate: #431
     if (completions) {
-        completions = completions.map(v => handleCompletionText(v, str => escapeString(str, null)))
+        completions = completions.map(comp => {
+            if (comp.insertTextFormat === InsertTextFormat.Snippet) {
+                return handleCompletionText(comp, str => escapeString(str, null))
+            }
+            return comp
+        })
     }
 
     return completions
