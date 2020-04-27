@@ -1,3 +1,5 @@
+# [v2.0.0](https://github.com/SPGoding/datapack-language-server/compare/v1.13.8...v2.0.0) (2020-04-27)
+
 # [v1.13.8](https://github.com/SPGoding/datapack-language-server/compare/v1.13.7...v1.13.8) (2020-03-19)
 
 ## 🐛 Bug Fixes

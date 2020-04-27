@@ -1,6 +1,6 @@
 {
     "name": "datapack-language-server",
-    "version": "1.13.8",
+    "version": "2.0.0",
     "main": "dist/client.js",
     "bin": {
         "datapack-language-server": "./dist/server.js"
