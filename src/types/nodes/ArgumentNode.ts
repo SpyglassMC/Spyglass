@@ -42,8 +42,11 @@ export default abstract class ArgumentNode implements Formattable {
         this[Triage](
             key => {
                 const value = this[key as keyof this]
-                if (value instanceof ArgumentNode && areOverlapped(range, value[NodeRange])) {
-                    ans.push(...value[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                const arr = value instanceof Array ? value : [value]
+                for (const item of arr) {
+                    if (item instanceof ArgumentNode && areOverlapped(range, item[NodeRange])) {
+                        ans.push(...item[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                    }
                 }
             }
         )
@@ -65,8 +68,11 @@ export default abstract class ArgumentNode implements Formattable {
             this[Triage](
                 key => {
                     const value = this[key as keyof this]
-                    if (value instanceof ArgumentNode && isInRange(char, value[NodeRange])) {
-                        ans = value[GetHoverInformation](lineNumber, char)
+                    const arr = value instanceof Array ? value : [value]
+                    for (const item of arr) {
+                        if (item instanceof ArgumentNode && isInRange(char, item[NodeRange])) {
+                            ans = item[GetHoverInformation](lineNumber, char)
+                        }
                     }
                 }
             )
