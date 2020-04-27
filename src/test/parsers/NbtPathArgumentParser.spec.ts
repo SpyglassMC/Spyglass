@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import { NodeRange } from '../../types/nodes/ArgumentNode'
+import { NodeRange, NodeDescription } from '../../types/nodes/ArgumentNode'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
@@ -15,6 +15,7 @@ import ParsingError from '../../types/ParsingError'
 import StringReader from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
+import NbtdocHelper from '../../utils/NbtdocHelper'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -26,8 +27,6 @@ describe('NbtPathArgumentParser Tests', () => {
     })
 
     const parsers = new ArgumentParserManager()
-    before(async () => {
-    })
     describe('parse() Tests', () => {
         it('Should parse a simple key', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -219,6 +218,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey1[NodeRange] = { start: 0, end: 8 }
+                expectedKey1[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The additional boolean')
 
                 const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 9 })
                 expectedKey2[NodeRange] = { start: 9, end: 12 }
@@ -247,6 +247,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
+                expectedKey[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The additional boolean')
 
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 8, end: 12 }
@@ -275,6 +276,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
+                expectedKey[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The additional boolean')
 
                 const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 10 }
@@ -378,6 +380,10 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 4 })
                 expectedKey[NodeRange] = { start: 4, end: 12 }
+                expectedKey[NodeDescription] = NbtdocHelper.getKeyDescription(
+                    { List: { length_range: null, value_type: { Compound: 1 } } },
+                    ' The additional complex list'
+                )
 
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 0, end: 3 }
@@ -458,6 +464,10 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey[NodeRange] = { start: 0, end: 8 }
+                expectedKey[NodeDescription] = NbtdocHelper.getKeyDescription(
+                    { ByteArray: { length_range: null, value_range: null } },
+                    ' The additional byte array'
+                )
 
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 11, end: 14 }

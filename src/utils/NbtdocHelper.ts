@@ -511,10 +511,7 @@ export default class NbtdocHelper {
                     const field = this.readField(key)
                     if (field) {
                         // Hover information.
-                        tag[Keys][key][NodeDescription] = `${
-                            NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype))
-                            }\n* * * * * *\n${
-                            NbtdocHelper.handleDescription(field.description)}`
+                        tag[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
                         this.validateField(ans, ctx, childTag, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
                     } else {
                         // Errors.
@@ -958,5 +955,18 @@ export default class NbtdocHelper {
     }
     static isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
         return (doc as any).Or !== undefined
+    }
+
+    static moveToChildIfNeeded(helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | undefined) {
+        if (helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
+            return helper.clone().goCompound(doc.Compound)
+        }
+        return helper
+    }
+
+    static getKeyDescription(value: nbtdoc.NbtValue, description: string) {
+        return `${NbtdocHelper.localeType(NbtdocHelper.getValueType(value))
+            }\n* * * * * *\n${
+            NbtdocHelper.handleDescription(description)}`
     }
 }

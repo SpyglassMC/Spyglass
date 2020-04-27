@@ -2,7 +2,7 @@ import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
 import IndexMapping from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
-import { NodeRange } from '../types/nodes/ArgumentNode'
+import { NodeDescription, NodeRange } from '../types/nodes/ArgumentNode'
 import NbtCompoundKeyNode from '../types/nodes/map/NbtCompoundKeyNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
 import NbtPathNode from '../types/nodes/NbtPathNode'
@@ -184,8 +184,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                     locale('unknown-key', locale('punc.quote', key)),
                     true, DiagnosticSeverity.Warning
                 ))
-            } else {
-                doc = field ? field.nbttype : null
+            } else if (field) {
+                keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
+                doc = field.nbttype
             }
         }
 
@@ -231,7 +232,10 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         if (this.canParseCompoundFilter(reader)) {
             checkSchema()
-            this.parseCompoundFilter(ans, reader, ctx, helper,
+            this.parseCompoundFilter(
+                ans, reader, ctx, 
+                /* istanbul ignore next */
+                isListDoc(doc) ? NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined) : undefined,
                 /* istanbul ignore next */
                 isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null
             )
@@ -245,7 +249,14 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         if (this.canParseSep(reader)) {
             checkSchema()
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, helper, isListDoc(doc) ? doc.List.value_type : null, ['key', 'index'], false)
+            this.parseSpecifiedTypes(
+                ans, reader, ctx,
+                /* istanbul ignore next */
+                isListDoc(doc) ? NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined) : undefined,
+                /* istanbul ignore next */
+                isListDoc(doc) ? doc.List.value_type : null,
+                ['key', 'index'], false
+            )
         } else {
             this.parseSpecifiedTypes(ans, reader, ctx, helper,
                 /* istanbul ignore next */
