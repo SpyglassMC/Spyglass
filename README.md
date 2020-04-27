@@ -26,7 +26,9 @@ DHP can provide many heavy language features for documents in your datapack, inc
   - [Completions](#completions)
   - [Code Snippets](#code-snippets)
   - [Definition Comments](#definition-comments)
-  - [Diagnostics](#diagnostics)
+  - [Alias Comments](#alias-comments)
+  - [Diagnostics and Code Actions](#diagnostics-and-code-actions)
+  - [Formatting and Linting](#formatting-and-linting)
   - [Folding Ranges](#folding-ranges)
   - [Call Hierarchy](#call-hierarchy)
   - [Color Information](#color-information)
@@ -35,7 +37,6 @@ DHP can provide many heavy language features for documents in your datapack, inc
   - [Goto Definitions](#goto-definitions)
   - [Finding References](#finding-references)
   - [Renaming](#renaming)
-  - [Formatting and Linting](#formatting-and-linting)
   - [Configuration Settings](#configuration-settings)
   - [Regenerating Cache](#regenerating-cache)
 - [Contributing](#contributing)
@@ -51,7 +52,7 @@ You can install DHP from the VSCode Marketplace: [![VSCode Marketplace](https://
 
 Alternatively, press Ctrl + P and execute `ext install spgoding.datapack-language-server` in your VSCode.
 
-**Note**: DHP has a minimum version requirement of VSCode `1.41.0`. Please make sure that your VSCode is later than this version.
+**Note**: DHP has a minimum version requirement of VSCode `1.44.0`. Please make sure that your VSCode is later than this version.
 
 # Features
 
@@ -108,29 +109,44 @@ If you'd like to help us translate this project into other languages, it would b
 
 ## Semantic Highlighting
 
-All command arguments should be colored semantically. 
-Unfortunately, the semantic coloring API of VSCode is still in proposed stage, thus we cannot use it in production environment. All the screenshots below are taken in development mode.
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Semantic-Coloring
 
-Before VSCode finalizes its API, I recommend to use [Arcensoth](https://github.com/Arcensoth)'s [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) extension for coloring. 
+All command arguments can be colored semantically. We also encourage you to install 
+[Arcensoth](https://github.com/Arcensotj)'s [language-mcfunction extension](https://github.com/Arcensoth/language-mcfunction)
+to get instant coloring feedback.
+
+![semantic-coloring](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/semantic-coloring.png)
 
 ## Signature Information
 
-You can get hints about the arguments of commands while typing.
+You can get hints about the arguments of commands while typing. Signature information will automatically show if
+you commit a space character.
+
+Alternatively you can use Ctrl + Shift + Space (or other configured hotkey) to show signature information manually.
 
 ![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.gif)
 
 ## Completions
 
-The extension can compute completions as you typing commands. Completions will automatically show if you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']`. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually. Note: completions are not available everywhere. Typically only the beginnings of arguments and literals are supported.
+The extension can compute completions as you typing commands. Completions will automatically show if 
+you commit one of these characters: `[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']`. 
+
+Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually.
 
 DHP can provide completions for simple commands:
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-For more complex NBT tags, with the help from [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths) contributed by MrYurihi, Levertion and Bassab03:
+For more complex NBT tags, with help from [mc-nbtdoc](https://github.com/Yurihaia/mc-nbtdoc) made by [Yurihaia](https://github.com/Yurihaia):
 ![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
 And also NBT paths:
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
+
+And also text components:
+![text-component-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/text-component-completions.gif)
+
+And also NESTING THEM TOGETHER:
+![ohhhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhhh-completions.gif)
 
 ## Code Snippets
 
@@ -140,15 +156,40 @@ DHP provides some helpful code snippets. See [VSCode's official docs](https://co
 
 ## Definition Comments
 
-You can use `#define bossbar|entity|objective|score_holder|storage|tag|team <id: string> [<description: string>]` to define a bossbar, an entity name, an objective, a score holder (fake player) name, a data storage, an entity tag, or a team. Definition comments will be used to compute completions, rename symbols and find references/definitions by DHP. The game will treat definition comments as normal comments and simply ignore them.
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Define-Comment
+
+You can use `#define <type: string> <id: string> [<description: string>]` to define a string which will be used to compute completions, rename symbols, and find references/definitions by DHP. The game will treat definition comments as normal comments and simply ignore them.
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 
-## Diagnostics
+## Alias Comments
+
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Alias-Comment
+
+You can use `#alias <type: string> <alias: string> <value: string>` to define a string that will be shown in the completion list for specific arguments,
+which will insert a different value when selected.
+
+![alias-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/alias-comments.gif)
+
+## Diagnostics and Code Actions
+
+> Wiki for code actions: https://github.com/SPGoding/datapack-language-server/wiki/Code-Actions
 
 DHP provides real-time diagnostics about your commands. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
 
+Some diagnostics also have a corresponding quickfix action so that you can fix them easily.
+
 ![diagnostics](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/diagnostics.gif)
+
+## Formatting and Linting
+
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Lint-Rules
+
+You can format the current function by pressing Shift + Alt + F or other configured hotkey.
+
+Also there are several linting rules you can set in the configuration settings. DHP can report errors for commands that don't follow your preference.
+
+![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
 ## Folding Ranges
 
@@ -236,16 +277,6 @@ Additionally, if you rename a namespaced ID with file definition (e.g. the ID fo
 
 *However*, renaming a file in a workspace manually will *not* update the namespaced IDs of it, and may cause problems with the cache.
 
-## Formatting and Linting
-
-You can format the current function by pressing Shift + Alt + F or other configured hotkey.
-
-Also there are several linting rules you can set in the configuration settings. DHP can report errors for commands that don't follow your preference.
-
-See the [wiki](https://github.com/SPGoding/datapack-language-server/wiki/Stylistic-Rules) for more information.
-
-![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
-
 ## Configuration Settings
 
 Press Ctrl + `,` (or other configured hotkey) to open the Settings page of VSCode, and search `datapack` to see all the configuration settings contributed by DHP. You can add your own code snippets, set the lint preferences and environment information to meet your needs. These config can be changed for the current user or the workspace. See [VSCode's official docs](https://code.visualstudio.com/docs/getstarted/settings) to learn more about configuring settings.
@@ -259,7 +290,7 @@ DHP uses cache to accelerate the process of renaming, finding references/definit
 Thanks for everyone who contributed to this project!
 
 - [1.x.x](./contributors/1.x.x.md)
-- [next](./contributors/next.md)
+- [2.0.0](./contributors/2.0.0.md)
 
 If you'd like to contribute, check [CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
 
