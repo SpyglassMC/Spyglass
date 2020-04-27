@@ -440,7 +440,10 @@ export default class NbtdocHelper {
             //#endregion
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
-                locale('expected-got', locale(`nbt-tag.${expected}`), locale(`nbt-tag.${actual}`)),
+                locale('diagnostic-rule',
+                    locale('expected-got', locale(`nbt-tag.${expected}`), locale(`nbt-tag.${actual}`)),
+                    locale('punc.quote', 'nbtTypeCheck')
+                ),
                 true, getDiagnosticSeverity(config ? config[0] : 'warning'), code
             ))
         }
@@ -749,7 +752,8 @@ export default class NbtdocHelper {
             /// Quotes.
             ans.errors.push(...validateStringQuote(
                 strTag.toString(), strTag.valueOf(), tag[NodeRange],
-                ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType
+                ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType,
+                'nbtStringQuote', 'nbtStringQuoteType'
             ))
         }
     }
@@ -893,7 +897,8 @@ export default class NbtdocHelper {
                 /// Quotes.
                 ans.errors.push(...validateStringQuote(
                     strTag.toString(), strTag.valueOf(), tag[NodeRange],
-                    ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType
+                    ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType,
+                    'nbtStringQuote', 'nbtStringQuoteType'
                 ))
             }
         }

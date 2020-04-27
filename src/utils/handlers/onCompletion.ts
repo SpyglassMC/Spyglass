@@ -19,6 +19,7 @@ export default async function onCompletion({ char, lineNumber, info, cacheFile, 
     }, commandTree, vanillaData))
 
     // Escape for TextMate: #431
+    /* istanbul ignore else */
     if (completions) {
         completions = completions.map(comp => {
             /* istanbul ignore next */

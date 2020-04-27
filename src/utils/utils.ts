@@ -110,7 +110,7 @@ export function quoteString(inner: string, quoteType: QuoteTypeConfig, forced: b
     }
 }
 
-export function validateStringQuote(raw: string, value: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>): ParsingError[] {
+export function validateStringQuote(raw: string, value: string, range: TextRange, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>, quoteConfigRule?: keyof LintConfig, quoteTypeConfigRule?: keyof LintConfig): ParsingError[] {
     const ans: ParsingError[] = []
     if (!quoteConfig && !quoteTypeConfig) {
         return ans
@@ -125,12 +125,13 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
     if (quoteConfig) {
         const [severity, shouldQuoted] = quoteConfig
         if (shouldQuoted !== isQuoted) {
+            const message = locale('expected-got',
+                shouldQuoted ? locale('quote') : locale('unquoted-string'),
+                locale('punc.quote', firstChar)
+            )
             ans.push(new ParsingError(
                 range,
-                locale('expected-got',
-                    shouldQuoted ? locale('quote') : locale('string'),
-                    locale('punc.quote', firstChar)
-                ),
+                quoteConfigRule ? locale('diagnostic-rule', message, locale('punc.quote', quoteConfigRule)) : message,
                 true, getDiagnosticSeverity(severity),
                 shouldQuoted ? specificQuoteCode : ErrorCode.StringUnquote
             ))
@@ -140,12 +141,13 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
     if (isQuoted && quoteTypeConfig) {
         const severity = quoteTypeConfig[0]
         if (firstChar !== expectedChar) {
+            const message = locale('expected-got',
+                locale('punc.quote', expectedChar),
+                locale('punc.quote', firstChar)
+            )
             ans.push(new ParsingError(
                 range,
-                locale('expected-got',
-                    locale('punc.quote', expectedChar),
-                    locale('punc.quote', firstChar)
-                ),
+                quoteConfigRule ? locale('diagnostic-rule', message, locale('punc.quote', quoteTypeConfigRule)) : message,
                 true, getDiagnosticSeverity(severity),
                 specificQuoteCode
             ))

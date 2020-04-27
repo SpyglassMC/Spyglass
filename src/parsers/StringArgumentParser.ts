@@ -62,7 +62,8 @@ export default class StringArgumentParser extends ArgumentParser<StringNode> {
         const quote = typeof this.quote === 'string' ? ctx.config.lint[this.quote] as DiagnosticConfig<boolean> : this.quote
         /* istanbul ignore next */
         const quoteType = typeof this.quoteType === 'string' ? ctx.config.lint[this.quoteType] as DiagnosticConfig<QuoteTypeConfig> : this.quoteType
-        ans.errors.push(...validateStringQuote(ans.data.raw, ans.data.value, ans.data[NodeRange], quote, quoteType))
+        /* istanbul ignore next */
+        ans.errors.push(...validateStringQuote(ans.data.raw, ans.data.value, ans.data[NodeRange], quote, quoteType, typeof this.quote === 'string' ? this.quote : undefined, typeof this.quoteType === 'string' ? this.quoteType : undefined))
         /// Unknown values.
         if (this.options && !this.options.includes(ans.data.value)) {
             ans.errors.push(

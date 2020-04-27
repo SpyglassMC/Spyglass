@@ -241,7 +241,11 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     const raw = reader.string.slice(start, end)
                     result.data = key
                     //#region Errors.
-                    ans.errors.push(...validateStringQuote(raw, key, { start, end }, ctx.config.lint.nbtCompoundKeyQuote, ctx.config.lint.nbtCompoundKeyQuoteType))
+                    ans.errors.push(...validateStringQuote(
+                        raw, key, { start, end },
+                        ctx.config.lint.nbtCompoundKeyQuote, ctx.config.lint.nbtCompoundKeyQuoteType,
+                        'nbtCompoundKeyQuote', 'nbtCompoundKeyQuoteType'
+                    ))
                     //#endregion
                     //#region Completions.
                     if (helper && doc) {

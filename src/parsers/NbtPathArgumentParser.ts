@@ -166,7 +166,8 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         ans.errors.push(...validateStringQuote(
             reader.string.slice(start, reader.cursor), key,
             { start, end: reader.cursor },
-            ctx.config.lint.nbtPathQuote, ctx.config.lint.nbtPathQuoteType
+            ctx.config.lint.nbtPathQuote, ctx.config.lint.nbtPathQuoteType,
+            'nbtPathQuote', 'nbtPathQuoteType'
         ))
         //#endregion
 
@@ -233,7 +234,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         if (this.canParseCompoundFilter(reader)) {
             checkSchema()
             this.parseCompoundFilter(
-                ans, reader, ctx, 
+                ans, reader, ctx,
                 /* istanbul ignore next */
                 isListDoc(doc) ? NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined) : undefined,
                 /* istanbul ignore next */

@@ -214,7 +214,7 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = null
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
         it('Should return nothing when should not quote', () => {
@@ -223,7 +223,7 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 3 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', false]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
         it('Should return errors when should not quote', () => {
@@ -232,10 +232,24 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', false]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected an unquoted string but got ‘"’ (rule: ‘stringQuote’)`,
+                undefined, DiagnosticSeverity.Information,
+                ErrorCode.StringUnquote
+            )])
+        })
+        it('Should return errors when should not quote without rule name', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', false]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected a string but got ‘"’`,
+                `Expected an unquoted string but got ‘"’`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringUnquote
             )])
@@ -246,7 +260,7 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
         it('Should return errors when should quote', () => {
@@ -255,10 +269,10 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 3 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = null
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected a quote (‘'’ or ‘"’) but got ‘f’`,
+                `Expected a quote (‘'’ or ‘"’) but got ‘f’ (rule: ‘stringQuote’)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])
@@ -269,10 +283,24 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always single']
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
         it('Should return errors when should quote with single quotation marks', () => {
+            const raw = '"foo"'
+            const value = 'foo'
+            const range = { start: 0, end: 5 }
+            const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
+            const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always single']
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
+            assert.deepStrictEqual(actual, [new ParsingError(
+                range,
+                `Expected ‘'’ but got ‘"’ (rule: ‘stringQuoteType’)`,
+                undefined, DiagnosticSeverity.Information,
+                ErrorCode.StringSingleQuote
+            )])
+        })
+        it('Should return errors when should quote with single quotation marks without rule name', () => {
             const raw = '"foo"'
             const value = 'foo'
             const range = { start: 0, end: 5 }
@@ -292,7 +320,7 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
         it('Should return errors when should quote with double quotation marks', () => {
@@ -301,10 +329,10 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 5 }
             const quoteConfig: DiagnosticConfig<boolean> = ['information', true]
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected ‘"’ but got ‘'’`,
+                `Expected ‘"’ but got ‘'’ (rule: ‘stringQuoteType’)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])
@@ -315,7 +343,7 @@ describe('utils.ts Tests', () => {
             const range = { start: 0, end: 3 }
             const quoteConfig: DiagnosticConfig<boolean> = null
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
-            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
+            const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
         })
     })

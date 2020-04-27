@@ -160,6 +160,7 @@
     "unexpected-selector-variable": "Unexpected selector variable %0%",
     "unknown-command": "Unknown command %0%",
     "unknown-key": "Unknown key %0%",
+    "unquoted-string": "an unquoted string",
     "unsorted-keys": "Unsorted keys",
     "uuid": "a UUID",
     "vector": "a vector"
