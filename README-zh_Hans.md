@@ -250,8 +250,16 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 感谢所有大憨批的贡献者！
 
-- [1.x.x](./contributors/1.x.x.md)
-- [2.0.0](./contributors/2.0.0.md)
+## 2.0.0 版本的贡献者
+
+![0.png](https://i.loli.net/2020/04/28/j8LpReVzNW9Cr5g.png)
+![1.png](https://i.loli.net/2020/04/28/pfmohyGReE6HP7i.png)
+
+[点此](https://github.com/SPGoding/datapack-language-server/blob/master/contributors/2.0.0.md)查看详细列表。
+
+## 往期版本贡献者
+
+- [1.x.x](https://github.com/SPGoding/datapack-language-server/blob/master/contributors/1.x.x.md)
 
 ## 贡献
 
