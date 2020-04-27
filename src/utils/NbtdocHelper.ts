@@ -1,4 +1,4 @@
-import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
 import LineParser from '../parsers/LineParser'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
@@ -28,9 +28,10 @@ import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError, { ActionCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
-import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import { getDiagnosticSeverity, DiagnosticConfig } from '../types/StylisticConfig'
 import StringReader from './StringReader'
-import { arrayToCompletions, arrayToMessage, quoteString, remapCompletionItem, validateStringQuote } from './utils'
+import { arrayToCompletions, arrayToMessage, quoteString, remapCompletionItem, validateStringQuote, handleCompletionText } from './utils'
+import QuoteTypeConfig from '../types/QuoteTypeConfig'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -297,21 +298,20 @@ export default class NbtdocHelper {
         for (const key of pool) {
             const field = clonedHelper.readField(key)!
             const description = NbtdocHelper.handleDescription(field.description)
-            let insertText: string
-            if (currentType) {
-                insertText = quoteString(key, currentType, true).slice(1, -1)
-            } else {
-                const quoteType = ctx.config.lint.nbtCompoundKeyQuoteType ? ctx.config.lint.nbtCompoundKeyQuoteType[1] : 'prefer double'
-                const quote = ctx.config.lint.nbtCompoundKeyQuote ? ctx.config.lint.nbtCompoundKeyQuote[1] : false
-                insertText = quoteString(key, quoteType, quote)
-            }
-            ans.completions.push({
-                label: key, insertText,
-                kind: CompletionItemKind.Property,
-                detail: NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype)),
-                /* istanbul ignore next */
-                ...description ? { documentation: description } : {}
-            })
+            ans.completions.push(
+                NbtdocHelper.escapeCompletion(
+                    {
+                        label: key, insertText: key,
+                        kind: CompletionItemKind.Property,
+                        detail: NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype)),
+                        /* istanbul ignore next */
+                        ...description ? { documentation: description } : {}
+                    },
+                    ctx.config.lint.nbtCompoundKeyQuote,
+                    ctx.config.lint.nbtCompoundKeyQuoteType,
+                    currentType
+                )
+            )
         }
     }
     private completeEnumField(ans: ValidateResult, ctx: ParsingContext, doc: EnumDoc) {
@@ -340,10 +340,7 @@ export default class NbtdocHelper {
             NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
         ]).parse(reader, subCtx)
         for (const com of result.completions) {
-            ans.completions.push({
-                ...com,
-                label: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.label)
-            })
+            ans.completions.push(NbtdocHelper.escapeCompletion(com, ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null))
         }
     }
     private completeStringField(ans: ValidateResult, ctx: ParsingContext, _doc: StringDoc, _isPredicate: boolean, description: string) {
@@ -352,11 +349,7 @@ export default class NbtdocHelper {
         const result = this.validateInnerString(reader, subCtx, description)
         if (result && result.completions) {
             for (const com of result.completions) {
-                ans.completions.push({
-                    ...com,
-                    label: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.label),
-                    ...com.insertText ? { insertText: NbtdocHelper.getFormattedString(ctx.config.lint, 'String', com.insertText) } : {}
-                })
+                ans.completions.push(NbtdocHelper.escapeCompletion(com, ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType, null))
             }
         }
     }
@@ -557,13 +550,33 @@ export default class NbtdocHelper {
                 break
             case 'String':
             default:
-                const quote = lint.nbtStringQuote ? lint.nbtStringQuote[1] : true
-                const quoteType = lint.nbtStringQuoteType ? lint.nbtStringQuoteType[1] : 'prefer double'
-                const raw = quoteString(value.toString(), quoteType, quote)
-                tag = new NbtStringNode(null, value as string, raw, {})
-                break
+                return NbtdocHelper.quoteCompletionText(value.toString(), lint.nbtStringQuote, lint.nbtStringQuoteType, null)
         }
         return tag[GetFormattedString](lint)
+    }
+
+    private static quoteCompletionText(text: string, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>, currentType: 'always double' | 'always single' | null) {
+        if (currentType) {
+            return quoteString(text, currentType, true).slice(1, -1)
+        } else {
+            const quote = quoteConfig ? quoteConfig[1] : false
+            const quoteType = quoteTypeConfig ? quoteTypeConfig[1] : 'prefer double'
+            return quoteString(text, quoteType, quote)
+        }
+    }
+    private static getQuoteType(raw: string): 'always double' | 'always single' | null {
+        if (raw.charAt(0) === '"') {
+            return 'always double'
+        } else if (raw.charAt(0) === "'") {
+            return 'always single'
+        } else {
+            return null
+        }
+    }
+
+    /* istanbul ignore next */
+    private static escapeCompletion(origin: CompletionItem, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>, currentType: 'always double' | 'always single' | null) {
+        return handleCompletionText(origin, str => NbtdocHelper.quoteCompletionText(str, quoteConfig, quoteTypeConfig, currentType))
     }
 
     private static getValueType(value: nbtdoc.NbtValue | nbtdoc.EnumType) {
@@ -851,15 +864,28 @@ export default class NbtdocHelper {
             // Errors.
             /// Special cases: https://github.com/SPGoding/datapack-language-server/issues/332#issuecomment-590167678.
             const strTag = tag as NbtStringNode
-            const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
-            const reader = new StringReader(strTag.valueOf())
-            const result = this.validateInnerString(reader, subCtx, description)
-            this.combineResult(ans, result, strTag)
-            /// Quotes.
-            ans.errors.push(...validateStringQuote(
-                strTag.toString(), strTag.valueOf(), tag[NodeRange],
-                ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType
-            ))
+            const quoteType = NbtdocHelper.getQuoteType(strTag.toString())
+            if (quoteType) {
+                const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
+                const reader = new StringReader(strTag.valueOf())
+                const result = this.validateInnerString(reader, subCtx, description)
+                if (result && result.completions) {
+                    result.completions = result.completions.map(
+                        v => NbtdocHelper.escapeCompletion(
+                            v,
+                            ctx.config.lint.nbtStringQuote,
+                            ctx.config.lint.nbtStringQuoteType,
+                            quoteType
+                        )
+                    )
+                }
+                this.combineResult(ans, result, strTag)
+                /// Quotes.
+                ans.errors.push(...validateStringQuote(
+                    strTag.toString(), strTag.valueOf(), tag[NodeRange],
+                    ctx.config.lint.nbtStringQuote, ctx.config.lint.nbtStringQuoteType
+                ))
+            }
         }
     }
 

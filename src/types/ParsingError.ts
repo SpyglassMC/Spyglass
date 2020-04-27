@@ -86,11 +86,12 @@ export function downgradeParsingError(errors: ParsingError[]) {
 }
 
 /**
- * Remap specific errors according to the mapping.
+ * Remap specific errors according to the mapping, and remove the action code.
  * @param errors Input errors.
  */
 export function remapParsingErrors(errors: ParsingError[], mapping: IndexMapping) {
     for (const err of errors) {
         err.range = remapTextRange(err.range, mapping)
+        err.code = undefined
     }
 }

@@ -4,7 +4,7 @@ export default interface IndexMapping {
 }
 
 export function getOuterIndex(mapping: IndexMapping, innerIndex: number) {
-    return (mapping.start || 0) + innerIndex + (mapping.skipAt || []).filter(skippedIndex => innerIndex >= skippedIndex).length
+    return (mapping.start || 0) + innerIndex + (mapping.skipAt || []).filter(skippedIndex => innerIndex > skippedIndex).length
 }
 
 export function getInnerIndex(mapping: IndexMapping, outerIndex: number) {

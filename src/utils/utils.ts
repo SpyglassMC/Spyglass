@@ -1,7 +1,7 @@
 import clone from 'clone'
 import https from 'https'
 import { EOL } from 'os'
-import { CodeActionKind, CompletionItem, Diagnostic } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, Diagnostic, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales/Locales'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
@@ -54,7 +54,7 @@ export function arrayToMessage(arr: string | string[], quoted = true, conjunctio
  * @param str A string.
  * @param quote A string indicating which type of quote should be escaped.
  */
-export function escapeString(str: string, quote: '"' | "'" = '"') {
+export function escapeString(str: string, quote: '"' | "'" | null = '"') {
     let ans = ''
     for (const char of str) {
         if (char === '\\' || char === quote) {
@@ -269,4 +269,29 @@ export function remapCompletionItem(completion: CompletionItem, param1: IndexMap
         }
     }
     return ans
+}
+
+/* istanbul ignore next */
+export function handleCompletionText(origin: CompletionItem, cb: (str: string) => string) {
+    let label = origin.label
+    let insertText: string | undefined
+    let textEdit: TextEdit | undefined
+    if (origin.textEdit) {
+        textEdit = {
+            range: origin.textEdit.range,
+            newText: cb(origin.textEdit.newText)
+        }
+    }
+    if (origin.insertText) {
+        insertText = cb(origin.insertText)
+    }
+    if (!origin.textEdit && !origin.insertText) {
+        label = cb(origin.label)
+    }
+    return {
+        ...origin,
+        label,
+        ...insertText ? { insertText } : {},
+        ...textEdit ? { textEdit } : {}
+    }
 }

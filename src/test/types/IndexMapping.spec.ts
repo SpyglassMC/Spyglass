@@ -121,7 +121,7 @@ describe('IndexMapping Tests', () => {
         })
         it('Should return correctly from 1', () => {
             const actual = getOuterIndex(mapping, 1)
-            assert(actual === 14)
+            assert(actual === 13)
         })
         it('Should return correctly from 2', () => {
             const actual = getOuterIndex(mapping, 2)
@@ -141,7 +141,7 @@ describe('IndexMapping Tests', () => {
         })
         it('Should return correctly from 6', () => {
             const actual = getOuterIndex(mapping, 6)
-            assert(actual === 20)
+            assert(actual === 19)
         })
         it('Should return correctly from 7', () => {
             const actual = getOuterIndex(mapping, 7)
@@ -149,7 +149,7 @@ describe('IndexMapping Tests', () => {
         })
         it('Should return correctly from 8', () => {
             const actual = getOuterIndex(mapping, 8)
-            assert(actual === 23)
+            assert(actual === 22)
         })
         it('Should return correctly from 9', () => {
             const actual = getOuterIndex(mapping, 9)
@@ -161,11 +161,11 @@ describe('IndexMapping Tests', () => {
         })
         it('Should return correctly from 11', () => {
             const actual = getOuterIndex(mapping, 11)
-            assert(actual === 27)
+            assert(actual === 26)
         })
         it('Should return correctly from 12', () => {
             const actual = getOuterIndex(mapping, 12)
-            assert(actual === 29)
+            assert(actual === 28)
         })
         it('Should return correctly from 13', () => {
             const actual = getOuterIndex(mapping, 13)
@@ -177,7 +177,7 @@ describe('IndexMapping Tests', () => {
         })
         it('Should return correctly from 15', () => {
             const actual = getOuterIndex(mapping, 15)
-            assert(actual === 33)
+            assert(actual === 32)
         })
         it('Should return correctly from 16', () => {
             const actual = getOuterIndex(mapping, 16)
