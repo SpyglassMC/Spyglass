@@ -523,8 +523,8 @@ describe('NbtdocHelper Tests', () => {
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '"minecraft"', kind: CompletionItemKind.Module },
-                    { label: '"one_boolean_field"', kind: CompletionItemKind.Field }
+                    { label: 'minecraft', insertText: '"minecraft"', kind: CompletionItemKind.Module },
+                    { label: 'one_boolean_field', insertText: '"one_boolean_field"', kind: CompletionItemKind.Field }
                 ])
             })
         })
@@ -585,7 +585,7 @@ describe('NbtdocHelper Tests', () => {
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
                 assert.deepStrictEqual(ans.completions, [
-                    { label: '"fooTag"' }
+                    { label: 'fooTag', insertText: '"fooTag"' }
                 ])
             })
         })
