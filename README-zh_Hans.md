@@ -12,7 +12,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20%F0%9F%98%9C%20%F0%9F%98%8D-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https://www.mcbbs.net/home.php?mod=space&uid=193048) 前辈制作的 [Datapack Helper](https://www.mcbbs.net/thread-772929-1-1.html) 的精神续作，是一组能够为 Minecraft Java版的数据包文件（包括进度、函数、战利品表、断言、配方、各种标签）提供支持的插件。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。
+Datapack Helper Plus，简称 DHP，中文名大憨批，是一组能够为 Minecraft Java版的数据包文件（包括进度、函数、战利品表、断言、配方、各种标签）提供支持的插件。您可以将其安装在 [VSCode](https://code.visualstudio.com/) 编辑器上。
 
 # 免责声明
 
@@ -24,7 +24,7 @@ Datapack Helper Plus，简称 DHP，中文名大憨批，是 [pca006132](https:/
 
 或者，您也可以直接打开 VSCode，按 Ctrl + P，复制粘贴 `ext install spgoding.datapack-language-server` 并回车。
 
-**提示**：大憨批要求 VSCode 的版本最低为 `1.41.0`。请确保你安装的 VSCode 在该版本之后发布。
+**提示**：大憨批要求 VSCode 的版本最低为 `1.44.0`。请确保你安装的 VSCode 在该版本之后发布。
 
 # 特性
 
@@ -81,32 +81,39 @@ function spgoding:foo
 
 ## 语义化高亮
 
-所有命令参数都可以被语义化高亮。如果感兴趣的话，你可以在 [#308](https://github.com/SPGoding/datapack-language-server/issues/308) 查看大憨批使用的所有 Semantic Token Type 与 Semantic Token Modifer。
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Semantic-Coloring
 
-不幸的是，VSCode 的相关 API 仍处于 proposed 阶段，这意味着我们无法在生产环境下使用这些 API。下方所有图片都是在开发环境下截取的。
+所有命令参数都可以被语义化高亮。我们同时建议您安装 
+[Arcensoth](https://github.com/Arcensotj) 的 [language-mcfunction extension](https://github.com/Arcensoth/language-mcfunction)
+插件以获得实时的颜色反馈。
 
-在 VSCode 正式发布这些 API 之前，我建议使用 [Arcensoth](https://github.com/Arcensoth) 制作的 [language-mcfunction](https://marketplace.visualstudio.com/items?itemName=arcensoth.language-mcfunction) 插件进行语法高亮。
+![semantic-coloring](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/semantic-coloring.png)
 
 ## 签名信息
 
-您可以在敲打命令的过程中得到该命令的签名提示。
+您可以在敲打命令的过程中得到该命令的签名提示。这些信息通常会在你按下空格后自动显示。
+
+您也可以使用 Ctrl + Shift + 空格手动触发签名信息。
 
 ![signature-help](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/signature-help.gif)
 
 ## 自动补全
 
-当您敲击了以下任意字符时，大憨批将自动计算补全提示：`[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']`。此外您也可以使用 Ctrl + Space 快捷键（或其他自行设定的按键）来手动触发自动补全。不过请注意：并非所有地方都能提供自动补全。通常只在参数或文本的开头能够提供。
+当您敲击了以下任意字符时，大憨批将自动计算补全提示：`[' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@']`。此外您也可以使用 Ctrl + 空格快捷键（或其他自行设定的按键）来手动触发自动补全。
 
 大憨批能够提供简单命令的自动补全：
 ![simple-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/simple-completions.gif)
 
-复杂的 NBT 标签的自动补全（感谢 MrYurihi、Levertion 与 Bassab03 贡献的 [mc-nbt-paths](https://github.com/MrYurihi/mc-nbt-paths)）：
+复杂的 NBT 标签的自动补全（感谢 [Yurihaia](https://github.com/Yurihaia) 维护的 [mc-nbtdoc](https://github.com/Yurihaia/mc-nbtdoc)）：
 ![nbt-tag-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-tag-completions.gif)
 
 以及 NBT 路径的自动补全：
 ![nbt-path-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/nbt-path-completions.gif)
 
-**甚至是物品标签里面的 JSON 文本里面的命令里面的 NBT**的自动补全，返回的结果将会自动进行转义：
+以及 JSON 文本的自动补全：
+![text-component-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/text-component-completions.gif)
+
+**甚至能把它们套起来**：
 ![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
 
 ## 代码片段
@@ -117,15 +124,39 @@ function spgoding:foo
 
 ## 定义注释
 
-你可以使用形如 `#define bossbar|entity|objective|score_holder|storage|tag|team <标识符: string> [<描述: string>]` 的格式来定义一个 bossbar、实体、记分项、记分假名、数据储存、记分板标签或队伍。定义注释中定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Define-Comment
+
+你可以使用形如 `#define <类型：字符串> <标识符: 字符串> [<描述: 字符串>]` 的格式来定义一个字符串。这些被定义的内容将会参与到补全提示的计算、符号的重命名、查找引用或定义等操作当中。Minecraft 本身会把这些定义注释当作普通的注释并直接忽略掉，只有大憨批会读取这些注释。
 
 ![definition-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/definition-comments.png)
 
-## 错误提示
+## 别名注释
+
+> Wiki: https://github.com/SPGoding/datapack-language-server/wiki/Alias-Comment
+
+你可以使用形如 `#alias <类型：字符串> <别名: 字符串> <值: 字符串>` 的格式来定义一个字符串别名，其将会出现在指定参数的补全列表中。
+
+![alias-comments](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/alias-comments.gif)
+
+## 错误提示与代码操作
+
+> 代码操作的 Wiki：https://github.com/SPGoding/datapack-language-server/wiki/Code-Actions
 
 大憨批能够提供实时的错误提示。它既能像 Minecraft 一样展现语法错误，也能给予你更加详细的警告信息。
 
+有些错误提示还附带代码操作，能够帮你快速修正问题。
+
 ![diagnostics](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/diagnostics.gif)
+
+## 格式化与校验
+
+> Wiki：https://github.com/SPGoding/datapack-language-server/wiki/Lint-Rules
+
+您可以通过按下 Shift + Alt + F 或其他自行设定的快捷键来格式化当前文档。
+
+您可以在配置中设置一些格式化与校验的规则，大憨批将给不符合设定的命令进行标注。
+
+![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
 
 ## 折叠区域
 
@@ -211,35 +242,39 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 *然而*，直接手动重命名工作区中的一个文件并*不会*更新它的命名空间 ID，并且可能会导致缓存错误。
 
-## 格式化与校验
-
-您可以通过按下 Shift + Alt + F 或其他自行设定的快捷键来格式化当前文档。
-
-您可以在配置中设置一些格式化与校验的规则。
-
-**警告**：格式化功能可能导致您的函数内容损坏，请及时备份。使用风险请自行承担。格式化功能默认是禁用的，如果您要使用，应当在设置界面中勾选 `datapack.lint.enableFormatting`。
-
-![formatting](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/formatting.gif)
-
 ## 配置
 
-使用 Ctrl + `,`（或其他绑定的快捷键）来打开 VSCode 的设置页，并搜索 `datapacklanguageserver` 来查看所有由大憨批提供的配置选项。通过修改这些选项，你可以自行添加代码片段、设置格式化与校验偏好，以及修改运行环境的相关信息。这些选项既可以是为当前用户设置的，也可以是为当前工作区设置的。有关修改配置选项的具体内容请查看 [VSCode 的官方文档](https://code.visualstudio.com/docs/getstarted/settings)。
+使用 Ctrl + `,`（或其他绑定的快捷键）来打开 VSCode 的设置页，并搜索 `datapack` 来查看所有由大憨批提供的配置选项。通过修改这些选项，你可以自行添加代码片段、设置格式化与校验偏好，以及修改运行环境的相关信息。这些选项既可以是为当前用户设置的，也可以是为当前工作区设置的。有关修改配置选项的具体内容请查看 [VSCode 的官方文档](https://code.visualstudio.com/docs/getstarted/settings)。
 
 # 贡献者
 
-大憨批目前已有 39 名直接贡献者，没有他们就没有大憨批的今天。完整的贡献者列表请在 [README.md](https://github.com/SPGoding/datapack-language-server#contributors) 查看。
+感谢所有大憨批的贡献者！
 
-# Q：大憨批就是个垃圾！
+- [1.x.x](./contributors/1.x.x.md)
+- [2.0.0](./contributors/2.0.0.md)
 
-请把您的意见、建议、遇到的问题等发布在 [GitHub issues](https://github.com/SPGoding/datapack-language-server/issues)，或直接回复在论坛发布帖之下。发布在 GitHub 有利于本人对其进行追踪，并便于将您加入到贡献者列表中；发布在论坛有利于我个人给予您相应积分奖励。如果您乐意，当然可以**在两处都进行反馈**。
+## 贡献
 
-# Q：大憨批真好用！
+如果您有意进行贡献，可以[提交漏洞或建议](https://github.com/SPGoding/datapack-language-server/issues/new)、[给我打钱](https://afdian.net/@SPGoding)等。
+
+查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 以获取更多信息。
+
+# 常见问题
+
+## 为什么补全提示卡死了？
+
+这是网络原因。请按 Ctrl + `.` 打开设置界面，搜索 `datapack.env.dataSource`，将其从 `GitHub` 切换至 `码云`。
+
+## 有漏洞/少功能！
+
+请把您的意见、建议、遇到的问题等发布在 [GitHub issues](https://github.com/SPGoding/datapack-language-server/issues/new)，或直接回复在论坛发布帖之下。发布在 GitHub 有利于本人对其进行追踪，发布在论坛有利于我个人给予您相应积分奖励。请**不要**在两处都进行反馈。
+
+## 大憨批真好用！
 
 谢谢。您有很多种对大憨批表示支持的方式。
 
 - 如果您喜欢大憨批的话，这就足够了。
 - 如果您的 MCBBS 帐号有权限的话，在本人的论坛发布页评满各项分值，这对本人申请精华有很大帮助；
-- 如果您有 GitHub 帐号的话，给本人的 [GitHub 仓库](https://github.com/SPGoding/datapack-language-server)点一个 Star；
 - 如果您有微软帐号的话，在本人的[插件发布页](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server&ssr=false#review-details)给一个五星好评。
 - 如果您有 CBer 朋友的话，把大憨批安利给 TA；
-- 如果您有钱的话，留着自己买点儿好吃的吧。
+- 如果您有钱的话，本人有一个[爱发电](https://afdian.net/@SPGoding)页面。
