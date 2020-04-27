@@ -33,6 +33,7 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
             label: type, insertText: `${type}$1`,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Snippet,
+            preselect: true,
             sortText: type === VectorElementType.Relative ? VectorArgumentParser.RelativeSortText : VectorArgumentParser.LocalSortText
         }
         for (let i = 2; i <= this.dimension; i++) {
