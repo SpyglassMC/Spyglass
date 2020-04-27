@@ -34,7 +34,7 @@
             "close": "}"
         }
     ],
-    "autoCloseBefore": ":,=}] \n\t",
+    "autoCloseBefore": ":,=}]\"' \n\t",
     "surroundingPairs": [
         [
             "\"",
