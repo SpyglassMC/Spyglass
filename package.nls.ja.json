@@ -1,6 +1,7 @@
 {
     "datapack.commands.regenerateCache.title": "キャッシュの再生成",
     "datapack.config.env.cmdVersion": "コマンドツリーのバージョン (一般的なバージョンのみが利用可能です)",
+    "datapack.config.env.dataSource": "補完データのダウンロード元 国/地域によってraw.githubusercontent.comがブロックされていない限り、GitHubを選択することをお勧めします。",
     "datapack.config.env.dataVersion": "レジストリ, ブロック定義, nbtdocを含むデータのバージョン `19w40a`の後にリリースされた[version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) のIDである必要があります。バージョンIDとは別に`Latest release` または `Latest snapshot`を入力することも可能です (大文字と小文字は区別されません)",
     "datapack.config.env.dependsOnVanilla": "このデータパックをVanillaデータパックに依存させる 有効にするとVanillaデータパックのデータ補完が提供されます。",
     "datapack.config.env.exclude": "検証から除外するファイル ここに記載される文字列はグロブパターンとして、データパックのルートからの相対ファイルパスとして指定します。",
