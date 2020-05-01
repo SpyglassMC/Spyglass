@@ -20,16 +20,16 @@ export default class TagArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        //#region Completions
-        if (reader.cursor === ctx.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'tags'))
-        }
-        //#endregion
         const category = getSafeCategory(ctx.cache, 'tags')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
+        //#endregion
+        //#region Completions
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'tags'))
+        }
         //#endregion
         //#region Tokens
         ans.tokens.push(Token.from(start, reader, TokenType.variable))

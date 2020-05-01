@@ -26,16 +26,16 @@ export default class ObjectiveArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        //#region Completions
-        if (reader.cursor === ctx.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'objectives'))
-        }
-        //#endregion
         const category = getSafeCategory(ctx.cache, 'objectives')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
+        //#endregion
+        //#region Completions
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'objectives'))
+        }
         //#endregion
         //#region Tokens
         if (this.isDefinition) {

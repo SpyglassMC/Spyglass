@@ -26,16 +26,16 @@ export default class TeamArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        //#region Completions
-        if (reader.cursor === ctx.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'teams'))
-        }
-        //#endregion
         const category = getSafeCategory(ctx.cache, 'teams')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
+        //#endregion
+        //#region Completions
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'teams'))
+        }
         //#endregion
         //#region Tokens
         if (this.isDefinition) {
