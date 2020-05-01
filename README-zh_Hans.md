@@ -114,7 +114,7 @@ function spgoding:foo
 ![text-component-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/text-component-completions.gif)
 
 **甚至能把它们套起来**：
-![ohhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhh-completions.gif)
+![ohhhhh-completions](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/ohhhhh-completions.gif)
 
 ## 代码片段
 
@@ -271,7 +271,7 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 ## 为什么补全提示卡死了？
 
-这是网络原因。请按 Ctrl + `.` 打开设置界面，搜索 `datapack.env.dataSource`，将其从 `GitHub` 切换至 `码云`。
+这是网络原因。请按 Ctrl + `,` 打开设置界面，搜索 `datapack.env.dataSource`，将其从 `GitHub` 切换至 `码云`。
 
 ## 有漏洞/少功能！
 
