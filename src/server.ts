@@ -41,7 +41,7 @@ import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
 import onSignatureHelp from './utils/handlers/onSignatureHelp'
 import { requestText } from './utils/utils'
 
-export const LangServerVersion = require('../package.json').version
+export const LangServerVersion = '2.0.x'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
