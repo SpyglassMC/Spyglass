@@ -16,30 +16,27 @@ export default async function onDidChangeTextDocument({ info, version, contentCh
         const range = (change as any).range
         if (range) {
             // Incremental update.
+            const { start, end } = range as Range
 
-            try {
-                const { start, end } = range as Range
-
-                // Update `strings`.
-                const affectedStrings = (
-                    info.strings[start.line].slice(0, start.character) +
-                    text +
-                    info.strings[end.line].slice(end.character)
-                ).split(/\r?\n/)
-                info.strings.splice(start.line, end.line - start.line + 1, ...affectedStrings)
-
-                // Update `lines`.
-                const affectedLines: Line[] = []
-                for (const string of affectedStrings) {
-                    await parseString(string, affectedLines, config, cacheFile, undefined, commandTree, vanillaData)
-                }
-                info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
-            } catch (e) {
-                /* istanbul ignore next */
-                console.error(e)
-                /* istanbul ignore next */
-                console.error(`info.strings = ${info.strings.join('\n')}\n* * * * * *\nrange = ${JSON.stringify(range)}`)
+            /* istanbul ignore next */
+            while (info.strings.length <= end.line) {
+                info.strings.push('')
             }
+
+            // Update `strings`.
+            const affectedStrings = (
+                info.strings[start.line].slice(0, start.character) +
+                text +
+                info.strings[end.line].slice(end.character)
+            ).split(/\r?\n/)
+            info.strings.splice(start.line, end.line - start.line + 1, ...affectedStrings)
+
+            // Update `lines`.
+            const affectedLines: Line[] = []
+            for (const string of affectedStrings) {
+                await parseString(string, affectedLines, config, cacheFile, undefined, commandTree, vanillaData)
+            }
+            info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
         } else {
             // Full update.
 
