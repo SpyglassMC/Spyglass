@@ -10,7 +10,7 @@ import NumberNode from '../types/nodes/NumberNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError from '../types/ParsingError'
-import TextRange from '../types/TextRange'
+import TextRange, { isInRange } from '../types/TextRange'
 import Token, { TokenType } from '../types/Token'
 import NbtdocHelper, { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc } from '../utils/NbtdocHelper'
 import StringReader from '../utils/StringReader'
@@ -61,7 +61,7 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             let range: TextRange = { start: reader.cursor, end: reader.cursor }
             if (this.canParseKey(reader)) {
                 isKey = true
-                range = this.parseKey(ans, reader, ctx, helper)[NodeRange]
+                range = this.parseKey(ans, reader, ctx, helper, doc)[NodeRange]
                 //#region Schema errors.
                 if (helper && doc && !NbtdocHelper.isCompoundDoc(doc)) {
                     ans.errors.push(new ParsingError(
@@ -73,19 +73,15 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 //#endregion
             }
             //#region Completions.
-            if (helper && doc) {
-                const clonedHelper = helper.clone()
-                if (NbtdocHelper.isCompoundDoc(doc)) {
-                    clonedHelper.goCompound(doc.Compound)
-                    if (range.start <= ctx.cursor && ctx.cursor <= range.end) {
-                        if (StringReader.isQuote(firstChar)) {
-                            // FIXME: after MC-175504 is fixed.
-                            /* istanbul ignore next */
-                            const quoteType = firstChar === '"' ? 'always double' : 'always single'
-                            clonedHelper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
-                        } else {
-                            clonedHelper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
-                        }
+            if (helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
+                if (isInRange(ctx.cursor, range)) {
+                    if (StringReader.isQuote(firstChar)) {
+                        // FIXME: after MC-175504 is fixed.
+                        /* istanbul ignore next */
+                        const quoteType = firstChar === '"' ? 'always double' : 'always single'
+                        helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
+                    } else {
+                        helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
                     }
                 }
             }
@@ -140,10 +136,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         }
     }
 
-    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined) {
+    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null) {
         const start = reader.cursor
         let key: string = ''
-        let doc: nbtdoc.NbtValue | null = null
         const out: { mapping: IndexMapping } = { mapping: {} }
         try {
             if (reader.peek() === '"') {
@@ -175,11 +170,12 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         ans.tokens.push(Token.from(start, reader, TokenType.property))
         //#endregion
 
-        let subHelper: NbtdocHelper | undefined
+        let childHelper: NbtdocHelper | undefined
+        let childDoc: nbtdoc.NbtValue | null = null
         if (helper) {
-            subHelper = helper.clone()
-            const field = subHelper.readField(key)
-            if (!field && !subHelper.isInheritFromItemBase(subHelper.readCompound())) {
+            childHelper = helper.clone()
+            const field = childHelper.readField(key)
+            if (!field && !childHelper.isInheritFromItemBase(childHelper.readCompound())) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unknown-key', locale('punc.quote', key)),
@@ -187,15 +183,18 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 ))
             } else if (field) {
                 keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
-                doc = field.nbttype
+                childDoc = field.nbttype
+                if (NbtdocHelper.isCompoundDoc(childDoc)) {
+                    childHelper.goCompound(childDoc.Compound)
+                }
             }
         }
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, subHelper, doc, ['key', 'index'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, childHelper, childDoc, ['key', 'index'], false)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, subHelper, doc, ['filter', 'index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, childHelper, childDoc, ['filter', 'index'], true)
         }
 
         return keyNode

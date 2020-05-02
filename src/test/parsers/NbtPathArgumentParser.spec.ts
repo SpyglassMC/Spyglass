@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import ArgumentParserManager from '../../parsers/ArgumentParserManager'
 import NbtPathArgumentParser from '../../parsers/NbtPathArgumentParser'
-import { NodeRange, NodeDescription } from '../../types/nodes/ArgumentNode'
+import { NodeDescription, NodeRange } from '../../types/nodes/ArgumentNode'
 import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
 import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
 import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
@@ -12,10 +12,10 @@ import NbtPathNode from '../../types/nodes/NbtPathNode'
 import NumberNode from '../../types/nodes/NumberNode'
 import ParsingContext, { constructContext } from '../../types/ParsingContext'
 import ParsingError from '../../types/ParsingError'
+import NbtdocHelper from '../../utils/NbtdocHelper'
 import StringReader from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
-import NbtdocHelper from '../../utils/NbtdocHelper'
 
 describe('NbtPathArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -212,6 +212,13 @@ describe('NbtPathArgumentParser Tests', () => {
             ctx = constructContext({ parsers, nbtdoc: TestNbtdoc })
         })
         describe('schema Tests', () => {
+            it('Should parse an existing child key without errors (#442)', () => {
+                const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:complex')
+                const reader = new StringReader('addition.foo')
+                const { errors } = parser.parse(reader, ctx)
+
+                assert.deepStrictEqual(errors, [])
+            })
             it('Should return warning when the key is not in compound tags', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('addition.foo')

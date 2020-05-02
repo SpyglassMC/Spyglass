@@ -4,7 +4,7 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "next.md"
+    "2.0.x.md"
   ],
   "imageSize": 64,
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
@@ -54,6 +54,14 @@
         { "type": "bug", "link": "issues/423", "text": "#423" },
         { "type": "bug", "link": "issues/424", "text": "#424" },
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
+      ]
+    },
+    {
+      "name": "Ellivers",
+      "avatar_url": "https://cdn.discordapp.com/avatars/287675064634179594/a8bbe21ac1e4af1a44597f2d760efca6.png?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/442", "text": "#442" }
       ]
     },
     {
