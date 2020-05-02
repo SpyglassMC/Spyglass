@@ -153,7 +153,8 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/438", "text": "#438" }
+        { "type": "bug", "link": "issues/438", "text": "#438" },
+        { "type": "bug", "link": "issues/439", "text": "#439" }
       ]
     },
     {

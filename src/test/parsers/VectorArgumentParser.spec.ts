@@ -73,6 +73,16 @@ describe('VectorArgumentParser Tests', () => {
                 ]
             )
         })
+        it('Should not return completions for local elements when hasNonLocal', async () => {
+            const ctx = constructContext({ cursor: 2 })
+            const parser = new VectorArgumentParser(2, true, true)
+            const actual = parser.parse(new StringReader('~ '), ctx)
+            assert.deepStrictEqual(actual.completions,
+                [
+                    { label: '~', sortText: '1' }
+                ]
+            )
+        })
         it('Should return untolerable error when the input is empty', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader(''), ctx)

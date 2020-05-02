@@ -72,12 +72,10 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 let hasNonLocal = false
                 try {
                     while (dimension) {
-                        const result = this.parseElement(reader, cursor, this.dimension - dimension)
-                        ans.data.push(result.data)
-                        combineArgumentParserResult(ans, result)
+                        const result = this.parseElement(ans, reader, cursor, this.dimension - dimension, hasLocal, hasNonLocal)
 
-                        hasLocal = hasLocal || result.data.type === VectorElementType.Local
-                        hasNonLocal = hasNonLocal || result.data.type !== VectorElementType.Local
+                        hasLocal = hasLocal || result.type === VectorElementType.Local
+                        hasNonLocal = hasNonLocal || result.type !== VectorElementType.Local
 
                         if (--dimension) {
                             reader
@@ -119,7 +117,7 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 false
             ))
             if (cursor === start) {
-                this.getCompletionsForSymbols(ans)
+                this.getCompletionsForSymbols(ans, false, false)
             }
         }
 
@@ -132,20 +130,20 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
         return ans
     }
 
-    private parseElement(reader: StringReader, cursor: number, index: number) {
-        const ans: ArgumentParserResult<VectorElementNode> = {
-            data: new VectorElementNode(VectorElementType.Absolute, 0, ''),
-            tokens: [], completions: [], errors: [], cache: {}
-        }
+    /**
+     * Add next element to `ans`, and also return it.
+     */
+    private parseElement(ans: ArgumentParserResult<VectorNode>, reader: StringReader, cursor: number, index: number, hasLocal: boolean, hasNonLocal: boolean) {
+        const ansElement = new VectorElementNode(VectorElementType.Absolute, 0, '')
         const start = reader.cursor
 
         if (cursor === reader.cursor) {
-            this.getCompletionsForSymbols(ans)
+            this.getCompletionsForSymbols(ans, hasLocal, hasNonLocal)
         }
 
         const firstChar = reader.peek()
         if (firstChar === VectorElementType.Local || firstChar === VectorElementType.Relative) {
-            ans.data.type = firstChar
+            ansElement.type = firstChar
             reader.skip()
         }
 
@@ -154,8 +152,8 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 const start = reader.cursor
                 const str = reader.readNumber()
                 const num = parseFloat(str)
-                ans.data.raw = str
-                ans.data.value = num
+                ansElement.raw = str
+                ansElement.value = num
                 const min = this.min instanceof Array ? this.min[index] : this.min
                 const max = this.max instanceof Array ? this.max[index] : this.max
                 if (min !== undefined && !(num >= min)) {
@@ -181,35 +179,37 @@ export default class VectorArgumentParser extends ArgumentParser<VectorNode> {
             }
         }
 
-        if (!this.allowLocal && ans.data.type === VectorElementType.Local) {
+        if (!this.allowLocal && ansElement.type === VectorElementType.Local) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('unexpected-local-coordinate',
-                    locale('punc.quote', ans.data.toString())
+                    locale('punc.quote', ansElement.toString())
                 )
             ))
-        } else if (!this.allowRelative && ans.data.type === VectorElementType.Relative) {
+        } else if (!this.allowRelative && ansElement.type === VectorElementType.Relative) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('unexpected-relative-coordinate',
-                    locale('punc.quote', ans.data.toString())
+                    locale('punc.quote', ansElement.toString())
                 )
             ))
         }
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ansElement[NodeRange] = { start, end: reader.cursor }
 
-        return ans
+        ans.data.push(ansElement)
+
+        return ansElement
     }
 
-    private getCompletionsForSymbols(ans: ArgumentParserResult<any>) {
-        if (this.allowRelative) {
+    private getCompletionsForSymbols(ans: ArgumentParserResult<any>, hasLocal: boolean, hasNonLocal: boolean) {
+        if (this.allowRelative && !hasLocal) {
             ans.completions.push({
                 label: VectorElementType.Relative,
                 sortText: VectorArgumentParser.RelativeSortText
             })
         }
-        if (this.allowLocal) {
+        if (this.allowLocal && !hasNonLocal) {
             ans.completions.push({
                 label: VectorElementType.Local,
                 sortText: VectorArgumentParser.LocalSortText
