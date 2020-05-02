@@ -57,5 +57,16 @@ describe('VectorNode Tests', () => {
             const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
             assert.deepStrictEqual(actual, [])
         })
+        it('Should not return align actions when the vector is not of type absolute', () => {
+            const range = { start: 1, end: 2 }
+            const node = $(new VectorNode(), {
+                length: 3,
+                0: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                2: new VectorElementNode(VectorElementType.Relative, 1.4, '1.4'),
+            })
+            const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
+            assert.deepStrictEqual(actual, [])
+        })
     })
 })

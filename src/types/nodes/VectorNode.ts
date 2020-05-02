@@ -53,7 +53,9 @@ export default class VectorNode extends ArgumentNode implements ArrayLike<Vector
 
     [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
-        if (Array.prototype.some.call(this, (v: VectorElementNode) => !v.raw.includes('.'))) {
+        if (Array.prototype.some.call(this,
+            (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')
+        )) {
             ans.push(
                 getCodeAction(
                     'vector-align-0.0', [], uri, info.version, lineNumber, this[NodeRange],

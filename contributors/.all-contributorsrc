@@ -148,6 +148,15 @@
       ]
     },
     {
+      "name": "missinggo",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/438", "text": "#438" }
+      ]
+    },
+    {
       "name": "ncfumction",
       "avatar_url": "https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256",
       "contributions": [],
