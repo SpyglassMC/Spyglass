@@ -1,18 +1,18 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
+import { locale } from '../locales/Locales'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 import BlockNode from '../types/nodes/BlockNode'
 import IdentityNode from '../types/nodes/IdentityNode'
-import StringReader from '../utils/StringReader'
-import MapParser from './MapParser'
-import ParsingError, { ErrorCode } from '../types/ParsingError'
-import ParsingContext from '../types/ParsingContext'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
 import BlockStateNode, { BlockStateNodeChars } from '../types/nodes/map/BlockStateNode'
 import { IsMapSorted } from '../types/nodes/map/MapNode'
 import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
-import { NodeRange } from '../types/nodes/ArgumentNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import ParsingContext from '../types/ParsingContext'
+import ParsingError, { ErrorCode } from '../types/ParsingError'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
+import Token, { TokenType } from '../types/Token'
+import StringReader from '../utils/StringReader'
+import ArgumentParser from './ArgumentParser'
+import MapParser from './MapParser'
 
 export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     static identity = 'Block'
@@ -116,7 +116,6 @@ export default class BlockArgumentParser extends ArgumentParser<BlockNode> {
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
             const tagResult = ctx.parsers.get('Nbt', [
-                /* istanbul ignore next */
                 'Compound', 'minecraft:block', id.isTag ? id.toString() : null, this.isPredicate
             ]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode

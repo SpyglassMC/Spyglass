@@ -223,7 +223,7 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return data with all kinds of negativable array arguments', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const reader = new StringReader('@a[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={foo: 1b}]')
+                const reader = new StringReader('@e[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={foo: 1b}]')
 
                 const expectedCompound = new NbtCompoundNode(null)
                 expectedCompound[NodeRange] = { start: 113, end: 122 }
@@ -256,7 +256,7 @@ describe('EntityArgumentParser Tests', () => {
 
                 const actual = parser.parse(reader, ctx)
 
-                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', expected), [0, 123]))
+                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expected), [0, 123]))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with the same negativable array arguments', () => {
@@ -342,18 +342,46 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return error for unexpected argument key', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[foo=bar]'), ctx)
+                const actual = parser.parse(new StringReader('@e[foo=bar]'), ctx)
                 assert.deepStrictEqual(
                     actual.errors[0],
                     new ParsingError({ start: 3, end: 6 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘foo’')
                 )
             })
+            it('Should return error for "type" of @a', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@a[type=bee]'), ctx)
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                ])
+            })
+            it('Should return error for "type" of @p', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@p[type=bee]'), ctx)
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                ])
+            })
+            it('Should return error for "type" of @r', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@r[type=bee]'), ctx)
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                ])
+            })
+            it('Should return error for "limit" of @s', () => {
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@s[limit=1]'), ctx)
+                assert.deepStrictEqual(actual.errors, [
+                    new ParsingError({ start: 3, end: 8 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘limit’')
+                ])
+            })
             it('Should return completions for argument keys', async () => {
                 const ctx = constructContext({ parsers, cache, cursor: 3 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[]'), ctx)
+                const actual = parser.parse(new StringReader('@e[]'), ctx)
                 assert.deepStrictEqual(actual.data, $(
-                    new EntityNode(undefined, 'a', $(
+                    new EntityNode(undefined, 'e', $(
                         new SelectorArgumentsNode(), [2, 4]
                     )),
                     [0, 4]
@@ -383,17 +411,50 @@ describe('EntityArgumentParser Tests', () => {
                 ])
                 assert.deepStrictEqual(actual.errors, [])
             })
+            it('Should omit certain keys in completions for @s selectors', async () => {
+                const ctx = constructContext({ parsers, cache, cursor: 3 })
+                const parser = new EntityArgumentParser('multiple', 'entities')
+                const actual = parser.parse(new StringReader('@s[]'), ctx)
+                assert.deepStrictEqual(actual.data, $(
+                    new EntityNode(undefined, 'a', $(
+                        new SelectorArgumentsNode(), [2, 4]
+                    )),
+                    [0, 4]
+                ))
+                assert.deepStrictEqual(actual.completions, [
+                    { label: 'advancements', insertText: 'advancements' },
+                    { label: 'distance', insertText: 'distance' },
+                    { label: 'dx', insertText: 'dx' },
+                    { label: 'dy', insertText: 'dy' },
+                    { label: 'dz', insertText: 'dz' },
+                    { label: 'gamemode', insertText: 'gamemode' },
+                    { label: 'level', insertText: 'level' },
+                    { label: 'name', insertText: 'name' },
+                    { label: 'nbt', insertText: 'nbt' },
+                    { label: 'predicate', insertText: 'predicate' },
+                    { label: 'scores', insertText: 'scores' },
+                    { label: 'tag', insertText: 'tag' },
+                    { label: 'team', insertText: 'team' },
+                    { label: 'type', insertText: 'type' },
+                    { label: 'x', insertText: 'x' },
+                    { label: 'x_rotation', insertText: 'x_rotation' },
+                    { label: 'y', insertText: 'y' },
+                    { label: 'y_rotation', insertText: 'y_rotation' },
+                    { label: 'z', insertText: 'z' }
+                ])
+                assert.deepStrictEqual(actual.errors, [])
+            })
             it('Should return completions for argument keys after comma', async () => {
                 const ctx = constructContext({ parsers, cache, cursor: 22 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[gamemode=adventure,]'), ctx)
+                const actual = parser.parse(new StringReader('@e[gamemode=adventure,]'), ctx)
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 23 }
                 expectedArguments.gamemode = ['adventure']
                 expectedArguments[Keys].gamemode = $(new StringNode('gamemode', 'gamemode', { start: 3 }), [3, 11])
                 expectedArguments[UnsortedKeys].push('gamemode')
 
-                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', expectedArguments), [0, 23]))
+                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 23]))
                 assert.deepStrictEqual(actual.completions, [
                     { label: 'advancements', insertText: 'advancements' },
                     { label: 'distance', insertText: 'distance' },

@@ -64,6 +64,11 @@ describe('ItemArgumentParser Tests', () => {
                 }))
             ), [0, 27]))
         })
+        it('Should not validate NBT of item tags #437', () => {
+            const parser = new ItemArgumentParser(false)
+            const actual = parser.parse(new StringReader('#minecraft:test{}'), ctx)
+            assert.deepStrictEqual(actual.errors, [])
+        })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
             const context = constructContext({ registry: registries, parsers, config, cursor: 0 })

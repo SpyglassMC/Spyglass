@@ -1,25 +1,24 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { getNbtdocRegistryId } from '../CommandTree'
+import { locale } from '../locales/Locales'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
-import ArgumentParser from './ArgumentParser'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 import EntityNode from '../types/nodes/EntityNode'
 import IdentityNode from '../types/nodes/IdentityNode'
-import MapParser from './MapParser'
+import { IsMapSorted, Keys, UnsortedKeys } from '../types/nodes/map/MapNode'
+import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorAdvancementsNode, SelectorArgumentKey, SelectorArgumentKeys, SelectorArgumentNodeChars, SelectorCriteriaNode, SelectorScoresNode, SelectorSortMethod } from '../types/nodes/map/SelectorArgumentsNode'
+import NumberNode from '../types/nodes/NumberNode'
 import NumberRangeNode from '../types/nodes/NumberRangeNode'
+import StringNode from '../types/nodes/StringNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import ParsingError, { ErrorCode } from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
-import SelectorArgumentsNode, { EntitySelectorNodeChars, SelectorArgumentKeys, SelectorSortMethod, SelectorScoresNode, SelectorArgumentNodeChars, SelectorAdvancementsNode, SelectorCriteriaNode } from '../types/nodes/map/SelectorArgumentsNode'
-import { StringType } from './StringArgumentParser'
-import { Keys, UnsortedKeys, IsMapSorted } from '../types/nodes/map/MapNode'
-import StringNode from '../types/nodes/StringNode'
-import { arrayToCompletions } from '../utils/utils'
-import { LintConfig } from '../types/Config'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import NumberNode from '../types/nodes/NumberNode'
-import { getNbtdocRegistryId } from '../CommandTree'
+import Token, { TokenType } from '../types/Token'
+import StringReader from '../utils/StringReader'
+import { arrayToCompletions } from '../utils/utils'
+import ArgumentParser from './ArgumentParser'
+import MapParser from './MapParser'
+import { StringType } from './StringArgumentParser'
 
 export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
     static identity = 'Entity'
@@ -134,6 +133,7 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
         //#endregion
 
         //#region Data
+        const excludedArguments: SelectorArgumentKey[] = []
         /// Variable
         reader
             .expect('@')
@@ -141,11 +141,23 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
         const variable = reader.read()
         if (EntityArgumentParser.isVariable(variable)) {
             ans.data.variable = variable
-            if (variable === 'a') {
-                isMultiple = true
-            } else if (variable === 'e') {
-                isMultiple = true
-                containsNonPlayer = true
+            switch (variable) {
+                case 'a':
+                    excludedArguments.push('type')
+                    isMultiple = true
+                    break
+                case 'e':
+                    isMultiple = true
+                    containsNonPlayer = true
+                    break
+                case 'p':
+                case 'r':
+                    excludedArguments.push('type')
+                    break
+                case 's':
+                default:
+                    excludedArguments.push('limit', 'sort')
+                    break
             }
         } else {
             ans.errors.push(new ParsingError(
@@ -208,7 +220,11 @@ export default class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 (ans, reader, ctx) => {
                     const start = reader.cursor
                     const result = ctx.parsers
-                        .get('String', [StringType.String, SelectorArgumentKeys, 'selectorKeyQuote', 'selectorKeyQuoteType'])
+                        .get('String', [
+                            StringType.String,
+                            SelectorArgumentKeys.filter(v => !excludedArguments.includes(v)),
+                            'selectorKeyQuote', 'selectorKeyQuoteType'
+                        ])
                         .parse(reader, ctx) as ArgumentParserResult<StringNode>
                     const key = result.data.value
                     /* istanbul ignore else */

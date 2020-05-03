@@ -53,6 +53,7 @@
         { "type": "bug", "link": "issues/417", "text": "#417" },
         { "type": "bug", "link": "issues/423", "text": "#423" },
         { "type": "bug", "link": "issues/424", "text": "#424" },
+        { "type": "bug", "link": "issues/430", "text": "#430" },
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
       ]
     },

@@ -102,7 +102,7 @@ describe('BlockArgumentParser Tests', () => {
                 })
             ), { start: 0, end: 41 }))
         })
-        it('Should return data with tag', () => {
+        it('Should return data with NBT', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone{ foo : "bar" }'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
@@ -115,7 +115,7 @@ describe('BlockArgumentParser Tests', () => {
                 }))
             ), [0, 30]))
         })
-        it('Should return data with both states and tag', () => {
+        it('Should return data with both states and NBT', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 2 ]{ foo : 1b }'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
@@ -131,6 +131,11 @@ describe('BlockArgumentParser Tests', () => {
                     [UnsortedKeys]: ['foo']
                 }))
             ), [0, 53]))
+        })
+        it('Should not validate NBT of block tags #437', () => {
+            const parser = new BlockArgumentParser(false)
+            const actual = parser.parse(new StringReader('#minecraft:test{}'), ctx)
+            assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions at the beginning of input', async () => {
             const parser = new BlockArgumentParser(false)

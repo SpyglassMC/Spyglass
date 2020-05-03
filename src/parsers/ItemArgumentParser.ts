@@ -1,13 +1,12 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
+import { NodeRange } from '../types/nodes/ArgumentNode'
 import IdentityNode from '../types/nodes/IdentityNode'
 import ItemNode from '../types/nodes/ItemNode'
+import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
+import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import ParsingContext from '../types/ParsingContext'
 import StringReader from '../utils/StringReader'
-import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
-import { UnsortedKeys } from '../types/nodes/map/MapNode'
+import ArgumentParser from './ArgumentParser'
 
 export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
     static identity = 'Item'
@@ -49,7 +48,6 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
             const dummySuperNode = new NbtCompoundNode(null)
             dummySuperNode.id = new NbtStringNode(dummySuperNode, ans.data.id.toString(), ans.data.id.toString(), {})
             const tagResult = ctx.parsers.get('Nbt', [
-                /* istanbul ignore next */
                 'Compound', 'minecraft:item', id.isTag ? id.toString() : null, this.isPredicate, dummySuperNode
             ]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
