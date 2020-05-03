@@ -48,7 +48,7 @@ export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
             const dummySuperNode = new NbtCompoundNode(null)
             dummySuperNode.id = new NbtStringNode(dummySuperNode, ans.data.id.toString(), ans.data.id.toString(), {})
             const tagResult = ctx.parsers.get('Nbt', [
-                'Compound', 'minecraft:item', id.isTag ? id.toString() : null, this.isPredicate, dummySuperNode
+                'Compound', 'minecraft:item', !id.isTag ? id.toString() : null, this.isPredicate, dummySuperNode
             ]).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
