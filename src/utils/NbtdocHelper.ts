@@ -27,7 +27,7 @@ import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
 import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
 import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
 import ParsingContext from '../types/ParsingContext'
-import ParsingError, { ErrorCode, downgradeParsingError, remapParsingErrors } from '../types/ParsingError'
+import ParsingError, { downgradeParsingError, ErrorCode, remapParsingErrors } from '../types/ParsingError'
 import QuoteTypeConfig from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import StringReader from './StringReader'
@@ -85,6 +85,8 @@ export default class NbtdocHelper {
     enumIndex: nbtdoc.Index<nbtdoc.EnumItem>
     moduleIndex: nbtdoc.Index<nbtdoc.Module>
     tag: NbtCompoundNode | null
+
+    currentDoc: nbtdoc.NbtValue
 
     // private mockEnum: nbtdoc.EnumItem
 
@@ -288,9 +290,20 @@ export default class NbtdocHelper {
     private static handleDescription(str: string) {
         return str.trim().replace(/\n\s/g, '\n')
     }
-    completeCompoundFieldKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc, currentType: 'always double' | 'always single' | null) {
+    completeCompoundKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc | IndexDoc | null, currentType: 'always double' | 'always single' | null) {
         const existingKeys = Object.keys(tag)
         const clonedHelper = this.clone()
+        if (NbtdocHelper.isIndexDoc(doc)) {
+            const idTag = clonedHelper
+                .withTag(tag[SuperNode])
+                .resolveFieldPath(doc.Index.path)
+            const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
+            if (doc.Index.target.startsWith('custom:')) {
+                // TODO: Merge this with validateIndexField
+            } else {
+                doc = { Compound: clonedHelper.goRegistryCompound(doc.Index.target, id).compoundIndex }
+            }
+        }
         const pool = clonedHelper
             .goCompound(doc.Compound)
             .readCompoundKeys()
@@ -763,7 +776,7 @@ export default class NbtdocHelper {
             const compoundTag = tag as NbtCompoundNode
             const clonedHelper = this
                 .clone()
-                .withTag(compoundTag)
+                .withTag(compoundTag[SuperNode])
             const idTag = clonedHelper.resolveFieldPath(doc.Index.path)
             /* istanbul ignore next */
             const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
@@ -810,7 +823,9 @@ export default class NbtdocHelper {
             }
             /* istanbul ignore else */
             if (compoundDoc) {
-                clonedHelper.validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
+                clonedHelper
+                    .withTag(compoundTag)
+                    .validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
             }
         }
     }
@@ -988,8 +1003,8 @@ export default class NbtdocHelper {
     static isListDoc(doc: nbtdoc.NbtValue): doc is ListDoc {
         return (doc as any).List !== undefined
     }
-    static isIndexDoc(doc: nbtdoc.NbtValue): doc is IndexDoc {
-        return (doc as any).Index !== undefined
+    static isIndexDoc(doc: nbtdoc.NbtValue | null): doc is IndexDoc {
+        return !!doc && (doc as any).Index !== undefined
     }
     static isIdDoc(doc: nbtdoc.NbtValue): doc is IdDoc {
         return (doc as any).Id !== undefined

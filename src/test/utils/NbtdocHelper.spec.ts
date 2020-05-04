@@ -600,7 +600,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
             assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -617,7 +617,7 @@ describe('NbtdocHelper Tests', () => {
             tag.foo = new NbtByteNode(null, 1, 'true')
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
             assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -632,7 +632,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
             assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -648,7 +648,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundFieldKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
             assert.deepStrictEqual(ans.completions, [
                 { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },

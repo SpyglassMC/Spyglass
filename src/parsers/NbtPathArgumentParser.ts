@@ -79,9 +79,9 @@ export default class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         // FIXME: after MC-175504 is fixed.
                         /* istanbul ignore next */
                         const quoteType = firstChar === '"' ? 'always double' : 'always single'
-                        helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
+                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
                     } else {
-                        helper.completeCompoundFieldKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
+                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
                     }
                 }
             }

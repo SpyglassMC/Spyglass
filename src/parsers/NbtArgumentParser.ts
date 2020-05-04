@@ -252,9 +252,9 @@ export default class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                             if (StringReader.isQuote(firstChar)) {
                                 const quoteType = firstChar === "'" ? 'always single' : 'always double'
-                                helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, quoteType)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType)
                             } else {
-                                helper.completeCompoundFieldKeys(result, ctx, ans.data, doc, null)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, null)
                             }
                         }
                     }
