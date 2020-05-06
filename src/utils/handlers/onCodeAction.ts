@@ -1,12 +1,12 @@
-import FunctionInfo from '../../types/FunctionInfo'
-import { Diagnostic, Range, CodeAction } from 'vscode-languageserver'
-import ArgumentNode, { NodeRange, GetCodeActions, DiagnosticMap } from '../../types/nodes/ArgumentNode'
-import { CacheFile } from '../../types/ClientCache'
-import { areOverlapped } from '../../types/TextRange'
 import { Uri } from 'vscode'
+import { CodeAction, Diagnostic, Range } from 'vscode-languageserver'
+import { CacheFile } from '../../types/ClientCache'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange } from '../../types/nodes/ArgumentNode'
 import { ErrorCode } from '../../types/ParsingError'
+import { areOverlapped } from '../../types/TextRange'
 
-export default function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: FunctionInfo, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
+export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: FunctionInfo, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
     const ans: CodeAction[] = []
 
     for (let i = range.start.line; i <= range.end.line; i++) {

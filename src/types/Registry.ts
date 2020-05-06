@@ -8,6 +8,6 @@ export type SingleRegistry = {
     }
 }
 
-export default interface Registry {
+export interface Registry {
     [type: string]: SingleRegistry
 }

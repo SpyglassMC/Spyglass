@@ -1,14 +1,14 @@
-import { ArgumentParserResult } from '../types/Parser'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { locale } from '../locales'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
-import ArgumentParser from './ArgumentParser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import { ArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class TagArgumentParser extends ArgumentParser<string> {
+export class TagArgumentParser extends ArgumentParser<string> {
     static identity = 'Tag'
     readonly identity = 'tag'
 

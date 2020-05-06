@@ -1,12 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import MessageArgumentParser from '../../parsers/MessageArgumentParser'
-import EntityNode from '../../types/nodes/EntityNode'
-import MessageNode from '../../types/nodes/MessageNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import Token, { TokenType } from '../../types/Token'
-import StringReader from '../../utils/StringReader'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { MessageArgumentParser } from '../../parsers/MessageArgumentParser'
+import { EntityNode } from '../../types/nodes/EntityNode'
+import { MessageNode } from '../../types/nodes/MessageNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { Token, TokenType } from '../../types/Token'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('MessageArgumentParser Tests', () => {

@@ -1,14 +1,12 @@
-import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
-import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap, NodeRange, GetHoverInformation } from './ArgumentNode'
-import SelectorArgumentsNode from './map/SelectorArgumentsNode'
-import FunctionInfo from '../FunctionInfo'
-import TextRange, { areOverlapped, isInRange } from '../TextRange'
+import { GetFormattedString } from '../Formattable'
+import { ArgumentNode, NodeType } from './ArgumentNode'
+import { SelectorArgumentsNode } from './SelectorArgumentsNode'
 
 /**
  * Represent an entity.
  */
-export default class EntityNode extends ArgumentNode {
+export class EntityNode extends ArgumentNode {
     readonly [NodeType] = 'Entity'
 
     constructor(

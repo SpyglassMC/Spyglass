@@ -259,7 +259,7 @@ _该特性依赖于 proposed 阶段的 API，只能在开发环境下使用。_
 
 ## 往期版本贡献者
 
-- [1.x.x](https://github.com/SPGoding/datapack-language-server/blob/master/contributors/1.x.x.md)
+- [1.0.0](https://github.com/SPGoding/datapack-language-server/blob/master/contributors/1.0.0.md)
 
 ## 贡献
 

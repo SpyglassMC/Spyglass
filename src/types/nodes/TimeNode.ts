@@ -1,8 +1,8 @@
-import { GetFormattedString } from '../Formattable'
 import { LintConfig } from '../Config'
-import NumberNode from './NumberNode'
+import { GetFormattedString } from '../Formattable'
+import { NumberNode } from './NumberNode'
 
-export default class TimeNode extends NumberNode {
+export class TimeNode extends NumberNode {
     constructor(
         public value: number,
         public raw: string,

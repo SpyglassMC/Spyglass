@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
-import VectorArgumentParser from '../../parsers/VectorArgumentParser'
-import VectorNode, { VectorElementNode, VectorElementType } from '../../types/nodes/VectorNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { VectorArgumentParser } from '../../parsers/VectorArgumentParser'
+import { VectorElementNode, VectorElementType, VectorNode } from '../../types/nodes/VectorNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('VectorArgumentParser Tests', () => {

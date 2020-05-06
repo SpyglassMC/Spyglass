@@ -1,9 +1,9 @@
 import assert = require('power-assert')
-import DefinitionIDArgumentParser from '../../parsers/DefinitionIDArgumentParser'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
-import Token, { TokenType, TokenModifier } from '../../types/Token'
+import { DefinitionIDArgumentParser } from '../../parsers/DefinitionIDArgumentParser'
+import { ParsingError } from '../../types/ParsingError'
+import { Token, TokenModifier, TokenType } from '../../types/Token'
+import { StringReader } from '../../utils/StringReader'
 
 describe('DefinitionIDArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onCompletion from '../../../utils/handlers/onCompletion'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { onCompletion } from '../../../utils/handlers/onCompletion'
 
 describe('onCompletion() Tests', () => {
     it('Should return completions', async () => {

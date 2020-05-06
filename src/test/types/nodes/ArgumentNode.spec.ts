@@ -2,8 +2,8 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import FunctionInfo from '../../../types/FunctionInfo'
-import ArgumentNode, { GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../../types/nodes/ArgumentNode'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { ArgumentNode, GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../../types/nodes/ArgumentNode'
 import { $ } from '../../utils.spec'
 
 class TestArgumentNode extends ArgumentNode {

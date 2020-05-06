@@ -1,12 +1,12 @@
-import CommandTreeVersion from './CommandTreeVersion'
-import NamingConventionConfig from './NamingConventionConfig'
-import StrictCheckConfig from './StrictCheckConfig'
+import { CommandTreeVersion } from './CommandTreeVersion'
+import { NamingConventionConfig } from './NamingConventionConfig'
+import { StrictCheckConfig } from './StrictCheckConfig'
 import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
-import QuoteTypeConfig from './QuoteTypeConfig'
+import { QuoteTypeConfig } from './QuoteTypeConfig'
 import minimatch from 'minimatch'
 import { DataSource } from '../data/VanillaData'
 
-export default interface Config {
+export interface Config {
     /**
      * Runtime environment.
      */

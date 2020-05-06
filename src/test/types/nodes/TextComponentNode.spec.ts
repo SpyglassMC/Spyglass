@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import TextComponentNode from '../../../types/nodes/TextComponent'
 import { GetFormattedString } from '../../../types/Formattable'
+import { TextComponentNode } from '../../../types/nodes/TextComponent'
 
 describe('TextComponentNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

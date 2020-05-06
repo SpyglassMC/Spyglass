@@ -1,11 +1,11 @@
-import ArgumentParser from '../parsers/ArgumentParser'
-import ParsingContext from './ParsingContext'
+import { ArgumentParser } from '../parsers/ArgumentParser'
 import { SaturatedLine } from './Line'
+import { ParsingContext } from './ParsingContext'
 
 /**
  * Represent a command tree.
  */
-export default interface CommandTree {
+export interface CommandTree {
     [path: string]: CommandTreeNodeChildren
 }
 

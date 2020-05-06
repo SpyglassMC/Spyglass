@@ -1,14 +1,14 @@
 ///<reference path="../typings/range.d.ts" />
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
 import range from 'python-range'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import { locale } from '../locales'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class ItemSlotArgumentParser extends ArgumentParser<string> {
+export class ItemSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ItemSlot'
     static readonly Category = {
         armor: ['chest', 'feet', 'head', 'legs'],

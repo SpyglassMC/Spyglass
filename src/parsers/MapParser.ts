@@ -1,11 +1,11 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import StringReader from '../utils/StringReader'
-import TextRange from '../types/TextRange'
-import ParsingContext from '../types/ParsingContext'
-import MapNode, { UnsortedKeys } from '../types/nodes/map/MapNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import { MapNode, UnsortedKeys } from '../types/nodes/MapNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { TextRange } from '../types/TextRange'
+import { StringReader } from '../utils/StringReader'
 
-export default class MapParser<T extends MapNode<any, any>> {
+export class MapParser<T extends MapNode<any, any>> {
     static readonly identity = 'Map'
     readonly identity = 'map'
 

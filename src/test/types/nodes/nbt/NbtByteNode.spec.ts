@@ -1,13 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig, VanillaConfig } from '../../../../types/Config'
-import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
 import { GetFormattedString } from '../../../../types/Formattable'
-import FunctionInfo from '../../../../types/FunctionInfo'
-import { ErrorCode } from '../../../../types/ParsingError'
-import IdentityNode from '../../../../types/nodes/IdentityNode'
+import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { getCodeAction } from '../../../../utils/utils'
+import { NbtByteNode } from '../../../../types/nodes/NbtByteNode'
+import { ErrorCode } from '../../../../types/ParsingError'
+import { getCodeAction } from '../../../../utils'
 import { $ } from '../../../utils.spec'
 
 describe('NbtByteNode Tests', () => {

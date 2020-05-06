@@ -2,15 +2,15 @@ import schema from 'datapack-json/src/shared/text_component.json'
 import { SynchronousPromise } from 'synchronous-promise'
 import { getLanguageService, TextDocument } from 'vscode-json-languageservice'
 import { NodeRange } from '../types/nodes/ArgumentNode'
-import TextComponentNode from '../types/nodes/TextComponent'
+import { TextComponentNode } from '../types/nodes/TextComponent'
 import { ArgumentParserResult } from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { remapCompletionItem } from '../utils/utils'
-import ArgumentParser from './ArgumentParser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { remapCompletionItem } from '../utils'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
+export class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
     static identity = 'TextComponent'
     readonly identity = 'textComponent'
 
@@ -79,8 +79,6 @@ class TextComponentArgumentParser extends ArgumentParser<TextComponentNode> {
 }
 
 /* istanbul ignore next */
-module TextComponentArgumentParser {
+export module TextComponentArgumentParser {
     TextComponentArgumentParser.initialize()
 }
-
-export default TextComponentArgumentParser 

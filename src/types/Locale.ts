@@ -1,3 +1,3 @@
-export default interface Locale {
+export interface Locale {
     [key: string]: string
 }

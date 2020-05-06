@@ -1,15 +1,15 @@
-import ArgumentParser from './ArgumentParser'
-import NumberRangeNode from '../types/nodes/NumberRangeNode'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import { locale } from '../locales'
 import { NodeRange } from '../types/nodes/ArgumentNode'
-import NumberNode from '../types/nodes/NumberNode'
+import { NumberNode } from '../types/nodes/NumberNode'
+import { NumberRangeNode } from '../types/nodes/NumberRangeNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
+export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
     static identity = 'NumberRange'
     identity = 'numberRange'
 

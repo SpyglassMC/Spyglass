@@ -1,12 +1,12 @@
-import { locale } from '../locales/Locales'
+import { locale } from '../locales'
 import { ArgumentParserResult } from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import Token, { TokenType } from '../types/Token'
-import StringReader from '../utils/StringReader'
-import ArgumentParser from './ArgumentParser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class UuidArgumentParser extends ArgumentParser<string> {
+export class UuidArgumentParser extends ArgumentParser<string> {
     static identity = 'Uuid'
     readonly identity = 'uuid'
 

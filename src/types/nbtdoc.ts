@@ -6,7 +6,7 @@
  * @author Yurihaia https://github.com/Yurihaia
  * @license MIT https://github.com/Yurihaia/nbtdoc-rs/blob/master/LICENSE-MIT
  */
-export module nbtdoc {
+export namespace nbtdoc {
     /**
      * A reference to an element inside an `Arena`
      */

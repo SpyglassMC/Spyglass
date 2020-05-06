@@ -1,11 +1,11 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { DocumentLink } from 'vscode-languageserver'
-import { isFileType, CacheUnit } from '../../types/ClientCache'
-import { UrisOfStrings, UrisOfIds, PathExistsFunction, Uri } from '../../types/handlers'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { getUriFromId } from './common'
+import { CacheUnit, isFileType } from '../../types/ClientCache'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { getUriFromId } from '.'
 
-export default async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
+export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
     const ans: DocumentLink[] = []
 
     for (let i = 0; i < info.lines.length; i++) {

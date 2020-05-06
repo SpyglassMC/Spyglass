@@ -1,7 +1,7 @@
-import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver'
-import TextRange, { remapTextRange } from './TextRange'
-import { locale } from '../locales/Locales'
-import IndexMapping from './IndexMapping'
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { locale } from '../locales'
+import { IndexMapping } from './IndexMapping'
+import { remapTextRange, TextRange } from './TextRange'
 
 export const enum ErrorCode {
     BlockStateSortKeys,
@@ -38,7 +38,7 @@ export const enum ErrorCode {
 /**
  * Represent an error occured while parsing.
  */
-export default class ParsingError {
+export class ParsingError {
     constructor(
         /**
          * Range of the error.

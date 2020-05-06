@@ -1,13 +1,13 @@
-import ArgumentParser from './ArgumentParser'
-import StringReader from '../utils/StringReader'
-import { ArgumentParserResult } from '../types/Parser'
-import ParsingError from '../types/ParsingError'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
-import NumberNode from '../types/nodes/NumberNode'
+import { locale } from '../locales'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import { NumberNode } from '../types/nodes/NumberNode'
+import { ArgumentParserResult } from '../types/Parser'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class NumberArgumentParser extends ArgumentParser<NumberNode> {
+export class NumberArgumentParser extends ArgumentParser<NumberNode> {
     static identity = 'Number'
     identity = 'number'
 

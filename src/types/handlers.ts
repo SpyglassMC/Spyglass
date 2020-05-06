@@ -1,8 +1,8 @@
 import { URI } from 'vscode-uri'
-import FunctionInfo from './FunctionInfo'
-import IdentityNode from './nodes/IdentityNode'
 import { CacheKey } from './ClientCache'
-import Config from './Config'
+import { Config } from './Config'
+import { FunctionInfo } from './FunctionInfo'
+import { IdentityNode } from './nodes/IdentityNode'
 
 export const Uri = URI
 

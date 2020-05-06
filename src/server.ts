@@ -4,44 +4,43 @@ import path from 'path'
 import { CodeActionKind, createConnection, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
+import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
 import { getVanillaData } from './data/VanillaData'
-import { loadLocale, locale } from './locales/Locales'
-import AdvancementInfo from './types/AdvancementInfo'
+import { loadLocale, locale } from './locales'
+import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
-import Config, { isRelIncluded, VanillaConfig } from './types/Config'
-import FunctionInfo from './types/FunctionInfo'
+import { Config, isRelIncluded, VanillaConfig } from './types/Config'
+import { FunctionInfo } from './types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
-import IdentityNode from './types/nodes/IdentityNode'
-import TagInfo from './types/TagInfo'
-import VersionInformation from './types/VersionInformation'
-import { getInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers/common'
-import onCallHierarchyIncomingCalls from './utils/handlers/onCallHierarchyIncomingCalls'
-import onCallHierarchyOutgoingCalls from './utils/handlers/onCallHierarchyOutgoingCalls'
-import onCallHierarchyPrepare from './utils/handlers/onCallHierarchyPrepare'
-import onCodeAction from './utils/handlers/onCodeAction'
-import onColorPresentation from './utils/handlers/onColorPresentation'
-import onCompletion from './utils/handlers/onCompletion'
-import onDefOrRef from './utils/handlers/onDefOrRef'
-import onDidChangeTextDocument from './utils/handlers/onDidChangeTextDocument'
-import onDidChangeWorkspaceFolders from './utils/handlers/onDidChangeWorkspaceFolders'
-import onDidCloseTextDocument from './utils/handlers/onDidCloseTextDocument'
-import onDidOpenTextDocument from './utils/handlers/onDidOpenTextDocument'
-import onDocumentColor from './utils/handlers/onDocumentColor'
-import onDocumentFormatting from './utils/handlers/onDocumentFormatting'
-import onDocumentHighlight from './utils/handlers/onDocumentHighlight'
-import onDocumentLinks from './utils/handlers/onDocumentLinks'
-import onFoldingRanges from './utils/handlers/onFoldingRanges'
-import onHover from './utils/handlers/onHover'
-import onPrepareRename from './utils/handlers/onPrepareRename'
-import onRenameRequest from './utils/handlers/onRenameRequest'
-import onSelectionRanges from './utils/handlers/onSelectionRanges'
-import onSemanticTokens from './utils/handlers/onSemanticTokens'
-import onSemanticTokensEdits from './utils/handlers/onSemanticTokensEdits'
-import onSignatureHelp from './utils/handlers/onSignatureHelp'
-import { requestText } from './utils/utils'
-
-export const LangServerVersion = '2.0.x'
+import { IdentityNode } from './types/nodes/IdentityNode'
+import { TagInfo } from './types/TagInfo'
+import { VersionInformation } from './types/VersionInformation'
+import { requestText } from './utils'
+import { getInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
+import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
+import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
+import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
+import { onCodeAction } from './utils/handlers/onCodeAction'
+import { onColorPresentation } from './utils/handlers/onColorPresentation'
+import { onCompletion } from './utils/handlers/onCompletion'
+import { onDefOrRef } from './utils/handlers/onDefOrRef'
+import { onDidChangeTextDocument } from './utils/handlers/onDidChangeTextDocument'
+import { onDidChangeWorkspaceFolders } from './utils/handlers/onDidChangeWorkspaceFolders'
+import { onDidCloseTextDocument } from './utils/handlers/onDidCloseTextDocument'
+import { onDidOpenTextDocument } from './utils/handlers/onDidOpenTextDocument'
+import { onDocumentColor } from './utils/handlers/onDocumentColor'
+import { onDocumentFormatting } from './utils/handlers/onDocumentFormatting'
+import { onDocumentHighlight } from './utils/handlers/onDocumentHighlight'
+import { onDocumentLinks } from './utils/handlers/onDocumentLinks'
+import { onFoldingRanges } from './utils/handlers/onFoldingRanges'
+import { onHover } from './utils/handlers/onHover'
+import { onPrepareRename } from './utils/handlers/onPrepareRename'
+import { onRenameRequest } from './utils/handlers/onRenameRequest'
+import { onSelectionRanges } from './utils/handlers/onSelectionRanges'
+import { onSemanticTokens } from './utils/handlers/onSemanticTokens'
+import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
+import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -86,7 +85,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             await fs.mkdirp(globalStoragePath)
         }
         connection.console.info(`CacheVersion = ‘${CacheVersion}’`)
-        connection.console.info(`LangServerVersion = ‘${LangServerVersion}’`)
+        connection.console.info(`ReleaseNotesVersion = ‘${ReleaseNotesVersion}’`)
 
         connection.console.info(`globalStoragePath = ‘${globalStoragePath}’`)
 
@@ -170,10 +169,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
 connection.onInitialized(() => {
     connection.sendNotification('datapackLanguageServer/checkVersion', {
-        currentVersion: LangServerVersion,
-        title: locale('server.new-version', LangServerVersion),
+        currentVersion: ReleaseNotesVersion,
+        title: locale('server.new-version', ReleaseNotesVersion),
         action: locale('server.show-release-notes'),
-        url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${LangServerVersion}`
+        url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${ReleaseNotesVersion}`
     })
 
     connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {

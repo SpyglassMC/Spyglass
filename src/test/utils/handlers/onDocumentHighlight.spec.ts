@@ -2,9 +2,9 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
-import Token, { TokenType } from '../../../types/Token'
-import onDocumentHighlight from '../../../utils/handlers/onDocumentHighlight'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { Token, TokenType } from '../../../types/Token'
+import { onDocumentHighlight } from '../../../utils/handlers/onDocumentHighlight'
 
 describe('onDocumentHighlight() Tests', () => {
     const info: FunctionInfo = {

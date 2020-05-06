@@ -1,8 +1,8 @@
 import assert = require('power-assert')
-import StringReader from '../../utils/StringReader'
-import ParsingError from '../../types/ParsingError'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 
 describe('StringReader Tests', () => {
     describe('passedString Tests', () => {

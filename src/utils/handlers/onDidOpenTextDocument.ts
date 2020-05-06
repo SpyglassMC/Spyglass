@@ -1,11 +1,11 @@
 import { VanillaData } from '../../data/VanillaData'
 import { CacheFile } from '../../types/ClientCache'
-import CommandTree from '../../types/CommandTree'
-import Config, { isRelIncluded } from '../../types/Config'
+import { CommandTree } from '../../types/CommandTree'
+import { Config, isRelIncluded } from '../../types/Config'
 import { InfosOfUris, Uri } from '../../types/handlers'
-import { parseString } from './common'
+import { parseString } from '.'
 
-export default async function onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData }: { text: string, uri: Uri, rel: string, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData }: { text: string, uri: Uri, rel: string, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const info: any = {}
 
     /* istanbul ignore next */

@@ -2,14 +2,14 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { CompletionItemKind } from 'vscode-languageserver'
-import ArgumentParser from '../../parsers/ArgumentParser'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import LineParser from '../../parsers/LineParser'
-import CommandTree, { CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
+import { ArgumentParser } from '../../parsers/ArgumentParser'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { LineParser } from '../../parsers/LineParser'
+import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
 import { ArgumentParserResult } from '../../types/Parser'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 
 /**
  * Argument parser for testing.

@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onSignatureHelp from '../../../utils/handlers/onSignatureHelp'
 import { VanillaConfig } from '../../../types/Config'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { onSignatureHelp } from '../../../utils/handlers/onSignatureHelp'
 
 describe('onSignatureHelp() Tests', () => {
     it('Should return signatures', async () => {

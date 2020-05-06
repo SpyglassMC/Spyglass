@@ -331,7 +331,7 @@ Thanks for everyone who contributed to this project!
 
 ## Contributors for older versions
 
-- [1.x.x](./contributors/1.x.x.md)
+- [1.0.0](./contributors/1.0.0.md)
 
 ## Contributing
 

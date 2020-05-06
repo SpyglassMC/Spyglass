@@ -1,21 +1,21 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import BlockArgumentParser from '../../parsers/BlockArgumentParser'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { BlockArgumentParser } from '../../parsers/BlockArgumentParser'
 import { ClientCache } from '../../types/ClientCache'
 import { constructConfig } from '../../types/Config'
-import BlockNode from '../../types/nodes/BlockNode'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import BlockStateNode from '../../types/nodes/map/BlockStateNode'
-import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
-import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ErrorCode } from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { BlockNode } from '../../types/nodes/BlockNode'
+import { BlockStateNode } from '../../types/nodes/BlockStateNode'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/MapNode'
+import { NbtByteNode } from '../../types/nodes/NbtByteNode'
+import { NbtCompoundKeyNode } from '../../types/nodes/NbtCompoundKeyNode'
+import { NbtCompoundNode } from '../../types/nodes/NbtCompoundNode'
+import { NbtStringNode } from '../../types/nodes/NbtStringNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ErrorCode, ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('BlockArgumentParser Tests', () => {
@@ -133,7 +133,7 @@ describe('BlockArgumentParser Tests', () => {
             ), [0, 53]))
         })
         it('Should not validate NBT of block tags #437', () => {
-            const parser = new BlockArgumentParser(false)
+            const parser = new BlockArgumentParser(true)
             const actual = parser.parse(new StringReader('#minecraft:test{}'), ctx)
             assert.deepStrictEqual(actual.errors, [])
         })

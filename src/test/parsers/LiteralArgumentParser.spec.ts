@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { LiteralArgumentParser } from '../../parsers/LiteralArgumentParser'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 
 let ctx: ParsingContext
 before(async () => {

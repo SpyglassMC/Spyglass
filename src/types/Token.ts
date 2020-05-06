@@ -1,5 +1,5 @@
-import TextRange from './TextRange'
-import StringReader from '../utils/StringReader'
+import { StringReader } from '../utils/StringReader'
+import { TextRange } from './TextRange'
 
 export enum TokenType {
     annotation,
@@ -27,7 +27,7 @@ export enum TokenModifier {
     _
 }
 
-export default class Token {
+export class Token {
     /* istanbul ignore next */
     constructor(
         public range: TextRange,

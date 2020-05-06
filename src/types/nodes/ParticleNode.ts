@@ -1,11 +1,9 @@
 import { LintConfig } from '../Config'
-import IdentityNode from './IdentityNode'
 import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
-import FunctionInfo from '../FunctionInfo'
-import TextRange, { areOverlapped } from '../TextRange'
+import { ArgumentNode, NodeType } from './ArgumentNode'
+import { IdentityNode } from './IdentityNode'
 
-export default class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
+export class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
     readonly [NodeType] = 'Particle'
 
     constructor(

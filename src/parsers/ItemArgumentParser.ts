@@ -1,14 +1,14 @@
 import { NodeRange } from '../types/nodes/ArgumentNode'
-import IdentityNode from '../types/nodes/IdentityNode'
-import ItemNode from '../types/nodes/ItemNode'
-import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
-import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
+import { IdentityNode } from '../types/nodes/IdentityNode'
+import { ItemNode } from '../types/nodes/ItemNode'
+import { NbtCompoundNode } from '../types/nodes/NbtCompoundNode'
+import { NbtStringNode } from '../types/nodes/NbtStringNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import StringReader from '../utils/StringReader'
-import ArgumentParser from './ArgumentParser'
+import { ParsingContext } from '../types/ParsingContext'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class ItemArgumentParser extends ArgumentParser<ItemNode> {
+export class ItemArgumentParser extends ArgumentParser<ItemNode> {
     static identity = 'Item'
     readonly identity = 'item'
 

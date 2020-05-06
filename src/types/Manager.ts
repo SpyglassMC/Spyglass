@@ -1,3 +1,3 @@
-export default interface Manager<T> {
+export interface Manager<T> {
     get(id: string, params?: any[]): T
 }

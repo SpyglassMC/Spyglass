@@ -1,13 +1,13 @@
-import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { arrayToMessage, arrayToCompletions } from '../utils/utils'
+import { locale } from '../locales'
 import { ArgumentParserResult } from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { arrayToCompletions, arrayToMessage } from '../utils'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class LiteralArgumentParser extends ArgumentParser<string> {
+export class LiteralArgumentParser extends ArgumentParser<string> {
     static identity = 'Literal'
     readonly identity = 'literal'
 

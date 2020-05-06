@@ -1,4 +1,4 @@
-type SingleBlockDefinition = {
+export type SingleBlockDefinition = {
     properties?: {
         [key: string]: string[]
     },
@@ -14,5 +14,3 @@ type SingleBlockDefinition = {
 export interface BlockDefinition {
     [id: string]: SingleBlockDefinition | undefined
 }
-
-export default BlockDefinition

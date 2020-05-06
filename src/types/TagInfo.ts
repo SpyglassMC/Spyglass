@@ -1,3 +1,3 @@
-export default interface TagInfo {
+export interface TagInfo {
     values: string[]
 }

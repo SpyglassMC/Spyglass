@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import Line, { combineLine, combineSaturatedLine, saturatedLineToLine, SaturatedLine, lineToLintedString } from '../../types/Line'
-import ParsingError from '../../types/ParsingError'
 import { VanillaConfig } from '../../types/Config'
-import Token, { TokenType } from '../../types/Token'
+import { combineLine, combineSaturatedLine, Line, lineToLintedString, SaturatedLine, saturatedLineToLine } from '../../types/Line'
+import { ParsingError } from '../../types/ParsingError'
+import { Token, TokenType } from '../../types/Token'
 
 describe('Line Tests', () => {
     describe('combineLine() Tests', () => {

@@ -1,9 +1,9 @@
-import FunctionInfo from '../../types/FunctionInfo'
-import { getCacheFromChar, getSafeCategory, CacheFile } from '../../types/ClientCache'
-import { Uri } from '../../types/handlers'
 import { Location } from 'vscode-languageserver'
+import { CacheFile, getCacheFromChar, getSafeCategory } from '../../types/ClientCache'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { Uri } from '../../types/handlers'
 
-export default function onDefOrRef({ info, lineNumber, char, uri, cacheFile, type }: { info: FunctionInfo, uri: Uri, cacheFile: CacheFile, char: number, lineNumber: number, type: 'def' | 'ref' }): Location[] | null {
+export function onDefOrRef({ info, lineNumber, char, uri, cacheFile, type }: { info: FunctionInfo, uri: Uri, cacheFile: CacheFile, char: number, lineNumber: number, type: 'def' | 'ref' }): Location[] | null {
     const line = info.lines[lineNumber]
     /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)

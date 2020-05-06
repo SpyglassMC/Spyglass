@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Uri, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
-import onDocumentLinks from '../../../utils/handlers/onDocumentLinks'
+import { onDocumentLinks } from '../../../utils/handlers/onDocumentLinks'
 
 describe('onDocumentLinks() Tests', () => {
     const pathExists = async () => false

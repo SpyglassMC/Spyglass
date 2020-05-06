@@ -1,12 +1,10 @@
-import EntityNode from './EntityNode'
-import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, DiagnosticMap, NodeRange } from './ArgumentNode'
-import FunctionInfo from '../FunctionInfo'
-import TextRange, { areOverlapped } from '../TextRange'
-import { toFormattedString } from '../../utils/utils'
+import { toFormattedString } from '../../utils'
 import { LintConfig } from '../Config'
+import { GetFormattedString } from '../Formattable'
+import { ArgumentNode, NodeType } from './ArgumentNode'
+import { EntityNode } from './EntityNode'
 
-export default class MessageNode extends ArgumentNode implements ArrayLike<string | EntityNode> {
+export class MessageNode extends ArgumentNode implements ArrayLike<string | EntityNode> {
     [index: number]: string | EntityNode
 
     readonly [NodeType] = 'Message'

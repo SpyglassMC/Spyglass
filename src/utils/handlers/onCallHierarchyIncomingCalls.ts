@@ -1,9 +1,9 @@
-import { CacheFile, CacheUnit, getSafeCategory } from '../../types/ClientCache'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { Uri, UrisOfStrings, GetUriFromIdFunction, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 import { Proposed } from 'vscode-languageserver'
-import { getId, getUri, getUriFromId } from './common'
-import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
+import { CacheFile, CacheUnit, getSafeCategory } from '../../types/ClientCache'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { getId, getUri, getUriFromId } from '.'
+import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
 /**
  * A function or a function tag can be called from:
@@ -13,7 +13,7 @@ import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
  * 
  * See also #298.
  */
-export default async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }) {
+export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }) {
     const ans: Proposed.CallHierarchyIncomingCall[] = []
 
     //#region Get function callers.

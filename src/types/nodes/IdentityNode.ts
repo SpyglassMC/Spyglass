@@ -1,14 +1,14 @@
 import path, { sep } from 'path'
-import { getCodeAction } from '../../utils/utils'
+import { getCodeAction } from '../../utils'
 import { CacheKey, ClientCache } from '../ClientCache'
 import { LintConfig } from '../Config'
 import { GetFormattedString } from '../Formattable'
-import FunctionInfo from '../FunctionInfo'
+import { FunctionInfo } from '../FunctionInfo'
 import { ErrorCode } from '../ParsingError'
-import TextRange from '../TextRange'
-import ArgumentNode, { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
+import { TextRange } from '../TextRange'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
-export default class IdentityNode extends ArgumentNode {
+export class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
     static readonly NamespaceDelimiter = ':'
     static readonly PathSep = '/'

@@ -1,8 +1,8 @@
 import assert = require('power-assert')
-import DefinitionDescriptionArgumentParser from '../../parsers/DefinitionDescriptionArgumentParser'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
 import { describe, it } from 'mocha'
+import { DefinitionDescriptionArgumentParser } from '../../parsers/DefinitionDescriptionArgumentParser'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 
 describe('DefinitionDescriptionArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

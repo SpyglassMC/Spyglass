@@ -1,19 +1,19 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import ItemArgumentParser from '../../parsers/ItemArgumentParser'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
 import { constructConfig } from '../../types/Config'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import ItemNode from '../../types/nodes/ItemNode'
-import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
-import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import { SuperNode } from '../../types/nodes/nbt/NbtNode'
-import NbtStringNode from '../../types/nodes/nbt/NbtStringNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import StringReader from '../../utils/StringReader'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { ItemNode } from '../../types/nodes/ItemNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/MapNode'
+import { NbtByteNode } from '../../types/nodes/NbtByteNode'
+import { NbtCompoundKeyNode } from '../../types/nodes/NbtCompoundKeyNode'
+import { NbtCompoundNode } from '../../types/nodes/NbtCompoundNode'
+import { SuperNode } from '../../types/nodes/NbtNode'
+import { NbtStringNode } from '../../types/nodes/NbtStringNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('ItemArgumentParser Tests', () => {
@@ -65,7 +65,7 @@ describe('ItemArgumentParser Tests', () => {
             ), [0, 27]))
         })
         it('Should not validate NBT of item tags #437', () => {
-            const parser = new ItemArgumentParser(false)
+            const parser = new ItemArgumentParser(true)
             const actual = parser.parse(new StringReader('#minecraft:test{}'), ctx)
             assert.deepStrictEqual(actual.errors, [])
         })

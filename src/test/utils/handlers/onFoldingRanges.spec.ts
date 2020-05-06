@@ -2,8 +2,8 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { FoldingRangeKind } from 'vscode-languageserver'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onFoldingRanges from '../../../utils/handlers/onFoldingRanges'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { onFoldingRanges } from '../../../utils/handlers/onFoldingRanges'
 
 describe('onFoldingRanges() Tests', () => {
     it('Should return for normal #region blocks', () => {

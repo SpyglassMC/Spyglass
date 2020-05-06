@@ -1,9 +1,9 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { Hover } from 'vscode-languageserver'
-import ArgumentNode, { NodeRange, GetHoverInformation } from '../../types/nodes/ArgumentNode'
 import { CacheFile } from '../../types/ClientCache'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { ArgumentNode, GetHoverInformation, NodeRange } from '../../types/nodes/ArgumentNode'
 
-export default function onHover({ info, lineNumber, char }: { info: FunctionInfo, char: number, lineNumber: number, cacheFile: CacheFile }): Hover | null {
+export function onHover({ info, lineNumber, char }: { info: FunctionInfo, char: number, lineNumber: number, cacheFile: CacheFile }): Hover | null {
     const line = info.lines[lineNumber]
 
     for (const { data } of line.args) {

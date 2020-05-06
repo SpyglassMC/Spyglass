@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import IndexMapping, { getInnerIndex, getOuterIndex } from '../../types/IndexMapping'
+import { getInnerIndex, getOuterIndex, IndexMapping } from '../../types/IndexMapping'
 
 describe('IndexMapping Tests', () => {
     // 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ

@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { combineArgumentParserResult } from '../../types/Parser'
-import ParsingError from '../../types/ParsingError'
-import Token, { TokenType } from '../../types/Token'
+import { ParsingError } from '../../types/ParsingError'
+import { Token, TokenType } from '../../types/Token'
 
 describe('Parser Tests', () => {
     describe('combineArgumentParserResult() Tests', () => {

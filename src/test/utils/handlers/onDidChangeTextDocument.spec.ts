@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
-import Token, { TokenType } from '../../../types/Token'
-import onDidChangeTextDocument from '../../../utils/handlers/onDidChangeTextDocument'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { Token, TokenType } from '../../../types/Token'
+import { onDidChangeTextDocument } from '../../../utils/handlers/onDidChangeTextDocument'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }

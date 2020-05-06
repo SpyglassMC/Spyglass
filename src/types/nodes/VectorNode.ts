@@ -1,10 +1,10 @@
+import { getCodeAction } from '../../utils'
 import { LintConfig } from '../Config'
 import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
-import NumberNode from './NumberNode'
-import FunctionInfo from '../FunctionInfo'
-import TextRange, { areOverlapped } from '../TextRange'
-import { getCodeAction } from '../../utils/utils'
+import { FunctionInfo } from '../FunctionInfo'
+import { TextRange } from '../TextRange'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
+import { NumberNode } from './NumberNode'
 
 export const enum VectorElementType {
     Absolute = '',
@@ -25,7 +25,7 @@ export class VectorElementNode extends NumberNode {
     }
 }
 
-export default class VectorNode extends ArgumentNode implements ArrayLike<VectorElementNode> {
+export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementNode> {
     [index: number]: VectorElementNode
 
     readonly [NodeType] = 'Vector'

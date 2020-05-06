@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import StringReader from '../../utils/StringReader'
-import NumberArgumentParser from '../../parsers/NumberArgumentParser'
-import ParsingError from '../../types/ParsingError'
-import NumberNode from '../../types/nodes/NumberNode'
+import { NumberArgumentParser } from '../../parsers/NumberArgumentParser'
+import { NumberNode } from '../../types/nodes/NumberNode'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('NumberArgumentParser Tests', () => {

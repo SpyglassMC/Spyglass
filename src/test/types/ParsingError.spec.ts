@@ -1,7 +1,7 @@
 import assert = require('power-assert')
-import ParsingError, { ErrorCode } from '../../types/ParsingError'
-import { DiagnosticSeverity } from 'vscode-languageserver'
 import { describe, it } from 'mocha'
+import { DiagnosticSeverity } from 'vscode-languageserver'
+import { ErrorCode, ParsingError } from '../../types/ParsingError'
 
 describe('ParsingError Tests', () => {
     describe('toDiagnostic() Tests', () => {

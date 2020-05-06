@@ -1,37 +1,37 @@
 import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
-import { locale } from '../locales/Locales'
-import LineParser from '../parsers/LineParser'
+import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from '.'
+import { locale } from '../locales'
+import { LineParser } from '../parsers/LineParser'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { getInnerIndex } from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
 import { NodeDescription, NodeRange } from '../types/nodes/ArgumentNode'
-import IdentityNode from '../types/nodes/IdentityNode'
-import { GetFormattedClose, GetFormattedOpen, Keys } from '../types/nodes/map/MapNode'
-import NbtCompoundNode from '../types/nodes/map/NbtCompoundNode'
-import NbtArrayNode from '../types/nodes/nbt/NbtArrayNode'
-import NbtByteArrayNode from '../types/nodes/nbt/NbtByteArrayNode'
-import NbtByteNode from '../types/nodes/nbt/NbtByteNode'
-import NbtCollectionNode from '../types/nodes/nbt/NbtCollectionNode'
-import NbtDoubleNode from '../types/nodes/nbt/NbtDoubleNode'
-import NbtFloatNode from '../types/nodes/nbt/NbtFloatNode'
-import NbtIntArrayNode from '../types/nodes/nbt/NbtIntArrayNode'
-import NbtIntNode from '../types/nodes/nbt/NbtIntNode'
-import NbtListNode from '../types/nodes/nbt/NbtListNode'
-import NbtLongArrayNode from '../types/nodes/nbt/NbtLongArrayNode'
-import NbtLongNode from '../types/nodes/nbt/NbtLongNode'
-import NbtNode, { isNbtNodeTypeLooselyMatched, isNbtNodeTypeStrictlyMatched, NbtNodeType, NbtNodeTypeName, SuperNode } from '../types/nodes/nbt/NbtNode'
-import NbtNumberNode from '../types/nodes/nbt/NbtNumberNode'
-import NbtPrimitiveNode from '../types/nodes/nbt/NbtPrimitiveNode'
-import NbtShortNode from '../types/nodes/nbt/NbtShortNode'
-import NbtStringNode from '../types/nodes/nbt/NbtStringNode'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError, { downgradeParsingError, ErrorCode, remapParsingErrors } from '../types/ParsingError'
-import QuoteTypeConfig from '../types/QuoteTypeConfig'
+import { IdentityNode } from '../types/nodes/IdentityNode'
+import { GetFormattedClose, GetFormattedOpen, Keys } from '../types/nodes/MapNode'
+import { NbtArrayNode } from '../types/nodes/NbtArrayNode'
+import { NbtByteArrayNode } from '../types/nodes/NbtByteArrayNode'
+import { NbtByteNode } from '../types/nodes/NbtByteNode'
+import { NbtCollectionNode } from '../types/nodes/NbtCollectionNode'
+import { NbtCompoundNode } from '../types/nodes/NbtCompoundNode'
+import { NbtDoubleNode } from '../types/nodes/NbtDoubleNode'
+import { NbtFloatNode } from '../types/nodes/NbtFloatNode'
+import { NbtIntArrayNode } from '../types/nodes/NbtIntArrayNode'
+import { NbtIntNode } from '../types/nodes/NbtIntNode'
+import { NbtListNode } from '../types/nodes/NbtListNode'
+import { NbtLongArrayNode } from '../types/nodes/NbtLongArrayNode'
+import { NbtLongNode } from '../types/nodes/NbtLongNode'
+import { isNbtNodeTypeLooselyMatched, isNbtNodeTypeStrictlyMatched, NbtNode, NbtNodeType, NbtNodeTypeName, SuperNode } from '../types/nodes/NbtNode'
+import { NbtNumberNode } from '../types/nodes/NbtNumberNode'
+import { NbtPrimitiveNode } from '../types/nodes/NbtPrimitiveNode'
+import { NbtShortNode } from '../types/nodes/NbtShortNode'
+import { NbtStringNode } from '../types/nodes/NbtStringNode'
+import { ParsingContext } from '../types/ParsingContext'
+import { downgradeParsingError, ErrorCode, ParsingError, remapParsingErrors } from '../types/ParsingError'
+import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
-import StringReader from './StringReader'
-import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from './utils'
+import { StringReader } from './StringReader'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -78,7 +78,7 @@ type IdDoc = { Id: string }
 
 type OrDoc = { Or: nbtdoc.NbtValue[] }
 
-export default class NbtdocHelper {
+export class NbtdocHelper {
     // private static readonly MockEnumIndex: nbtdoc.Index<nbtdoc.EnumItem> = 114514
 
     compoundIndex: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
@@ -300,12 +300,13 @@ export default class NbtdocHelper {
             const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
             if (doc.Index.target.startsWith('custom:')) {
                 // TODO: Merge this with validateIndexField
+                doc = { Compound: null as unknown as number }
             } else {
-                doc = { Compound: clonedHelper.goRegistryCompound(doc.Index.target, id).compoundIndex }
+                doc = { Compound: clonedHelper.goRegistryCompound(doc.Index.target, id).compoundIndex as unknown as number }
             }
         }
         const pool = clonedHelper
-            .goCompound(doc.Compound)
+            .goCompound(doc ? doc.Compound : null)
             .readCompoundKeys()
             .filter(v => !existingKeys.includes(v))
         for (const key of pool) {

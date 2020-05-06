@@ -1,7 +1,7 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { ColorPresentation } from 'vscode-languageserver'
+import { FunctionInfo } from '../../types/FunctionInfo'
 
-export default function onColorPresentation({ info, lineNumber, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, lineNumber: number, r: number, g: number, b: number, a: number }) {
+export function onColorPresentation({ info, lineNumber, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, lineNumber: number, r: number, g: number, b: number, a: number }) {
     const ans: ColorPresentation[] = []
 
     const string = info.strings[lineNumber].slice(start, end)

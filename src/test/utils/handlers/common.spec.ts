@@ -4,12 +4,12 @@ import { fail } from 'power-assert'
 import { URI as Uri } from 'vscode-uri'
 import { CacheFile } from '../../../types/ClientCache'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
-import Line from '../../../types/Line'
-import IdentityNode from '../../../types/nodes/IdentityNode'
-import Token, { TokenType } from '../../../types/Token'
-import { getId, getInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers/common'
+import { Line } from '../../../types/Line'
+import { IdentityNode } from '../../../types/nodes/IdentityNode'
+import { Token, TokenType } from '../../../types/Token'
+import { getId, getInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {

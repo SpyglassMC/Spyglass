@@ -1,13 +1,13 @@
 import { Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { VanillaData } from '../../data/VanillaData'
 import { CacheFile } from '../../types/ClientCache'
-import CommandTree from '../../types/CommandTree'
-import Config from '../../types/Config'
-import FunctionInfo from '../../types/FunctionInfo'
-import Line from '../../types/Line'
-import { parseString } from './common'
+import { CommandTree } from '../../types/CommandTree'
+import { Config } from '../../types/Config'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { Line } from '../../types/Line'
+import { parseString } from '.'
 
-export default async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     // Update `version`.
     info.version = version
 

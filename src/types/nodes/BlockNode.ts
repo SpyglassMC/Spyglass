@@ -1,13 +1,12 @@
 import { LintConfig } from '../Config'
-import IdentityNode from './IdentityNode'
-import ArgumentNode, { NodeType, NodeRange, GetCodeActions, DiagnosticMap, GetHoverInformation } from './ArgumentNode'
 import { GetFormattedString } from '../Formattable'
-import BlockStateNode from './map/BlockStateNode'
-import NbtCompoundNode from './map/NbtCompoundNode'
-import TextRange, { areOverlapped, isInRange } from '../TextRange'
-import FunctionInfo from '../FunctionInfo'
+import { TextRange } from '../TextRange'
+import { ArgumentNode, NodeRange, NodeType } from './ArgumentNode'
+import { BlockStateNode } from './BlockStateNode'
+import { IdentityNode } from './IdentityNode'
+import { NbtCompoundNode } from './NbtCompoundNode'
 
-export default class BlockNode extends ArgumentNode {
+export class BlockNode extends ArgumentNode {
     readonly [NodeType] = 'block';
     [NodeRange]: TextRange
 

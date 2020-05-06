@@ -1,7 +1,7 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { ProposedFeatures } from 'vscode-languageserver'
+import { FunctionInfo } from '../../types/FunctionInfo'
 
-export default function onSemanticTokens({ info }: { info: FunctionInfo }) {
+export function onSemanticTokens({ info }: { info: FunctionInfo }) {
     info.builder = info.builder || new ProposedFeatures.SemanticTokensBuilder()
 
     for (let i = 0; i < info.lines.length; i++) {

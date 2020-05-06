@@ -2,7 +2,6 @@ import { DiagnosticConfig } from './StylisticConfig'
 
 export type NamingConvention = 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'kebab-case'
 export type NamingConventionConfig = NamingConvention | NamingConvention[]
-export default NamingConventionConfig
 
 const validators: { [key in NamingConvention]: RegExp } = {
     camelCase: /^[a-z\d]+([A-Z\d]+[a-z\d]*)*$/,

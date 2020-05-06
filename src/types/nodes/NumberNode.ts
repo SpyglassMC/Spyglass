@@ -1,8 +1,6 @@
-import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType } from './ArgumentNode'
-import { LintConfig } from '../Config'
+import { ArgumentNode, NodeType } from './ArgumentNode'
 
-export default class NumberNode extends ArgumentNode {
+export class NumberNode extends ArgumentNode {
     readonly [NodeType]: string = 'Number'
 
     constructor(

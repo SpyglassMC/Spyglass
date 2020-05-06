@@ -1,8 +1,8 @@
 import assert = require('power-assert')
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import LiteralArgumentParser from '../../parsers/LiteralArgumentParser'
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { LiteralArgumentParser } from '../../parsers/LiteralArgumentParser'
 
 describe('ArgumentParserManager Tests', () => {
     describe('getArgumentParser() Tests', () => {

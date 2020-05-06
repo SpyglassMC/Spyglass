@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../../types/Config'
-import NbtIntNode from '../../../../types/nodes/nbt/NbtIntNode'
 import { GetFormattedString } from '../../../../types/Formattable'
+import { NbtIntNode } from '../../../../types/nodes/NbtIntNode'
 
 describe('NbtIntNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

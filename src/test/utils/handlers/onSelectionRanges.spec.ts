@@ -1,10 +1,10 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onSelectionRanges from '../../../utils/handlers/onSelectionRanges'
-import { VanillaConfig } from '../../../types/Config'
 import { Position } from 'vscode-languageserver'
-import Token, { TokenType } from '../../../types/Token'
+import { VanillaConfig } from '../../../types/Config'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { Token, TokenType } from '../../../types/Token'
+import { onSelectionRanges } from '../../../utils/handlers/onSelectionRanges'
 
 describe('onSelectionRanges() Tests', () => {
     it('Should return selection ranges', () => {

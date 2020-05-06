@@ -1,16 +1,16 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import BlockNode from '../types/nodes/BlockNode'
-import IdentityNode from '../types/nodes/IdentityNode'
-import ItemNode from '../types/nodes/ItemNode'
-import ParsingContext from '../types/ParsingContext'
-import ParticleNode from '../types/nodes/ParticleNode'
-import StringReader from '../utils/StringReader'
-import VectorNode, { VectorElementNode, VectorElementType } from '../types/nodes/VectorNode'
 import { NodeRange } from '../types/nodes/ArgumentNode'
-import NumberNode from '../types/nodes/NumberNode'
+import { BlockNode } from '../types/nodes/BlockNode'
+import { IdentityNode } from '../types/nodes/IdentityNode'
+import { ItemNode } from '../types/nodes/ItemNode'
+import { NumberNode } from '../types/nodes/NumberNode'
+import { ParticleNode } from '../types/nodes/ParticleNode'
+import { VectorElementNode, VectorElementType, VectorNode } from '../types/nodes/VectorNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
+export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
     static identity = 'Particle'
     readonly identity = 'particle'
 

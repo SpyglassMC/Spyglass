@@ -1,16 +1,16 @@
-import { arrayToCompletions } from '../utils/utils'
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import TimeNode from '../types/nodes/TimeNode'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
-import NumberNode from '../types/nodes/NumberNode'
+import { locale } from '../locales'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import { NumberNode } from '../types/nodes/NumberNode'
+import { TimeNode } from '../types/nodes/TimeNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { arrayToCompletions } from '../utils'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class TimeArgumentParser extends ArgumentParser<TimeNode> {
+export class TimeArgumentParser extends ArgumentParser<TimeNode> {
     static identity = 'Time'
     static readonly Units = ['d', 's', 't']
 

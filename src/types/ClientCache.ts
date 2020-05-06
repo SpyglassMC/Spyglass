@@ -1,9 +1,9 @@
-import TextRange, { remapTextRange } from './TextRange'
 import { CompletionItem, MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
-import AdvancementInfo from './AdvancementInfo'
-import TagInfo from './TagInfo'
-import IndexMapping from './IndexMapping'
+import { AdvancementInfo } from './AdvancementInfo'
+import { IndexMapping } from './IndexMapping'
+import { TagInfo } from './TagInfo'
+import { remapTextRange, TextRange } from './TextRange'
 
 export const CacheVersion = 7
 

@@ -1,4 +1,4 @@
-export default interface IndexMapping {
+export interface IndexMapping {
     start?: number,
     skipAt?: number[]
 }

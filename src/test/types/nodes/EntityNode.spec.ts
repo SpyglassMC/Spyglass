@@ -1,14 +1,14 @@
 import assert = require('power-assert')
-import { constructConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
+import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import EntityNode from '../../../types/nodes/EntityNode'
-import IdentityNode from '../../../types/nodes/IdentityNode'
-import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
-import SelectorArgumentsNode, { SelectorScoresNode, SelectorAdvancementsNode, SelectorCriteriaNode } from '../../../types/nodes/map/SelectorArgumentsNode'
+import { EntityNode } from '../../../types/nodes/EntityNode'
+import { IdentityNode } from '../../../types/nodes/IdentityNode'
+import { UnsortedKeys } from '../../../types/nodes/MapNode'
+import { NumberNode } from '../../../types/nodes/NumberNode'
+import { NumberRangeNode } from '../../../types/nodes/NumberRangeNode'
+import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../../types/nodes/SelectorArgumentsNode'
 import { $ } from '../../utils.spec'
-import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
-import NumberNode from '../../../types/nodes/NumberNode'
 
 describe('EntityNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

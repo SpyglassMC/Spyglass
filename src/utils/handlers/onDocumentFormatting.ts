@@ -1,8 +1,8 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
+import { FunctionInfo } from '../../types/FunctionInfo'
 import { lineToLintedString } from '../../types/Line'
 
-export default function onDocumentFormatting({ info }: { info: FunctionInfo }) {
+export function onDocumentFormatting({ info }: { info: FunctionInfo }) {
     const ans: TextEdit[] = []
 
     for (let i = 0; i < info.lines.length; i++) {

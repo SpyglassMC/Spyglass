@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import IndexMapping from '../../types/IndexMapping'
-import { remapTextRange, areOverlapped, isInRange } from '../../types/TextRange'
+import { IndexMapping } from '../../types/IndexMapping'
+import { areOverlapped, isInRange, remapTextRange } from '../../types/TextRange'
 
 describe('TextRange Tests', () => {
     describe('remapTextRange() Tests', () => {

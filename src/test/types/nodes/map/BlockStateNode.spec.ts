@@ -1,13 +1,13 @@
 import assert = require('power-assert')
-import BlockStateNode from '../../../../types/nodes/map/BlockStateNode'
-import { $ } from '../../../utils.spec'
 import { constructConfig } from '../../../../types/Config'
-import FunctionInfo from '../../../../types/FunctionInfo'
-import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { ErrorCode } from '../../../../types/ParsingError'
-import { getCodeAction } from '../../../../utils/utils'
-import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
 import { GetFormattedString } from '../../../../types/Formattable'
+import { FunctionInfo } from '../../../../types/FunctionInfo'
+import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
+import { BlockStateNode } from '../../../../types/nodes/BlockStateNode'
+import { UnsortedKeys } from '../../../../types/nodes/MapNode'
+import { ErrorCode } from '../../../../types/ParsingError'
+import { getCodeAction } from '../../../../utils'
+import { $ } from '../../../utils.spec'
 
 describe('BlockStateNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

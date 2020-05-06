@@ -1,12 +1,12 @@
+import { locale } from '../locales'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
-import Token, { TokenType } from '../types/Token'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
+export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ScoreboardSlot'
     static readonly Category = ['belowName', 'list', 'sidebar']
     static readonly Colors = ['black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white']

@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import TagArgumentParser from '../../parsers/TagArgumentParser'
+import { TagArgumentParser } from '../../parsers/TagArgumentParser'
 import { constructConfig } from '../../types/Config'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 
 describe('TagArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

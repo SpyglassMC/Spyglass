@@ -1,12 +1,12 @@
 import assert = require('power-assert')
-import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { describe, it } from 'mocha'
+import { VanillaConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import StringNode from '../../../types/nodes/StringNode'
-import { ErrorCode } from '../../../types/ParsingError'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
-import FunctionInfo from '../../../types/FunctionInfo'
-import { getCodeAction } from '../../../utils/utils'
+import { StringNode } from '../../../types/nodes/StringNode'
+import { ErrorCode } from '../../../types/ParsingError'
+import { getCodeAction } from '../../../utils'
 import { $ } from '../../utils.spec'
 
 describe('StringNode Tests', () => {

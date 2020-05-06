@@ -1,11 +1,11 @@
-import FunctionInfo from '../../types/FunctionInfo'
+import { Proposed, SymbolKind } from 'vscode-languageserver'
 import { getCacheFromChar } from '../../types/ClientCache'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { PathExistsFunction, UrisOfIds, Uri, UrisOfStrings } from '../../types/handlers'
-import { SymbolKind, Proposed } from 'vscode-languageserver'
-import { getUriFromId } from './common'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { getUriFromId } from '.'
 
-export default async function onCallHierarchyPrepare({ info, lineNumber, char, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, lineNumber: number, char: number, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
+export async function onCallHierarchyPrepare({ info, lineNumber, char, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, lineNumber: number, char: number, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
     const line = info.lines[lineNumber]
     /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)

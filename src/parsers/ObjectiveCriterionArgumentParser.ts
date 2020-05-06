@@ -1,14 +1,14 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import ParsingContext from '../types/ParsingContext'
-import ScoreboardSlotArgumentParser from './ScoreboardSlotArgumentParser'
-import StringReader from '../utils/StringReader'
-import Token, { TokenType } from '../types/Token'
-import { arrayToCompletions, arrayToMessage } from '../utils/utils'
 import { CompletionItemKind } from 'vscode-languageserver'
-import ParsingError from '../types/ParsingError'
-import { locale } from '../locales/Locales'
-import IdentityNode from '../types/nodes/IdentityNode'
+import { locale } from '../locales'
+import { IdentityNode } from '../types/nodes/IdentityNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenType } from '../types/Token'
+import { arrayToCompletions, arrayToMessage } from '../utils'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
+import { ScoreboardSlotArgumentParser } from './ScoreboardSlotArgumentParser'
 
 const RegularSep = '.'
 const StatsSep = ':'
@@ -42,7 +42,7 @@ const Category: { [type: string]: null | string | string[] } = {
     ...StatsCategory
 }
 
-export default class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
+export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     static identity = 'ObjectiveCriterion'
 
     readonly identity = 'objectiveCriterion'

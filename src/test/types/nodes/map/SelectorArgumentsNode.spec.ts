@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../../../types/Config'
-import FunctionInfo from '../../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
-import SelectorArgumentsNode from '../../../../types/nodes/map/SelectorArgumentsNode'
+import { UnsortedKeys } from '../../../../types/nodes/MapNode'
+import { SelectorArgumentsNode } from '../../../../types/nodes/SelectorArgumentsNode'
 import { ErrorCode } from '../../../../types/ParsingError'
-import { getCodeAction } from '../../../../utils/utils'
+import { getCodeAction } from '../../../../utils'
 import { $ } from '../../../utils.spec'
 
 describe('SelectorArgumentsNode Tests', () => {

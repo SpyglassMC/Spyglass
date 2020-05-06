@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import NumberRangeNode from '../../../types/nodes/NumberRangeNode'
 import { GetFormattedString } from '../../../types/Formattable'
-import NumberNode from '../../../types/nodes/NumberNode'
+import { NumberNode } from '../../../types/nodes/NumberNode'
+import { NumberRangeNode } from '../../../types/nodes/NumberRangeNode'
 
 describe('NumberRangeNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

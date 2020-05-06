@@ -1,9 +1,9 @@
-import { CacheFile, getSafeCategory, CacheCategory, CacheKey } from '../../types/ClientCache'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { Uri, UrisOfStrings, GetUriFromIdFunction, PathExistsFunction, UrisOfIds } from '../../types/handlers'
 import { Proposed } from 'vscode-languageserver'
-import { getId, getUri, getUriFromId } from './common'
-import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
+import { CacheCategory, CacheFile, CacheKey, getSafeCategory } from '../../types/ClientCache'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { getId, getUri, getUriFromId } from '.'
+import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
 /**
  * An advancement reward can call:
@@ -19,7 +19,7 @@ import { IdentityKind, getCallHierarchyItem } from './onCallHierarchyPrepare'
  * 
  * See also #298.
  */
-export default async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }): Promise<Proposed.CallHierarchyOutgoingCall[] | null> {
+export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }): Promise<Proposed.CallHierarchyOutgoingCall[] | null> {
     const ans: Proposed.CallHierarchyOutgoingCall[] = []
 
     switch (kind) {

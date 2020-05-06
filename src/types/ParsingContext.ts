@@ -1,18 +1,18 @@
-import FallbackCommandTree from '../data/1.16/CommandTree'
+import { CommandTree116 as FallbackCommandTree } from '../data/CommandTree116'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
-import ArgumentParser from '../parsers/ArgumentParser'
-import ArgumentParserManager from '../parsers/ArgumentParserManager'
-import BlockDefinitions from './BlockDefinition'
+import { ArgumentParser } from '../parsers/ArgumentParser'
+import { ArgumentParserManager } from '../parsers/ArgumentParserManager'
+import { BlockDefinition } from './BlockDefinition'
 import { ClientCache } from './ClientCache'
-import CommandTree from './CommandTree'
-import Config, { VanillaConfig } from './Config'
-import Manager from './Manager'
-import NamespaceSummary from './NamespaceSummary'
+import { CommandTree } from './CommandTree'
+import { Config, VanillaConfig } from './Config'
+import { Manager } from './Manager'
+import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
-import Registry from './Registry'
+import { Registry } from './Registry'
 
-export default interface ParsingContext {
-    blockDefinition: BlockDefinitions,
+export interface ParsingContext {
+    blockDefinition: BlockDefinition,
     cache: ClientCache,
     commandTree: CommandTree,
     config: Config,
@@ -28,7 +28,7 @@ export default interface ParsingContext {
 }
 
 interface ParsingContextLike {
-    blockDefinition?: BlockDefinitions,
+    blockDefinition?: BlockDefinition,
     cache?: ClientCache,
     commandTree?: CommandTree,
     config?: Config,

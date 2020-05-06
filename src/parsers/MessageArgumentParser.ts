@@ -1,12 +1,12 @@
-import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
-import ArgumentParser from './ArgumentParser'
-import MessageNode from '../types/nodes/MessageNode'
-import ParsingContext from '../types/ParsingContext'
-import StringReader from '../utils/StringReader'
-import Token, { TokenType } from '../types/Token'
 import { NodeRange } from '../types/nodes/ArgumentNode'
+import { MessageNode } from '../types/nodes/MessageNode'
+import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { Token, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class MessageArgumentParser extends ArgumentParser<MessageNode> {
+export class MessageArgumentParser extends ArgumentParser<MessageNode> {
     static identity = 'Message'
     readonly identity = 'message'
 

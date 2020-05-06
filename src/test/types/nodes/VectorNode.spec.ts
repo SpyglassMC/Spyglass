@@ -2,10 +2,10 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import FunctionInfo from '../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../types/nodes/ArgumentNode'
-import VectorNode, { VectorElementNode, VectorElementType } from '../../../types/nodes/VectorNode'
-import { getCodeAction } from '../../../utils/utils'
+import { VectorElementNode, VectorElementType, VectorNode } from '../../../types/nodes/VectorNode'
+import { getCodeAction } from '../../../utils'
 import { $ } from '../../utils.spec'
 
 describe('VectorNode Tests', () => {

@@ -1,5 +1,5 @@
-import ArgumentNode, { NodeRange } from '../types/nodes/ArgumentNode'
-import TextRange from '../types/TextRange'
+import { ArgumentNode, NodeRange } from '../types/nodes/ArgumentNode'
+import { TextRange } from '../types/TextRange'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }

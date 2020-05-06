@@ -1,18 +1,17 @@
-import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
-import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
-import ArgumentParser from './ArgumentParser'
-import Line, { combineSaturatedLine, SaturatedLine, saturatedLineToLine } from '../types/Line'
-import Parser from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import ParsingError, { downgradeParsingError } from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
-import Token, { TokenType, TokenModifier } from '../types/Token'
-import { toFormattedString } from '../utils/utils'
-import { CacheKey } from '../types/ClientCache'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
+import { locale } from '../locales'
+import { CacheKey } from '../types/ClientCache'
+import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
+import { combineSaturatedLine, Line, SaturatedLine, saturatedLineToLine } from '../types/Line'
+import { Parser } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { downgradeParsingError, ParsingError } from '../types/ParsingError'
+import { Token, TokenModifier, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class LineParser implements Parser<Line> {
+export class LineParser implements Parser<Line> {
     /* istanbul ignore next */
     constructor(
         /**

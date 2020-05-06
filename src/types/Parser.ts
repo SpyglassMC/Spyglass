@@ -1,14 +1,14 @@
-import { ClientCache, combineCache } from './ClientCache'
 import { CompletionItem } from 'vscode-languageserver'
-import ParsingError, { downgradeParsingError } from './ParsingError'
-import StringReader from '../utils/StringReader'
-import Token from './Token'
+import { StringReader } from '../utils/StringReader'
+import { ClientCache, combineCache } from './ClientCache'
+import { downgradeParsingError, ParsingError } from './ParsingError'
+import { Token } from './Token'
 
 /**
  * Represent an argument parser.
  * @template T Type of the parsed data. Can be string, Selector, NBT, etc.
  */
-export default interface Parser<T> {
+export interface Parser<T> {
     /**
      * Parse.
      * @param reader Input reader.

@@ -2,9 +2,9 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris } from '../../../types/handlers'
-import onDidCloseTextDocument from '../../../utils/handlers/onDidCloseTextDocument'
+import { onDidCloseTextDocument } from '../../../utils/handlers/onDidCloseTextDocument'
 
 describe('onDidCloseTextDocument() Tests', () => {
     it('Should remove the info', () => {

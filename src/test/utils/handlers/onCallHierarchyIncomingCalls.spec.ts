@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri, UrisOfIds } from '../../../types/handlers'
-import onCallHierarchyIncomingCalls from '../../../utils/handlers/onCallHierarchyIncomingCalls'
+import { onCallHierarchyIncomingCalls } from '../../../utils/handlers/onCallHierarchyIncomingCalls'
 import { IdentityKind } from '../../../utils/handlers/onCallHierarchyPrepare'
 
 describe('onCallHierarchyIncomingCalls() Tests', () => {

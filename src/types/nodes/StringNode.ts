@@ -1,12 +1,11 @@
-import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType, GetCodeActions, NodeRange, DiagnosticMap } from './ArgumentNode'
-import IndexMapping from '../IndexMapping'
+import { getCodeAction, quoteString } from '../../utils'
+import { FunctionInfo } from '../FunctionInfo'
+import { IndexMapping } from '../IndexMapping'
 import { ErrorCode } from '../ParsingError'
-import FunctionInfo from '../FunctionInfo'
-import { getCodeAction, quoteString } from '../../utils/utils'
-import TextRange from '../TextRange'
+import { TextRange } from '../TextRange'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
-export default class StringNode extends ArgumentNode {
+export class StringNode extends ArgumentNode {
     readonly [NodeType]: string = 'String'
 
     constructor(

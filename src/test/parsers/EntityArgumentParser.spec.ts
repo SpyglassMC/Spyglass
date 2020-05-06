@@ -1,23 +1,23 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import EntityArgumentParser from '../../parsers/EntityArgumentParser'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { EntityArgumentParser } from '../../parsers/EntityArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { NodeRange } from '../../types/nodes/ArgumentNode'
-import EntityNode from '../../types/nodes/EntityNode'
-import IdentityNode from '../../types/nodes/IdentityNode'
-import { Keys, UnsortedKeys } from '../../types/nodes/map/MapNode'
-import NbtCompoundKeyNode from '../../types/nodes/map/NbtCompoundKeyNode'
-import NbtCompoundNode from '../../types/nodes/map/NbtCompoundNode'
-import SelectorArgumentsNode, { SelectorAdvancementsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../types/nodes/map/SelectorArgumentsNode'
-import NbtByteNode from '../../types/nodes/nbt/NbtByteNode'
-import NumberNode from '../../types/nodes/NumberNode'
-import NumberRangeNode from '../../types/nodes/NumberRangeNode'
-import StringNode from '../../types/nodes/StringNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError, { ErrorCode } from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { EntityNode } from '../../types/nodes/EntityNode'
+import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { Keys, UnsortedKeys } from '../../types/nodes/MapNode'
+import { NbtByteNode } from '../../types/nodes/NbtByteNode'
+import { NbtCompoundKeyNode } from '../../types/nodes/NbtCompoundKeyNode'
+import { NbtCompoundNode } from '../../types/nodes/NbtCompoundNode'
+import { NumberNode } from '../../types/nodes/NumberNode'
+import { NumberRangeNode } from '../../types/nodes/NumberRangeNode'
+import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../types/nodes/SelectorArgumentsNode'
+import { StringNode } from '../../types/nodes/StringNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ErrorCode, ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('EntityArgumentParser Tests', () => {
@@ -416,7 +416,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@s[]'), ctx)
                 assert.deepStrictEqual(actual.data, $(
-                    new EntityNode(undefined, 'a', $(
+                    new EntityNode(undefined, 's', $(
                         new SelectorArgumentsNode(), [2, 4]
                     )),
                     [0, 4]

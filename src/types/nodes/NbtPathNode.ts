@@ -1,10 +1,10 @@
-import { GetFormattedString } from '../Formattable'
+import { toFormattedString } from '../../utils'
 import { LintConfig } from '../Config'
-import { toFormattedString } from '../../utils/utils'
-import NbtCompoundNode from './map/NbtCompoundNode'
-import ArgumentNode, { NodeType } from './ArgumentNode'
-import NbtCompoundKeyNode from './map/NbtCompoundKeyNode'
-import NumberNode from './NumberNode'
+import { GetFormattedString } from '../Formattable'
+import { ArgumentNode, NodeType } from './ArgumentNode'
+import { NbtCompoundKeyNode } from './NbtCompoundKeyNode'
+import { NbtCompoundNode } from './NbtCompoundNode'
+import { NumberNode } from './NumberNode'
 
 type NbtPathElement =
     | typeof NbtPathNode.IndexBegin
@@ -14,7 +14,7 @@ type NbtPathElement =
     | NbtCompoundNode
     | NbtCompoundKeyNode
 
-export default class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPathElement> {
+export class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPathElement> {
     [index: number]: NbtPathElement
 
     static readonly IndexBegin = '['

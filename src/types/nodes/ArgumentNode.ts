@@ -1,9 +1,9 @@
-import Formattable, { GetFormattedString } from '../Formattable'
-import { LintConfig } from '../Config'
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
-import TextRange, { EmptyRange, areOverlapped, isInRange } from '../TextRange'
-import FunctionInfo from '../FunctionInfo'
+import { LintConfig } from '../Config'
+import { Formattable, GetFormattedString } from '../Formattable'
+import { FunctionInfo } from '../FunctionInfo'
 import { ErrorCode } from '../ParsingError'
+import { areOverlapped, EmptyRange, isInRange, TextRange } from '../TextRange'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('Range')
@@ -16,7 +16,7 @@ export type DiagnosticMap = { [code in ErrorCode]?: Diagnostic[] }
 
 const Triage = Symbol('Triage')
 
-export default abstract class ArgumentNode implements Formattable {
+export abstract class ArgumentNode implements Formattable {
     abstract [NodeType]: string
     [NodeRange]: TextRange = EmptyRange;
     [NodeDescription]: string = '';

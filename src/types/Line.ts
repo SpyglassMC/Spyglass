@@ -1,14 +1,14 @@
-import { ClientCache, combineCache } from './ClientCache'
-import ParsingError from './ParsingError'
 import { CompletionItem } from 'vscode-languageserver'
-import { toFormattedString } from '../utils/utils'
+import { toFormattedString } from '../utils'
+import { ClientCache, combineCache } from './ClientCache'
 import { LintConfig } from './Config'
-import Token from './Token'
+import { ParsingError } from './ParsingError'
+import { Token } from './Token'
 
 /**
  * Represent a parsed line in a function.
  */
-export default interface Line {
+export interface Line {
     /**
      * All parsed arguments of the line.
      */

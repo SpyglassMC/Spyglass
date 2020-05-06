@@ -1,12 +1,12 @@
-import ArgumentParser from './ArgumentParser'
-import ParsingError from '../types/ParsingError'
-import StringReader from '../utils/StringReader'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { locale } from '../locales'
 import { ArgumentParserResult } from '../types/Parser'
-import { InsertTextFormat, CompletionItemKind } from 'vscode-languageserver'
-import ParsingContext from '../types/ParsingContext'
-import { locale } from '../locales/Locales'
+import { ParsingContext } from '../types/ParsingContext'
+import { ParsingError } from '../types/ParsingError'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class CodeSnippetArgumentParser extends ArgumentParser<string> {
+export class CodeSnippetArgumentParser extends ArgumentParser<string> {
     readonly identity = 'codeSnippet'
 
     /* istanbul ignore next */

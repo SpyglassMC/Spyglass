@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import FunctionInfo from '../../../types/FunctionInfo'
-import onSemanticTokens from '../../../utils/handlers/onSemanticTokens'
 import { VanillaConfig } from '../../../types/Config'
-import Token, { TokenType } from '../../../types/Token'
+import { FunctionInfo } from '../../../types/FunctionInfo'
+import { Token, TokenType } from '../../../types/Token'
+import { onSemanticTokens } from '../../../utils/handlers/onSemanticTokens'
 
 describe('onSemanticTokens() Tests', () => {
     it('Should return correctly', () => {

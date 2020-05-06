@@ -2,11 +2,11 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import IdentityNode from '../../../types/nodes/IdentityNode'
-import ItemNode from '../../../types/nodes/ItemNode'
-import { UnsortedKeys } from '../../../types/nodes/map/MapNode'
-import NbtCompoundNode from '../../../types/nodes/map/NbtCompoundNode'
-import NbtStringNode from '../../../types/nodes/nbt/NbtStringNode'
+import { IdentityNode } from '../../../types/nodes/IdentityNode'
+import { ItemNode } from '../../../types/nodes/ItemNode'
+import { UnsortedKeys } from '../../../types/nodes/MapNode'
+import { NbtCompoundNode } from '../../../types/nodes/NbtCompoundNode'
+import { NbtStringNode } from '../../../types/nodes/NbtStringNode'
 import { $ } from '../../utils.spec'
 
 describe('ItemNode Tests', () => {

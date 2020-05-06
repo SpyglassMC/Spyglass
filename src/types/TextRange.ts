@@ -1,6 +1,6 @@
-import IndexMapping, { getOuterIndex } from './IndexMapping'
+import { getOuterIndex, IndexMapping } from './IndexMapping'
 
-export default interface TextRange {
+export interface TextRange {
     start: number,
     end: number
 }

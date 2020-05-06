@@ -1,12 +1,12 @@
-import ArgumentParser from './ArgumentParser'
-import StringReader from '../utils/StringReader'
+import { locale } from '../locales'
+import { CacheCategory, getCategoryKey, isDefinitionType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
-import ParsingError from '../types/ParsingError'
-import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
-import { locale } from '../locales/Locales'
-import Token, { TokenModifier, TokenType } from '../types/Token'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenModifier, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
+export class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionDescription'
     readonly identity = 'string'
 

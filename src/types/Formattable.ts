@@ -2,7 +2,7 @@ import { LintConfig } from './Config'
 
 export const GetFormattedString = Symbol()
 
-export default interface Formattable {
+export interface Formattable {
     [GetFormattedString](lint: LintConfig): string
 }
 

@@ -1,14 +1,14 @@
 import assert = require('power-assert')
-import NbtCompoundNode from '../../../../types/nodes/map/NbtCompoundNode'
-import { $ } from '../../../utils.spec'
 import { constructConfig } from '../../../../types/Config'
-import FunctionInfo from '../../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
+import { UnsortedKeys } from '../../../../types/nodes/MapNode'
+import { NbtByteNode } from '../../../../types/nodes/NbtByteNode'
+import { NbtCompoundNode } from '../../../../types/nodes/NbtCompoundNode'
+import { NbtLongNode } from '../../../../types/nodes/NbtLongNode'
 import { ErrorCode } from '../../../../types/ParsingError'
-import { getCodeAction } from '../../../../utils/utils'
-import { UnsortedKeys } from '../../../../types/nodes/map/MapNode'
-import NbtByteNode from '../../../../types/nodes/nbt/NbtByteNode'
-import NbtLongNode from '../../../../types/nodes/nbt/NbtLongNode'
+import { getCodeAction } from '../../../../utils'
+import { $ } from '../../../utils.spec'
 
 describe('NbtCompoundNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {

@@ -1,8 +1,8 @@
 import { WorkspaceFolder } from 'vscode-languageserver'
-import { getRootUri } from './common'
 import { Uri } from '../../types/handlers'
+import { getRootUri } from '.'
 
-export default function onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds }: { folders: WorkspaceFolder[] | null, roots: Uri[], uris: Map<string, Uri>, urisOfIds: Map<string, Uri | null> }) {
+export function onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds }: { folders: WorkspaceFolder[] | null, roots: Uri[], uris: Map<string, Uri>, urisOfIds: Map<string, Uri | null> }) {
     roots.splice(0)
     urisOfIds.clear()
 

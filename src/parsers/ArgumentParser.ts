@@ -1,12 +1,12 @@
-import Parser, { ArgumentParserResult } from '../types/Parser'
-import ParsingContext from '../types/ParsingContext'
-import StringReader from '../utils/StringReader'
-import { locale } from '../locales/Locales'
+import { locale } from '../locales'
+import { ArgumentParserResult, Parser } from '../types/Parser'
+import { ParsingContext } from '../types/ParsingContext'
+import { StringReader } from '../utils/StringReader'
 
 /**
  * Base class of argument parsers.
  */
-export default abstract class ArgumentParser<T> implements Parser<T> {
+export abstract class ArgumentParser<T> implements Parser<T> {
     static identity: string
     /**
      * Human-readable identity of the parser. Will be shown in hints.

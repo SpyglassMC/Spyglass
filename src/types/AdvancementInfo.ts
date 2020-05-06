@@ -1,4 +1,4 @@
-export default interface AdvancementInfo {
+export interface AdvancementInfo {
     rewards?: {
         function?: string
     }

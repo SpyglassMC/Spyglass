@@ -1,7 +1,7 @@
 import assert = require('power-assert')
-import Token, { TokenType } from '../../types/Token'
 import { describe, it } from 'mocha'
-import StringReader from '../../utils/StringReader'
+import { Token, TokenType } from '../../types/Token'
+import { StringReader } from '../../utils/StringReader'
 
 describe('Token Tests', () => {
     describe('toArray() Tests', () => {

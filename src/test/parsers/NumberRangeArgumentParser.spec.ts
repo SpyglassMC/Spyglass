@@ -1,12 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import ArgumentParserManager from '../../parsers/ArgumentParserManager'
-import NumberRangeArgumentParser from '../../parsers/NumberRangeArgumentParser'
-import NumberNode from '../../types/nodes/NumberNode'
-import NumberRangeNode from '../../types/nodes/NumberRangeNode'
-import ParsingContext, { constructContext } from '../../types/ParsingContext'
-import ParsingError from '../../types/ParsingError'
-import StringReader from '../../utils/StringReader'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { NumberRangeArgumentParser } from '../../parsers/NumberRangeArgumentParser'
+import { NumberNode } from '../../types/nodes/NumberNode'
+import { NumberRangeNode } from '../../types/nodes/NumberRangeNode'
+import { constructContext, ParsingContext } from '../../types/ParsingContext'
+import { ParsingError } from '../../types/ParsingError'
+import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
 
 describe('NumberRangeArgumentParser Tests', () => {

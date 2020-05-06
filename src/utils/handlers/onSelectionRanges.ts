@@ -1,7 +1,7 @@
-import FunctionInfo from '../../types/FunctionInfo'
 import { Position, Range } from 'vscode-languageserver'
+import { FunctionInfo } from '../../types/FunctionInfo'
 
-export default function onSelectionRanges({ info, positions }: { info: FunctionInfo, positions: Position[] }) {
+export function onSelectionRanges({ info, positions }: { info: FunctionInfo, positions: Position[] }) {
     const ans: { range: Range }[] = []
 
     for (const { line: lineNumber, character: char } of positions) {

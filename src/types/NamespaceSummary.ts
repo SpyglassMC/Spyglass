@@ -1,7 +1,7 @@
 /**
  * A summary data for a certain namespace in the datapack.
  */
-export default interface NamespaceSummary {
+export interface NamespaceSummary {
     advancements: string[],
     loot_tables: string[],
     recipes: string[],

@@ -1,13 +1,13 @@
-import ArgumentParser from './ArgumentParser'
-import StringReader from '../utils/StringReader'
+import { locale } from '../locales'
+import { CacheCategory, getCategoryKey, isDefinitionType } from '../types/ClientCache'
+import { IdentityNode } from '../types/nodes/IdentityNode'
 import { ArgumentParserResult } from '../types/Parser'
-import ParsingError from '../types/ParsingError'
-import { isDefinitionType, getCategoryKey, CacheCategory } from '../types/ClientCache'
-import { locale } from '../locales/Locales'
-import Token, { TokenModifier, TokenType } from '../types/Token'
-import IdentityNode from '../types/nodes/IdentityNode'
+import { ParsingError } from '../types/ParsingError'
+import { Token, TokenModifier, TokenType } from '../types/Token'
+import { StringReader } from '../utils/StringReader'
+import { ArgumentParser } from './ArgumentParser'
 
-export default class DefinitionIDArgumentParser extends ArgumentParser<string> {
+export class DefinitionIDArgumentParser extends ArgumentParser<string> {
     static identity = 'DefinitionID'
     readonly identity = 'string'
 

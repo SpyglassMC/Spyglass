@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
-import FunctionInfo from '../../../types/FunctionInfo'
+import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris, PathExistsFunction, Uri, UrisOfIds } from '../../../types/handlers'
-import onRenameRequest from '../../../utils/handlers/onRenameRequest'
+import { onRenameRequest } from '../../../utils/handlers/onRenameRequest'
 
 describe('onRenameRequest() Tests', () => {
     const pathExists: PathExistsFunction = async abs => !!(

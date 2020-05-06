@@ -1,13 +1,13 @@
 import assert = require('power-assert')
-import os from 'os'
-import Formattable, { GetFormattedString } from '../../types/Formattable'
 import { describe, it } from 'mocha'
-import { arrayToMessage, escapeString, quoteString, arrayToCompletions, toFormattedString, getEol, remapCompletionItem, validateStringQuote } from '../../utils/utils'
-import { constructConfig, LintConfig } from '../../types/Config'
-import { DiagnosticConfig } from '../../types/StylisticConfig'
-import QuoteTypeConfig from '../../types/QuoteTypeConfig'
-import ParsingError, { ErrorCode } from '../../types/ParsingError'
+import os from 'os'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { constructConfig, LintConfig } from '../../types/Config'
+import { Formattable, GetFormattedString } from '../../types/Formattable'
+import { ErrorCode, ParsingError } from '../../types/ParsingError'
+import { QuoteTypeConfig } from '../../types/QuoteTypeConfig'
+import { DiagnosticConfig } from '../../types/StylisticConfig'
+import { arrayToCompletions, arrayToMessage, escapeString, getEol, quoteString, remapCompletionItem, toFormattedString, validateStringQuote } from '../../utils'
 
 describe('utils.ts Tests', () => {
     describe('arrayToMessage() Tests', () => {

@@ -1,8 +1,8 @@
-import ParsingError from '../types/ParsingError'
-import { locale } from '../locales/Locales'
-import IndexMapping from '../types/IndexMapping'
+import { locale } from '../locales'
+import { IndexMapping } from '../types/IndexMapping'
+import { ParsingError } from '../types/ParsingError'
 
-export default class StringReader {
+export class StringReader {
     public cursor = 0
 
     constructor(

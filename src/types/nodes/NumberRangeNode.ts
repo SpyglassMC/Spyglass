@@ -1,10 +1,10 @@
+import { toFormattedString } from '../../utils'
 import { LintConfig } from '../Config'
 import { GetFormattedString } from '../Formattable'
-import ArgumentNode, { NodeType } from './ArgumentNode'
-import NumberNode from './NumberNode'
-import { toFormattedString } from '../../utils/utils'
+import { ArgumentNode, NodeType } from './ArgumentNode'
+import { NumberNode } from './NumberNode'
 
-export default class NumberRangeNode extends ArgumentNode {
+export class NumberRangeNode extends ArgumentNode {
     readonly [NodeType] = 'NumberRange'
 
     constructor(

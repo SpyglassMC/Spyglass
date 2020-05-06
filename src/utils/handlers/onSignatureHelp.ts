@@ -1,13 +1,13 @@
 import { SignatureInformation } from 'vscode-languageserver'
 import { VanillaData } from '../../data/VanillaData'
-import LineParser from '../../parsers/LineParser'
+import { LineParser } from '../../parsers/LineParser'
 import { CacheFile } from '../../types/ClientCache'
-import CommandTree from '../../types/CommandTree'
-import FunctionInfo from '../../types/FunctionInfo'
+import { CommandTree } from '../../types/CommandTree'
+import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
-import StringReader from '../StringReader'
+import { StringReader } from '../StringReader'
 
-export default async function onSignatureHelp({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const signatures: SignatureInformation[] = []
 
     const parser = new LineParser(false, 'line')

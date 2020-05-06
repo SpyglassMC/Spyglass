@@ -2,12 +2,12 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import BlockDefinition from '../types/BlockDefinition'
-import NamespaceSummary from '../types/NamespaceSummary'
+import { BlockDefinition } from '../types/BlockDefinition'
+import { NamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
-import Registry from '../types/Registry'
-import { requestText } from '../utils/utils'
-import VersionInformation from '../types/VersionInformation'
+import { Registry } from '../types/Registry'
+import { VersionInformation } from '../types/VersionInformation'
+import { requestText } from '../utils'
 
 let faildTimes = 0
 const MaxFaildTimes = 10
