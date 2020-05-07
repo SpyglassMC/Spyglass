@@ -1409,8 +1409,22 @@ export const CommandTree: ICommandTree = {
                 players: {
                     parser: new LiteralArgumentParser('players'),
                     children: {
-                        add_remove_set: {
-                            parser: new LiteralArgumentParser('add', 'remove', 'set'),
+                        add_remove: {
+                            parser: new LiteralArgumentParser('add', 'remove'),
+                            children: {
+                                targets: {
+                                    template: 'templates.multiple_score',
+                                    children: {
+                                        score: {
+                                            parser: new NumberArgumentParser('integer', 0),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        set: {
+                            parser: new LiteralArgumentParser('set'),
                             children: {
                                 targets: {
                                     template: 'templates.multiple_score',
