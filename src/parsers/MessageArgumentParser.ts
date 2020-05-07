@@ -1,5 +1,5 @@
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import { MessageNode } from '../types/nodes/MessageNode'
+import { NodeRange } from '../nodes/ArgumentNode'
+import { MessageNode } from '../nodes/MessageNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { Token, TokenType } from '../types/Token'

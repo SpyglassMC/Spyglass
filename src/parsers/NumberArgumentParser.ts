@@ -1,6 +1,6 @@
 import { locale } from '../locales'
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import { NumberNode } from '../types/nodes/NumberNode'
+import { NodeRange } from '../nodes/ArgumentNode'
+import { NumberNode } from '../nodes/NumberNode'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'

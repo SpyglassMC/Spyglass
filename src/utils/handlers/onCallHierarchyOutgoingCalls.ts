@@ -1,7 +1,7 @@
 import { Proposed } from 'vscode-languageserver'
 import { CacheCategory, CacheFile, CacheKey, getSafeCategory } from '../../types/ClientCache'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { getId, getUri, getUriFromId } from '.'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 

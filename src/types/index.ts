@@ -1,5 +1,3 @@
-import * as nodes from './nodes'
-
 export * from './AdvancementInfo'
 export * from './BlockDefinition'
 export * from './ClientCache'
@@ -29,4 +27,3 @@ export * from './TagInfo'
 export * from './TextRange'
 export * from './Token'
 export * from './VersionInformation'
-export { nodes }

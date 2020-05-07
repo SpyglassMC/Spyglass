@@ -1,6 +1,6 @@
 import { CompletionItemKind } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { IdentityNode } from '../types/nodes/IdentityNode'
+import { IdentityNode } from '../nodes/IdentityNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'

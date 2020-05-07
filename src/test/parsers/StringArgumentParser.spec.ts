@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { StringArgumentParser, StringType } from '../../parsers/StringArgumentParser'
-import { StringNode } from '../../types/nodes/StringNode'
+import { StringNode } from '../../nodes/StringNode'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'

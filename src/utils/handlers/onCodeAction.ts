@@ -1,8 +1,6 @@
-import { Uri } from 'vscode'
 import { CodeAction, Diagnostic, Range } from 'vscode-languageserver'
-import { CacheFile } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
-import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange } from '../../types/nodes/ArgumentNode'
+import { CacheFile, FunctionInfo, Uri } from '../../types'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange } from '../../nodes/ArgumentNode'
 import { ErrorCode } from '../../types/ParsingError'
 import { areOverlapped } from '../../types/TextRange'
 

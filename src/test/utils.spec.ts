@@ -1,4 +1,4 @@
-import { ArgumentNode, NodeRange } from '../types/nodes/ArgumentNode'
+import { ArgumentNode, NodeRange } from '../nodes/ArgumentNode'
 import { TextRange } from '../types/TextRange'
 
 type Range = TextRange | [number, number]

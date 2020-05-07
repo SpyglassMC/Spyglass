@@ -10,8 +10,6 @@ import { ErrorCode, ParsingError } from '../types/ParsingError'
 import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { TextRange } from '../types/TextRange'
-import * as datafixers from './datafixers'
-import * as handlers from './handlers'
 import { StringReader } from './StringReader'
 
 /**
@@ -286,6 +284,7 @@ export function handleCompletionText(origin: CompletionItem, cb: (str: string) =
     }
 }
 
+export * as datafixers from './datafixers'
+export * as handlers from './handlers'
 export * from './NbtdocHelper'
 export * from './StringReader'
-export { datafixers, handlers }

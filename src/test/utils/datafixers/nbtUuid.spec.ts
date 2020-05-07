@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { NbtCompoundNode } from '../../../types/nodes/NbtCompoundNode'
-import { NbtLongNode } from '../../../types/nodes/NbtLongNode'
-import { NbtStringNode } from '../../../types/nodes/NbtStringNode'
+import { NbtCompoundNode } from '../../../nodes/NbtCompoundNode'
+import { NbtLongNode } from '../../../nodes/NbtLongNode'
+import { NbtStringNode } from '../../../nodes/NbtStringNode'
 import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../../../utils/datafixers/nbtUuid'
 
 describe('nbtUuid.ts Tests', () => {

@@ -1,6 +1,6 @@
-import { toFormattedString } from '../../utils'
-import { LintConfig } from '../Config'
-import { GetFormattedString } from '../Formattable'
+import { toFormattedString } from '../utils'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
 import { ArgumentNode, NodeType } from './ArgumentNode'
 import { NumberNode } from './NumberNode'
 

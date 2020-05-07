@@ -1,8 +1,8 @@
-import { NbtCompoundNode } from '../../types/nodes/NbtCompoundNode'
-import { NbtIntArrayNode } from '../../types/nodes/NbtIntArrayNode'
-import { NbtIntNode } from '../../types/nodes/NbtIntNode'
-import { NbtNumberNode } from '../../types/nodes/NbtNumberNode'
-import { NbtStringNode } from '../../types/nodes/NbtStringNode'
+import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
+import { NbtIntArrayNode } from '../../nodes/NbtIntArrayNode'
+import { NbtIntNode } from '../../nodes/NbtIntNode'
+import { NbtNumberNode } from '../../nodes/NbtNumberNode'
+import { NbtStringNode } from '../../nodes/NbtStringNode'
 
 const group = [8, 4, 4, 4, 12]
 

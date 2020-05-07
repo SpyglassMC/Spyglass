@@ -2,7 +2,7 @@ import { DocumentLink } from 'vscode-languageserver'
 import { CacheUnit, isFileType } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { getUriFromId } from '.'
 
 export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {

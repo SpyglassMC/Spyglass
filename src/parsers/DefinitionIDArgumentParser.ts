@@ -1,6 +1,6 @@
 import { locale } from '../locales'
 import { CacheCategory, getCategoryKey, isDefinitionType } from '../types/ClientCache'
-import { IdentityNode } from '../types/nodes/IdentityNode'
+import { IdentityNode } from '../nodes/IdentityNode'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'

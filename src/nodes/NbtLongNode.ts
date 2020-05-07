@@ -1,4 +1,4 @@
-import { ErrorCode } from '../ParsingError'
+import { ErrorCode } from '../types/ParsingError'
 import { NodeType } from './ArgumentNode'
 import { NbtNode, NbtNodeType } from './NbtNode'
 import { NbtNumberNode } from './NbtNumberNode'

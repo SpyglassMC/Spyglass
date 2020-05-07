@@ -1,4 +1,4 @@
-import { LintConfig } from '../Config'
+import { LintConfig } from '../types/Config'
 import { NodeType } from './ArgumentNode'
 import { NbtCollectionNode } from './NbtCollectionNode'
 import { NbtNode, NbtNodeType, NbtNodeTypeName } from './NbtNode'

@@ -1,4 +1,4 @@
-import { LintConfig } from '../Config'
+import { LintConfig } from '../types/Config'
 import { GetFormattedOpen } from './MapNode'
 import { NbtCollectionNode } from './NbtCollectionNode'
 import { NbtNode } from './NbtNode'

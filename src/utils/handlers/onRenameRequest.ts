@@ -6,7 +6,7 @@ import { getVanillaData } from '../../data/VanillaData'
 import { CacheFile, canBeRenamed, getCacheFromChar, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { VersionInformation } from '../../types/VersionInformation'
 
 export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {

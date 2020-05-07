@@ -1,5 +1,5 @@
-import { NodeRange } from '../types/nodes/ArgumentNode'
-import { MapNode, UnsortedKeys } from '../types/nodes/MapNode'
+import { NodeRange } from '../nodes/ArgumentNode'
+import { MapNode, UnsortedKeys } from '../nodes/MapNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { TextRange } from '../types/TextRange'

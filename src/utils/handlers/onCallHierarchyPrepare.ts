@@ -2,7 +2,7 @@ import { Proposed, SymbolKind } from 'vscode-languageserver'
 import { getCacheFromChar } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { IdentityNode } from '../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { getUriFromId } from '.'
 
 export async function onCallHierarchyPrepare({ info, lineNumber, char, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, lineNumber: number, char: number, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {

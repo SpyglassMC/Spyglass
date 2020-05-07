@@ -1,8 +1,8 @@
-import { getCodeAction, quoteString } from '../../utils'
-import { FunctionInfo } from '../FunctionInfo'
-import { IndexMapping } from '../IndexMapping'
-import { ErrorCode } from '../ParsingError'
-import { TextRange } from '../TextRange'
+import { getCodeAction, quoteString } from '../utils'
+import { FunctionInfo } from '../types/FunctionInfo'
+import { IndexMapping } from '../types/IndexMapping'
+import { ErrorCode } from '../types/ParsingError'
+import { TextRange } from '../types/TextRange'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
 export class StringNode extends ArgumentNode {

@@ -2,12 +2,12 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import { EntityNode } from '../../../types/nodes/EntityNode'
-import { IdentityNode } from '../../../types/nodes/IdentityNode'
-import { UnsortedKeys } from '../../../types/nodes/MapNode'
-import { NumberNode } from '../../../types/nodes/NumberNode'
-import { NumberRangeNode } from '../../../types/nodes/NumberRangeNode'
-import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../../types/nodes/SelectorArgumentsNode'
+import { EntityNode } from '../../../nodes/EntityNode'
+import { IdentityNode } from '../../../nodes/IdentityNode'
+import { UnsortedKeys } from '../../../nodes/MapNode'
+import { NumberNode } from '../../../nodes/NumberNode'
+import { NumberRangeNode } from '../../../nodes/NumberRangeNode'
+import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../../nodes/SelectorArgumentsNode'
 import { $ } from '../../utils.spec'
 
 describe('EntityNode Tests', () => {

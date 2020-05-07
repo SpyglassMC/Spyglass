@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../types/Config'
 import { FunctionInfo } from '../../../types/FunctionInfo'
-import { IdentityNode } from '../../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../../nodes/IdentityNode'
 import { ParsingError } from '../../../types/ParsingError'
 import { onDocumentFormatting } from '../../../utils/handlers/onDocumentFormatting'
 

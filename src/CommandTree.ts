@@ -1,7 +1,7 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import { LineArgumentNode } from './types/Line'
-import { EntityNode } from './types/nodes/EntityNode'
-import { SelectorArgumentsNode } from './types/nodes/SelectorArgumentsNode'
+import { EntityNode } from './nodes/EntityNode'
+import { SelectorArgumentsNode } from './nodes/SelectorArgumentsNode'
 
 export function getNbtdocRegistryId(entity: EntityNode): null | string
 export function getNbtdocRegistryId(selectorArguments: SelectorArgumentsNode): null | string

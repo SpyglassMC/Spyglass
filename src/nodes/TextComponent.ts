@@ -1,6 +1,6 @@
 import { JSONDocument } from 'vscode-json-languageservice'
 import { TextDocument } from 'vscode-languageserver'
-import { GetFormattedString } from '../Formattable'
+import { GetFormattedString } from '../types/Formattable'
 import { ArgumentNode, NodeType } from './ArgumentNode'
 import { NbtCompoundNode } from './NbtCompoundNode'
 

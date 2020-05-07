@@ -1,9 +1,9 @@
-import { toFormattedString } from '../../utils'
-import { LintConfig } from '../Config'
-import { GetFormattedString } from '../Formattable'
-import { FunctionInfo } from '../FunctionInfo'
-import { BracketSpacingConfig, SepSpacingConfig } from '../StylisticConfig'
-import { areOverlapped, isInRange, TextRange } from '../TextRange'
+import { toFormattedString } from '../utils'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
+import { FunctionInfo } from '../types/FunctionInfo'
+import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
+import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, GetHoverInformation, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
 
 export const enum BracketType { open, close }

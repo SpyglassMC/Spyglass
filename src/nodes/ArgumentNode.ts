@@ -1,9 +1,9 @@
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
-import { LintConfig } from '../Config'
-import { Formattable, GetFormattedString } from '../Formattable'
-import { FunctionInfo } from '../FunctionInfo'
-import { ErrorCode } from '../ParsingError'
-import { areOverlapped, EmptyRange, isInRange, TextRange } from '../TextRange'
+import { LintConfig } from '../types/Config'
+import { Formattable, GetFormattedString } from '../types/Formattable'
+import { FunctionInfo } from '../types/FunctionInfo'
+import { ErrorCode } from '../types/ParsingError'
+import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('Range')

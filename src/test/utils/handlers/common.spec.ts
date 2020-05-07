@@ -7,7 +7,7 @@ import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { Line } from '../../../types/Line'
-import { IdentityNode } from '../../../types/nodes/IdentityNode'
+import { IdentityNode } from '../../../nodes/IdentityNode'
 import { Token, TokenType } from '../../../types/Token'
 import { getId, getInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers'
 

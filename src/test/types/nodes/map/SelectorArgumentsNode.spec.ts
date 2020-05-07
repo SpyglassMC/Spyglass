@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../../../types/Config'
 import { FunctionInfo } from '../../../../types/FunctionInfo'
-import { GetCodeActions } from '../../../../types/nodes/ArgumentNode'
-import { UnsortedKeys } from '../../../../types/nodes/MapNode'
-import { SelectorArgumentsNode } from '../../../../types/nodes/SelectorArgumentsNode'
+import { GetCodeActions } from '../../../../nodes/ArgumentNode'
+import { UnsortedKeys } from '../../../../nodes/MapNode'
+import { SelectorArgumentsNode } from '../../../../nodes/SelectorArgumentsNode'
 import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils'
 import { $ } from '../../../utils.spec'

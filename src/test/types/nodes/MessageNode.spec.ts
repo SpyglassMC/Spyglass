@@ -2,8 +2,8 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import { EntityNode } from '../../../types/nodes/EntityNode'
-import { MessageNode } from '../../../types/nodes/MessageNode'
+import { EntityNode } from '../../../nodes/EntityNode'
+import { MessageNode } from '../../../nodes/MessageNode'
 import { $ } from '../../utils.spec'
 
 describe('MessageNode Tests', () => {

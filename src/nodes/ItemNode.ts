@@ -1,5 +1,5 @@
-import { LintConfig } from '../Config'
-import { GetFormattedString } from '../Formattable'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
 import { ArgumentNode, NodeType } from './ArgumentNode'
 import { IdentityNode } from './IdentityNode'
 import { NbtCompoundNode } from './NbtCompoundNode'

@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { TimeArgumentParser } from '../../parsers/TimeArgumentParser'
-import { TimeNode } from '../../types/nodes/TimeNode'
+import { TimeNode } from '../../nodes/TimeNode'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'

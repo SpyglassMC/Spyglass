@@ -1,8 +1,8 @@
-import { toFormattedString } from '../../utils'
-import { LintConfig } from '../Config'
-import { GetFormattedString } from '../Formattable'
+import { toFormattedString } from '../utils'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
 import { BracketType, GetFormattedClose, GetFormattedOpen, MapNode } from './MapNode'
-import { BracketSpacingConfig, SepSpacingConfig } from '../StylisticConfig'
+import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { NbtNode } from './NbtNode'
 
 export abstract class NbtCollectionNode<T extends NbtNode> extends NbtNode implements ArrayLike<T>, Iterable<T> {

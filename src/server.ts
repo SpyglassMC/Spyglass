@@ -13,7 +13,7 @@ import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCa
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { FunctionInfo } from './types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
-import { IdentityNode } from './types/nodes/IdentityNode'
+import { IdentityNode } from './nodes/IdentityNode'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'

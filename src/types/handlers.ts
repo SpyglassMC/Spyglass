@@ -2,7 +2,7 @@ import { URI } from 'vscode-uri'
 import { CacheKey } from './ClientCache'
 import { Config } from './Config'
 import { FunctionInfo } from './FunctionInfo'
-import { IdentityNode } from './nodes/IdentityNode'
+import { IdentityNode } from '../nodes/IdentityNode'
 
 export const Uri = URI
 
