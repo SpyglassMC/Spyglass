@@ -19,6 +19,11 @@
         "resolveJsonModule": true
     },
     "exclude": [
-        "lib"
+        "lib",
+        "src/test/**/*.spec.ts"
+    ],
+    "include": [
+        "src/**/*.json",
+        "src/**/*.ts"
     ]
 }
