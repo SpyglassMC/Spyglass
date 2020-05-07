@@ -3,6 +3,12 @@ on:
   push:
     branches-ignore:
       - released
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+  GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test:
     name: Test
