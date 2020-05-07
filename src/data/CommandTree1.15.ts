@@ -1849,7 +1849,7 @@ export const CommandTree: ICommandTree = {
                     executable: true,
                     children: {
                         duration: {
-                            parser: new NumberArgumentParser('integer', 1, 1_000_000),
+                            parser: new NumberArgumentParser('integer', 0, 1_000_000),
                             executable: true
                         }
                     }
