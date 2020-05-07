@@ -1,5 +1,6 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
+import { getInfo, getUri, getUriFromId } from '.'
 import { getCommandTree } from '../../data/CommandTree'
 import { getVanillaData } from '../../data/VanillaData'
 import { CacheFile, canBeRenamed, getCacheFromChar, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
@@ -7,7 +8,6 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 import { FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../types/nodes/IdentityNode'
 import { VersionInformation } from '../../types/VersionInformation'
-import { getInfo, getUri, getUriFromId } from '.'
 
 export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, lineNumber, char, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, lineNumber: number, char: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)

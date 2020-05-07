@@ -8,7 +8,7 @@ const CommandTrees: {
 /* istanbul ignore next */
 export async function getCommandTree(version: CommandTreeVersion) {
     if (!CommandTrees[version]) {
-        CommandTrees[version] = (await import(`./${version}/CommandTree`)).default
+        CommandTrees[version] = (await import(`./CommandTree${version}`)).CommandTree
     }
     return CommandTrees[version] as CommandTree
 }

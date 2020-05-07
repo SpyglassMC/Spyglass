@@ -1,4 +1,4 @@
-import { CommandTree116 as FallbackCommandTree } from '../data/CommandTree116'
+import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import { ArgumentParser } from '../parsers/ArgumentParser'
 import { ArgumentParserManager } from '../parsers/ArgumentParserManager'

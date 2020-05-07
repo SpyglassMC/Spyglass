@@ -9,7 +9,6 @@
         "src/data/**/*.ts",
         "src/locales/**/*.ts",
         "src/test/**/*.ts",
-        "src/client.ts",
         "src/server.ts"
     ]
 }

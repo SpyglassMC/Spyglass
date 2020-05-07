@@ -1263,7 +1263,7 @@ describe('NbtdocHelper Tests', () => {
             })
         })
         describe('Index Tests', () => {
-            const doc: nbtdoc.NbtValue = { Index: { target: 'minecraft:block', path: ['Super', { Child: 'Id' }] } }
+            const doc: nbtdoc.NbtValue = { Index: { target: 'minecraft:block', path: [{ Child: 'Id' }] } }
             const superTag = new NbtCompoundNode(null)
             superTag.Id = new NbtStringNode(superTag, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', {})
             it('Should report errors for non-compound tags', async () => {
