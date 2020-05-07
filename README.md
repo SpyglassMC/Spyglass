@@ -1,4 +1,4 @@
-![banner](https://raw.githubusercontent.com/SPGoding/datapack-language-server/master/img/banner.png)
+![banner](https://raw.githubusercontent.com/SPGoding/vscode-datapack-helper-plus/master/img/banner.png)
 
 [![Discord](https://img.shields.io/discord/666020457568403505?logo=discord&style=flat-square)](https://discord.gg/EbdseuS)
 [![CircleCI](https://img.shields.io/circleci/build/github/SPGoding/datapack-language-server.svg?logo=circleci&style=flat-square)](https://circleci.com/gh/SPGoding/datapack-language-server)
