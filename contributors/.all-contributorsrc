@@ -4,28 +4,18 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "2.0.0.md"
+    "2.0.1.md"
   ],
   "imageSize": 64,
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
   "contributors": [
-    {
-      "name": "឵!Onnowhere",
-      "avatar_url": "https://cdn.discordapp.com/avatars/136741373003956224/fb81857fc2e65f6579451ddec680d1db.png?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/376", "text": "#376" }
-      ]
-    },
     {
       "name": "00ll00",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" },
-        { "type": "bug", "link": "issues/408", "text": "#408" },
-        { "type": "bug", "link": "issues/422", "text": "#422" }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
       ]
     },
     {
@@ -43,19 +33,8 @@
       "profile": "https://github.com/ChenCMD",
       "contributions": [],
       "details": [
-        { "type": "ideas", "link": "issues/358", "text": "#358" },
-        { "type": "bug", "link": "issues/368", "text": "#368" },
-        { "type": "bug", "link": "issues/369", "text": "#369" },
-        { "type": "bug", "link": "issues/379", "text": "#379" },
-        { "type": "bug", "link": "issues/409", "text": "#409" },
-        { "type": "bug", "link": "issues/411", "text": "#411" },
-        { "type": "bug", "link": "issues/413", "text": "#413" },
-        { "type": "bug", "link": "issues/417", "text": "#417" },
-        { "type": "bug", "link": "issues/423", "text": "#423" },
-        { "type": "bug", "link": "issues/424", "text": "#424" },
         { "type": "bug", "link": "issues/430", "text": "#430" },
-        { "type": "bug", "link": "issues/443", "text": "#443" },
-        { "type": "localization", "link": "commits?author=ChenCMD", "text": "for Japanese (ja)" }
+        { "type": "bug", "link": "issues/443", "text": "#443" }
       ]
     },
     {
@@ -73,52 +52,6 @@
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/442", "text": "#442" }
-      ]
-    },
-    {
-      "name": "Feierwoerx",
-      "avatar_url": "https://camo.githubusercontent.com/e36bd065c49b5d8942f4d7b8788a3a5e8b1b6c90/68747470733a2f2f322e67726176617461722e636f6d2f6176617461722f32626664636334353931663439626231366531303134653966623036653266663f643d68747470732533412532462532466769746875622e6769746875626173736574732e636f6d253246696d6167657325324667726176617461727325324667726176617461722d757365722d3432302e706e6726723d6726733d3634",
-      "contributions": [],
-      "details": [
-        { "type": "localization", "link": "commits?author=Feierwoerx", "text": "for German (de)" }
-      ]
-    },
-    {
-      "name": "Foobin",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/22305295?s=460&v=4",
-      "profile": "https://github.com/Foobin",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/398", "text": "#398" }
-      ]
-    },
-    {
-      "name": "Jerozgen",
-      "avatar_url": "https://cdn.discordapp.com/avatars/165678950628982784/3f1093ec653cd58b363e084ef8d0239e.png?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/364", "text": "#364" },
-        { "type": "bug", "link": "issues/365", "text": "#365" }
-      ]
-    },
-    {
-      "name": "Misode",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
-      "profile": "https://github.com/Misode",
-      "contributions": [],
-      "details": [
-        { "type": "ideas", "link": "issues/238", "text": "#238" },
-        { "type": "bug", "link": "issues/375", "text": "#375" },
-        { "type": "bug", "link": "issues/384", "text": "#384" },
-        { "type": "bug", "link": "issues/386", "text": "#386" }
-      ]
-    },
-    {
-      "name": "MulverineX",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/12068027?v=4",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/401", "text": "#401" }
       ]
     },
     {
@@ -157,25 +90,6 @@
       ]
     },
     {
-      "name": "martin_zzy",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1670389&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1670389",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/353", "text": "#353" }
-      ]
-    },
-    {
-      "name": "mathaym25",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4",
-      "profile": "https://github.com/mathaym25",
-      "contributions": [],
-      "details": [
-        { "type": "ideas", "link": "issues/382", "text": "#382" },
-        { "type": "bug", "link": "issues/385", "text": "#385" }
-      ]
-    },
-    {
       "name": "missinggo",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
@@ -183,16 +97,6 @@
       "details": [
         { "type": "bug", "link": "issues/438", "text": "#438" },
         { "type": "bug", "link": "issues/439", "text": "#439" }
-      ]
-    },
-    {
-      "name": "ncfumction",
-      "avatar_url": "https://cdn.discordapp.com/avatars/416799672674418710/d6b90e26cf0f2be0aeaa321916311db2.png?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/376", "text": "#376" },
-        { "type": "bug", "link": "issues/392", "text": "#392" },
-        { "type": "ideas", "link": "issues/393", "text": "#393" }
       ]
     },
     {
