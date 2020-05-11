@@ -12,7 +12,7 @@
         [
             "@semantic-release/git",
             {
-                "message": ":bookmark: v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPGoding/datapack-language-server/releases/tag/${nextRelease.gitTag}"
+                "message": "🔖 v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPGoding/datapack-language-server/releases/tag/${nextRelease.gitTag}"
             }
         ]
     ],
