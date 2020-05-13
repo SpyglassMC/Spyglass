@@ -55,58 +55,58 @@ function getUri(source: DataSource, maintainer: string, name: string, path: stri
     }
 }
 
-function getReportUri(type: DataType, source: DataSource, version: string, processedVersions: string[]) {
+function getReportUri(type: DataType, source: DataSource, version: string, processedVersions: string[], isLatestSnapshot: boolean) {
     switch (type) {
         case 'BlockDefinition':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${version}/processed/reports/blocks/blocks.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/blocks/blocks.min.json`)
             } else {
                 return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/blocks.json`)
             }
         case 'NamespaceSummary':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${version}/processed/data/minecraft/minecraft.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/data/minecraft/minecraft.min.json`)
             } else {
                 throw new Error(`No namespace summary for version ${version}.`)
             }
         case 'Nbtdoc':
-            return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${version}-gen/build/generated.json`)
+            return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${isLatestSnapshot ? 'generated' : `${version}-gen`}/build/generated.json`)
         case 'Registry':
         default:
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${version}/processed/reports/registries/registries.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/registries/registries.min.json`)
             } else {
                 return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/registries.json`)
             }
     }
 }
 
-async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string, processedVersions: string[]) {
+async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string, processedVersions: string[], latestSnapshot: string) {
     const cache = VanillaDataCache[type]
     if (!cache[version]) {
         if (faildTimes < MaxFaildTimes) {
             const versionPath = path.join(globalStoragePath, version)
             const filePath = path.join(versionPath, `${type}.json`)
-            console.info(`[VanillaData] Geting ${type} for ${version}...`)
             try {
                 if (await fs.pathExists(filePath)) {
-                    console.info(`[VanillaData] Loading ${type} for ${version} from local file ‘${filePath}’...`)
+                    console.info(`[VanillaData: ${type} for ${version}] Loading from local file ‘${filePath}’...`)
                     const json = await fs.readJson(filePath, { encoding: 'utf8' })
-                    console.info(`[VanillaData] Loaded ${type} for ${version} from local file.`)
+                    console.info(`[VanillaData: ${type} for ${version}] Loaded from local file.`)
                     cache[version] = json
                 } else {
-                    const uri = getReportUri(type, source, version, processedVersions)
-                    console.info(`[VanillaData] Fetching ${type} for ${version} from ${source} ‘${uri}’...`)
+                    const isLatestSnapshot = version === latestSnapshot
+                    const uri = getReportUri(type, source, version, processedVersions, isLatestSnapshot)
+                    console.info(`[VanillaData: ${type} for ${version}] Fetching from ${source} ‘${uri}’...`)
                     const json = JSON.parse(await requestText(uri))
                     await fs.mkdirp(versionPath)
                     fs.writeJson(filePath, json, { encoding: 'utf8' })
-                    console.info(`[VanillaData] Fetched ${type} for ${version} from ${source} and saved at ‘${filePath}’.`)
+                    console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source} and saved at ‘${filePath}’.`)
                     cache[version] = json
                 }
             } catch (e) {
-                console.warn(`[VanillaData] Error occurred while getting ${type} for ${version}: ${e} (${++faildTimes}/${MaxFaildTimes})`)
+                console.warn(`[VanillaData: ${type} for ${version}] Error occurred while getting for: ${e} (${++faildTimes}/${MaxFaildTimes})`)
                 const ans = FallbackVanillaData[type]
-                console.info(`[VanillaData] Used the fallback ${type} for ${version}.`)
+                console.info(`[VanillaData: ${type} for ${version}] Used the fallback.`)
                 return ans
             }
         } else {
@@ -137,7 +137,7 @@ export async function getVanillaData(versionOrLiteral: string, source: DataSourc
     }
     for (const type of types) {
         ans[type] = await getSingleVanillaData(
-            type, source, version, globalStoragePath, versionInformation.processedVersions
+            type, source, version, globalStoragePath, versionInformation.processedVersions, versionInformation.latestSnapshot
         ) as any
     }
     return ans
