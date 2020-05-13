@@ -231,165 +231,165 @@ const TestCache: ClientCache = {
 }
 
 describe('NbtdocHelper Tests', () => {
-    describe('clone() Tests', () => {
-        it('Should clone correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.clone()
-            assert(actual.compoundIndex === helper.compoundIndex)
-            assert(actual.enumIndex === helper.enumIndex)
-            assert(actual.moduleIndex === helper.moduleIndex)
-            assert(actual.tag === helper.tag)
-        })
-    })
-    describe('goCompound() Tests', () => {
-        it('Should go to compound correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            helper.goCompound(123)
-            assert(helper.compoundIndex === 123)
-        })
-    })
-    describe('goEnum() Tests', () => {
-        it('Should go to enum correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            helper.goEnum(123)
-            assert(helper.enumIndex === 123)
-        })
-    })
-    describe('goModule() Tests', () => {
-        it('Should go to module correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            helper.goModule(123)
-            assert(helper.moduleIndex === 123)
-        })
-    })
-    describe('withTag() Tests', () => {
-        it('Should set tag correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const tag = new NbtCompoundNode(null)
-            helper.withTag(tag)
-            assert(helper.tag === tag)
-        })
-    })
-    describe('readCompound() Tests', () => {
-        it('Should read null', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.readCompound()
-            assert(actual === null)
-        })
-        it('Should read correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(0)
-                .readCompound()
-            assert(actual === TestNbtdoc.compound_arena[0])
-        })
-    })
-    describe('readEnum() Tests', () => {
-        it('Should read correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goEnum(0)
-                .readEnum()
-            assert(actual === TestNbtdoc.enum_arena[0])
-        })
-    })
-    describe('readModule() Tests', () => {
-        it('Should read correctly', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goModule(0)
-                .readModule()
-            assert(actual === TestNbtdoc.module_arena[0])
-        })
-    })
-    describe('goRegistryCompound() Tests', () => {
-        it('Should go null for wrong registries', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.goRegistryCompound('asdfghjkl', null)
-            assert(actual.compoundIndex === null)
-        })
-        it('Should go fallback for null IDs', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.goRegistryCompound('minecraft:block', null)
-            assert(actual.compoundIndex === 4)
-        })
-        it('Should go fallback for unknown IDs', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.goRegistryCompound('minecraft:block', 'asdfghjkl')
-            assert(actual.compoundIndex === 4)
-        })
-        it('Should go correctly for correct IDs', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.goRegistryCompound('minecraft:block', 'minecraft:one_boolean_field')
-            assert(actual.compoundIndex === 1)
-        })
-    })
-    describe('readCompoundKeys() Tests', () => {
-        it('Should read the keys of a simple compound', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(1)
-                .readCompoundKeys()
-            assert.deepStrictEqual(actual, ['foo'])
-        })
-        it('Should read the keys of a compound with a compound supers', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(2)
-                .readCompoundKeys()
-            assert.deepStrictEqual(actual, ['bar', 'foo'])
-        })
-        it('Should read the keys of a compound with a registry supers', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const superNode = new NbtCompoundNode(null)
-            const compoundNode = new NbtCompoundNode(superNode)
-            const idNode = new NbtStringNode(superNode, 'minecraft:one_boolean_field', 'minecraft:one_boolean_field', {})
-            superNode.Id = idNode
-            const actual = helper
-                .withTag(compoundNode)
-                .goCompound(3)
-                .readCompoundKeys()
-            assert.deepStrictEqual(actual, ['bar', 'foo'])
-        })
-        it('Should read the keys of a compound with a registry supers when the path field does not exist', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const superNode = new NbtCompoundNode(null)
-            const compoundNode = new NbtCompoundNode(superNode)
-            const actual = helper
-                .withTag(compoundNode)
-                .goCompound(3)
-                .readCompoundKeys()
-            assert.deepStrictEqual(actual, ['bar'])
-        })
-    })
-    describe('readField() Tests', () => {
-        it('Should return null when no compound is selected', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper.readField('foo')
-            assert(actual === null)
-        })
-        it('Should return null when the key does not exist', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(2)
-                .readField('asdfghjkl')
-            assert(actual === null)
-        })
-        it('Should read the field from current compound', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(2)
-                .readField('bar')
-            assert(actual === TestNbtdoc.compound_arena[2].fields.bar)
-        })
-        it('Should read the field from the supers compound', () => {
-            const helper = new NbtdocHelper(TestNbtdoc)
-            const actual = helper
-                .goCompound(2)
-                .readField('foo')
-            assert(actual === TestNbtdoc.compound_arena[1].fields.foo)
-        })
-    })
+    // describe('clone() Tests', () => {
+    //     it('Should clone correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.clone()
+    //         assert(actual.compoundIndex === helper.compoundIndex)
+    //         assert(actual.enumIndex === helper.enumIndex)
+    //         assert(actual.moduleIndex === helper.moduleIndex)
+    //         assert(actual.tag === helper.tag)
+    //     })
+    // })
+    // describe('goCompound() Tests', () => {
+    //     it('Should go to compound correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         helper.goCompound(123)
+    //         assert(helper.compoundIndex === 123)
+    //     })
+    // })
+    // describe('goEnum() Tests', () => {
+    //     it('Should go to enum correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         helper.goEnum(123)
+    //         assert(helper.enumIndex === 123)
+    //     })
+    // })
+    // describe('goModule() Tests', () => {
+    //     it('Should go to module correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         helper.goModule(123)
+    //         assert(helper.moduleIndex === 123)
+    //     })
+    // })
+    // describe('withTag() Tests', () => {
+    //     it('Should set tag correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const tag = new NbtCompoundNode(null)
+    //         helper.withTag(tag)
+    //         assert(helper.tag === tag)
+    //     })
+    // })
+    // describe('readCompound() Tests', () => {
+    //     it('Should read null', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.readCompound()
+    //         assert(actual === null)
+    //     })
+    //     it('Should read correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(0)
+    //             .readCompound()
+    //         assert(actual === TestNbtdoc.compound_arena[0])
+    //     })
+    // })
+    // describe('readEnum() Tests', () => {
+    //     it('Should read correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goEnum(0)
+    //             .readEnum()
+    //         assert(actual === TestNbtdoc.enum_arena[0])
+    //     })
+    // })
+    // describe('readModule() Tests', () => {
+    //     it('Should read correctly', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goModule(0)
+    //             .readModule()
+    //         assert(actual === TestNbtdoc.module_arena[0])
+    //     })
+    // })
+    // describe('goRegistryCompound() Tests', () => {
+    //     it('Should go null for wrong registries', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.goRegistryCompound('asdfghjkl', null)
+    //         assert(actual.compoundIndex === null)
+    //     })
+    //     it('Should go fallback for null IDs', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.goRegistryCompound('minecraft:block', null)
+    //         assert(actual.compoundIndex === 4)
+    //     })
+    //     it('Should go fallback for unknown IDs', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.goRegistryCompound('minecraft:block', 'asdfghjkl')
+    //         assert(actual.compoundIndex === 4)
+    //     })
+    //     it('Should go correctly for correct IDs', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.goRegistryCompound('minecraft:block', 'minecraft:one_boolean_field')
+    //         assert(actual.compoundIndex === 1)
+    //     })
+    // })
+    // describe('readCompoundKeys() Tests', () => {
+    //     it('Should read the keys of a simple compound', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(1)
+    //             .readCompoundKeys()
+    //         assert.deepStrictEqual(actual, ['foo'])
+    //     })
+    //     it('Should read the keys of a compound with a compound supers', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(2)
+    //             .readCompoundKeys()
+    //         assert.deepStrictEqual(actual, ['bar', 'foo'])
+    //     })
+    //     it('Should read the keys of a compound with a registry supers', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const superNode = new NbtCompoundNode(null)
+    //         const compoundNode = new NbtCompoundNode(superNode)
+    //         const idNode = new NbtStringNode(superNode, 'minecraft:one_boolean_field', 'minecraft:one_boolean_field', {})
+    //         superNode.Id = idNode
+    //         const actual = helper
+    //             .withTag(compoundNode)
+    //             .goCompound(3)
+    //             .readCompoundKeys()
+    //         assert.deepStrictEqual(actual, ['bar', 'foo'])
+    //     })
+    //     it('Should read the keys of a compound with a registry supers when the path field does not exist', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const superNode = new NbtCompoundNode(null)
+    //         const compoundNode = new NbtCompoundNode(superNode)
+    //         const actual = helper
+    //             .withTag(compoundNode)
+    //             .goCompound(3)
+    //             .readCompoundKeys()
+    //         assert.deepStrictEqual(actual, ['bar'])
+    //     })
+    // })
+    // describe('readField() Tests', () => {
+    //     it('Should return null when no compound is selected', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper.readField('foo')
+    //         assert(actual === null)
+    //     })
+    //     it('Should return null when the key does not exist', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(2)
+    //             .readField('asdfghjkl')
+    //         assert(actual === null)
+    //     })
+    //     it('Should read the field from current compound', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(2)
+    //             .readField('bar')
+    //         assert(actual === TestNbtdoc.compound_arena[2].fields.bar)
+    //     })
+    //     it('Should read the field from the supers compound', () => {
+    //         const helper = new NbtdocHelper(TestNbtdoc)
+    //         const actual = helper
+    //             .goCompound(2)
+    //             .readField('foo')
+    //         assert(actual === TestNbtdoc.compound_arena[1].fields.foo)
+    //     })
+    // })
     describe('completeField() Tests', () => {
         const tag = new NbtCompoundNode(null)
         const isPredicate = false
