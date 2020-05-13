@@ -14,5 +14,5 @@ export function onSemanticTokensEdits({ info, previousResultId }: { info: Functi
         }
     }
 
-    return info.builder.buildEdits()
+    return info.builder.build/*Edits*/()
 }
