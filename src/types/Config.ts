@@ -222,7 +222,7 @@ export const VanillaConfig: Config = {
         nbtPathQuoteType: ['warning', 'always double'],
         nbtStringQuote: ['warning', true],
         nbtStringQuoteType: ['warning', 'prefer double'],
-        nbtTypeCheck: ['warning', 'strictly'],
+        nbtTypeCheck: ['warning', 'loosely'],
         selectorKeyQuote: null,
         selectorKeyQuoteType: null,
         selectorSortKeys: null,
