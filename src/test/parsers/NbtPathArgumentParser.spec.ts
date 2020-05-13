@@ -220,16 +220,15 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [])
             })
             it('Should return warning when the key is not in compound tags', () => {
-                const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:complex')
+                const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('addition.foo')
 
                 const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey1[NodeRange] = { start: 0, end: 8 }
-                expectedKey1[NodeDescription] = NbtdocHelper.getKeyDescription({ Compound: 0 }, ' The additional complex compound')
+                expectedKey1[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The additional boolean')
 
                 const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 9 })
                 expectedKey2[NodeRange] = { start: 9, end: 12 }
-                expectedKey2[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The only field of this compound')
 
                 const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 12 }
@@ -238,9 +237,13 @@ describe('NbtPathArgumentParser Tests', () => {
                 expected.push(expectedKey2)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
-
                 assert.deepStrictEqual(data, expected)
-                assert.deepStrictEqual(errors, [
+                assert.deepStrictEqual(errors, [                    
+                    new ParsingError(
+                        { start: 9, end: 12 },
+                        'Unknown key ‘foo’',
+                        true, DiagnosticSeverity.Warning
+                    ),
                     new ParsingError(
                         { start: 9, end: 12 },
                         'Keys are only used for compound tags',
