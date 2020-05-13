@@ -608,16 +608,6 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c']), [0, 18]))
             assert.deepStrictEqual(actual.cache, {})
         })
-        it('Should throw error when the type does not have a corresponding tag type', async () => {
-            const ctx = constructContext({ registry: registries, parsers, cache, config, cursor: 1 })
-            const parser = new IdentityArgumentParser('spgoding:test', true)
-            try {
-                parser.parse(new StringReader('#'), ctx)
-                fail()
-            } catch (e) {
-                assert(e.message === 'faild to find a tag type for ‘spgoding:test’')
-            }
-        })
         it('Should throw error when tags are not allowed here', async () => {
             const ctx = constructContext({ registry: registries, parsers, cache, config })
             const parser = new IdentityArgumentParser('minecraft:entity_type')

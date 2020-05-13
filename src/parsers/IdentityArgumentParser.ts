@@ -55,6 +55,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 case '$functions':
                     return 'tags/functions'
                 default:
+                    /* istanbul ignore next */
                     throw new Error(`faild to find a tag type for ‘${this.type}’`)
             }
         }
@@ -215,7 +216,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 
         if (reader.cursor - start && stringID) {
             // Check whether the ID exists in cache or registry.
-            if (isTag) {
+            if (isTag && this.allowTag) {
                 // For tags.
                 const tagType = getCacheTagType()
                 this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
