@@ -47,11 +47,29 @@
       ]
     },
     {
+      "name": "ColorRain_Tree",
+      "avatar_url": "https://pic1.afdiancdn.com/default/avatar/avatar-purple.png?imageView2/1/w/240/h/240",
+      "profile": "https://afdian.net/u/da477488928011ea8ea552540025c377",
+      "contributions": [],
+      "details": [
+        { "type": "crazy", "link": "blob/master/CONTRIBUTING.md", "text": "<span style=\"color:gold;\">(＃°Д°)</span>" }
+      ]
+    },
+    {
       "name": "Ellivers",
       "avatar_url": "https://cdn.discordapp.com/avatars/287675064634179594/a8bbe21ac1e4af1a44597f2d760efca6.png?size=256",
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/442", "text": "#442" }
+      ]
+    },
+    {
+      "name": "K_bai",
+      "avatar_url": "https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240",
+      "profile": "https://afdian.net/@k_bai",
+      "contributions": [],
+      "details": [
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
       ]
     },
     {
@@ -100,6 +118,15 @@
       ]
     },
     {
+      "name": "酱香卤鹅",
+      "avatar_url": "https://pic1.afdiancdn.com/user/43f152b898b511e8b5f552540025c377/avatar/b35473b4f5d00311d3a3cabef38c60fd_w640_h640_s24.jpg?imageView2/1/w/240/h/240",
+      "profile": "https://afdian.net/u/43f152b898b511e8b5f552540025c377",
+      "contributions": [],
+      "details": [
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+      ]
+    },
+    {
       "name": "龙腾猫跃",
       "avatar_url": "https://pic1.afdiancdn.com/user/df2dfad2960911e89c5252540025c377/avatar/31c78ee63d5dce8ac4848c837fb04204_w160_h160_s35.jpg?imageView2/1/w/240/h/240",
       "profile": "https://afdian.net/@LTCat",
@@ -117,6 +144,10 @@
     },
     "pizza": {
       "symbol": "🍕",
+      "description": "Financial support"
+    },
+    "crazy": {
+      "symbol": "",
       "description": "Financial support"
     },
     "localization": {
