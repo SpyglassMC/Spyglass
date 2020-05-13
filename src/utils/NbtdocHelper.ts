@@ -444,10 +444,8 @@ export class NbtdocHelper {
         if (lengthRange) {
             this.validateCollectionLength(ans, ctx, tag, lengthRange, isPredicate)
         }
-        if (valueRange) {
-            for (const item of tag) {
-                this.validateNumberField(ans, ctx, item, valueRange, isPredicate, description)
-            }
+        for (const item of tag) {
+            this.validateNumberField(ans, ctx, item, valueRange, isPredicate, description)
         }
     }
 
@@ -459,9 +457,13 @@ export class NbtdocHelper {
             const r = ((num >> 16) & 255) / 255
             const g = ((num >> 8) & 255) / 255
             const b = (num & 255) / 255
-            ans.cache.colors = {
-                [`${r} ${g} ${b} 1`]: { def: [], ref: [tag[NodeRange]] }
-            }
+            combineCache(ans.cache, {
+                colors: {
+                    [`${r} ${g} ${b} 1`]: {
+                        def: [], ref: [tag[NodeRange]]
+                    }
+                }
+            })
         }
         // Errors.
         if (range) {
