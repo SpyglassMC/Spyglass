@@ -157,14 +157,20 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             const registryDoc = helper.getRegistryCompound(this.category, this.id)
             index = registryDoc ? registryDoc.Compound : null
         }
+        const doc = index !== null ? { Compound: index } : null
         const compoundDoc = helper.readCompound(index)
         /* istanbul ignore next */
         const description = compoundDoc ? compoundDoc.description : undefined
         const start = reader.cursor
         const ans = this.parseTag(reader, ctx, this.superNode, helper,
-            helper && index !== null ? { Compound: index } : undefined,
+            helper && doc,
             description
         )
+        //#region Completions.
+        if (helper && ctx.cursor === start) {
+            helper.completeField(ans, ctx, doc, this.isPredicate, '')
+        }
+        //#endregion
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
@@ -180,7 +186,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         return ans
     }
 
-    private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: nbtdoc.NbtValue, description?: string): ArgumentParserResult<NbtNode> {
+    private parseTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: nbtdoc.NbtValue | null, description?: string): ArgumentParserResult<NbtNode> {
         let ans: ArgumentParserResult<NbtNode>
         switch (reader.peek()) {
             case '{':
