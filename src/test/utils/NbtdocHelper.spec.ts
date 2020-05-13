@@ -1,9 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
-import { ClientCache } from '../../types/ClientCache'
-import { constructConfig } from '../../types/Config'
-import { nbtdoc } from '../../types/nbtdoc'
 import { NodeDescription, NodeRange } from '../../nodes/ArgumentNode'
 import { Keys } from '../../nodes/MapNode'
 import { NbtByteArrayNode } from '../../nodes/NbtByteArrayNode'
@@ -19,6 +16,9 @@ import { NbtLongArrayNode } from '../../nodes/NbtLongArrayNode'
 import { NbtLongNode } from '../../nodes/NbtLongNode'
 import { NbtShortNode } from '../../nodes/NbtShortNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
+import { ClientCache } from '../../types/ClientCache'
+import { constructConfig } from '../../types/Config'
+import { nbtdoc } from '../../types/nbtdoc'
 import { constructContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
@@ -863,7 +863,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
-                const config = constructConfig({})
+                const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
@@ -1039,7 +1039,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
-                const config = constructConfig({})
+                const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
@@ -1188,7 +1188,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
-                const config = constructConfig({})
+                const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
@@ -1526,7 +1526,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
-                const config = constructConfig({})
+                const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
@@ -1633,7 +1633,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for loosely-matched tags', async () => {
                 const ans = { cache: {}, completions: [], errors: [] }
-                const config = constructConfig({})
+                const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
                 tag[NodeRange] = { start: 0, end: 1 }
