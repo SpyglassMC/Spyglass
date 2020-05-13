@@ -156,5 +156,12 @@
     "unknown-key": "未知的键%0%",
     "unsorted-keys": "键未排序",
     "uuid": "一个 UUID",
-    "vector": "一个向量"
+    "vector": "一个向量",
+    "unquoted-string": "一个未被引号包裹的字符串",
+    "code-action.nbt-type-to-double": "转换为 NBT 双精度浮点数（double）标签",
+    "code-action.nbt-type-to-float": "转换为 NBT 单精度浮点数（float）标签",
+    "code-action.nbt-type-to-long": "转换为 NBT 长整型（long）标签",
+    "code-action.nbt-type-to-int": "转换为 NBT 整型（int）标签",
+    "code-action.nbt-type-to-short": "转换为 NBT 短整型（short）标签",
+    "code-action.nbt-type-to-byte": "转换为 NBT 字节型（byte）标签"
 }
