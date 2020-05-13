@@ -225,10 +225,11 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
                 expectedKey1[NodeRange] = { start: 0, end: 8 }
-                expectedKey1[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The additional boolean')
+                expectedKey1[NodeDescription] = NbtdocHelper.getKeyDescription({ Compound: 0 }, ' The additional complex compound')
 
                 const expectedKey2 = new NbtCompoundKeyNode(null, 'foo', 'foo', { start: 9 })
                 expectedKey2[NodeRange] = { start: 9, end: 12 }
+                expectedKey2[NodeDescription] = NbtdocHelper.getKeyDescription('Boolean', ' The only field of this compound')
 
                 const expected = new NbtPathNode()
                 expected[NodeRange] = { start: 0, end: 12 }
@@ -237,6 +238,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 expected.push(expectedKey2)
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
+
                 assert.deepStrictEqual(data, expected)
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
