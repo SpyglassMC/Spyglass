@@ -78,112 +78,78 @@ type IdDoc = { Id: string }
 
 type OrDoc = { Or: nbtdoc.NbtValue[] }
 
-export class NbtdocHelper {
-    // private static readonly MockEnumIndex: nbtdoc.Index<nbtdoc.EnumItem> = 114514
-
-    compoundIndex: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
-    enumIndex: nbtdoc.Index<nbtdoc.EnumItem>
-    moduleIndex: nbtdoc.Index<nbtdoc.Module>
+type NbtdocHelperOptions = {
+    description: string | null,
+    doc: nbtdoc.NbtValue,
     tag: NbtCompoundNode | null
+}
 
-    currentDoc: nbtdoc.NbtValue
-
-    // private mockEnum: nbtdoc.EnumItem
-
+export class NbtdocHelper {
     constructor(private readonly doc: nbtdoc.Root) { }
 
-    clone() {
-        return new NbtdocHelper(this.doc)
-            .goCompound(this.compoundIndex)
-            .goEnum(this.enumIndex)
-            .goModule(this.moduleIndex)
-            .withTag(this.tag)
-    }
+    private readonly mockCompoundArena: { [index: number]: nbtdoc.CompoundTag | undefined } = {}
+    // private mockCompoundArenaNext: number = -1
 
-    goCompound(index: nbtdoc.Index<nbtdoc.CompoundTag> | null) {
-        this.compoundIndex = index
-        return this
-    }
-
-    goEnum(index: nbtdoc.Index<nbtdoc.EnumItem>) {
-        this.enumIndex = index
-        return this
-    }
-
-    goModule(index: nbtdoc.Index<nbtdoc.Module>) {
-        this.moduleIndex = index
-        return this
-    }
-
-    withTag(tag: NbtCompoundNode | null) {
-        this.tag = tag
-        return this
-    }
-
-    readCompound(): nbtdoc.CompoundTag | null {
-        if (this.compoundIndex === null) {
+    readCompound(index: nbtdoc.Index<nbtdoc.CompoundTag> | null): nbtdoc.CompoundTag | null {
+        if (index === null) {
             return null
+        } else if (index < 0) {
+            return this.mockCompoundArena[index] || null
+        } else {
+            return this.doc.compound_arena[index] || null
         }
-        return this.doc.compound_arena[this.compoundIndex]
     }
 
-    readEnum(): nbtdoc.EnumItem {
-        // if (this.enumIndex === NbtdocHelper.MockEnumIndex) {
-        //     return this.mockEnum
-        // }
-        return this.doc.enum_arena[this.enumIndex]
+    readEnum(index: nbtdoc.Index<nbtdoc.EnumItem>) {
+        return this.doc.enum_arena[index] || null
     }
 
-    readModule(): nbtdoc.Module {
-        return this.doc.module_arena[this.moduleIndex]
-    }
-
-    goRegistryCompound(type: string, id: string | null) {
+    getRegistryCompound(type: string, id: string | null) {
         const registry = this.doc.registries[type]
         if (registry) {
             const [reg, fallback] = registry
             if (id && reg[id] !== undefined) {
-                this.compoundIndex = reg[id]
+                return { Compound: reg[id] }
             } else {
-                this.compoundIndex = fallback
+                return fallback !== null ? { Compound: fallback } : null
             }
-        } else {
-            this.compoundIndex = null
         }
-        return this
+        return null
     }
 
-    private goSupers(supers: Supers) {
+    /**
+     * Get the supers of this compound tag doc.
+     * @param supers An index or a compound.
+     * @param node The super tag node.
+     */
+    private getSupers(supers: Supers, node: NbtCompoundNode | null) {
         if (supers === null) {
-            this.goCompound(null)
+            return { Compound: null }
         } else if (NbtdocHelper.isRegistrySupers(supers)) {
-            const id = this.resolveFieldPath(supers.Registry.path)
-            this.goRegistryCompound(
+            const id = this.resolveFieldPath(supers.Registry.path, node)
+            return this.getRegistryCompound(
                 supers.Registry.target,
                 /* istanbul ignore next */
                 id ? IdentityNode.fromString(id.valueOf().toString()).toString() : null
             )
-        } else {
-            this.goCompound(supers.Compound)
         }
-        return this
+        return { Compound: supers.Compound }
     }
 
-    private resolveFieldPath(paths: nbtdoc.FieldPath[]): NbtStringNode | null {
+    private resolveFieldPath(paths: nbtdoc.FieldPath[], node: NbtCompoundNode | null): NbtStringNode | null {
         paths = JSON.parse(JSON.stringify(paths))
-        let tag: NbtNode | null = this.tag
-        while (paths.length > 0 && tag && tag instanceof NbtCompoundNode) {
+        let ansNode: NbtNode | null = node
+        while (paths.length > 0 && ansNode && ansNode instanceof NbtCompoundNode) {
             const path = paths.shift()!
             if (path === 'Super') {
-                tag = tag[SuperNode]
+                ansNode = ansNode[SuperNode]
             } else {
                 const key = path.Child
-                tag = tag[key]
+                ansNode = ansNode[key]
             }
             if (paths.length === 0) {
-                if (tag && tag instanceof NbtStringNode) {
-                    this.tag = tag[SuperNode]
-                    return tag
+                if (ansNode && ansNode instanceof NbtStringNode) {
+                    return ansNode
                 } else {
                     return null
                 }
@@ -192,32 +158,32 @@ export class NbtdocHelper {
         return null
     }
 
-    readCompoundKeys(): string[] {
-        const doc = this.readCompound()
+    readCompoundKeys(doc: nbtdoc.CompoundTag | null, node: NbtCompoundNode | null): string[] {
         if (doc) {
+            const superDoc = this.getSupers(doc.supers, node)
             return [
-                ...Object
-                    .keys(doc.fields),
-                ...this
-                    .clone()
-                    .goSupers(doc.supers)
-                    .readCompoundKeys()
+                ...Object.keys(doc.fields),
+                ...this.readCompoundKeys(
+                    this.readCompound(superDoc ? superDoc.Compound : null),
+                    node
+                )
             ].filter((v, i, a) => a.indexOf(v) === i)
         }
         return []
     }
 
-    readField(key: string): nbtdoc.Field | null {
-        const doc = this.readCompound()
+    readField(doc: nbtdoc.CompoundTag | null, key: string, node: NbtCompoundNode | null): nbtdoc.Field | null {
         if (doc) {
             const field: nbtdoc.Field | undefined = doc.fields[key]
             if (field) {
                 return field
             } else {
-                return this
-                    .clone()
-                    .goSupers(doc.supers)
-                    .readField(key)
+                const superDoc = this.getSupers(doc.supers, node)
+                return this.readField(
+                    this.readCompound(superDoc ? superDoc.Compound : null),
+                    key,
+                    node
+                )
             }
         }
         return null
@@ -292,25 +258,25 @@ export class NbtdocHelper {
     }
     completeCompoundKeys(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc | IndexDoc | null, currentType: 'always double' | 'always single' | null) {
         const existingKeys = Object.keys(tag)
-        const clonedHelper = this.clone()
         if (NbtdocHelper.isIndexDoc(doc)) {
-            const idTag = clonedHelper
-                .withTag(tag[SuperNode])
-                .resolveFieldPath(doc.Index.path)
+            const idTag = this.resolveFieldPath(doc.Index.path, tag[SuperNode])
             const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
             if (doc.Index.target.startsWith('custom:')) {
                 // TODO: Merge this with validateIndexField
                 doc = { Compound: null as unknown as number }
             } else {
-                doc = { Compound: clonedHelper.goRegistryCompound(doc.Index.target, id).compoundIndex as unknown as number }
+                doc = this.getRegistryCompound(doc.Index.target, id)
             }
         }
-        const pool = clonedHelper
-            .goCompound(doc ? doc.Compound : null)
-            .readCompoundKeys()
+        const compoundDoc = this.readCompound(doc ? doc.Compound : null)
+        const pool = this
+            .readCompoundKeys(
+                compoundDoc,
+                tag[SuperNode]
+            )
             .filter(v => !existingKeys.includes(v))
         for (const key of pool) {
-            const field = clonedHelper.readField(key)!
+            const field = this.readField(compoundDoc, key, tag[SuperNode])!
             const description = NbtdocHelper.handleDescription(field.description)
             ans.completions.push(
                 NbtdocHelper.escapeCompletion(
@@ -329,9 +295,7 @@ export class NbtdocHelper {
         }
     }
     private completeEnumField(ans: ValidateResult, ctx: ParsingContext, doc: EnumDoc) {
-        const { et } = this
-            .goEnum(doc.Enum)
-            .readEnum()
+        const { et } = this.readEnum(doc.Enum)
         const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
         const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
         for (const key in options) {
@@ -512,30 +476,34 @@ export class NbtdocHelper {
         }
     }
 
-    public isInheritFromItemBase(doc: nbtdoc.CompoundTag | null): boolean {
+    public isInheritFromItemBase(doc: nbtdoc.CompoundTag | null, node: NbtCompoundNode | null): boolean {
         if (!doc) {
             return false
         }
         if (doc.fields.hasOwnProperty('CustomModelData')) {
             return true
         }
-        return this.isInheritFromItemBase(this.clone().goSupers(doc.supers).readCompound())
+        const superDoc = this.getSupers(doc.supers, node)
+        return this.isInheritFromItemBase(
+            this.readCompound(superDoc ? superDoc.Compound : null),
+            node
+        )
     }
 
-    private validateCompoundDoc(ans: ValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: nbtdoc.CompoundTag | null, isPredicate: boolean) {
+    private validateCompoundDoc(ans: ValidateResult, ctx: ParsingContext, node: NbtCompoundNode, doc: nbtdoc.CompoundTag | null, isPredicate: boolean) {
         if (doc) {
-            for (const key in tag) {
+            for (const key in node) {
                 /* istanbul ignore else */
-                if (tag.hasOwnProperty(key)) {
-                    const childTag = tag[key]
-                    const field = this.readField(key)
+                if (node.hasOwnProperty(key)) {
+                    const childNode = node[key]
+                    const field = this.readField(doc, key, node[SuperNode])
                     if (field) {
                         // Hover information.
-                        tag[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
-                        this.validateField(ans, ctx, childTag, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
+                        node[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
+                        this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
                     } else {
                         // Errors.
-                        if (!this.isInheritFromItemBase(doc)) {
+                        if (!this.isInheritFromItemBase(doc, node[SuperNode])) {
                             let code: ErrorCode | undefined
                             //#region UUID datafix: #377
                             if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
@@ -543,7 +511,7 @@ export class NbtdocHelper {
                             }
                             //#endregion
                             ans.errors.push(new ParsingError(
-                                tag[Keys][key][NodeRange],
+                                node[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),
                                 true, DiagnosticSeverity.Warning, code
                             ))
@@ -655,14 +623,9 @@ export class NbtdocHelper {
     private validateCompoundField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: CompoundDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Compound', isPredicate)
         if (shouldValidate) {
-            const compoundTag: NbtCompoundNode = tag as any
-            const clonedHelpler = this.clone()
-            const compoundDoc = clonedHelpler
-                .goCompound(doc.Compound)
-                .readCompound()
-            clonedHelpler
-                .withTag(compoundTag)
-                .validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
+            const compoundNode: NbtCompoundNode = tag as any
+            const compoundDoc = this.readCompound(doc.Compound)
+            this.validateCompoundDoc(ans, ctx, compoundNode, compoundDoc, isPredicate)
         }
     }
     private validateDoubleField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: DoubleDoc, isPredicate: boolean): void {
@@ -672,9 +635,7 @@ export class NbtdocHelper {
         }
     }
     private validateEnumField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: EnumDoc, isPredicate: boolean): void {
-        const { description, et } = this
-            .goEnum(doc.Enum)
-            .readEnum()
+        const { description, et } = this.readEnum(doc.Enum)
         const handledDescription = NbtdocHelper.handleDescription(description)
         const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
         tag[NodeDescription] = `${NbtdocHelper.localeType(type)}\n* * * * * *\n${handledDescription}`
@@ -774,11 +735,8 @@ export class NbtdocHelper {
     private validateIndexField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: IndexDoc, isPredicate: boolean): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'Compound', isPredicate)
         if (shouldValidate) {
-            const compoundTag = tag as NbtCompoundNode
-            const clonedHelper = this
-                .clone()
-                .withTag(compoundTag[SuperNode])
-            const idTag = clonedHelper.resolveFieldPath(doc.Index.path)
+            const compoundNode = tag as NbtCompoundNode
+            const idTag = this.resolveFieldPath(doc.Index.path, compoundNode[SuperNode])
             /* istanbul ignore next */
             const id = idTag ? IdentityNode.fromString(idTag.valueOf()).toString() : null
             let compoundDoc: nbtdoc.CompoundTag | null = null
@@ -818,15 +776,12 @@ export class NbtdocHelper {
                     // }
                 }
             } else {
-                compoundDoc = clonedHelper
-                    .goRegistryCompound(doc.Index.target, id)
-                    .readCompound()
+                const registryDoc = this.getRegistryCompound(doc.Index.target, id)
+                compoundDoc = this.readCompound(registryDoc ? registryDoc.Compound : null)
             }
             /* istanbul ignore else */
             if (compoundDoc) {
-                clonedHelper
-                    .withTag(compoundTag)
-                    .validateCompoundDoc(ans, ctx, compoundTag, compoundDoc, isPredicate)
+                this.validateCompoundDoc(ans, ctx, compoundNode, compoundDoc, isPredicate)
             }
         }
     }
@@ -962,63 +917,56 @@ export class NbtdocHelper {
     static isRegistrySupers(supers: Supers): supers is RegistrySupers {
         return (supers as RegistrySupers).Registry !== undefined
     }
-    static isBooleanDoc(doc: nbtdoc.NbtValue): doc is BooleanDoc {
+    static isBooleanDoc(doc: any): doc is BooleanDoc {
         return doc === 'Boolean'
     }
-    static isByteDoc(doc: nbtdoc.NbtValue): doc is ByteDoc {
-        return (doc as any).Byte !== undefined
+    static isByteDoc(doc: any): doc is ByteDoc {
+        return !!doc && doc.Byte !== undefined
     }
-    static isShortDoc(doc: nbtdoc.NbtValue): doc is ShortDoc {
-        return (doc as any).Short !== undefined
+    static isShortDoc(doc: any): doc is ShortDoc {
+        return !!doc && doc.Short !== undefined
     }
-    static isIntDoc(doc: nbtdoc.NbtValue): doc is IntDoc {
-        return (doc as any).Int !== undefined
+    static isIntDoc(doc: any): doc is IntDoc {
+        return !!doc && doc.Int !== undefined
     }
-    static isLongDoc(doc: nbtdoc.NbtValue): doc is LongDoc {
-        return (doc as any).Long !== undefined
+    static isLongDoc(doc: any): doc is LongDoc {
+        return !!doc && doc.Long !== undefined
     }
-    static isFloatDoc(doc: nbtdoc.NbtValue): doc is FloatDoc {
-        return (doc as any).Float !== undefined
+    static isFloatDoc(doc: any): doc is FloatDoc {
+        return !!doc && doc.Float !== undefined
     }
-    static isDoubleDoc(doc: nbtdoc.NbtValue): doc is DoubleDoc {
-        return (doc as any).Double !== undefined
+    static isDoubleDoc(doc: any): doc is DoubleDoc {
+        return !!doc && doc.Double !== undefined
     }
-    static isStringDoc(doc: nbtdoc.NbtValue): doc is StringDoc {
+    static isStringDoc(doc: any): doc is StringDoc {
         return doc === 'String'
     }
-    static isByteArrayDoc(doc: nbtdoc.NbtValue): doc is ByteArrayDoc {
-        return (doc as any).ByteArray !== undefined
+    static isByteArrayDoc(doc: any): doc is ByteArrayDoc {
+        return !!doc && doc.ByteArray !== undefined
     }
-    static isIntArrayDoc(doc: nbtdoc.NbtValue): doc is IntArrayDoc {
-        return (doc as any).IntArray !== undefined
+    static isIntArrayDoc(doc: any): doc is IntArrayDoc {
+        return !!doc && doc.IntArray !== undefined
     }
-    static isLongArrayDoc(doc: nbtdoc.NbtValue): doc is LongArrayDoc {
-        return (doc as any).LongArray !== undefined
+    static isLongArrayDoc(doc: any): doc is LongArrayDoc {
+        return !!doc && doc.LongArray !== undefined
     }
-    static isCompoundDoc(doc: nbtdoc.NbtValue): doc is CompoundDoc {
-        return (doc as any).Compound !== undefined
+    static isCompoundDoc(doc: any): doc is CompoundDoc {
+        return !!doc && doc.Compound !== undefined
     }
-    static isEnumDoc(doc: nbtdoc.NbtValue): doc is EnumDoc {
-        return (doc as any).Enum !== undefined
+    static isEnumDoc(doc: any): doc is EnumDoc {
+        return !!doc && doc.Enum !== undefined
     }
-    static isListDoc(doc: nbtdoc.NbtValue): doc is ListDoc {
-        return (doc as any).List !== undefined
+    static isListDoc(doc: any): doc is ListDoc {
+        return !!doc && doc.List !== undefined
     }
-    static isIndexDoc(doc: nbtdoc.NbtValue | null): doc is IndexDoc {
-        return !!doc && (doc as any).Index !== undefined
+    static isIndexDoc(doc: any): doc is IndexDoc {
+        return !!doc && doc.Index !== undefined
     }
-    static isIdDoc(doc: nbtdoc.NbtValue): doc is IdDoc {
-        return (doc as any).Id !== undefined
+    static isIdDoc(doc: any): doc is IdDoc {
+        return !!doc && doc.Id !== undefined
     }
-    static isOrDoc(doc: nbtdoc.NbtValue): doc is OrDoc {
-        return (doc as any).Or !== undefined
-    }
-
-    static moveToChildIfNeeded(helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | undefined) {
-        if (helper && doc && NbtdocHelper.isCompoundDoc(doc)) {
-            return helper.clone().goCompound(doc.Compound)
-        }
-        return helper
+    static isOrDoc(doc: any): doc is OrDoc {
+        return !!doc && doc.Or !== undefined
     }
 
     static getKeyDescription(value: nbtdoc.NbtValue, description: string) {

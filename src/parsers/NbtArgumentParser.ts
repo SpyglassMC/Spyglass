@@ -18,7 +18,7 @@ import { isNbtIntNode, NbtIntNode } from '../nodes/NbtIntNode'
 import { ChildNbtNodeType, NbtListNode } from '../nodes/NbtListNode'
 import { NbtLongArrayNode } from '../nodes/NbtLongArrayNode'
 import { isNbtLongNode, NbtLongNode } from '../nodes/NbtLongNode'
-import { NbtNode, NbtNodeType, NbtNodeTypeName } from '../nodes/NbtNode'
+import { NbtNode, NbtNodeType, NbtNodeTypeName, SuperNode } from '../nodes/NbtNode'
 import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
@@ -35,6 +35,35 @@ import { MapParser } from './MapParser'
 
 export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     static identity = 'Nbt'
+
+    /**
+     * The diagnostic level of nbt schema is `Warning`. 
+     * 
+     * This field is used to trigger `Error` diagnostics.
+     */
+    private readonly expectedTypes: NbtNodeTypeName[]
+
+    readonly identity = 'nbtTag'
+
+    /* istanbul ignore next */
+    constructor(
+        type: NbtNodeTypeName | NbtNodeTypeName[] = [
+            'Compound', 'List', 'ByteArray', 'IntArray', 'LongArray',
+            'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
+        ],
+        private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
+        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null = null,
+        private readonly isPredicate = false,
+        private readonly superNode: NbtCompoundNode | null = null
+    ) {
+        super()
+        if (type instanceof Array) {
+            this.expectedTypes = type
+        } else {
+            this.expectedTypes = [type]
+        }
+    }
+
     /**
      * @throws {string}
      */
@@ -115,57 +144,25 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             true: [/^(true)$/i, (superNode, value) => new NbtByteNode(superNode, 1, value)]
         }
 
-    /**
-     * The diagnostic level of nbt schema is `Warning`. 
-     * 
-     * This field is used to trigger `Error` diagnostics.
-     */
-    private readonly expectedTypes: NbtNodeTypeName[]
-
-    readonly identity = 'nbtTag'
-
-    /* istanbul ignore next */
-    constructor(
-        type: NbtNodeTypeName | NbtNodeTypeName[] = [
-            'Compound', 'List', 'ByteArray', 'IntArray', 'LongArray',
-            'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
-        ],
-        private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
-        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null = null,
-        private readonly isPredicate = false,
-        private readonly superNode: NbtCompoundNode | null = null
-    ) {
-        super()
-        if (type instanceof Array) {
-            this.expectedTypes = type
-        } else {
-            this.expectedTypes = [type]
-        }
-    }
-
     private getLocaleName(name: NbtNodeTypeName) {
         return locale(`nbt-tag.${name}`)
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtNode> {
-        let helper: NbtdocHelper | undefined
-        let description: string | undefined
+        const helper = new NbtdocHelper(ctx.nbtdoc)
+        let index: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
         if (typeof this.id === 'number') {
-            helper = new NbtdocHelper(ctx.nbtdoc)
-            helper.goCompound(this.id)
-            const doc = helper.readCompound()
-            /* istanbul ignore next */
-            description = doc ? doc.description : undefined
+            index = this.id
         } else if (this.id) {
-            helper = new NbtdocHelper(ctx.nbtdoc)
-            helper.goRegistryCompound(this.category, this.id)
-            const doc = helper.readCompound()
-            /* istanbul ignore next */
-            description = doc ? doc.description : undefined
+            const registryDoc = helper.getRegistryCompound(this.category, this.id)
+            index = registryDoc ? registryDoc.Compound : null
         }
+        const compoundDoc = helper.readCompound(index)
+        /* istanbul ignore next */
+        const description = compoundDoc ? compoundDoc.description : undefined
         const start = reader.cursor
         const ans = this.parseTag(reader, ctx, this.superNode, helper,
-            helper && helper.compoundIndex !== null ? { Compound: helper.compoundIndex } : undefined,
+            helper && index !== null ? { Compound: index } : undefined,
             description
         )
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
@@ -177,8 +174,8 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 )
             ))
         }
-        if (helper && helper.compoundIndex !== null) {
-            helper.validateField(ans, ctx, ans.data, { Compound: helper.compoundIndex }, this.isPredicate, '')
+        if (helper && index !== null) {
+            helper.validateField(ans, ctx, ans.data, { Compound: index }, this.isPredicate, '')
         }
         return ans
     }
@@ -272,7 +269,8 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         ))
                     } else {
                         // Check whether the current key follows the naming convention.
-                        const isCustomKey = !(helper && doc) || (helper.readField(key) === null)
+                        const isCustomKey = !(helper && doc) ||
+                            (helper.readField(helper.readCompound(doc.Compound), key, ans.data) === null)
                         if (isCustomKey && ctx.config.lint.nameOfNbtCompoundTagKeys &&
                             !checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
                             const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
@@ -309,12 +307,12 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             (ans, reader, ctx, key) => {
                 // Check whether the schema for the key is available.
                 let fieldDoc: nbtdoc.Field | null = null
-                if (helper && helper.compoundIndex !== null) {
-                    fieldDoc = helper.readField(key)
+                if (helper && doc && doc.Compound !== null) {
+                    fieldDoc = helper.readField(helper.readCompound(doc.Compound), key, ans.data)
                 }
                 const result = this.parseTag(
                     reader, ctx, ans.data,
-                    NbtdocHelper.moveToChildIfNeeded(helper, fieldDoc ? fieldDoc.nbttype : undefined),
+                    helper,
                     fieldDoc ? fieldDoc.nbttype : undefined,
                     fieldDoc ? fieldDoc.description : undefined
                 )
@@ -495,7 +493,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 /* istanbul ignore next */
                 const result = this.parseTag(
                     reader, ctx, superNode,
-                    NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined),
+                    helper,
                     doc ? doc.List.value_type : undefined,
                     description
                 )

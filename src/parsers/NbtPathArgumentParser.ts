@@ -13,7 +13,7 @@ import { ParsingError } from '../types/ParsingError'
 import { isInRange, TextRange } from '../types/TextRange'
 import { Token, TokenType } from '../types/Token'
 import { arrayToMessage, validateStringQuote } from '../utils'
-import { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc, NbtdocHelper } from '../utils/NbtdocHelper'
+import { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc, NbtdocHelper, CompoundDoc } from '../utils/NbtdocHelper'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -41,10 +41,10 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         let helper: NbtdocHelper | undefined
         if (this.id) {
             helper = new NbtdocHelper(ctx.nbtdoc)
-            helper.goRegistryCompound(this.category, this.id)
+
         }
 
-        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper && helper.compoundIndex !== null ? { Compound: helper.compoundIndex } : null, ['filter', 'key', 'index'], false)
+        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.getRegistryCompound(this.category, this.id) : null, ['filter', 'key', 'index'], false)
 
         ans.data[NodeRange] = { start, end: reader.cursor }
 
@@ -52,8 +52,6 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean) {
-        let subHelper: NbtdocHelper | undefined = undefined
-
         let isKey = false
 
         if (types.includes('key')) {
@@ -61,7 +59,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             let range: TextRange = { start: reader.cursor, end: reader.cursor }
             if (this.canParseKey(reader)) {
                 isKey = true
-                range = this.parseKey(ans, reader, ctx, helper, doc)[NodeRange]
+                range = this.parseKey(ans, reader, ctx, helper, NbtdocHelper.isCompoundDoc(doc) ? doc : null)[NodeRange]
                 //#region Schema errors.
                 if (helper && doc && !NbtdocHelper.isCompoundDoc(doc)) {
                     ans.errors.push(new ParsingError(
@@ -91,11 +89,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         if (!isKey) {
             if (types.includes('filter') && this.canParseCompoundFilter(reader)) {
                 if (helper && doc) {
-                    if (NbtdocHelper.isCompoundDoc(doc)) {
-                        subHelper = helper
-                            .clone()
-                            .goCompound(doc.Compound)
-                    } else {
+                    if (!NbtdocHelper.isCompoundDoc(doc)) {
                         ans.errors.push(new ParsingError(
                             { start: reader.cursor, end: reader.cursor + 1 },
                             locale('unexpected-nbt-path-filter'),
@@ -103,17 +97,15 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         ))
                     }
                 }
-                this.parseCompoundFilter(ans, reader, ctx, subHelper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : null)
+                this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : null)
             } else if (types.includes('index') && this.canParseIndex(reader)) {
                 if (helper && doc) {
-                    if ((
+                    if (!(
                         NbtdocHelper.isListDoc(doc) ||
                         NbtdocHelper.isByteArrayDoc(doc) ||
                         NbtdocHelper.isIntArrayDoc(doc) ||
                         NbtdocHelper.isLongArrayDoc(doc)
                     )) {
-                        subHelper = helper
-                    } else {
                         ans.errors.push(new ParsingError(
                             { start: reader.cursor, end: reader.cursor + 1 },
                             locale('unexpected-nbt-path-index'),
@@ -121,7 +113,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         ))
                     }
                 }
-                this.parseIndex(ans, reader, ctx, subHelper, doc && NbtdocHelper.isListDoc(doc) ? doc : null)
+                this.parseIndex(ans, reader, ctx, helper, doc && NbtdocHelper.isListDoc(doc) ? doc : null)
             } else {
                 if (!allowEmpty) {
                     ans.errors.push(new ParsingError(
@@ -136,7 +128,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         }
     }
 
-    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null) {
+    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: NbtCompoundDoc | null) {
         const start = reader.cursor
         let key: string = ''
         const out: { mapping: IndexMapping } = { mapping: {} }
@@ -170,12 +162,11 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         ans.tokens.push(Token.from(start, reader, TokenType.property))
         //#endregion
 
-        let childHelper: NbtdocHelper | undefined
         let childDoc: nbtdoc.NbtValue | null = null
         if (helper) {
-            childHelper = helper.clone()
-            const field = childHelper.readField(key)
-            if (!field && !childHelper.isInheritFromItemBase(childHelper.readCompound())) {
+            const compoundDoc = helper.readCompound(doc ? doc.Compound : null)
+            const field = helper.readField(compoundDoc, key, null)
+            if (!field && !helper.isInheritFromItemBase(compoundDoc, null)) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unknown-key', locale('punc.quote', key)),
@@ -184,17 +175,14 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             } else if (field) {
                 keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
                 childDoc = field.nbttype
-                if (NbtdocHelper.isCompoundDoc(childDoc)) {
-                    childHelper.goCompound(childDoc.Compound)
-                }
             }
         }
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, childHelper, childDoc, ['key', 'index'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['key', 'index'], false)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, childHelper, childDoc, ['filter', 'index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['filter', 'index'], true)
         }
 
         return keyNode
@@ -202,7 +190,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
     private parseCompoundFilter(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: NbtCompoundDoc | null) {
         const result = ctx.parsers
-            .get('Nbt', ['Compound', this.category, helper ? helper.compoundIndex : null, true])
+            .get('Nbt', ['Compound', this.category, doc ? doc.Compound : null, true])
             .parse(reader, ctx)
         ans.data.push(result.data as NbtCompoundNode)
         combineArgumentParserResult(ans, result)
@@ -233,9 +221,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         if (this.canParseCompoundFilter(reader)) {
             checkSchema()
             this.parseCompoundFilter(
-                ans, reader, ctx,
-                /* istanbul ignore next */
-                isListDoc(doc) ? NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined) : undefined,
+                ans, reader, ctx, helper,
                 /* istanbul ignore next */
                 isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null
             )
@@ -250,9 +236,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             checkSchema()
             this.parseSep(ans, reader)
             this.parseSpecifiedTypes(
-                ans, reader, ctx,
-                /* istanbul ignore next */
-                isListDoc(doc) ? NbtdocHelper.moveToChildIfNeeded(helper, doc ? doc.List.value_type : undefined) : undefined,
+                ans, reader, ctx, helper,
                 /* istanbul ignore next */
                 isListDoc(doc) ? doc.List.value_type : null,
                 ['key', 'index'], false
