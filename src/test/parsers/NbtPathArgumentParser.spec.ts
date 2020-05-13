@@ -220,7 +220,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [])
             })
             it('Should return warning when the key is not in compound tags', () => {
-                const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
+                const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:complex')
                 const reader = new StringReader('addition.foo')
 
                 const expectedKey1 = new NbtCompoundKeyNode(null, 'addition', 'addition', { start: 0 })
