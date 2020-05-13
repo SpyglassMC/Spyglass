@@ -22,8 +22,6 @@ export class MapParser<T extends MapNode<any, any>> {
 
     /* istanbul ignore next */
     parse(ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) {
-        let { cursor } = ctx
-
         const start = reader.cursor
 
         /**
@@ -33,8 +31,8 @@ export class MapParser<T extends MapNode<any, any>> {
         const skipWhiteSpace = () => {
             const whiteSpaceStart = reader.cursor
             reader.skipWhiteSpace()
-            if (whiteSpaceStart <= cursor && cursor < reader.cursor) {
-                cursor = reader.cursor
+            if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.cursor) {
+                ctx.cursor = reader.cursor
             }
         }
 
@@ -74,9 +72,8 @@ export class MapParser<T extends MapNode<any, any>> {
 
                 // Key-value pair SepToken.
                 if (reader.peek() === this.chars.pairSep) {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
+                    reader.skip()
+                    skipWhiteSpace()
                     continue
                 }
                 break

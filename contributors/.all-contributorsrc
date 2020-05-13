@@ -35,6 +35,7 @@
       "details": [
         { "type": "bug", "link": "issues/430", "text": "#430" },
         { "type": "bug", "link": "issues/443", "text": "#443" },
+        { "type": "bug", "link": "issues/457", "text": "#457" },
         { "type": "bug", "link": "issues/459", "text": "#459" }
       ]
     },

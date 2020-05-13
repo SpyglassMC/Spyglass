@@ -189,22 +189,6 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             case '[':
                 ans = this.parseListOrArray(reader, ctx, superNode, helper, doc && NbtdocHelper.isListDoc(doc) ? doc : undefined, description)
                 break
-            case '':
-            case '}':
-                if (doc) {
-                    ans = {
-                        data: new NbtStringNode(null, '', '', {}),
-                        cache: {}, completions: [], errors: [], tokens: []
-                    }
-                    ans.data[NodeRange] = { start: reader.cursor, end: reader.cursor }
-                    /* istanbul ignore next */
-                    if (helper && ctx.cursor === reader.cursor) {
-                        helper.completeField(ans, ctx, doc, this.isPredicate, description || '')
-                    }
-                } else {
-                    ans = this.parsePrimitiveTag(reader, superNode, helper)
-                }
-                break
             default:
                 ans = this.parsePrimitiveTag(reader, superNode, helper)
                 break
@@ -212,7 +196,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         return ans
     }
 
-    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: NbtCompoundDoc): ArgumentParserResult<NbtCompoundNode> {
+    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc: NbtCompoundDoc | null = null): ArgumentParserResult<NbtCompoundNode> {
         const ans: ArgumentParserResult<NbtCompoundNode> = {
             data: new NbtCompoundNode(superNode),
             cache: {}, completions: [], errors: [], tokens: []
@@ -310,6 +294,11 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 if (helper && doc && doc.Compound !== null) {
                     fieldDoc = helper.readField(helper.readCompound(doc.Compound), key, ans.data)
                 }
+                //#region Completions.
+                if (helper && ctx.cursor === reader.cursor) {
+                    helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '')
+                }
+                //#endregion
                 const result = this.parseTag(
                     reader, ctx, ans.data,
                     helper,
@@ -484,12 +473,32 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
         const start = reader.cursor
         try {
+            /**
+             * Move cursor to the end of the white spaces, so that we can provide
+             * completions when the cursor is inside the white spaces.
+             */
+            const skipWhiteSpace = () => {
+                const whiteSpaceStart = reader.cursor
+                reader.skipWhiteSpace()
+                if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.cursor) {
+                    ctx.cursor = reader.cursor
+                }
+            }
             reader
                 .expect('[')
                 .skip()
-                .skipWhiteSpace()
-            while (reader.canRead() && reader.peek() !== ']') {
+            skipWhiteSpace()
+            while (true) {
                 const start = reader.cursor
+                //#region Completions.
+                if (helper && ctx.cursor === start) {
+                    /* istanbul ignore next */
+                    helper.completeField(ans, ctx, doc ? doc.List.value_type : null, this.isPredicate, description || '')
+                }
+                //#endregion
+                if (!(reader.canRead() && reader.peek() !== ']')) {
+                    break
+                }
                 /* istanbul ignore next */
                 const result = this.parseTag(
                     reader, ctx, superNode,
@@ -499,7 +508,6 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 )
                 const end = reader.cursor
                 combineArgumentParserResult(ans, result)
-                reader.skipWhiteSpace()
                 ans.data.push(result.data)
                 if (!ans.data[ChildNbtNodeType]) {
                     ans.data[ChildNbtNodeType] = result.data[NbtNodeType]
@@ -514,10 +522,11 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         )
                     )
                 }
+
+                reader.skipWhiteSpace()
                 if (reader.peek() === ',') {
-                    reader
-                        .skip()
-                        .skipWhiteSpace()
+                    reader.skip()
+                    skipWhiteSpace()
                     continue
                 }
                 break

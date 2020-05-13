@@ -802,12 +802,13 @@ export class NbtdocHelper {
     private validateListField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: ListDoc, isPredicate: boolean, description: string): void {
         const shouldValidate = this.validateNbtNodeType(ans, ctx, tag, 'List', isPredicate)
         if (shouldValidate) {
-            const { length_range: lengthRange, value_type: valueType } = doc.List
+            const listTag = tag as NbtListNode<NbtNode>
+            const { length_range: lengthRange, value_type: childDoc } = doc.List
             if (lengthRange) {
-                this.validateCollectionLength(ans, ctx, tag as NbtListNode<NbtNode>, lengthRange, isPredicate)
+                this.validateCollectionLength(ans, ctx, listTag, lengthRange, isPredicate)
             }
-            for (const item of tag as NbtListNode<NbtNode>) {
-                this.validateField(ans, ctx, item, valueType, isPredicate, description)
+            for (const item of listTag) {
+                this.validateField(ans, ctx, item, childDoc, isPredicate, description)
             }
         }
     }
