@@ -1657,7 +1657,7 @@ export const CommandTree: ICommandTree = {
                                     }
                                 },
                                 nametagVisibility_deathMessageVisibility: {
-                                    parser: new LiteralArgumentParser('nametagVisibility', 'deathMessageVisibility '),
+                                    parser: new LiteralArgumentParser('nametagVisibility', 'deathMessageVisibility'),
                                     children: {
                                         value: {
                                             parser: new LiteralArgumentParser('never', 'hideForOtherTeams', 'hideForOwnTeam', 'always'),
