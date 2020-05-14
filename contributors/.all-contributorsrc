@@ -45,7 +45,8 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=844249",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/437", "text": "#437" }
+        { "type": "bug", "link": "issues/437", "text": "#437" },
+        { "type": "bug", "link": "https://github.com/SPGoding/datapack-json/issues/40", "text": "SPGoding/datapack-json#40" }
       ]
     },
     {
@@ -72,6 +73,14 @@
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+      ]
+    },
+    {
+      "name": "Red_Bones",
+      "avatar_url": "https://cdn.discordapp.com/avatars/342059161426591745/54b479e081dbc77474e355b512c09961.png?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "https://github.com/SPGoding/datapack-json/issues/41", "text": "SPGoding/datapack-json#41" }
       ]
     },
     {
