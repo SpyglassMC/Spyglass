@@ -4,7 +4,7 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "2.0.1.md"
+    "2.1.0.md"
   ],
   "imageSize": 64,
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
@@ -28,25 +28,12 @@
       ]
     },
     {
-      "name": "ChenCMD",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/46134240?s=400&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4",
-      "profile": "https://github.com/ChenCMD",
+      "name": "ChapterII",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1834567&size=middle",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1834567",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/430", "text": "#430" },
-        { "type": "bug", "link": "issues/443", "text": "#443" },
-        { "type": "bug", "link": "issues/457", "text": "#457" },
-        { "type": "bug", "link": "issues/459", "text": "#459" }
-      ]
-    },
-    {
-      "name": "Cjsah_",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=844249&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=844249",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/437", "text": "#437" },
-        { "type": "bug", "link": "https://github.com/SPGoding/datapack-json/issues/40", "text": "SPGoding/datapack-json#40" }
+        { "type": "bug", "link": "issues/467", "text": "#467" }
       ]
     },
     {
@@ -59,36 +46,12 @@
       ]
     },
     {
-      "name": "Ellivers",
-      "avatar_url": "https://cdn.discordapp.com/avatars/287675064634179594/a8bbe21ac1e4af1a44597f2d760efca6.png?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/442", "text": "#442" }
-      ]
-    },
-    {
       "name": "K_bai",
       "avatar_url": "https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240",
       "profile": "https://afdian.net/@k_bai",
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
-      ]
-    },
-    {
-      "name": "Red_Bones",
-      "avatar_url": "https://cdn.discordapp.com/avatars/342059161426591745/54b479e081dbc77474e355b512c09961.png?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "https://github.com/SPGoding/datapack-json/issues/41", "text": "SPGoding/datapack-json#41" }
-      ]
-    },
-    {
-      "name": "ShoukaSeikyo",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/1260418?s=460&u=546b2be73fcee3556d1dcb0fb8e63245083789e1&v=4",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/451", "text": "#451" }
       ]
     },
     {
@@ -107,34 +70,6 @@
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
-      ]
-    },
-    {
-      "name": "liudaifeng55",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=497461&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=497461",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/453", "text": "#453" }
-      ]
-    },
-    {
-      "name": "missinggo",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/438", "text": "#438" },
-        { "type": "bug", "link": "issues/439", "text": "#439" }
-      ]
-    },
-    {
-      "name": "shurik204",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/43310372?s=460&u=91bc2eb7213cd4580be5de984f7f920397217103&v=4",
-      "profile": "https://github.com/shurik204",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/455", "text": "#455" }
       ]
     },
     {
