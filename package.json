@@ -49,6 +49,7 @@
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",
         "acorn": "^7.2.0",
+        "all-contributors-cli": "^6.14.2",
         "codecov": "^3.6.5",
         "eslint": "^6.8.0",
         "espower-typescript": "^9.0.2",
