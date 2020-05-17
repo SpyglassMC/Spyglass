@@ -66,6 +66,9 @@
         "ts-node": "^8.10.1",
         "typescript": "^3.9.2"
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/SPGoding/datapack-language-server.git"
