@@ -10,7 +10,7 @@ describe('IndexMapping Tests', () => {
     // {"text":"ha\\ha"}
     const mapping: IndexMapping = {
         start: 12,
-        skipAt: [1, 6, 8, 11, 12, 15]
+        skipAt: [1, 6, 8, 11, { index: 12 }, { index: 15, length: 1 }]
     }
     describe('getInnerIndex() Tests', () => {
         it('Should return correctly for empty mapping', () => {

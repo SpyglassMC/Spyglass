@@ -43,6 +43,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             completions: []
         }
         const getCacheTagType = () => {
+            /* istanbul ignore next */
             switch (this.type) {
                 case 'minecraft:block':
                     return 'tags/blocks'
@@ -55,7 +56,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 case '$functions':
                     return 'tags/functions'
                 default:
-                    /* istanbul ignore next */
                     throw new Error(`faild to find a tag type for ‘${this.type}’`)
             }
         }

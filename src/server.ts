@@ -592,14 +592,19 @@ connection.onInitialized(() => {
 async function getLatestVersions() {
     try {
         connection.console.info('[LatestVersions] Fetching the latest versions...')
-        const str = await requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json')
+        const str = await Promise.race([
+            requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json'),
+            new Promise<string>((_, reject) => {
+                setTimeout(() => { reject(new Error('Time out!')) }, 7_000)
+            })
+        ])
         const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
         const processedVersion = '20w10a'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         versionInformation = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
-        connection.console.warn(`[LatestVersions] Error occurred: ${e}`)
+        connection.console.warn(`[LatestVersions] ${e}`)
     }
     connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(versionInformation)}`)
 }

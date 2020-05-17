@@ -97,21 +97,25 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     const isLatestSnapshot = version === latestSnapshot
                     const uri = getReportUri(type, source, version, processedVersions, isLatestSnapshot)
                     console.info(`[VanillaData: ${type} for ${version}] Fetching from ${source} ‘${uri}’...`)
-                    const json = JSON.parse(await requestText(uri))
+                    const str = await Promise.race([
+                        requestText(uri),
+                        new Promise<string>((_, reject) => {
+                            setTimeout(() => { reject(new Error('Time out!')) }, 7_000)
+                        })
+                    ])
+                    const json = JSON.parse(str)
                     await fs.mkdirp(versionPath)
                     fs.writeJson(filePath, json, { encoding: 'utf8' })
                     console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source} and saved at ‘${filePath}’.`)
                     cache[version] = json
                 }
             } catch (e) {
-                console.warn(`[VanillaData: ${type} for ${version}] Error occurred while getting for: ${e} (${++faildTimes}/${MaxFaildTimes})`)
-                const ans = FallbackVanillaData[type]
+                console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)
                 console.info(`[VanillaData: ${type} for ${version}] Used the fallback.`)
-                return ans
+                return FallbackVanillaData[type]
             }
         } else {
-            const ans = FallbackVanillaData[type]
-            return ans
+            return FallbackVanillaData[type]
         }
     }
     return cache[version]

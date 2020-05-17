@@ -486,6 +486,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             const skipWhiteSpace = () => {
                 const whiteSpaceStart = reader.cursor
                 reader.skipWhiteSpace()
+                /* istanbul ignore next */
                 if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.cursor) {
                     ctx.cursor = reader.cursor
                 }
