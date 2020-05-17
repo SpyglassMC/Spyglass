@@ -6,7 +6,7 @@
         [
             "@semantic-release/github",
             {
-                "releasedLabels": [":rocket: released"]
+                "releasedLabels": ["🚀 released"]
             }
         ],
         [
