@@ -1026,7 +1026,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('locate'),
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('Buried_Treasure', 'EndCity', 'Fortress', 'Mansion', 'Mineshaft', 'Monument', 'Ocean_Ruin', 'Shipwreck', 'Stronghold', 'Desert_Pyramid', 'Igloo', 'Jungle_Pyramid', 'Swamp_Hut', 'Village', 'Pillager_Outpost'),
+                    parser: new LiteralArgumentParser('bastion_remnant', 'buried_treasure', 'desert_pyramid', 'endcity', 'fortress', 'igloo', 'jungle_pyramid', 'mansion', 'mineshaft', 'monument', 'nether_fossil', 'ocean_ruin', 'pillager_outpost', 'ruined_portal', 'shipwreck', 'stronghold', 'swamp_hut', 'village'),
                     executable: true
                 }
             }
@@ -1585,7 +1585,7 @@ export const CommandTree: ICommandTree = {
         spreadplayers: {
             parser: new LiteralArgumentParser('spreadplayers'),
             children: {
-                pos: {
+                center: {
                     parser: new VectorArgumentParser(2),
                     children: {
                         spreadDistance: {
@@ -1594,6 +1594,25 @@ export const CommandTree: ICommandTree = {
                                 maxRange: {
                                     parser: new NumberArgumentParser('float', 1),
                                     children: {
+                                        under: {
+                                            parser: new LiteralArgumentParser('under'),
+                                            children: {
+                                                maxHeight: {
+                                                    parser: new NumberArgumentParser('integer'),
+                                                    children: {
+                                                        respectTeams: {
+                                                            template: 'templates.boolean',
+                                                            children: {
+                                                                entity: {
+                                                                    parser: new EntityArgumentParser('multiple', 'entities'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
                                         respectTeams: {
                                             template: 'templates.boolean',
                                             children: {
