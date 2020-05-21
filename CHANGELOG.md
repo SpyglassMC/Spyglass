@@ -1,3 +1,8 @@
+# [v2.0.3](https://github.com/SPGoding/datapack-language-server/compare/v2.0.2...v2.0.3) (2020-05-21)
+
+## 🐛 Bug Fixes
+- [`a234486`](https://github.com/SPGoding/datapack-language-server/commit/a234486)  Support new command syntax of 20w21a
+
 # [v2.0.2](https://github.com/SPGoding/datapack-language-server/compare/v2.0.1...v2.0.2) (2020-05-17)
 
 ## 🐛 Bug Fixes
