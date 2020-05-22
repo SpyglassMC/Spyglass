@@ -328,19 +328,15 @@ connection.onInitialized(() => {
     })
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position: { character: char, line: lineNumber } }) => {
-        try {
-            const uri = getUri(uriString, uris)
-            const config = await fetchConfig(uri)
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-            const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-            if (info && info.config.features.completions) {
-                const commandTree = await getCommandTree(info.config.env.cmdVersion)
-                const vanillaData = await getVanillaData(info.config.env.dataVersion, info.config.env.dataSource, versionInformation, globalStoragePath)
-                return onCompletion({ cacheFile, lineNumber, char, info, commandTree, vanillaData })
-            }
-        } catch (e) {
-            connection.console.error(e)
+        const uri = getUri(uriString, uris)
+        const config = await fetchConfig(uri)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
+        if (info && info.config.features.completions) {
+            const commandTree = await getCommandTree(info.config.env.cmdVersion)
+            const vanillaData = await getVanillaData(info.config.env.dataVersion, info.config.env.dataSource, versionInformation, globalStoragePath)
+            return onCompletion({ cacheFile, lineNumber, char, info, commandTree, vanillaData })
         }
         return null
     })

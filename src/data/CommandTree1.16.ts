@@ -2502,7 +2502,8 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('in'),
             children: {
                 dimension: {
-                    parser: new IdentityArgumentParser('minecraft:dimension_type'),
+                    // parser: new IdentityArgumentParser('minecraft:dimension_type'),
+                    parser: new IdentityArgumentParser(['minecraft:overworld', 'minecraft:the_end', 'minecraft:the_nether'], undefined, undefined, true),
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'

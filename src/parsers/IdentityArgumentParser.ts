@@ -86,7 +86,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         } else {
             const registry = registries[this.type]
-            idPool.push(...Object.keys(registry.entries))
+            if (registry) {
+                idPool.push(...Object.keys(registry.entries))
+            } else {
+                console.error(`Identity registry ‘${this.type}’ doesn't exist!`)
+            }
         }
 
         const complNamespaces = new Set<string>()
