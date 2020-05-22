@@ -1,3 +1,8 @@
+# [v2.0.4](https://github.com/SPGoding/datapack-language-server/compare/v2.0.3...v2.0.4) (2020-05-22)
+
+## 🐛 Bug Fixes
+- [`75963a3`](https://github.com/SPGoding/datapack-language-server/commit/75963a3)  Fix completions for dimension types (Issues: [`#475`](https://github.com/SPGoding/datapack-language-server/issues/475))
+
 # [v2.0.3](https://github.com/SPGoding/datapack-language-server/compare/v2.0.2...v2.0.3) (2020-05-21)
 
 ## 🐛 Bug Fixes
