@@ -37,7 +37,4 @@ Datapack Helper Plus supports multiple languages. If you'd like to help us trans
 
 [SPGoding](https://github.com/SPGoding) personally accept financial supports. The funds will be used for purchasing the server which holds the [localization website](https://dhp.spgoding.com), the rest money will be used for SPGoding's personal usage. _Intransparent, huh?_
 
-If you're interested in donating:
-
-- For global users -> [Patreon](https://patreon.com/SPGoding).
-- For Mainland China users -> [爱发电](https://afdian.net/@SPGoding).
+If you're interested in donating, I have a [Patreon](https://patreon.com/SPGoding) profile.
