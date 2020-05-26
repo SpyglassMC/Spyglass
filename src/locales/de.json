@@ -141,7 +141,7 @@
     "unexpected-leading-slash": "Unerwarteter führender Schrägstrich „/“",
     "unexpected-local-coordinate": "Lokale Koordinate %0% ist nicht erlaubt",
     "unexpected-multiple-selector": "Der Selektor könnte mehrere Objekte liefern",
-    "unexpected-nbt": "Diese Eigenschaft existiert hier nicht.",
+    "unexpected-nbt": "Diese Eigenschaft existiert hier nicht",
     "unexpected-nbt-array-type": "Ungültiger Array-Typ %0%. Sollte „B“, „I“ oder „L“ sein",
     "unexpected-nbt-path-filter": "Pfadfilter funktionieren nur mit Compound-Eigenschaften",
     "unexpected-nbt-path-index": "Indizes funktionieren nur mit Listen oder Array-Eigenschaften",
@@ -156,5 +156,12 @@
     "unknown-key": "Unbekannter Schlüssel %0%",
     "unsorted-keys": "Unsortierte Schlüssel",
     "uuid": "eine UUID",
-    "vector": "einen Vektor"
+    "vector": "einen Vektor",
+    "unquoted-string": "eine Zeichenkette ohne Anführungszeichen",
+    "code-action.nbt-type-to-double": "In ein NBT-Double-Tag umwandeln",
+    "code-action.nbt-type-to-float": "In ein NBT-Float-Tag umwandeln",
+    "code-action.nbt-type-to-long": "In ein NBT-Long-Tag umwandeln",
+    "code-action.nbt-type-to-int": "In ein NBT-Int-Tag umwandeln",
+    "code-action.nbt-type-to-short": "In ein NBT-Short-Tag umwandeln",
+    "code-action.nbt-type-to-byte": "In ein NBT-Byte-Tag umwandeln"
 }
