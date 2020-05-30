@@ -121,8 +121,8 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
     return cache[version]
 }
 
-export async function getVanillaData(versionOrLiteral: string, source: DataSource, versionInformation: VersionInformation | undefined, globalStoragePath: string) {
-    if (!versionInformation) {
+export async function getVanillaData(versionOrLiteral: string | null, source: DataSource, versionInformation: VersionInformation | undefined, globalStoragePath: string) {
+    if (!versionInformation || !versionOrLiteral) {
         return FallbackVanillaData
     }
     const ans: VanillaData = {} as any

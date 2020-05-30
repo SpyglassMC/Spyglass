@@ -33,7 +33,7 @@ export async function onCompletion({ char, lineNumber, info, cacheFile, commandT
 
         return completions
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
     return null
 }
