@@ -2031,8 +2031,23 @@ export const CommandTree: ICommandTree = {
         worldborder: {
             parser: new LiteralArgumentParser('worldborder'),
             children: {
+                add: {
+                    parser: new LiteralArgumentParser('add'),
+                    children: {
+                        distance: {
+                            parser: new NumberArgumentParser('float', -60_000_000, 60_000_000),
+                            executable: true,
+                            children: {
+                                time: {
+                                    parser: new NumberArgumentParser('integer', 0),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
                 add_set: {
-                    parser: new LiteralArgumentParser('add', 'set'),
+                    parser: new LiteralArgumentParser('set'),
                     children: {
                         distance: {
                             parser: new NumberArgumentParser('float', 1, 60_000_000),
