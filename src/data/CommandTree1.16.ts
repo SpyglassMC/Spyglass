@@ -2046,7 +2046,7 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
-                add_set: {
+                set: {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         distance: {
