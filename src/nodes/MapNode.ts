@@ -5,6 +5,7 @@ import { FunctionInfo } from '../types/FunctionInfo'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, GetHoverInformation, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
+import { TextDocument } from 'vscode-languageserver'
 
 export const enum BracketType { open, close }
 
@@ -121,14 +122,14 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
         for (const key of this[GetPlainKeys]()) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                 const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
-                        ans.push(...keyInfo[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                        ans.push(...keyInfo[GetCodeActions](uri, info, range, diagnostics))
                     }
                 }
             }
@@ -137,16 +138,16 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetHoverInformation](lineNumber: number, char: number) {
-        const ans = super[GetHoverInformation](lineNumber, char)
+    [GetHoverInformation](content: TextDocument, offset: number) {
+        const ans = super[GetHoverInformation](content, offset)
         if (!ans) {
             for (const key of this[GetPlainKeys]()) {
                 /* istanbul ignore else */
                 if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                     const keyInfo = this[Keys]![key]
                     if (keyInfo instanceof ArgumentNode) {
-                        if (isInRange(char, keyInfo[NodeRange])) {
-                            return keyInfo[GetHoverInformation](lineNumber, char)
+                        if (isInRange(offset, keyInfo[NodeRange])) {
+                            return keyInfo[GetHoverInformation](content, offset)
                         }
                     }
                 }

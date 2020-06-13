@@ -83,8 +83,8 @@ export class IdentityNode extends ArgumentNode {
         return `${this.getTagSymbolPart()}${id}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]
         const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
@@ -92,14 +92,14 @@ export class IdentityNode extends ArgumentNode {
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 this.toTagString()
             ))
         }
         if (omitDiagnostics && omitDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 this.toShortestTagString()
             ))
         }

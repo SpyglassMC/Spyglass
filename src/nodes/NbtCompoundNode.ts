@@ -34,8 +34,8 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
 
     protected [Chars] = NbtCompoundNodeChars;
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const sortKeysDiagnostics = diagnostics[ErrorCode.NbtCompoundSortKeys]
         if (sortKeysDiagnostics && info.config.lint.nbtCompoundSortKeys) {
             /* istanbul ignore next */
@@ -43,7 +43,7 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'nbt-compound-sort-keys', sortKeysDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 this[GetFormattedString](info.config.lint, keys)
             ))
         }
@@ -57,7 +57,7 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
                 ))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    uri, info.version, lineNumber, this[NodeRange],
+                    info.content, this[NodeRange],
                     newArrayNode[GetFormattedString](info.config.lint)
                 ))
             } catch (ignored) {

@@ -3,7 +3,7 @@ import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
-import { combineSaturatedLine, Line, SaturatedLine, saturatedLineToLine } from '../types/Line'
+import { combineSaturatedLine, LineNode, SaturatedLine, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ParsingError } from '../types/ParsingError'
@@ -11,7 +11,7 @@ import { Token, TokenModifier, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
-export class LineParser implements Parser<Line> {
+export class LineParser implements Parser<LineNode> {
     /* istanbul ignore next */
     constructor(
         /**
@@ -47,7 +47,7 @@ export class LineParser implements Parser<Line> {
             if (this.leadingSlash === false) {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
+                    { start: reader.offset, end: reader.offset + 1 },
                     locale('unexpected-leading-slash'),
                     false
                 ))
@@ -58,14 +58,14 @@ export class LineParser implements Parser<Line> {
             if (this.leadingSlash === true) {
                 // ...which is unexpected
                 line.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
+                    { start: reader.offset, end: reader.offset + 1 },
                     locale('expected-got',
                         locale('leading-slash'),
                         locale('punc.quote', reader.peek())
                     ),
                     false
                 ))
-                if (ctx.cursor === reader.cursor) {
+                if (ctx.cursor === reader.offset) {
                     line.completions.push({ label: '/' })
                 }
             }
@@ -117,11 +117,11 @@ export class LineParser implements Parser<Line> {
                 this.parseSingle(reader, ctx, seg[1], template, parsedLine, isTheLastElement, optional)
             }
         } else if (node.parser) {
-            const start = reader.cursor
+            const start = reader.offset
             const parser = LineParser.getParser(node.parser, parsedLine, ctx)
             const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
             //#region Aliases.
-            if (start === reader.cursor) {
+            if (start === reader.offset) {
                 const category = ctx.cache[`aliases/${parser.identity.split('.')[0]}` as CacheKey]
                 for (const alias in category) {
                     /* istanbul ignore else */
@@ -137,7 +137,7 @@ export class LineParser implements Parser<Line> {
                 hint: { fix: [], options: [] },
                 cache, completions, errors, tokens
             })
-            if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
                 parsedLine.hint.options.push([
                     parser.toHint(key, optional),
                     this.getHintsInChildren(ctx, node)
@@ -155,7 +155,7 @@ export class LineParser implements Parser<Line> {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, locale('expected-got',
+                        new ParsingError({ start: reader.offset, end: reader.offset + 2 }, locale('expected-got',
                             locale('more-arguments'),
                             locale('nothing')
                         ))
@@ -165,7 +165,7 @@ export class LineParser implements Parser<Line> {
                     reader.skip()
                     // The input line is end with a space.
                     /* istanbul ignore else */
-                    if (node.children && ctx.cursor === reader.cursor) {
+                    if (node.children && ctx.cursor === reader.offset) {
                         // Compute completions.
                         const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
                         /* istanbul ignore else */
@@ -185,7 +185,7 @@ export class LineParser implements Parser<Line> {
                 // There are trailing data.
                 if (!node.children) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('expected-got',
+                        new ParsingError({ start: reader.offset, end: reader.string.length }, locale('expected-got',
                             locale('nothing'),
                             locale('punc.quote', reader.remainingString)
                         ))
@@ -200,7 +200,7 @@ export class LineParser implements Parser<Line> {
                             parsedLine.errors = downgradeParsingError(parsedLine.errors)
                         } else {
                             parsedLine.errors.push(
-                                new ParsingError({ start: reader.cursor, end: reader.string.length }, locale('space-seperating-arguments'))
+                                new ParsingError({ start: reader.offset, end: reader.string.length }, locale('space-seperating-arguments'))
                             )
                         }
                     }
@@ -213,7 +213,7 @@ export class LineParser implements Parser<Line> {
             if (level > levelMax) {
                 parsedLine.errors.push(
                     new ParsingError(
-                        { start, end: reader.cursor },
+                        { start, end: reader.offset },
                         locale('no-permission', level, levelMax)
                     )
                 )
@@ -252,7 +252,7 @@ export class LineParser implements Parser<Line> {
                     parsedLine.tokens = oldTokens
                     continue
                 }
-                reader.cursor = newReader.cursor
+                reader.offset = newReader.offset
                 return
             }
         }
@@ -284,5 +284,5 @@ export class LineParser implements Parser<Line> {
 }
 
 type ParserResult = {
-    data: Line
+    data: LineNode
 }

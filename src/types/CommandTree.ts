@@ -1,5 +1,5 @@
 import { ArgumentParser } from '../parsers/ArgumentParser'
-import { SaturatedLine } from './Line'
+import { SaturatedLine } from './LineNode'
 import { ParsingContext } from './ParsingContext'
 
 /**

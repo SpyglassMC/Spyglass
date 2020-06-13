@@ -28,11 +28,11 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
             errors: [],
             cache: {}
         }
-        const start = reader.cursor
+        const start = reader.offset
         try {
             const value = this.type === 'integer' ? reader.readInt() : reader.readFloat()
             ans.data.value = value
-            ans.data.raw = reader.string.slice(start, reader.cursor)
+            ans.data.raw = reader.string.slice(start, reader.offset)
         } catch (p) {
             ans.errors.push(p)
         }
@@ -41,7 +41,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
         //#endregion
         if (this.min !== undefined && !(ans.data.valueOf() >= this.min)) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('expected-got',
                     locale('number.>=', this.min),
                     ans.data
@@ -50,7 +50,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
         }
         if (this.max !== undefined && !(ans.data.valueOf() <= this.max)) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('expected-got',
                     locale('number.<=', this.max),
                     ans.data
@@ -58,7 +58,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
             ))
         }
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
         
         return ans
     }

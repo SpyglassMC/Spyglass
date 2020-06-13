@@ -27,7 +27,7 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
             completions: []
         }
 
-        const start = reader.cursor
+        const start = reader.offset
         const categoryResult = ctx.parsers.get('Literal', ScoreboardSlotArgumentParser.Category).parse(reader, ctx)
         const category = categoryResult.data as 'list' | 'sidebar' | 'belowName' | ''
         categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
@@ -36,13 +36,13 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
         if (category && reader.peek() === ScoreboardSlotArgumentParser.Sep) {
             if (category !== 'sidebar') {
                 ans.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
+                    { start: reader.offset, end: reader.offset + 1 },
                     locale('unexpected-scoreboard-sub-slot')
                 ))
                 ans.data = category
             } else {
                 reader.skip()
-                const start = reader.cursor
+                const start = reader.offset
                 const teamResult = ctx.parsers
                     .get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`))
                     .parse(reader, ctx)

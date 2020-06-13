@@ -5,15 +5,15 @@ import { onSelectionRanges } from './onSelectionRanges'
 
 export function onDocumentHighlight({ position, info }: { position: Position, info: FunctionInfo }): DocumentHighlight[] {
     const { line: lineNumber, character: char } = position
-    const line = info.lines[lineNumber]
+    const line = info.nodes[lineNumber]
     /* istanbul ignore next */
     const result = getCacheFromChar(line.cache || {}, char)
     if (result) {
         // Highlight all the references/definitions of the selected stuff.
         const ans: DocumentHighlight[] = []
 
-        for (let i = 0; i < info.lines.length; i++) {
-            const line = info.lines[i]
+        for (let i = 0; i < info.nodes.length; i++) {
+            const line = info.nodes[i]
             const unit = getSafeCategory(line.cache, result.type)[result.id]
             /* istanbul ignore else */
             if (unit) {

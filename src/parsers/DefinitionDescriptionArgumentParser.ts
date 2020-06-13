@@ -18,7 +18,7 @@ export class DefinitionDescriptionArgumentParser extends ArgumentParser<string> 
     }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
-        const start = reader.cursor
+        const start = reader.offset
         const description = reader.readRemaining()
         const ans: ArgumentParserResult<string> = {
             data: description,

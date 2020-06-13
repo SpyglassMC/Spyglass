@@ -9,7 +9,7 @@ export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info
         const ans: CodeAction[] = []
 
         for (let i = range.start.line; i <= range.end.line; i++) {
-            const line = info.lines[i]
+            const line = info.nodes[i]
             const selectedRange = { start: range.start.character, end: range.end.character }
 
             /* istanbul ignore else */

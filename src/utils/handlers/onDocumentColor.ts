@@ -5,8 +5,8 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 export function onDocumentColor({ info }: { info: FunctionInfo }) {
     const ans: ColorInformation[] = []
 
-    for (let i = 0; i < info.lines.length; i++) {
-        const line = info.lines[i]
+    for (let i = 0; i < info.nodes.length; i++) {
+        const line = info.nodes[i]
         const colors = getSafeCategory(line.cache, 'colors')
         for (const key in colors) {
             /* istanbul ignore next */

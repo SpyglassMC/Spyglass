@@ -161,7 +161,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         const compoundDoc = helper.readCompound(index)
         /* istanbul ignore next */
         const description = compoundDoc ? compoundDoc.description : undefined
-        const start = reader.cursor
+        const start = reader.offset
         const ans = this.parseTag(reader, ctx, this.superNode, helper,
             helper && doc,
             description
@@ -173,7 +173,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         //#endregion
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('expected-got',
                     arrayToMessage(this.expectedTypes.map(this.getLocaleName), false, 'or'),
                     this.getLocaleName(ans.data[NbtNodeType])
@@ -207,7 +207,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             data: new NbtCompoundNode(superNode),
             cache: {}, completions: [], errors: [], tokens: []
         }
-        const start = reader.cursor
+        const start = reader.offset
 
         new MapParser<NbtCompoundNode>(
             NbtCompoundNodeChars,
@@ -219,12 +219,12 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     completions: [],
                     errors: []
                 }
-                const start = reader.cursor
+                const start = reader.offset
                 try {
                     const out: { mapping: IndexMapping } = { mapping: {} }
                     const firstChar = reader.peek()
                     const key = reader.readString(out)
-                    const end = reader.cursor
+                    const end = reader.offset
                     const raw = reader.string.slice(start, end)
                     result.data = key
                     //#region Errors.
@@ -236,7 +236,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     //#endregion
                     //#region Completions.
                     if (helper && doc) {
-                        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+                        if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
                             if (StringReader.isQuote(firstChar)) {
                                 const quoteType = firstChar === "'" ? 'always single' : 'always double'
                                 helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType)
@@ -301,7 +301,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     fieldDoc = helper.readField(helper.readCompound(doc.Compound), key, ans.data)
                 }
                 //#region Completions.
-                if (helper && ctx.cursor === reader.cursor) {
+                if (helper && ctx.cursor === reader.offset) {
                     helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '')
                 }
                 //#endregion
@@ -318,11 +318,11 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             }
         ).parse(ans, reader, ctx)
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
 
         if (ctx.config.lint.nbtCompoundSortKeys && !ans.data[IsMapSorted]()) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('diagnostic-rule',
                     locale('unsorted-keys'),
                     locale('punc.quote', 'datapack.lint.nbtCompoundSortKeys')
@@ -343,7 +343,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
-        const start = reader.cursor
+        const start = reader.offset
         try {
             reader.expect('[')
             let result: ArgumentParserResult<NbtCollectionNode<NbtNode>>
@@ -360,7 +360,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
-            ans.data[NodeRange] = { start, end: reader.cursor }
+            ans.data[NodeRange] = { start, end: reader.offset }
             return ans
         }
     }
@@ -374,12 +374,12 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
-        const start = reader.cursor
+        const start = reader.offset
         try {
             reader
                 .expect('[')
                 .skip()
-            const start = reader.cursor
+            const start = reader.offset
             const type = reader.read()
             //#region Tokens
             ans.tokens.push(Token.from(start, reader, TokenType.keyword))
@@ -396,7 +396,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     break
                 default:
                     throw new ParsingError(
-                        { start: reader.cursor - 1, end: reader.cursor },
+                        { start: reader.offset - 1, end: reader.offset },
                         locale('unexpected-nbt-array-type', locale('punc.quote', type))
                     )
             }
@@ -405,7 +405,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .skip()
                 .skipWhiteSpace()
             while (reader.canRead() && reader.peek() !== ']') {
-                const start = reader.cursor
+                const start = reader.offset
                 const result = this.parsePrimitiveTag(reader, superNode, helper)
                 combineArgumentParserResult(ans, result)
                 reader.skipWhiteSpace()
@@ -414,7 +414,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     if (!isNbtByteNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
-                                { start, end: reader.cursor },
+                                { start, end: reader.offset },
                                 locale('expected-got',
                                     this.getLocaleName('Byte'),
                                     this.getLocaleName(result.data[NbtNodeType])
@@ -427,7 +427,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     if (!isNbtIntNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
-                                { start, end: reader.cursor },
+                                { start, end: reader.offset },
                                 locale('expected-got',
                                     this.getLocaleName('Int'),
                                     this.getLocaleName(result.data[NbtNodeType])
@@ -440,7 +440,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     if (!isNbtLongNode(result.data)) {
                         ans.errors.push(
                             new ParsingError(
-                                { start, end: reader.cursor },
+                                { start, end: reader.offset },
                                 locale('expected-got',
                                     this.getLocaleName('Long'),
                                     this.getLocaleName(result.data[NbtNodeType])
@@ -464,7 +464,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
-            ans.data[NodeRange] = { start, end: reader.cursor }
+            ans.data[NodeRange] = { start, end: reader.offset }
             return ans
         }
     }
@@ -477,18 +477,18 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
-        const start = reader.cursor
+        const start = reader.offset
         try {
             /**
              * Move cursor to the end of the white spaces, so that we can provide
              * completions when the cursor is inside the white spaces.
              */
             const skipWhiteSpace = () => {
-                const whiteSpaceStart = reader.cursor
+                const whiteSpaceStart = reader.offset
                 reader.skipWhiteSpace()
                 /* istanbul ignore next */
-                if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.cursor) {
-                    ctx.cursor = reader.cursor
+                if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.offset) {
+                    ctx.cursor = reader.offset
                 }
             }
             reader
@@ -496,7 +496,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 .skip()
             skipWhiteSpace()
             while (true) {
-                const start = reader.cursor
+                const start = reader.offset
                 //#region Completions.
                 if (helper && ctx.cursor === start) {
                     /* istanbul ignore next */
@@ -513,7 +513,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     doc ? doc.List.value_type : undefined,
                     description
                 )
-                const end = reader.cursor
+                const end = reader.offset
                 combineArgumentParserResult(ans, result)
                 ans.data.push(result.data)
                 if (!ans.data[ChildNbtNodeType]) {
@@ -545,7 +545,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             /* istanbul ignore next */
             ans.errors.push(p)
         } finally {
-            ans.data[NodeRange] = { start, end: reader.cursor }
+            ans.data[NodeRange] = { start, end: reader.offset }
             return ans
         }
     }
@@ -558,13 +558,13 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             cache: {},
             completions: []
         }
-        const start = reader.cursor
+        const start = reader.offset
         const out: { mapping: IndexMapping } = { mapping: {} }
         if (StringReader.isQuote(reader.peek())) {
             // Parse as a quoted string.
             try {
                 const value = reader.readQuotedString(out)
-                ans.data = new NbtStringNode(superNode, value, reader.string.slice(start, reader.cursor), out.mapping)
+                ans.data = new NbtStringNode(superNode, value, reader.string.slice(start, reader.offset), out.mapping)
             } catch (p) {
                 /* istanbul ignore next */
                 ans.errors.push(p)
@@ -595,7 +595,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                                 //#region Tokens
                                 ans.tokens.push(Token.from(start, reader, TokenType.number))
                                 //#endregion
-                                ans.data[NodeRange] = { start, end: reader.cursor }
+                                ans.data[NodeRange] = { start, end: reader.offset }
                                 return ans
                             }
                         }
@@ -609,13 +609,13 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     ans.data = new NbtStringNode(superNode, value, value, out.mapping)
                     if (s !== failedToMatchAllPatterns) {
                         ans.errors.push(
-                            new ParsingError({ start, end: reader.cursor }, s, undefined, DiagnosticSeverity.Warning)
+                            new ParsingError({ start, end: reader.offset }, s, undefined, DiagnosticSeverity.Warning)
                         )
                     }
                 }
             }
         }
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
         return ans
     }
 

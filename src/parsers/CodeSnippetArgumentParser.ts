@@ -10,7 +10,7 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
     readonly identity = 'codeSnippet'
 
     /* istanbul ignore next */
-    parse(reader: StringReader, { cursor, config: { snippets } }: ParsingContext): ArgumentParserResult<string> {
+    parse(reader: StringReader, { cursor: cursor, config: { snippets } }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             tokens: [],
@@ -19,9 +19,9 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions.
-        const startCursor = reader.cursor
+        const startCursor = reader.offset
         ans.data = reader.readUntilOrEnd(' ')
-        const endCursor = reader.cursor
+        const endCursor = reader.offset
         if (startCursor <= cursor && cursor <= endCursor) {
             for (const label in snippets) {
                 /* istanbul ignore next */
@@ -40,7 +40,7 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
 
         //#region Errors.
         ans.errors = [new ParsingError(
-            { start: reader.cursor, end: reader.cursor + 1 },
+            { start: reader.offset, end: reader.offset + 1 },
             locale('code-snippets-invalid-for-game'),
             false
         )]

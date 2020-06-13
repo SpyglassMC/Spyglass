@@ -1,5 +1,6 @@
 import { StringReader } from '../utils/StringReader'
 import { TextRange } from './TextRange'
+import { TextDocument } from 'vscode-languageserver'
 
 export enum TokenType {
     annotation,
@@ -44,7 +45,7 @@ export class Token {
      */
     /* istanbul ignore next */
     static from(start: number, reader: StringReader, type: TokenType, modifiers = new Set<TokenModifier>()) {
-        return new Token({ start, end: reader.cursor }, type, modifiers)
+        return new Token({ start, end: reader.offset }, type, modifiers)
     }
 
     /**
@@ -52,18 +53,19 @@ export class Token {
      * semantic tokens builder.
      * @returns `[ line, char, length, tokenType, tokenModifiers ]`
      */
-    toArray(line: number): [number, number, number, number, number] {
+    toArray(content: TextDocument): [number, number, number, number, number] {
         /* istanbul ignore next */
         let tokenModifiers = 0
         for (const modifier of this.modifiers) {
             tokenModifiers = tokenModifiers | (1 << modifier)
         }
+        const startPos = content.positionAt(this.range.start)
         return [
-            line,
-            this.range.start,
-            this.range.end - this.range.start,
-            this.type,
-            tokenModifiers
+            /* line           */ startPos.line,
+            /* char           */ startPos.character,
+            /* length         */ this.range.end - this.range.start,
+            /* tokenType      */ this.type,
+            /* tokenModifiers */ tokenModifiers
         ]
     }
 }

@@ -28,12 +28,12 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
         }
         const category = getSafeCategory(ctx.cache, 'objectives')
         //#region Data
-        const start = reader.cursor
+        const start = reader.offset
         const value = reader.readUnquotedString()
         ans.data = value
         //#endregion
         //#region Completions
-        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+        if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
             ans.completions.push(...getCompletions(ctx.cache, 'objectives'))
         }
         //#endregion
@@ -59,7 +59,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
                 ans.cache = {
                     objectives: {
                         [value]: {
-                            def: [{ start, end: reader.cursor }],
+                            def: [{ start, end: reader.offset }],
                             ref: []
                         }
                     }

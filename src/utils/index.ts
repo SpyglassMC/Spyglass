@@ -1,7 +1,7 @@
 import clone from 'clone'
 import https from 'https'
 import { EOL } from 'os'
-import { CodeActionKind, CompletionItem, Diagnostic, TextEdit } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, Diagnostic, TextEdit, Position, TextDocument } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
@@ -218,17 +218,17 @@ export function getEol({ eol }: LintConfig) {
  * @param titleLocaleKey The locale key of the code action title (without the `code-action.` part).
  */
 /* istanbul ignore next */
-export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[], uri: string, version: number | null, lineNumber: number, range: TextRange, newText: string, kind = CodeActionKind.QuickFix, isPreferred = true) {
+export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[], content: TextDocument, range: TextRange, newText: string, kind = CodeActionKind.QuickFix, isPreferred = true) {
     return {
         title: locale(`code-action.${titleLocaleKey}`),
         kind, diagnostics, isPreferred,
         edit: {
             documentChanges: [{
-                textDocument: { uri, version },
+                textDocument: { uri: content.uri, version: content.version },
                 edits: [{
                     range: {
-                        start: { line: lineNumber, character: range.start },
-                        end: { line: lineNumber, character: range.end }
+                        start: content.positionAt(range.start),
+                        end: content.positionAt(range.end)
                     },
                     newText
                 }]

@@ -44,12 +44,12 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         return ans
     }
 
-    parse(reader: StringReader, { cursor }: ParsingContext): ArgumentParserResult<VectorNode> {
+    parse(reader: StringReader, { cursor: cursor }: ParsingContext): ArgumentParserResult<VectorNode> {
         const ans: ArgumentParserResult<VectorNode> = {
             data: new VectorNode(),
             tokens: [], completions: [], errors: [], cache: {}
         }
-        const start = reader.cursor
+        const start = reader.offset
 
         //#region Completions.
         if (start === cursor) {
@@ -93,7 +93,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 
                 if (hasLocal && hasNonLocal) {
                     ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
+                        { start, end: reader.offset },
                         locale('mixed-coordinates')
                     ))
                 }
@@ -125,7 +125,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         ans.tokens.push(Token.from(start, reader, TokenType.vector))
         //#endregion
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
 
         return ans
     }
@@ -135,9 +135,9 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
      */
     private parseElement(ans: ArgumentParserResult<VectorNode>, reader: StringReader, cursor: number, index: number, hasLocal: boolean, hasNonLocal: boolean) {
         const ansElement = new VectorElementNode(VectorElementType.Absolute, 0, '')
-        const start = reader.cursor
+        const start = reader.offset
 
-        if (cursor === reader.cursor) {
+        if (cursor === reader.offset) {
             this.getCompletionsForSymbols(ans, hasLocal, hasNonLocal)
         }
 
@@ -149,7 +149,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 
         if (StringReader.canInNumber(reader.peek())) {
             try {
-                const start = reader.cursor
+                const start = reader.offset
                 const str = reader.readNumber()
                 const num = parseFloat(str)
                 ansElement.raw = str
@@ -158,7 +158,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 const max = this.max instanceof Array ? this.max[index] : this.max
                 if (min !== undefined && !(num >= min)) {
                     ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
+                        { start, end: reader.offset },
                         locale('expected-got',
                             locale('number.>=', min),
                             num
@@ -167,7 +167,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 }
                 if (max !== undefined && !(num <= max)) {
                     ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
+                        { start, end: reader.offset },
                         locale('expected-got',
                             locale('number.<=', max),
                             num
@@ -181,21 +181,21 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 
         if (!this.allowLocal && ansElement.type === VectorElementType.Local) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('unexpected-local-coordinate',
                     locale('punc.quote', ansElement.toString())
                 )
             ))
         } else if (!this.allowRelative && ansElement.type === VectorElementType.Relative) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('unexpected-relative-coordinate',
                     locale('punc.quote', ansElement.toString())
                 )
             ))
         }
 
-        ansElement[NodeRange] = { start, end: reader.cursor }
+        ansElement[NodeRange] = { start, end: reader.offset }
 
         ans.data.push(ansElement)
 

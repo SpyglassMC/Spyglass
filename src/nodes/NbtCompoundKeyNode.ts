@@ -28,8 +28,8 @@ export class NbtCompoundKeyNode extends NbtStringNode {
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixUnknownKey]
@@ -73,7 +73,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
                 }
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    uri, info.version, lineNumber, oldSuper[NodeRange],
+                    info.content, oldSuper[NodeRange],
                     newSuper[GetFormattedString](info.config.lint)
                 ))
             }

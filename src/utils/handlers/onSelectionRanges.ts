@@ -5,7 +5,7 @@ export function onSelectionRanges({ info, positions }: { info: FunctionInfo, pos
     const ans: { range: Range }[] = []
 
     for (const { line: lineNumber, character: char } of positions) {
-        const line = info.lines[lineNumber]
+        const line = info.nodes[lineNumber]
         for (const token of line.tokens) {
             if (token.range.start <= char && char <= token.range.end) {
                 ans.push({

@@ -34,11 +34,11 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
         }
 
         if (StringReader.canInNumber(reader.peek())) {
-            const start = reader.cursor
+            const start = reader.offset
             ans.data = reader.readInt().toString()
             ans.tokens.push(Token.from(start, reader, TokenType.type))
         } else {
-            const start = reader.cursor
+            const start = reader.offset
             const categoryResult = ctx.parsers.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
             const category = categoryResult.data as 'armor' | 'container' | 'enderchest' | 'horse' | 'hotbar' | 'inventory' | 'villager' | 'weapon'
             categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
@@ -47,7 +47,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
             if (category && reader.peek() === ItemSlotArgumentParser.Sep) {
                 reader.skip()
 
-                const start = reader.cursor
+                const start = reader.offset
                 const subResult = ctx.parsers.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
                 const sub: string = subResult.data
                 subResult.tokens = [Token.from(start, reader, TokenType.type)]
@@ -57,7 +57,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
                 ans.data = category
                 if (category !== 'weapon') {
                     ans.errors.push(new ParsingError(
-                        { start: reader.cursor, end: reader.cursor + 1 },
+                        { start: reader.offset, end: reader.offset + 1 },
                         locale('expected-got',
                             locale('punc.quote', ItemSlotArgumentParser.Sep),
                             locale('punc.quote', reader.peek())

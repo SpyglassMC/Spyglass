@@ -4,7 +4,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "ESNext",
+        "target": "ES2015",
         "rootDir": "src",
         "outDir": "lib",
         "noFallthroughCasesInSwitch": true,

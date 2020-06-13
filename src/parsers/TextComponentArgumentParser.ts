@@ -30,9 +30,9 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
 
     /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponentNode> {
-        const start = reader.cursor
+        const start = reader.offset
         const raw = reader.readRemaining()
-        const end = reader.cursor
+        const end = reader.offset
         const ans: ArgumentParserResult<TextComponentNode> = {
             data: new TextComponentNode(raw),
             tokens: [], errors: [], cache: {}, completions: []

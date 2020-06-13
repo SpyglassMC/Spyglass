@@ -1,5 +1,5 @@
 import path from 'path'
-import { Proposed } from 'vscode-languageserver'
+import { Proposed, Range } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaData } from '../../data/VanillaData'
 import { LineParser } from '../../parsers/LineParser'
@@ -8,12 +8,15 @@ import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { Line } from '../../types/Line'
+import { LineNode } from '../../types/LineNode'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
 import { StringReader } from '../StringReader'
 import { onDidOpenTextDocument } from './onDidOpenTextDocument'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { TextRange } from '../../types'
+import { NodeRange } from '../../nodes'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -67,18 +70,15 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseString(string: string, lines: Line[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
-    if (string.match(/^[\s\t]*$/)) {
-        lines.push({ args: [], tokens: [], hint: { fix: [], options: [] } })
-    } else {
-        const parser = new LineParser(false, 'line')
-        const reader = new StringReader(string)
-        const { data } = parser.parse(reader, constructContext({
-            cache: cacheFile.cache,
-            config, cursor
-        }, commandTree, vanillaData))
-        lines.push(data)
-    }
+export async function parseString(string: string, start: number, end: number, lines: LineNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+    const parser = new LineParser(false, 'line')
+    const reader = new StringReader(string, start, end)
+    reader.skipWhiteSpace()
+    const { data } = parser.parse(reader, constructContext({
+        cache: cacheFile.cache,
+        config, cursor
+    }, commandTree, vanillaData))
+    lines.push(data)
 }
 
 export function getRel(uri: Uri, roots: Uri[]) {
@@ -133,6 +133,39 @@ export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
     }
 
     return { tokenTypes, tokenModifiers }
+}
+
+export function getLspRange(content: TextDocument, { start, end }: TextRange) {
+    return Range.create(content.positionAt(start), content.positionAt(end))
+}
+
+export function getStringLines(content: TextDocument) {
+    return content.getText().split(/(\r\n|\r|\n)/)
+}
+
+export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null } {
+    let left = 0
+    let right = nodes.length - 1
+    while (left <= right) {
+        const middle = Math.floor(left + (right - left) / 2)
+        const node = nodes[middle]
+        const range = node[NodeRange]
+        if (range.start <= offset && offset < range.end) {
+            // [ | )
+            return { index: middle, node }
+        } else if (range.end <= offset) {
+            // [   ) |
+            left = middle + 1
+        } else if (offset < range.start) {
+            // | [   )
+            right = middle - 1
+        }
+    }
+    if (nodes.length !== 0) {
+        return { index: nodes.length - 1, node: nodes[nodes.length - 1] }
+    } else {
+        return { index: -1, node: null }
+    }
 }
 
 export * from './onCallHierarchyIncomingCalls'

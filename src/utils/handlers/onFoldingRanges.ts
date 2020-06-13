@@ -1,11 +1,8 @@
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { StringReader } from '../StringReader'
+import { getStringLines } from '.'
 
-/**
- * @
- * @param string 
- */
 function getCommentSymbolAmount(string: string) {
     const reader = new StringReader(string)
     let ans = 0
@@ -23,10 +20,11 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
     try {
         const ans: FoldingRange[] = []
 
+        const strings = getStringLines(info.content)
         const regionStartLineNumbers: number[] = []
         const commentStartLineNumers: { [level: number]: number | undefined } = {}
         let i = 0
-        for (const string of info.strings) {
+        for (const string of strings) {
             if (string.startsWith('#region')) {
                 regionStartLineNumbers.push(i)
             } else if (string.startsWith('#endregion')) {
@@ -58,7 +56,7 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
                             undefined, undefined, FoldingRangeKind.Region
                         ))
                         delete commentStartLineNumers[level]
-                    } else if (i === info.strings.length - 1) {
+                    } else if (i === strings.length - 1) {
                         // End normal comments at end of file.
                         ans.push(FoldingRange.create(
                             commentStartLineNumers[level]!, i,

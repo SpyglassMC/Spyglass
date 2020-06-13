@@ -2038,7 +2038,7 @@ export const CommandTree: ICommandTree = {
                             parser: new NumberArgumentParser('float', -60_000_000, 60_000_000),
                             executable: true,
                             children: {
-                                time: {
+                                time: { 
                                     parser: new NumberArgumentParser('integer', 0),
                                     executable: true
                                 }
@@ -2129,7 +2129,7 @@ export const CommandTree: ICommandTree = {
             run: ({ args, errors }) => {
                 errors.push(
                     new ParsingError(
-                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        { start: 0, end: Infinity },
                         locale('unknown-command',
                             locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),
@@ -2243,7 +2243,7 @@ export const CommandTree: ICommandTree = {
             run: ({ args, errors }) => {
                 errors.push(
                     new ParsingError(
-                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        { start: 0, end: Infinity },
                         locale('unknown-command',
                             locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),

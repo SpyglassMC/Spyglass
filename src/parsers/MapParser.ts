@@ -22,17 +22,17 @@ export class MapParser<T extends MapNode<any, any>> {
 
     /* istanbul ignore next */
     parse(ans: ArgumentParserResult<T>, reader: StringReader, ctx: ParsingContext) {
-        const start = reader.cursor
+        const start = reader.offset
 
         /**
          * Move cursor to the end of the white spaces, so that we can provide
          * completions when the cursor is inside the white spaces.
          */
         const skipWhiteSpace = () => {
-            const whiteSpaceStart = reader.cursor
+            const whiteSpaceStart = reader.offset
             reader.skipWhiteSpace()
-            if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.cursor) {
-                ctx.cursor = reader.cursor
+            if (whiteSpaceStart <= ctx.cursor && ctx.cursor < reader.offset) {
+                ctx.cursor = reader.offset
             }
         }
 
@@ -46,10 +46,10 @@ export class MapParser<T extends MapNode<any, any>> {
                 skipWhiteSpace()
 
                 // Key StringToken.
-                const keyStart = reader.cursor
+                const keyStart = reader.offset
                 const keyResult = this.parseKeyResult(ans, reader, ctx)
                 const key = keyResult.data
-                const keyEnd = reader.cursor
+                const keyEnd = reader.offset
                 ans.completions.push(...keyResult.completions)
                 if (!(reader.canRead() && reader.peek() !== this.chars.closeBracket)) {
                     break
@@ -88,7 +88,7 @@ export class MapParser<T extends MapNode<any, any>> {
             ans.errors.push(p)
         }
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
 
         return ans
     }

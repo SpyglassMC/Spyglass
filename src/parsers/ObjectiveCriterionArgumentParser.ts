@@ -56,11 +56,11 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
             completions: []
         }
 
-        const start = reader.cursor
+        const start = reader.offset
         let category = reader.readUntilOrEnd(' ', RegularSep, StatsSep)
         const pool = ['', 'minecraft', ...Object.keys(Category)]
         //#region Completions.
-        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+        if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
             ans.completions.push({ label: 'minecraft', kind: CompletionItemKind.Module })
             ans.completions.push(...arrayToCompletions(
                 Object.keys(Category),
@@ -72,7 +72,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
         //#region Errors.
         if (!pool.includes(category)) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('expected-got',
                     arrayToMessage(pool, true, 'or'),
                     locale('punc.quote', category)
@@ -86,11 +86,11 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                 reader
                     .expect(RegularSep)
                     .skip()
-                const start = reader.cursor
+                const start = reader.offset
                 const statsPool = Object.keys(StatsCategory)
                 category = reader.readUntilOrEnd(' ', StatsSep)
                 //#region Completions.
-                if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+                if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
                     ans.completions.push(...arrayToCompletions(
                         statsPool,
                         c => ({ ...c, kind: CompletionItemKind.Field })
@@ -100,7 +100,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                 //#region Errors.
                 if (!statsPool.includes(category)) {
                     ans.errors.push(new ParsingError(
-                        { start, end: reader.cursor },
+                        { start, end: reader.offset },
                         locale('expected-got',
                             arrayToMessage(statsPool, true, 'or'),
                             locale('punc.quote', category)
@@ -125,7 +125,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                     const newReader = reader.clone()
                     newReader.string = newReader.string.replace(new RegExp(`\\${RegularSep}`, 'g'), IdentityNode.NamespaceDelimiter)
                     subResult = ctx.parsers.get('Identity', [subCriteria]).parse(newReader, ctx)
-                    reader.cursor = newReader.cursor
+                    reader.offset = newReader.offset
                 }
                 subResult.tokens = []
                 combineArgumentParserResult(ans, subResult)
@@ -134,7 +134,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
             }
         }
 
-        ans.data = reader.string.slice(start, reader.cursor)
+        ans.data = reader.string.slice(start, reader.offset)
         ans.tokens = [Token.from(start, reader, TokenType.type)]
 
         return ans

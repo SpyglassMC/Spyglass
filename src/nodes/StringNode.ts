@@ -27,8 +27,8 @@ export class StringNode extends ArgumentNode {
     /**
      * Return code actions for changing quotation marks when relevant diagnostics exist.
      */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         const unquoteDiagnostics = diagnostics[ErrorCode.StringUnquote]
         const doubleQuoteDiagnostics = diagnostics[ErrorCode.StringDoubleQuote]
@@ -37,21 +37,21 @@ export class StringNode extends ArgumentNode {
         if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-unquote', unquoteDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 this.value
             ))
         }
         if (doubleQuoteDiagnostics && doubleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-double-quote', doubleQuoteDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 quoteString(this.value, 'always double', true)
             ))
         }
         if (singleQuoteDiagnostics && singleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-single-quote', singleQuoteDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 quoteString(this.value, 'always single', true)
             ))
         }

@@ -1990,7 +1990,7 @@ export const CommandTree: ICommandTree = {
             run: ({ args, errors }) => {
                 errors.push(
                     new ParsingError(
-                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        { start: 0, end: Infinity },
                         locale('unknown-command',
                             locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),
@@ -2057,7 +2057,7 @@ export const CommandTree: ICommandTree = {
             run: ({ args, errors }) => {
                 errors.push(
                     new ParsingError(
-                        { start: 0, end: Number.MAX_SAFE_INTEGER },
+                        { start: 0, end: Infinity },
                         locale('unknown-command',
                             locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
                         ),

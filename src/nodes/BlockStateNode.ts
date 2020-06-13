@@ -26,8 +26,8 @@ export class BlockStateNode extends MapNode<string, string> {
 
     protected readonly [Chars] = BlockStateNodeChars;
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
         if (relevantDiagnostics && info.config.lint.blockStateSortKeys) {
             /* istanbul ignore next */
@@ -35,7 +35,7 @@ export class BlockStateNode extends MapNode<string, string> {
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'block-state-sort-keys', relevantDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 this[GetFormattedString](info.config.lint, keys)
             ))
         }

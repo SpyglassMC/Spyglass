@@ -4,13 +4,16 @@ import { ClientCache, combineCache } from './ClientCache'
 import { LintConfig } from './Config'
 import { ParsingError } from './ParsingError'
 import { Token } from './Token'
+import { NodeRange } from '../nodes'
+import { TextRange } from './TextRange'
 
 /**
  * Represent a parsed line in a function.
  */
-export interface Line {
+export interface LineNode {
+    [NodeRange]: TextRange,
     /**
-     * All parsed arguments of the line.
+     * All parsed argument nodes of the line.
      */
     args: LineArgumentNode<any>[],
     /**
@@ -47,7 +50,7 @@ export interface Line {
 /**
  * `Line` without optional properties.
  */
-export interface SaturatedLine extends Line {
+export interface SaturatedLine extends LineNode {
     cache: ClientCache,
     errors: ParsingError[],
     completions: CompletionItem[]
@@ -58,7 +61,7 @@ export interface LineArgumentNode<T> {
     parser: string
 }
 
-export function combineLine(base: Line, override: Line): Line {
+export function combineLine(base: LineNode, override: LineNode): LineNode {
     // Args.
     if (override.args.length !== 0) {
         base.args = [...base.args, ...override.args]
@@ -95,7 +98,7 @@ export function combineLine(base: Line, override: Line): Line {
     return base
 }
 
-export function combineSaturatedLine(base: SaturatedLine, override: Line): SaturatedLine {
+export function combineSaturatedLine(base: SaturatedLine, override: LineNode): SaturatedLine {
     /* istanbul ignore next */
     override.completions = override.completions || []
     /* istanbul ignore next */
@@ -128,6 +131,6 @@ export function saturatedLineToLine(line: SaturatedLine) {
     }
 }
 
-export function lineToLintedString(line: Line, lint: LintConfig) {
+export function lineToLintedString(line: LineNode, lint: LintConfig) {
     return line.args.map(v => toFormattedString(v.data, lint)).join(' ')
 }

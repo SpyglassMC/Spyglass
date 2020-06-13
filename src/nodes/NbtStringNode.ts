@@ -25,10 +25,10 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
         const node = new StringNode(this.value, this.raw, this.mapping)
         node[NodeRange] = this[NodeRange]
-        const ans = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+        const ans = node[GetCodeActions](uri, info, range, diagnostics)
 
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
@@ -37,7 +37,7 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
                 const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    uri, info.version, lineNumber, this[NodeRange],
+                    info.content, this[NodeRange],
                     newNode[GetFormattedString](info.config.lint)
                 ))
             } catch (ignored) {
@@ -51,7 +51,7 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
         if (attributeDiagnostics) {
                 ans.push(getCodeAction(
                 'id-attribute-datafix', attributeDiagnostics,
-                uri, info.version, lineNumber, this[NodeRange],
+                info.content, this[NodeRange],
                 `"${attributeNameToIdentity(this.valueOf())}"`
             ))
         }

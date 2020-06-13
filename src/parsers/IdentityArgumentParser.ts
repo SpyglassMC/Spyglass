@@ -34,7 +34,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor, registry: registries, namespaceSummary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
+    parse(reader: StringReader, { cache, config, cursor: cursor, registry: registries, namespaceSummary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
         const ans: ArgumentParserResult<IdentityNode> = {
             data: new IdentityNode(),
             tokens: [],
@@ -59,7 +59,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     throw new Error(`faild to find a tag type for ‘${this.type}’`)
             }
         }
-        const start = reader.cursor
+        const start = reader.offset
         let stringID: string = ''
         let isTag = false
 
@@ -108,7 +108,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             isTag = true
             if (!this.allowTag) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
+                    { start, end: reader.offset },
                     locale('unexpected-datapack-tag')
                 ))
             }
@@ -123,7 +123,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#region Completions at the beginning.
         const shouldOmit = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
         const severity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
-        if (start <= cursor && cursor <= reader.cursor) {
+        if (start <= cursor && cursor <= reader.offset) {
             if (!isTag && this.allowTag) {
                 // If this ID is not a tag but could be a tag, then provide completions for tags.
                 for (const id of tagPool) {
@@ -162,20 +162,20 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             // `path0` is the namespace.
             if (shouldOmit === true && path0 === IdentityNode.DefaultNamespace) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
+                    { start, end: reader.offset },
                     locale('unexpected-default-namespace'),
                     undefined, severity, ErrorCode.IdentityOmitDefaultNamespace
                 ))
             }
             reader.skip()
-            const pathStart = reader.cursor
+            const pathStart = reader.offset
             namespace = path0
             path0 = this.readValidString(reader, ans)
             //#region Completions
             pool = pool
                 .filter(v => v.startsWith(`${namespace}${IdentityNode.NamespaceDelimiter}`))
                 .map(v => v.slice(namespace!.length + 1))
-            if (pathStart <= cursor && cursor <= reader.cursor) {
+            if (pathStart <= cursor && cursor <= reader.offset) {
                 for (const id of pool) {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles)
@@ -189,7 +189,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 .map(v => v.slice(IdentityNode.DefaultNamespace.length + 1))
             if (shouldOmit === false) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
+                    { start, end: reader.offset },
                     locale('unexpected-omitted-default-namespace'),
                     undefined, severity, ErrorCode.IdentityCompleteDefaultNamespace
                 ))
@@ -200,11 +200,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         // Parse the remaning paths.
         while (reader.peek() === IdentityNode.PathSep) {
             reader.skip()
-            const start = reader.cursor
+            const start = reader.offset
             const path = this.readValidString(reader, ans)
             //#region Completions
             pool = pool.filter(v => v.startsWith(paths.join(IdentityNode.PathSep)))
-            if (start <= cursor && cursor <= reader.cursor) {
+            if (start <= cursor && cursor <= reader.offset) {
                 for (const id of pool) {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles, paths.length)
@@ -218,7 +218,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         stringID = ans.data.toString()
         //#endregion
 
-        if (reader.cursor - start && stringID) {
+        if (reader.offset - start && stringID) {
             // Check whether the ID exists in cache or registry.
             if (isTag && this.allowTag) {
                 // For tags.
@@ -230,7 +230,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     //#region Errors
                     if (!this.allowUnknown && !this.type.includes(stringID)) {
                         ans.errors.push(new ParsingError(
-                            { start, end: reader.cursor },
+                            { start, end: reader.offset },
                             locale('expected-got',
                                 arrayToMessage(this.type, true, 'or'),
                                 locale('punc.quote', stringID)
@@ -249,7 +249,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     //#region Errors
                     if (shouldCheck && !Object.keys(registry.entries).includes(stringID)) {
                         ans.errors.push(new ParsingError(
-                            { start, end: reader.cursor },
+                            { start, end: reader.offset },
                             locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
                             undefined, severity
                         ))
@@ -297,10 +297,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#endregion
 
         //#region Range.
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
         //#endregion
 
-        if (reader.cursor === start) {
+        if (reader.offset === start) {
             ans.errors.push(new ParsingError(
                 { start, end: start + 1 },
                 locale('expected-got',
@@ -420,9 +420,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
      * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
      */
     private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>) {
-        const start = reader.cursor
+        const start = reader.offset
         const value = reader.readUnquotedString()
-        const end = reader.cursor
+        const end = reader.offset
         if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
             ans.errors.push(new ParsingError(
                 { start, end },
@@ -461,7 +461,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const [shouldCheck, severity] = this.shouldStrictCheck(`$${type}`, config, namespace)
         if (!canResolve && shouldCheck) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
+                { start, end: reader.offset },
                 locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
                 undefined, severity
             ))
@@ -474,7 +474,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 [type]: {
                     [stringID]: {
                         def: [],
-                        ref: [{ start, end: reader.cursor }]
+                        ref: [{ start, end: reader.offset }]
                     }
                 }
             }

@@ -17,10 +17,6 @@ export interface ParsingContext {
     commandTree: CommandTree,
     config: Config,
     cursor: number,
-    /**
-     * Only exists for signature information provider and completion provider.
-     */
-    lineNumber: number,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
@@ -33,7 +29,6 @@ interface ParsingContextLike {
     commandTree?: CommandTree,
     config?: Config,
     cursor?: number,
-    lineNumber?: number,
     namespaceSummary?: NamespaceSummary,
     nbtdoc?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
@@ -58,7 +53,6 @@ export function constructContext(
         cache: {},
         config: VanillaConfig,
         cursor: -1,
-        lineNumber: 0,
         parsers: new ArgumentParserManager(),
         ...custom
     } as ParsingContext

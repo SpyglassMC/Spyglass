@@ -1,4 +1,4 @@
-import { InsertTextFormat } from 'vscode-languageserver'
+import { InsertTextFormat, Position } from 'vscode-languageserver'
 import { escapeString, handleCompletionText } from '..'
 import { VanillaData } from '../../data/VanillaData'
 import { LineParser } from '../../parsers/LineParser'
@@ -8,15 +8,18 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onCompletion({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onCompletion({ offset, lineNumber, info, cacheFile, commandTree, vanillaData }: { offset: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const parser = new LineParser(false, 'line')
-        const reader = new StringReader(info.strings[lineNumber])
+        const reader = new StringReader(
+            info.content.getText(),
+            info.content.offsetAt(Position.create(lineNumber, 0)),
+            info.content.offsetAt(Position.create(lineNumber, Infinity))
+        )
         let { data: { completions } } = parser.parse(reader, constructContext({
-            cursor: char,
+            cursor: offset,
             cache: cacheFile.cache,
-            config: info.config,
-            lineNumber
+            config: info.config
         }, commandTree, vanillaData))
 
         // Escape for TextMate: #431

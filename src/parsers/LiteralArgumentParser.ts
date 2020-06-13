@@ -28,7 +28,7 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
         }
     }
 
-    parse(reader: StringReader, { cursor }: ParsingContext): ArgumentParserResult<string> {
+    parse(reader: StringReader, { cursor: cursor }: ParsingContext): ArgumentParserResult<string> {
         const ans: ArgumentParserResult<string> = {
             data: '',
             tokens: [],
@@ -37,7 +37,7 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Get completions.
-        const lengthToCursor = cursor - reader.cursor
+        const lengthToCursor = cursor - reader.offset
         if (lengthToCursor >= 0) {
             const textToCursor = reader.remainingString.slice(0, lengthToCursor).toLowerCase()
             const candidates = this.literals.filter(v => v.toLowerCase().startsWith(textToCursor))
@@ -45,7 +45,7 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
         }
         //#endregion
         //#region Data
-        const start = reader.cursor
+        const start = reader.offset
         let remaningLiterals = this.literals
         let value = ''
         while (reader.canRead() && (StringReader.canInUnquotedString(reader.peek()) || this.extraChars.includes(reader.peek()))) {

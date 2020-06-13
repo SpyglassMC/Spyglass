@@ -1,11 +1,11 @@
-import { ColorPresentation } from 'vscode-languageserver'
+import { ColorPresentation, Range } from 'vscode-languageserver'
 import { FunctionInfo } from '../../types/FunctionInfo'
 
 export function onColorPresentation({ info, lineNumber, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, lineNumber: number, r: number, g: number, b: number, a: number }) {
     try {
         const ans: ColorPresentation[] = []
-
-        const string = info.strings[lineNumber].slice(start, end)
+        const range = Range.create(lineNumber, start, lineNumber, end)
+        const string = info.content.getText(range)
         if (string.startsWith('dust')) {
             ans.push({ label: `dust ${r} ${g} ${b}` })
         } else if (string.startsWith('minecraft:dust')) {

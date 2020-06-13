@@ -1,5 +1,5 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
-import { LineArgumentNode } from './types/Line'
+import { LineArgumentNode } from './types/LineNode'
 import { EntityNode } from './nodes/EntityNode'
 import { SelectorArgumentsNode } from './nodes/SelectorArgumentsNode'
 

@@ -1,4 +1,4 @@
-import { SignatureInformation } from 'vscode-languageserver'
+import { SignatureInformation, Position } from 'vscode-languageserver'
 import { VanillaData } from '../../data/VanillaData'
 import { LineParser } from '../../parsers/LineParser'
 import { CacheFile } from '../../types/ClientCache'
@@ -7,17 +7,20 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onSignatureHelp({ char, lineNumber, info, cacheFile, commandTree, vanillaData }: { char: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, lineNumber, info, cacheFile, commandTree, vanillaData }: { offset: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
         const parser = new LineParser(false, 'line')
-        const reader = new StringReader(info.strings[lineNumber])
+        const reader = new StringReader(
+            info.content.getText(),
+            info.content.offsetAt(Position.create(lineNumber, 0)),
+            info.content.offsetAt(Position.create(lineNumber, Infinity))
+        )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cursor: char,
+            cursor,
             cache: cacheFile.cache,
-            config: info.config,
-            lineNumber
+            config: info.config
         }, commandTree, vanillaData))
 
         const fixLabel = fix.join(' ')

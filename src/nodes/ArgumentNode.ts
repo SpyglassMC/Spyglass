@@ -1,4 +1,4 @@
-import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
+import { CodeAction, Diagnostic, Hover, Position, TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'
 import { FunctionInfo } from '../types/FunctionInfo'
@@ -37,7 +37,7 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         this[Triage](
             key => {
@@ -45,7 +45,7 @@ export abstract class ArgumentNode implements Formattable {
                 const arr = value instanceof Array ? value : [value]
                 for (const item of arr) {
                     if (item instanceof ArgumentNode && areOverlapped(range, item[NodeRange])) {
-                        ans.push(...item[GetCodeActions](uri, info, lineNumber, range, diagnostics))
+                        ans.push(...item[GetCodeActions](uri, info, range, diagnostics))
                     }
                 }
             }
@@ -54,14 +54,14 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetHoverInformation](lineNumber: number, char: number) {
+    [GetHoverInformation](content: TextDocument, offset: number) {
         let ans: Hover | null = null
         if (this[NodeDescription]) {
             ans = {
                 contents: { kind: 'markdown', value: this[NodeDescription] },
                 range: {
-                    start: { line: lineNumber, character: this[NodeRange].start },
-                    end: { line: lineNumber, character: this[NodeRange].end }
+                    start: content.positionAt(this[NodeRange].start),
+                    end: content.positionAt(this[NodeRange].end)
                 }
             }
         } else {
@@ -70,8 +70,8 @@ export abstract class ArgumentNode implements Formattable {
                     const value = this[key as keyof this]
                     const arr = value instanceof Array ? value : [value]
                     for (const item of arr) {
-                        if (item instanceof ArgumentNode && isInRange(char, item[NodeRange])) {
-                            ans = item[GetHoverInformation](lineNumber, char)
+                        if (item instanceof ArgumentNode && isInRange(offset, item[NodeRange])) {
+                            ans = item[GetHoverInformation](content, offset)
                         }
                     }
                 }

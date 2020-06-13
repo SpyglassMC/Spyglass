@@ -1,12 +1,11 @@
 import { ProposedFeatures } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Config } from './Config'
-import { Line } from './Line'
+import { LineNode } from './LineNode'
 
 export interface FunctionInfo {
     builder?: ProposedFeatures.SemanticTokensBuilder,
     config: Config,
-    lineBreak: '\n' | '\r\n',
-    lines: Line[],
-    strings: string[],
-    version: number | null
+    nodes: LineNode[],
+    content: TextDocument
 }

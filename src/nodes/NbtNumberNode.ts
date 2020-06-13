@@ -23,15 +23,15 @@ export abstract class NbtNumberNode<T = number> extends NbtPrimitiveNode<T> {
         return `${this}${suffix}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const pushActions = (code: ErrorCode, actionId: string, getNode: () => NbtNumberNode<any>) => {
             const relevantDiagnostics = diagnostics[code]
             if (relevantDiagnostics) {
                 const newNode = getNode()
                 ans.push(getCodeAction(
                     `nbt-type-to-${actionId}`, relevantDiagnostics,
-                    uri, info.version, lineNumber, this[NodeRange],
+                    info.content, this[NodeRange],
                     newNode[GetFormattedString](info.config.lint)
                 ))
             }

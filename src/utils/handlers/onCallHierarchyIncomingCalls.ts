@@ -37,12 +37,12 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                     {
                         from: getCallHierarchyItem(
                             getId(getUri(ref.uri!, uris), roots),
-                            ref.uri!, ref.line!, ref.start, ref.end,
+                            ref.uri!, ref.startLine!, ref.endLine!, ref.start, ref.end,
                             IdentityKind.Function
                         ),
                         fromRanges: [{
-                            start: { line: ref.line!, character: ref.start },
-                            end: { line: ref.line!, character: ref.end }
+                            start: { line: ref.startLine!, character: ref.start },
+                            end: { line: ref.endLine!, character: ref.end }
                         }]
                     }
                 )
@@ -69,7 +69,7 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                         {
                             from: getCallHierarchyItem(
                                 tagId.toTagString(), tagUri.toString(),
-                                0, 0, 0, IdentityKind.FunctionTag
+                                0, 0, 0, 0, IdentityKind.FunctionTag
                             ),
                             fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
                         }
@@ -96,7 +96,7 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                             {
                                 from: getCallHierarchyItem(
                                     advId.toTagString(), advUri.toString(),
-                                    0, 0, 0, IdentityKind.Advancement
+                                    0, 0, 0, 0, IdentityKind.Advancement
                                 ),
                                 fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
                             }

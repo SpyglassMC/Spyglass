@@ -1,61 +1,40 @@
 import { Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../../data/VanillaData'
 import { CacheFile } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { Line } from '../../types/Line'
+import { LineNode } from '../../types/LineNode'
 import { parseString } from '.'
 
-export async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { info: FunctionInfo, version: number | null, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
-    // Update `version`.
-    info.version = version
-
+export async function onDidChangeTextDocument({ info, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { info: FunctionInfo, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+    // Update `lines`.
     for (const change of contentChanges) {
-        const text = change.text
         const range = (change as any).range
         if (range) {
             // Incremental update.
             const { start, end } = range as Range
-
-            /* istanbul ignore next */
-            while (info.strings.length <= end.line) {
-                info.strings.push('')
-            }
-
-            // Update `strings`.
-            const affectedStrings = (
-                info.strings[start.line].slice(0, start.character) +
-                text +
-                info.strings[end.line].slice(end.character)
-            ).split(/\r?\n/)
-            info.strings.splice(start.line, end.line - start.line + 1, ...affectedStrings)
-
-            // Update `lines`.
-            const affectedLines: Line[] = []
+            const affectedStrings = strings.slice(start.line, end.line + 1)
+            const affectedLines: LineNode[] = []
             for (const string of affectedStrings) {
                 await parseString(string, affectedLines, config, cacheFile, undefined, commandTree, vanillaData)
             }
-            info.lines.splice(start.line, end.line - start.line + 1, ...affectedLines)
+            info.nodes.splice(start.line, end.line - start.line + 1, ...affectedLines)
         } else {
             // Full update.
-
-            // Update `lineBreak`.
-            /* istanbul ignore next */
-            if (text.includes('\r\n')) {
-                info.lineBreak = '\r\n'
-            } else {
-                info.lineBreak = '\n'
-            }
-
-            // Update `strings`.
-            info.strings = text.split(/\r?\n/)
-
-            // Update `lines`.
-            info.lines = []
-            for (const string of info.strings) {
-                await parseString(string, info.lines, config, cacheFile, undefined, commandTree, vanillaData)
+            info.nodes = []
+            for (const string of strings) {
+                await parseString(string, info.nodes, config, cacheFile, undefined, commandTree, vanillaData)
             }
         }
     }
+
+    // Update `content`.
+    console.log(`info.content 0 = ${JSON.stringify(info.content)}`)
+    const newContent = TextDocument.update(info.content, contentChanges, version)
+    console.log(`info.content 1 = ${JSON.stringify(info.content)}`)
+    console.log(`newContent = ${JSON.stringify(newContent)}`)
+    info.content = newContent
+    console.log(`info.content 2 = ${JSON.stringify(info.content)}`)
 }

@@ -36,7 +36,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             completions: [],
             errors: []
         }
-        const start = reader.cursor
+        const start = reader.offset
 
         let helper: NbtdocHelper | undefined
         if (this.id) {
@@ -46,7 +46,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.getRegistryCompound(this.category, this.id) : null, ['filter', 'key', 'index'], false)
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data[NodeRange] = { start, end: reader.offset }
 
         return ans
     }
@@ -56,7 +56,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         if (types.includes('key')) {
             const firstChar = reader.peek()
-            let range: TextRange = { start: reader.cursor, end: reader.cursor }
+            let range: TextRange = { start: reader.offset, end: reader.offset }
             if (this.canParseKey(reader)) {
                 isKey = true
                 range = this.parseKey(ans, reader, ctx, helper, NbtdocHelper.isCompoundDoc(doc) ? doc : null)[NodeRange]
@@ -91,7 +91,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 if (helper && doc) {
                     if (!NbtdocHelper.isCompoundDoc(doc)) {
                         ans.errors.push(new ParsingError(
-                            { start: reader.cursor, end: reader.cursor + 1 },
+                            { start: reader.offset, end: reader.offset + 1 },
                             locale('unexpected-nbt-path-filter'),
                             true, DiagnosticSeverity.Warning
                         ))
@@ -107,7 +107,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         NbtdocHelper.isLongArrayDoc(doc)
                     )) {
                         ans.errors.push(new ParsingError(
-                            { start: reader.cursor, end: reader.cursor + 1 },
+                            { start: reader.offset, end: reader.offset + 1 },
                             locale('unexpected-nbt-path-index'),
                             true, DiagnosticSeverity.Warning
                         ))
@@ -117,7 +117,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             } else {
                 if (!allowEmpty) {
                     ans.errors.push(new ParsingError(
-                        { start: reader.cursor, end: reader.cursor + 1 },
+                        { start: reader.offset, end: reader.offset + 1 },
                         locale('expected-got',
                             arrayToMessage(types.map(v => locale(`nbt-path.${v}`)), false, 'or'),
                             locale('nothing')
@@ -129,14 +129,14 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: NbtCompoundDoc | null) {
-        const start = reader.cursor
+        const start = reader.offset
         let key: string = ''
         const out: { mapping: IndexMapping } = { mapping: {} }
         try {
             if (reader.peek() === '"') {
                 key = reader.readQuotedString(out)
             } else {
-                out.mapping.start = reader.cursor
+                out.mapping.start = reader.offset
                 while (reader.canRead() && StringReader.canInUnquotedString(reader.peek()) && reader.peek() !== '.') {
                     key += reader.read()
                 }
@@ -145,14 +145,14 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             /* istanbul ignore next */
             ans.errors.push(p)
         }
-        const keyNode = new NbtCompoundKeyNode(null, key, reader.string.slice(start, reader.cursor), out.mapping)
-        keyNode[NodeRange] = { start, end: reader.cursor }
+        const keyNode = new NbtCompoundKeyNode(null, key, reader.string.slice(start, reader.offset), out.mapping)
+        keyNode[NodeRange] = { start, end: reader.offset }
         ans.data.push(keyNode)
 
         //#region Errors.
         ans.errors.push(...validateStringQuote(
-            reader.string.slice(start, reader.cursor), key,
-            { start, end: reader.cursor },
+            reader.string.slice(start, reader.offset), key,
+            { start, end: reader.offset },
             ctx.config.lint.nbtPathQuote, ctx.config.lint.nbtPathQuoteType,
             'nbtPathQuote', 'nbtPathQuoteType'
         ))
@@ -168,7 +168,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             const field = helper.readField(compoundDoc, key, null)
             if (!field && !helper.isInheritFromItemBase(compoundDoc, null)) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
+                    { start, end: reader.offset },
                     locale('unknown-key', locale('punc.quote', key)),
                     true, DiagnosticSeverity.Warning
                 ))
@@ -211,7 +211,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         const checkSchema = () => {
             if (helper && !(doc && NbtdocHelper.isListDoc(doc))) {
                 ans.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
+                    { start: reader.offset, end: reader.offset + 1 },
                     locale('unexpected-nbt-path-sub'),
                     true, DiagnosticSeverity.Warning
                 ))

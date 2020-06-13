@@ -51,14 +51,14 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         }
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, lineNumber: number, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, info, range, diagnostics)
         if (Array.prototype.some.call(this,
             (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')
         )) {
             ans.push(
                 getCodeAction(
-                    'vector-align-0.0', [], uri, info.version, lineNumber, this[NodeRange],
+                    'vector-align-0.0', [], info.content, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {
@@ -69,7 +69,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                     ).join(' ')
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], uri, info.version, lineNumber, this[NodeRange],
+                    'vector-align-0.5', [], info.content, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {

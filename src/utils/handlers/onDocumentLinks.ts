@@ -9,8 +9,8 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
     try {
         const ans: DocumentLink[] = []
 
-        for (let i = 0; i < info.lines.length; i++) {
-            const { cache } = info.lines[i]
+        for (let i = 0; i < info.nodes.length; i++) {
+            const { cache } = info.nodes[i]
             for (const type in cache) {
                 if (isFileType(type)) {
                     const category = cache[type]
