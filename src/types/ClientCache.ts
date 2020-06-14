@@ -5,7 +5,7 @@ import { IndexMapping } from './IndexMapping'
 import { TagInfo } from './TagInfo'
 import { remapTextRange, TextRange } from './TextRange'
 
-export const CacheVersion = 7
+export const CacheVersion = 8
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
@@ -97,21 +97,23 @@ export type CacheUnit = {
 export interface CachePosition extends TextRange {
     uri?: string,
     startLine?: number,
-    endLine?: number
+    startChar?: number,
+    endLine?: number,
+    endChar?: number
 }
 
-export function getCacheFromChar(cache: ClientCache, char: number) {
+export function getCacheFromOffset(cache: ClientCache, offset: number) {
     for (const type in cache) {
         const category = cache[type as CacheKey] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
             for (const def of unit.def) {
-                if (def.start <= char && char <= def.end) {
+                if (def.start <= offset && offset <= def.end) {
                     return { type: type as CacheKey, id, start: def.start, end: def.end }
                 }
             }
             for (const ref of unit.ref) {
-                if (ref.start <= char && char <= ref.end) {
+                if (ref.start <= offset && offset <= ref.end) {
                     return { type: type as CacheKey, id, start: ref.start, end: ref.end }
                 }
             }
@@ -152,7 +154,7 @@ export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) 
  * @param base Base cache.
  * @param override Overriding cache.
  */
-export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, startLine: number, endLine: number }) {
+export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, startLine: number, startChar: number, endLine: number, endChar: number }) {
     const ans: ClientCache = base
     function initUnit(type: CacheKey, id: string) {
         ans[type] = getSafeCategory(ans, type)
@@ -165,7 +167,9 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         if (addition) {
             pos.uri = addition.uri.toString()
             pos.startLine = addition.startLine
+            pos.startChar = addition.startChar
             pos.endLine = addition.endLine
+            pos.endChar = addition.endChar
         }
         poses.push(pos)
     }
