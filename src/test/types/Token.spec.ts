@@ -2,13 +2,17 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Token, TokenType } from '../../types/Token'
 import { StringReader } from '../../utils/StringReader'
+import { mockFunctionInfo } from '../utils.spec'
 
 describe('Token Tests', () => {
     describe('toArray() Tests', () => {
         it('Should calculate the deltas', () => {
-            const token = new Token({ start: 3, end: 5 }, 0, new Set([0]))
-            const actual = token.toArray(2)
-            assert.deepStrictEqual(actual, [2, 3, 2, 0, 1])
+            const info = mockFunctionInfo({
+                content: '\n\n23456789'
+            })
+            const token = new Token({ start: 5, end: 9 }, 0, new Set([0]))
+            const actual = token.toArray(info.document)
+            assert.deepStrictEqual(actual, [2, 3, 4, 0, 1])
         })
     })
     describe('static from() Tests', () => {

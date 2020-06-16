@@ -92,14 +92,14 @@ export class IdentityNode extends ArgumentNode {
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
-                info.content, this[NodeRange],
+                info.document, this[NodeRange],
                 this.toTagString()
             ))
         }
         if (omitDiagnostics && omitDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
-                info.content, this[NodeRange],
+                info.document, this[NodeRange],
                 this.toShortestTagString()
             ))
         }

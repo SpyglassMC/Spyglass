@@ -1,13 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { GetFormattedString } from '../../../types/Formattable'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../nodes/ArgumentNode'
 import { StringNode } from '../../../nodes/StringNode'
+import { GetFormattedString } from '../../../types/Formattable'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $ } from '../../utils.spec'
+import { $, mockFunctionInfo } from '../../utils.spec'
 
 describe('StringNode Tests', () => {
     describe('toString() Tests', () => {
@@ -33,8 +31,7 @@ describe('StringNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const lineNumber = 10
-        const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+        const info = mockFunctionInfo()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should unquote the string', () => {
             const range = { start: 0, end: 5 }
@@ -43,9 +40,9 @@ describe('StringNode Tests', () => {
             }
             const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-unquote', diags, uri, info.version, lineNumber, range,
+                'string-unquote', diags, info.document, range,
                 'foo'
             )])
         })
@@ -56,9 +53,9 @@ describe('StringNode Tests', () => {
             }
             const node = $(new StringNode('foo', "'foo'", { start: 1 }), range)
 
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-double-quote', diags, uri, info.version, lineNumber, range,
+                'string-double-quote', diags, info.document, range,
                 '"foo"'
             )])
         })
@@ -69,9 +66,9 @@ describe('StringNode Tests', () => {
             }
             const node = $(new StringNode('foo', '"foo"', { start: 1 }), range)
 
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-single-quote', diags, uri, info.version, lineNumber, range,
+                'string-single-quote', diags, info.document, range,
                 "'foo'"
             )])
         })

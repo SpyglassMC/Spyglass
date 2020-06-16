@@ -35,7 +35,7 @@ export class BlockStateNode extends MapNode<string, string> {
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'block-state-sort-keys', relevantDiagnostics,
-                info.content, this[NodeRange],
+                info.document, this[NodeRange],
                 this[GetFormattedString](info.config.lint, keys)
             ))
         }

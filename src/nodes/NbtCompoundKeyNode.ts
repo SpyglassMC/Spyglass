@@ -73,7 +73,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
                 }
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    info.content, oldSuper[NodeRange],
+                    info.document, oldSuper[NodeRange],
                     newSuper[GetFormattedString](info.config.lint)
                 ))
             }

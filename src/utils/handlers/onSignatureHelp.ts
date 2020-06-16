@@ -1,13 +1,13 @@
-import { SignatureInformation, Position } from 'vscode-languageserver'
+import { SignatureInformation } from 'vscode-languageserver'
 import { VanillaData } from '../../data/VanillaData'
+import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
+import { DocNode } from '../../types'
 import { CacheFile } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
-import { DocNode } from '../../types'
-import { NodeRange } from '../../nodes'
 
 export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData }: { offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
@@ -15,7 +15,7 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
 
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
-            info.content.getText(),
+            info.document.getText(),
             node[NodeRange].start,
             node[NodeRange].end
         )
@@ -23,7 +23,7 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
             cursor: offset,
             cache: cacheFile.cache,
             config: info.config,
-            content: info.content
+            document: info.document
         }, commandTree, vanillaData))
 
         const fixLabel = fix.join(' ')

@@ -38,7 +38,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
             tokens: [], errors: [], cache: {}, completions: []
         }
 
-        const pos = ctx.content.positionAt(start)
+        const pos = ctx.document.positionAt(start)
         const text = ' '.repeat(pos.character) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
         const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)

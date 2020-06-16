@@ -1,25 +1,22 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Token, TokenType } from '../../../types/Token'
 import { onSemanticTokens } from '../../../utils/handlers/onSemanticTokens'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onSemanticTokens() Tests', () => {
     it('Should return correctly', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
+        const info = mockFunctionInfo({
+            nodes: [
+                mockLineNode({
+                    tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
+                }),
+                mockLineNode({
+                    tokens: [new Token({ start: 9, end: 17 }, TokenType.comment)]
+                })
             ],
-            strings: [
-                '# Test 0',
-                '# Test 1'
-            ],
-            version: 0
-        }
+            content: '# Test 0\n# Test 1'
+        })
 
         const actual = onSemanticTokens({ info })
 

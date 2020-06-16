@@ -1,15 +1,17 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
+import { NodeRange } from '../../../nodes'
+import { IdentityNode } from '../../../nodes/IdentityNode'
 import { CacheFile } from '../../../types/ClientCache'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
-import { Line } from '../../../types/Line'
-import { IdentityNode } from '../../../nodes/IdentityNode'
+import { LineNode } from '../../../types/LineNode'
 import { Token, TokenType } from '../../../types/Token'
 import { getId, getInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers'
+import { mockFunctionInfo } from '../../utils.spec'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -39,25 +41,35 @@ describe('common.ts Tests', () => {
         })
     })
     describe('parseString() Tests', () => {
-        it('Should push an empty line for whitespaces', async () => {
-            const string = '  \t  '
-            const lines: Line[] = []
+        it('Should push an empty node at the end of whitespaces', async () => {
+            const content = '  \t  '
+            const document = TextDocument.create('', '', 0, content)
+            const nodes: LineNode[] = []
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(string, lines, config, cacheFile)
+            await parseString(document, 0, 5, nodes, config, cacheFile)
 
-            assert.deepStrictEqual(lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
+            assert.deepStrictEqual(nodes, [{
+                [NodeRange]: { start: 5, end: 5 },
+                args: [], tokens: [], hint: { fix: [], options: [] }
+            }])
         })
-        it('Should push parsed line for other input', async () => {
-            const string = '# test'
-            const lines: Line[] = []
+        it('Should push a parsed node for other input', async () => {
+            const content = '# test'
+            const document = TextDocument.create('', '', 0, content)
+            const nodes: LineNode[] = []
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(string, lines, config, cacheFile)
+            await parseString(document, 0, 6, nodes, config, cacheFile)
 
-            assert.deepStrictEqual(lines, [{ args: [{ data: '# test', parser: 'string' }], tokens: [new Token({ start: 0, end: 6 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }])
+            assert.deepStrictEqual(nodes, [{
+                [NodeRange]: { start: 0, end: 6 },
+                args: [{ data: '# test', parser: 'string' }],
+                tokens: [new Token({ start: 0, end: 6 }, TokenType.comment)],
+                hint: { fix: [], options: [] }, completions: undefined
+            }])
         })
     })
     describe('getRel() Tests', () => {
@@ -164,7 +176,7 @@ describe('common.ts Tests', () => {
         const readFile = async () => { throw 'Fake readFile() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
-            const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+            const info = mockFunctionInfo()
             const infos: InfosOfUris = new Map([[uri, info]])
 
             const actual = await getInfo(uri, roots, infos, cacheFile, config, readFile)
@@ -185,9 +197,8 @@ describe('common.ts Tests', () => {
             const actual = (await getInfo(uri, roots, infos, cacheFile, config, readFile))!
 
             assert(actual.config === VanillaConfig)
-            assert(actual.lineBreak === '\n')
-            assert(actual.version === null)
-            assert.deepStrictEqual(actual.strings, ['# foo'])
+            assert(actual.document.getText() === '# foo')
+            assert(actual.document.version === 0)
         })
         it('Should return undefined when the file is excluded', async () => {
             let hasReadFile = false

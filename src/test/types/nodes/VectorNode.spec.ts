@@ -6,7 +6,7 @@ import { FunctionInfo } from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../nodes/ArgumentNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../../../nodes/VectorNode'
 import { getCodeAction } from '../../../utils'
-import { $ } from '../../utils.spec'
+import { $, mockFunctionInfo } from '../../utils.spec'
 
 describe('VectorNode Tests', () => {
     const { lint } = constructConfig({})
@@ -25,7 +25,7 @@ describe('VectorNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
         const lineNumber = 10
-        const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+        const info=mockFunctionInfo()
         it('Should return align actions', () => {
             const range = { start: 1, end: 2 }
             const node = $(new VectorNode(), [0, 7], {
@@ -34,14 +34,14 @@ describe('VectorNode Tests', () => {
                 1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
                 2: new VectorElementNode(VectorElementType.Absolute, 1.2, '1.2'),
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
+            const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [
                 getCodeAction(
-                    'vector-align-0.0', [], uri, info.version, lineNumber, { start: 0, end: 7 },
+                    'vector-align-0.0', [], info.document, { start: 0, end: 7 },
                     '1.0 ~1 1.2'
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], uri, info.version, lineNumber, { start: 0, end: 7 },
+                    'vector-align-0.5', [], info.document, { start: 0, end: 7 },
                     '1.5 ~1 1.2'
                 )
             ])
@@ -54,7 +54,7 @@ describe('VectorNode Tests', () => {
                 1: new VectorElementNode(VectorElementType.Absolute, 1.2, '1.2'),
                 2: new VectorElementNode(VectorElementType.Absolute, 1.4, '1.4'),
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
+            const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [])
         })
         it('Should not return align actions when the vector is not of type absolute', () => {
@@ -65,7 +65,7 @@ describe('VectorNode Tests', () => {
                 1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
                 2: new VectorElementNode(VectorElementType.Relative, 1.4, '1.4'),
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, {})
+            const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [])
         })
     })

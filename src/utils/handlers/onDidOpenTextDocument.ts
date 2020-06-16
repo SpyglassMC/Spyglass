@@ -19,12 +19,12 @@ export async function onDidOpenTextDocument({ text, uri, rel, version, infos, co
     info.config = config
 
     // strings
-    info.content = TextDocument.create(uri.toString(), 'mcfunction', version!!, text)
+    info.document = TextDocument.create(uri.toString(), 'mcfunction', version!!, text)
 
     // nodes
     info.nodes = []
     await parseStrings(
-        info.content, undefined, undefined,
+        info.document, undefined, undefined,
         info.nodes, config, cacheFile, undefined, commandTree, vanillaData
     )
 

@@ -1,14 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import path from 'path'
-import { VanillaConfig } from '../../../types/Config'
-import { GetFormattedString } from '../../../types/Formattable'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../nodes/ArgumentNode'
 import { IdentityNode } from '../../../nodes/IdentityNode'
+import { GetFormattedString } from '../../../types/Formattable'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $ } from '../../utils.spec'
+import { $, mockFunctionInfo } from '../../utils.spec'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
@@ -102,8 +100,7 @@ describe('IdentityNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const lineNumber = 10
-        const info: FunctionInfo = { config: VanillaConfig, lineBreak: '\n', lines: [], strings: [], version: null }
+        const info = mockFunctionInfo()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should complete the namespace', () => {
             const range = { start: 0, end: 7 }
@@ -112,9 +109,9 @@ describe('IdentityNode Tests', () => {
             }
             const node = $(new IdentityNode(undefined, ['foo', 'bar']), range)
 
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-complete-default-namespace', diags, uri, info.version, lineNumber, range,
+                'id-complete-default-namespace', diags, info.document, range,
                 'minecraft:foo/bar'
             )])
         })
@@ -125,9 +122,9 @@ describe('IdentityNode Tests', () => {
             }
             const node = $(new IdentityNode('minecraft', ['foo', 'bar']), range)
 
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-omit-default-namespace', diags, uri, info.version, lineNumber, range,
+                'id-omit-default-namespace', diags, info.document, range,
                 'foo/bar'
             )])
         })

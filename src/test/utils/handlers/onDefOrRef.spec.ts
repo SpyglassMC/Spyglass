@@ -1,9 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Uri } from '../../../types/handlers'
 import { onDefOrRef } from '../../../utils/handlers/onDefOrRef'
+import { mockLineNode } from '../../utils.spec'
 
 describe('onDefOrRef() Tests', () => {
     const uri = Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction')
@@ -13,45 +12,31 @@ describe('onDefOrRef() Tests', () => {
                 SPGoding: {
                     def: [{
                         uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
-                        line: 789,
-                        start: 14,
-                        end: 23
+                        line: 789, start: 14, end: 23
                     }],
                     ref: [{
                         uri: uri.toString(),
-                        line: 0,
-                        start: 4,
-                        end: 13
+                        line: 0, start: 4, end: 13
                     }]
                 }
             }
         },
         advancements: {}, tags: { functions: {} }, files: {}, version: 0
     }
-    const lineNumber = 0
-    const char = 12
-    const info: FunctionInfo = {
-        config: VanillaConfig,
-        lineBreak: '\n',
-        lines: [{
-            args: [], hint: { fix: [], options: [] }, tokens: [],
-            cache: {
-                entities: {
-                    SPGoding: {
-                        def: [],
-                        ref: [{ start: 4, end: 13 }]
-                    }
+    const offset = 12
+    const node = mockLineNode({
+        cache: {
+            entities: {
+                SPGoding: {
+                    def: [],
+                    ref: [{ start: 4, end: 13 }]
                 }
             }
-        }],
-        strings: [
-            'kill SPGoding'
-        ],
-        version: 0
-    }
+        }
+    })
 
     it('Should return definitions', () => {
-        const definitions = onDefOrRef({ info, uri, cacheFile, lineNumber, char, type: 'def' })
+        const definitions = onDefOrRef({ node, uri, cacheFile, offset, type: 'def' })
 
         assert.deepStrictEqual(definitions, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
@@ -62,7 +47,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return references', () => {
-        const references = onDefOrRef({ info, uri, cacheFile, lineNumber, char, type: 'ref' })
+        const references = onDefOrRef({ node, uri, cacheFile, offset, type: 'ref' })
 
         assert.deepStrictEqual(references, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction').toString(),
@@ -73,7 +58,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return null when selects nothing', () => {
-        const definitions = onDefOrRef({ info, uri, cacheFile, lineNumber, char: 0, type: 'def' })
+        const definitions = onDefOrRef({ node, uri, cacheFile, offset: 0, type: 'def' })
 
         assert(definitions === null)
     })

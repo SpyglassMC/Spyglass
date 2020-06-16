@@ -1,16 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { onDocumentColor } from '../../../utils/handlers/onDocumentColor'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onDocumentColor() Tests', () => {
-    const info: FunctionInfo = {
-        config: VanillaConfig,
-        lineBreak: '\n',
-        lines: [
-            {
-                args: [], hint: { fix: [], options: [] }, tokens: [],
+    const info = mockFunctionInfo({
+        nodes: [
+            mockLineNode({
                 cache: {
                     colors: {
                         '1 1 1 1': {
@@ -19,13 +15,10 @@ describe('onDocumentColor() Tests', () => {
                         }
                     }
                 }
-            }
+            })
         ],
-        strings: [
-            'particle dust 1 1 1 1'
-        ],
-        version: 0
-    }
+        content: 'particle dust 1 1 1 1'
+    })
     it('Should return correctly', () => {
         const colors = onDocumentColor({ info })
 

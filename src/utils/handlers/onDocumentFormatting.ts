@@ -10,7 +10,7 @@ export function onDocumentFormatting({ info }: { info: FunctionInfo }) {
     info.nodes.forEach(line => {
         if (!line.errors || line.errors.filter(v => v.severity === DiagnosticSeverity.Error).length === 0) {
             ans.push({
-                range: getLspRange(info.content, line[NodeRange]),
+                range: getLspRange(info.document, line[NodeRange]),
                 newText: lineToLintedString(line, info.config.lint)
             })
         }

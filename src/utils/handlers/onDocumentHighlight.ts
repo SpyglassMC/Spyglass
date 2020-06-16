@@ -21,8 +21,8 @@ export function onDocumentHighlight({ position, info }: { position: Position, in
                 if (ref.length > 0) {
                     ans.push(...ref.map(v => ({
                         range: {
-                            start: info.content.positionAt(v.start),
-                            end: info.content.positionAt(v.end)
+                            start: info.document.positionAt(v.start),
+                            end: info.document.positionAt(v.end)
                         }
                     })))
                 }

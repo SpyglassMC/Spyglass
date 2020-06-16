@@ -84,9 +84,9 @@ export async function parseStrings(content: TextDocument, start: number = 0, end
     }
 }
 
-export async function parseString(content: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseString(document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const parser = new LineParser(false, 'line')
-    const string = content.getText()
+    const string = document.getText()
     while (StringReader.isWhiteSpace(string.charAt(end - 1)) && end > start) {
         end--
     }
@@ -101,7 +101,7 @@ export async function parseString(content: TextDocument, start: number, end: num
     } else {
         const { data } = parser.parse(reader, constructContext({
             cache: cacheFile.cache,
-            content, config, cursor
+            document, config, cursor
         }, commandTree, vanillaData))
         nodes.push(data)
     }

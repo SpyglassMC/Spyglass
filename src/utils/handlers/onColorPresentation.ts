@@ -5,10 +5,10 @@ export function onColorPresentation({ info, start, end, r, g, b, a }: { info: Fu
     try {
         const ans: ColorPresentation[] = []
         const range = Range.create(
-            info.content.positionAt(start),
-            info.content.positionAt(end)
+            info.document.positionAt(start),
+            info.document.positionAt(end)
         )
-        const string = info.content.getText(range)
+        const string = info.document.getText(range)
         if (string.startsWith('dust')) {
             ans.push({ label: `dust ${r} ${g} ${b}` })
         } else if (string.startsWith('minecraft:dust')) {

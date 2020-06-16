@@ -6,6 +6,6 @@ import { LineNode } from './LineNode'
 export interface FunctionInfo {
     builder?: ProposedFeatures.SemanticTokensBuilder,
     config: Config,
-    nodes: LineNode[],
-    content: TextDocument
+    document: TextDocument,
+    nodes: LineNode[]
 }

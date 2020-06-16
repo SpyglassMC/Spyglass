@@ -1,10 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Token, TokenType } from '../../../types/Token'
 import { onSelectionRanges } from '../../../utils/handlers/onSelectionRanges'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onSelectionRanges() Tests', () => {
     it('Should return selection ranges', () => {
@@ -12,21 +11,17 @@ describe('onSelectionRanges() Tests', () => {
             line: 0,
             character: 4
         }]
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [{
-                args: [], hint: { fix: [], options: [] },
-                tokens: [
-                    new Token({ start: 0, end: 2 }, TokenType.literal),
-                    new Token({ start: 3, end: 8 }, TokenType.literal)
-                ]
-            }],
-            strings: [
-                'tp ~ ~ ~'
+        const info = mockFunctionInfo({
+            nodes: [
+                mockLineNode({
+                    tokens: [
+                        new Token({ start: 0, end: 2 }, TokenType.literal),
+                        new Token({ start: 3, end: 8 }, TokenType.literal)
+                    ]
+                })
             ],
-            version: 0
-        }
+            content: 'tp ~ ~ ~'
+        })
 
         const ranges = onSelectionRanges({ info, positions })
 

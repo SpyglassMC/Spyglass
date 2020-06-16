@@ -17,8 +17,8 @@ export interface ParsingContext {
     cache: ClientCache,
     commandTree: CommandTree,
     config: Config,
-    content: TextDocument,
     cursor: number,
+    document: TextDocument,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
@@ -30,8 +30,8 @@ interface ParsingContextLike {
     cache?: ClientCache,
     commandTree?: CommandTree,
     config?: Config,
-    content?: TextDocument,
     cursor?: number,
+    document?: TextDocument,
     namespaceSummary?: NamespaceSummary,
     nbtdoc?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
@@ -55,7 +55,7 @@ export function constructContext(
     const ans = {
         cache: {},
         config: VanillaConfig,
-        content: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
+        document: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         cursor: -1,
         parsers: new ArgumentParserManager(),
         ...custom

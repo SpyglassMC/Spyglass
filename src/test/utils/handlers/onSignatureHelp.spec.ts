@@ -1,25 +1,20 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { onSignatureHelp } from '../../../utils/handlers/onSignatureHelp'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onSignatureHelp() Tests', () => {
     it('Should return signatures', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
-        const lineNumber = 0
-        const char = 12
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                'advancement '
-            ],
-            version: 0
-        }
+        const offset = 12
+        const info = mockFunctionInfo({
+            content: 'advancement '
+        })
+        const node = mockLineNode({
+            range: { start: 0, end: 12 }
+        })
 
-        const signatures = await onSignatureHelp({ info, cacheFile, lineNumber, char })
+        const signatures = await onSignatureHelp({ info, cacheFile, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
@@ -36,19 +31,15 @@ describe('onSignatureHelp() Tests', () => {
     })
     it('Should return signatures when there are no options', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
-        const lineNumber = 0
-        const char = 4
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                'say '
-            ],
-            version: 0
-        }
+        const offset = 4
+        const info = mockFunctionInfo({
+            content: 'say '
+        })
+        const node = mockLineNode({
+            range: { start: 0, end: 4 }
+        })
 
-        const signatures = await onSignatureHelp({ info, cacheFile, lineNumber, char })
+        const signatures = await onSignatureHelp({ info, cacheFile, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{

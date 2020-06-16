@@ -21,8 +21,8 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
                             for (const pos of ref) {
                                 const link = {
                                     range: {
-                                        start: info.content.positionAt(pos.start),
-                                        end: info.content.positionAt(pos.end)
+                                        start: info.document.positionAt(pos.start),
+                                        end: info.document.positionAt(pos.end)
                                     },
                                     target: await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(id), type)
                                 }

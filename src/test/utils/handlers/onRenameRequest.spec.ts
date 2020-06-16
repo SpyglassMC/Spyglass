@@ -1,9 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { InfosOfUris, PathExistsFunction, Uri, UrisOfIds } from '../../../types/handlers'
 import { onRenameRequest } from '../../../utils/handlers/onRenameRequest'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onRenameRequest() Tests', () => {
     const pathExists: PathExistsFunction = async abs => !!(
@@ -16,36 +16,36 @@ describe('onRenameRequest() Tests', () => {
 
     const oldFunction1 = Uri.parse('file:///c:/data/spgoding/functions/foo.mcfunction').toString()
     const oldFunction2 = Uri.parse('file:///d:/data/spgoding/functions/bar.mcfunction').toString()
-    const oldFunctionInfo1: FunctionInfo = {
-        config: VanillaConfig, lineBreak: '\n', version: 4320,
-        lines: [{
-            args: [], hint: { fix: [], options: [] }, tokens: [],
-            cache: {
-                colors: {
-                    ignored: { ref: [{ start: 0, end: 2 }], def: [] }
-                },
-                functions: {
-                    'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
-                },
-                objectives: {
-                    'oldObjective': { ref: [{ start: 16, end: 28 }], def: [] }
-                }
+    const oldNode1 = mockLineNode({
+        cache: {
+            colors: {
+                ignored: { ref: [{ start: 0, end: 2 }], def: [] }
+            },
+            functions: {
+                'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
+            },
+            objectives: {
+                'oldObjective': { ref: [{ start: 16, end: 28 }], def: [] }
             }
-        }],
-        strings: ['#> spgoding:foo oldObjective']
-    }
-    const oldFunctionInfo2: FunctionInfo = {
-        config: VanillaConfig, lineBreak: '\n', version: 4320,
-        lines: [{
-            args: [], hint: { fix: [], options: [] }, tokens: [],
-            cache: {
-                functions: {
-                    'spgoding:bar': { ref: [{ start: 3, end: 15 }], def: [] }
-                }
+        }
+    })
+    const oldFunctionInfo1 = mockFunctionInfo({
+        nodes: [oldNode1],
+        version: 4320,
+        content: '#> spgoding:foo oldObjective'
+    })
+    const oldNode2 = mockLineNode({
+        cache: {
+            functions: {
+                'spgoding:bar': { ref: [{ start: 3, end: 15 }], def: [] }
             }
-        }],
-        strings: ['#> spgoding:bar']
-    }
+        }
+    })
+    const oldFunctionInfo2 = mockFunctionInfo({
+        nodes: [oldNode2],
+        version: 4320,
+        content: '#> spgoding:bar'
+    })
 
     const uris = new Map([
         [oldFunction1, Uri.parse(oldFunction1)],
@@ -62,11 +62,10 @@ describe('onRenameRequest() Tests', () => {
 
     it('Should return null when the selected cursor cannot be renamed', async () => {
         const cacheFile = { version: 0, advancements: {}, tags: { functions: {} }, files: {}, cache: {} }
-        const lineNumber = 0
-        const char = 2
+        const offset = 2
         const newName = 'ruhuasiyu:foo'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert(actual === null)
     })
@@ -79,11 +78,10 @@ describe('onRenameRequest() Tests', () => {
                 objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
             }
         }
-        const lineNumber = 0
-        const char = 28
+        const offset = 28
         const newName = 'newObjective'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [{
@@ -115,12 +113,11 @@ describe('onRenameRequest() Tests', () => {
                 objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
             }
         }
-        const lineNumber = 0
-        const char = 15
+        const offset = 15
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -155,12 +152,11 @@ describe('onRenameRequest() Tests', () => {
                 objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
             }
         }
-        const lineNumber = 0
-        const char = 15
+        const offset = 15
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -195,12 +191,11 @@ describe('onRenameRequest() Tests', () => {
                 objectives: { 'oldObjective': { ref: [{ uri: oldFunction2, line: 0, start: 16, end: 28 }], def: [] } }
             }
         }
-        const lineNumber = 0
-        const char = 15
+        const offset = 15
         const newName = 'ruhuasiyu:bar'
         const newFunction = Uri.parse('file:///d:/data/ruhuasiyu/functions/bar.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, infos, roots, uris, urisOfIds, lineNumber, char, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, node: oldNode2, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [

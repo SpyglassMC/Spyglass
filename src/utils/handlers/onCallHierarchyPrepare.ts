@@ -15,8 +15,8 @@ export async function onCallHierarchyPrepare({ info, offset, node, pathExists, u
         if (!uri) {
             return null
         }
-        const startPos = info.content.positionAt(result.start)
-        const endPos = info.content.positionAt(result.end)
+        const startPos = info.document.positionAt(result.start)
+        const endPos = info.document.positionAt(result.end)
         return [
             getCallHierarchyItem(
                 (result.type === 'tags/functions' ? IdentityNode.TagSymbol : '') + result.id,

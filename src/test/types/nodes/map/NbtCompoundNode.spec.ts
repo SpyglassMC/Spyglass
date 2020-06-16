@@ -1,6 +1,5 @@
 import assert = require('power-assert')
 import { constructConfig } from '../../../../types/Config'
-import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../nodes/ArgumentNode'
 import { UnsortedKeys } from '../../../../nodes/MapNode'
 import { NbtByteNode } from '../../../../nodes/NbtByteNode'
@@ -8,7 +7,7 @@ import { NbtCompoundNode } from '../../../../nodes/NbtCompoundNode'
 import { NbtLongNode } from '../../../../nodes/NbtLongNode'
 import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils'
-import { $ } from '../../../utils.spec'
+import { $, mockFunctionInfo } from '../../../utils.spec'
 
 describe('NbtCompoundNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {
@@ -22,8 +21,7 @@ describe('NbtCompoundNode Tests', () => {
             }
         })
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const lineNumber = 10
-        const info: FunctionInfo = { config, lineBreak: '\n', lines: [], strings: [], version: null }
+        const info = mockFunctionInfo({ config })
         const diags: any = [{ message: 'A diagnostic message' }]
         it('Should return empty actions', () => {
             const range = { start: 3, end: 3 }
@@ -33,7 +31,7 @@ describe('NbtCompoundNode Tests', () => {
                 bar: new NbtByteNode(null, 0, '0b'),
                 [UnsortedKeys]: ['foo', 'bar']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [])
         })
         it('Should return sort actions', () => {
@@ -46,9 +44,9 @@ describe('NbtCompoundNode Tests', () => {
                 bar: new NbtByteNode(null, 0, '0'),
                 [UnsortedKeys]: ['foo', 'bar']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-compound-sort-keys', diags, uri, info.version, lineNumber, { start: 0, end: 7 },
+                'nbt-compound-sort-keys', diags, info.document, { start: 0, end: 7 },
                 '{bar: 0b, foo: 1b}'
             )])
         })
@@ -62,9 +60,9 @@ describe('NbtCompoundNode Tests', () => {
                 L: new NbtLongNode(null, BigInt(4567890123456), '4567890123456L'),
                 [UnsortedKeys]: ['M', 'L']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-uuid-datafix', diags, uri, info.version, lineNumber, { start: 0, end: 7 },
+                'nbt-uuid-datafix', diags, info.document, { start: 0, end: 7 },
                 '[I; 287, 1912276171, 1063, -1955079488]'
             )])
         })
@@ -78,9 +76,9 @@ describe('NbtCompoundNode Tests', () => {
                 OwnerUUIDLeast: new NbtLongNode(null, BigInt(4567890123456), '4567890123456L'),
                 [UnsortedKeys]: ['OwnerUUIDMost', 'OwnerUUIDLeast']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-uuid-datafix', diags, uri, info.version, lineNumber, { start: 0, end: 7 },
+                'nbt-uuid-datafix', diags, info.document, { start: 0, end: 7 },
                 '[I; 287, 1912276171, 1063, -1955079488]'
             )])
         })

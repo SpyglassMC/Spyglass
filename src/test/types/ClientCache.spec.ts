@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromChar, isNamespacedType, remapCachePosition } from '../../types/ClientCache'
+import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromOffset, isNamespacedType, remapCachePosition } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 
@@ -86,11 +86,11 @@ describe('ClientCache Tests', () => {
                     }
                 }
             }
-            const actual = combineCache(base, override, { uri: Uri.parse('file:///blabla'), line: 0 })
+            const actual = combineCache(base, override, { uri: Uri.parse('file:///blabla'), startLine: 0, endLine: 0, skippedChar: 0 })
             assert.deepStrictEqual(actual, {
                 entities: {
                     foo: {
-                        def: [{ start: 0, end: 3, uri: 'file:///blabla', line: 0 }],
+                        def: [{ start: 0, end: 3, uri: 'file:///blabla', startLine: 0, startChar: 0, endLine: 0, endChar: 3  }],
                         ref: []
                     }
                 }
@@ -162,7 +162,7 @@ describe('ClientCache Tests', () => {
                     foo: { def: [], ref: [] },
                     bar: {
                         doc: 'Documentation for **bar**',
-                        def: [{ uri: '', line: 0, start: 0, end: 0 }],
+                        def: [{ uri: '', start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 }],
                         ref: []
                     }
                 }
@@ -217,9 +217,9 @@ describe('ClientCache Tests', () => {
             assert(actual === 'tags')
         })
     })
-    describe('getCacheFromChar() Tests', () => {
+    describe('getCacheFromOffset() Tests', () => {
         it('Should return def', () => {
-            const actual = getCacheFromChar({
+            const actual = getCacheFromOffset({
                 tags: {
                     foo: {
                         def: [{ start: 0, end: 1 }],
@@ -230,7 +230,7 @@ describe('ClientCache Tests', () => {
             assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
         })
         it('Should return ref', () => {
-            const actual = getCacheFromChar({
+            const actual = getCacheFromOffset({
                 tags: {
                     foo: {
                         def: [],
@@ -241,7 +241,7 @@ describe('ClientCache Tests', () => {
             assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
         })
         it('Should return undefined', () => {
-            const actual = getCacheFromChar({
+            const actual = getCacheFromOffset({
                 tags: {
                     foo: {
                         def: [{ start: 0, end: 1 }],

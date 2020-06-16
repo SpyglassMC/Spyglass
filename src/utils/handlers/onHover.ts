@@ -9,7 +9,7 @@ export function onHover({ info, node, offset }: { info: FunctionInfo, offset: nu
         if (data instanceof ArgumentNode) {
             const range = data[NodeRange]
             if (range.start <= offset && offset <= range.end) {
-                return data[GetHoverInformation](info.content, offset)
+                return data[GetHoverInformation](info.document, offset)
             }
         }
     }

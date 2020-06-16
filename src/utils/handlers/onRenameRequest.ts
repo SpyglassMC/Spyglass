@@ -36,7 +36,7 @@ export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists
                             /* istanbul ignore else */
                             if (affectedInfo) {
                                 documentChanges.push({
-                                    textDocument: { uri: pos.uri!, version: affectedInfo.content.version },
+                                    textDocument: { uri: pos.uri!, version: affectedInfo.document.version },
                                     edits: [{
                                         newText: newName,
                                         range: {

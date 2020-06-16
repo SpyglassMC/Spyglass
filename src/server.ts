@@ -335,7 +335,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info && info.config.features.completions) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 const commandTree = await getCommandTree(info.config.env.cmdVersion)
@@ -353,7 +353,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info && info.config.features.signatures) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onSignatureHelp({ cacheFile, offset, info, node, commandTree, vanillaData })
@@ -381,7 +381,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info && info.config.features.hover) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onHover({ info, offset, node, cacheFile })
@@ -410,7 +410,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
@@ -425,7 +425,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
@@ -477,7 +477,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onCallHierarchyPrepare({ info, offset, node, uris, roots, urisOfIds, pathExists: fs.pathExists })
@@ -501,7 +501,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onPrepareRename({ info, node, offset })
@@ -516,7 +516,7 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info) {
-            const offset = info.content.offsetAt(position)
+            const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
@@ -563,8 +563,8 @@ connection.onInitialized(() => {
         if (!info || !info.config.features.colors) {
             return null
         }
-        const start = info.content.offsetAt(startPos)
-        const end = info.content.offsetAt(endPos)
+        const start = info.document.offsetAt(startPos)
+        const end = info.document.offsetAt(endPos)
         return onColorPresentation({ r, g, b, a, start, end, info })
     })
 
@@ -641,7 +641,7 @@ async function updateDiagnostics(uri: Uri) {
     info?.nodes.forEach(line => {
         line.errors?.forEach(err => {
             try {
-                diagnostics.push(err.toDiagnostic(info.content))
+                diagnostics.push(err.toDiagnostic(info.document))
             } catch (ignored) {
                 console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
             }

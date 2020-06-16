@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { NamingConventionConfig, checkNamingConvention } from '../../types/NamingConventionConfig'
+import { checkNamingConvention, NamingConventionConfig } from '../../types/NamingConventionConfig'
 import { DiagnosticConfig } from '../../types/StylisticConfig'
 
 describe('NamingConventionConfig Tests', () => {

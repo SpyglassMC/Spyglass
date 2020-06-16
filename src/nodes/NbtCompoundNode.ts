@@ -43,7 +43,7 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'nbt-compound-sort-keys', sortKeysDiagnostics,
-                info.content, this[NodeRange],
+                info.document, this[NodeRange],
                 this[GetFormattedString](info.config.lint, keys)
             ))
         }
@@ -57,7 +57,7 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
                 ))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    info.content, this[NodeRange],
+                    info.document, this[NodeRange],
                     newArrayNode[GetFormattedString](info.config.lint)
                 ))
             } catch (ignored) {

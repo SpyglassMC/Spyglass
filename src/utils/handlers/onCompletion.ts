@@ -14,7 +14,7 @@ export async function onCompletion({ offset, info, cacheFile, node, commandTree,
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
-            info.content.getText(),
+            info.document.getText(),
             node[NodeRange].start,
             node[NodeRange].end
         )
@@ -22,7 +22,7 @@ export async function onCompletion({ offset, info, cacheFile, node, commandTree,
             cursor: offset,
             cache: cacheFile.cache,
             config: info.config,
-            content: info.content
+            document: info.document
         }, commandTree, vanillaData))
 
         // Escape for TextMate: #431

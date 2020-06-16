@@ -1,25 +1,19 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { onCompletion } from '../../../utils/handlers/onCompletion'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onCompletion() Tests', () => {
     it('Should return completions', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
-        const lineNumber = 0
-        const char = 12
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                'advancement '
-            ],
-            version: 0
-        }
+        const offset = 12
+        const node = mockLineNode()
+        const info = mockFunctionInfo({
+            nodes: [node],
+            content: 'advancement '
+        })
 
-        const completions = await onCompletion({ info, cacheFile, lineNumber, char })
+        const completions = await onCompletion({ info, node, cacheFile, offset })
 
         assert.deepStrictEqual(completions, [
             { label: 'grant' },

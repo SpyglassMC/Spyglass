@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { getDiagnosticSeverity } from '../../types/StylisticConfig'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { getDiagnosticSeverity } from '../../types/StylisticConfig'
 
 describe('StylisticConfig Tests', () => {
     describe('getDiagnosticSeverity() Tests', () => {

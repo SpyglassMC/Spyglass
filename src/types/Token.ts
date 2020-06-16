@@ -53,13 +53,13 @@ export class Token {
      * semantic tokens builder.
      * @returns `[ line, char, length, tokenType, tokenModifiers ]`
      */
-    toArray(content: TextDocument): [number, number, number, number, number] {
+    toArray(document: TextDocument): [number, number, number, number, number] {
         /* istanbul ignore next */
         let tokenModifiers = 0
         for (const modifier of this.modifiers) {
             tokenModifiers = tokenModifiers | (1 << modifier)
         }
-        const startPos = content.positionAt(this.range.start)
+        const startPos = document.positionAt(this.range.start)
         return [
             /* line           */ startPos.line,
             /* char           */ startPos.character,

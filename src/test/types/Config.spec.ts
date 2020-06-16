@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { constructConfig, VanillaConfig, isRelIncluded } from '../../types/Config'
+import { constructConfig, isRelIncluded, VanillaConfig } from '../../types/Config'
 
 describe('Config Tests', () => {
     describe('constructConfig() Tests', () => {

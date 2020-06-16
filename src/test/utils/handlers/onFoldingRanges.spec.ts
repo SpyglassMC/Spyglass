@@ -1,23 +1,20 @@
 import assert = require('power-assert')
+import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { FoldingRangeKind } from 'vscode-languageserver'
 import { VanillaConfig } from '../../../types/Config'
 import { FunctionInfo } from '../../../types/FunctionInfo'
 import { onFoldingRanges } from '../../../utils/handlers/onFoldingRanges'
+import { mockFunctionInfo } from '../../utils.spec'
 
 describe('onFoldingRanges() Tests', () => {
     it('Should return for normal #region blocks', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                '#region haha',
-                'Hello world!',
-                '#endregion'
-            ],
-            version: 0
-        }
+        const info = mockFunctionInfo({
+            content: dedent`
+            #region haha
+            Hello world!
+            #endregion`
+        })
 
         const ranges = onFoldingRanges({ info })
 
@@ -30,32 +27,22 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return empty array for single #endregion comment', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                'Hello world!',
-                '#endregion'
-            ],
-            version: 0
-        }
+        const info = mockFunctionInfo({
+            content: dedent`
+            Hello world!
+            #endregion`
+        })
 
         const ranges = onFoldingRanges({ info })
 
         assert.deepStrictEqual(ranges, [])
     })
     it('Should return for normal comments', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                '# Hi',
-                'Hello World'
-            ],
-            version: 0
-        }
+        const info = mockFunctionInfo({
+            content: dedent`
+            # Hi
+            Hello World`
+        })
 
         const ranges = onFoldingRanges({ info })
 
@@ -68,18 +55,13 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multiple normal comments', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                '# First',
-                'Hello World',
-                '# Second',
-                'Cool'
-            ],
-            version: 0
-        }
+        const info = mockFunctionInfo({
+            content: dedent`
+            # First
+            Hello World
+            # Second
+            Cool`
+        })
 
         const ranges = onFoldingRanges({ info })
 
@@ -97,21 +79,16 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multi-level normal comments', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                '# First',
-                'Hello World',
-                '## First-First',
-                'Cool',
-                'Fantastic',
-                '# Second',
-                'Awesome'
-            ],
-            version: 0
-        }
+        const info = mockFunctionInfo({
+            content: dedent`
+            # First
+            Hello World
+            ## First-First
+            Cool
+            Fantastic
+            # Second
+            Awesome`
+        })
 
         const ranges = onFoldingRanges({ info })
 
@@ -134,23 +111,18 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return end normal comment regions before #endregion comment', () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [],
-            strings: [
-                '#region',
-                '# First',
-                'Hello World',
-                '## First-First',
-                'Cool',
-                '#endregion',
-                'Fantastic',
-                '# Second',
-                'Awesome'
-            ],
-            version: 0
-        }
+        const info=mockFunctionInfo({
+            content: dedent`
+            #region
+            # First
+            Hello World
+            ## First-First
+            Cool
+            #endregion
+            Fantastic
+            # Second
+            Awesome`
+        })
 
         const ranges = onFoldingRanges({ info })
 

@@ -20,7 +20,7 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
     try {
         const ans: FoldingRange[] = []
 
-        const strings = getStringLines(info.content.getText())
+        const strings = getStringLines(info.document.getText())
         const regionStartLineNumbers: number[] = []
         const commentStartLineNumers: { [level: number]: number | undefined } = {}
         let i = 0

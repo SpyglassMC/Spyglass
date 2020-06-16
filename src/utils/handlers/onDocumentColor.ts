@@ -21,8 +21,8 @@ export function onDocumentColor({ info }: { info: FunctionInfo }) {
                 for (const { start, end } of unit.ref) {
                     ans.push({
                         range: { 
-                            start: info.content.positionAt(start), 
-                            end: info.content.positionAt(end) 
+                            start: info.document.positionAt(start), 
+                            end: info.document.positionAt(end) 
                         },
                         color
                     })

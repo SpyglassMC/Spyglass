@@ -1,13 +1,13 @@
 import assert = require('power-assert')
-import { constructConfig } from '../../../../types/Config'
-import { GetFormattedString } from '../../../../types/Formattable'
-import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { GetCodeActions } from '../../../../nodes/ArgumentNode'
 import { BlockStateNode } from '../../../../nodes/BlockStateNode'
 import { UnsortedKeys } from '../../../../nodes/MapNode'
+import { constructConfig } from '../../../../types/Config'
+import { GetFormattedString } from '../../../../types/Formattable'
+import { FunctionInfo } from '../../../../types/FunctionInfo'
 import { ErrorCode } from '../../../../types/ParsingError'
 import { getCodeAction } from '../../../../utils'
-import { $ } from '../../../utils.spec'
+import { $, mockFunctionInfo } from '../../../utils.spec'
 
 describe('BlockStateNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
@@ -68,8 +68,7 @@ describe('BlockStateNode Tests', () => {
             }
         })
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const lineNumber = 10
-        const info: FunctionInfo = { config, lineBreak: '\n', lines: [], strings: [], version: null }
+        const info: FunctionInfo = mockFunctionInfo({ config })
         const diags: any = [{ message: 'A diagnostic message' }]
         it('Should return empty actions', () => {
             const range = { start: 3, end: 3 }
@@ -79,7 +78,7 @@ describe('BlockStateNode Tests', () => {
                 baz: 'qux',
                 [UnsortedKeys]: ['foo', 'baz']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [])
         })
         it('Should return sort actions', () => {
@@ -92,9 +91,9 @@ describe('BlockStateNode Tests', () => {
                 baz: 'qux',
                 [UnsortedKeys]: ['foo', 'baz']
             })
-            const actual = node[GetCodeActions](uri, info, lineNumber, range, diagnostics)
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'block-state-sort-keys', diags, uri, info.version, lineNumber, { start: 0, end: 7 },
+                'block-state-sort-keys', diags, info.document, { start: 0, end: 7 },
                 '[baz=qux, foo=bar]'
             )])
         })

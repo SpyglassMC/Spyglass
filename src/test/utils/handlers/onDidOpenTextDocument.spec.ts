@@ -1,9 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { URI as Uri } from 'vscode-uri'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
-import { InfosOfUris } from '../../../types/handlers'
+import { NodeRange } from '../../../nodes'
+import { FunctionInfo, InfosOfUris, VanillaConfig } from '../../../types'
 import { onDidOpenTextDocument } from '../../../utils/handlers/onDidOpenTextDocument'
 
 describe('onDidOpenTextDocument() Tests', () => {
@@ -20,38 +19,9 @@ describe('onDidOpenTextDocument() Tests', () => {
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.config === VanillaConfig)
-        assert(info.version === 2)
-        assert.deepStrictEqual(info.strings, [''])
-        assert.deepStrictEqual(info.lines, [{ args: [], tokens: [], hint: { fix: [], options: [] } }])
-    })
-    it('Should set the `lineBreak` to CRLF', async () => {
-        const text = '0\r\n1\n2'
-        const uri = Uri.parse('file:///c:/foo')
-        const rel = 'foo'
-        const version = 2
-        const infos: InfosOfUris = new Map()
-        const config = VanillaConfig
-        const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
-
-        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
-        const info = infos.get(uri) as FunctionInfo
-
-        assert(info.lineBreak === '\r\n')
-        assert.deepStrictEqual(info.strings, ['0', '1', '2'])
-    })
-    it('Should set the `lineBreak` to LF', async () => {
-        const text = '0\n1\n2'
-        const uri = Uri.parse('file:///c:/foo')
-        const rel = 'foo'
-        const version = 2
-        const infos: InfosOfUris = new Map()
-        const config = VanillaConfig
-        const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
-
-        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
-        const info = infos.get(uri) as FunctionInfo
-
-        assert(info.lineBreak === '\n')
-        assert.deepStrictEqual(info.strings, ['0', '1', '2'])
+        assert(info.document.version === 2)
+        assert(info.document.uri === uri.toString())
+        assert(info.document.getText() === '')
+        assert.deepStrictEqual(info.nodes, [{ [NodeRange]: { start: 0, end: 0 }, args: [], tokens: [], hint: { fix: [], options: [] } }])
     })
 })

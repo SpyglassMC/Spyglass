@@ -31,7 +31,7 @@ export abstract class NbtNumberNode<T = number> extends NbtPrimitiveNode<T> {
                 const newNode = getNode()
                 ans.push(getCodeAction(
                     `nbt-type-to-${actionId}`, relevantDiagnostics,
-                    info.content, this[NodeRange],
+                    info.document, this[NodeRange],
                     newNode[GetFormattedString](info.config.lint)
                 ))
             }

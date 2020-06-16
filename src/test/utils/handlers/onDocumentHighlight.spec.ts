@@ -1,18 +1,15 @@
 import assert = require('power-assert')
+import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Token, TokenType } from '../../../types/Token'
 import { onDocumentHighlight } from '../../../utils/handlers/onDocumentHighlight'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onDocumentHighlight() Tests', () => {
-    const info: FunctionInfo = {
-        config: VanillaConfig,
-        lineBreak: '\n',
-        lines: [
-            {
-                args: [], hint: { fix: [], options: [] },
+    const info = mockFunctionInfo({
+        nodes: [
+            mockLineNode({
                 tokens: [
                     new Token({ start: 0, end: 4 }, TokenType.literal),
                     new Token({ start: 5, end: 13 }, TokenType.entity)
@@ -25,9 +22,8 @@ describe('onDocumentHighlight() Tests', () => {
                         }
                     }
                 }
-            },
-            {
-                args: [], hint: { fix: [], options: [] },
+            }),
+            mockLineNode({
                 tokens: [
                     new Token({ start: 0, end: 4 }, TokenType.literal),
                     new Token({ start: 5, end: 13 }, TokenType.entity)
@@ -40,14 +36,12 @@ describe('onDocumentHighlight() Tests', () => {
                         }
                     }
                 }
-            }
+            })
         ],
-        strings: [
-            'kill SPGoding',
-            'kill SPGoding'
-        ],
-        version: 0
-    }
+        content: dedent`
+        kill SPGoding
+        kill SPGoding`
+    })
     it('Should return ranges for all references of the selected cache stuff', () => {
         const position: Position = {
             line: 0,
@@ -56,7 +50,7 @@ describe('onDocumentHighlight() Tests', () => {
 
         const ranges = onDocumentHighlight({ info, position })
 
-        assert.deepStrictEqual(ranges, [            
+        assert.deepStrictEqual(ranges, [
             {
                 range: {
                     start: { line: 0, character: 5 },

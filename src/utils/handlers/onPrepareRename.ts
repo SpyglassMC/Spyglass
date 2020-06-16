@@ -8,8 +8,8 @@ export function onPrepareRename({ info, node, offset }: { info: FunctionInfo, no
 
     if (result && canBeRenamed(result.type)) {
         return {
-            start: info.content.positionAt(result.start),
-            end: info.content.positionAt(result.end)
+            start: info.document.positionAt(result.start),
+            end: info.document.positionAt(result.end)
         }
     }
 

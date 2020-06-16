@@ -20,7 +20,7 @@
     },
     "exclude": [
         "lib",
-        "src/test/**/*.spec.ts"
+        "src/test/**/*.ts"
     ],
     "include": [
         "src/**/*.json",

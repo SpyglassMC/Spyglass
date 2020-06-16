@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
+import { NbtStringNode } from '../../../../nodes/NbtStringNode'
 import { constructConfig } from '../../../../types/Config'
 import { GetFormattedString } from '../../../../types/Formattable'
-import { NbtStringNode } from '../../../../nodes/NbtStringNode'
 
 describe('NbtStringNode Tests', () => {
     const { lint } = constructConfig({

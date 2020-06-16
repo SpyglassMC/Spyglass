@@ -1,224 +1,52 @@
 import assert = require('power-assert')
+import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
+import { NodeRange } from '../../../nodes'
 import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Token, TokenType } from '../../../types/Token'
 import { onDidChangeTextDocument } from '../../../utils/handlers/onDidChangeTextDocument'
+import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
     it('Should handle with full update', async () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
+        const info = mockFunctionInfo({
+            nodes: [
+                mockLineNode({
+                    range: { start: 0, end: 8 },
+                    args: [{ data: '# Test 0', parser: 'string' }],
+                    tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
+                }),
+                mockLineNode({
+                    range: { start: 9, end: 16 },
+                    args: [{ data: '# Test 1', parser: 'string' }],
+                    tokens: [new Token({ start: 9, end: 16 }, TokenType.comment)]
+                }),
+                mockLineNode({
+                    range: { start: 17, end: 25 },
+                    args: [{ data: '# Test 2', parser: 'string' }],
+                    tokens: [new Token({ start: 17, end: 25 }, TokenType.comment)]
+                })
             ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 2'
-            ],
-            version: 0
-        }
+            content: dedent`
+            # Test 0
+            # Test 1
+            # Test 2`
+        })
         const contentChanges = [{ text: '# Modified' }]
 
         await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
 
-        assert.deepStrictEqual(info, {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Modified', parser: 'string' }], tokens: [new Token({ start: 0, end: 10 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Modified'
-            ],
-            version: 1
-        })
-    })
-    it('Should handle with inline incremental update', async () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 2'
-            ],
-            version: 0
-        }
-        const contentChanges = [
-            {
-                text: '-Modified',
-                range: {
-                    start: { line: 1, character: 8 },
-                    end: { line: 1, character: 8 }
-                }
-            }
-        ]
-
-        await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
-
-        assert.deepStrictEqual(info, {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1-Modified', parser: 'string' }], tokens: [new Token({ start: 0, end: 17 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1-Modified',
-                '# Test 2'
-            ],
-            version: 1
-        })
-    })
-    it('Should handle with adding-line incremental update', async () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 2'
-            ],
-            version: 0
-        }
-        const contentChanges = [
-            {
-                text: '\n# Test 1-1',
-                range: {
-                    start: { line: 1, character: 8 },
-                    end: { line: 1, character: 8 }
-                }
-            }
-        ]
-
-        await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
-
-        assert.deepStrictEqual(info, {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1-1', parser: 'string' }], tokens: [new Token({ start: 0, end: 10 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 1-1',
-                '# Test 2'
-            ],
-            version: 1
-        })
-    })
-    it('Should handle with removing-line incremental update', async () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 2'
-            ],
-            version: 0
-        }
-        const contentChanges = [
-            {
-                text: '',
-                range: {
-                    start: { line: 1, character: 0 },
-                    end: { line: 2, character: 0 }
-                }
-            }
-        ]
-
-        await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
-
-        assert.deepStrictEqual(info, {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 2'
-            ],
-            version: 1
-        })
-    })
-    it('Should handle with replacing-line incremental update', async () => {
-        const info: FunctionInfo = {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Test 1',
-                '# Test 2'
-            ],
-            version: 0
-        }
-        const contentChanges = [
-            {
-                text: '\n# Modified 1\n# Modified 2\n# Modified 3\n',
-                range: {
-                    start: { line: 0, character: 8 },
-                    end: { line: 2, character: 0 }
-                }
-            }
-        ]
-
-        await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
-
-        assert.deepStrictEqual(info, {
-            config: VanillaConfig,
-            lineBreak: '\n',
-            lines: [
-                { args: [{ data: '# Test 0', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 1', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Modified 3', parser: 'string' }], tokens: [new Token({ start: 0, end: 12 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined },
-                { args: [{ data: '# Test 2', parser: 'string' }], tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)], hint: { fix: [], options: [] }, completions: undefined }
-            ],
-            strings: [
-                '# Test 0',
-                '# Modified 1',
-                '# Modified 2',
-                '# Modified 3',
-                '# Test 2'
-            ],
-            version: 1
-        })
+        assert(info.document.getText() === '# Modified')
+        assert(info.document.version === version)
+        assert.deepStrictEqual(info.nodes, [{
+            [NodeRange]: { start: 0, end: 10 },
+            args: [{ data: '# Modified', parser: 'string' }],
+            tokens: [new Token({ start: 0, end: 10 }, TokenType.comment)],
+            hint: { fix: [], options: [] },
+            completions: undefined
+        }])
     })
 })
