@@ -1,5 +1,5 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
-import { getCacheFromChar, getSafeCategory } from '../../types/ClientCache'
+import { getCacheFromOffset, getSafeCategory } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { onSelectionRanges } from './onSelectionRanges'
 
@@ -7,14 +7,13 @@ export function onDocumentHighlight({ position, info }: { position: Position, in
     const { line: lineNumber, character: char } = position
     const line = info.nodes[lineNumber]
     /* istanbul ignore next */
-    const result = getCacheFromChar(line.cache || {}, char)
+    const result = getCacheFromOffset(line.cache || {}, char)
     if (result) {
         // Highlight all the references/definitions of the selected stuff.
         const ans: DocumentHighlight[] = []
 
-        for (let i = 0; i < info.nodes.length; i++) {
-            const line = info.nodes[i]
-            const unit = getSafeCategory(line.cache, result.type)[result.id]
+        for (const node of info.nodes) {
+            const unit = getSafeCategory(node.cache, result.type)[result.id]
             /* istanbul ignore else */
             if (unit) {
                 const ref = [...unit.def, ...unit.ref]
@@ -22,8 +21,8 @@ export function onDocumentHighlight({ position, info }: { position: Position, in
                 if (ref.length > 0) {
                     ans.push(...ref.map(v => ({
                         range: {
-                            start: { line: i, character: v.start },
-                            end: { line: i, character: v.end }
+                            start: info.content.positionAt(v.start),
+                            end: info.content.positionAt(v.end)
                         }
                     })))
                 }

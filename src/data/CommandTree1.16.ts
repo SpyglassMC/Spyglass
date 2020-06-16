@@ -2122,28 +2122,6 @@ export const CommandTree: ICommandTree = {
             parser: new CodeSnippetArgumentParser(),
             permission: 0,
             executable: true
-        },
-        unknown: {
-            parser: new StringArgumentParser(StringType.Unquoted),
-            permission: 0,
-            run: ({ args, errors }) => {
-                errors.push(
-                    new ParsingError(
-                        { start: 0, end: Infinity },
-                        locale('unknown-command',
-                            locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
-                        ),
-                        false
-                    )
-                )
-            },
-            children: {
-                arguments: {
-                    parser: new StringArgumentParser(StringType.Greedy),
-                    executable: true
-                }
-            },
-            executable: true
         }
     },
     comments: {
@@ -2236,28 +2214,6 @@ export const CommandTree: ICommandTree = {
                     }
                 }
             }
-        },
-        unknown: {
-            parser: new StringArgumentParser(StringType.Unquoted),
-            permission: 0,
-            run: ({ args, errors }) => {
-                errors.push(
-                    new ParsingError(
-                        { start: 0, end: Infinity },
-                        locale('unknown-command',
-                            locale('punc.quote', toFormattedString(getArgOrDefault(args, 1, ''), VanillaConfig.lint))
-                        ),
-                        false
-                    )
-                )
-            },
-            children: {
-                arguments: {
-                    parser: new StringArgumentParser(StringType.Greedy),
-                    executable: true
-                }
-            },
-            executable: true
         }
     },
     templates: {

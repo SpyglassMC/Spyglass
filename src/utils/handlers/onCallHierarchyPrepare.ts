@@ -1,14 +1,13 @@
 import { Proposed, SymbolKind } from 'vscode-languageserver'
-import { getCacheFromChar } from '../../types/ClientCache'
+import { getCacheFromOffset } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings, DocNode } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { getUriFromId } from '.'
 
-export async function onCallHierarchyPrepare({ info, lineNumber, offset, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, lineNumber: number, offset: number, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
-    const line = info.nodes[lineNumber]
+export async function onCallHierarchyPrepare({ info, offset, node, pathExists, urisOfIds, roots, uris }: { info: FunctionInfo, offset: number, node: DocNode, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
     /* istanbul ignore next */
-    const result = getCacheFromChar(line.cache || {}, offset)
+    const result = getCacheFromOffset(node.cache || {}, offset)
     /* istanbul ignore next */
     if (result && (result.type === 'advancements' || result.type === 'functions' || result.type === 'tags/functions')) {
         const uri = await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(result.id), result.type)
@@ -16,10 +15,12 @@ export async function onCallHierarchyPrepare({ info, lineNumber, offset, pathExi
         if (!uri) {
             return null
         }
+        const startPos = info.content.positionAt(result.start)
+        const endPos = info.content.positionAt(result.end)
         return [
             getCallHierarchyItem(
                 (result.type === 'tags/functions' ? IdentityNode.TagSymbol : '') + result.id,
-                uri.toString(), lineNumber, lineNumber, result.start, result.end,
+                uri.toString(), startPos.line, endPos.line, startPos.character, endPos.character,
                 result.type === 'advancements' ? IdentityKind.Advancement :
                     result.type === 'functions' ? IdentityKind.Function :
                         IdentityKind.FunctionTag

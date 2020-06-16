@@ -1,5 +1,5 @@
 import path from 'path'
-import { Proposed, Range } from 'vscode-languageserver'
+import { Proposed, Range, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaData } from '../../data/VanillaData'
 import { LineParser } from '../../parsers/LineParser'
@@ -7,7 +7,7 @@ import { CacheFile, CacheKey } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings, DocNode } from '../../types/handlers'
 import { LineNode } from '../../types/LineNode'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { constructContext } from '../../types/ParsingContext'
@@ -70,15 +70,41 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseString(string: string, start: number, end: number, lines: LineNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+    const lines = getStringLines(
+        content.getText(Range.create(content.positionAt(start), content.positionAt(end)))
+    )
+    for (let i = 0; i < lines.length; i++) {
+        await parseString(
+            content,
+            content.offsetAt(Position.create(i, 0)),
+            content.offsetAt(Position.create(i, Infinity)),
+            nodes, config, cacheFile, cursor, commandTree, vanillaData
+        )
+    }
+}
+
+export async function parseString(content: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const parser = new LineParser(false, 'line')
+    const string = content.getText()
+    while (StringReader.isWhiteSpace(string.charAt(end - 1)) && end > start) {
+        end--
+    }
     const reader = new StringReader(string, start, end)
     reader.skipWhiteSpace()
-    const { data } = parser.parse(reader, constructContext({
-        cache: cacheFile.cache,
-        config, cursor
-    }, commandTree, vanillaData))
-    lines.push(data)
+    if (reader.remainingString.length === 0) {
+        // This empty node will be used to select in methods like `onCompletion`.
+        nodes.push({
+            [NodeRange]: { start: reader.cursor, end: reader.cursor },
+            args: [], hint: { fix: [], options: [] }, tokens: []
+        })
+    } else {
+        const { data } = parser.parse(reader, constructContext({
+            cache: cacheFile.cache,
+            content, config, cursor
+        }, commandTree, vanillaData))
+        nodes.push(data)
+    }
 }
 
 export function getRel(uri: Uri, roots: Uri[]) {
@@ -139,8 +165,8 @@ export function getLspRange(content: TextDocument, { start, end }: TextRange) {
     return Range.create(content.positionAt(start), content.positionAt(end))
 }
 
-export function getStringLines(content: TextDocument) {
-    return content.getText().split(/(\r\n|\r|\n)/)
+export function getStringLines(string: string) {
+    return string.split(/(\r\n|\r|\n)/)
 }
 
 export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null } {
@@ -150,10 +176,10 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
         const middle = Math.floor(left + (right - left) / 2)
         const node = nodes[middle]
         const range = node[NodeRange]
-        if (range.start <= offset && offset < range.end) {
+        if (range.start <= offset && offset <= range.end) {
             // [ | )
-            return { index: middle, node }
-        } else if (range.end <= offset) {
+            return { node, index: middle }
+        } else if (range.end < offset) {
             // [   ) |
             left = middle + 1
         } else if (offset < range.start) {
@@ -161,11 +187,7 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
             right = middle - 1
         }
     }
-    if (nodes.length !== 0) {
-        return { index: nodes.length - 1, node: nodes[nodes.length - 1] }
-    } else {
-        return { index: -1, node: null }
-    }
+    return { node: null, index: -1 }
 }
 
 export * from './onCallHierarchyIncomingCalls'

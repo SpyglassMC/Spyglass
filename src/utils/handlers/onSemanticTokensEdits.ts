@@ -7,9 +7,9 @@ export function onSemanticTokensEdits({ info, previousResultId }: { info: Functi
 
     info.builder.previousResult(previousResultId)
 
-    for (const {tokens} of info.nodes) {
+    for (const { tokens } of info.nodes) {
         for (const token of tokens) {
-            info.builder.push(...token.toArray(offset => info.content.positionAt(offset)))
+            info.builder.push(...token.toArray(info.content))
         }
     }
 

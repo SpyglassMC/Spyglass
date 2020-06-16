@@ -5,25 +5,25 @@ import { ParsingError } from '../types/ParsingError'
 export class StringReader {
     constructor(
         public string: string,
-        public offset: number = 0,
+        public cursor: number = 0,
         public end: number = string.length
     ) { }
 
     get passedString() {
-        return this.string.slice(0, this.offset)
+        return this.string.slice(0, this.cursor)
     }
 
     get remainingString() {
-        return this.string.slice(this.offset, this.end)
+        return this.string.slice(this.cursor, this.end)
     }
 
     clone() {
-        const ans = new StringReader(this.string, this.offset, this.end)
+        const ans = new StringReader(this.string, this.cursor, this.end)
         return ans
     }
 
     canRead(length = 1) {
-        return this.offset + length <= this.end
+        return this.cursor + length <= this.end
     }
 
     /**
@@ -31,7 +31,7 @@ export class StringReader {
      * @param offset The index to offset from cursor. @default 0
      */
     peek(offset = 0) {
-        return this.string.charAt(this.offset + offset)
+        return this.string.charAt(this.cursor + offset)
     }
 
     /**
@@ -39,12 +39,12 @@ export class StringReader {
      * @param step The step to skip. @default 1
      */
     skip(step = 1) {
-        this.offset += step
+        this.cursor += step
         return this
     }
 
     read() {
-        return this.string.charAt(this.offset++)
+        return this.string.charAt(this.cursor++)
     }
 
     skipWhiteSpace() {
@@ -58,7 +58,7 @@ export class StringReader {
      * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
      */
     readNumber() {
-        const start = this.offset
+        const start = this.cursor
         let str = ''
         while (this.canRead() && StringReader.canInNumber(this.peek())) {
             if (this.peek() === '.' && this.peek(1) === '.') {
@@ -69,8 +69,8 @@ export class StringReader {
         if (str) {
             const num = Number(str)
             if (isNaN(num)) {
-                const end = this.offset
-                this.offset = start
+                const end = this.cursor
+                this.cursor = start
                 throw new ParsingError({ start, end }, locale('expected-got',
                     locale('number'),
                     locale('punc.quote', str)
@@ -78,7 +78,7 @@ export class StringReader {
             }
             return str
         } else {
-            const end = this.offset + 1
+            const end = this.cursor + 1
             const value = this.peek()
             if (value) {
                 throw new ParsingError({ start, end }, locale('expected-got',
@@ -98,21 +98,21 @@ export class StringReader {
      * @throws {ParsingError} When the value is float or exceeds the range.
      */
     readInt() {
-        const start = this.offset
+        const start = this.cursor
         const str = this.readNumber()
         const num = parseInt(str)
         if (str.includes('.')) {
             // num is float.
-            const end = this.offset
-            this.offset = start
+            const end = this.cursor
+            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('integer'),
                 str)
             )
         }
         if (num < -2147483648 || num > 2147483647) {
-            const end = this.offset
-            this.offset = start
+            const end = this.cursor
+            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('integer.between', -2147483648, 2147483647),
                 str
@@ -126,12 +126,12 @@ export class StringReader {
      * @throws When the value is float.
      */
     readLong() {
-        const start = this.offset
+        const start = this.cursor
         const str = this.readNumber()
         if (str.includes('.')) {
             // num is float
-            const end = this.offset
-            this.offset = start
+            const end = this.cursor
+            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('long'),
                 str
@@ -158,7 +158,7 @@ export class StringReader {
      */
     readUnquotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
         let ans = ''
-        out.mapping.start = this.offset
+        out.mapping.start = this.cursor
         while (this.canRead() && StringReader.canInUnquotedString(this.peek())) {
             ans += this.read()
         }
@@ -180,8 +180,8 @@ export class StringReader {
             this.skip()
             ans += this.readUntilQuote(quote, out)
         } else {
-            const start = this.offset
-            const end = this.offset + 1
+            const start = this.cursor
+            const end = this.cursor + 1
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('quote'),
                 locale('punc.quote', quote)
@@ -197,7 +197,7 @@ export class StringReader {
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
-        const start = this.offset
+        const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
         let escaped = false
@@ -211,8 +211,8 @@ export class StringReader {
                     ans += c
                     escaped = false
                 } else {
-                    const errStart = this.offset - 1
-                    this.offset = start
+                    const errStart = this.cursor - 1
+                    this.cursor = start
                     throw new ParsingError(
                         { start: errStart, end: errStart + 1 },
                         locale('unexpected-escape', locale('punc.quote', c))
@@ -228,8 +228,8 @@ export class StringReader {
                 }
             }
         }
-        const errStart = this.offset
-        this.offset = start
+        const errStart = this.cursor
+        this.cursor = start
         throw new ParsingError(
             { start: errStart, end: errStart + 1 },
             locale('expected-got',
@@ -278,15 +278,15 @@ export class StringReader {
      * @throws {ParsingError}
      */
     readBoolean() {
-        const start = this.offset
+        const start = this.cursor
         const string = this.readString()
         if (string === 'true') {
             return true
         } else if (string === 'false') {
             return false
         } else {
-            const end = this.offset
-            this.offset = start
+            const end = this.cursor
+            this.cursor = start
             const toleratable = 'true'.startsWith(string.toLowerCase()) || 'false'.startsWith(string.toLowerCase())
             throw new ParsingError(
                 { start, end },
@@ -303,8 +303,8 @@ export class StringReader {
      * @throws {ParsingError} (tolerable) When the next char can't match the expected one.
      */
     expect(c: string) {
-        const start = this.offset
-        const end = this.offset + 1
+        const start = this.cursor
+        const end = this.cursor + 1
         if (!this.canRead()) {
             throw new ParsingError(
                 { start, end },
@@ -327,7 +327,7 @@ export class StringReader {
 
     readRemaining() {
         const ans = this.remainingString
-        this.offset = this.end
+        this.cursor = this.end
         return ans
     }
 

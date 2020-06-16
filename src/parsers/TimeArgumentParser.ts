@@ -29,26 +29,26 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
             completions: []
         }
 
-        const start = reader.offset
+        const start = reader.cursor
 
         const numberResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
         combineArgumentParserResult(ans, numberResult)
         ans.data.value = numberResult.data.valueOf()
         ans.data.raw = numberResult.data.toString()
 
-        if (ctx.cursor === reader.offset) {
+        if (ctx.cursor === reader.cursor) {
             ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
         }
 
         if (StringReader.canInUnquotedString(reader.peek())) {
-            const start = reader.offset
+            const start = reader.cursor
             const unit = reader.read()
             ans.tokens.push(Token.from(start, reader, TokenType.keyword))
             if (unit === 'd' || unit === 's' || unit === 't') {
                 ans.data.unit = unit
             } else {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.offset },
+                    { start, end: reader.cursor },
                     locale('expected-got',
                         locale('time-unit'),
                         locale('punc.quote', unit)
@@ -57,7 +57,7 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
             }
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

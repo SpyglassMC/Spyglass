@@ -36,7 +36,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
             if (rewardUri) {
                 ans.push({
                     to: getCallHierarchyItem(
-                        rewardIdString, rewardUri.toString(), 0, 0, 0,
+                        rewardIdString, rewardUri.toString(), 0, 0, 0, 0,
                         IdentityKind.Function
                     ),
                     fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
@@ -61,7 +61,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
                                     ans.push({
                                         to: getCallHierarchyItem(
                                             (type === 'tags/functions' ? IdentityNode.TagSymbol : '') + outgoingId.toString(),
-                                            outgoingUri.toString(), 0, 0, 0,
+                                            outgoingUri.toString(), 0, 0, 0, 0,
                                             type === 'tags/functions' ? IdentityKind.FunctionTag : IdentityKind.Function
                                         ),
                                         fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
@@ -90,7 +90,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
                 if (valueUri) {
                     ans.push({
                         to: getCallHierarchyItem(
-                            valueIdString, valueUri.toString(), 0, 0, 0,
+                            valueIdString, valueUri.toString(), 0, 0, 0, 0,
                             valueId.isTag ? IdentityKind.FunctionTag : IdentityKind.Function
                         ),
                         fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]

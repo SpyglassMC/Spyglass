@@ -17,7 +17,7 @@ import { IdentityNode } from './nodes/IdentityNode'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { getInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
+import { getInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId, getSelectedNode } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -41,6 +41,7 @@ import { onSelectionRanges } from './utils/handlers/onSelectionRanges'
 import { onSemanticTokens } from './utils/handlers/onSemanticTokens'
 import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
 import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
+import { NodeRange } from './nodes/ArgumentNode'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -334,10 +335,13 @@ connection.onInitialized(() => {
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
         if (info && info.config.features.completions) {
-            const commandTree = await getCommandTree(info.config.env.cmdVersion)
-            const vanillaData = await getVanillaData(info.config.env.dataVersion, info.config.env.dataSource, versionInformation, globalStoragePath)
             const offset = info.content.offsetAt(position)
-            return onCompletion({ cacheFile, offset, info, commandTree, vanillaData })
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                const commandTree = await getCommandTree(info.config.env.cmdVersion)
+                const vanillaData = await getVanillaData(info.config.env.dataVersion, info.config.env.dataSource, versionInformation, globalStoragePath)
+                return onCompletion({ cacheFile, offset, info, node, commandTree, vanillaData })
+            }
         }
         return null
     })
@@ -348,11 +352,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info || !info.config.features.signatures) {
-            return null
+        if (info && info.config.features.signatures) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onSignatureHelp({ cacheFile, offset, info, node, commandTree, vanillaData })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onSignatureHelp({ cacheFile, offset, info, commandTree, vanillaData })
+        return null
     })
 
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
@@ -373,11 +380,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info || !info.config.features.hover) {
-            return null
+        if (info && info.config.features.hover) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onHover({ info, offset, node, cacheFile })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onHover({ info, offset, cacheFile })
+        return null
     })
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
@@ -399,11 +409,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info) {
-            return null
+        if (info) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onDefOrRef({ uri, info, cacheFile, offset, type: 'def' })
+        return null
     })
     connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
@@ -411,11 +424,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info) {
-            return null
+        if (info) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onDefOrRef({ uri, info, cacheFile, offset, type: 'ref' })
+        return null
     })
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
@@ -424,11 +440,10 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info || !info.config.features.documentHighlighting) {
-            return null
+        if (info && info.config.features.documentHighlighting) {
+            return onDocumentHighlight({ position, info })
         }
-
-        return onDocumentHighlight({ position, info })
+        return null
     })
 
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
@@ -437,11 +452,10 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info || !info.config.features.selectionRanges) {
-            return null
+        if (info && info.config.features.selectionRanges) {
+            return onSelectionRanges({ positions, info })
         }
-
-        return onSelectionRanges({ positions, info })
+        return null
     })
 
     connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
@@ -450,10 +464,10 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info || !info.config.features.codeActions) {
-            return null
+        if (info && info.config.features.codeActions) {
+            return onCodeAction({ uri, info, diagnostics, range, cacheFile })
         }
-        return onCodeAction({ uri, info, diagnostics, range, cacheFile })
+        return null
     })
 
     connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
@@ -462,11 +476,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info) {
-            return null
+        if (info) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onCallHierarchyPrepare({ info, offset, node, uris, roots, urisOfIds, pathExists: fs.pathExists })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onCallHierarchyPrepare({ info, offset, uris, roots, urisOfIds, pathExists: fs.pathExists })
+        return null
     })
 
     connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
@@ -483,11 +500,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info) {
-            return null
+        if (info) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onPrepareRename({ info, node, offset })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onPrepareRename({ info, offset })
+        return null
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
         const uri = getUri(uriString, uris)
@@ -495,11 +515,14 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
-        if (!info) {
-            return null
+        if (info) {
+            const offset = info.content.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+            }
         }
-        const offset = info.content.offsetAt(position)
-        return onRenameRequest({ infos, cacheFile, info, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+        return null
     })
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
@@ -665,8 +688,8 @@ const cacheFileOperations = {
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
-            for (const line of info.nodes) {
-                combineCache(cacheOfLines, line.cache, { uri, startLine: i, endLine: i })
+            for (const node of info.nodes) {
+                combineCache(cacheOfLines, node.cache, { uri, startLine: i, endLine: i, skippedChar: node[NodeRange].start })
                 i++
             }
             combineCache(cacheFile.cache, cacheOfLines)

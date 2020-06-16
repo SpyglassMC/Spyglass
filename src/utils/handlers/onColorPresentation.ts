@@ -1,10 +1,13 @@
 import { ColorPresentation, Range } from 'vscode-languageserver'
 import { FunctionInfo } from '../../types/FunctionInfo'
 
-export function onColorPresentation({ info, lineNumber, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, lineNumber: number, r: number, g: number, b: number, a: number }) {
+export function onColorPresentation({ info, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, r: number, g: number, b: number, a: number }) {
     try {
         const ans: ColorPresentation[] = []
-        const range = Range.create(lineNumber, start, lineNumber, end)
+        const range = Range.create(
+            info.content.positionAt(start),
+            info.content.positionAt(end)
+        )
         const string = info.content.getText(range)
         if (string.startsWith('dust')) {
             ans.push({ label: `dust ${r} ${g} ${b}` })

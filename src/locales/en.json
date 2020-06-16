@@ -113,6 +113,7 @@
     "nbtdoc.type.String": "string",
     "no-permission": "Permission level %0% is required, which is higher than %1% defined in config",
     "nothing": "nothing",
+    "not-matching-any-child": "Failed to match any children in the command syntax tree",
     "number": "a number",
     "number-range": "a number range",
     "number-range.min>max": "The minimum value %0% is larger than the maximum value %1%",

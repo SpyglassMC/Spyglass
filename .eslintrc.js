@@ -13,7 +13,6 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/interface-name-prefix": "error",
         "@typescript-eslint/member-delimiter-style": [
             "error",
             {

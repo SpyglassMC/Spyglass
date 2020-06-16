@@ -154,7 +154,7 @@ export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) 
  * @param base Base cache.
  * @param override Overriding cache.
  */
-export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, startLine: number, startChar: number, endLine: number, endChar: number }) {
+export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, startLine: number, endLine: number, skippedChar: number }) {
     const ans: ClientCache = base
     function initUnit(type: CacheKey, id: string) {
         ans[type] = getSafeCategory(ans, type)
@@ -167,9 +167,9 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         if (addition) {
             pos.uri = addition.uri.toString()
             pos.startLine = addition.startLine
-            pos.startChar = addition.startChar
+            pos.startChar = pos.start - addition.skippedChar
             pos.endLine = addition.endLine
-            pos.endChar = addition.endChar
+            pos.endChar = pos.end - addition.skippedChar
         }
         poses.push(pos)
     }

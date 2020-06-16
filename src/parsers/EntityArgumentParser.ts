@@ -47,7 +47,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             cache: {},
             completions: []
         }
-        const start = reader.offset
+        const start = reader.cursor
 
         // Completions
         if (ctx.cursor === start) {
@@ -109,7 +109,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             }
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }
@@ -122,7 +122,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             cache: {},
             completions: []
         }
-        const start = reader.offset
+        const start = reader.cursor
         let isMultiple = false
         let containsNonPlayer = false
 
@@ -178,7 +178,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             }
             const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentsNode>, parser: ArgumentParser<any>, key: string) => {
                 const keyNeg = `${key}Neg`
-                if (ctx.cursor === reader.offset) {
+                if (ctx.cursor === reader.cursor) {
                     ans.completions.push({ label: '!' })
                 }
                 const isNegative = reader.peek() === '!'
@@ -218,7 +218,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             new MapParser<SelectorArgumentsNode>(
                 EntitySelectorNodeChars,
                 (ans, reader, ctx) => {
-                    const start = reader.offset
+                    const start = reader.cursor
                     const result = ctx.parsers
                         .get('String', [
                             StringType.String,
@@ -236,7 +236,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 },
                 (ans, reader, ctx, key) => {
                     if (key === 'sort') {
-                        const start = reader.offset
+                        const start = reader.cursor
                         const result = ctx.parsers.get('Literal', ['arbitrary', 'furthest', 'nearest', 'random']).parse(reader, ctx)
                         if (result.data) {
                             ans.data.sort = result.data as SelectorSortMethod
@@ -311,7 +311,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                     new MapParser<SelectorCriteriaNode>(
                                         SelectorArgumentNodeChars,
                                         (ans, reader, ctx) => {
-                                            const start = reader.offset
+                                            const start = reader.cursor
                                             const result: ArgumentParserResult<StringNode> = ctx.parsers
                                                 .get('String', [StringType.String, null, 'selectorKeyQuote', 'selectorKeyQuoteType'])
                                                 .parse(reader, ctx)
@@ -324,7 +324,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                             return { ...result, data: crit }
                                         },
                                         (ans, reader, ctx, crit) => {
-                                            const start = reader.offset
+                                            const start = reader.cursor
                                             const boolResult: ArgumentParserResult<string> = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
                                             const bool = boolResult.data.toLowerCase() === 'true'
                                             boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
@@ -335,7 +335,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                     ans.data[adv] = criteriaAns.data
                                     combineArgumentParserResult(ans, criteriaAns)
                                 } else {
-                                    const start = reader.offset
+                                    const start = reader.cursor
                                     const boolResult: ArgumentParserResult<string> = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
                                     const bool = boolResult.data.toLowerCase() === 'true'
                                     boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
@@ -388,19 +388,19 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         if (this.amount === 'single' && isMultiple) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.offset },
+                { start, end: reader.cursor },
                 locale('unexpected-multiple-selector')
             ))
         }
 
         if (this.type === 'players' && containsNonPlayer) {
             ans.errors.push(new ParsingError(
-                { start, end: reader.offset },
+                { start, end: reader.cursor },
                 locale('unexpected-non-player-selector')
             ))
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

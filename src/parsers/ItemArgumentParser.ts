@@ -29,7 +29,7 @@ export class ItemArgumentParser extends ArgumentParser<ItemNode> {
             completions: []
         }
 
-        const start = reader.offset
+        const start = reader.cursor
 
         const idResult = ctx.parsers.get('Identity', ['minecraft:item', this.allowTag]).parse(reader, ctx)
         const id = idResult.data as IdentityNode
@@ -38,7 +38,7 @@ export class ItemArgumentParser extends ArgumentParser<ItemNode> {
 
         this.parseTag(reader, ctx, ans, id)
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

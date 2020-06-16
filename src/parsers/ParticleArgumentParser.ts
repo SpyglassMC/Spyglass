@@ -22,7 +22,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
             cache: {},
             completions: []
         }
-        const start = reader.offset
+        const start = reader.cursor
 
         const typeResult = ctx.parsers.get('Identity', ['minecraft:particle_type']).parse(reader, ctx)
         const type = typeResult.data as IdentityNode
@@ -49,7 +49,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                             colors: {
                                 [key]: {
                                     def: [],
-                                    ref: [{ start, end: reader.offset }]
+                                    ref: [{ start, end: reader.cursor }]
                                 }
                             }
                         }
@@ -57,13 +57,13 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     reader
                         .expect(' ')
                         .skip()
-                    const sizeStart = reader.offset
+                    const sizeStart = reader.cursor
                     const sizeResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float']).parse(reader, ctx)
                     const sizeNode = new VectorElementNode(VectorElementType.Absolute, sizeResult.data.valueOf(), sizeResult.data.toString())
-                    sizeNode[NodeRange] = { start: sizeStart, end: reader.offset }
+                    sizeNode[NodeRange] = { start: sizeStart, end: reader.cursor }
                     combineArgumentParserResult(ans, colorResult)
                     color.push(sizeNode)
-                    color[NodeRange].end = reader.offset
+                    color[NodeRange].end = reader.cursor
                     ans.data.param = color
                     break
                 case 'minecraft:block':
@@ -92,7 +92,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
             ans.errors.push(p)
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

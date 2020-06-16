@@ -3,13 +3,14 @@ import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
-import { combineSaturatedLine, LineNode, SaturatedLine, saturatedLineToLine } from '../types/LineNode'
+import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { NodeRange } from '../nodes'
 
 export class LineParser implements Parser<LineNode> {
     /* istanbul ignore next */
@@ -27,7 +28,7 @@ export class LineParser implements Parser<LineNode> {
         private readonly entryPoint: 'line' | 'commands' = 'line'
     ) { }
 
-    private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLine, ctx: ParsingContext) => ArgumentParser<any>), parsedLine: SaturatedLine, ctx: ParsingContext) {
+    private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLineNode, ctx: ParsingContext) => ArgumentParser<any>), parsedLine: SaturatedLineNode, ctx: ParsingContext) {
         let ans: ArgumentParser<any>
         if (parserInNode instanceof Function) {
             ans = parserInNode(parsedLine, ctx)
@@ -38,16 +39,16 @@ export class LineParser implements Parser<LineNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ParserResult {
-        const line: SaturatedLine = { args: [], tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
-        reader.skipWhiteSpace()
+        const node: SaturatedLineNode = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+        const start = reader.cursor
         const backupReader = reader.clone()
         //#region Check leading slash.
         if (reader.peek() === '/') {
             // Find a leading slash...
             if (this.leadingSlash === false) {
                 // ...which is unexpected
-                line.errors.push(new ParsingError(
-                    { start: reader.offset, end: reader.offset + 1 },
+                node.errors.push(new ParsingError(
+                    { start: reader.cursor, end: reader.cursor + 1 },
                     locale('unexpected-leading-slash'),
                     false
                 ))
@@ -57,43 +58,46 @@ export class LineParser implements Parser<LineNode> {
             // Don't find a leading slash...
             if (this.leadingSlash === true) {
                 // ...which is unexpected
-                line.errors.push(new ParsingError(
-                    { start: reader.offset, end: reader.offset + 1 },
+                node.errors.push(new ParsingError(
+                    { start: reader.cursor, end: reader.cursor + 1 },
                     locale('expected-got',
                         locale('leading-slash'),
                         locale('punc.quote', reader.peek())
                     ),
                     false
                 ))
-                if (ctx.cursor === reader.offset) {
-                    line.completions.push({ label: '/' })
+                if (ctx.cursor === reader.cursor) {
+                    node.completions.push({ label: '/' })
                 }
             }
         }
         //#endregion
 
-        if (line.errors.length === 0) {
-            this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], line, false, true)
-        }
-        saturatedLineToLine(line)
+        // if (node.errors.length === 0) {
+        this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
+        // }
+        saturatedLineToLine(node)
 
         // Handle comments.
         /* istanbul ignore next */
-        if (backupReader.peek() === '#' && line.errors && line.errors.length > 0) {
+        if (backupReader.peek() === '#' && node.errors && node.errors.length > 0) {
             return {
                 data: {
+                    [NodeRange]: { start, end: backupReader.end },
                     args: [{ data: backupReader.readRemaining(), parser: 'string' }],
                     tokens: [Token.from(0, backupReader, TokenType.comment)],
                     hint: { fix: [], options: [] },
-                    completions: line.completions
+                    completions: node.completions
                 }
             }
         }
 
-        return { data: line }
+        node[NodeRange] = { start, end: reader.cursor }
+
+        return { data: node }
     }
 
-    parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLine, isTheLastElement = false, optional = false) {
+    parseSingle(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLineNode, isTheSoleChild = false, optional = false) {
         if (node.redirect) {
             if (!node.redirect.includes('.')) {
                 // Redirect to children.
@@ -103,7 +107,7 @@ export class LineParser implements Parser<LineNode> {
                 // Redirect to single.
                 const seg = node.redirect.split(/\./g)
                 const redirect = ctx.commandTree[seg[0]][seg[1]]
-                this.parseSingle(reader, ctx, seg[1], redirect, parsedLine, isTheLastElement, optional)
+                this.parseSingle(reader, ctx, seg[1], redirect, parsedLine, isTheSoleChild, optional)
             }
         } else if (node.template) {
             if (!node.template.includes('.')) {
@@ -114,14 +118,14 @@ export class LineParser implements Parser<LineNode> {
                 // Use `single` as the template.
                 const seg = node.template.split('.')
                 const template = fillSingleTemplate(node, ctx.commandTree[seg[0]][seg[1]])
-                this.parseSingle(reader, ctx, seg[1], template, parsedLine, isTheLastElement, optional)
+                this.parseSingle(reader, ctx, seg[1], template, parsedLine, isTheSoleChild, optional)
             }
         } else if (node.parser) {
-            const start = reader.offset
+            const start = reader.cursor
             const parser = LineParser.getParser(node.parser, parsedLine, ctx)
             const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
             //#region Aliases.
-            if (start === reader.offset) {
+            if (start === reader.cursor) {
                 const category = ctx.cache[`aliases/${parser.identity.split('.')[0]}` as CacheKey]
                 for (const alias in category) {
                     /* istanbul ignore else */
@@ -133,11 +137,12 @@ export class LineParser implements Parser<LineNode> {
             }
             //#endregion
             combineSaturatedLine(parsedLine, {
+                [NodeRange]: { start: NaN, end: NaN },
                 args: [{ data, parser: parser.identity }],
                 hint: { fix: [], options: [] },
                 cache, completions, errors, tokens
             })
-            if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
+            if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                 parsedLine.hint.options.push([
                     parser.toHint(key, optional),
                     this.getHintsInChildren(ctx, node)
@@ -151,11 +156,11 @@ export class LineParser implements Parser<LineNode> {
             }
 
             //#region Handle trailing data or absent data.
-            if (!reader.canRead(2) && (reader.peek() === '' || reader.peek() === ' ')) {
+            if (!reader.canRead(2) && (!reader.canRead() || reader.peek() === ' ')) {
                 // The input line is all parsed.
                 if (!node.executable) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.offset, end: reader.offset + 2 }, locale('expected-got',
+                        new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, locale('expected-got',
                             locale('more-arguments'),
                             locale('nothing')
                         ))
@@ -165,12 +170,12 @@ export class LineParser implements Parser<LineNode> {
                     reader.skip()
                     // The input line is end with a space.
                     /* istanbul ignore else */
-                    if (node.children && ctx.cursor === reader.offset) {
+                    if (node.children && ctx.cursor === reader.cursor) {
                         // Compute completions.
-                        const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
+                        const shouldParseChildren = isTheSoleChild || parsedLine.errors.filter(v => !v.tolerable).length === 0
                         /* istanbul ignore else */
                         if (shouldParseChildren) {
-                            const result = { args: parsedLine.args, tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
+                            const result = { [NodeRange]: { start: NaN, end: NaN }, args: parsedLine.args, tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
                             this.parseChildren(reader, ctx, node.children, result, optional, false)
                             /* istanbul ignore else */
                             if (result.completions && result.completions.length !== 0) {
@@ -185,13 +190,13 @@ export class LineParser implements Parser<LineNode> {
                 // There are trailing data.
                 if (!node.children) {
                     parsedLine.errors.push(
-                        new ParsingError({ start: reader.offset, end: reader.string.length }, locale('expected-got',
+                        new ParsingError({ start: reader.cursor, end: reader.end }, locale('expected-got',
                             locale('nothing'),
                             locale('punc.quote', reader.remainingString)
                         ))
                     )
                 } else {
-                    const shouldParseChildren = isTheLastElement || parsedLine.errors.filter(v => !v.tolerable).length === 0
+                    const shouldParseChildren = isTheSoleChild || parsedLine.errors.filter(v => !v.tolerable).length === 0
                     if (shouldParseChildren) {
                         if (reader.peek() === ' ') {
                             reader.skip()
@@ -200,7 +205,7 @@ export class LineParser implements Parser<LineNode> {
                             parsedLine.errors = downgradeParsingError(parsedLine.errors)
                         } else {
                             parsedLine.errors.push(
-                                new ParsingError({ start: reader.offset, end: reader.string.length }, locale('space-seperating-arguments'))
+                                new ParsingError({ start: reader.cursor, end: reader.end }, locale('space-seperating-arguments'))
                             )
                         }
                     }
@@ -213,7 +218,7 @@ export class LineParser implements Parser<LineNode> {
             if (level > levelMax) {
                 parsedLine.errors.push(
                     new ParsingError(
-                        { start, end: reader.offset },
+                        { start, end: reader.cursor },
                         locale('no-permission', level, levelMax)
                     )
                 )
@@ -224,19 +229,17 @@ export class LineParser implements Parser<LineNode> {
         }
     }
 
-    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLine, optional = false, isFirstArgument = false) {
-        let i = -1
+    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLineNode, optional = false, isFirstArgument = false) {
+        const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
+        const hasSoleChild = Object.keys(children).length === 1
         for (const key in children) {
-            i += 1
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
-                const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
                 const node = children[key]
                 const newReader = reader.clone()
                 const oldErrors = [...parsedLine.errors]
                 const oldTokens = [...parsedLine.tokens]
-                const isTheLastElement = i === Object.keys(children).length - 1
-                this.parseSingle(newReader, ctx, key, node, parsedLine, isTheLastElement, optional)
+                this.parseSingle(newReader, ctx, key, node, parsedLine, hasSoleChild, optional)
                 //#region Add `firstArgument` token modifer.
                 if (isFirstArgument) {
                     const firstArgumentToken = parsedLine.tokens[oldTokens.length]
@@ -245,18 +248,23 @@ export class LineParser implements Parser<LineNode> {
                     }
                 }
                 //#endregion
-                if (!isTheLastElement && hasUntolerableErrors(parsedLine.errors)) {
+                if (!hasSoleChild && hasUntolerableErrors(parsedLine.errors)) {
                     parsedLine.args.pop()
                     parsedLine.hint.fix.pop()
                     parsedLine.errors = oldErrors
                     parsedLine.tokens = oldTokens
                     continue
                 }
-                reader.offset = newReader.offset
+                reader.cursor = newReader.cursor
                 return
             }
         }
-        throw new Error('unreachable error. Maybe there is an empty children in the command tree')
+        const start = reader.cursor
+        reader.readRemaining()
+        parsedLine.errors.push(new ParsingError(
+            { start, end: reader.cursor },
+            locale('not-matching-any-child')
+        ))
     }
 
     getHintsInChildren(ctx: ParsingContext, node: CommandTreeNode<any>) {
@@ -265,7 +273,8 @@ export class LineParser implements Parser<LineNode> {
         for (const key in children) {
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
-                const line: SaturatedLine = {
+                const line: SaturatedLineNode = {
+                    [NodeRange]: { start: NaN, end: NaN },
                     args: [],
                     tokens: [],
                     hint: { fix: [], options: [] },

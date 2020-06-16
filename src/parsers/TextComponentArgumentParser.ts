@@ -30,15 +30,16 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
 
     /* istanbul ignore next */
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TextComponentNode> {
-        const start = reader.offset
+        const start = reader.cursor
         const raw = reader.readRemaining()
-        const end = reader.offset
+        const end = reader.cursor
         const ans: ArgumentParserResult<TextComponentNode> = {
             data: new TextComponentNode(raw),
             tokens: [], errors: [], cache: {}, completions: []
         }
 
-        const text = ' '.repeat(start) + raw
+        const pos = ctx.content.positionAt(start)
+        const text = ' '.repeat(pos.character) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
         const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
 
@@ -64,7 +65,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         //#region Completions.
         TextComponentArgumentParser.Service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
             if (completions) {
-                ans.completions.push(...completions.items.map(v => remapCompletionItem(v, ctx.lineNumber)))
+                ans.completions.push(...completions.items.map(v => remapCompletionItem(v, pos.line)))
             }
         })
         //#endregion

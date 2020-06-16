@@ -9,8 +9,7 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
     try {
         const ans: DocumentLink[] = []
 
-        for (let i = 0; i < info.nodes.length; i++) {
-            const { cache } = info.nodes[i]
+        for (const { cache } of info.nodes) {
             for (const type in cache) {
                 if (isFileType(type)) {
                     const category = cache[type]
@@ -22,8 +21,8 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
                             for (const pos of ref) {
                                 const link = {
                                     range: {
-                                        start: { line: i, character: pos.start },
-                                        end: { line: i, character: pos.end }
+                                        start: info.content.positionAt(pos.start),
+                                        end: info.content.positionAt(pos.end)
                                     },
                                     target: await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(id), type)
                                 }

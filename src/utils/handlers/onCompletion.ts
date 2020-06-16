@@ -1,25 +1,28 @@
-import { InsertTextFormat, Position } from 'vscode-languageserver'
+import { InsertTextFormat } from 'vscode-languageserver'
 import { escapeString, handleCompletionText } from '..'
 import { VanillaData } from '../../data/VanillaData'
+import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
 import { CacheFile } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { FunctionInfo } from '../../types/FunctionInfo'
+import { DocNode } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onCompletion({ offset, lineNumber, info, cacheFile, commandTree, vanillaData }: { offset: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onCompletion({ offset, info, cacheFile, node, commandTree, vanillaData }: { offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
             info.content.getText(),
-            info.content.offsetAt(Position.create(lineNumber, 0)),
-            info.content.offsetAt(Position.create(lineNumber, Infinity))
+            node[NodeRange].start,
+            node[NodeRange].end
         )
         let { data: { completions } } = parser.parse(reader, constructContext({
             cursor: offset,
             cache: cacheFile.cache,
-            config: info.config
+            config: info.config,
+            content: info.content
         }, commandTree, vanillaData))
 
         // Escape for TextMate: #431

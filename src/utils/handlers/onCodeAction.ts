@@ -25,7 +25,7 @@ export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info
                                     diagnosticsMap[diag.code as ErrorCode]!.push(diag)
                                 }
                             }
-                            ans.push(...data[GetCodeActions](uri.toString(), info, i, selectedRange, diagnosticsMap))
+                            ans.push(...data[GetCodeActions](uri.toString(), info, selectedRange, diagnosticsMap))
                         }
                     }
                 }

@@ -19,9 +19,9 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions.
-        const startCursor = reader.offset
+        const startCursor = reader.cursor
         ans.data = reader.readUntilOrEnd(' ')
-        const endCursor = reader.offset
+        const endCursor = reader.cursor
         if (startCursor <= cursor && cursor <= endCursor) {
             for (const label in snippets) {
                 /* istanbul ignore next */
@@ -40,7 +40,7 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
 
         //#region Errors.
         ans.errors = [new ParsingError(
-            { start: reader.offset, end: reader.offset + 1 },
+            { start: reader.cursor, end: reader.cursor + 1 },
             locale('code-snippets-invalid-for-game'),
             false
         )]

@@ -3,8 +3,11 @@ import { CacheKey } from './ClientCache'
 import { Config } from './Config'
 import { FunctionInfo } from './FunctionInfo'
 import { IdentityNode } from '../nodes/IdentityNode'
+import { LineNode } from './LineNode'
 
 export const Uri = URI
+
+export type DocNode = LineNode
 
 export type Uri = URI
 export type InfosOfUris = Map<Uri, FunctionInfo>

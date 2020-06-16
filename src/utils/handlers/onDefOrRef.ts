@@ -1,12 +1,11 @@
 import { Location } from 'vscode-languageserver'
-import { CacheFile, getCacheFromChar, getSafeCategory } from '../../types/ClientCache'
+import { CacheFile, getCacheFromOffset, getSafeCategory } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { Uri } from '../../types/handlers'
+import { Uri, DocNode } from '../../types/handlers'
 
-export function onDefOrRef({ info, lineNumber, offset, cacheFile, type }: { info: FunctionInfo, uri: Uri, cacheFile: CacheFile, offset: number, lineNumber: number, type: 'def' | 'ref' }): Location[] | null {
-    const line = info.nodes[lineNumber]
+export function onDefOrRef({ node, offset, cacheFile, type }: { uri: Uri, cacheFile: CacheFile, offset: number, node: DocNode, type: 'def' | 'ref' }): Location[] | null {
     /* istanbul ignore next */
-    const result = getCacheFromChar(line.cache || {}, offset)
+    const result = getCacheFromOffset(node.cache || {}, offset)
 
     if (result) {
         const unit = getSafeCategory(cacheFile.cache, result.type)[result.id]

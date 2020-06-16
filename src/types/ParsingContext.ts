@@ -10,12 +10,14 @@ import { Manager } from './Manager'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
+import { TextDocument } from 'vscode-languageserver'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,
     cache: ClientCache,
     commandTree: CommandTree,
     config: Config,
+    content: TextDocument,
     cursor: number,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
@@ -28,6 +30,7 @@ interface ParsingContextLike {
     cache?: ClientCache,
     commandTree?: CommandTree,
     config?: Config,
+    content?: TextDocument,
     cursor?: number,
     namespaceSummary?: NamespaceSummary,
     nbtdoc?: nbtdoc.Root,
@@ -52,6 +55,7 @@ export function constructContext(
     const ans = {
         cache: {},
         config: VanillaConfig,
+        content: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         cursor: -1,
         parsers: new ArgumentParserManager(),
         ...custom

@@ -45,7 +45,7 @@ export class Token {
      */
     /* istanbul ignore next */
     static from(start: number, reader: StringReader, type: TokenType, modifiers = new Set<TokenModifier>()) {
-        return new Token({ start, end: reader.offset }, type, modifiers)
+        return new Token({ start, end: reader.cursor }, type, modifiers)
     }
 
     /**

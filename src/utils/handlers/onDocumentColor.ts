@@ -5,9 +5,8 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 export function onDocumentColor({ info }: { info: FunctionInfo }) {
     const ans: ColorInformation[] = []
 
-    for (let i = 0; i < info.nodes.length; i++) {
-        const line = info.nodes[i]
-        const colors = getSafeCategory(line.cache, 'colors')
+    for (const node of info.nodes) {
+        const colors = getSafeCategory(node.cache, 'colors')
         for (const key in colors) {
             /* istanbul ignore next */
             if (colors.hasOwnProperty(key)) {
@@ -21,7 +20,10 @@ export function onDocumentColor({ info }: { info: FunctionInfo }) {
                 }
                 for (const { start, end } of unit.ref) {
                     ans.push({
-                        range: { start: { character: start, line: i }, end: { character: end, line: i } },
+                        range: { 
+                            start: info.content.positionAt(start), 
+                            end: info.content.positionAt(end) 
+                        },
                         color
                     })
                 }

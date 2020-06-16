@@ -50,7 +50,7 @@ export interface LineNode {
 /**
  * `Line` without optional properties.
  */
-export interface SaturatedLine extends LineNode {
+export interface SaturatedLineNode extends LineNode {
     cache: ClientCache,
     errors: ParsingError[],
     completions: CompletionItem[]
@@ -98,7 +98,7 @@ export function combineLine(base: LineNode, override: LineNode): LineNode {
     return base
 }
 
-export function combineSaturatedLine(base: SaturatedLine, override: LineNode): SaturatedLine {
+export function combineSaturatedLine(base: SaturatedLineNode, override: LineNode): SaturatedLineNode {
     /* istanbul ignore next */
     override.completions = override.completions || []
     /* istanbul ignore next */
@@ -119,7 +119,7 @@ export function combineSaturatedLine(base: SaturatedLine, override: LineNode): S
     return base
 }
 
-export function saturatedLineToLine(line: SaturatedLine) {
+export function saturatedLineToLine(line: SaturatedLineNode) {
     if (Object.keys(line.cache).length === 0) {
         delete line.cache
     }

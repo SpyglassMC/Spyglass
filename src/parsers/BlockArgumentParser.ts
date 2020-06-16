@@ -35,7 +35,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
             completions: []
         }
 
-        const start = reader.offset
+        const start = reader.cursor
 
         const idResult = ctx.parsers.get('Identity', ['minecraft:block', this.allowTag]).parse(reader, ctx)
         const id = idResult.data as IdentityNode
@@ -45,14 +45,14 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
         this.parseStates(reader, ctx, ans, id)
         this.parseTag(reader, ctx, ans, id)
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }
 
     private parseStates(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '[') {
-            const start = reader.offset
+            const start = reader.cursor
             const definition = id.isTag ? undefined : ctx.blockDefinition[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
@@ -67,7 +67,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                     const existingKeys = Object.keys(ans.data)
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
 
-                    const start = reader.offset
+                    const start = reader.cursor
                     const result = ctx.parsers.get('Literal', keys).parse(reader, ctx)
                     result.tokens = [Token.from(start, reader, TokenType.property)]
 
@@ -84,7 +84,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                         ))
                     }
 
-                    const start = reader.offset
+                    const start = reader.cursor
                     const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
                     result.tokens = [Token.from(start, reader, TokenType.string)]
 
@@ -97,11 +97,11 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
             ).parse(statesResult, reader, ctx)
             combineArgumentParserResult(ans, statesResult)
             ans.data.states = statesResult.data
-            ans.data.states[NodeRange] = { start, end: reader.offset }
+            ans.data.states[NodeRange] = { start, end: reader.cursor }
 
             if (ctx.config.lint.blockStateSortKeys && !ans.data.states[IsMapSorted]()) {
                 ans.errors.push(new ParsingError(
-                    { start, end: reader.offset },
+                    { start, end: reader.cursor },
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
                         locale('punc.quote', 'datapack.lint.blockStateSortKeys')

@@ -16,7 +16,7 @@ export class DefinitionIDArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader): ArgumentParserResult<string> {
-        const start = reader.offset
+        const start = reader.cursor
         let id = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = {
             data: id,

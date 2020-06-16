@@ -30,7 +30,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
             cache: {}
         }
         const isDoublePeriods = () => reader.peek() === '.' && reader.peek(1) === '.'
-        const start = reader.offset
+        const start = reader.cursor
 
         if (ctx.cursor === start && this.type === 'integer') {
             ans.completions.push({ label: '-2147483648..2147483647' })
@@ -38,7 +38,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
 
         if (!reader.canRead()) {
             ans.errors.push(new ParsingError(
-                { start: reader.offset, end: reader.offset + 1 },
+                { start: reader.cursor, end: reader.cursor + 1 },
                 locale('expected-got',
                     locale('number-range'),
                     locale('nothing')
@@ -54,7 +54,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
                 combineArgumentParserResult(ans, result)
             }
             if (isDoublePeriods()) {
-                ans.tokens.push(new Token({ start: reader.offset, end: reader.offset + 2 }, TokenType.keyword))
+                ans.tokens.push(new Token({ start: reader.cursor, end: reader.cursor + 2 }, TokenType.keyword))
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
                     const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
@@ -67,17 +67,17 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
             // Check values.
             if (!this.isCycle && min !== undefined && max !== undefined && min > max) {
                 ans.errors.push(
-                    new ParsingError({ start, end: reader.offset }, locale('number-range.min>max', min, max))
+                    new ParsingError({ start, end: reader.cursor }, locale('number-range.min>max', min, max))
                 )
             } else if (min === undefined && max === undefined) {
                 ans.errors.push(
-                    new ParsingError({ start, end: reader.offset }, locale('number-range.missing-min-and-max'))
+                    new ParsingError({ start, end: reader.cursor }, locale('number-range.missing-min-and-max'))
                 )
             }
             ans.data = new NumberRangeNode(this.type, min, max)
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

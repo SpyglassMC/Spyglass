@@ -22,12 +22,12 @@ export class TagArgumentParser extends ArgumentParser<string> {
         }
         const category = getSafeCategory(ctx.cache, 'tags')
         //#region Data
-        const start = reader.offset
+        const start = reader.cursor
         const value = reader.readUnquotedString()
         ans.data = value
         //#endregion
         //#region Completions
-        if (start <= ctx.cursor && ctx.cursor <= reader.offset) {
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
             ans.completions.push(...getCompletions(ctx.cache, 'tags'))
         }
         //#endregion

@@ -6,21 +6,24 @@ import { CommandTree } from '../../types/CommandTree'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
+import { DocNode } from '../../types'
+import { NodeRange } from '../../nodes'
 
-export async function onSignatureHelp({ offset, lineNumber, info, cacheFile, commandTree, vanillaData }: { offset: number, lineNumber: number, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData }: { offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
             info.content.getText(),
-            info.content.offsetAt(Position.create(lineNumber, 0)),
-            info.content.offsetAt(Position.create(lineNumber, Infinity))
+            node[NodeRange].start,
+            node[NodeRange].end
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cursor,
+            cursor: offset,
             cache: cacheFile.cache,
-            config: info.config
+            config: info.config,
+            content: info.content
         }, commandTree, vanillaData))
 
         const fixLabel = fix.join(' ')

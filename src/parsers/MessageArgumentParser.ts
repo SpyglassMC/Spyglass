@@ -18,7 +18,7 @@ export class MessageArgumentParser extends ArgumentParser<MessageNode> {
             cache: {},
             completions: []
         }
-        const start = reader.offset
+        const start = reader.cursor
 
         while (reader.canRead()) {
             if (reader.peek() === '@' &&
@@ -28,7 +28,7 @@ export class MessageArgumentParser extends ArgumentParser<MessageNode> {
                 ans.data.push(entityResult.data)
                 combineArgumentParserResult(ans, entityResult)
             } else {
-                const start = reader.offset
+                const start = reader.cursor
                 if (typeof ans.data[ans.data.length - 1] === 'string') {
                     ans.data[ans.data.length - 1] += reader.read()
                 } else {
@@ -36,14 +36,14 @@ export class MessageArgumentParser extends ArgumentParser<MessageNode> {
                 }
                 const lastToken = ans.tokens[ans.tokens.length - 1]
                 if (lastToken && lastToken.type === TokenType.string) {
-                    lastToken.range.end = reader.offset
+                    lastToken.range.end = reader.cursor
                 } else {
                     ans.tokens.push(Token.from(start, reader, TokenType.string))
                 }
             }
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
+        ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }

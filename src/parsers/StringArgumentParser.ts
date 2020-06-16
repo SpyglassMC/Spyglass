@@ -31,7 +31,7 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
             cache: {},
             completions: []
         }
-        const start = reader.offset
+        const start = reader.cursor
 
         //#region Data.
         try {
@@ -52,8 +52,8 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
             ans.errors = [e]
         }
 
-        ans.data[NodeRange] = { start, end: reader.offset }
-        ans.data.raw = reader.string.slice(start, reader.offset)
+        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data.raw = reader.string.slice(start, reader.cursor)
         //#endregion
 
         //#region Errors.
@@ -68,7 +68,7 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
         if (this.options && !this.options.includes(ans.data.value)) {
             ans.errors.push(
                 new ParsingError(
-                    { start, end: reader.offset },
+                    { start, end: reader.cursor },
                     locale('expected-got',
                         arrayToMessage(this.options, true, 'or'),
                         locale('punc.quote', ans.data.value)
@@ -79,7 +79,7 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
         //#endregion
 
         //#region Completions.
-        if (this.options && start <= ctx.cursor && ctx.cursor <= reader.offset) {
+        if (this.options && start <= ctx.cursor && ctx.cursor <= reader.cursor) {
             const firstChar = reader.string.charAt(start)
             const currentType = StringReader.isQuote(firstChar) ?
                 (firstChar === '"' ? 'always double' : 'always single') :
