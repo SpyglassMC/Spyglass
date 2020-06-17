@@ -49,8 +49,8 @@ describe('ArgumentNode Tests', () => {
             assert.deepStrictEqual(actual, {
                 contents: { kind: 'markdown', value: 'This is the description for the TestArgumentNode' },
                 range: {
-                    start: { line: 10, character: 38 },
-                    end: { line: 10, character: 45 }
+                    start: { line: 0, character: 38 },
+                    end: { line: 0, character: 45 }
                 }
             })
         })

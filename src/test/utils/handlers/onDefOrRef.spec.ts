@@ -12,11 +12,11 @@ describe('onDefOrRef() Tests', () => {
                 SPGoding: {
                     def: [{
                         uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
-                        line: 789, start: 14, end: 23
+                        start: 14, end: 23, startLine: 789, startChar: 14, endLine: 789, endChar: 23
                     }],
                     ref: [{
                         uri: uri.toString(),
-                        line: 0, start: 4, end: 13
+                        start: 4, end: 13, startLine: 0, startChar: 4, endLine: 0, endChar: 13
                     }]
                 }
             }

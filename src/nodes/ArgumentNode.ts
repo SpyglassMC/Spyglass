@@ -6,7 +6,7 @@ import { ErrorCode } from '../types/ParsingError'
 import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
 
 export const NodeType = Symbol('NodeType')
-export const NodeRange = Symbol('Range')
+export const NodeRange = Symbol('NodeRange')
 export const NodeDescription = Symbol('NbtNodeDescription')
 export const GetCodeActions = Symbol('GetCodeActions')
 export const GetHoverInformation = Symbol('GetHoverInformation')

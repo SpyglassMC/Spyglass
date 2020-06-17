@@ -37,12 +37,12 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                     {
                         from: getCallHierarchyItem(
                             getId(getUri(ref.uri!, uris), roots),
-                            ref.uri!, ref.startLine!, ref.endLine!, ref.start, ref.end,
+                            ref.uri!, ref.startLine!, ref.endLine!, ref.startChar!, ref.endChar!,
                             IdentityKind.Function
                         ),
                         fromRanges: [{
-                            start: { line: ref.startLine!, character: ref.start },
-                            end: { line: ref.endLine!, character: ref.end }
+                            start: { line: ref.startLine!, character: ref.startChar! },
+                            end: { line: ref.endLine!, character: ref.endChar! }
                         }]
                     }
                 )

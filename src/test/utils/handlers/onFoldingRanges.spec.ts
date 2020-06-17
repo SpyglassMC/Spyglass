@@ -2,8 +2,6 @@ import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { FoldingRangeKind } from 'vscode-languageserver'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { onFoldingRanges } from '../../../utils/handlers/onFoldingRanges'
 import { mockFunctionInfo } from '../../utils.spec'
 
@@ -111,7 +109,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return end normal comment regions before #endregion comment', () => {
-        const info=mockFunctionInfo({
+        const info = mockFunctionInfo({
             content: dedent`
             #region
             # First

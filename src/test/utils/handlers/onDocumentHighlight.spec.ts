@@ -25,14 +25,14 @@ describe('onDocumentHighlight() Tests', () => {
             }),
             mockLineNode({
                 tokens: [
-                    new Token({ start: 0, end: 4 }, TokenType.literal),
-                    new Token({ start: 5, end: 13 }, TokenType.entity)
+                    new Token({ start: 14, end: 18 }, TokenType.literal),
+                    new Token({ start: 19, end: 27 }, TokenType.entity)
                 ],
                 cache: {
                     entities: {
                         SPGoding: {
                             def: [],
-                            ref: [{ start: 5, end: 13 }]
+                            ref: [{ start: 19, end: 27 }]
                         }
                     }
                 }

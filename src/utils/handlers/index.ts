@@ -87,15 +87,15 @@ export async function parseStrings(content: TextDocument, start: number = 0, end
 export async function parseString(document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
-    while (StringReader.isWhiteSpace(string.charAt(end - 1)) && end > start) {
-        end--
-    }
     const reader = new StringReader(string, start, end)
     reader.skipWhiteSpace()
+    while (StringReader.isWhiteSpace(string.charAt(reader.end - 1)) && reader.end > start) {
+        reader.end--
+    }
     if (reader.remainingString.length === 0) {
-        // This empty node will be used to select in methods like `onCompletion`.
+        // This empty node will be selected in methods like `onCompletion`.
         nodes.push({
-            [NodeRange]: { start: reader.cursor, end: reader.cursor },
+            [NodeRange]: { start, end },
             args: [], hint: { fix: [], options: [] }, tokens: []
         })
     } else {
@@ -166,7 +166,7 @@ export function getLspRange(content: TextDocument, { start, end }: TextRange) {
 }
 
 export function getStringLines(string: string) {
-    return string.split(/(\r\n|\r|\n)/)
+    return string.split(/\r\n|\r|\n/)
 }
 
 export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null } {

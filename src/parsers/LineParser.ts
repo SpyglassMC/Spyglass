@@ -73,9 +73,9 @@ export class LineParser implements Parser<LineNode> {
         }
         //#endregion
 
-        // if (node.errors.length === 0) {
-        this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
-        // }
+        if (node.errors.length === 0) {
+            this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
+        }
         saturatedLineToLine(node)
 
         // Handle comments.
@@ -263,7 +263,8 @@ export class LineParser implements Parser<LineNode> {
         reader.readRemaining()
         parsedLine.errors.push(new ParsingError(
             { start, end: reader.cursor },
-            locale('not-matching-any-child')
+            locale('not-matching-any-child'),
+            false
         ))
     }
 

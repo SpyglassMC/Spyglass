@@ -14,8 +14,8 @@ export function onDefOrRef({ node, offset, cacheFile, type }: { uri: Uri, cacheF
             return unit[type].map(v => ({
                 uri: v.uri!,
                 range: {
-                    start: { line: v.startLine!, character: v.start },
-                    end: { line: v.endLine!, character: v.end }
+                    start: { line: v.startLine!, character: v.startChar! },
+                    end: { line: v.endLine!, character: v.endChar! }
                 }
             }))
         }

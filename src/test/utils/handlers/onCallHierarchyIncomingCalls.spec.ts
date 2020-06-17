@@ -75,7 +75,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
             files: {}, version: 0,
             cache: {
                 functions: {
-                    'spgoding:callee': { ref: [{ uri: functionCaller, line: 3, start: 5, end: 20 }], def: [] },
+                    'spgoding:callee': { ref: [{ uri: functionCaller, start: 8, end: 23, startLine: 3, startChar: 5, endLine: 3, endChar: 20 }], def: [] },
                 }
             },
             advancements: {},
@@ -131,7 +131,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
             files: {}, version: 0,
             cache: {
                 'tags/functions': {
-                    'spgoding:callee': { ref: [{ uri: functionCaller, line: 3, start: 5, end: 20 }], def: [] },
+                    'spgoding:callee': { ref: [{ uri: functionCaller, start: 8, end: 23, startLine: 3, startChar: 5, endLine: 3, endChar: 20 }], def: [] },
                 }
             },
             advancements: {},

@@ -51,7 +51,7 @@ describe('common.ts Tests', () => {
             await parseString(document, 0, 5, nodes, config, cacheFile)
 
             assert.deepStrictEqual(nodes, [{
-                [NodeRange]: { start: 5, end: 5 },
+                [NodeRange]: { start: 0, end: 5 },
                 args: [], tokens: [], hint: { fix: [], options: [] }
             }])
         })
@@ -198,7 +198,7 @@ describe('common.ts Tests', () => {
 
             assert(actual.config === VanillaConfig)
             assert(actual.document.getText() === '# foo')
-            assert(actual.document.version === 0)
+            assert(actual.document.version === null)
         })
         it('Should return undefined when the file is excluded', async () => {
             let hasReadFile = false

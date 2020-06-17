@@ -5,6 +5,7 @@ import { getStringLines } from '.'
 
 function getCommentSymbolAmount(string: string) {
     const reader = new StringReader(string)
+    reader.skipWhiteSpace()
     let ans = 0
     while (reader.canRead() && reader.peek() === '#') {
         reader.skip()
@@ -21,52 +22,52 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
         const ans: FoldingRange[] = []
 
         const strings = getStringLines(info.document.getText())
-        const regionStartLineNumbers: number[] = []
-        const commentStartLineNumers: { [level: number]: number | undefined } = {}
+        const regionStartLines: number[] = []
+        const commentStartLines: { [level: number]: number | undefined } = {}
         let i = 0
         for (const string of strings) {
-            if (string.startsWith('#region')) {
-                regionStartLineNumbers.push(i)
-            } else if (string.startsWith('#endregion')) {
-                const startLineNumber = regionStartLineNumbers.pop()
-                if (startLineNumber !== undefined) {
+            if (string.match(/^\s*#region\b/)) {
+                regionStartLines.push(i)
+            } else if (string.match(/^\s*#endregion\b/)) {
+                const startLine = regionStartLines.pop()
+                if (startLine !== undefined) {
                     // End ‘#region’s.
                     ans.push(FoldingRange.create(
-                        startLineNumber, i,
+                        startLine, i,
                         undefined, undefined, FoldingRangeKind.Region
                     ))
                 }
-                for (const levelString in commentStartLineNumers) {
+                for (const levelString in commentStartLines) {
                     // End normal comments.
                     const level = parseFloat(levelString)
                     ans.push(FoldingRange.create(
-                        commentStartLineNumers[level]!, i - 1,
+                        commentStartLines[level]!, i - 1,
                         undefined, undefined, FoldingRangeKind.Region
                     ))
-                    delete commentStartLineNumers[level]
+                    delete commentStartLines[level]
                 }
             } else {
                 const amount = getCommentSymbolAmount(string)
-                for (const levelString in commentStartLineNumers) {
+                for (const levelString in commentStartLines) {
                     const level = parseFloat(levelString)
-                    if (amount > 0 && level >= amount && commentStartLineNumers[level] !== undefined) {
+                    if (amount > 0 && level >= amount && commentStartLines[level] !== undefined) {
                         // End equal-or-lower-level comments.
                         ans.push(FoldingRange.create(
-                            commentStartLineNumers[level]!, i - 1,
+                            commentStartLines[level]!, i - 1,
                             undefined, undefined, FoldingRangeKind.Region
                         ))
-                        delete commentStartLineNumers[level]
+                        delete commentStartLines[level]
                     } else if (i === strings.length - 1) {
                         // End normal comments at end of file.
                         ans.push(FoldingRange.create(
-                            commentStartLineNumers[level]!, i,
+                            commentStartLines[level]!, i,
                             undefined, undefined, FoldingRangeKind.Region
                         ))
-                        delete commentStartLineNumers[level]
+                        delete commentStartLines[level]
                     }
                 }
                 if (amount > 0) {
-                    commentStartLineNumers[amount] = i
+                    commentStartLines[amount] = i
                 }
             }
             i += 1

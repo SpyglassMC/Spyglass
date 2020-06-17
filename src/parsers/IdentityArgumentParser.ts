@@ -1,10 +1,11 @@
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { NodeRange } from '../nodes/ArgumentNode'
+import { IdentityNode } from '../nodes/IdentityNode'
+import { Registry } from '../types'
 import { CacheKey, ClientCache, getSafeCategory } from '../types/ClientCache'
 import { Config } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
-import { NodeRange } from '../nodes/ArgumentNode'
-import { IdentityNode } from '../nodes/IdentityNode'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../types/ParsingError'
@@ -42,64 +43,42 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             cache: {},
             completions: []
         }
-        const getCacheTagType = () => {
-            /* istanbul ignore next */
-            switch (this.type) {
-                case 'minecraft:block':
-                    return 'tags/blocks'
-                case 'minecraft:entity_type':
-                    return 'tags/entity_types'
-                case 'minecraft:fluid':
-                    return 'tags/fluids'
-                case 'minecraft:item':
-                    return 'tags/items'
-                case '$functions':
-                    return 'tags/functions'
-                default:
-                    throw new Error(`faild to find a tag type for ‘${this.type}’`)
-            }
-        }
         const start = reader.cursor
-        let stringID: string = ''
+        let stringID = ''
         let isTag = false
 
-        //#region Completions.
-        const tagPool: string[] = []
-        const idPool: string[] = []
-        // Set `tagPool`.
-        if (this.allowTag) {
-            const type = getCacheTagType()
-            const category = getSafeCategory(cache, type)
-            tagPool.push(...Object.keys(category))
-            if (config.env.dependsOnVanilla) {
-                tagPool.push(...this.getVanillaPool(type, vanilla))
-            }
-        }
-        // Set `idPool`.
-        if (this.type instanceof Array) {
-            idPool.push(...this.type)
-        } else if (this.type.startsWith('$')) {
-            const type = this.type.slice(1) as CacheKey
-            idPool.push(...Object.keys(getSafeCategory(cache, type)))
-            if (config.env.dependsOnVanilla) {
-                idPool.push(...this.getVanillaPool(type, vanilla))
-            }
-        } else {
-            const registry = registries[this.type]
-            if (registry) {
-                idPool.push(...Object.keys(registry.entries))
-            } else {
-                console.error(`Identity registry ‘${this.type}’ doesn't exist!`)
-            }
-        }
-
-        const complNamespaces = new Set<string>()
-        const complFolders = new Set<string>()
-        const complFiles = new Set<string>()
+        //#region Completions: prepare.
+        const { tagPool, idPool, complNamespaces, complFolders, complFiles } = this.setUpCompletion(cache, config, vanilla, registries)
         //#endregion
 
         //#region Data.
-        let namespace: string | undefined
+        let namespace: string | undefined = undefined;
+        ({ namespace, isTag, stringID } = this.parseData(reader, isTag, ans, start, tagPool, idPool, config, cursor, complNamespaces, complFolders, complFiles, stringID))
+        //#endregion
+
+        //#region Completions: apply.
+        this.applyCompletions(complNamespaces, ans, complFolders, complFiles)
+        //#endregion
+
+        //#region Errors.
+        if (reader.cursor - start && stringID) {
+            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, config, cache, registries)
+        } else {
+            this.addEmptyError(start, ans)
+        }
+        //#endregion
+
+        //#region Tokens.
+        ans.tokens.push(Token.from(start, reader, TokenType.identity))
+        //#endregion
+
+        ans.data[NodeRange] = { start, end: reader.cursor }
+
+        return ans
+    }
+
+    private parseData(reader: StringReader, isTag: boolean, ans: ArgumentParserResult<IdentityNode>, start: number, tagPool: string[], idPool: string[], config: Config, cursor: number, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, stringID: string) {
+        let namespace: string | undefined = undefined
         const paths: string[] = []
 
         // Whether this is a tag ID.
@@ -115,49 +94,111 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
         let pool = isTag ? tagPool : idPool
 
-        /**
-         * The namespace or the first part of path.
-         */
-        let path0 = this.readValidString(reader, ans)
+        const shouldOmitNamespace = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
+        const namespaceSeverity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
 
-        //#region Completions at the beginning.
-        const shouldOmit = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
-        const severity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
-        if (start <= cursor && cursor <= reader.cursor) {
-            if (!isTag && this.allowTag) {
-                // If this ID is not a tag but could be a tag, then provide completions for tags.
-                for (const id of tagPool) {
-                    const complNamespace = id.split(IdentityNode.NamespaceDelimiter)[0]
-                    const complPaths = id.split(IdentityNode.NamespaceDelimiter)[1].split(IdentityNode.PathSep)
-                    if (!(shouldOmit === true && complNamespace === IdentityNode.DefaultNamespace)) {
-                        complNamespaces.add(`${IdentityNode.TagSymbol}${complNamespace}`)
-                    }
-                    if (shouldOmit !== false && complNamespace === IdentityNode.DefaultNamespace) {
-                        this.completeFolderOrFile(
-                            // Only the first element and the length matter. We don't care
-                            // if other elements are also prefixed by `Identity.TagSymbol`.
-                            // Thus we add `IdentityNode.TagSymbol` to all paths to make the
-                            // code easier to write.
-                            complPaths.map(v => `${IdentityNode.TagSymbol}${v}`),
-                            complFolders,
-                            complFiles
+        let path0 = this.readValidString(reader, ans)
+        this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool);
+        ({ path0, namespace, pool } = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths))
+        this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles)
+
+        ans.data = new IdentityNode(namespace, paths, isTag)
+        stringID = ans.data.toString()
+        return { namespace, isTag, stringID }
+    }
+
+    private addEmptyError(start: number, ans: ArgumentParserResult<IdentityNode>) {
+        ans.errors.push(new ParsingError(
+            { start, end: start + 1 },
+            locale('expected-got',
+                locale('identity'),
+                locale('nothing')
+            ),
+            false
+        ))
+    }
+
+    private applyCompletions(complNamespaces: Set<string>, ans: ArgumentParserResult<IdentityNode>, complFolders: Set<string>, complFiles: Set<string>) {
+        // namespace -> CompletionItemKind.Module
+        // folder -> CompletionItemKind.Folder
+        // file -> CompletionItemKind.Field
+        /// advancement file -> CompletionItemKind.Event
+        /// function (tag) file -> CompletionItemKind.Function
+        let fileKind: CompletionItemKind
+        switch (this.type) {
+            case '$advancements':
+                fileKind = CompletionItemKind.Event
+                break
+            case '$functions':
+            case '$tags/functions':
+                fileKind = CompletionItemKind.Function
+                break
+            default:
+                fileKind = CompletionItemKind.Field
+                break
+        }
+        complNamespaces.forEach(k => void ans.completions.push({
+            label: k,
+            kind: CompletionItemKind.Module
+        }))
+        complFolders.forEach(k => void ans.completions.push({
+            label: k,
+            kind: CompletionItemKind.Folder
+        }))
+        complFiles.forEach(k => void ans.completions.push({
+            label: k,
+            kind: fileKind
+        }))
+    }
+
+    private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry) {
+        if (isTag && this.allowTag) {
+            // For tags.
+            const tagType = this.getCacheTagType()
+            this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
+        } else {
+            if (this.type instanceof Array) {
+                // For array IDs.
+                //#region Errors
+                if (!this.allowUnknown && !this.type.includes(stringID)) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        locale('expected-got',
+                            arrayToMessage(this.type, true, 'or'),
+                            locale('punc.quote', stringID)
                         )
-                    }
+                    ))
                 }
-            }
-            for (const id of pool) {
-                const namespace = id.split(IdentityNode.NamespaceDelimiter)[0]
-                const paths = id.split(IdentityNode.NamespaceDelimiter)[1].split('/')
-                if (!(shouldOmit === true && namespace === IdentityNode.DefaultNamespace)) {
-                    complNamespaces.add(namespace)
+                //#endregion
+            } else if (this.type.startsWith('$')) {
+                // For cache IDs.
+                const type = this.type.slice(1) as CacheKey
+                this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache)
+            } else {
+                // For registry IDs.
+                const registry = registries[this.type]
+                const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
+                //#region Errors
+                if (shouldCheck && registry && !Object.keys(registry.entries).includes(stringID)) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
+                        undefined, severity
+                    ))
                 }
-                if (shouldOmit !== false && namespace === IdentityNode.DefaultNamespace) {
-                    this.completeFolderOrFile(paths, complFolders, complFiles)
-                }
+                //#endregion
             }
         }
-        //#endregion
+    }
 
+    private completeBeginning(shouldOmit: boolean | null, start: number, cursor: number, reader: StringReader, isTag: boolean, tagPool: string[], complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, pool: string[]) {
+        if (start <= cursor && cursor <= reader.cursor) {
+            this.completeBeginningFromTagPoolIfApplicable(isTag, tagPool, shouldOmit, complNamespaces, complFolders, complFiles)
+            this.completeBeginningFromCurrentPool(pool, shouldOmit, complNamespaces, complFolders, complFiles)
+        }
+    }
+
+    private parseNamespaceAndFirstPath(reader: StringReader, shouldOmit: boolean | null, path0: string, ans: ArgumentParserResult<IdentityNode>, start: number, severity: DiagnosticSeverity, namespace: string | undefined, pool: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>, paths: string[]) {
         if (reader.peek() === IdentityNode.NamespaceDelimiter) {
             // `path0` is the namespace.
             if (shouldOmit === true && path0 === IdentityNode.DefaultNamespace) {
@@ -196,8 +237,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         paths.push(path0)
+        return { path0, namespace, pool }
+    }
 
-        // Parse the remaning paths.
+    private parseRemaningPaths(reader: StringReader, ans: ArgumentParserResult<IdentityNode>, pool: string[], paths: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>) {
         while (reader.peek() === IdentityNode.PathSep) {
             reader.skip()
             const start = reader.cursor
@@ -213,105 +256,95 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             //#endregion
             paths.push(path)
         }
+    }
 
-        ans.data = new IdentityNode(namespace, paths, isTag)
-        stringID = ans.data.toString()
-        //#endregion
+    private completeBeginningFromCurrentPool(pool: string[], shouldOmit: boolean | null, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
+        for (const id of pool) {
+            const namespace = id.split(IdentityNode.NamespaceDelimiter)[0]
+            const paths = id.split(IdentityNode.NamespaceDelimiter)[1].split('/')
+            if (!(shouldOmit === true && namespace === IdentityNode.DefaultNamespace)) {
+                complNamespaces.add(namespace)
+            }
+            if (shouldOmit !== false && namespace === IdentityNode.DefaultNamespace) {
+                this.completeFolderOrFile(paths, complFolders, complFiles)
+            }
+        }
+    }
 
-        if (reader.cursor - start && stringID) {
-            // Check whether the ID exists in cache or registry.
-            if (isTag && this.allowTag) {
-                // For tags.
-                const tagType = getCacheTagType()
-                this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
-            } else {
-                if (this.type instanceof Array) {
-                    // For array IDs.
-                    //#region Errors
-                    if (!this.allowUnknown && !this.type.includes(stringID)) {
-                        ans.errors.push(new ParsingError(
-                            { start, end: reader.cursor },
-                            locale('expected-got',
-                                arrayToMessage(this.type, true, 'or'),
-                                locale('punc.quote', stringID)
-                            )
-                        ))
-                    }
-                    //#endregion
-                } else if (this.type.startsWith('$')) {
-                    // For cache IDs.
-                    const type = this.type.slice(1) as CacheKey
-                    this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache)
-                } else {
-                    // For registry IDs.
-                    const registry = registries[this.type]
-                    const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
-                    //#region Errors
-                    if (shouldCheck && !Object.keys(registry.entries).includes(stringID)) {
-                        ans.errors.push(new ParsingError(
-                            { start, end: reader.cursor },
-                            locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
-                            undefined, severity
-                        ))
-                    }
-                    //#endregion
+    private completeBeginningFromTagPoolIfApplicable(isTag: boolean, tagPool: string[], shouldOmit: boolean | null, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
+        if (!isTag && this.allowTag) {
+            for (const id of tagPool) {
+                const complNamespace = id.split(IdentityNode.NamespaceDelimiter)[0]
+                const complPaths = id.split(IdentityNode.NamespaceDelimiter)[1].split(IdentityNode.PathSep)
+                if (!(shouldOmit === true && complNamespace === IdentityNode.DefaultNamespace)) {
+                    complNamespaces.add(`${IdentityNode.TagSymbol}${complNamespace}`)
+                }
+                if (shouldOmit !== false && complNamespace === IdentityNode.DefaultNamespace) {
+                    this.completeFolderOrFile(
+                        // Only the first path and the length of paths matter. We don't care
+                        // if the remaning paths are also prefixed by `Identity.TagSymbol`.
+                        // Thus we add `IdentityNode.TagSymbol` to all paths to make the
+                        // code easier to write.
+                        complPaths.map(v => `${IdentityNode.TagSymbol}${v}`),
+                        complFolders,
+                        complFiles
+                    )
                 }
             }
         }
+    }
 
-        //#region Completions.
-        // namespace -> CompletionItemKind.Module
-        // folder -> CompletionItemKind.Folder
-        // file -> CompletionItemKind.Field
-        /// advancement file -> CompletionItemKind.Event
-        /// function (tag) file -> CompletionItemKind.Function
-        let fileKind: CompletionItemKind
+    private setUpCompletion(cache: ClientCache, config: Config, vanilla: NamespaceSummary, registries: Registry) {
+        const tagPool: string[] = []
+        const idPool: string[] = []
+        // Set `tagPool`.
+        if (this.allowTag) {
+            const type = this.getCacheTagType()
+            const category = getSafeCategory(cache, type)
+            tagPool.push(...Object.keys(category))
+            if (config.env.dependsOnVanilla) {
+                tagPool.push(...this.getVanillaPool(type, vanilla))
+            }
+        }
+        // Set `idPool`.
+        if (this.type instanceof Array) {
+            idPool.push(...this.type)
+        } else if (this.type.startsWith('$')) {
+            const type = this.type.slice(1) as CacheKey
+            idPool.push(...Object.keys(getSafeCategory(cache, type)))
+            if (config.env.dependsOnVanilla) {
+                idPool.push(...this.getVanillaPool(type, vanilla))
+            }
+        } else {
+            const registry = registries[this.type]
+            if (registry) {
+                idPool.push(...Object.keys(registry.entries))
+            } else {
+                console.error(`Identity registry ‘${this.type}’ doesn't exist!`)
+            }
+        }
+        const complNamespaces = new Set<string>()
+        const complFolders = new Set<string>()
+        const complFiles = new Set<string>()
+        return { tagPool, idPool, complNamespaces, complFolders, complFiles }
+    }
+
+    private getCacheTagType() {
+        /* istanbul ignore next */
         switch (this.type) {
-            case '$advancements':
-                fileKind = CompletionItemKind.Event
-                break
+            case 'minecraft:block':
+                return 'tags/blocks'
+            case 'minecraft:entity_type':
+                return 'tags/entity_types'
+            case 'minecraft:fluid':
+                return 'tags/fluids'
+            case 'minecraft:item':
+                return 'tags/items'
             case '$functions':
-            case '$tags/functions':
-                fileKind = CompletionItemKind.Function
-                break
+                return 'tags/functions'
             default:
-                fileKind = CompletionItemKind.Field
-                break
+                throw new Error(`faild to find a tag type for ‘${this.type}’`)
         }
-        complNamespaces.forEach(k => void ans.completions.push({
-            label: k,
-            kind: CompletionItemKind.Module
-        }))
-        complFolders.forEach(k => void ans.completions.push({
-            label: k,
-            kind: CompletionItemKind.Folder
-        }))
-        complFiles.forEach(k => void ans.completions.push({
-            label: k,
-            kind: fileKind
-        }))
-        //#endregion
-
-        //#region Tokens.
-        ans.tokens.push(Token.from(start, reader, TokenType.identity))
-        //#endregion
-
-        //#region Range.
-        ans.data[NodeRange] = { start, end: reader.cursor }
-        //#endregion
-
-        if (reader.cursor === start) {
-            ans.errors.push(new ParsingError(
-                { start, end: start + 1 },
-                locale('expected-got',
-                    locale('identity'),
-                    locale('nothing')
-                ),
-                false
-            ))
-        }
-
-        return ans
     }
 
     /* istanbul ignore next: tired of writing tests */

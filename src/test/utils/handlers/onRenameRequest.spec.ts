@@ -74,8 +74,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, line: 0, start: 3, end: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
+                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 28
@@ -96,8 +96,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, line: 0, start: 3, end: 15 }], def: [] } },
-                objectives: { 'newObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
+                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objectives: { 'newObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         })
     })
@@ -107,8 +107,8 @@ describe('onRenameRequest() Tests', () => {
             files: { [oldFunction1]: 142857 },
             cache: {
                 functions: {
-                    'spgoding:foo': { ref: [{ uri: oldFunction1, line: 0, start: 3, end: 15 }], def: [] },
-                    'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, line: 1, start: 14, end: 514 }], def: [] }
+                    'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] },
+                    'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, start: 29, end: 529, startLine: 1, startChar: 14, endLine: 1, endChar: 514 }], def: [] }
                 },
                 objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
             }
@@ -138,7 +138,7 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
-                functions: { 'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, line: 1, start: 14, end: 514 }], def: [] } },
+                functions: { 'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, start: 29, end: 529, startLine: 1, startChar: 14, endLine: 1, endChar: 514 }], def: [] } },
                 objectives: { 'oldObjective': { ref: [], def: [] } }
             }
         })
@@ -148,8 +148,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, line: 0, start: 3, end: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
+                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 15
@@ -187,8 +187,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction2]: 142857 },
             cache: {
-                functions: { 'spgoding:bar': { ref: [{ uri: oldFunction2, line: 0, start: 3, end: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction2, line: 0, start: 16, end: 28 }], def: [] } }
+                functions: { 'spgoding:bar': { ref: [{ uri: oldFunction2, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objectives: { 'oldObjective': { ref: [{ uri: oldFunction2, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 15

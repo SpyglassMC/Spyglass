@@ -40,8 +40,8 @@ export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists
                                     edits: [{
                                         newText: newName,
                                         range: {
-                                            start: { line: pos.startLine!, character: pos.start },
-                                            end: { line: pos.startLine!, character: pos.end }
+                                            start: { line: pos.startLine!, character: pos.startChar! },
+                                            end: { line: pos.startLine!, character: pos.endChar! }
                                         }
                                     }]
                                 })

@@ -19,7 +19,7 @@ export async function onDidOpenTextDocument({ text, uri, rel, version, infos, co
     info.config = config
 
     // strings
-    info.document = TextDocument.create(uri.toString(), 'mcfunction', version!!, text)
+    info.document = TextDocument.create(uri.toString(), 'mcfunction', version as number, text)
 
     // nodes
     info.nodes = []
