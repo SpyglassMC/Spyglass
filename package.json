@@ -54,7 +54,7 @@
         "dedent-js": "^1.0.1",
         "eslint": "^7.0.0",
         "espower-typescript": "^9.0.2",
-        "gitmoji-cli": "^3.2.5",
+        "gitmoji-cli": "^3.2.6",
         "minimatch": "^3.0.4",
         "mocha": "^8.0.0",
         "nyc": "^15.0.1",
