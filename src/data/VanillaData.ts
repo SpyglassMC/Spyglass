@@ -10,7 +10,7 @@ import { VersionInformation } from '../types/VersionInformation'
 import { requestText } from '../utils'
 
 let faildTimes = 0
-const MaxFaildTimes = 10
+const MaxFaildTimes = 3
 
 export type VanillaData = {
     BlockDefinition: BlockDefinition,
