@@ -32,7 +32,8 @@ export interface EnvConfig {
     dataVersion: string,
     dependsOnVanilla: boolean,
     exclude: string[],
-    include: string[]
+    include: string[],
+    language: string
 }
 
 export interface LintConfig {
@@ -176,7 +177,8 @@ export const VanillaConfig: Config = {
         cmdVersion: '1.16',
         dependsOnVanilla: true,
         exclude: [],
-        include: []
+        include: [],
+        language: 'Default'
     },
     lint: {
         // Stylistic configs.

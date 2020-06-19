@@ -62,8 +62,6 @@ let cacheFile: CacheFile = clone(DefaultCacheFile)
 let versionInformation: VersionInformation | undefined
 
 connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath } }, _, progress) => {
-    await loadLocale(connection.console as unknown as Console)
-
     progress.begin(locale('server.initializing'))
 
     if (workspaceFolders) {
@@ -652,10 +650,12 @@ async function updateDiagnostics(uri: Uri) {
 
 async function fetchConfig(uri: Uri): Promise<Config> {
     try {
-        return await connection.workspace.getConfiguration({
+        const config: Config = await connection.workspace.getConfiguration({
             scopeUri: uri.toString(),
             section: 'datapack'
-        }) as Config
+        })
+        loadLocale(connection.console as unknown as Console, config)
+        return config
     } catch (e) {
         // connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
         return VanillaConfig
