@@ -101,7 +101,7 @@ export const CommandTree: ICommandTree = {
                     parser: new EntityArgumentParser('single', 'entities'),
                     children: {
                         attribute: {
-                            parser: new IdentityArgumentParser('minecraft:attributes'),
+                            parser: new IdentityArgumentParser('minecraft:attribute'),
                             children: {
                                 base: {
                                     parser: new LiteralArgumentParser('base'),

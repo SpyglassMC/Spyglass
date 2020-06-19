@@ -680,6 +680,7 @@ export class NbtdocHelper {
     /* istanbul ignore next */
     private static getIdentityTypeFromRegistry(registry: string) {
         switch (registry) {
+            case 'minecraft:attribute':
             case 'minecraft:block':
             case 'minecraft:enchantment':
             case 'minecraft:item':
@@ -688,8 +689,6 @@ export class NbtdocHelper {
             case 'minecraft:villager_profession':
             case 'minecraft:villager_type':
                 return registry
-            case 'minecraft:attribute':
-                return 'minecraft:attributes'
             case 'minecraft:block_entity':
                 return 'minecraft:block_entity_type'
             case 'minecraft:dimension':

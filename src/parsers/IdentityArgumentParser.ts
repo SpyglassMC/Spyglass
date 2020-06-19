@@ -408,7 +408,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 return evalStrictCheckConfig(lint.strictEntityTypeCheck)
             case 'minecraft:dimension_type':
                 return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
-            case 'minecraft:attributes':
+            case 'minecraft:attribute':
                 return evalStrictCheckConfig(lint.strictAttributeCheck)
             case 'minecraft:block':
                 return evalStrictCheckConfig(lint.strictBlockCheck)
