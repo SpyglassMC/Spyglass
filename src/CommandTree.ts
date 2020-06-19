@@ -1,19 +1,14 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import { LineArgumentNode } from './types/LineNode'
 import { EntityNode } from './nodes/EntityNode'
-import { SelectorArgumentsNode } from './nodes/SelectorArgumentsNode'
 
-export function getNbtdocRegistryId(entity: EntityNode): null | string
-export function getNbtdocRegistryId(selectorArguments: SelectorArgumentsNode): null | string
-export function getNbtdocRegistryId(param: EntityNode | SelectorArgumentsNode): null | string {
-    if (param instanceof EntityNode) {
-        param = param.argument
+export function getNbtdocRegistryId(entity: EntityNode): null | string {
+    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
+        return 'minecraft:player'
     }
-    if (param.type) {
-        const firstID = param.type[0]
-        if (firstID && !firstID.isTag) {
-            return firstID.toString()
-        }
+    const firstID = entity.argument.type?.[0]
+    if (firstID && !firstID.isTag) {
+        return firstID.toString()
     }
     return null
 }

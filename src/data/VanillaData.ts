@@ -37,10 +37,10 @@ export const VanillaDataCache: {
     Nbtdoc: { [version: string]: nbtdoc.Root },
     Registry: { [version: string]: Registry }
 } = {
-    BlockDefinition: { '20w17a': FallbackBlockDefinition },
-    NamespaceSummary: { '20w17a': FallbackNamespaceSummary },
+    BlockDefinition: { '1.16-rc1': FallbackBlockDefinition },
+    NamespaceSummary: { '1.16-rc1': FallbackNamespaceSummary },
     Nbtdoc: { '20w16a': FallbackNbtdoc },
-    Registry: { '20w17a': FallbackRegistry }
+    Registry: { '1.16-rc1': FallbackRegistry }
 }
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
