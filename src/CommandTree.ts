@@ -1,17 +1,5 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
 import { LineArgumentNode } from './types/LineNode'
-import { EntityNode } from './nodes/EntityNode'
-
-export function getNbtdocRegistryId(entity: EntityNode): null | string {
-    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
-        return 'minecraft:player'
-    }
-    const firstID = entity.argument.type?.[0]
-    if (firstID && !firstID.isTag) {
-        return firstID.toString()
-    }
-    return null
-}
 
 /**
  * @param lastIndex The index counted from the last, starting from `1`.

@@ -1,10 +1,11 @@
-import { getArgOrDefault, getNbtdocRegistryId } from '../CommandTree'
-import { locale } from '../locales'
+import { getArgOrDefault } from '../CommandTree'
+import { EntityNode } from '../nodes/EntityNode'
+import { IdentityNode } from '../nodes/IdentityNode'
 import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
 import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
 import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
-import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
+import { EntityArgumentParser, getNbtdocRegistryId } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
 import { ItemSlotArgumentParser } from '../parsers/ItemSlotArgumentParser'
@@ -25,12 +26,7 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
-import { VanillaConfig } from '../types/Config'
-import { EntityNode } from '../nodes/EntityNode'
-import { IdentityNode } from '../nodes/IdentityNode'
-import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
-import { toFormattedString } from '../utils'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
