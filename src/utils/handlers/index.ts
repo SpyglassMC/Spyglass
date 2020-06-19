@@ -125,6 +125,7 @@ export function getId(uri: Uri, roots: Uri[]) {
     return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
+/* istanbul ignore next */
 export function getInfo(uri: Uri, infos: InfosOfUris): FunctionInfo | undefined {
     return infos.get(uri)
 }
