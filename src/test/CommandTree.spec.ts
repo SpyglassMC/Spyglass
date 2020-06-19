@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { fillSingleTemplate, getArgOrDefault, getChildren, getNbtdocRegistryId } from '../CommandTree'
+import { fillSingleTemplate, getArgOrDefault, getChildren } from '../CommandTree'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { BlockNode } from '../nodes/BlockNode'
 import { BlockStateNode } from '../nodes/BlockStateNode'
@@ -177,42 +177,6 @@ describe('CommandTree Tests', () => {
                     }
                 }
             })
-        })
-    })
-    describe('getNbtdocRegistryId() Tests', () => {
-        it('Should return the respective id', () => {
-            const id = new IdentityNode('minecraft', ['spgoding'])
-            const argument = new SelectorArgumentsNode()
-            argument.type = [id]
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === 'minecraft:spgoding')
-        })
-        it('Should return minecraft:player for @a', () => {
-            const entity = new EntityNode(undefined, 'a', new SelectorArgumentsNode())
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === 'minecraft:player')
-        })
-        it('Should return null when there is no type', () => {
-            const argument = new SelectorArgumentsNode()
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
-        })
-        it('Should return null when the type is empty', () => {
-            const argument = new SelectorArgumentsNode()
-            argument.type = []
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
-        })
-        it('Should return null when the first type is a tag', () => {
-            const id = new IdentityNode('minecraft', ['spgoding'], true)
-            const argument = new SelectorArgumentsNode()
-            argument.type = [id]
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
         })
     })
     const parsers = new ArgumentParserManager()

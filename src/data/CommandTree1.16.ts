@@ -1,10 +1,12 @@
-import { getArgOrDefault, getNbtdocRegistryId } from '../CommandTree'
-import { locale } from '../locales'
+import { getArgOrDefault } from '../CommandTree'
+import { EntityNode } from '../nodes/EntityNode'
+import { IdentityNode } from '../nodes/IdentityNode'
+import { StringNode } from '../nodes/StringNode'
 import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
 import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
 import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
-import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
+import { EntityArgumentParser, getNbtdocRegistryId } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
 import { ItemSlotArgumentParser } from '../parsers/ItemSlotArgumentParser'
@@ -27,13 +29,7 @@ import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
-import { VanillaConfig } from '../types/Config'
-import { EntityNode } from '../nodes/EntityNode'
-import { IdentityNode } from '../nodes/IdentityNode'
-import { StringNode } from '../nodes/StringNode'
-import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
-import { toFormattedString } from '../utils'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -2038,7 +2034,7 @@ export const CommandTree: ICommandTree = {
                             parser: new NumberArgumentParser('float', -60_000_000, 60_000_000),
                             executable: true,
                             children: {
-                                time: { 
+                                time: {
                                     parser: new NumberArgumentParser('integer', 0),
                                     executable: true
                                 }

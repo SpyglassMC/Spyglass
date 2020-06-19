@@ -1,6 +1,6 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getInfo, getUri, getUriFromId } from '.'
+import { getOrCreateInfo, getUri, getUriFromId } from '.'
 import { getCommandTree } from '../../data/CommandTree'
 import { getVanillaData } from '../../data/VanillaData'
 import { IdentityNode } from '../../nodes/IdentityNode'
@@ -9,7 +9,7 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 import { DocNode, FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { VersionInformation } from '../../types/VersionInformation'
 
-export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
+export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
 
     /* istanbul ignore next */
@@ -32,7 +32,7 @@ export async function onRenameRequest({ info, roots, uris, urisOfIds, pathExists
                             const affectedConfig = await fetchConfig(affectedUri)
                             const commandTree = await getCommandTree(affectedConfig.env.cmdVersion)
                             const vanillaData = await getVanillaData(affectedConfig.env.dataVersion, affectedConfig.env.dataSource, versionInformation, globalStoragePath)
-                            const affectedInfo = await getInfo(affectedUri, roots, infos, cacheFile, affectedConfig, readFile, commandTree, vanillaData)
+                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, affectedConfig, readFile, commandTree, vanillaData)
                             /* istanbul ignore else */
                             if (affectedInfo) {
                                 documentChanges.push({

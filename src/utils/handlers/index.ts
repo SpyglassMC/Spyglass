@@ -125,7 +125,12 @@ export function getId(uri: Uri, roots: Uri[]) {
     return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
 }
 
-export async function getInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
+/* istanbul ignore next */
+export function getInfo(uri: Uri, infos: InfosOfUris): FunctionInfo | undefined {
+    return infos.get(uri)
+}
+
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
