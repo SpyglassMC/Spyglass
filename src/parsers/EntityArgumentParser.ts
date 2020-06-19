@@ -214,6 +214,9 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 data: new SelectorArgumentsNode(),
                 tokens: [], errors: [], cache: {}, completions: []
             }
+            // We assign `argumentAns.data` to `ans.data.argument` first so that we can use
+            // `ans.data.argument` to access it while parsing.
+            ans.data.argument = argumentAns.data
             new MapParser<SelectorArgumentsNode>(
                 EntitySelectorNodeChars,
                 (argumentAns, reader, ctx) => {
@@ -307,9 +310,10 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                         data: new SelectorCriteriaNode(),
                                         tokens: [], errors: [], cache: {}, completions: []
                                     }
+                                    ans.data[adv] = criteriaAns.data
                                     new MapParser<SelectorCriteriaNode>(
                                         SelectorArgumentNodeChars,
-                                        (ans, reader, ctx) => {
+                                        (criteriaAns, reader, ctx) => {
                                             const start = reader.cursor
                                             const result: ArgumentParserResult<StringNode> = ctx.parsers
                                                 .get('String', [StringType.String, null, 'selectorKeyQuote', 'selectorKeyQuoteType'])
@@ -318,20 +322,19 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                             const crit = result.data.value
                                             /* istanbul ignore else */
                                             if (crit) {
-                                                ans.data[Keys][crit] = result.data
+                                                criteriaAns.data[Keys][crit] = result.data
                                             }
                                             return { ...result, data: crit }
                                         },
-                                        (ans, reader, ctx, crit) => {
+                                        (criteriaAns, reader, ctx, crit) => {
                                             const start = reader.cursor
                                             const boolResult: ArgumentParserResult<string> = ctx.parsers.get('Literal', ['false', 'true']).parse(reader, ctx)
                                             const bool = boolResult.data.toLowerCase() === 'true'
                                             boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
-                                            ans.data[crit] = bool
-                                            combineArgumentParserResult(ans, boolResult)
+                                            criteriaAns.data[crit] = bool
+                                            combineArgumentParserResult(criteriaAns, boolResult)
                                         }
                                     ).parse(criteriaAns, reader, ctx)
-                                    ans.data[adv] = criteriaAns.data
                                     combineArgumentParserResult(ans, criteriaAns)
                                 } else {
                                     const start = reader.cursor
@@ -350,25 +353,24 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                             data: new SelectorScoresNode(),
                             tokens: [], errors: [], cache: {}, completions: []
                         }
+                        argumentAns.data.scores = scoresAns.data
                         new MapParser<SelectorScoresNode>(
                             SelectorArgumentNodeChars,
-                            (_ans, reader, ctx) => {
+                            (_scoresAns, reader, ctx) => {
                                 return ctx.parsers
                                     .get('Objective')
                                     .parse(reader, ctx)
                             },
-                            (ans, reader, ctx, objective) => {
+                            (scoresAns, reader, ctx, objective) => {
                                 const rangeResult: ArgumentParserResult<NumberRangeNode> = ctx.parsers.get('NumberRange', ['integer']).parse(reader, ctx)
-                                ans.data[objective] = rangeResult.data
-                                combineArgumentParserResult(ans, rangeResult)
+                                scoresAns.data[objective] = rangeResult.data
+                                combineArgumentParserResult(scoresAns, rangeResult)
                             }
                         ).parse(scoresAns, reader, ctx)
-                        argumentAns.data.scores = scoresAns.data
                         combineArgumentParserResult(argumentAns, scoresAns)
                     }
                 }
             ).parse(argumentAns, reader, ctx)
-            ans.data.argument = argumentAns.data
             combineArgumentParserResult(ans, argumentAns)
 
             if (ctx.config.lint.selectorSortKeys && !ans.data.argument[IsMapSorted](ctx.config.lint)) {

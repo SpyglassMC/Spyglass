@@ -3,7 +3,7 @@ import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, 
 import { locale } from '../locales'
 import { LineParser } from '../parsers/LineParser'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
-import { LintConfig } from '../types/Config'
+import { LintConfig, VanillaConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { getInnerIndex } from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
@@ -130,7 +130,7 @@ export class NbtdocHelper {
             return this.getRegistryCompound(
                 supers.Registry.target,
                 /* istanbul ignore next */
-                id ? IdentityNode.fromString(id.valueOf().toString()).toString() : null
+                id ? IdentityNode.fromString(id.valueOf()).toString() : null
             )
         }
         return { Compound: supers.Compound }
@@ -172,6 +172,9 @@ export class NbtdocHelper {
         return []
     }
 
+    /**
+     * @param node The node which is at the same level as the `doc`
+     */
     readField(doc: nbtdoc.CompoundTag | null, key: string, node: NbtCompoundNode | null): nbtdoc.Field | null {
         if (doc) {
             const field: nbtdoc.Field | undefined = doc.fields[key]
@@ -272,11 +275,11 @@ export class NbtdocHelper {
         const pool = this
             .readCompoundKeys(
                 compoundDoc,
-                tag[SuperNode]
+                tag
             )
             .filter(v => !existingKeys.includes(v))
         for (const key of pool) {
-            const field = this.readField(compoundDoc, key, tag[SuperNode])!
+            const field = this.readField(compoundDoc, key, tag)!
             const description = NbtdocHelper.handleDescription(field.description)
             ans.completions.push(
                 NbtdocHelper.escapeCompletion(
@@ -478,6 +481,9 @@ export class NbtdocHelper {
         }
     }
 
+    /**
+     * @param node The node which is at the same level as the `doc`
+     */
     public isInheritFromItemBase(doc: nbtdoc.CompoundTag | null, node: NbtCompoundNode | null): boolean {
         if (!doc) {
             return false
@@ -488,7 +494,7 @@ export class NbtdocHelper {
         const superDoc = this.getSupers(doc.supers, node)
         return this.isInheritFromItemBase(
             this.readCompound(superDoc ? superDoc.Compound : null),
-            node
+            node ? node[SuperNode] : null
         )
     }
 
@@ -498,14 +504,14 @@ export class NbtdocHelper {
                 /* istanbul ignore else */
                 if (node.hasOwnProperty(key)) {
                     const childNode = node[key]
-                    const field = this.readField(doc, key, node[SuperNode])
+                    const field = this.readField(doc, key, node)
                     if (field) {
                         // Hover information.
                         node[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
                         this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
                     } else {
                         // Errors.
-                        if (!this.isInheritFromItemBase(doc, node[SuperNode])) {
+                        if (!this.isInheritFromItemBase(doc, node/* [SuperNode] */)) {
                             let code: ErrorCode | undefined
                             //#region UUID datafix: #377
                             if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
