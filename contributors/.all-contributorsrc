@@ -66,6 +66,15 @@
       ]
     },
     {
+      "name": "Seidko",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/482", "text": "#482" }
+      ]
+    },
+    {
       "name": "UltraBlack_",
       "avatar_url": "https://cdn.discordapp.com/avatars/579619944602271744/3cefa458a174a0e15020dd6773c8da3b.webp?size=256",
       "contributions": [],
@@ -89,6 +98,15 @@
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+      ]
+    },
+    {
+      "name": "yulongjiuqiu",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/49058621?s=460&u=724cf689519843fdcb9fd78bf6d7f54ecf095f1c&v=4",
+      "profile": "https://github.com/yulongjiuqiu",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/494", "text": "#494" }
       ]
     },
     {
