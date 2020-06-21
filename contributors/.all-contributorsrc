@@ -15,7 +15,8 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" },
+        { "type": "bug", "link": "issues/500", "text": "#500" }
       ]
     },
     {

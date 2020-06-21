@@ -80,7 +80,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
                         if (--dimension) {
                             reader
                                 .expect(VectorArgumentParser.Sep)
-                                .skip()
+                                .skipWhiteSpace()
                         }
                     }
                 } catch (p) {
