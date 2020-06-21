@@ -28,7 +28,7 @@ import { ErrorCode, ParsingError } from '../types/ParsingError'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { Token, TokenType } from '../types/Token'
 import { arrayToMessage, validateStringQuote } from '../utils'
-import { CompoundDoc as NbtCompoundDoc, ListDoc as NbtListDoc, NbtdocHelper } from '../utils/NbtdocHelper'
+import { CompoundDoc, ListDoc, NbtdocHelper, IndexDoc } from '../utils/NbtdocHelper'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 import { MapParser } from './MapParser'
@@ -52,7 +52,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
-        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null = null,
+        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | undefined | null = null,
         private readonly isPredicate = false,
         private readonly superNode: NbtCompoundNode | null = null
     ) {
@@ -154,7 +154,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         if (typeof this.id === 'number') {
             index = this.id
         } else if (this.id) {
-            const registryDoc = helper.getRegistryCompound(this.category, this.id)
+            const registryDoc = helper.resolveRegistryCompound(this.category, this.id)
             index = registryDoc ? registryDoc.Compound : null
         }
         const doc = index !== null ? { Compound: index } : null
@@ -190,7 +190,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         let ans: ArgumentParserResult<NbtNode>
         switch (reader.peek()) {
             case '{':
-                ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc && NbtdocHelper.isCompoundDoc(doc) ? doc : undefined)
+                ans = this.parseCompoundTag(reader, ctx, superNode, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : undefined)
                 break
             case '[':
                 ans = this.parseListOrArray(reader, ctx, superNode, helper, doc && NbtdocHelper.isListDoc(doc) ? doc : undefined, description)
@@ -202,7 +202,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         return ans
     }
 
-    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc: NbtCompoundDoc | null = null): ArgumentParserResult<NbtCompoundNode> {
+    private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc: CompoundDoc | IndexDoc | null = null): ArgumentParserResult<NbtCompoundNode> {
         const ans: ArgumentParserResult<NbtCompoundNode> = {
             data: new NbtCompoundNode(superNode),
             cache: {}, completions: [], errors: [], tokens: []
@@ -260,7 +260,14 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                     } else {
                         // Check whether the current key follows the naming convention.
                         const isCustomKey = !(helper && doc) ||
-                            (helper.readField(helper.readCompound(doc.Compound), key, ans.data) === null)
+                            (
+                                helper.readField(
+                                    helper.readCompound(
+                                        helper.resolveCompoundOrIndexDoc(doc, superNode, ctx)
+                                    ),
+                                    key, ans.data
+                                ) === null
+                            )
                         if (isCustomKey && ctx.config.lint.nameOfNbtCompoundTagKeys &&
                             !checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
                             const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
@@ -297,8 +304,13 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             (ans, reader, ctx, key) => {
                 // Check whether the schema for the key is available.
                 let fieldDoc: nbtdoc.Field | null = null
-                if (helper && doc && doc.Compound !== null) {
-                    fieldDoc = helper.readField(helper.readCompound(doc.Compound), key, ans.data)
+                if (helper && doc) {
+                    fieldDoc = helper.readField(
+                        helper.readCompound(
+                            helper.resolveCompoundOrIndexDoc(doc, superNode, ctx)
+                        ),
+                        key, ans.data
+                    )
                 }
                 //#region Completions.
                 if (helper && ctx.cursor === reader.cursor) {
@@ -335,7 +347,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         return ans
     }
 
-    private parseListOrArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: NbtListDoc, description?: string): ArgumentParserResult<NbtCollectionNode<NbtNode>> {
+    private parseListOrArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtCollectionNode<NbtNode>> {
         const ans: ArgumentParserResult<NbtCollectionNode<NbtNode>> = {
             data: new NbtListNode(superNode),
             tokens: [],
@@ -469,7 +481,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
     }
 
-    private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: NbtListDoc, description?: string): ArgumentParserResult<NbtListNode<NbtNode>> {
+    private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtListNode<NbtNode>> {
         const ans: ArgumentParserResult<NbtListNode<NbtNode>> = {
             data: new NbtListNode<NbtNode>(superNode),
             tokens: [],
