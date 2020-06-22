@@ -25,7 +25,7 @@ export async function onDidOpenTextDocument({ text, uri, rel, version, infos, co
     info.nodes = []
     await parseStrings(
         info.document, undefined, undefined,
-        info.nodes, config, cacheFile, undefined, commandTree, vanillaData
+        info.nodes, config, cacheFile, uri, undefined, commandTree, vanillaData
     )
 
     infos.set(uri, info)

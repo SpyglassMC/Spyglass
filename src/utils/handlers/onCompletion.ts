@@ -3,14 +3,14 @@ import { escapeString, handleCompletionText } from '..'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
-import { CacheFile } from '../../types/ClientCache'
+import { CacheFile, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { DocNode } from '../../types/handlers'
+import { DocNode, Uri } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onCompletion({ offset, info, cacheFile, node, commandTree, vanillaData }: { offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onCompletion({ offset, info, cacheFile, node, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
@@ -20,7 +20,7 @@ export async function onCompletion({ offset, info, cacheFile, node, commandTree,
         )
         let { data: { completions } } = parser.parse(reader, constructContext({
             cursor: offset,
-            cache: cacheFile.cache,
+            cache: getCacheForUri(cacheFile.cache, uri),
             config: info.config,
             document: info.document
         }, commandTree, vanillaData))

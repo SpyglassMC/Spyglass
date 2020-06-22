@@ -1,23 +1,24 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, createConnection, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind, Diagnostic, DidChangeConfigurationNotification } from 'vscode-languageserver'
+import { CodeActionKind, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
 import { getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
+import { NodeRange } from './nodes/ArgumentNode'
+import { IdentityNode } from './nodes/IdentityNode'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { FunctionInfo } from './types/FunctionInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
-import { IdentityNode } from './nodes/IdentityNode'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { getOrCreateInfo, getRel, getRootUri, getSemanticTokensLegend, getUri, getUriFromId, getSelectedNode, getInfo } from './utils/handlers'
+import { getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -41,7 +42,6 @@ import { onSelectionRanges } from './utils/handlers/onSelectionRanges'
 import { onSemanticTokens } from './utils/handlers/onSemanticTokens'
 import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
 import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
-import { NodeRange } from './nodes/ArgumentNode'
 
 const connection = createConnection(ProposedFeatures.all)
 // const isInitialized = false
@@ -199,7 +199,7 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
 
-        await onDidChangeTextDocument({ info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+        await onDidChangeTextDocument({ uri, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -349,7 +349,7 @@ connection.onInitialized(() => {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                return onCompletion({ cacheFile, offset, info, node, commandTree, vanillaData })
+                return onCompletion({ uri, cacheFile, offset, info, node, commandTree, vanillaData })
             }
         }
         return null
@@ -365,7 +365,7 @@ connection.onInitialized(() => {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                return onSignatureHelp({ cacheFile, offset, info, node, commandTree, vanillaData })
+                return onSignatureHelp({ uri, cacheFile, offset, info, node, commandTree, vanillaData })
             }
         }
         return null
@@ -635,8 +635,6 @@ const cacheFileOperations = {
         removeCachePosition(cacheFile.cache, uri)
     },
     combineCacheOfLines: async (uri: Uri, config: Config) => {
-        // CHECKME
-        // const info = infos.get(uri)
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
         const info = await getOrCreateInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)

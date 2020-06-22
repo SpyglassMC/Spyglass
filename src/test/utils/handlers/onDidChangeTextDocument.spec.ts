@@ -3,6 +3,7 @@ import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { NodeRange } from '../../../nodes'
 import { VanillaConfig } from '../../../types/Config'
+import { Uri } from '../../../types/handlers'
 import { Token, TokenType } from '../../../types/Token'
 import { onDidChangeTextDocument } from '../../../utils/handlers/onDidChangeTextDocument'
 import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
@@ -11,6 +12,7 @@ describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
+    const uri = Uri.parse('file:///c:/foo')
     it('Should handle with full update', async () => {
         const info = mockFunctionInfo({
             nodes: [
@@ -37,14 +39,14 @@ describe('onDidChangeTextDocument() Tests', () => {
         })
         const contentChanges = [{ text: '# Modified' }]
 
-        await onDidChangeTextDocument({ info, version, cacheFile, config, contentChanges })
+        await onDidChangeTextDocument({ uri, info, version, cacheFile, config, contentChanges })
 
         assert(info.document.getText() === '# Modified')
         assert(info.document.version === version)
         assert.deepStrictEqual(info.nodes, [{
             [NodeRange]: { start: 0, end: 10 },
             args: [{ data: '# Modified', parser: 'string' }],
-            tokens: [new Token({ start: 0, end: 10 }, TokenType.comment)],
+            tokens: [],
             hint: { fix: [], options: [] },
             completions: undefined
         }])

@@ -10,7 +10,7 @@ import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { LineNode } from '../../../types/LineNode'
 import { Token, TokenType } from '../../../types/Token'
-import { getId, getRel, getRootUri, getUri, getUriFromId, parseString, getOrCreateInfo } from '../../../utils/handlers'
+import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers'
 import { mockFunctionInfo } from '../../utils.spec'
 
 describe('common.ts Tests', () => {
@@ -41,6 +41,7 @@ describe('common.ts Tests', () => {
         })
     })
     describe('parseString() Tests', () => {
+        const uri = Uri.parse('file:///c:/foo')
         it('Should push an empty node at the end of whitespaces', async () => {
             const content = '  \t  '
             const document = TextDocument.create('', '', 0, content)
@@ -48,7 +49,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(document, 0, 5, nodes, config, cacheFile)
+            await parseString(document, 0, 5, nodes, config, cacheFile, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -62,12 +63,12 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(document, 0, 6, nodes, config, cacheFile)
+            await parseString(document, 0, 6, nodes, config, cacheFile, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },
                 args: [{ data: '# test', parser: 'string' }],
-                tokens: [new Token({ start: 0, end: 6 }, TokenType.comment)],
+                tokens: [],
                 hint: { fix: [], options: [] }, completions: undefined
             }])
         })

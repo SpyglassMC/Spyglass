@@ -3,7 +3,7 @@ import { Proposed, Range, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaData } from '../../data/VanillaData'
 import { LineParser } from '../../parsers/LineParser'
-import { CacheFile, CacheKey } from '../../types/ClientCache'
+import { CacheFile, CacheKey, ClientCache, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
@@ -70,7 +70,7 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const lines = getStringLines(
         content.getText(Range.create(content.positionAt(start), content.positionAt(end)))
     )
@@ -79,12 +79,12 @@ export async function parseStrings(content: TextDocument, start: number = 0, end
             content,
             content.offsetAt(Position.create(i, 0)),
             content.offsetAt(Position.create(i, Infinity)),
-            nodes, config, cacheFile, cursor, commandTree, vanillaData
+            nodes, config, cacheFile, uri, cursor, commandTree, vanillaData
         )
     }
 }
 
-export async function parseString(document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseString(document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
@@ -100,7 +100,7 @@ export async function parseString(document: TextDocument, start: number, end: nu
         })
     } else {
         const { data } = parser.parse(reader, constructContext({
-            cache: cacheFile.cache,
+            cache: getCacheForUri(cacheFile.cache, uri),
             document, config, cursor
         }, commandTree, vanillaData))
         nodes.push(data)

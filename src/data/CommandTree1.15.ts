@@ -26,7 +26,7 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
-import { Token, TokenType } from '../types/Token'
+import { TokenType } from '../types/Token'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -1988,14 +1988,7 @@ export const CommandTree: ICommandTree = {
             run: ({ tokens, args }) => {
                 if (getArgOrDefault(args, 1, undefined) === '#define') {
                     const lastToken = tokens[tokens.length - 1]
-                    tokens.push(
-                        new Token(
-                            { start: lastToken.range.start + 1, end: lastToken.range.end },
-                            lastToken.type, lastToken.modifiers
-                        )
-                    )
-                    lastToken.range.end = lastToken.range.start + 1
-                    lastToken.type = TokenType.comment
+                    lastToken.range.start += 1
                 }
             },
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',

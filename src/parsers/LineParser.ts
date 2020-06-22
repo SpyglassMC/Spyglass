@@ -1,16 +1,16 @@
 import { CompletionItemKind } from 'vscode-languageserver'
 import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
+import { NodeRange } from '../nodes'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
 import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ParsingError } from '../types/ParsingError'
-import { Token, TokenModifier, TokenType } from '../types/Token'
+import { TokenModifier } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
-import { NodeRange } from '../nodes'
 
 export class LineParser implements Parser<LineNode> {
     /* istanbul ignore next */
@@ -85,7 +85,7 @@ export class LineParser implements Parser<LineNode> {
                 data: {
                     [NodeRange]: { start, end: backupReader.end },
                     args: [{ data: backupReader.readRemaining(), parser: 'string' }],
-                    tokens: [Token.from(0, backupReader, TokenType.comment)],
+                    tokens: [],
                     hint: { fix: [], options: [] },
                     completions: node.completions
                 }

@@ -2,14 +2,14 @@ import { SignatureInformation } from 'vscode-languageserver'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
-import { DocNode } from '../../types'
-import { CacheFile } from '../../types/ClientCache'
+import { DocNode, Uri } from '../../types'
+import { CacheFile, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData }: { offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri }: { uri: Uri, offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
@@ -21,7 +21,7 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
             cursor: offset,
-            cache: cacheFile.cache,
+            cache: getCacheForUri(cacheFile.cache, uri),
             config: info.config,
             document: info.document
         }, commandTree, vanillaData))

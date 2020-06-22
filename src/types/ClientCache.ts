@@ -138,8 +138,8 @@ export function removeCachePosition(cache: ClientCache, uri: Uri) {
         const category = cache[type as CacheKey] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            unit.def = unit.def.filter(ele => ele.uri !== uri.toString())
-            unit.ref = unit.ref.filter(ele => ele.uri !== uri.toString())
+            unit.def = unit.def.filter(ele => ele.uri && ele.uri !== uri.toString())
+            unit.ref = unit.ref.filter(ele => ele.uri && ele.uri !== uri.toString())
         }
     }
 }
@@ -234,6 +234,29 @@ export function trimCache(cache: ClientCache) {
             delete cache[type as CacheKey]
         }
     }
+}
+
+/**
+ * Pure function.
+ */
+export function getCacheForUri(cache: ClientCache, _uri: Uri) {
+    const ans = JSON.parse(JSON.stringify(cache))
+    for (const type in ans) {
+        const category = ans[type as CacheKey] as CacheCategory
+        if (shouldHaveDef(type as CacheKey)) {
+            for (const id in category) {
+                const unit = category[id] as CacheUnit
+                // TODO (#319): check the access modifier here
+                if (unit.def.length === 0) {
+                    delete category[id]
+                }
+            }
+        }
+        if (Object.keys(category).length === 0) {
+            delete ans[type as CacheKey]
+        }
+    }
+    return ans
 }
 
 export function getSafeCategory(cache: ClientCache | undefined, type: CacheKey) {
