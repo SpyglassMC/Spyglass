@@ -36,7 +36,7 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                 ans.push(
                     {
                         from: getCallHierarchyItem(
-                            getId(getUri(ref.uri!, uris), roots),
+                            getId(getUri(ref.uri!, uris), roots)?.toString(),
                             ref.uri!, ref.startLine!, ref.endLine!, ref.startChar!, ref.endChar!,
                             IdentityKind.Function
                         ),

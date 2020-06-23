@@ -5,6 +5,7 @@ import { onSignatureHelp } from '../../../utils/handlers/onSignatureHelp'
 import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onSignatureHelp() Tests', () => {
+    const roots: Uri[] = []
     const uri = Uri.parse('file:///c:/foo')
     it('Should return signatures', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
@@ -16,7 +17,7 @@ describe('onSignatureHelp() Tests', () => {
             range: { start: 0, end: 12 }
         })
 
-        const signatures = await onSignatureHelp({ uri, info, cacheFile, offset, node })
+        const signatures = await onSignatureHelp({ roots, uri, info, cacheFile, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
@@ -41,7 +42,7 @@ describe('onSignatureHelp() Tests', () => {
             range: { start: 0, end: 4 }
         })
 
-        const signatures = await onSignatureHelp({ uri, info, cacheFile, offset, node })
+        const signatures = await onSignatureHelp({ roots, uri, info, cacheFile, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{

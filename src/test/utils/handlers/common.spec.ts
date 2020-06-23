@@ -9,8 +9,7 @@ import { CacheFile } from '../../../types/ClientCache'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { LineNode } from '../../../types/LineNode'
-import { Token, TokenType } from '../../../types/Token'
-import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseString } from '../../../utils/handlers'
+import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseString, parseStrings } from '../../../utils/handlers'
 import { mockFunctionInfo } from '../../utils.spec'
 
 describe('common.ts Tests', () => {
@@ -40,7 +39,8 @@ describe('common.ts Tests', () => {
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
     })
-    describe('parseString() Tests', () => {
+    describe('parseStrings() Tests', () => {
+        const roots: Uri[] = []
         const uri = Uri.parse('file:///c:/foo')
         it('Should push an empty node at the end of whitespaces', async () => {
             const content = '  \t  '
@@ -49,7 +49,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(document, 0, 5, nodes, config, cacheFile, uri)
+            await parseStrings(document, 0, 5, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -63,7 +63,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseString(document, 0, 6, nodes, config, cacheFile, uri)
+            await parseStrings(document, 0, 6, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },
@@ -96,7 +96,7 @@ describe('common.ts Tests', () => {
             const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
             const roots = [Uri.parse('file:///c:/foo/'), Uri.parse('file:///c:/bar/')]
 
-            const actual = getId(uri, roots) as string
+            const actual = getId(uri, roots)?.toString()
 
             assert(actual === 'minecraft:test')
         })

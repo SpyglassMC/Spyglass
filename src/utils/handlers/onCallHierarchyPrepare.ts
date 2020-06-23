@@ -36,7 +36,7 @@ export enum IdentityKind {
     FunctionTag = SymbolKind.Class
 }
 
-export function getCallHierarchyItem(id: string, uri: string, startLine: number, endLine: number, start: number, end: number, kind: IdentityKind): Proposed.CallHierarchyItem {
+export function getCallHierarchyItem(id: string = '', uri: string, startLine: number, endLine: number, start: number, end: number, kind: IdentityKind): Proposed.CallHierarchyItem {
     return {
         name: id,
         range: {

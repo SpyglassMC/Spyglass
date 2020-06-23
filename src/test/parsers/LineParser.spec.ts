@@ -117,7 +117,12 @@ describe('LineParser Tests', () => {
             })
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
             assert.deepStrictEqual(line.completions, [
-                { label: 'MyCustomUUID', insertText: '12345678-90ab-cdef-1234-567890abcdef', kind: CompletionItemKind.Snippet }
+                { 
+                    label: 'MyCustomUUID', 
+                    insertText: '12345678-90ab-cdef-1234-567890abcdef', 
+                    detail: '12345678-90ab-cdef-1234-567890abcdef',
+                    kind: CompletionItemKind.Snippet 
+                }
             ])
         })
         it('Should parse when parser specified', () => {

@@ -1,12 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { IdentityArgumentParser } from '../../parsers/IdentityArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { NamespaceSummary } from '../../types/NamespaceSummary'
-import { IdentityNode } from '../../nodes/IdentityNode'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
@@ -146,27 +145,43 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'spgoding',
-                        kind: CompletionItemKind.Module
-                    }
-                ]
-            )
+            assert.deepStrictEqual(actual.completions, [
+                {
+                    label: 'spgoding',
+                    kind: CompletionItemKind.Module
+                }
+            ])
+        })
+        it('Should return completions for "This"', async () => {
+            const ctx = constructContext({
+                registry: registries, parsers, cache, cursor: 0,
+                id: new IdentityNode('spgoding', ['this', 'is', 'the', 'current', 'function'])
+            })
+            const parser = new IdentityArgumentParser('spgoding:test')
+            const actual = parser.parse(new StringReader(''), ctx)
+            assert.deepStrictEqual(actual.completions, [
+                {
+                    label: 'spgoding',
+                    kind: CompletionItemKind.Module
+                },
+                {
+                    label: 'THIS',
+                    insertText: 'spgoding:this/is/the/current/function',
+                    detail: 'spgoding:this/is/the/current/function',
+                    kind: CompletionItemKind.Snippet
+                }
+            ])
         })
         it('Should return completions for array registry', async () => {
             const ctx = constructContext({ registry: registries, parsers, cache, cursor: 0 })
             const parser = new IdentityArgumentParser(['spgoding:foo'])
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'spgoding',
-                        kind: CompletionItemKind.Module
-                    }
-                ]
-            )
+            assert.deepStrictEqual(actual.completions, [
+                {
+                    label: 'spgoding',
+                    kind: CompletionItemKind.Module
+                }
+            ])
         })
         it('Should return completions for cache units', async () => {
             const ctx = constructContext({ registry: registries, parsers, cache, cursor: 0 })

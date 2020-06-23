@@ -1,5 +1,7 @@
+import { TextDocument } from 'vscode-languageserver'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
+import { IdentityNode } from '../nodes'
 import { ArgumentParser } from '../parsers/ArgumentParser'
 import { ArgumentParserManager } from '../parsers/ArgumentParserManager'
 import { BlockDefinition } from './BlockDefinition'
@@ -10,7 +12,7 @@ import { Manager } from './Manager'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
-import { TextDocument } from 'vscode-languageserver'
+import { Uri } from './handlers'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,
@@ -19,10 +21,13 @@ export interface ParsingContext {
     config: Config,
     cursor: number,
     document: TextDocument,
+    id: IdentityNode | undefined,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
     parsers: Manager<ArgumentParser<any>>,
-    registry: Registry
+    registry: Registry,
+    rootIndex: number | null,
+    roots: Uri[]
 }
 
 interface ParsingContextLike {
@@ -32,10 +37,13 @@ interface ParsingContextLike {
     config?: Config,
     cursor?: number,
     document?: TextDocument,
+    id?: IdentityNode,
     namespaceSummary?: NamespaceSummary,
     nbtdoc?: nbtdoc.Root,
     parsers?: Manager<ArgumentParser<any>>,
-    registry?: Registry
+    registry?: Registry,
+    rootIndex?: number | null,
+    roots?: Uri[]
 }
 
 /**
@@ -52,20 +60,22 @@ export function constructContext(
         Registry: FallbackRegistry
     }
 ): ParsingContext {
-    const ans = {
+    const ans: ParsingContext = {
+        blockDefinition: vanillaData.BlockDefinition,
         cache: {},
+        commandTree,
         config: VanillaConfig,
-        document: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         cursor: -1,
+        document: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
+        id: undefined,
+        namespaceSummary: vanillaData.NamespaceSummary,
+        nbtdoc: vanillaData.Nbtdoc,
         parsers: new ArgumentParserManager(),
+        registry: vanillaData.Registry,
+        rootIndex: null,
+        roots: [],
         ...custom
-    } as ParsingContext
-
-    ans.commandTree = ans.commandTree || commandTree
-    ans.blockDefinition = ans.blockDefinition || vanillaData.BlockDefinition
-    ans.nbtdoc = ans.nbtdoc || vanillaData.Nbtdoc
-    ans.registry = ans.registry || vanillaData.Registry
-    ans.namespaceSummary = ans.namespaceSummary || vanillaData.NamespaceSummary
+    }
 
     return ans
 }

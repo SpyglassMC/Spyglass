@@ -183,7 +183,7 @@ connection.onInitialized(() => {
         if (isRelIncluded(rel, config)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
             const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-            await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData })
+            await onDidOpenTextDocument({ text, roots, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData })
             updateDiagnostics(uri)
         }
     })
@@ -199,7 +199,7 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
 
-        await onDidChangeTextDocument({ uri, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+        await onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -343,13 +343,13 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = getInfo(uri, infos)
         if (info && info.config.features.completions) {
-            const config = info.config
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                return onCompletion({ uri, cacheFile, offset, info, node, commandTree, vanillaData })
+                const config = info.config
+                const commandTree = await getCommandTree(config.env.cmdVersion)
+                const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+                return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
             }
         }
         return null
@@ -359,13 +359,13 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = getInfo(uri, infos)
         if (info && info.config.features.signatures) {
-            const config = info.config
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                return onSignatureHelp({ uri, cacheFile, offset, info, node, commandTree, vanillaData })
+                const config = info.config
+                const commandTree = await getCommandTree(config.env.cmdVersion)
+                const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+                return onSignatureHelp({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
             }
         }
         return null

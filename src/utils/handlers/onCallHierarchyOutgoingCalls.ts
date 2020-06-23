@@ -53,7 +53,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
                         for (const ref of unit.ref) {
                             const refId = getId(getUri(ref.uri!, uris), roots)
                             /* istanbul ignore else */
-                            if (id === refId) {
+                            if (id === refId?.toString()) {
                                 const outgoingId = IdentityNode.fromString(outgoingIdString)
                                 const outgoingUri = await getUriFromId(pathExists, roots, uris, urisOfIds, outgoingId, type)
                                 /* istanbul ignore else */

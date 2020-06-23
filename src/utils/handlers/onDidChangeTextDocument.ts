@@ -8,7 +8,7 @@ import { CommandTree } from '../../types/CommandTree'
 import { Config } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
 
-export async function onDidChangeTextDocument({ uri, info, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { uri: Uri, info: FunctionInfo, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onDidChangeTextDocument({ uri, info, roots, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { uri: Uri, info: FunctionInfo, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     // Update `content`.
     TextDocument.update(info.document, contentChanges, version)
 
@@ -16,6 +16,6 @@ export async function onDidChangeTextDocument({ uri, info, version, contentChang
     info.nodes = []
     await parseStrings(
         info.document, undefined, undefined,
-        info.nodes, config, cacheFile, uri, undefined, commandTree, vanillaData
+        info.nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData
     )
 }

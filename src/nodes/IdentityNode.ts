@@ -130,7 +130,10 @@ export class IdentityNode extends ArgumentNode {
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string): { id: IdentityNode, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
+    static fromRel(rel: string | undefined): { id: IdentityNode, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
+        if (!rel) {
+            return undefined
+        }
         rel = path.normalize(rel)
         const segs = rel.split(/[/\\]/)
         const ext = path.extname(rel)

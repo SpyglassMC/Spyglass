@@ -8,6 +8,7 @@ import { onDidOpenTextDocument } from '../../../utils/handlers/onDidOpenTextDocu
 describe('onDidOpenTextDocument() Tests', () => {
     it('Should set basic values correctly', async () => {
         const text = ''
+        const roots: Uri[] = []
         const uri = Uri.parse('file:///c:/foo')
         const rel = 'foo'
         const version = 2
@@ -15,7 +16,7 @@ describe('onDidOpenTextDocument() Tests', () => {
         const infos: InfosOfUris = new Map()
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-        await onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile })
+        await onDidOpenTextDocument({ text, uri, roots, rel, version, infos, config, cacheFile })
         const info = infos.get(uri) as FunctionInfo
 
         assert(info.config === VanillaConfig)

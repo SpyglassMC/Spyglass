@@ -12,6 +12,7 @@ describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
+    const roots: Uri[] = []
     const uri = Uri.parse('file:///c:/foo')
     it('Should handle with full update', async () => {
         const info = mockFunctionInfo({
@@ -39,7 +40,7 @@ describe('onDidChangeTextDocument() Tests', () => {
         })
         const contentChanges = [{ text: '# Modified' }]
 
-        await onDidChangeTextDocument({ uri, info, version, cacheFile, config, contentChanges })
+        await onDidChangeTextDocument({ uri, info, version, cacheFile, roots, config, contentChanges })
 
         assert(info.document.getText() === '# Modified')
         assert(info.document.version === version)

@@ -1,4 +1,5 @@
 import { InsertTextFormat } from 'vscode-languageserver'
+import { getId, getRootIndex } from '.'
 import { escapeString, handleCompletionText } from '..'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
@@ -10,7 +11,7 @@ import { DocNode, Uri } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onCompletion({ offset, info, cacheFile, node, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onCompletion({ offset, info, cacheFile, node, roots, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
@@ -22,7 +23,10 @@ export async function onCompletion({ offset, info, cacheFile, node, commandTree,
             cursor: offset,
             cache: getCacheForUri(cacheFile.cache, uri),
             config: info.config,
-            document: info.document
+            document: info.document,
+            id: getId(uri, roots),
+            rootIndex: getRootIndex(uri, roots),
+            roots
         }, commandTree, vanillaData))
 
         // Escape for TextMate: #431

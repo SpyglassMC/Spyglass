@@ -35,7 +35,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         super()
     }
 
-    parse(reader: StringReader, { cache, config, cursor: cursor, registry: registries, namespaceSummary: vanilla }: ParsingContext): ArgumentParserResult<IdentityNode> {
+    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<IdentityNode> {
         const ans: ArgumentParserResult<IdentityNode> = {
             data: new IdentityNode(),
             tokens: [],
@@ -48,21 +48,21 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         let isTag = false
 
         //#region Completions: prepare.
-        const { tagPool, idPool, complNamespaces, complFolders, complFiles } = this.setUpCompletion(cache, config, vanilla, registries)
+        const { tagPool, idPool, complNamespaces, complFolders, complFiles } = this.setUpCompletion(ctx.cache, ctx.config, ctx.namespaceSummary, ctx.registry)
         //#endregion
 
         //#region Data.
         let namespace: string | undefined = undefined;
-        ({ namespace, isTag, stringID } = this.parseData(reader, isTag, ans, start, tagPool, idPool, config, cursor, complNamespaces, complFolders, complFiles, stringID))
+        ({ namespace, isTag, stringID } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
         //#endregion
 
         //#region Completions: apply.
-        this.applyCompletions(complNamespaces, ans, complFolders, complFiles)
+        this.applyCompletions(complNamespaces, ans, ctx, complFolders, complFiles)
         //#endregion
 
         //#region Errors.
         if (reader.cursor - start && stringID) {
-            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, config, cache, registries)
+            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry)
         } else {
             this.addEmptyError(start, ans)
         }
@@ -118,7 +118,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         ))
     }
 
-    private applyCompletions(complNamespaces: Set<string>, ans: ArgumentParserResult<IdentityNode>, complFolders: Set<string>, complFiles: Set<string>) {
+    private applyCompletions(complNamespaces: Set<string>, ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, complFolders: Set<string>, complFiles: Set<string>) {
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
@@ -149,6 +149,16 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             label: k,
             kind: fileKind
         }))
+
+        // Add 'This' to completions
+        if (ctx.id) {
+            ans.completions.push({
+                label: 'THIS',
+                insertText: ctx.id.toTagString(),
+                detail: ctx.id.toTagString(),
+                kind: CompletionItemKind.Snippet
+            })
+        }
     }
 
     private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry) {
@@ -294,7 +304,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
-    private setUpCompletion(cache: ClientCache, config: Config, vanilla: NamespaceSummary, registries: Registry) {
+    private setUpCompletion(cache: ClientCache, config: Config, namespaceSummary: NamespaceSummary, registries: Registry) {
         const tagPool: string[] = []
         const idPool: string[] = []
         // Set `tagPool`.
@@ -303,7 +313,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             const category = getSafeCategory(cache, type)
             tagPool.push(...Object.keys(category))
             if (config.env.dependsOnVanilla) {
-                tagPool.push(...this.getVanillaPool(type, vanilla))
+                tagPool.push(...this.getVanillaPool(type, namespaceSummary))
             }
         }
         // Set `idPool`.
@@ -313,7 +323,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             const type = this.type.slice(1) as CacheKey
             idPool.push(...Object.keys(getSafeCategory(cache, type)))
             if (config.env.dependsOnVanilla) {
-                idPool.push(...this.getVanillaPool(type, vanilla))
+                idPool.push(...this.getVanillaPool(type, namespaceSummary))
             }
         } else {
             const registry = registries[this.type]

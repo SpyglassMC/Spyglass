@@ -131,7 +131,12 @@ export class LineParser implements Parser<LineNode> {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(alias)) {
                         const unit = category[alias]!
-                        completions.push({ label: alias, insertText: unit.doc, kind: CompletionItemKind.Snippet })
+                        completions.push({
+                            label: alias,
+                            insertText: unit.doc,
+                            detail: unit.doc,
+                            kind: CompletionItemKind.Snippet
+                        })
                     }
                 }
             }

@@ -1,4 +1,5 @@
 import { SignatureInformation } from 'vscode-languageserver'
+import { getId, getRootIndex } from '.'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
@@ -9,7 +10,7 @@ import { FunctionInfo } from '../../types/FunctionInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 
-export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri }: { uri: Uri, offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
@@ -20,10 +21,13 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
             node[NodeRange].end
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cursor: offset,
             cache: getCacheForUri(cacheFile.cache, uri),
             config: info.config,
-            document: info.document
+            cursor: offset,
+            document: info.document,
+            id: getId(uri, roots),
+            rootIndex: getRootIndex(uri, roots),
+            roots
         }, commandTree, vanillaData))
 
         const fixLabel = fix.join(' ')

@@ -7,7 +7,7 @@ import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { InfosOfUris, Uri } from '../../types/handlers'
 
-export async function onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData }: { text: string, uri: Uri, rel: string, version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onDidOpenTextDocument({ text, uri, rel, version, infos, config, cacheFile, commandTree, roots, vanillaData }: { text: string, uri: Uri, rel: string, roots: Uri[], version: number | null, infos: InfosOfUris, config: Config, cacheFile: CacheFile, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const info: FunctionInfo = {} as any
 
     /* istanbul ignore next */
@@ -25,7 +25,7 @@ export async function onDidOpenTextDocument({ text, uri, rel, version, infos, co
     info.nodes = []
     await parseStrings(
         info.document, undefined, undefined,
-        info.nodes, config, cacheFile, uri, undefined, commandTree, vanillaData
+        info.nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData
     )
 
     infos.set(uri, info)

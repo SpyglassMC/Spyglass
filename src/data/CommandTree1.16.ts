@@ -30,7 +30,7 @@ import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
-import { NodeDescription } from '../nodes'
+import { NodeDescription, NodeRange } from '../nodes'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -2184,11 +2184,10 @@ export const CommandTree: ICommandTree = {
                                             const alias = getArgOrDefault<StringNode | null>(parsedLine.args, 2, null)
                                             const value = getArgOrDefault<StringNode | null>(parsedLine.args, 1, null)
                                             if (parser && alias && value) {
-                                                alias[NodeDescription] = `\`\`\`mcfunction\n${value.valueOf()}\n\`\`\``
                                                 const key = `aliases/${parser}` as CacheKey
                                                 parsedLine.cache = {
                                                     [key]: {
-                                                        [alias.valueOf()]: { doc: value.valueOf(), def: [{ start: -1, end: -1 }], ref: [] }
+                                                        [alias.valueOf()]: { doc: value.valueOf(), def: [alias[NodeRange]], ref: [] }
                                                     }
                                                 }
                                             }

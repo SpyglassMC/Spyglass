@@ -5,6 +5,7 @@ import { onCompletion } from '../../../utils/handlers/onCompletion'
 import { mockFunctionInfo, mockLineNode } from '../../utils.spec'
 
 describe('onCompletion() Tests', () => {
+    const roots: Uri[] = []
     const uri = Uri.parse('file:///c:/foo')
     it('Should return completions', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
@@ -17,7 +18,7 @@ describe('onCompletion() Tests', () => {
             content: 'advancement '
         })
 
-        const completions = await onCompletion({ uri, info, node, cacheFile, offset })
+        const completions = await onCompletion({ roots, uri, info, node, cacheFile, offset })
 
         assert.deepStrictEqual(completions, [
             { label: 'grant' },

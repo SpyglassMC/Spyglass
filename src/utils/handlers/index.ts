@@ -1,22 +1,21 @@
 import path from 'path'
-import { Proposed, Range, Position } from 'vscode-languageserver'
+import { Position, Proposed, Range } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaData } from '../../data/VanillaData'
+import { NodeRange } from '../../nodes'
+import { IdentityNode } from '../../nodes/IdentityNode'
 import { LineParser } from '../../parsers/LineParser'
-import { CacheFile, CacheKey, ClientCache, getCacheForUri } from '../../types/ClientCache'
+import { TextRange } from '../../types'
+import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings, DocNode } from '../../types/handlers'
-import { LineNode } from '../../types/LineNode'
-import { IdentityNode } from '../../nodes/IdentityNode'
+import { DocNode, InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
 import { StringReader } from '../StringReader'
 import { onDidOpenTextDocument } from './onDidOpenTextDocument'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import { TextRange } from '../../types'
-import { NodeRange } from '../../nodes'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -70,38 +69,56 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const lines = getStringLines(
         content.getText(Range.create(content.positionAt(start), content.positionAt(end)))
     )
     for (let i = 0; i < lines.length; i++) {
-        await parseString(
-            content,
-            content.offsetAt(Position.create(i, 0)),
-            content.offsetAt(Position.create(i, Infinity)),
-            nodes, config, cacheFile, uri, cursor, commandTree, vanillaData
-        )
+        await parseString({
+            document: content,
+            start: content.offsetAt(Position.create(i, 0)),
+            end: content.offsetAt(Position.create(i, Infinity)),
+            id: getId(uri, roots),
+            rootIndex: getRootIndex(uri, roots),
+            nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData
+        })
     }
 }
 
-export async function parseString(document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export async function parseString({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
+    let lineEnd = end
     reader.skipWhiteSpace()
-    while (StringReader.isWhiteSpace(string.charAt(reader.end - 1)) && reader.end > start) {
-        reader.end--
+    while (true) {
+        const char = string.charAt(reader.end - 1)
+        if (StringReader.isWhiteSpace(char) && reader.end > start) {
+            // Remove the whitespaces at the end of this line
+            reader.end--
+            if (char === '\r' || char === '\n') {
+                // Remove the line breaks after the end of this line
+                lineEnd--
+            }
+        } else {
+            break
+        }
     }
     if (reader.remainingString.length === 0) {
         // This empty node will be selected in methods like `onCompletion`.
         nodes.push({
-            [NodeRange]: { start, end },
+            [NodeRange]: { start, end: lineEnd },
             args: [], hint: { fix: [], options: [] }, tokens: []
         })
     } else {
         const { data } = parser.parse(reader, constructContext({
             cache: getCacheForUri(cacheFile.cache, uri),
-            document, config, cursor
+            config,
+            cursor,
+            document,
+            id,
+            rootIndex,
+            roots
         }, commandTree, vanillaData))
         nodes.push(data)
     }
@@ -117,12 +134,17 @@ export function getRel(uri: Uri, roots: Uri[]) {
     return undefined
 }
 
-/**
- * @throws When the URI does not belong to any roots.
- * @throws When the URI is not a valid datapack resource.
- */
 export function getId(uri: Uri, roots: Uri[]) {
-    return IdentityNode.fromRel(getRel(uri, roots)!)!.id.toString()
+    return IdentityNode.fromRel(getRel(uri, roots))?.id
+}
+
+export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
+    for (const [i, root] of roots.entries()) {
+        if (uri.toString().startsWith(root.toString())) {
+            return i
+        }
+    }
+    return null
 }
 
 /* istanbul ignore next */
@@ -138,7 +160,7 @@ export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris
             const rel = getRel(uri, roots)!
             if (isRelIncluded(rel, config)) {
                 const text = await readFile(uri.fsPath, 'utf8')
-                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, commandTree, vanillaData })
+                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
                 info = infos.get(uri)
             }
         } catch (ignored) {
