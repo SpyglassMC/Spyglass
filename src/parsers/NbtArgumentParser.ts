@@ -153,7 +153,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         let index: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
         if (typeof this.id === 'number') {
             index = this.id
-        } else if (this.id) {
+        } else if (this.id !== undefined) {
             const registryDoc = helper.resolveRegistryCompound(this.category, this.id)
             index = registryDoc ? registryDoc.Compound : null
         }
