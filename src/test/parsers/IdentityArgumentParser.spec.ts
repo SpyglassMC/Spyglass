@@ -152,7 +152,7 @@ describe('IdentityArgumentParser Tests', () => {
                 }
             ])
         })
-        it('Should return completions for "This"', async () => {
+        it('Should return completions for "THIS"', async () => {
             const ctx = constructContext({
                 registry: registries, parsers, cache, cursor: 0,
                 id: new IdentityNode('spgoding', ['this', 'is', 'the', 'current', 'function'])

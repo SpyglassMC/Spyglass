@@ -1,3 +1,5 @@
+import { v4 as uuidV4 } from 'uuid'
+import { CompletionItemKind } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -31,6 +33,18 @@ export class UuidArgumentParser extends ArgumentParser<string> {
                     locale('punc.quote', ans.data)
                 )
             ))
+        }
+        //#endregion
+
+        //#region Completions.
+        if (ctx.cursor === start) {
+            const randomUuid = uuidV4()
+            ans.completions.push({
+                label: locale('completion.uuid.random'),
+                insertText: randomUuid,
+                detail: randomUuid,
+                kind: CompletionItemKind.Snippet
+            })
         }
         //#endregion
 

@@ -57,7 +57,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#endregion
 
         //#region Completions: apply.
-        this.applyCompletions(complNamespaces, ans, ctx, complFolders, complFiles)
+        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles)
         //#endregion
 
         //#region Errors.
@@ -118,7 +118,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         ))
     }
 
-    private applyCompletions(complNamespaces: Set<string>, ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, complFolders: Set<string>, complFiles: Set<string>) {
+    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, start: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
@@ -151,9 +151,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }))
 
         // Add 'This' to completions
-        if (ctx.id) {
+        if (start === ctx.cursor && ctx.id) {
             ans.completions.push({
-                label: 'THIS',
+                label: locale('completion.identity.this'),
                 insertText: ctx.id.toTagString(),
                 detail: ctx.id.toTagString(),
                 kind: CompletionItemKind.Snippet
