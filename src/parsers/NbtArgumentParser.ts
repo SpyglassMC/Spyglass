@@ -28,7 +28,7 @@ import { ErrorCode, ParsingError } from '../types/ParsingError'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { Token, TokenType } from '../types/Token'
 import { arrayToMessage, validateStringQuote } from '../utils'
-import { CompoundDoc, ListDoc, NbtdocHelper, IndexDoc } from '../utils/NbtdocHelper'
+import { CompoundDoc, IndexDoc, ListDoc, NbtdocHelper } from '../utils/NbtdocHelper'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 import { MapParser } from './MapParser'
@@ -52,7 +52,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
-        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | undefined | null = null,
+        private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
         private readonly isPredicate = false,
         private readonly superNode: NbtCompoundNode | null = null
     ) {
@@ -153,7 +153,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         let index: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
         if (typeof this.id === 'number') {
             index = this.id
-        } else if (this.id) {
+        } else if (this.id !== undefined) {
             const registryDoc = helper.resolveRegistryCompound(this.category, this.id)
             index = registryDoc ? registryDoc.Compound : null
         }

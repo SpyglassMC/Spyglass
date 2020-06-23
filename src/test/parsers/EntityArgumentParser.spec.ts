@@ -223,18 +223,11 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return data with all kinds of negativable array arguments', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const reader = new StringReader('@e[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={foo: 1b}]')
+                const reader = new StringReader('@e[gamemode=adventure,name=!SPGoding,predicate=spgoding:test/predicate,tag=foo,team=!red,type=#spgoding:mobs,nbt={}]')
 
                 const expectedCompound = new NbtCompoundNode(null)
-                expectedCompound[NodeRange] = { start: 113, end: 122 }
-                const expectedCompoundKey = new NbtCompoundKeyNode(expectedCompound, 'foo', 'foo', { start: 114 })
-                expectedCompoundKey[NodeRange] = { start: 114, end: 117 }
-                expectedCompound[Keys].foo = expectedCompoundKey
-                const expectedByte = new NbtByteNode(expectedCompound, 1, '1')
-                expectedByte[NodeRange] = { start: 119, end: 121 }
-                expectedCompound.foo = expectedByte
-                expectedCompound[UnsortedKeys].push('foo')
-                const expected = $(new SelectorArgumentsNode(), [2, 123], {
+                expectedCompound[NodeRange] = { start: 113, end: 115 }
+                const expected = $(new SelectorArgumentsNode(), [2, 116], {
                     gamemode: ['adventure'],
                     nameNeg: [$(new StringNode('SPGoding', 'SPGoding', { start: 28 }), [28, 36])],
                     predicate: [$(new IdentityNode('spgoding', ['test', 'predicate']), [47, 70])],
@@ -255,8 +248,8 @@ describe('EntityArgumentParser Tests', () => {
                 })
 
                 const actual = parser.parse(reader, ctx)
-
-                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expected), [0, 123]))
+                
+                assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expected), [0, 116]))
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return data with the same negativable array arguments', () => {
