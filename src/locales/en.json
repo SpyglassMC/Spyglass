@@ -34,6 +34,8 @@
     "argument-type.vector.4D": "4D vector",
     "boolean": "a boolean",
     "code-action.block-state-sort-keys": "Sort block state",
+    "code-action.fix-file": "Fix all auto-fixable problems in this file",
+    "code-action.fix-workspace": "Fix all auto-fixable problems in the workspace",
     "code-action.id-attribute-datafix": "Update this attribute name to 1.16",
     "code-action.id-complete-default-namespace": "Complete default namespace",
     "code-action.id-omit-default-namespace": "Omit default namespace",

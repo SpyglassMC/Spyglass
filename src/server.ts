@@ -6,7 +6,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
-import { getVanillaData } from './data/VanillaData'
+import { DataSource, getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
@@ -18,7 +18,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
+import { fixFileCommandHandler, fixWorkspaceCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -125,7 +125,11 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             documentHighlightProvider: true,
             documentLinkProvider: {},
             executeCommandProvider: {
-                commands: ['datapack.regenerateCache'],
+                commands: [
+                    'datapack.fixFile',
+                    'datapack.fixWorkspace',
+                    'datapack.regenerateCache'
+                ],
                 workDoneProgress: true
             },
             foldingRangeProvider: true,
@@ -551,20 +555,41 @@ connection.onInitialized(() => {
         return { edits: [] }
     })
 
-    connection.onExecuteCommand(async ({ command }) => {
-        switch (command) {
-            case 'datapack.regenerateCache':
-                const progress = await connection.window.createWorkDoneProgress()
-                progress.begin(locale('server.regenerating-cache'))
+    /*
+     * datapack.fixFile <Uri>    -  Fix all auto-fixable problems in <Uri>.
+     * datapack.fixWorkspace     -  Fix all auto-fixable problems in the workspace.
+     * datapack.regenerateCache  -  Regenerate cache.
+     */
+    connection.onExecuteCommand(async ({ command, arguments: args }) => {
+        try {
+            switch (command) {
+                case 'datapack.fixFile': {
+                    const uri = getUri(args![0], uris)
+                    fixFileCommandHandler({
+                        cacheFile, infos, roots, uri,
+                        getCommandTree, fetchConfig,
+                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
+                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
+                        readFile: fs.readFile
+                    })
+                    break
+                }
+                case 'datapack.fixWorkspace':
+                    return fixWorkspaceCommandHandler()
+                case 'datapack.regenerateCache':
+                    const progress = await connection.window.createWorkDoneProgress()
+                    progress.begin(locale('server.regenerating-cache'))
 
-                cacheFile = clone(DefaultCacheFile)
-                await updateCacheFile(cacheFile, roots, progress)
+                    cacheFile = clone(DefaultCacheFile)
+                    await updateCacheFile(cacheFile, roots, progress)
 
-                progress.done()
-                break
-            default:
-                connection.console.error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
-                break
+                    progress.done()
+                    break
+                default:
+                    throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
+            }
+        } catch (e) {
+            connection.console.error(e)
         }
     })
 })

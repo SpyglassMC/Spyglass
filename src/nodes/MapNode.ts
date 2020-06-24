@@ -1,11 +1,11 @@
-import { toFormattedString } from '../utils'
+import { TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { FunctionInfo } from '../types/FunctionInfo'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
-import { ArgumentNode, DiagnosticMap, GetCodeActions, GetHoverInformation, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
-import { TextDocument } from 'vscode-languageserver'
+import { toFormattedString } from '../utils'
+import { ArgumentNode, DiagnosticMap, FilterDiagnostics, GetCodeActions, GetHoverInformation, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
 
 export const enum BracketType { open, close }
 
@@ -129,7 +129,9 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
                 const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
-                        ans.push(...keyInfo[GetCodeActions](uri, info, range, diagnostics))
+                        ans.push(...keyInfo[GetCodeActions](
+                            uri, info, range, this[FilterDiagnostics](info, diagnostics, keyInfo[NodeRange])
+                        ))
                     }
                 }
             }

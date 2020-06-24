@@ -1,12 +1,12 @@
 import path from 'path'
-import { Position, Proposed, Range } from 'vscode-languageserver'
+import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { VanillaData } from '../../data/VanillaData'
-import { NodeRange } from '../../nodes'
+import { DiagnosticMap, NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { LineParser } from '../../parsers/LineParser'
-import { TextRange } from '../../types'
+import { ErrorCode, TextRange } from '../../types'
 import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
@@ -171,6 +171,18 @@ export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris
     return info
 }
 
+export function getDiagnosticMap(diagnostics: Diagnostic[]) {
+    const diagnosticsMap: DiagnosticMap = {}
+    for (const diag of diagnostics) {
+        if (diag.code !== undefined) {
+            const code = diag.code as ErrorCode
+            diagnosticsMap[code] = diagnosticsMap[code] || []
+            diagnosticsMap[code]!.push(diag)
+        }
+    }
+    return diagnosticsMap
+}
+
 /* istanbul ignore next */
 export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
     const tokenTypes: string[] = []
@@ -217,6 +229,7 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
     return { node: null, index: -1 }
 }
 
+export * from './commands'
 export * from './onCallHierarchyIncomingCalls'
 export * from './onCallHierarchyOutgoingCalls'
 export * from './onCallHierarchyPrepare'
