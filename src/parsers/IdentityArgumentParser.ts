@@ -176,7 +176,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                         locale('expected-got',
                             arrayToMessage(this.type, true, 'or'),
                             locale('punc.quote', stringID)
-                        )
+                        ),
+                        undefined, undefined, 
+                        ErrorCode.IdentityUnknown
                     ))
                 }
                 //#endregion
@@ -193,7 +195,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
-                        undefined, severity
+                        undefined, severity,
+                        ErrorCode.IdentityUnknown
                     ))
                 }
                 //#endregion
@@ -506,7 +509,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
-                undefined, severity
+                undefined, severity,
+                ErrorCode.IdentityUnknown
             ))
         }
         //#endregion

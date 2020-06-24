@@ -1,11 +1,11 @@
 import path, { sep } from 'path'
-import { getCodeAction } from '../utils'
 import { CacheKey, ClientCache } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { FunctionInfo } from '../types/FunctionInfo'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
 export class IdentityNode extends ArgumentNode {
@@ -88,6 +88,7 @@ export class IdentityNode extends ArgumentNode {
 
         const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]
         const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
+        const unknownDiagnostics = diagnostics[ErrorCode.IdentityUnknown]
 
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
@@ -102,6 +103,17 @@ export class IdentityNode extends ArgumentNode {
                 info.document, this[NodeRange],
                 this.toShortestTagString()
             ))
+        }
+        if (unknownDiagnostics && unknownDiagnostics.length > 0) {
+            //#region Zombified Piglin datafix: #508
+            if (this.toTagString() === 'minecraft:zombie_pigman') {
+                ans.push(getCodeAction(
+                    'id-zombified-piglin-datafix', unknownDiagnostics,
+                    info.document, this[NodeRange],
+                    new IdentityNode(this.namespace, ['zombified_piglin'])[GetFormattedString]()
+                ))
+            }
+            //#endregion
         }
 
         return ans

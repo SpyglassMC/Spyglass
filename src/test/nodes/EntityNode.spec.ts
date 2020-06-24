@@ -1,14 +1,14 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { EntityNode } from '../../../nodes/EntityNode'
-import { IdentityNode } from '../../../nodes/IdentityNode'
-import { UnsortedKeys } from '../../../nodes/MapNode'
-import { NumberNode } from '../../../nodes/NumberNode'
-import { NumberRangeNode } from '../../../nodes/NumberRangeNode'
-import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../../nodes/SelectorArgumentsNode'
-import { constructConfig } from '../../../types/Config'
-import { GetFormattedString } from '../../../types/Formattable'
-import { $ } from '../../utils.spec'
+import { EntityNode } from '../../nodes/EntityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
+import { UnsortedKeys } from '../../nodes/MapNode'
+import { NumberNode } from '../../nodes/NumberNode'
+import { NumberRangeNode } from '../../nodes/NumberRangeNode'
+import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../nodes/SelectorArgumentsNode'
+import { constructConfig } from '../../types/Config'
+import { GetFormattedString } from '../../types/Formattable'
+import { $ } from '../utils.spec'
 
 describe('EntityNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

@@ -1,12 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { GetCodeActions } from '../../../../nodes/ArgumentNode'
-import { NbtByteNode } from '../../../../nodes/NbtByteNode'
-import { constructConfig } from '../../../../types/Config'
-import { GetFormattedString } from '../../../../types/Formattable'
-import { ErrorCode } from '../../../../types/ParsingError'
-import { getCodeAction } from '../../../../utils'
-import { $, mockFunctionInfo } from '../../../utils.spec'
+import { GetCodeActions } from '../../../nodes/ArgumentNode'
+import { NbtByteNode } from '../../../nodes/NbtByteNode'
+import { constructConfig } from '../../../types/Config'
+import { GetFormattedString } from '../../../types/Formattable'
+import { ErrorCode } from '../../../types/ParsingError'
+import { getCodeAction } from '../../../utils'
+import { $, mockFunctionInfo } from '../../utils.spec'
 
 describe('NbtByteNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {

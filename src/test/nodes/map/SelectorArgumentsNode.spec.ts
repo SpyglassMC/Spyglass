@@ -1,11 +1,11 @@
 import assert = require('power-assert')
-import { GetCodeActions } from '../../../../nodes/ArgumentNode'
-import { UnsortedKeys } from '../../../../nodes/MapNode'
-import { SelectorArgumentsNode } from '../../../../nodes/SelectorArgumentsNode'
-import { constructConfig } from '../../../../types/Config'
-import { ErrorCode } from '../../../../types/ParsingError'
-import { getCodeAction } from '../../../../utils'
-import { $, mockFunctionInfo } from '../../../utils.spec'
+import { GetCodeActions } from '../../../nodes/ArgumentNode'
+import { UnsortedKeys } from '../../../nodes/MapNode'
+import { SelectorArgumentsNode } from '../../../nodes/SelectorArgumentsNode'
+import { constructConfig } from '../../../types/Config'
+import { ErrorCode } from '../../../types/ParsingError'
+import { getCodeAction } from '../../../utils'
+import { $, mockFunctionInfo } from '../../utils.spec'
 
 describe('SelectorArgumentsNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {

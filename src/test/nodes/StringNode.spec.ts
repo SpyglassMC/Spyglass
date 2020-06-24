@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { GetCodeActions } from '../../../nodes/ArgumentNode'
-import { StringNode } from '../../../nodes/StringNode'
-import { GetFormattedString } from '../../../types/Formattable'
-import { ErrorCode } from '../../../types/ParsingError'
-import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { GetCodeActions } from '../../nodes/ArgumentNode'
+import { StringNode } from '../../nodes/StringNode'
+import { GetFormattedString } from '../../types/Formattable'
+import { ErrorCode } from '../../types/ParsingError'
+import { getCodeAction } from '../../utils'
+import { $, mockFunctionInfo } from '../utils.spec'
 
 describe('StringNode Tests', () => {
     describe('toString() Tests', () => {
