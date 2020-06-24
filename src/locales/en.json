@@ -39,6 +39,7 @@
     "code-action.id-attribute-datafix": "Update this attribute name to 1.16",
     "code-action.id-complete-default-namespace": "Complete default namespace",
     "code-action.id-omit-default-namespace": "Omit default namespace",
+    "code-action.id-zombified-piglin-datafix": "Change this ID to Zombified Piglin's",
     "code-action.nbt-compound-sort-keys": "Sort NBT compound tag",
     "code-action.nbt-type-to-byte": "Convert to an NBT byte tag",
     "code-action.nbt-type-to-short": "Convert to an NBT short tag",

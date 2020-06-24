@@ -8,6 +8,7 @@ export const enum ErrorCode {
     BlockStateSortKeys,
     IdentityCompleteDefaultNamespace,
     IdentityOmitDefaultNamespace,
+    IdentityUnknown,
     NbtByteToLiteral,
     NbtByteToNumber,
     NbtCompoundSortKeys,

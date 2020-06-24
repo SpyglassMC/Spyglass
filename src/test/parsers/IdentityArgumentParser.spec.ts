@@ -542,7 +542,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 3 },
                     'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’',
-                    undefined, DiagnosticSeverity.Warning
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
         })
@@ -570,7 +570,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 21 },
                     'Failed to resolve namespaced ID ‘spgoding:function/42’ in cache category ‘tags/functions’',
-                    undefined, DiagnosticSeverity.Warning
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
         })
@@ -584,7 +584,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 3 },
                     'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’',
-                    undefined, DiagnosticSeverity.Error
+                    undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )
             ])
         })
@@ -598,7 +598,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 3 },
                     'Expected ‘spgoding:foo’ but got ‘minecraft:qux’',
-                    undefined, DiagnosticSeverity.Error
+                    undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )
             ])
         })
