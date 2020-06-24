@@ -1,4 +1,4 @@
-import { CodeAction, Diagnostic, Hover, Position, TextDocument } from 'vscode-languageserver'
+import { CodeAction, Diagnostic, Hover, TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'
 import { FunctionInfo } from '../types/FunctionInfo'
@@ -9,6 +9,7 @@ export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('NodeRange')
 export const NodeDescription = Symbol('NbtNodeDescription')
 export const GetCodeActions = Symbol('GetCodeActions')
+export const FilterDiagnostics = Symbol('FilterDiagnostics')
 export const GetHoverInformation = Symbol('GetHoverInformation')
 export const GetPlainKeys = Symbol('GetPlainKeys')
 
@@ -36,6 +37,28 @@ export abstract class ArgumentNode implements Formattable {
         }
     }
 
+    protected [FilterDiagnostics](info: FunctionInfo, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
+        const ans: DiagnosticMap = {}
+        for (const codeString in diagnosticMap) {
+            /* istanbul ignore else */
+            if (Object.prototype.hasOwnProperty.call(diagnosticMap, codeString)) {
+                const code = codeString as unknown as ErrorCode
+                const diagnostics = diagnosticMap[code]!
+                for (const diag of diagnostics) {
+                    const diagRange = {
+                        start: info.document.offsetAt(diag.range.start),
+                        end: info.document.offsetAt(diag.range.end)
+                    }
+                    if (areOverlapped(diagRange, nodeRange)) {
+                        ans[code] = ans[code] ?? []
+                        ans[code]!.push(diag)
+                    }
+                }
+            }
+        }
+        return ans
+    }
+
     /* istanbul ignore next: simple triage */
     [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
@@ -45,7 +68,9 @@ export abstract class ArgumentNode implements Formattable {
                 const arr = value instanceof Array ? value : [value]
                 for (const item of arr) {
                     if (item instanceof ArgumentNode && areOverlapped(range, item[NodeRange])) {
-                        ans.push(...item[GetCodeActions](uri, info, range, diagnostics))
+                        ans.push(...item[GetCodeActions](
+                            uri, info, range, this[FilterDiagnostics](info, diagnostics, item[NodeRange])
+                        ))
                     }
                 }
             }

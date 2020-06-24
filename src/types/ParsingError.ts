@@ -1,8 +1,8 @@
-import { Diagnostic, DiagnosticSeverity, Position } from 'vscode-languageserver'
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
 import { IndexMapping } from './IndexMapping'
 import { remapTextRange, TextRange } from './TextRange'
-import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export const enum ErrorCode {
     BlockStateSortKeys,
@@ -67,9 +67,9 @@ export class ParsingError {
     /**
      * Get the diagnostic form of the parsing error.
      */
-    toDiagnostic(content: TextDocument): Diagnostic {
+    toDiagnostic(document: TextDocument): Diagnostic {
         return {
-            range: { start: content.positionAt(this.range.start), end: content.positionAt(this.range.end) },
+            range: { start: document.positionAt(this.range.start), end: document.positionAt(this.range.end) },
             severity: this.severity,
             source: 'datapack',
             message: this.message + locale('punc.period'),
@@ -93,6 +93,5 @@ export function downgradeParsingError(errors: ParsingError[]) {
 export function remapParsingErrors(errors: ParsingError[], mapping: IndexMapping) {
     for (const err of errors) {
         err.range = remapTextRange(err.range, mapping)
-        err.code = undefined
     }
 }
