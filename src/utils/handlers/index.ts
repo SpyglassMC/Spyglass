@@ -225,6 +225,8 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
         } else if (offset < range.start) {
             // | [   )
             right = middle - 1
+        } else {
+            break
         }
     }
     return { node: null, index: -1 }

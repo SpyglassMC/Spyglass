@@ -582,7 +582,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 ans.errors.push(p)
             }
             //#region Tokens
-            ans.tokens.push(Token.from(start, reader, TokenType.string))
+            // ans.tokens.push(Token.from(start, reader, TokenType.string))
             //#endregion
         } else {
             // Parse as an unquoted string or a number.

@@ -32,16 +32,17 @@ import { downgradeParsingError, ErrorCode, ParsingError, remapParsingErrors } fr
 import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { StringReader } from './StringReader'
+import { Token, remapTokens } from '../types'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
 type Supers = CompoundSupers | RegistrySupers | null
 
 interface ValidateResultLike {
-    completions?: CompletionItem[], errors?: ParsingError[], cache?: ClientCache
+    completions?: CompletionItem[], errors?: ParsingError[], cache?: ClientCache, tokens?: Token[]
 }
 interface ValidateResult extends ValidateResultLike {
-    completions: CompletionItem[], errors: ParsingError[], cache: ClientCache
+    completions: CompletionItem[], errors: ParsingError[], cache: ClientCache, tokens: Token[]
 }
 
 type BooleanDoc = 'Boolean'
@@ -790,7 +791,7 @@ export class NbtdocHelper {
     private validateOrField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): void {
         for (let i = 0; i < doc.Or.length; i++) {
             const childDoc = doc.Or[i]
-            const childAns: ValidateResult = { cache: {}, completions: [], errors: [] }
+            const childAns: ValidateResult = { cache: {}, completions: [], errors: [], tokens:[] }
             this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
             if (childAns.errors.length === 0 || i === doc.Or.length - 1) {
                 combineCache(ans.cache, childAns.cache)
@@ -863,7 +864,7 @@ export class NbtdocHelper {
         return result
     }
 
-    private combineResult(ans: ValidateResult, result: { cache?: ClientCache | undefined, errors?: ParsingError[] | undefined, completions?: CompletionItem[] } | undefined, tag: NbtStringNode) {
+    private combineResult(ans: ValidateResult, result: { cache?: ClientCache | undefined, errors?: ParsingError[] | undefined, completions?: CompletionItem[], tokens?: Token[] } | undefined, tag: NbtStringNode) {
         if (result) {
             if (result.cache) {
                 remapCachePosition(result.cache, tag.mapping)
@@ -876,6 +877,9 @@ export class NbtdocHelper {
             }
             if (result.completions) {
                 ans.completions.push(...result.completions.map(v => remapCompletionItem(v, tag.mapping)))
+            }
+            if (result.tokens) {
+                ans.tokens.push(...remapTokens(result.tokens, tag.mapping))
             }
         }
     }
