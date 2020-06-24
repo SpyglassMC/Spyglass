@@ -1,3 +1,23 @@
+# [v2.1.0](https://github.com/SPGoding/datapack-language-server/compare/v2.0.4...v2.1.0) (2020-06-24)
+
+## ✨ New Features
+- [`3b55b15`](https://github.com/SPGoding/datapack-language-server/commit/3b55b15)  Add new env.language config (Issues: [`#481`](https://github.com/SPGoding/datapack-language-server/issues/481))
+- [`4f9a9ea`](https://github.com/SPGoding/datapack-language-server/commit/4f9a9ea)  Complete &#x27;THIS&#x27; for identities (Issues: [`#402`](https://github.com/SPGoding/datapack-language-server/issues/402))
+- [`935258c`](https://github.com/SPGoding/datapack-language-server/commit/935258c)  Complete &#x27;RANDOM&#x27; for UUIDs (Issues: [`#440`](https://github.com/SPGoding/datapack-language-server/issues/440))
+- [`c197192`](https://github.com/SPGoding/datapack-language-server/commit/c197192)  Add fix-all code actions (#509) (Issues: [`#509`](https://github.com/SPGoding/datapack-language-server/issues/509) [`#504`](https://github.com/SPGoding/datapack-language-server/issues/504))
+- [`65bf362`](https://github.com/SPGoding/datapack-language-server/commit/65bf362)  Add an action to convert Zombified Piglin&#x27;s ID (#510) (Issues: [`#510`](https://github.com/SPGoding/datapack-language-server/issues/510) [`#508`](https://github.com/SPGoding/datapack-language-server/issues/508))
+
+## 🐛 Bug Fixes
+- [`b12061d`](https://github.com/SPGoding/datapack-language-server/commit/b12061d)  Fix TypeError in getVanillaData (Issues: [`#480`](https://github.com/SPGoding/datapack-language-server/issues/480))
+- [`7871d10`](https://github.com/SPGoding/datapack-language-server/commit/7871d10)  Fix worldborder add showing an error for negative values (#484) (Issues: [`#484`](https://github.com/SPGoding/datapack-language-server/issues/484) [`#483`](https://github.com/SPGoding/datapack-language-server/issues/483))
+- [`d3ff235`](https://github.com/SPGoding/datapack-language-server/commit/d3ff235)  Rename attribute registry to singular (Issues: [`#489`](https://github.com/SPGoding/datapack-language-server/issues/489))
+- [`46d8b29`](https://github.com/SPGoding/datapack-language-server/commit/46d8b29)  Fix not completing NBT for certain selectors (Issues: [`#482`](https://github.com/SPGoding/datapack-language-server/issues/482))
+- [`8c55765`](https://github.com/SPGoding/datapack-language-server/commit/8c55765)  Fix resolving Registry Supers incorrectly (Issues: [`#494`](https://github.com/SPGoding/datapack-language-server/issues/494))
+- [`417f4a4`](https://github.com/SPGoding/datapack-language-server/commit/417f4a4)  Fix not resolve Index nbtdoc (Issues: [`#448`](https://github.com/SPGoding/datapack-language-server/issues/448) [`#487`](https://github.com/SPGoding/datapack-language-server/issues/487))
+- [`49666bb`](https://github.com/SPGoding/datapack-language-server/commit/49666bb)  Fix not allowing multiple spaces in vectors (Issues: [`#500`](https://github.com/SPGoding/datapack-language-server/issues/500))
+- [`12656f7`](https://github.com/SPGoding/datapack-language-server/commit/12656f7)  Fix showing deleted definitions in completions (Issues: [`#458`](https://github.com/SPGoding/datapack-language-server/issues/458))
+- [`4db95b5`](https://github.com/SPGoding/datapack-language-server/commit/4db95b5)  Fix no completions for NBT in selectors w/o type (#507) (Issues: [`#507`](https://github.com/SPGoding/datapack-language-server/issues/507))
+
 # [v2.0.4](https://github.com/SPGoding/datapack-language-server/compare/v2.0.3...v2.0.4) (2020-05-22)
 
 ## 🐛 Bug Fixes
