@@ -18,7 +18,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { fixFileCommandHandler, fixWorkspaceCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId } from './utils/handlers'
+import { fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, walk } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -565,7 +565,7 @@ connection.onInitialized(() => {
             switch (command) {
                 case 'datapack.fixFile': {
                     const uri = getUri(args![0], uris)
-                    fixFileCommandHandler({
+                    await fixFileCommandHandler({
                         cacheFile, infos, roots, uri,
                         getCommandTree, fetchConfig,
                         applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
@@ -575,7 +575,29 @@ connection.onInitialized(() => {
                     break
                 }
                 case 'datapack.fixWorkspace':
-                    return fixWorkspaceCommandHandler()
+                    for (const root of roots) {
+                        const dataPath = path.join(root.fsPath, 'data')
+                        const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
+                        for (const namespace of namespaces) {
+                            const namespacePath = path.join(dataPath, namespace)
+                            const functionsPath = path.join(namespacePath, 'functions')
+                            walk(root.fsPath, functionsPath, async abs => {
+                                try {
+                                    const uri = getUri(Uri.file(abs).toString(), uris)
+                                    await fixFileCommandHandler({
+                                        cacheFile, infos, roots, uri,
+                                        getCommandTree, fetchConfig,
+                                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
+                                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
+                                        readFile: fs.readFile
+                                    })
+                                } catch (e) {
+                                    console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
+                                }
+                            })
+                        }
+                    }
+                    break
                 case 'datapack.regenerateCache':
                     const progress = await connection.window.createWorkDoneProgress()
                     progress.begin(locale('server.regenerating-cache'))
@@ -821,20 +843,6 @@ const cacheFileOperations = {
             await cacheFileOperations.updateAdvancementInfo(id)
         }
         cacheFileOperations.deleteDefault(id.toString(), type)
-    }
-}
-
-async function walk(workspaceRootPath: string, abs: string, cb: (abs: string, rel: string, stat: fs.Stats) => any) {
-    const names = await fs.readdir(abs)
-    for (const name of names) {
-        const newAbs = path.join(abs, name)
-        const stat = await fs.stat(newAbs)
-        if (stat.isDirectory()) {
-            await walk(workspaceRootPath, newAbs, cb)
-        } else {
-            const rel = path.relative(workspaceRootPath, newAbs)
-            await cb(newAbs, rel, stat)
-        }
     }
 }
 
