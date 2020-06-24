@@ -54,6 +54,8 @@
     "code-snippets-invalid-for-game": "コードスニペットはゲームに対して無効です",
     "collection-length.between": "長さが%0% ~ %1%のコレクション",
     "collection-length.exact": "長さが%0%のコレクション",
+    "completion.identity.this": "this",
+    "completion.uuid.random": "ランダム",
     "conjunction.and_2": " と ",
     "conjunction.and_3+_1": "と ",
     "conjunction.and_3+_2": "と ",
