@@ -1,4 +1,4 @@
-export const ReleaseNotesVersion = '2.0.1'
+export const ReleaseNotesVersion = '2.1.0'
 
 export * as data from './data'
 export * as locales from './locales'
