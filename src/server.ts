@@ -436,7 +436,11 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = getInfo(uri, infos)
         if (info && info.config.features.documentHighlighting) {
-            return onDocumentHighlight({ position, info })
+            const offset = info.document.offsetAt(position)
+            const { node } = getSelectedNode(info.nodes, offset)
+            if (node) {
+                return onDocumentHighlight({ info, node, position, offset })
+            }
         }
         return null
     })

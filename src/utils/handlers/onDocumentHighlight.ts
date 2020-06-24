@@ -1,13 +1,12 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
+import { DocNode } from '../../types'
 import { getCacheFromOffset, getSafeCategory } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { onSelectionRanges } from './onSelectionRanges'
 
-export function onDocumentHighlight({ position, info }: { position: Position, info: FunctionInfo }): DocumentHighlight[] {
-    const { line: lineNumber, character: char } = position
-    const line = info.nodes[lineNumber]
+export function onDocumentHighlight({ offset, info, node, position }: { position: Position, offset: number, info: FunctionInfo, node: DocNode }): DocumentHighlight[] {
     /* istanbul ignore next */
-    const result = getCacheFromOffset(line.cache || {}, char)
+    const result = getCacheFromOffset(node.cache || {}, offset)
     if (result) {
         // Highlight all the references/definitions of the selected stuff.
         const ans: DocumentHighlight[] = []

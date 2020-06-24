@@ -1,6 +1,8 @@
-import { StringReader } from '../utils/StringReader'
-import { TextRange } from './TextRange'
+import clone from 'clone'
 import { TextDocument } from 'vscode-languageserver'
+import { StringReader } from '../utils/StringReader'
+import { IndexMapping } from './IndexMapping'
+import { remapTextRange, TextRange } from './TextRange'
 
 export enum TokenType {
     annotation,
@@ -25,6 +27,7 @@ export enum TokenModifier {
     deprecated,
     documentation,
     firstArgument,
+    inString,
     _
 }
 
@@ -68,4 +71,17 @@ export class Token {
             /* tokenModifiers */ tokenModifiers
         ]
     }
+}
+
+/**
+ * Remap specific tokens according to the mapping, and add the inString modifier.
+ * @param tokens Input tokens.
+ */
+export function remapTokens(tokens: Token[], mapping: IndexMapping) {
+    const ans = clone(tokens)
+    for (const token of ans) {
+        token.range = remapTextRange(token.range, mapping)
+        token.modifiers.add(TokenModifier.inString)
+    }
+    return ans
 }

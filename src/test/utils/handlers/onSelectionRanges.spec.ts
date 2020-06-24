@@ -14,6 +14,7 @@ describe('onSelectionRanges() Tests', () => {
         const info = mockFunctionInfo({
             nodes: [
                 mockLineNode({
+                    range: { start: 0, end: 8 },
                     tokens: [
                         new Token({ start: 0, end: 2 }, TokenType.literal),
                         new Token({ start: 3, end: 8 }, TokenType.literal)

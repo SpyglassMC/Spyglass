@@ -1,17 +1,19 @@
 import { Position, Range } from 'vscode-languageserver'
+import { getSelectedNode } from '.'
 import { FunctionInfo } from '../../types/FunctionInfo'
 
 export function onSelectionRanges({ info, positions }: { info: FunctionInfo, positions: Position[] }) {
     const ans: { range: Range }[] = []
 
-    for (const { line: lineNumber, character: char } of positions) {
-        const line = info.nodes[lineNumber]
-        for (const token of line.tokens) {
-            if (token.range.start <= char && char <= token.range.end) {
+    for (const pos of positions) {
+        const offset = info.document.offsetAt(pos)
+        const { node } = getSelectedNode(info.nodes, offset)
+        for (const token of node?.tokens ?? []) {
+            if (token.range.start <= offset && offset <= token.range.end) {
                 ans.push({
                     range: {
-                        start: { line: lineNumber, character: token.range.start },
-                        end: { line: lineNumber, character: token.range.end }
+                        start: info.document.positionAt(token.range.start),
+                        end: info.document.positionAt(token.range.end)
                     }
                 })
                 break

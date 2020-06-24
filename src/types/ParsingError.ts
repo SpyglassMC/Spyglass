@@ -88,7 +88,7 @@ export function downgradeParsingError(errors: ParsingError[]) {
 }
 
 /**
- * Remap specific errors according to the mapping, and remove the action code.
+ * Remap specific errors according to the mapping.
  * @param errors Input errors.
  */
 export function remapParsingErrors(errors: ParsingError[], mapping: IndexMapping) {
