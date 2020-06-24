@@ -8,9 +8,9 @@ export function onSemanticTokensEdits({ info, previousResultId }: { info: Functi
     info.builder.previousResult(previousResultId)
 
     for (const { tokens } of info.nodes) {
-        for (const token of tokens) {
-            info.builder.push(...token.toArray(info.document))
-        }
+        tokens
+            .sort((a, b) => a.range.start - b.range.start)
+            .forEach(t => info.builder!.push(...t.toArray(info.document)))
     }
 
     return info.builder.build/*Edits*/()

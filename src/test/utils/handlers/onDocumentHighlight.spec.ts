@@ -10,6 +10,7 @@ describe('onDocumentHighlight() Tests', () => {
     const info = mockFunctionInfo({
         nodes: [
             mockLineNode({
+                range: { start: 0, end: 13 },
                 tokens: [
                     new Token({ start: 0, end: 4 }, TokenType.literal),
                     new Token({ start: 5, end: 13 }, TokenType.entity)
@@ -24,6 +25,7 @@ describe('onDocumentHighlight() Tests', () => {
                 }
             }),
             mockLineNode({
+                range: { start: 14, end: 27 },
                 tokens: [
                     new Token({ start: 14, end: 18 }, TokenType.literal),
                     new Token({ start: 19, end: 27 }, TokenType.entity)
@@ -47,8 +49,9 @@ describe('onDocumentHighlight() Tests', () => {
             line: 0,
             character: 8
         }
+        const offset = 8
 
-        const ranges = onDocumentHighlight({ info, position })
+        const ranges = onDocumentHighlight({ info, node: info.nodes[0], position, offset })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -70,8 +73,9 @@ describe('onDocumentHighlight() Tests', () => {
             line: 0,
             character: 2
         }
+        const offset = 2
 
-        const ranges = onDocumentHighlight({ info, position })
+        const ranges = onDocumentHighlight({ info, node: info.nodes[0], position, offset })
 
         assert.deepStrictEqual(ranges, [
             {
