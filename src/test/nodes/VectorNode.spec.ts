@@ -1,12 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { constructConfig, VanillaConfig } from '../../../types/Config'
-import { GetFormattedString } from '../../../types/Formattable'
-import { FunctionInfo } from '../../../types/FunctionInfo'
-import { GetCodeActions } from '../../../nodes/ArgumentNode'
-import { VectorElementNode, VectorElementType, VectorNode } from '../../../nodes/VectorNode'
-import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { constructConfig, VanillaConfig } from '../../types/Config'
+import { GetFormattedString } from '../../types/Formattable'
+import { FunctionInfo } from '../../types/FunctionInfo'
+import { GetCodeActions } from '../../nodes/ArgumentNode'
+import { VectorElementNode, VectorElementType, VectorNode } from '../../nodes/VectorNode'
+import { getCodeAction } from '../../utils'
+import { $, mockFunctionInfo } from '../utils.spec'
 
 describe('VectorNode Tests', () => {
     const { lint } = constructConfig({})

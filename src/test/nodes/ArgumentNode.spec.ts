@@ -1,8 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentNode, GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../../nodes/ArgumentNode'
-import { GetFormattedString } from '../../../types/Formattable'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { ArgumentNode, GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../nodes/ArgumentNode'
+import { GetFormattedString } from '../../types/Formattable'
+import { $, mockFunctionInfo } from '../utils.spec'
 
 class TestArgumentNode extends ArgumentNode {
     readonly [NodeType] = 'Test'

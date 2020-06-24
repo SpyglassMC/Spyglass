@@ -1,12 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import path from 'path'
-import { GetCodeActions } from '../../../nodes/ArgumentNode'
-import { IdentityNode } from '../../../nodes/IdentityNode'
-import { GetFormattedString } from '../../../types/Formattable'
-import { ErrorCode } from '../../../types/ParsingError'
-import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { GetCodeActions } from '../../nodes/ArgumentNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
+import { GetFormattedString } from '../../types/Formattable'
+import { ErrorCode } from '../../types/ParsingError'
+import { getCodeAction } from '../../utils'
+import { $, mockFunctionInfo } from '../utils.spec'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
@@ -127,6 +127,29 @@ describe('IdentityNode Tests', () => {
                 'id-omit-default-namespace', diags, info.document, range,
                 'foo/bar'
             )])
+        })
+        it("Should fix Zombified Piglin's identity", () => {
+            const range = { start: 0, end: 17 }
+            const diagnostics = {
+                [ErrorCode.IdentityUnknown]: diags
+            }
+            const node = $(new IdentityNode('minecraft', ['zombie_pigman']), range)
+
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
+            assert.deepStrictEqual(actual, [getCodeAction(
+                'id-zombified-piglin-datafix', diags, info.document, range,
+                'minecraft:zombified_piglin'
+            )])
+        })
+        it("Should not fix Zombified Piglin's identity which is under custom namespace", () => {
+            const range = { start: 0, end: 17 }
+            const diagnostics = {
+                [ErrorCode.IdentityUnknown]: diags
+            }
+            const node = $(new IdentityNode('spgoding', ['zombie_pigman']), range)
+
+            const actual = node[GetCodeActions](uri, info, range, diagnostics)
+            assert.deepStrictEqual(actual, [])
         })
     })
     describe('toRel() Tests', () => {

@@ -556,7 +556,7 @@ describe('IdentityArgumentParser Tests', () => {
                 new ParsingError(
                     { start: 0, end: 3 },
                     'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_tables’',
-                    undefined, DiagnosticSeverity.Warning
+                    undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
         })

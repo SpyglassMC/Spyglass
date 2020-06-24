@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { IdentityNode } from '../../../nodes/IdentityNode'
-import { ParticleNode } from '../../../nodes/ParticleNode'
-import { VectorElementNode, VectorElementType, VectorNode } from '../../../nodes/VectorNode'
-import { constructConfig } from '../../../types/Config'
-import { GetFormattedString } from '../../../types/Formattable'
-import { $ } from '../../utils.spec'
+import { IdentityNode } from '../../nodes/IdentityNode'
+import { ParticleNode } from '../../nodes/ParticleNode'
+import { VectorElementNode, VectorElementType, VectorNode } from '../../nodes/VectorNode'
+import { constructConfig } from '../../types/Config'
+import { GetFormattedString } from '../../types/Formattable'
+import { $ } from '../utils.spec'
 
 describe('ParticleNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
