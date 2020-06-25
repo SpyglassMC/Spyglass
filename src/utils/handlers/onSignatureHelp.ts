@@ -60,7 +60,7 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
 
         return { signatures, activeParameter: 1, activeSignature: signatures.length - 1 }
     } catch (e) {
-        console.error(e)
+        console.error('onSignatureHelp', e)
     }
     return null
 }

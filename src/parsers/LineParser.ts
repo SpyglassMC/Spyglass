@@ -290,7 +290,7 @@ export class LineParser implements Parser<LineNode> {
                 }
                 const subNode = children[key]
                 this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, false, !!node.executable)
-                const option = line.hint.fix[0]
+                const option = line.hint.fix[0] ?? ''
                 ans.push(option)
             }
         }

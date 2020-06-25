@@ -42,7 +42,7 @@ export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info
 
         return ans
     } catch (e) {
-        console.error(e)
+        console.error('onCodeAction', e)
     }
     return null
 }

@@ -43,7 +43,7 @@ export async function onCompletion({ offset, info, cacheFile, node, roots, comma
 
         return completions
     } catch (e) {
-        console.error(e)
+        console.error('onCompletion', e)
     }
     return null
 }

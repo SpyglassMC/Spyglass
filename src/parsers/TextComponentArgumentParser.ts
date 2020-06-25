@@ -38,8 +38,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
             tokens: [], errors: [], cache: {}, completions: []
         }
 
-        const pos = ctx.document.positionAt(start)
-        const text = ' '.repeat(pos.character) + raw
+        const text = ' '.repeat(start) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
         const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
 
@@ -65,7 +64,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         //#region Completions.
         TextComponentArgumentParser.Service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
             if (completions) {
-                ans.completions.push(...completions.items.map(v => remapCompletionItem(v, pos.line)))
+                ans.completions.push(...completions.items.map(v => remapCompletionItem(v, (offset: number) => ctx.document.positionAt(offset))))
             }
         })
         //#endregion

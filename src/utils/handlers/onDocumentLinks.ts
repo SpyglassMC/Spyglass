@@ -39,7 +39,7 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
 
         return ans
     } catch (e) {
-        console.error(e)
+        console.error('onDocumentLinks', e)
     }
     return null
 }

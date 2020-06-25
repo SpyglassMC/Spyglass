@@ -171,7 +171,7 @@ describe('utils.ts Tests', () => {
     })
     describe('remapCompletionItem() Tests', () => {
         it('Should return as-is if the completion item does not contain any TextEdits', () => {
-            const actual = remapCompletionItem({ label: 'foo' }, 0)
+            const actual = remapCompletionItem({ label: 'foo' }, { start: 1 })
             assert.deepStrictEqual(actual, { label: 'foo' })
         })
         it('Should return remap the lineNumber as needed', () => {
@@ -181,7 +181,7 @@ describe('utils.ts Tests', () => {
                     range: { start: { line: 0, character: 12 }, end: { line: 0, character: 16 } },
                     newText: 'foo'
                 }
-            }, 42)
+            }, offset => ({ line: 42, character: offset }))
             assert.deepStrictEqual(actual, {
                 label: 'foo',
                 textEdit: {
