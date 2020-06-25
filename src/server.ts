@@ -221,8 +221,6 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
 
         onDidCloseTextDocument({ uri, infos })
-
-        updateDiagnostics(uri)
     })
 
     connection.onDidChangeConfiguration(async () => {

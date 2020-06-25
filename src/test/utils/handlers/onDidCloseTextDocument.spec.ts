@@ -6,13 +6,13 @@ import { onDidCloseTextDocument } from '../../../utils/handlers/onDidCloseTextDo
 import { mockFunctionInfo } from '../../utils.spec'
 
 describe('onDidCloseTextDocument() Tests', () => {
-    it('Should remove the info', () => {
+    it('Should do nothing', () => {
         const uri = Uri.parse('file:///c:/foo')
         const info = mockFunctionInfo()
         const infos: InfosOfUris = new Map([[uri, info]])
 
         onDidCloseTextDocument({ uri, infos })
 
-        assert(infos.size === 0)
+        assert(infos.size === 1)
     })
 })
