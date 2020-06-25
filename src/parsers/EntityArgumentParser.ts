@@ -416,6 +416,8 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
 }
 
 export function getNbtdocRegistryId(entity: EntityNode): null | string {
+    console.log(require('util').inspect(entity, true, null))
+    
     if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
         return 'minecraft:player'
     }
