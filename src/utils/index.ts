@@ -243,14 +243,14 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
  * @param param1 The mapping used to offset.
  */
 export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, lineNumber: number): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | number) {
+export function remapCompletionItem(completion: CompletionItem, getPosition: (offset:number) =>Position): CompletionItem
+export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset:number) =>Position)) {
     const ans = clone(completion)
     if (ans.textEdit) {
         const range = ans.textEdit.range
-        if (typeof param1 === 'number') {
-            range.start.line = param1
-            range.end.line = param1
+        if (param1 instanceof Function) {
+            range.start = param1(range.start.character)
+            range.end = param1(range.end.character)
         } else {
             range.start.character = getOuterIndex(param1, range.start.character)
             range.end.character = getOuterIndex(param1, range.end.character)
