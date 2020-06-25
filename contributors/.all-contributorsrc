@@ -10,6 +10,15 @@
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
   "contributors": [
     {
+      "name": "(=°ω°)丿",
+      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2337994&size=middle",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2337994",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/512", "text": "#512" }
+      ]
+    },
+    {
       "name": "00ll00",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
