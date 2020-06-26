@@ -27,10 +27,11 @@
         "watch": "tsc -w"
     },
     "dependencies": {
+        "@mcschema/core": "^0.2.7",
+        "@mcschema/java-1.16": "^0.1.0",
         "clone": "^2.1.2",
         "datapack-json": "^2.0.10",
         "fs-extra": "^9.0.0",
-        "minecraft-schemas": "^0.2.5",
         "python-range": "^1.0.4",
         "synchronous-promise": "^2.0.12",
         "uuid": "^8.1.0",
