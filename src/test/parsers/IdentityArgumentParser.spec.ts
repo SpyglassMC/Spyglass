@@ -157,20 +157,14 @@ describe('IdentityArgumentParser Tests', () => {
                 registry: registries, parsers, cache, cursor: 0,
                 id: new IdentityNode('spgoding', ['this', 'is', 'the', 'current', 'function'])
             })
-            const parser = new IdentityArgumentParser('spgoding:test')
+            const parser = new IdentityArgumentParser('$advancements')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions, [
-                {
-                    label: 'spgoding',
-                    kind: CompletionItemKind.Module
-                },
-                {
-                    label: 'THIS',
-                    insertText: 'spgoding:this/is/the/current/function',
-                    detail: 'spgoding:this/is/the/current/function',
-                    kind: CompletionItemKind.Snippet
-                }
-            ])
+            assert.deepStrictEqual(actual.completions.find(v => v.label === 'THIS'), {
+                label: 'THIS',
+                insertText: 'spgoding:this/is/the/current/function',
+                detail: 'spgoding:this/is/the/current/function',
+                kind: CompletionItemKind.Snippet
+            })
         })
         it('Should return completions for array registry', async () => {
             const ctx = constructContext({ registry: registries, parsers, cache, cursor: 0 })

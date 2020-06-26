@@ -3,7 +3,7 @@ import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { Registry } from '../types'
-import { CacheKey, ClientCache, getSafeCategory } from '../types/ClientCache'
+import { CacheKey, ClientCache, getSafeCategory, isFileType } from '../types/ClientCache'
 import { Config } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
 import { ArgumentParserResult } from '../types/Parser'
@@ -150,8 +150,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             kind: fileKind
         }))
 
-        // Add 'This' to completions
-        if (start === ctx.cursor && ctx.id) {
+        // Add 'THIS' to completions
+        if (start === ctx.cursor && ctx.id &&
+            typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
+        ) {
             ans.completions.push({
                 label: locale('completion.identity.this'),
                 insertText: ctx.id.toTagString(),
@@ -177,7 +179,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                             arrayToMessage(this.type, true, 'or'),
                             locale('punc.quote', stringID)
                         ),
-                        undefined, undefined, 
+                        undefined, undefined,
                         ErrorCode.IdentityUnknown
                     ))
                 }
