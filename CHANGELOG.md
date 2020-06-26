@@ -1,3 +1,15 @@
+# [v2.1.1](https://github.com/SPGoding/datapack-language-server/compare/v2.1.0...v2.1.1) (2020-06-26)
+
+## 🐛 Bug Fixes
+- [`9ae025a`](https://github.com/SPGoding/datapack-language-server/commit/9ae025a)  Fix not coloring values inside strings (#511) (Issues: [`#511`](https://github.com/SPGoding/datapack-language-server/issues/511) [`#436`](https://github.com/SPGoding/datapack-language-server/issues/436))
+- [`aac178d`](https://github.com/SPGoding/datapack-language-server/commit/aac178d)  Fix getNbtdocRegistryId from storage IDs (#521) (Issues: [`#521`](https://github.com/SPGoding/datapack-language-server/issues/521) [`#512`](https://github.com/SPGoding/datapack-language-server/issues/512))
+- [`100bca4`](https://github.com/SPGoding/datapack-language-server/commit/100bca4)  Fix not keeping diagnostics for closed documents (#522) (Issues: [`#522`](https://github.com/SPGoding/datapack-language-server/issues/522) [`#517`](https://github.com/SPGoding/datapack-language-server/issues/517))
+- [`19581c9`](https://github.com/SPGoding/datapack-language-server/commit/19581c9)  Fix completions for chat components (#523) (Issues: [`#523`](https://github.com/SPGoding/datapack-language-server/issues/523) [`#513`](https://github.com/SPGoding/datapack-language-server/issues/513))
+- [`34f50a7`](https://github.com/SPGoding/datapack-language-server/commit/34f50a7)  Fix allowing floats in block positions (#524) (Issues: [`#524`](https://github.com/SPGoding/datapack-language-server/issues/524) [`#520`](https://github.com/SPGoding/datapack-language-server/issues/520))
+- [`6e2dac8`](https://github.com/SPGoding/datapack-language-server/commit/6e2dac8)  Fix completing THIS under unrelevant categories (#525) (Issues: [`#525`](https://github.com/SPGoding/datapack-language-server/issues/525) [`#516`](https://github.com/SPGoding/datapack-language-server/issues/516))
+- [`8f8dd1e`](https://github.com/SPGoding/datapack-language-server/commit/8f8dd1e)  Fix annoying warnings for unknown keys in NBTs (#526) (Issues: [`#526`](https://github.com/SPGoding/datapack-language-server/issues/526) [`#515`](https://github.com/SPGoding/datapack-language-server/issues/515))
+- [`50f5dd5`](https://github.com/SPGoding/datapack-language-server/commit/50f5dd5)  Fix loading wrong info for non-opened documents (#527) (Issues: [`#527`](https://github.com/SPGoding/datapack-language-server/issues/527) [`#519`](https://github.com/SPGoding/datapack-language-server/issues/519))
+
 # [v2.1.0](https://github.com/SPGoding/datapack-language-server/compare/v2.0.4...v2.1.0) (2020-06-24)
 
 ## ✨ New Features
