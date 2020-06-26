@@ -576,14 +576,16 @@ connection.onInitialized(() => {
                     })
                     break
                 }
-                case 'datapack.fixWorkspace':
+                case 'datapack.fixWorkspace': {
+                    const progress = await connection.window.createWorkDoneProgress()
+                    progress.begin(locale('server.fixing-workspace'))
                     for (const root of roots) {
                         const dataPath = path.join(root.fsPath, 'data')
                         const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
                         for (const namespace of namespaces) {
                             const namespacePath = path.join(dataPath, namespace)
                             const functionsPath = path.join(namespacePath, 'functions')
-                            walk(root.fsPath, functionsPath, async abs => {
+                            await walk(root.fsPath, functionsPath, async abs => {
                                 try {
                                     const uri = getUri(Uri.file(abs).toString(), uris)
                                     await fixFileCommandHandler({
@@ -599,8 +601,10 @@ connection.onInitialized(() => {
                             })
                         }
                     }
+                    progress.done()
                     break
-                case 'datapack.regenerateCache':
+                }
+                case 'datapack.regenerateCache': {
                     const progress = await connection.window.createWorkDoneProgress()
                     progress.begin(locale('server.regenerating-cache'))
 
@@ -609,6 +613,7 @@ connection.onInitialized(() => {
 
                     progress.done()
                     break
+                }
                 default:
                     throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
             }

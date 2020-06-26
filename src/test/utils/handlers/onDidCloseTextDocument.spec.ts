@@ -13,6 +13,6 @@ describe('onDidCloseTextDocument() Tests', () => {
 
         onDidCloseTextDocument({ uri, infos })
 
-        assert(infos.size === 1)
+        assert(infos.size === 0)
     })
 })

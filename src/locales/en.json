@@ -132,6 +132,7 @@
     "quote": "a quote (‘'’ or ‘\"’)",
     "score-holder": "a score holder",
     "server.checking-file": "Checking ‘%0%’",
+    "server.fixing-workspace": "Fixing all auto-fixable problems in the workspace",
     "server.initializing": "Initialize DHP features",
     "server.new-version": "The Datapack Language Server has been updated to a newer version: %0%",
     "server.regenerating-cache": "Regenerating cache",

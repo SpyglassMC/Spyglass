@@ -55,8 +55,10 @@
         { "type": "ideas", "link": "issues/402", "text": "#402" },
         { "type": "bug", "link": "issues/458", "text": "#458" },
         { "type": "bug", "link": "issues/487", "text": "#487" },
+        { "type": "bug", "link": "issues/515", "text": "#515" },
         { "type": "bug", "link": "issues/516", "text": "#516" },
         { "type": "bug", "link": "issues/517", "text": "#517" },
+        { "type": "bug", "link": "issues/519", "text": "#519" },
         { "type": "bug", "link": "issues/520", "text": "#520" }
       ]
     },

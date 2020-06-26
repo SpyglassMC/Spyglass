@@ -10,12 +10,7 @@ export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, read
     const info = await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile, commandTree, vanillaData)
     /* istanbul ignore else */
     if (info) {
-        const startTime = new Date().getTime()
         const edit = getMergedPreferredEdit(info, uri)
-        const endTime = new Date().getTime()
-        console.log(`--------------- Edit for ‘${uri.toString()}’ (${endTime - startTime} ms) ---------------`)
-        console.log(JSON.stringify(edit, undefined, 4))
-
         if (edit) {
             applyEdit(edit)
         }
