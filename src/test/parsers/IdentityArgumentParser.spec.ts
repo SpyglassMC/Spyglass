@@ -157,7 +157,7 @@ describe('IdentityArgumentParser Tests', () => {
                 registry: registries, parsers, cache, cursor: 0,
                 id: new IdentityNode('spgoding', ['this', 'is', 'the', 'current', 'function'])
             })
-            const parser = new IdentityArgumentParser('spgoding:test')
+            const parser = new IdentityArgumentParser('$advancements')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions, [
                 {

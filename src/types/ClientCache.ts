@@ -318,7 +318,7 @@ export function isTagType(type: CacheKey): type is TagType {
 
 type FileType = 'advancements' | 'functions' | 'loot_tables' | 'predicates' | 'recipes' | TagType
 
-export function isFileType(type: any): type is FileType {
+export function isFileType(type: string): type is FileType {
     return (
         type === 'advancements' ||
         type === 'functions' ||

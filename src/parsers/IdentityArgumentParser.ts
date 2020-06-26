@@ -150,8 +150,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             kind: fileKind
         }))
 
-        // Add 'This' to completions
-        if (start === ctx.cursor && ctx.id && isFileType(this.type)) {
+        // Add 'THIS' to completions
+        if (start === ctx.cursor && ctx.id &&
+            typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
+        ) {
             ans.completions.push({
                 label: locale('completion.identity.this'),
                 insertText: ctx.id.toTagString(),
