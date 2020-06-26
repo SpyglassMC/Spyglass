@@ -367,7 +367,7 @@ describe('NbtArgumentParser Tests', () => {
                     new ParsingError(
                         { start: 1, end: 21 },
                         "Unknown key ‘this_is_a_custom_key’",
-                        undefined, DiagnosticSeverity.Warning
+                        undefined, DiagnosticSeverity.Hint
                     )
                 ])
             })
