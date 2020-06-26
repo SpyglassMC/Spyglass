@@ -153,20 +153,28 @@ export function getInfo(uri: Uri, infos: InfosOfUris): FunctionInfo | undefined 
     return infos.get(uri)
 }
 
+/* istanbul ignore next */
+export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
+    try {
+        const rel = getRel(uri, roots)!
+        if (isRelIncluded(rel, config)) {
+            const text = await readFile(uri.fsPath, 'utf8')
+            await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
+            const info = infos.get(uri)
+            infos.delete(uri)
+            return info
+        }
+    } catch (e) {
+        console.error('createInfo', e)
+    }
+    return undefined
+}
+
 export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
-        try {
-            const rel = getRel(uri, roots)!
-            if (isRelIncluded(rel, config)) {
-                const text = await readFile(uri.fsPath, 'utf8')
-                await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
-                info = infos.get(uri)
-            }
-        } catch (ignored) {
-            // Ignored.
-        }
+        info = await createInfo(uri, roots, infos, cacheFile, config, readFile, commandTree, vanillaData)
     }
 
     return info
