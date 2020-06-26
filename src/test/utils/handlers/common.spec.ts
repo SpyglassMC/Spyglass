@@ -173,21 +173,21 @@ describe('common.ts Tests', () => {
     describe('getOrCreateInfo() Tests', () => {
         const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
         const roots = [Uri.parse('file:///c:/bar/')]
-        const config = VanillaConfig
+        const getConfig = async () => VanillaConfig
         const readFile = async () => { throw 'Fake readFile() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
             const info = mockFunctionInfo()
             const infos: InfosOfUris = new Map([[uri, info]])
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile)
 
             assert(actual === info)
         })
         it('Should return undefined when exceptions are thrown during reading file', async () => {
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile)
 
             assert(actual === undefined)
         })
@@ -195,7 +195,7 @@ describe('common.ts Tests', () => {
             const readFile = async () => '# foo'
             const infos: InfosOfUris = new Map()
 
-            const actual = (await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile))!
+            const actual = (await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile))!
 
             assert(actual.config === VanillaConfig)
             assert(actual.document.getText() === '# foo')
@@ -203,11 +203,11 @@ describe('common.ts Tests', () => {
         })
         it('Should return undefined when the file is excluded', async () => {
             let hasReadFile = false
-            const config = constructConfig({ env: { exclude: ['**'] } })
+            const getConfig = async () => constructConfig({ env: { exclude: ['**'] } })
             const readFile = async () => hasReadFile = true
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile as any)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile as any)
 
             if (hasReadFile) {
                 fail()

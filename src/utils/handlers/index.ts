@@ -154,11 +154,14 @@ export function getInfo(uri: Uri, infos: InfosOfUris): FunctionInfo | undefined 
 }
 
 /* istanbul ignore next */
-export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
+export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, readFile: ReadFileFunction, getCommandTree?: (config: Config) => Promise<CommandTree>, getVanillaData?: (config: Config) => Promise<VanillaData>): Promise<FunctionInfo | undefined> {
     try {
         const rel = getRel(uri, roots)!
+        const config = await getConfig()
         if (isRelIncluded(rel, config)) {
             const text = await readFile(uri.fsPath, 'utf8')
+            const commandTree = await getCommandTree?.(config)
+            const vanillaData = await getVanillaData?.(config)
             await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
             const info = infos.get(uri)
             infos.delete(uri)
@@ -170,11 +173,11 @@ export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cac
     return undefined
 }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, config: Config, readFile: ReadFileFunction, commandTree?: CommandTree, vanillaData?: VanillaData): Promise<FunctionInfo | undefined> {
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, readFile: ReadFileFunction, getCommandTree?: (config: Config) => Promise<CommandTree>, getVanillaData?: (config: Config) => Promise<VanillaData>): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
-        info = await createInfo(uri, roots, infos, cacheFile, config, readFile, commandTree, vanillaData)
+        info = await createInfo(uri, roots, infos, cacheFile, getConfig, readFile, getCommandTree, getVanillaData)
     }
 
     return info
