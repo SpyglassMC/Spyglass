@@ -1015,7 +1015,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 10 },
                     'Unknown key ‘asdfghjkl’',
-                    undefined, DiagnosticSeverity.Warning
+                    undefined, DiagnosticSeverity.Hint
                 )])
             })
         })

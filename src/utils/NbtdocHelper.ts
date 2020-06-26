@@ -521,7 +521,7 @@ export class NbtdocHelper {
                             ans.errors.push(new ParsingError(
                                 node[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),
-                                true, DiagnosticSeverity.Warning, code
+                                true, DiagnosticSeverity.Hint, code
                             ))
                         }
                     }

@@ -170,7 +170,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unknown-key', locale('punc.quote', key)),
-                    true, DiagnosticSeverity.Warning
+                    true, DiagnosticSeverity.Hint
                 ))
             } else if (field) {
                 keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
