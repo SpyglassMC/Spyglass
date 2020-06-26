@@ -1,13 +1,13 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { getDiagnosticMap, getOrCreateInfo } from '..'
 import { ArgumentNode, GetCodeActions } from '../../../nodes'
-import { areOverlapped, CacheFile, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, ReadFileFunction, Uri } from '../../../types'
+import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, ReadFileFunction, Uri } from '../../../types'
 
 export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
-    const config = await fetchConfig(uri)
-    const commandTree = await getCommandTree(config.env.cmdVersion)
-    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource)
-    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, config, readFile, commandTree, vanillaData)
+    const getTheConfig = async () => await fetchConfig(uri)
+    const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
+    const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource)
+    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, readFile, getTheCommandTree, getTheVanillaData)
     /* istanbul ignore else */
     if (info) {
         const edit = getMergedPreferredEdit(info, uri)

@@ -509,7 +509,10 @@ connection.onInitialized(() => {
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const getTheConfig = async () => await fetchConfig(uri)
+        const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
+        const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
         if (info && info.config.features.documentLinks) {
             return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
         }
@@ -518,7 +521,10 @@ connection.onInitialized(() => {
 
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const getTheConfig = async () => await fetchConfig(uri)
+        const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
+        const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
         if (info && info.config.features.colors) {
             return onDocumentColor({ info })
         }
@@ -541,7 +547,10 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const getTheConfig = async () => await fetchConfig(uri)
+        const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
+        const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
         if (info && info.config.features.semanticColoring) {
             return onSemanticTokens({ info })
         }
@@ -689,9 +698,10 @@ const cacheFileOperations = {
         removeCachePosition(cacheFile.cache, uri)
     },
     combineCacheOfLines: async (uri: Uri, config: Config) => {
-        const commandTree = await getCommandTree(config.env.cmdVersion)
-        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, config, fs.readFile, commandTree, vanillaData)
+        const getTheConfig = async () => config
+        const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
+        const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
