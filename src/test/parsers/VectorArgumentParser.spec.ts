@@ -158,7 +158,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data[0], $(new VectorElementNode(VectorElementType.Absolute, 1, '1'), [0, 1]))
             assert.deepStrictEqual(actual.data[1], $(new VectorElementNode(VectorElementType.Relative, 0, ''), [2, 12]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 12 }, 'Expected a number but got ‘1.4.5.1.4’')
+                new ParsingError({ start: 3, end: 12 }, 'Expected a number but got ‘1.4.5.1.4’', false)
             ])
         })
         it('Should return error when the number is smaller than min', () => {

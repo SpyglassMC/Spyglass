@@ -73,7 +73,7 @@ export class StringReader {
                 throw new ParsingError({ start, end }, locale('expected-got',
                     locale('number'),
                     locale('punc.quote', str)
-                ))
+                ), false)
             }
             return str
         } else {
