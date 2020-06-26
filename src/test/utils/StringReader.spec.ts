@@ -117,7 +117,7 @@ describe('StringReader Tests', () => {
                 assert(message.match(/Expected a number but got ‘2.3.3’/))
                 assert(range.start === 0)
                 assert(range.end === 5)
-                assert(tolerable === true)
+                assert(tolerable === false)
             }
         })
         it('Should throw error for invalid string containing invalid characters', () => {
