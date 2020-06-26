@@ -1720,7 +1720,7 @@ export const CommandTree: ICommandTree = {
                                     }
                                 },
                                 rotation: {
-                                    parser: new VectorArgumentParser(2, false),
+                                    parser: new VectorArgumentParser(2, 'float', false),
                                     executable: true
                                 }
                             }
@@ -2324,7 +2324,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 rot: {
-                    parser: new VectorArgumentParser(2, false),
+                    parser: new VectorArgumentParser(2, 'float', false),
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'
