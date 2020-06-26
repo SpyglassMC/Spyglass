@@ -1,3 +1,9 @@
+# [v2.1.2](https://github.com/SPGoding/datapack-language-server/compare/v2.1.1...v2.1.2) (2020-06-26)
+
+## 🐛 Bug Fixes
+- [`aa1fe93`](https://github.com/SPGoding/datapack-language-server/commit/aa1fe93)  Fix throwing tolerable error for invalid numbers (#532) (Issues: [`#532`](https://github.com/SPGoding/datapack-language-server/issues/532) [`#529`](https://github.com/SPGoding/datapack-language-server/issues/529))
+- [`9a03114`](https://github.com/SPGoding/datapack-language-server/commit/9a03114)  Fix not showing document links on startup (#533) (Issues: [`#533`](https://github.com/SPGoding/datapack-language-server/issues/533) [`#530`](https://github.com/SPGoding/datapack-language-server/issues/530))
+
 # [v2.1.1](https://github.com/SPGoding/datapack-language-server/compare/v2.1.0...v2.1.1) (2020-06-26)
 
 ## 🐛 Bug Fixes
