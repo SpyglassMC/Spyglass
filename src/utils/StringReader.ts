@@ -70,7 +70,6 @@ export class StringReader {
             const num = Number(str)
             if (isNaN(num)) {
                 const end = this.cursor
-                this.cursor = start
                 throw new ParsingError({ start, end }, locale('expected-got',
                     locale('number'),
                     locale('punc.quote', str)
@@ -104,7 +103,6 @@ export class StringReader {
         if (str.includes('.')) {
             // num is float.
             const end = this.cursor
-            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('integer'),
                 str)
@@ -112,7 +110,6 @@ export class StringReader {
         }
         if (num < -2147483648 || num > 2147483647) {
             const end = this.cursor
-            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('integer.between', -2147483648, 2147483647),
                 str
@@ -131,7 +128,6 @@ export class StringReader {
         if (str.includes('.')) {
             // num is float
             const end = this.cursor
-            this.cursor = start
             throw new ParsingError({ start, end }, locale('expected-got',
                 locale('long'),
                 str
@@ -286,7 +282,6 @@ export class StringReader {
             return false
         } else {
             const end = this.cursor
-            this.cursor = start
             const toleratable = 'true'.startsWith(string.toLowerCase()) || 'false'.startsWith(string.toLowerCase())
             throw new ParsingError(
                 { start, end },

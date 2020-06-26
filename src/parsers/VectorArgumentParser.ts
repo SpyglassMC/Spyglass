@@ -19,6 +19,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 
     constructor(
         private readonly dimension: 2 | 3 | 4,
+        private readonly type: 'float' | 'integer' = 'float',
         private readonly allowLocal = true,
         private readonly allowRelative = true,
         private readonly min: undefined | number | (undefined | number)[] = undefined,
@@ -150,8 +151,13 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         if (StringReader.canInNumber(reader.peek())) {
             try {
                 const start = reader.cursor
-                const str = reader.readNumber()
-                const num = parseFloat(str)
+                let num: number
+                if (this.type === 'integer' && ansElement.type === VectorElementType.Absolute) {
+                    num = reader.readInt()
+                } else {
+                    num = reader.readFloat()
+                }
+                const str = reader.string.slice(start, reader.cursor)
                 ansElement.raw = str
                 ansElement.value = num
                 const min = this.min instanceof Array ? this.min[index] : this.min

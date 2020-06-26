@@ -1,4 +1,5 @@
 import { getArgOrDefault } from '../CommandTree'
+import { NodeRange } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { StringNode } from '../nodes/StringNode'
@@ -30,7 +31,6 @@ import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
-import { NodeDescription, NodeRange } from '../nodes'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -402,13 +402,13 @@ export const CommandTree: ICommandTree = {
             description: '',
             children: {
                 begin: {
-                    parser: new VectorArgumentParser(3),
+                    parser: new VectorArgumentParser(3, 'integer'),
                     children: {
                         end: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             children: {
                                 destination: {
-                                    parser: new VectorArgumentParser(3),
+                                    parser: new VectorArgumentParser(3, 'integer'),
                                     executable: true,
                                     children: {
                                         filtered: {
@@ -807,10 +807,10 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('fill'),
             children: {
                 from: {
-                    parser: new VectorArgumentParser(3),
+                    parser: new VectorArgumentParser(3, 'integer'),
                     children: {
                         to: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(false),
@@ -1505,7 +1505,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('setblock'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3),
+                    parser: new VectorArgumentParser(3, 'integer'),
                     children: {
                         block: {
                             parser: new BlockArgumentParser(false),
@@ -1536,7 +1536,7 @@ export const CommandTree: ICommandTree = {
             executable: true,
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3),
+                    parser: new VectorArgumentParser(3, 'integer'),
                     executable: true
                 }
             }
@@ -1550,7 +1550,7 @@ export const CommandTree: ICommandTree = {
                     executable: true,
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             executable: true
                         }
                     }
@@ -1859,7 +1859,7 @@ export const CommandTree: ICommandTree = {
                                     }
                                 },
                                 rotation: {
-                                    parser: new VectorArgumentParser(2, false),
+                                    parser: new VectorArgumentParser(2, 'float', false),
                                     executable: true
                                 }
                             }
@@ -2242,7 +2242,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('block'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3)
+                    parser: new VectorArgumentParser(3, 'integer')
                 }
             }
         },
@@ -2260,7 +2260,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('block'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3)
+                    parser: new VectorArgumentParser(3, 'integer')
                 }
             }
         },
@@ -2315,7 +2315,7 @@ export const CommandTree: ICommandTree = {
                     parser: new IdentityArgumentParser('$loot_tables'),
                     children: {
                         location: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             executable: true,
                             children: {
                                 mainhand_offhand: {
@@ -2350,7 +2350,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('mine'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3),
+                    parser: new VectorArgumentParser(3, 'integer'),
                     executable: true,
                     children: {
                         mainhand_offhand: {
@@ -2505,7 +2505,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 rot: {
-                    parser: new VectorArgumentParser(2, false),
+                    parser: new VectorArgumentParser(2, 'float', false),
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'
@@ -2594,13 +2594,13 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('blocks'),
                     children: {
                         start: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             children: {
                                 end: {
-                                    parser: new VectorArgumentParser(3),
+                                    parser: new VectorArgumentParser(3, 'integer'),
                                     children: {
                                         destination: {
-                                            parser: new VectorArgumentParser(3),
+                                            parser: new VectorArgumentParser(3, 'integer'),
                                             children: {
                                                 all_masked: {
                                                     parser: new LiteralArgumentParser('all', 'masked'),
@@ -2623,7 +2623,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('block'),
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(3),
+                            parser: new VectorArgumentParser(3, 'integer'),
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(true, true),
