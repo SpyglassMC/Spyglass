@@ -1,3 +1,11 @@
+# [v2.1.6](https://github.com/SPGoding/datapack-language-server/compare/v2.1.5...v2.1.6) (2020-06-28)
+
+## 🐛 Bug Fixes
+- [`db524e4`](https://github.com/SPGoding/datapack-language-server/commit/db524e4)  Fix not logging errors thrown by executeCommand (#537) (Issues: [`#537`](https://github.com/SPGoding/datapack-language-server/issues/537) [`#536`](https://github.com/SPGoding/datapack-language-server/issues/536))
+- [`89ba2d3`](https://github.com/SPGoding/datapack-language-server/commit/89ba2d3)  Fix not aborting progress when there are errors (#541) (Issues: [`#541`](https://github.com/SPGoding/datapack-language-server/issues/541) [`#538`](https://github.com/SPGoding/datapack-language-server/issues/538))
+- [`62c0e7d`](https://github.com/SPGoding/datapack-language-server/commit/62c0e7d)  Fix ENOENT when fixing all in workspace (#542) (Issues: [`#542`](https://github.com/SPGoding/datapack-language-server/issues/542) [`#539`](https://github.com/SPGoding/datapack-language-server/issues/539))
+- [`2317958`](https://github.com/SPGoding/datapack-language-server/commit/2317958)  Fix bugs about loading info
+
 # [v2.1.5](https://github.com/SPGoding/datapack-language-server/compare/v2.1.4...v2.1.5) (2020-06-28)
 
 ## 🐛 Bug Fixes
