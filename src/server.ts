@@ -194,7 +194,7 @@ connection.onInitialized(() => {
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (!info) {
             return
         }
