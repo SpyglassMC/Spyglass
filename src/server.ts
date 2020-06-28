@@ -343,7 +343,7 @@ connection.onInitialized(() => {
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.completions) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -359,7 +359,7 @@ connection.onInitialized(() => {
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.signatures) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -375,7 +375,7 @@ connection.onInitialized(() => {
 
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.foldingRanges) {
             return onFoldingRanges({ info })
         }
@@ -384,7 +384,7 @@ connection.onInitialized(() => {
 
     connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.hover) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -397,7 +397,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (!info || !info.config.features.formatting) {
             return null
         }
@@ -407,7 +407,7 @@ connection.onInitialized(() => {
 
     connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -419,7 +419,7 @@ connection.onInitialized(() => {
     })
     connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -432,7 +432,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.documentHighlighting) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -445,7 +445,7 @@ connection.onInitialized(() => {
 
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.selectionRanges) {
             return onSelectionRanges({ positions, info })
         }
@@ -454,7 +454,7 @@ connection.onInitialized(() => {
 
     connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.codeActions) {
             return onCodeAction({ uri, info, diagnostics, range, cacheFile })
         }
@@ -463,7 +463,7 @@ connection.onInitialized(() => {
 
     connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -484,7 +484,7 @@ connection.onInitialized(() => {
 
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -496,7 +496,7 @@ connection.onInitialized(() => {
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -530,7 +530,7 @@ connection.onInitialized(() => {
         range: { start: startPos, end: endPos }
     }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.colors) {
             const start = info.document.offsetAt(startPos)
             const end = info.document.offsetAt(endPos)
@@ -550,7 +550,7 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = getInfo(uri, infos)
         if (info && info.config.features.semanticColoring) {
             return onSemanticTokensEdits({ info, previousResultId })
         }

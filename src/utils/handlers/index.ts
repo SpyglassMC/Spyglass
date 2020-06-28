@@ -165,6 +165,7 @@ export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cac
             await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
             const info = infos.get(uri)
             if (info && !info.shouldKeep) {
+                console.log('DELETE')
                 infos.delete(uri)
             }
             return info
