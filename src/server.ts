@@ -586,20 +586,22 @@ connection.onInitialized(() => {
                         for (const namespace of namespaces) {
                             const namespacePath = path.join(dataPath, namespace)
                             const functionsPath = path.join(namespacePath, 'functions')
-                            await walk(root.fsPath, functionsPath, async abs => {
-                                try {
-                                    const uri = getUri(Uri.file(abs).toString(), uris)
-                                    await fixFileCommandHandler({
-                                        cacheFile, infos, roots, uri,
-                                        getCommandTree, fetchConfig,
-                                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
-                                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
-                                        readFile: fs.readFile
-                                    })
-                                } catch (e) {
-                                    console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
-                                }
-                            })
+                            if (fs.pathExistsSync(functionsPath)) {
+                                await walk(root.fsPath, functionsPath, async abs => {
+                                    try {
+                                        const uri = getUri(Uri.file(abs).toString(), uris)
+                                        await fixFileCommandHandler({
+                                            cacheFile, infos, roots, uri,
+                                            getCommandTree, fetchConfig,
+                                            applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
+                                            getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
+                                            readFile: fs.readFile
+                                        })
+                                    } catch (e) {
+                                        console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
+                                    }
+                                })
+                            }
                         }
                     }
                     break
