@@ -15,6 +15,9 @@ export async function onDidOpenTextDocument({ text, uri, rel, version, infos, co
         return
     }
 
+    // shouldKeep
+    info.shouldKeep = true
+
     // config
     info.config = config
 

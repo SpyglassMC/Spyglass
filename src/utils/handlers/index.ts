@@ -164,7 +164,9 @@ export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cac
             const vanillaData = await getVanillaData?.(config)
             await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
             const info = infos.get(uri)
-            infos.delete(uri)
+            if (info && !info.shouldKeep) {
+                infos.delete(uri)
+            }
             return info
         }
     } catch (e) {
