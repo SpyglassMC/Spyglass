@@ -618,7 +618,7 @@ connection.onInitialized(() => {
                     throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
             }
         } catch (e) {
-            connection.console.error(e)
+            console.error('onExecuteCommand', e)
         }
     })
 })
