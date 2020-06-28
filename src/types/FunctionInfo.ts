@@ -7,6 +7,5 @@ export interface FunctionInfo {
     builder?: ProposedFeatures.SemanticTokensBuilder,
     config: Config,
     document: TextDocument,
-    shouldKeep?: boolean,
     nodes: LineNode[]
 }

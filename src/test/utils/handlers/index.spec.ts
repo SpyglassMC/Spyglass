@@ -11,6 +11,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { LineNode } from '../../../types/LineNode'
 import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseString, parseStrings } from '../../../utils/handlers'
 import { mockFunctionInfo } from '../../utils.spec'
+import { CommandTree116, FallbackVanillaData } from '../../../data'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -49,7 +50,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseStrings(document, 0, 5, nodes, config, cacheFile, uri, roots)
+            parseStrings(document, 0, 5, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -63,7 +64,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            await parseStrings(document, 0, 6, nodes, config, cacheFile, uri, roots)
+            parseStrings(document, 0, 6, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },
@@ -174,40 +175,43 @@ describe('common.ts Tests', () => {
         const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
         const roots = [Uri.parse('file:///c:/bar/')]
         const getConfig = async () => VanillaConfig
-        const readFile = async () => { throw 'Fake readFile() Intended Exception' }
+        const getCommandTree = async () => CommandTree116
+        const getVanillaData = async () => FallbackVanillaData
+        const getText = async () => { throw 'Fake getText() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
             const info = mockFunctionInfo()
             const infos: InfosOfUris = new Map([[uri, info]])
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData)
 
             assert(actual === info)
         })
-        it('Should return undefined when exceptions are thrown during reading file', async () => {
+        it('Should return undefined when exceptions are thrown', async () => {
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData)
 
             assert(actual === undefined)
         })
-        it('Should return the info after reading file', async () => {
-            const readFile = async () => '# foo'
+        it('Should return the info correctly', async () => {
+            const getText = async () => '# foo'
             const infos: InfosOfUris = new Map()
 
-            const actual = (await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile))!
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, 2)
 
-            assert(actual.config === VanillaConfig)
+            assert(actual?.config === VanillaConfig)
+            assert(actual.document.version === 2)
+            assert(actual.document.uri === uri.toString())
             assert(actual.document.getText() === '# foo')
-            assert(actual.document.version === null)
         })
         it('Should return undefined when the file is excluded', async () => {
             let hasReadFile = false
             const getConfig = async () => constructConfig({ env: { exclude: ['**'] } })
-            const readFile = async () => hasReadFile = true
+            const getText = async () => hasReadFile = true
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, readFile as any)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText as any, getCommandTree, getVanillaData)
 
             if (hasReadFile) {
                 fail()

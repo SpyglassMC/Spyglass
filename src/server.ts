@@ -18,7 +18,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, walk } from './utils/handlers'
+import { createInfo, fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, walk } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -29,7 +29,6 @@ import { onDefOrRef } from './utils/handlers/onDefOrRef'
 import { onDidChangeTextDocument } from './utils/handlers/onDidChangeTextDocument'
 import { onDidChangeWorkspaceFolders } from './utils/handlers/onDidChangeWorkspaceFolders'
 import { onDidCloseTextDocument } from './utils/handlers/onDidCloseTextDocument'
-import { onDidOpenTextDocument } from './utils/handlers/onDidOpenTextDocument'
 import { onDocumentColor } from './utils/handlers/onDocumentColor'
 import { onDocumentFormatting } from './utils/handlers/onDocumentFormatting'
 import { onDocumentHighlight } from './utils/handlers/onDocumentHighlight'
@@ -182,19 +181,23 @@ connection.onInitialized(() => {
 
     connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {
         const uri = getUri(uriString, uris)
-        const config = await fetchConfig(uri)
-        const rel = getRel(uri, roots)!
-        if (isRelIncluded(rel, config)) {
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-            await onDidOpenTextDocument({ text, roots, uri, rel, version, infos, config, cacheFile, commandTree, vanillaData })
-            updateDiagnostics(uri)
+        const promise = createInfo({
+            getText: async () => text,
+            getConfig: async () => fetchConfig(uri),
+            getCommandTree: async config => getCommandTree(config.env.cmdVersion),
+            getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
+            roots, uri, version, cacheFile
+        })
+        infos.set(uri, promise)
+        const info = await promise
+        if (info) {
+            updateDiagnostics(uri, info)
         }
     })
     connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
         // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (!info) {
             return
         }
@@ -203,7 +206,7 @@ connection.onInitialized(() => {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
 
-        await onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+        onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -214,7 +217,7 @@ connection.onInitialized(() => {
             }
         }
 
-        updateDiagnostics(uri)
+        updateDiagnostics(uri, info)
         // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
     })
     connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
@@ -227,8 +230,11 @@ connection.onInitialized(() => {
         return Promise.all(
             Array
                 .from(infos.entries())
-                .map(async ([uri, info]) => {
-                    info.config = await fetchConfig(uri)
+                .map(async ([uri, promise]) => {
+                    const info = await promise
+                    if (info) {
+                        info.config = await fetchConfig(uri)
+                    }
                 })
         )
     })
@@ -343,7 +349,7 @@ connection.onInitialized(() => {
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.completions) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -359,7 +365,7 @@ connection.onInitialized(() => {
 
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.signatures) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -375,7 +381,7 @@ connection.onInitialized(() => {
 
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.foldingRanges) {
             return onFoldingRanges({ info })
         }
@@ -384,7 +390,7 @@ connection.onInitialized(() => {
 
     connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.hover) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -397,7 +403,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (!info || !info.config.features.formatting) {
             return null
         }
@@ -407,7 +413,7 @@ connection.onInitialized(() => {
 
     connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -419,7 +425,7 @@ connection.onInitialized(() => {
     })
     connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -432,7 +438,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.documentHighlighting) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -445,7 +451,7 @@ connection.onInitialized(() => {
 
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.selectionRanges) {
             return onSelectionRanges({ positions, info })
         }
@@ -454,7 +460,7 @@ connection.onInitialized(() => {
 
     connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.codeActions) {
             return onCodeAction({ uri, info, diagnostics, range, cacheFile })
         }
@@ -463,7 +469,7 @@ connection.onInitialized(() => {
 
     connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -484,7 +490,7 @@ connection.onInitialized(() => {
 
     connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -496,7 +502,7 @@ connection.onInitialized(() => {
     })
     connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
@@ -509,7 +515,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.documentLinks) {
             return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
         }
@@ -518,7 +524,7 @@ connection.onInitialized(() => {
 
     connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.colors) {
             return onDocumentColor({ info })
         }
@@ -530,7 +536,7 @@ connection.onInitialized(() => {
         range: { start: startPos, end: endPos }
     }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.colors) {
             const start = info.document.offsetAt(startPos)
             const end = info.document.offsetAt(endPos)
@@ -541,7 +547,7 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
-        const info = await gcInfo(uri)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.semanticColoring) {
             return onSemanticTokens({ info })
         }
@@ -550,7 +556,7 @@ connection.onInitialized(() => {
 
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
-        const info = getInfo(uri, infos)
+        const info = await getInfo(uri, infos)
         if (info && info.config.features.semanticColoring) {
             return onSemanticTokensEdits({ info, previousResultId })
         }
@@ -646,8 +652,7 @@ async function getLatestVersions() {
     connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(versionInformation)}`)
 }
 
-function updateDiagnostics(uri: Uri) {
-    const info = getInfo(uri, infos)
+function updateDiagnostics(uri: Uri, info: FunctionInfo) {
     const diagnostics: Diagnostic[] = []
     info?.nodes.forEach(line => {
         line.errors?.forEach(err => {
@@ -681,13 +686,6 @@ async function saveCacheFile() {
     }
 }
 
-async function gcInfo(uri: Uri) {
-    const getTheConfig = async () => await fetchConfig(uri)
-    const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
-    const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-    return getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
-}
-
 setInterval(saveCacheFile, 30_000)
 
 const cacheFileOperations = {
@@ -702,7 +700,8 @@ const cacheFileOperations = {
         const getTheConfig = async () => config
         const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
         const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, fs.readFile, getTheCommandTree, getTheVanillaData)
+        const getText = async () => fs.readFile(uri.fsPath, 'utf8')
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0

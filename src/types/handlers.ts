@@ -12,7 +12,7 @@ export const Uri = URI
 export type DocNode = LineNode
 
 export type Uri = URI
-export type InfosOfUris = Map<Uri, FunctionInfo>
+export type InfosOfUris = Map<Uri, FunctionInfo | Promise<FunctionInfo | undefined>>
 export type UrisOfIds = Map<string, Uri | null>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.

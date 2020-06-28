@@ -4,11 +4,11 @@ import { getOrCreateInfo, getUri, getUriFromId } from '.'
 import { getCommandTree } from '../../data/CommandTree'
 import { getVanillaData } from '../../data/VanillaData'
 import { IdentityNode } from '../../nodes/IdentityNode'
+import { Config } from '../../types'
 import { CacheFile, canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
 import { FunctionInfo } from '../../types/FunctionInfo'
 import { DocNode, FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { VersionInformation } from '../../types/VersionInformation'
-import { Config } from '../../types'
 
 export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
@@ -32,8 +32,9 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                             const affectedUri = getUri(pos.uri!, uris)
                             const getAffectedConfig = async () => await fetchConfig(affectedUri)
                             const getAffectedCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
-                            const getAffectedVanillaData = async (config: Config) => await  getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, getAffectedConfig, readFile, getAffectedCommandTree, getAffectedVanillaData)
+                            const getAffectedVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+                            const getText = async () => readFile(affectedUri.fsPath, 'utf8')
+                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, getAffectedConfig, getText, getAffectedCommandTree, getAffectedVanillaData)
                             /* istanbul ignore else */
                             if (affectedInfo) {
                                 documentChanges.push({

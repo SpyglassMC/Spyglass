@@ -7,16 +7,15 @@ import { VanillaData } from '../../data/VanillaData'
 import { DiagnosticMap, NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { LineParser } from '../../parsers/LineParser'
-import { ErrorCode, TextRange } from '../../types'
+import { ErrorCode, LineNode, TextRange } from '../../types'
 import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { FunctionInfo } from '../../types/FunctionInfo'
-import { DocNode, InfosOfUris, PathExistsFunction, ReadFileFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { DocNode, InfosOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
 import { StringReader } from '../StringReader'
-import { onDidOpenTextDocument } from './onDidOpenTextDocument'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -70,12 +69,12 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export async function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
     const lines = getStringLines(
         content.getText(Range.create(content.positionAt(start), content.positionAt(end)))
     )
     for (let i = 0; i < lines.length; i++) {
-        await parseString({
+        parseString({
             document: content,
             start: content.offsetAt(Position.create(i, 0)),
             end: content.offsetAt(Position.create(i, Infinity)),
@@ -86,7 +85,7 @@ export async function parseStrings(content: TextDocument, start: number = 0, end
     }
 }
 
-export async function parseString({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export function parseString({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
@@ -149,26 +148,26 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
 }
 
 /* istanbul ignore next */
-export function getInfo(uri: Uri, infos: InfosOfUris): FunctionInfo | undefined {
+export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<FunctionInfo | undefined> {
     return infos.get(uri)
 }
 
 /* istanbul ignore next */
-export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, readFile: ReadFileFunction, getCommandTree?: (config: Config) => Promise<CommandTree>, getVanillaData?: (config: Config) => Promise<VanillaData>): Promise<FunctionInfo | undefined> {
+export async function createInfo({ getText, uri, version, getConfig, cacheFile, getCommandTree, roots, getVanillaData }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData> }): Promise<FunctionInfo | undefined> {
     try {
         const rel = getRel(uri, roots)!
         const config = await getConfig()
         if (isRelIncluded(rel, config)) {
-            const text = await readFile(uri.fsPath, 'utf8')
-            const commandTree = await getCommandTree?.(config)
-            const vanillaData = await getVanillaData?.(config)
-            await onDidOpenTextDocument({ text, uri, rel, infos, config, cacheFile, version: null, roots, commandTree, vanillaData })
-            const info = infos.get(uri)
-            if (info && !info.shouldKeep) {
-                console.log('DELETE')
-                infos.delete(uri)
-            }
-            return info
+            const text = await getText()
+            const commandTree = await getCommandTree(config)
+            const vanillaData = await getVanillaData(config)
+
+            const document: TextDocument = TextDocument.create(uri.toString(), 'mcfunction', version as number, text)
+            const nodes: LineNode[] = []
+
+            parseStrings(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
+
+            return { config, document, nodes }
         }
     } catch (e) {
         console.error('createInfo', e)
@@ -176,11 +175,11 @@ export async function createInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cac
     return undefined
 }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, readFile: ReadFileFunction, getCommandTree?: (config: Config) => Promise<CommandTree>, getVanillaData?: (config: Config) => Promise<VanillaData>): Promise<FunctionInfo | undefined> {
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, version: number | null = null): Promise<FunctionInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
-        info = await createInfo(uri, roots, infos, cacheFile, getConfig, readFile, getCommandTree, getVanillaData)
+        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData })
     }
 
     return info
@@ -249,16 +248,18 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
 /* istanbul ignore next */
 export async function walk(workspaceRootPath: string, abs: string, cb: (abs: string, rel: string, stat: fs.Stats) => any) {
     const names = await fs.readdir(abs)
+    const promises: Promise<any>[] = []
     for (const name of names) {
         const newAbs = path.join(abs, name)
         const stat = await fs.stat(newAbs)
         if (stat.isDirectory()) {
-            await walk(workspaceRootPath, newAbs, cb)
+            promises.push(walk(workspaceRootPath, newAbs, cb))
         } else {
             const rel = path.relative(workspaceRootPath, newAbs)
-            await cb(newAbs, rel, stat)
+            promises.push(cb(newAbs, rel, stat))
         }
     }
+    return Promise.all(promises)
 }
 
 export * from './commands'
@@ -272,7 +273,6 @@ export * from './onDefOrRef'
 export * from './onDidChangeTextDocument'
 export * from './onDidChangeWorkspaceFolders'
 export * from './onDidCloseTextDocument'
-export * from './onDidOpenTextDocument'
 export * from './onDocumentColor'
 export * from './onDocumentFormatting'
 export * from './onDocumentHighlight'
