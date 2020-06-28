@@ -563,6 +563,7 @@ connection.onInitialized(() => {
      * datapack.regenerateCache  -  Regenerate cache.
      */
     connection.onExecuteCommand(async ({ command, arguments: args }) => {
+        let progress: WorkDoneProgress | undefined = undefined
         try {
             switch (command) {
                 case 'datapack.fixFile': {
@@ -577,7 +578,7 @@ connection.onInitialized(() => {
                     break
                 }
                 case 'datapack.fixWorkspace': {
-                    const progress = await connection.window.createWorkDoneProgress()
+                    progress = await connection.window.createWorkDoneProgress()
                     progress.begin(locale('server.fixing-workspace'))
                     for (const root of roots) {
                         const dataPath = path.join(root.fsPath, 'data')
@@ -601,17 +602,13 @@ connection.onInitialized(() => {
                             })
                         }
                     }
-                    progress.done()
                     break
                 }
                 case 'datapack.regenerateCache': {
-                    const progress = await connection.window.createWorkDoneProgress()
+                    progress = await connection.window.createWorkDoneProgress()
                     progress.begin(locale('server.regenerating-cache'))
-
                     cacheFile = clone(DefaultCacheFile)
                     await updateCacheFile(cacheFile, roots, progress)
-
-                    progress.done()
                     break
                 }
                 default:
@@ -619,6 +616,10 @@ connection.onInitialized(() => {
             }
         } catch (e) {
             console.error('onExecuteCommand', e)
+        } finally {
+            if (progress) {
+                progress.done()
+            }
         }
     })
 })
@@ -678,7 +679,7 @@ async function saveCacheFile() {
     }
 }
 
-async function gcInfo(uri: Uri ) {
+async function gcInfo(uri: Uri) {
     const getTheConfig = async () => await fetchConfig(uri)
     const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
     const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
