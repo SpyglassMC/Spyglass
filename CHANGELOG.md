@@ -1,3 +1,8 @@
+# [v2.1.3](https://github.com/SPGoding/datapack-language-server/compare/v2.1.2...v2.1.3) (2020-06-28)
+
+## 🐛 Bug Fixes
+- [`63156fb`](https://github.com/SPGoding/datapack-language-server/commit/63156fb)  Fix not providing any support sometimes
+
 # [v2.1.2](https://github.com/SPGoding/datapack-language-server/compare/v2.1.1...v2.1.2) (2020-06-26)
 
 ## 🐛 Bug Fixes
