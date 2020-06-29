@@ -38,11 +38,11 @@ describe('VectorNode Tests', () => {
             assert.deepStrictEqual(actual, [
                 getCodeAction(
                     'vector-align-0.0', [], info.document, { start: 0, end: 7 },
-                    '1.0 ~1 1.2'
+                    '1.0 ~1 1.2', undefined, false
                 ),
                 getCodeAction(
                     'vector-align-0.5', [], info.document, { start: 0, end: 7 },
-                    '1.5 ~1 1.2'
+                    '1.5 ~1 1.2', undefined, false
                 )
             ])
         })
