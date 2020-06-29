@@ -66,7 +66,8 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                             }
                             return v.toString()
                         }
-                    ).join(' ')
+                    ).join(' '),
+                    undefined, false
                 ),
                 getCodeAction(
                     'vector-align-0.5', [], info.document, this[NodeRange],
@@ -77,7 +78,8 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                             }
                             return v.toString()
                         }
-                    ).join(' ')
+                    ).join(' '),
+                    undefined, false
                 )
             )
         }
