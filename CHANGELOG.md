@@ -1,3 +1,8 @@
+# [v2.1.7](https://github.com/SPGoding/datapack-language-server/compare/v2.1.6...v2.1.7) (2020-06-29)
+
+## 🐛 Bug Fixes
+- [`cc3514d`](https://github.com/SPGoding/datapack-language-server/commit/cc3514d)  Fix quick fixes destroying integer vectors (#544) (Issues: [`#544`](https://github.com/SPGoding/datapack-language-server/issues/544) [`#543`](https://github.com/SPGoding/datapack-language-server/issues/543))
+
 # [v2.1.6](https://github.com/SPGoding/datapack-language-server/compare/v2.1.5...v2.1.6) (2020-06-28)
 
 ## 🐛 Bug Fixes
