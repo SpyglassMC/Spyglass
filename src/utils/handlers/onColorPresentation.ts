@@ -1,5 +1,5 @@
 import { ColorPresentation, Range } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 export function onColorPresentation({ info, start, end, r, g, b, a }: { info: FunctionInfo, start: number, end: number, r: number, g: number, b: number, a: number }) {
     try {

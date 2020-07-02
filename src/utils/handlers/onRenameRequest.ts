@@ -6,7 +6,7 @@ import { getVanillaData } from '../../data/VanillaData'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { Config } from '../../types'
 import { CacheFile, canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { DocNode, FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { VersionInformation } from '../../types/VersionInformation'
 

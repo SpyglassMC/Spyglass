@@ -4,7 +4,7 @@ import { DataSource, VanillaData } from '../data'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheKey } from './ClientCache'
 import { Config } from './Config'
-import { FunctionInfo } from './FunctionInfo'
+import { DocumentInfo } from './DocumentInfo'
 import { LineNode } from './LineNode'
 
 export const Uri = URI
@@ -12,7 +12,7 @@ export const Uri = URI
 export type DocNode = LineNode
 
 export type Uri = URI
-export type InfosOfUris = Map<Uri, FunctionInfo | Promise<FunctionInfo | undefined>>
+export type InfosOfUris = Map<Uri, DocumentInfo | Promise<DocumentInfo | undefined>>
 export type UrisOfIds = Map<string, Uri | null>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.

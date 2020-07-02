@@ -1,5 +1,5 @@
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { StringReader } from '../StringReader'
 import { getStringLines } from '.'
 

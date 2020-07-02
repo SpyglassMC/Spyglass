@@ -1,5 +1,5 @@
 import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { lineToLintedString } from '../../types/LineNode'
 import { NodeRange } from '../../nodes'
 import { getLspRange } from '.'

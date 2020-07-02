@@ -1,5 +1,5 @@
 import { canBeRenamed, getCacheFromOffset } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { DocNode } from '../../types'
 
 export function onPrepareRename({ info, node, offset }: { info: FunctionInfo, node: DocNode, offset: number }) {

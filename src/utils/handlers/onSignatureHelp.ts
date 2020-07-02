@@ -6,7 +6,7 @@ import { LineParser } from '../../parsers/LineParser'
 import { DocNode, Uri } from '../../types'
 import { CacheFile, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
 

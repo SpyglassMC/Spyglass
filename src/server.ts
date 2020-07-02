@@ -13,7 +13,7 @@ import { IdentityNode } from './nodes/IdentityNode'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
-import { FunctionInfo } from './types/FunctionInfo'
+import { DocumentInfo, isFunctionInfo } from './types/DocumentInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
@@ -43,12 +43,11 @@ import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
 import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
 
 const connection = createConnection(ProposedFeatures.all)
-// const isInitialized = false
 const uris: UrisOfStrings = new Map<string, Uri>()
-const infos: InfosOfUris = new Map<Uri, FunctionInfo>()
+const infos: InfosOfUris = new Map<Uri, DocumentInfo>()
 const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
 /**
- * Sorted by priority. If you want to read something in which Minecraft does,
+ * Sorted by priority. If you want to read something in the same order as Minecraft does,
  * iterate from the last element of this array to the first element.
  */
 const roots: Uri[] = []
@@ -352,7 +351,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info && info.config.features.completions) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 const config = info.config
                 const commandTree = await getCommandTree(config.env.cmdVersion)
@@ -366,7 +365,7 @@ connection.onInitialized(() => {
     connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.signatures) {
+        if (info && info.config.features.signatures && isFunctionInfo(info)) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
@@ -382,7 +381,7 @@ connection.onInitialized(() => {
     connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.foldingRanges) {
+        if (info && info.config.features.foldingRanges && isFunctionInfo(info)) {
             return onFoldingRanges({ info })
         }
         return null
@@ -393,7 +392,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info && info.config.features.hover) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 return onHover({ info, offset, node, cacheFile })
             }
@@ -404,11 +403,10 @@ connection.onInitialized(() => {
     connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (!info || !info.config.features.formatting) {
-            return null
+        if (info && info.config.features.formatting && isFunctionInfo(info)) {
+            return onDocumentFormatting({ info })
         }
-
-        return onDocumentFormatting({ info })
+        return null
     })
 
     connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
@@ -416,7 +414,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
             }
@@ -428,7 +426,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
             }
@@ -439,7 +437,7 @@ connection.onInitialized(() => {
     connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.documentHighlighting) {
+        if (info && info.config.features.documentHighlighting && isFunctionInfo(info)) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
@@ -452,7 +450,7 @@ connection.onInitialized(() => {
     connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.selectionRanges) {
+        if (info && info.config.features.selectionRanges && isFunctionInfo(info)) {
             return onSelectionRanges({ positions, info })
         }
         return null
@@ -470,7 +468,7 @@ connection.onInitialized(() => {
     connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info) {
+        if (info && isFunctionInfo(info)) {
             const offset = info.document.offsetAt(position)
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
@@ -493,7 +491,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 return onPrepareRename({ info, node, offset })
             }
@@ -505,7 +503,7 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
+            const { node } = getSelectedNode(info.json, offset)
             if (node) {
                 return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
             }
@@ -548,7 +546,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring) {
+        if (info && info.config.features.semanticColoring && isFunctionInfo(info)) {
             return onSemanticTokens({ info })
         }
         return { data: [] }
@@ -557,7 +555,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring) {
+        if (info && info.config.features.semanticColoring && isFunctionInfo(info)) {
             return onSemanticTokensEdits({ info, previousResultId })
         }
         return { edits: [] }
@@ -652,18 +650,20 @@ async function getLatestVersions() {
     connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(versionInformation)}`)
 }
 
-function updateDiagnostics(uri: Uri, info: FunctionInfo) {
+function updateDiagnostics(uri: Uri, info: DocumentInfo) {
     const diagnostics: Diagnostic[] = []
-    info?.nodes.forEach(line => {
-        line.errors?.forEach(err => {
-            try {
-                diagnostics.push(err.toDiagnostic(info.document))
-            } catch (ignored) {
-                console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
-            }
+    if (isFunctionInfo(info)) {
+        info?.nodes.forEach(line => {
+            line.errors?.forEach(err => {
+                try {
+                    diagnostics.push(err.toDiagnostic(info.document))
+                } catch (ignored) {
+                    console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
+                }
+            })
         })
-    })
-    connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
+        connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
+    }
 }
 
 async function fetchConfig(uri: Uri): Promise<Config> {
@@ -705,7 +705,7 @@ const cacheFileOperations = {
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
-            for (const node of info.nodes) {
+            for (const node of info.json) {
                 combineCache(cacheOfLines, node.cache, { uri, startLine: i, endLine: i, skippedChar: node[NodeRange].start })
                 i++
             }

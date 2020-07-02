@@ -1,6 +1,6 @@
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'

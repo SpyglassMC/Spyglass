@@ -1,6 +1,6 @@
 import { Hover } from 'vscode-languageserver'
 import { CacheFile } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { ArgumentNode, GetHoverInformation, NodeRange } from '../../nodes/ArgumentNode'
 import { DocNode } from '../../types'
 

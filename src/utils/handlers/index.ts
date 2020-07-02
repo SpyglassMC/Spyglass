@@ -1,17 +1,20 @@
+import { INode } from '@mcschema/core'
 import fs from 'fs-extra'
 import path from 'path'
 import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
+import { getJsonSchemaType, JsonSchemaType } from '../../data/JsonSchema'
 import { VanillaData } from '../../data/VanillaData'
 import { DiagnosticMap, NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
+import { JsonNode } from '../../nodes/JsonNode'
 import { LineParser } from '../../parsers/LineParser'
 import { ErrorCode, LineNode, TextRange } from '../../types'
 import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { DocumentInfo } from '../../types/DocumentInfo'
 import { DocNode, InfosOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
@@ -69,16 +72,21 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
-export function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
-    const startPos = content.positionAt(start)
+export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, vanillaData: VanillaData }): JsonNode {
+    // TODO: JSON-related
+    throw new Error('Unimplemented')
+}
+
+export function parseFunctionNodes(document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+    const startPos = document.positionAt(start)
     const lines = getStringLines(
-        content.getText(Range.create(startPos, content.positionAt(end)))
+        document.getText(Range.create(startPos, document.positionAt(end)))
     )
     for (let i = 0; i < lines.length; i++) {
-        parseString({
-            document: content,
-            start: content.offsetAt(Position.create(startPos.line + i, 0)),
-            end: content.offsetAt(Position.create(startPos.line + i, Infinity)),
+        parseFunctionNode({
+            document: document,
+            start: document.offsetAt(Position.create(startPos.line + i, 0)),
+            end: document.offsetAt(Position.create(startPos.line + i, Infinity)),
             id: getId(uri, roots),
             rootIndex: getRootIndex(uri, roots),
             nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData
@@ -86,7 +94,7 @@ export function parseStrings(content: TextDocument, start: number = 0, end: numb
     }
 }
 
-export function parseString({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export function parseFunctionNode({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
@@ -149,7 +157,7 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
 }
 
 /* istanbul ignore next */
-export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<FunctionInfo | undefined> {
+export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInfo | undefined> {
     const result = infos.get(uri)
     if (result instanceof Promise) {
         const ans = await result
@@ -164,21 +172,28 @@ export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<FunctionInf
 }
 
 /* istanbul ignore next */
-export async function createInfo({ getText, uri, version, getConfig, cacheFile, getCommandTree, roots, getVanillaData }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData> }): Promise<FunctionInfo | undefined> {
+export async function createInfo({ roots, uri, version, cacheFile, getText, getConfig, getCommandTree, getVanillaData, getJsonSchema }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchema: (config: Config, type: JsonSchemaType) => Promise<INode> }): Promise<DocumentInfo | undefined> {
     try {
         const rel = getRel(uri, roots)!
         const config = await getConfig()
         if (isRelIncluded(rel, config)) {
             const text = await getText()
-            const commandTree = await getCommandTree(config)
             const vanillaData = await getVanillaData(config)
-
-            const document: TextDocument = TextDocument.create(uri.toString(), 'mcfunction', version as number, text)
-            const nodes: LineNode[] = []
-
-            parseStrings(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
-
-            return { config, document, nodes }
+            const langId = rel.endsWith('.json') ? 'json' : 'mcfunction'
+            const document: TextDocument = TextDocument.create(uri.toString(), langId, version as number, text)
+            if (langId === 'json') {
+                const schemaType = getJsonSchemaType(rel)
+                if (schemaType) {
+                    const schema = await getJsonSchema(config, schemaType)
+                    const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, vanillaData })
+                    return { config, document, node }
+                }
+            } else {
+                const commandTree = await getCommandTree(config)
+                const nodes: LineNode[] = []
+                parseFunctionNodes(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
+                return { config, document, nodes }
+            }
         }
     } catch (e) {
         console.error('createInfo', e)
@@ -186,11 +201,11 @@ export async function createInfo({ getText, uri, version, getConfig, cacheFile, 
     return undefined
 }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, version: number | null = null): Promise<FunctionInfo | undefined> {
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchema: (config: Config, type: JsonSchemaType) => Promise<INode>, version: number | null = null): Promise<DocumentInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
-        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData })
+        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema })
     }
 
     return info

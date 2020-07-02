@@ -1,6 +1,6 @@
 import { Position, Range } from 'vscode-languageserver'
 import { getSelectedNode } from '.'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 export function onSelectionRanges({ info, positions }: { info: FunctionInfo, positions: Position[] }) {
     const ans: { range: Range }[] = []

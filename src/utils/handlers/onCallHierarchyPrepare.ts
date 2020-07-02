@@ -1,6 +1,6 @@
 import { Proposed, SymbolKind } from 'vscode-languageserver'
 import { getCacheFromOffset } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings, DocNode } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { getUriFromId } from '.'

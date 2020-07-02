@@ -1,7 +1,7 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
 import { DocNode } from '../../types'
 import { getCacheFromOffset, getSafeCategory } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { onSelectionRanges } from './onSelectionRanges'
 
 export function onDocumentHighlight({ offset, info, node, position }: { position: Position, offset: number, info: FunctionInfo, node: DocNode }): DocumentHighlight[] {

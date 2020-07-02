@@ -3,15 +3,15 @@ import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
+import { CommandTree116, FallbackVanillaData } from '../../../data'
 import { NodeRange } from '../../../nodes'
 import { IdentityNode } from '../../../nodes/IdentityNode'
 import { CacheFile } from '../../../types/ClientCache'
 import { constructConfig, VanillaConfig } from '../../../types/Config'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { LineNode } from '../../../types/LineNode'
-import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseString, parseStrings } from '../../../utils/handlers'
+import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseFunctionNodes } from '../../../utils/handlers'
 import { mockFunctionInfo } from '../../utils.spec'
-import { CommandTree116, FallbackVanillaData } from '../../../data'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -40,7 +40,7 @@ describe('common.ts Tests', () => {
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
     })
-    describe('parseStrings() Tests', () => {
+    describe('parseFunctionNodes() Tests', () => {
         const roots: Uri[] = []
         const uri = Uri.parse('file:///c:/foo')
         it('Should push an empty node at the end of whitespaces', async () => {
@@ -50,7 +50,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            parseStrings(document, 0, 5, nodes, config, cacheFile, uri, roots)
+            parseFunctionNodes(document, 0, 5, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -64,7 +64,7 @@ describe('common.ts Tests', () => {
             const config = VanillaConfig
             const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            parseStrings(document, 0, 6, nodes, config, cacheFile, uri, roots)
+            parseFunctionNodes(document, 0, 6, nodes, config, cacheFile, uri, roots)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },

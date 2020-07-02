@@ -1,5 +1,5 @@
 import { ProposedFeatures } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 export function onSemanticTokens({ info }: { info: FunctionInfo }) {
     info.builder = info.builder || new ProposedFeatures.SemanticTokensBuilder()

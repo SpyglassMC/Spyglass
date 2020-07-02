@@ -1,6 +1,6 @@
 import { DocumentLink } from 'vscode-languageserver'
 import { CacheUnit, isFileType } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { getUriFromId } from '.'

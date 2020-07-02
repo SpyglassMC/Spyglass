@@ -41,7 +41,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         const text = ' '.repeat(start) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
         const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
-
+        
         //#region Data.
         ans.data.document = document
         ans.data.jsonDocument = jsonDocument

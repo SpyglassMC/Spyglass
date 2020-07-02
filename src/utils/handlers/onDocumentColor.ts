@@ -1,6 +1,6 @@
 import { ColorInformation } from 'vscode-languageserver'
 import { getSafeCategory } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 export function onDocumentColor({ info }: { info: FunctionInfo }) {
     const ans: ColorInformation[] = []

@@ -1,5 +1,5 @@
 import { ProposedFeatures } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 /** istanbul ignore next: mostly reply on the builder, not ourselves. */
 export function onSemanticTokensEdits({ info, previousResultId }: { info: FunctionInfo, previousResultId: string }) {
