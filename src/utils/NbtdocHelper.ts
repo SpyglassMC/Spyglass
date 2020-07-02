@@ -1,12 +1,6 @@
 import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from '.'
 import { locale } from '../locales'
-import { LineParser } from '../parsers/LineParser'
-import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
-import { LintConfig, VanillaConfig } from '../types/Config'
-import { GetFormattedString } from '../types/Formattable'
-import { getInnerIndex } from '../types/IndexMapping'
-import { nbtdoc } from '../types/nbtdoc'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { GetFormattedClose, GetFormattedOpen, Keys } from '../nodes/MapNode'
@@ -27,12 +21,18 @@ import { NbtNumberNode } from '../nodes/NbtNumberNode'
 import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
+import { LineParser } from '../parsers/LineParser'
+import { remapTokens, Token } from '../types'
+import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
+import { getInnerIndex } from '../types/IndexMapping'
+import { nbtdoc } from '../types/nbtdoc'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ErrorCode, ParsingError, remapParsingErrors } from '../types/ParsingError'
 import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { StringReader } from './StringReader'
-import { Token, remapTokens } from '../types'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -88,6 +88,8 @@ type NbtdocHelperOptions = {
 export class NbtdocHelper {
     constructor(private readonly doc: nbtdoc.Root) { }
 
+    static readonly CompiledFallbacks: { [type: string]: nbtdoc.CompoundTag } = {}
+
     private readonly mockCompoundArena: { [index: number]: nbtdoc.CompoundTag | null | undefined } = {}
     private mockCompoundIndexNext: nbtdoc.Index<nbtdoc.CompoundTag> = -1
 
@@ -119,7 +121,9 @@ export class NbtdocHelper {
             if (id && reg[id] !== undefined) {
                 return { Compound: reg[id] }
             } else {
-                return fallback !== null ? { Compound: fallback } : null
+                const compiledFallback = NbtdocHelper.getCompiledFallback(this.doc, type)
+                const mockIndex = this.mock
+                return compiledFallback
             }
         }
         return null
@@ -791,7 +795,7 @@ export class NbtdocHelper {
     private validateOrField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): void {
         for (let i = 0; i < doc.Or.length; i++) {
             const childDoc = doc.Or[i]
-            const childAns: ValidateResult = { cache: {}, completions: [], errors: [], tokens:[] }
+            const childAns: ValidateResult = { cache: {}, completions: [], errors: [], tokens: [] }
             this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
             if (childAns.errors.length === 0 || i === doc.Or.length - 1) {
                 combineCache(ans.cache, childAns.cache)
@@ -985,6 +989,10 @@ export class NbtdocHelper {
         } else {
             return this.resolveIndexDoc(doc, tag, ctx)
         }
+    }
+
+    static getCompiledFallback(root: nbtdoc.Root, type: string): nbtdoc.CompoundTag {
+        throw ''
     }
 
     static isRegistrySupers(supers: Supers): supers is RegistrySupers {
