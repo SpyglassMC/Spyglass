@@ -1,3 +1,8 @@
+# [v2.1.9](https://github.com/SPGoding/datapack-language-server/compare/v2.1.8...v2.1.9) (2020-07-02)
+
+## 🐛 Bug Fixes
+- [`926e7e6`](https://github.com/SPGoding/datapack-language-server/commit/926e7e6)  Fix unknown keys for storage (#555) (Issues: [`#555`](https://github.com/SPGoding/datapack-language-server/issues/555) [`#554`](https://github.com/SPGoding/datapack-language-server/issues/554))
+
 # [v2.1.8](https://github.com/SPGoding/datapack-language-server/compare/v2.1.7...v2.1.8) (2020-07-02)
 
 ## 🐛 Bug Fixes
