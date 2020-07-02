@@ -8,7 +8,6 @@ import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { NbtCompoundKeyNode } from '../nodes/NbtCompoundKeyNode'
 import { NbtPathNode } from '../nodes/NbtPathNode'
-import { SelectorArgumentsNode } from '../nodes/SelectorArgumentsNode'
 import { StringNode } from '../nodes/StringNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
 import { ArgumentParserManager } from '../parsers/ArgumentParserManager'
@@ -307,29 +306,21 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('data get block ~ ~ ~ CustomName')
             const { data } = parser.parse(reader, ctx)
-            const expectedKey = new NbtCompoundKeyNode(null, 'CustomName', 'CustomName', { start: 21 })
-            expectedKey[NodeRange] = { start: 21, end: 31 }
-            assert.deepStrictEqual(data.args, [
-                { data: 'data', parser: 'literal' },
-                { data: 'get', parser: 'literal' },
-                { data: 'block', parser: 'literal' },
-                {
-                    data: $(new VectorNode(), [15, 20], {
-                        length: 3,
-                        0: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [15, 16]),
-                        1: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [17, 18]),
-                        2: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [19, 20])
-                    }),
-                    parser: 'vector.3D'
-                },
-                {
-                    data: $(new NbtPathNode(), [21, 31], v => {
-                        v.push(expectedKey)
-                        return v
-                    }),
-                    parser: 'nbtPath'
-                }
-            ])
+            assert.deepStrictEqual(data.args[0], { data: 'data', parser: 'literal' })
+            assert.deepStrictEqual(data.args[1], { data: 'get', parser: 'literal' })
+            assert.deepStrictEqual(data.args[2], { data: 'block', parser: 'literal' })
+            assert.deepStrictEqual(data.args[3], {
+                data: $(new VectorNode(), [15, 20], {
+                    length: 3,
+                    0: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [15, 16]),
+                    1: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [17, 18]),
+                    2: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [19, 20])
+                }),
+                parser: 'vector.3D'
+            })
+            assert(data.args[4].parser === 'nbtPath')
+            assert(data.args[4].data instanceof NbtPathNode)
+            assert.deepStrictEqual(data.args[4].data[NodeRange], { start: 21, end: 31 })
             assert.deepStrictEqual(data.hint, {
                 fix: ['data', 'get', 'block', '<pos: 3D vector>', '<path: NBT path>'],
                 options: []
