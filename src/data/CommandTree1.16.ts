@@ -510,7 +510,7 @@ export const CommandTree: ICommandTree = {
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
+                                            return new NbtPathArgumentParser('minecraft:block', null)
                                         }
                                     },
                                     executable: true,
@@ -562,7 +562,7 @@ export const CommandTree: ICommandTree = {
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
+                                            return new NbtPathArgumentParser('minecraft:block', null)
                                         }
                                     },
                                     children: {
@@ -584,7 +584,7 @@ export const CommandTree: ICommandTree = {
                                                                             const id = getNbtdocRegistryId(entity)
                                                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                                                         } else {
-                                                                            return new NbtPathArgumentParser('minecraft:block')
+                                                                            return new NbtPathArgumentParser('minecraft:block', null)
                                                                         }
                                                                     },
                                                                     executable: true
@@ -633,7 +633,7 @@ export const CommandTree: ICommandTree = {
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
+                                            return new NbtPathArgumentParser('minecraft:block', null)
                                         }
                                     },
                                     executable: true
@@ -2562,7 +2562,7 @@ export const CommandTree: ICommandTree = {
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
+                                            return new NbtPathArgumentParser('minecraft:block', null)
                                         }
                                     },
                                     children: {
@@ -2652,7 +2652,7 @@ export const CommandTree: ICommandTree = {
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
+                                            return new NbtPathArgumentParser('minecraft:block', null)
                                         }
                                     },
                                     executable: true,

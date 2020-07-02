@@ -1,19 +1,19 @@
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { IndexMapping } from '../types/IndexMapping'
-import { nbtdoc } from '../types/nbtdoc'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { NbtCompoundKeyNode } from '../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../nodes/NbtCompoundNode'
 import { NbtPathNode } from '../nodes/NbtPathNode'
 import { NumberNode } from '../nodes/NumberNode'
+import { IndexMapping } from '../types/IndexMapping'
+import { nbtdoc } from '../types/nbtdoc'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { isInRange, TextRange } from '../types/TextRange'
 import { Token, TokenType } from '../types/Token'
 import { arrayToMessage, validateStringQuote } from '../utils'
-import { CompoundDoc, ListDoc, NbtdocHelper, IndexDoc } from '../utils/NbtdocHelper'
+import { CompoundDoc, IndexDoc, ListDoc, NbtdocHelper } from '../utils/NbtdocHelper'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -23,7 +23,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
     constructor(
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
-        private readonly id: string | null = null
+        private readonly id: string | null | undefined = undefined
     ) {
         super()
     }
@@ -39,12 +39,11 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         const start = reader.cursor
 
         let helper: NbtdocHelper | undefined
-        if (this.id) {
+        if (this.id !== undefined) {
             helper = new NbtdocHelper(ctx.nbtdoc)
-
         }
 
-        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.resolveRegistryCompound(this.category, this.id) : null, ['filter', 'key', 'index'], false)
+        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.resolveRegistryCompound(this.category, this.id as string | null) : null, ['filter', 'key', 'index'], false)
 
         ans.data[NodeRange] = { start, end: reader.cursor }
 
@@ -170,7 +169,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unknown-key', locale('punc.quote', key)),
-                    true, DiagnosticSeverity.Hint
+                    true, DiagnosticSeverity.Warning
                 ))
             } else if (field) {
                 keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)

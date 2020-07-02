@@ -242,7 +242,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     new ParsingError(
                         { start: 9, end: 12 },
                         'Unknown key ‘foo’',
-                        true, DiagnosticSeverity.Hint
+                        true, DiagnosticSeverity.Warning
                     ),
                     new ParsingError(
                         { start: 9, end: 12 },
@@ -447,7 +447,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     new ParsingError(
                         { start: 0, end: 3 },
                         'Unknown key ‘bar’',
-                        true, DiagnosticSeverity.Hint
+                        true, DiagnosticSeverity.Warning
                     )
                 ])
                 assert.deepStrictEqual(cache, {})

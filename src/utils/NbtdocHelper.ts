@@ -1,12 +1,6 @@
 import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from '.'
 import { locale } from '../locales'
-import { LineParser } from '../parsers/LineParser'
-import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
-import { LintConfig, VanillaConfig } from '../types/Config'
-import { GetFormattedString } from '../types/Formattable'
-import { getInnerIndex } from '../types/IndexMapping'
-import { nbtdoc } from '../types/nbtdoc'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { GetFormattedClose, GetFormattedOpen, Keys } from '../nodes/MapNode'
@@ -27,12 +21,18 @@ import { NbtNumberNode } from '../nodes/NbtNumberNode'
 import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
+import { LineParser } from '../parsers/LineParser'
+import { remapTokens, Token } from '../types'
+import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
+import { LintConfig } from '../types/Config'
+import { GetFormattedString } from '../types/Formattable'
+import { getInnerIndex } from '../types/IndexMapping'
+import { nbtdoc } from '../types/nbtdoc'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ErrorCode, ParsingError, remapParsingErrors } from '../types/ParsingError'
 import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { StringReader } from './StringReader'
-import { Token, remapTokens } from '../types'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -88,11 +88,19 @@ type NbtdocHelperOptions = {
 export class NbtdocHelper {
     constructor(private readonly doc: nbtdoc.Root) { }
 
+    static readonly CompiledFallbacks: { [type: string]: nbtdoc.CompoundTag } = {}
+
     private readonly mockCompoundArena: { [index: number]: nbtdoc.CompoundTag | null | undefined } = {}
     private mockCompoundIndexNext: nbtdoc.Index<nbtdoc.CompoundTag> = -1
 
     private readonly mockEnumArena: { [index: number]: nbtdoc.EnumItem } = {}
     private mockEnumIndexNext: nbtdoc.Index<nbtdoc.EnumItem> = -1
+
+    private mockCompoundDoc(compoundDoc: nbtdoc.CompoundTag | null) {
+        const mockIndex = this.mockCompoundIndexNext--
+        this.mockCompoundArena[mockIndex] = compoundDoc
+        return mockIndex
+    }
 
     readCompound(index: nbtdoc.Index<nbtdoc.CompoundTag> | null): nbtdoc.CompoundTag | null {
         if (index === null) {
@@ -115,11 +123,13 @@ export class NbtdocHelper {
     resolveRegistryCompound(type: string, id: string | null) {
         const registry = this.doc.registries[type]
         if (registry) {
-            const [reg, fallback] = registry
+            const reg = registry[0]
             if (id && reg[id] !== undefined) {
                 return { Compound: reg[id] }
             } else {
-                return fallback !== null ? { Compound: fallback } : null
+                const compiledFallback = NbtdocHelper.getCompiledFallback(this.doc, type)
+                const mockIndex = this.mockCompoundDoc(compiledFallback)
+                return { Compound: mockIndex }
             }
         }
         return null
@@ -521,7 +531,7 @@ export class NbtdocHelper {
                             ans.errors.push(new ParsingError(
                                 node[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),
-                                true, DiagnosticSeverity.Hint, code
+                                true, DiagnosticSeverity.Warning, code
                             ))
                         }
                     }
@@ -791,7 +801,7 @@ export class NbtdocHelper {
     private validateOrField(ans: ValidateResult, ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): void {
         for (let i = 0; i < doc.Or.length; i++) {
             const childDoc = doc.Or[i]
-            const childAns: ValidateResult = { cache: {}, completions: [], errors: [], tokens:[] }
+            const childAns: ValidateResult = { cache: {}, completions: [], errors: [], tokens: [] }
             this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
             if (childAns.errors.length === 0 || i === doc.Or.length - 1) {
                 combineCache(ans.cache, childAns.cache)
@@ -917,9 +927,7 @@ export class NbtdocHelper {
                     break
             }
         }
-        const mockIndex = this.mockCompoundIndexNext--
-        this.mockCompoundArena[mockIndex] = compoundDoc
-        return mockIndex
+        return this.mockCompoundDoc(compoundDoc)
     }
 
     /* istanbul ignore next */
@@ -985,6 +993,29 @@ export class NbtdocHelper {
         } else {
             return this.resolveIndexDoc(doc, tag, ctx)
         }
+    }
+
+    static getCompiledFallback(root: nbtdoc.Root, type: string): nbtdoc.CompoundTag {
+        const ans: nbtdoc.CompoundTag = { description: '', fields: {}, supers: null }
+        const mergedDocs: Set<nbtdoc.Index<nbtdoc.CompoundTag>> = new Set()
+        const merge = (index: nbtdoc.Index<nbtdoc.CompoundTag> | null) => {
+            if (index !== null && !mergedDocs.has(index)) {
+                mergedDocs.add(index)
+                const doc = root.compound_arena[index]
+                ans.fields = { ...ans.fields, ...doc.fields }
+                merge(doc.supers && !NbtdocHelper.isRegistrySupers(doc.supers) ? doc.supers.Compound : null)
+            }
+        }
+
+        const registry = root.registries[type][0]
+        for (const key in registry) {
+            if (Object.prototype.hasOwnProperty.call(registry, key)) {
+                const index = registry[key]
+                merge(index)
+            }
+        }
+
+        return ans
     }
 
     static isRegistrySupers(supers: Supers): supers is RegistrySupers {
