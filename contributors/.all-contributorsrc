@@ -78,6 +78,14 @@
       ]
     },
     {
+      "name": "Grant",
+      "avatar_url": "https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/548", "text": "#548" }
+      ]
+    },
+    {
       "name": "K_bai",
       "avatar_url": "https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240",
       "profile": "https://afdian.net/@k_bai",
