@@ -70,14 +70,15 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
 }
 
 export function parseStrings(content: TextDocument, start: number = 0, end: number = content.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+    const startPos = content.positionAt(start)
     const lines = getStringLines(
-        content.getText(Range.create(content.positionAt(start), content.positionAt(end)))
+        content.getText(Range.create(startPos, content.positionAt(end)))
     )
     for (let i = 0; i < lines.length; i++) {
         parseString({
             document: content,
-            start: content.offsetAt(Position.create(i, 0)),
-            end: content.offsetAt(Position.create(i, Infinity)),
+            start: content.offsetAt(Position.create(startPos.line + i, 0)),
+            end: content.offsetAt(Position.create(startPos.line + i, Infinity)),
             id: getId(uri, roots),
             rootIndex: getRootIndex(uri, roots),
             nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData
@@ -149,7 +150,17 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
 
 /* istanbul ignore next */
 export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<FunctionInfo | undefined> {
-    return infos.get(uri)
+    const result = infos.get(uri)
+    if (result instanceof Promise) {
+        const ans = await result
+        if (ans) {
+            infos.set(uri, ans)
+            return ans
+        }
+    } else {
+        return result
+    }
+    return undefined
 }
 
 /* istanbul ignore next */
