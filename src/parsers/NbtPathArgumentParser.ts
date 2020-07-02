@@ -113,7 +113,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         ))
                     }
                 }
-                this.parseIndex(ans, reader, ctx, helper, doc && NbtdocHelper.isListDoc(doc) ? doc : null)
+                this.parseIndex(ans, reader, ctx, helper, doc)
             } else {
                 if (!allowEmpty) {
                     ans.errors.push(new ParsingError(
@@ -209,7 +209,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             !!(helper && doc && NbtdocHelper.isListDoc(doc))
 
         const checkSchema = () => {
-            if (helper && !(doc && NbtdocHelper.isListDoc(doc))) {
+            if (helper && doc && !NbtdocHelper.isListDoc(doc)) {
                 ans.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
                     locale('unexpected-nbt-path-sub'),
