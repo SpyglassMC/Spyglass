@@ -1,3 +1,9 @@
+# [v2.1.8](https://github.com/SPGoding/datapack-language-server/compare/v2.1.7...v2.1.8) (2020-07-02)
+
+## 🐛 Bug Fixes
+- [`f1d921e`](https://github.com/SPGoding/datapack-language-server/commit/f1d921e)  Fix unexpected-nbt-path-sub warning for null doc (#549) (Issues: [`#549`](https://github.com/SPGoding/datapack-language-server/issues/549) [`#548`](https://github.com/SPGoding/datapack-language-server/issues/548))
+- [`d20b61e`](https://github.com/SPGoding/datapack-language-server/commit/d20b61e)  Complete all vanilla keys when type is unknown  (#553) (Issues: [`#553`](https://github.com/SPGoding/datapack-language-server/issues/553) [`#515`](https://github.com/SPGoding/datapack-language-server/issues/515))
+
 # [v2.1.7](https://github.com/SPGoding/datapack-language-server/compare/v2.1.6...v2.1.7) (2020-06-29)
 
 ## 🐛 Bug Fixes
