@@ -13,5 +13,5 @@ export function onSemanticTokensEdits({ info, previousResultId }: { info: Functi
             .forEach(t => info.builder!.push(...t.toArray(info.document)))
     }
 
-    return info.builder.build/*Edits*/()
+    return info.builder.buildEdits()
 }
