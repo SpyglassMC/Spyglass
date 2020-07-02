@@ -96,6 +96,12 @@ export class NbtdocHelper {
     private readonly mockEnumArena: { [index: number]: nbtdoc.EnumItem } = {}
     private mockEnumIndexNext: nbtdoc.Index<nbtdoc.EnumItem> = -1
 
+    private mockCompoundDoc(compoundDoc: nbtdoc.CompoundTag | null) {
+        const mockIndex = this.mockCompoundIndexNext--
+        this.mockCompoundArena[mockIndex] = compoundDoc
+        return mockIndex
+    }
+
     readCompound(index: nbtdoc.Index<nbtdoc.CompoundTag> | null): nbtdoc.CompoundTag | null {
         if (index === null) {
             return null
@@ -117,13 +123,13 @@ export class NbtdocHelper {
     resolveRegistryCompound(type: string, id: string | null) {
         const registry = this.doc.registries[type]
         if (registry) {
-            const [reg, fallback] = registry
+            const reg = registry[0]
             if (id && reg[id] !== undefined) {
                 return { Compound: reg[id] }
             } else {
                 const compiledFallback = NbtdocHelper.getCompiledFallback(this.doc, type)
-                const mockIndex = this.mock
-                return compiledFallback
+                const mockIndex = this.mockCompoundDoc(compiledFallback)
+                return { Compound: mockIndex }
             }
         }
         return null
@@ -525,7 +531,7 @@ export class NbtdocHelper {
                             ans.errors.push(new ParsingError(
                                 node[Keys][key][NodeRange],
                                 locale('unknown-key', locale('punc.quote', key)),
-                                true, DiagnosticSeverity.Hint, code
+                                true, DiagnosticSeverity.Warning, code
                             ))
                         }
                     }
@@ -921,9 +927,7 @@ export class NbtdocHelper {
                     break
             }
         }
-        const mockIndex = this.mockCompoundIndexNext--
-        this.mockCompoundArena[mockIndex] = compoundDoc
-        return mockIndex
+        return this.mockCompoundDoc(compoundDoc)
     }
 
     /* istanbul ignore next */
@@ -992,7 +996,26 @@ export class NbtdocHelper {
     }
 
     static getCompiledFallback(root: nbtdoc.Root, type: string): nbtdoc.CompoundTag {
-        throw ''
+        const ans: nbtdoc.CompoundTag = { description: '', fields: {}, supers: null }
+        const mergedDocs: Set<nbtdoc.Index<nbtdoc.CompoundTag>> = new Set()
+        const merge = (index: nbtdoc.Index<nbtdoc.CompoundTag> | null) => {
+            if (index !== null && !mergedDocs.has(index)) {
+                mergedDocs.add(index)
+                const doc = root.compound_arena[index]
+                ans.fields = { ...ans.fields, ...doc.fields }
+                merge(doc.supers && !NbtdocHelper.isRegistrySupers(doc.supers) ? doc.supers.Compound : null)
+            }
+        }
+
+        const registry = root.registries[type][0]
+        for (const key in registry) {
+            if (Object.prototype.hasOwnProperty.call(registry, key)) {
+                const index = registry[key]
+                merge(index)
+            }
+        }
+
+        return ans
     }
 
     static isRegistrySupers(supers: Supers): supers is RegistrySupers {
