@@ -1,14 +1,14 @@
 import { INode } from '@mcschema/core'
 import fs from 'fs-extra'
 import path from 'path'
+import { getLanguageService } from 'vscode-json-languageservice'
 import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { getJsonSchemaType, JsonSchemaType } from '../../data/JsonSchema'
 import { VanillaData } from '../../data/VanillaData'
-import { DiagnosticMap, NodeRange } from '../../nodes'
+import { DiagnosticMap, JsonNode, NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { JsonNode } from '../../nodes/JsonNode'
 import { LineParser } from '../../parsers/LineParser'
 import { ErrorCode, LineNode, TextRange } from '../../types'
 import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
@@ -72,9 +72,15 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
     return null
 }
 
+export const JsonLanguageService = getLanguageService({})
+
 export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, vanillaData: VanillaData }): JsonNode {
-    // TODO: JSON-related
-    throw new Error('Unimplemented')
+    const ans: JsonNode = {
+        json: JsonLanguageService.parseJSONDocument(document),
+        cache: {}, errors: [], tokens: []
+    }
+    // TODO: JSON
+    return ans
 }
 
 export function parseFunctionNodes(document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {

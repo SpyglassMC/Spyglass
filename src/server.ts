@@ -6,6 +6,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
+import { getJsonSchema, JsonSchemaType } from './data/JsonSchema'
 import { DataSource, getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
 import { NodeRange } from './nodes/ArgumentNode'
@@ -185,6 +186,7 @@ connection.onInitialized(() => {
             getConfig: async () => fetchConfig(uri),
             getCommandTree: async config => getCommandTree(config.env.cmdVersion),
             getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
+            getJsonSchema: async (config: Config, type: JsonSchemaType) => getJsonSchema(config.env.jsonVersion, type),
             roots, uri, version, cacheFile
         })
         infos.set(uri, promise)
@@ -202,10 +204,13 @@ connection.onInitialized(() => {
         }
 
         const config = info.config
-        const commandTree = await getCommandTree(config.env.cmdVersion)
         const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-
-        onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+        if (isFunctionInfo(info)) {
+            const commandTree = await getCommandTree(config.env.cmdVersion)
+            onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+        } else {
+            // TODO: JSON
+        }
 
         const rel = getRel(uri, roots)
         if (rel) {
@@ -351,12 +356,16 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info && info.config.features.completions) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                const config = info.config
-                const commandTree = await getCommandTree(config.env.cmdVersion)
-                const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    const config = info.config
+                    const commandTree = await getCommandTree(config.env.cmdVersion)
+                    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+                    return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -392,9 +401,13 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info && info.config.features.hover) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                return onHover({ info, offset, node, cacheFile })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    return onHover({ info, offset, node, cacheFile })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -414,9 +427,13 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -426,9 +443,13 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -460,7 +481,11 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.codeActions) {
-            return onCodeAction({ uri, info, diagnostics, range, cacheFile })
+            if (isFunctionInfo(info)) {
+                return onCodeAction({ uri, info, diagnostics, range, cacheFile })
+            } else {
+                // TODO: JSON
+            }
         }
         return null
     })
@@ -491,9 +516,13 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                return onPrepareRename({ info, node, offset })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    return onPrepareRename({ info, node, offset })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -503,9 +532,13 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.json, offset)
-            if (node) {
-                return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+            if (isFunctionInfo(info)) {
+                const { node } = getSelectedNode(info.nodes, offset)
+                if (node) {
+                    return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+                }
+            } else {
+                // TODO: JSON
             }
         }
         return null
@@ -515,7 +548,11 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.documentLinks) {
-            return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
+            if (isFunctionInfo(info)) {
+                return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
+            } else {
+                // TODO: JSON
+            }
         }
         return null
     })
@@ -524,7 +561,11 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.colors) {
-            return onDocumentColor({ info })
+            if (isFunctionInfo(info)) {
+                return onDocumentColor({ info })
+            } else {
+                // TODO: JSON
+            }
         }
         return null
     })
@@ -538,7 +579,11 @@ connection.onInitialized(() => {
         if (info && info.config.features.colors) {
             const start = info.document.offsetAt(startPos)
             const end = info.document.offsetAt(endPos)
-            return onColorPresentation({ r, g, b, a, start, end, info })
+            if (isFunctionInfo(info)) {
+                return onColorPresentation({ r, g, b, a, start, end, info })
+            } else {
+                // TODO: JSON
+            }
         }
         return null
     })
@@ -700,13 +745,16 @@ const cacheFileOperations = {
         const getTheConfig = async () => config
         const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
         const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+        const getTheJsonSchema = async (config: Config, type: JsonSchemaType) => await getJsonSchema(config.env.jsonVersion, type)
         const getText = async () => fs.readFile(uri.fsPath, 'utf8')
-        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchema)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
-            for (const node of info.json) {
-                combineCache(cacheOfLines, node.cache, { uri, startLine: i, endLine: i, skippedChar: node[NodeRange].start })
+            const nodes = isFunctionInfo(info) ? info.nodes : [info.node]
+            for (const node of nodes) {
+                const skippedChar = (node as any)[NodeRange]?.start ?? 0
+                combineCache(cacheOfLines, node.cache, { uri, startLine: i, endLine: i, skippedChar })
                 i++
             }
             combineCache(cacheFile.cache, cacheOfLines)

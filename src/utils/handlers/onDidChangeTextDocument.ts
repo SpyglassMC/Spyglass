@@ -1,6 +1,6 @@
 import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { parseFunctionNodes, getSelectedNode, getStringLines, parseStrings } from '.'
+import { getSelectedNode, getStringLines, parseFunctionNodes } from '.'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineNode, Uri } from '../../types'
@@ -47,19 +47,12 @@ export function onDidChangeTextDocument({ uri, info, roots, version, contentChan
     nodeChange.lineStop = lineAmount - 1
 
     // Update `lines`.
-<<<<<<< HEAD
     const changedNodes: LineNode[] = []
-    parseStrings(
+    parseFunctionNodes(
         info.document,
         info.document.offsetAt(Position.create(nodeChange.lineStart, 0)),
         info.document.offsetAt(Position.create(nodeChange.lineStop + lineDelta, Infinity)),
         changedNodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData
-=======
-    info.nodes = []
-    parseFunctionNodes(
-        info.document, undefined, undefined,
-        info.nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData
->>>>>>> cd69ec7... 🚧 Explorer the prototype of JSON support
     )
     info.nodes.splice(nodeChange.nodeStart, nodeChange.nodeStop - nodeChange.nodeStart + 1, ...changedNodes)
 }

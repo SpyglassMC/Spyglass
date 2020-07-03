@@ -1,24 +1,30 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { getDiagnosticMap, getOrCreateInfo } from '..'
+import { getJsonSchema, JsonSchemaType } from '../../../data/JsonSchema'
 import { ArgumentNode, GetCodeActions } from '../../../nodes'
-import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, ReadFileFunction, Uri } from '../../../types'
+import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, isFunctionInfo, ReadFileFunction, Uri } from '../../../types'
 
 export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
     const start = new Date().getTime()
     const getTheConfig = async () => await fetchConfig(uri)
     const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
     const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource)
+    const getTheJsonSchema = async (config: Config, type: JsonSchemaType) => await getJsonSchema(config.env.jsonVersion, type)
     const getText = async () => readFile(uri.fsPath, 'utf8')
-    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData)
+    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchema)
     /* istanbul ignore else */
     if (info) {
-        const edit = getMergedPreferredEdit(info, uri)
-        if (edit) {
-            applyEdit(edit)
+        if (isFunctionInfo(info)) {
+            const edit = getMergedPreferredEdit(info, uri)
+            if (edit) {
+                applyEdit(edit)
+            }
+            // TODO: Finish command part when we have any quick fixes using it}
+        } else {
+            // TODO: JSON
         }
-        // TODO: Finish command part when we have any quick fixes using it
+        console.log(`[Fix All] ${new Date().getTime() - start}ms in ‘${uri}’`)
     }
-    console.log(`[Fix All] ${new Date().getTime() - start}ms in ‘${uri}’`)
 }
 
 function getMergedPreferredEdit(info: FunctionInfo, uri: Uri) {

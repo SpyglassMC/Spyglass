@@ -2,7 +2,7 @@ import { Diagnostic, JSONDocument } from 'vscode-json-languageservice'
 import { ClientCache, Token } from '../types'
 
 /**
- * Represent a JSON file.
+ * Represent an root node in a JSON file.
  */
 export interface JsonNode {
     json: JSONDocument,
