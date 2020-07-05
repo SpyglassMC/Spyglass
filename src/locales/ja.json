@@ -132,6 +132,7 @@
     "quote": "引用符 (‘'’ か ‘\"’)",
     "score-holder": "スコア保持者",
     "server.checking-file": "チェック中 ‘%0%’",
+    "server.fixing-workspace": "このワークスペース内のすべての修正可能な問題を一括修正する",
     "server.initializing": "DHPを初期化しています",
     "server.new-version": "Datapack Language Serverが%0%に更新されました",
     "server.regenerating-cache": "キャッシュファイルを再生成しています",
