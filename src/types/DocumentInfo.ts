@@ -1,4 +1,3 @@
-import { JSONDocument } from 'vscode-json-languageservice'
 import { ProposedFeatures } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Config } from './Config'

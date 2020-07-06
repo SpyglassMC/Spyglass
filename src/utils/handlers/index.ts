@@ -7,7 +7,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { getJsonSchemaType, JsonSchemaType } from '../../data/JsonSchema'
 import { VanillaData } from '../../data/VanillaData'
-import { DiagnosticMap, JsonNode, NodeRange } from '../../nodes'
+import { DiagnosticMap, JsonDocument, JsonNode, NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { LineParser } from '../../parsers/LineParser'
 import { ErrorCode, LineNode, TextRange } from '../../types'
@@ -18,6 +18,7 @@ import { DocumentInfo } from '../../types/DocumentInfo'
 import { DocNode, InfosOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
+import { JsonSchemaHelper, JsonSchemaHelperContext } from '../JsonSchemaHelper'
 import { StringReader } from '../StringReader'
 
 export function getUri(str: string, uris: UrisOfStrings) {
@@ -76,10 +77,20 @@ export const JsonLanguageService = getLanguageService({})
 
 export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, vanillaData: VanillaData }): JsonNode {
     const ans: JsonNode = {
-        json: JsonLanguageService.parseJSONDocument(document),
+        json: JsonLanguageService.parseJSONDocument(document) as JsonDocument,
         cache: {}, errors: [], tokens: []
     }
-    // TODO: JSON
+    if (ans.json.syntaxErrors.length === 0) {
+        const ctx: JsonSchemaHelperContext = {
+            ctx: constructContext({
+                cache: getCacheForUri(cacheFile.cache, uri),
+                id: getId(uri, roots),
+                rootIndex: getRootIndex(uri, roots),
+                config, document, roots
+            })
+        }
+        JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
+    }
     return ans
 }
 

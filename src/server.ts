@@ -708,6 +708,9 @@ function updateDiagnostics(uri: Uri, info: DocumentInfo) {
             })
         })
         connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
+    } else {
+        // TODO: JSON
+
     }
 }
 

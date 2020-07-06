@@ -1,11 +1,11 @@
-import { Diagnostic, JSONDocument } from 'vscode-json-languageservice'
-import { ClientCache, Token } from '../types'
+import { ClientCache, ParsingError, Token } from '../types'
+import { JsonDocument } from './JsonDocument'
 
 /**
  * Represent an root node in a JSON file.
  */
 export interface JsonNode {
-    json: JSONDocument,
+    json: JsonDocument,
     /**
      * Semantic tokens of the node.
      */
@@ -17,5 +17,5 @@ export interface JsonNode {
     /**
      * All errors of the node.
      */
-    errors: Diagnostic[]
+    errors: ParsingError[]
 }
