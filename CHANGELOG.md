@@ -1,3 +1,9 @@
+# [v2.1.10](https://github.com/SPGoding/datapack-language-server/compare/v2.1.9...v2.1.10) (2020-07-06)
+
+## 🐛 Bug Fixes
+- [`11d3264`](https://github.com/SPGoding/datapack-language-server/commit/11d3264)  Fix no completions for comments (#559) (Issues: [`#559`](https://github.com/SPGoding/datapack-language-server/issues/559) [`#556`](https://github.com/SPGoding/datapack-language-server/issues/556))
+- [`41ee3c6`](https://github.com/SPGoding/datapack-language-server/commit/41ee3c6)  Fix semantic coloring (#560) (Issues: [`#560`](https://github.com/SPGoding/datapack-language-server/issues/560) [`#558`](https://github.com/SPGoding/datapack-language-server/issues/558))
+
 # [v2.1.9](https://github.com/SPGoding/datapack-language-server/compare/v2.1.8...v2.1.9) (2020-07-02)
 
 ## 🐛 Bug Fixes
