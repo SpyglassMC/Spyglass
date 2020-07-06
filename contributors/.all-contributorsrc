@@ -82,7 +82,8 @@
       "avatar_url": "https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/548", "text": "#548" }
+        { "type": "bug", "link": "issues/548", "text": "#548" },
+        { "type": "bug", "link": "issues/558", "text": "#558" }
       ]
     },
     {
