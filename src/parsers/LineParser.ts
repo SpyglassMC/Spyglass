@@ -78,21 +78,21 @@ export class LineParser implements Parser<LineNode> {
         }
         saturatedLineToLine(node)
 
+        node[NodeRange] = { start, end: reader.cursor }
+
         // Handle comments.
         /* istanbul ignore next */
         if (backupReader.peek() === '#' && node.errors && node.errors.length > 0) {
             return {
                 data: {
-                    [NodeRange]: { start, end: backupReader.end },
+                    [NodeRange]: node[NodeRange],
                     args: [{ data: backupReader.readRemaining(), parser: 'string' }],
                     tokens: [],
-                    hint: { fix: [], options: [] },
+                    hint: node.hint,
                     completions: node.completions
                 }
             }
         }
-
-        node[NodeRange] = { start, end: reader.cursor }
 
         return { data: node }
     }
