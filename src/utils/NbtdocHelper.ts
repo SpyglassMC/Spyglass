@@ -88,7 +88,7 @@ type NbtdocHelperOptions = {
 export class NbtdocHelper {
     constructor(private readonly doc: nbtdoc.Root) { }
 
-    static readonly CompiledFallbacks: { [type: string]: nbtdoc.CompoundTag } = {}
+    static readonly CompiledFallbacks: { [type: string]: nbtdoc.CompoundTag | undefined } = {}
 
     private readonly mockCompoundArena: { [index: number]: nbtdoc.CompoundTag | null | undefined } = {}
     private mockCompoundIndexNext: nbtdoc.Index<nbtdoc.CompoundTag> = -1
@@ -996,22 +996,47 @@ export class NbtdocHelper {
     }
 
     static getCompiledFallback(root: nbtdoc.Root, type: string): nbtdoc.CompoundTag {
-        const ans: nbtdoc.CompoundTag = { description: '', fields: {}, supers: null }
-        const mergedDocs: Set<nbtdoc.Index<nbtdoc.CompoundTag>> = new Set()
-        const merge = (index: nbtdoc.Index<nbtdoc.CompoundTag> | null) => {
-            if (index !== null && !mergedDocs.has(index)) {
-                mergedDocs.add(index)
-                const doc = root.compound_arena[index]
-                ans.fields = { ...ans.fields, ...doc.fields }
-                merge(doc.supers && !NbtdocHelper.isRegistrySupers(doc.supers) ? doc.supers.Compound : null)
-            }
-        }
+        let ans: nbtdoc.CompoundTag | undefined = this.CompiledFallbacks[type]
 
-        const registry = root.registries[type][0]
-        for (const key in registry) {
-            if (Object.prototype.hasOwnProperty.call(registry, key)) {
-                const index = registry[key]
-                merge(index)
+        if (!ans) {
+            ans = { description: '', fields: {}, supers: null }
+            const mergedDocs: Set<nbtdoc.Index<nbtdoc.CompoundTag>> = new Set()
+            const merge = (index: nbtdoc.Index<nbtdoc.CompoundTag> | null) => {
+                if (index !== null && !mergedDocs.has(index)) {
+                    mergedDocs.add(index)
+                    const doc = root.compound_arena[index]
+                    for (const key in doc.fields) {
+                        /* istanbul ignore else */
+                        if (Object.prototype.hasOwnProperty.call(doc.fields, key)) {
+                            const ansField = ans!.fields[key]
+                            const field = doc.fields[key]
+                            if (this.isOrDoc(field.nbttype) && field.nbttype.Or.length === 0) {
+                                break
+                            }
+                            if (ansField) {
+                                if (this.isOrDoc(ansField.nbttype)) {
+                                    ansField.nbttype.Or.push(field.nbttype)
+                                } else {
+                                    ans!.fields[key] = {
+                                        description: ansField.description,
+                                        nbttype: { Or: [ansField.nbttype, field.nbttype] }
+                                    }
+                                }
+                            } else {
+                                ans!.fields[key] = field
+                            }
+                        }
+                    }
+                    merge(doc.supers && !NbtdocHelper.isRegistrySupers(doc.supers) ? doc.supers.Compound : null)
+                }
+            }
+
+            const registry = root.registries[type][0]
+            for (const key in registry) {
+                if (Object.prototype.hasOwnProperty.call(registry, key)) {
+                    const index = registry[key]
+                    merge(index)
+                }
             }
         }
 
