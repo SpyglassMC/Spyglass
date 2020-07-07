@@ -162,8 +162,8 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         //#endregion
 
         let childDoc: nbtdoc.NbtValue | null = null
-        if (helper) {
-            const compoundDoc = doc ? helper.readCompound(helper.resolveCompoundOrIndexDoc(doc, null, ctx)) : null
+        if (helper && doc) {
+            const compoundDoc = helper.readCompound(helper.resolveCompoundOrIndexDoc(doc, null, ctx))
             const field = helper.readField(compoundDoc, key, null)
             if (!field && !helper.isInheritFromItemBase(compoundDoc, null)) {
                 ans.errors.push(new ParsingError(

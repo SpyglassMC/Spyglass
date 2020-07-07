@@ -88,6 +88,14 @@
       ]
     },
     {
+      "name": "Green",
+      "avatar_url": "https://cdn.discordapp.com/avatars/244517712032825344/870e7a9845aae2d82f18325436ed260f.webp?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/562", "text": "#562" }
+      ]
+    },
+    {
       "name": "GrifterMage",
       "avatar_url": "https://cdn.discordapp.com/avatars/188514417862901761/acb07eb2ee48a590d0a77312578e8dc5.webp?size=256",
       "contributions": [],
