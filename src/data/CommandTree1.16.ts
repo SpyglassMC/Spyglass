@@ -261,7 +261,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbars', undefined, undefined, undefined, true),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
