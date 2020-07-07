@@ -1,8 +1,8 @@
 import path, { sep } from 'path'
 import { CacheKey, ClientCache } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
-import { GetFormattedString } from '../types/Formattable'
 import { FunctionInfo } from '../types/DocumentInfo'
+import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
@@ -142,7 +142,7 @@ export class IdentityNode extends ArgumentNode {
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string | undefined): { id: IdentityNode, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
+    static fromRel(rel: string | undefined): { id: IdentityNode, category: CacheKey, ext: string, side: 'assets' | 'data' } | undefined {
         if (!rel) {
             return undefined
         }

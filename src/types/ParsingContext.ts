@@ -30,28 +30,12 @@ export interface ParsingContext {
     roots: Uri[]
 }
 
-interface ParsingContextLike {
-    blockDefinition?: BlockDefinition,
-    cache?: ClientCache,
-    commandTree?: CommandTree,
-    config?: Config,
-    cursor?: number,
-    document?: TextDocument,
-    id?: IdentityNode,
-    namespaceSummary?: NamespaceSummary,
-    nbtdoc?: nbtdoc.Root,
-    parsers?: Manager<ArgumentParser<any>>,
-    registry?: Registry,
-    rootIndex?: number | null,
-    roots?: Uri[]
-}
-
 /**
  * Construct a `ParsingContext`.
  */
 /* istanbul ignore next */
 export function constructContext(
-    custom: ParsingContextLike,
+    custom: Partial<ParsingContext>,
     commandTree: CommandTree = FallbackCommandTree,
     vanillaData: VanillaData = {
         BlockDefinition: FallbackBlockDefinition,

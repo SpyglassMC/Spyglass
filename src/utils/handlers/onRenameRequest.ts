@@ -9,7 +9,7 @@ import { CacheFile, canBeRenamed, getCacheFromOffset, getSafeCategory, isFileTyp
 import { FunctionInfo } from '../../types/DocumentInfo'
 import { DocNode, FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { VersionInformation } from '../../types/VersionInformation'
-import { JsonSchemaType, getJsonSchema } from '../../data/JsonSchema'
+import { JsonSchemaType, getJsonSchemas } from '../../data/JsonSchema'
 
 export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
@@ -34,9 +34,9 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                             const getAffectedConfig = async () => await fetchConfig(affectedUri)
                             const getAffectedCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
                             const getAffectedVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                            const getAffectedJsonSchema = async (config: Config, type:JsonSchemaType) => await getJsonSchema(config.env.jsonVersion, type)
+                            const getAffectedJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
                             const getText = async () => readFile(affectedUri.fsPath, 'utf8')
-                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, getAffectedConfig, getText, getAffectedCommandTree, getAffectedVanillaData, getAffectedJsonSchema)
+                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, getAffectedConfig, getText, getAffectedCommandTree, getAffectedVanillaData, getAffectedJsonSchemas)
                             /* istanbul ignore else */
                             if (affectedInfo) {
                                 documentChanges.push({

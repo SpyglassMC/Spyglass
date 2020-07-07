@@ -1,4 +1,4 @@
-import { INode } from '@mcschema/core'
+import { SCHEMAS } from '@mcschema/core'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion } from '../types'
 
@@ -22,8 +22,9 @@ export function getJsonSchemaType(rel: string): JsonSchemaType | null {
 }
 
 /* istanbul ignore next */
-export async function getJsonSchema(version: JsonSchemaVersion, type: JsonSchemaType) {
+export async function getJsonSchemas(version: JsonSchemaVersion) {
     // Note: The stupid Webpack can't load the entry point of a scoped package correctly.
-    const { schemas } = await import(`@mcschema/java-${version}/lib/index.js`) as { schemas: { [type in JsonSchemaType]: INode } }
-    return schemas[type]
+    // FIXME: JSON when the registry is moved under different versions.
+    await import(`@mcschema/java-${version}/lib/index.js`)
+    return SCHEMAS
 }

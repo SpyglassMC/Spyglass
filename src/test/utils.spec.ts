@@ -50,7 +50,7 @@ export function $<T extends ArgumentNode>(node: T, param1: Range | Object, param
     return node
 }
 
-interface FunctionInfoLike {
+interface FunctionInfoMockOptions {
     builder?: ProposedFeatures.SemanticTokensBuilder,
     config?: Config,
     nodes?: LineNode[],
@@ -58,7 +58,7 @@ interface FunctionInfoLike {
     version?: number,
     content?: string
 }
-export function mockFunctionInfo(info: FunctionInfoLike = {}): FunctionInfo {
+export function mockFunctionInfo(info: FunctionInfoMockOptions = {}): FunctionInfo {
     return {
         builder: info.builder,
         config: info.config ?? VanillaConfig,
@@ -72,7 +72,7 @@ export function mockFunctionInfo(info: FunctionInfoLike = {}): FunctionInfo {
     }
 }
 
-interface LineNodeLike {
+interface LineNodeMockOptions {
     range?: TextRange,
     args?: LineArgumentNode<any>[],
     hint?: {
@@ -84,7 +84,7 @@ interface LineNodeLike {
     errors?: ParsingError[],
     completions?: CompletionItem[]
 }
-export function mockLineNode(node: LineNodeLike = {}): LineNode {
+export function mockLineNode(node: LineNodeMockOptions = {}): LineNode {
     return {
         [NodeRange]: node.range ?? { start: NaN, end: NaN },
         args: node.args ?? [],

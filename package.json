@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "@mcschema/core": "^0.2.7",
-        "@mcschema/java-1.16": "^0.1.0",
+        "@mcschema/java-1.16": "^0.1.1",
         "clone": "^2.1.2",
         "datapack-json": "^2.0.10",
         "fs-extra": "^9.0.0",

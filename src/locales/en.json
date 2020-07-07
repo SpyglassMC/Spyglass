@@ -76,6 +76,7 @@
     "identity": "a namespaced ID",
     "integer": "an integer",
     "integer.between": "an integer between %0% and %1%",
+    "json-schema.error-for-path": "Path %0%: %1%",
     "key": "a key",
     "key-not-following-convention": "Invalid key %0% which doesn't follow %1% convention",
     "leading-slash": "a leading slash ‘/’",

@@ -2,15 +2,17 @@ import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
 import { CodeActionKind, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
-import { getJsonSchema, JsonSchemaType } from './data/JsonSchema'
+import { getJsonSchemas } from './data/JsonSchema'
 import { DataSource, getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
+import { ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
@@ -19,7 +21,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { createInfo, fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, walk } from './utils/handlers'
+import { createInfo, fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk } from './utils/handlers'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -186,7 +188,7 @@ connection.onInitialized(() => {
             getConfig: async () => fetchConfig(uri),
             getCommandTree: async config => getCommandTree(config.env.cmdVersion),
             getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
-            getJsonSchema: async (config: Config, type: JsonSchemaType) => getJsonSchema(config.env.jsonVersion, type),
+            getJsonSchemas: async config => getJsonSchemas(config.env.jsonVersion),
             roots, uri, version, cacheFile
         })
         infos.set(uri, promise)
@@ -209,14 +211,17 @@ connection.onInitialized(() => {
             const commandTree = await getCommandTree(config.env.cmdVersion)
             onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
         } else {
-            // TODO: JSON
+            const schemas = await getJsonSchemas(config.env.jsonVersion)
+            const schema = schemas.get(info.node.schemaType)
+            TextDocument.update(info.document, contentChanges, version!)
+            info.node = parseJsonNode({ uri, roots, config, cacheFile, schema, schemas, vanillaData, document: info.document, schemaType: info.node.schemaType })
         }
 
         const rel = getRel(uri, roots)
         if (rel) {
             const result = IdentityNode.fromRel(rel)
             if (result) {
-                cacheFileOperations.fileModified(uri, 'functions', result.id)
+                cacheFileOperations.fileModified(uri, result.category, result.id)
                 trimCache(cacheFile.cache)
             }
         }
@@ -697,21 +702,21 @@ async function getLatestVersions() {
 
 function updateDiagnostics(uri: Uri, info: DocumentInfo) {
     const diagnostics: Diagnostic[] = []
+    const pusher = (err: ParsingError) => {
+        try {
+            diagnostics.push(err.toDiagnostic(info.document))
+        } catch (ignored) {
+            console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
+        }
+    }
     if (isFunctionInfo(info)) {
         info?.nodes.forEach(line => {
-            line.errors?.forEach(err => {
-                try {
-                    diagnostics.push(err.toDiagnostic(info.document))
-                } catch (ignored) {
-                    console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
-                }
-            })
+            line.errors?.forEach(pusher)
         })
-        connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
     } else {
-        // TODO: JSON
-
+        info.node.errors.forEach(pusher)
     }
+    connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
 }
 
 async function fetchConfig(uri: Uri): Promise<Config> {
@@ -748,9 +753,9 @@ const cacheFileOperations = {
         const getTheConfig = async () => config
         const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
         const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-        const getTheJsonSchema = async (config: Config, type: JsonSchemaType) => await getJsonSchema(config.env.jsonVersion, type)
+        const getTheJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
         const getText = async () => fs.readFile(uri.fsPath, 'utf8')
-        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchema)
+        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchemas)
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0

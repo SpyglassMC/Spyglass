@@ -1,4 +1,4 @@
-import { INode } from '@mcschema/core'
+import { INode, SchemaRegistry } from '@mcschema/core'
 import fs from 'fs-extra'
 import path from 'path'
 import { getLanguageService } from 'vscode-json-languageservice'
@@ -18,7 +18,7 @@ import { DocumentInfo } from '../../types/DocumentInfo'
 import { DocNode, InfosOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { constructContext } from '../../types/ParsingContext'
 import { TokenModifier, TokenType } from '../../types/Token'
-import { JsonSchemaHelper, JsonSchemaHelperContext } from '../JsonSchemaHelper'
+import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../JsonSchemaHelper'
 import { StringReader } from '../StringReader'
 
 export function getUri(str: string, uris: UrisOfStrings) {
@@ -75,19 +75,20 @@ export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[],
 
 export const JsonLanguageService = getLanguageService({})
 
-export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, vanillaData: VanillaData }): JsonNode {
+export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData, schemas, schemaType }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, schemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
     const ans: JsonNode = {
         json: JsonLanguageService.parseJSONDocument(document) as JsonDocument,
-        cache: {}, errors: [], tokens: []
+        cache: {}, errors: [], tokens: [], schemaType
     }
     if (ans.json.syntaxErrors.length === 0) {
-        const ctx: JsonSchemaHelperContext = {
+        const ctx: JsonSchemaHelperOptions = {
             ctx: constructContext({
                 cache: getCacheForUri(cacheFile.cache, uri),
                 id: getId(uri, roots),
                 rootIndex: getRootIndex(uri, roots),
                 config, document, roots
-            })
+            }),
+            schemas: schemas
         }
         JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
     }
@@ -189,7 +190,7 @@ export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInf
 }
 
 /* istanbul ignore next */
-export async function createInfo({ roots, uri, version, cacheFile, getText, getConfig, getCommandTree, getVanillaData, getJsonSchema }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchema: (config: Config, type: JsonSchemaType) => Promise<INode> }): Promise<DocumentInfo | undefined> {
+export async function createInfo({ roots, uri, version, cacheFile, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DocumentInfo | undefined> {
     try {
         const rel = getRel(uri, roots)!
         const config = await getConfig()
@@ -201,8 +202,9 @@ export async function createInfo({ roots, uri, version, cacheFile, getText, getC
             if (langId === 'json') {
                 const schemaType = getJsonSchemaType(rel)
                 if (schemaType) {
-                    const schema = await getJsonSchema(config, schemaType)
-                    const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, vanillaData })
+                    const schemas = await getJsonSchemas(config)
+                    const schema = schemas.get(schemaType)
+                    const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, schemas, schemaType, vanillaData })
                     return { config, document, node }
                 }
             } else {
@@ -218,11 +220,11 @@ export async function createInfo({ roots, uri, version, cacheFile, getText, getC
     return undefined
 }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchema: (config: Config, type: JsonSchemaType) => Promise<INode>, version: number | null = null): Promise<DocumentInfo | undefined> {
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DocumentInfo | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
-        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema })
+        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchemas })
     }
 
     return info

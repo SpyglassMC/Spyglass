@@ -1,6 +1,6 @@
+import { LOCALES as JsonLocales } from '@mcschema/core'
 import { Locale } from '../types/Locale'
 import AmericanEnglish from './en.json'
-import { Config } from '../types'
 
 const Locales: {
     en: Locale,
@@ -35,8 +35,12 @@ export function locale(key: string, ...params: any[]) {
 
 async function setupLanguage(code: string) {
     const locale = await import(`./${code}.json`)
-    language = code
     Locales[code] = locale
+    language = code
+
+    const jsonLocale = await import(`@mcschema/core/locales/${code}.json`)
+    JsonLocales.register(code, jsonLocale)
+    JsonLocales.language = code
 }
 
 /* istanbul ignore next */
@@ -64,24 +68,18 @@ async function loadVscodeLanguage(console: Console) {
             const config = JSON.parse(process.env.VSCODE_NLS_CONFIG)
             if (typeof config.locale === 'string') {
                 const code: string = config.locale
-                if (code !== 'en' && code !== 'en-us') {
-                    try {
-                        await setupLanguage(code)
-                    }
-                    catch (e) {
-                        console.warn(`[I18N] Faild: ‘${code}’.`)
-                    }
+                try {
+                    await setupLanguage(code)
+                } catch (e) {
+                    console.warn(`[I18N] Faild: ‘${code}’.`)
                 }
-            }
-            else {
+            } else {
                 console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
             }
-        }
-        catch (ignored) {
+        } catch (ignored) {
             console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: ‘${process.env.VSCODE_NLS_CONFIG}’`)
         }
-    }
-    else {
+    } else {
         console.warn('[I18N] No VSCODE_NLS_CONFIG found.')
     }
 

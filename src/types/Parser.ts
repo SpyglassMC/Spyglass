@@ -27,31 +27,18 @@ export interface ParserResult<T> {
     data: T
 }
 
-export interface ValidateResultLike {
+export interface ValidateResult {
     /**
      * All errors occurred while the process of parsing.
      */
-    errors?: ParsingError[],
+    errors: ParsingError[],
     /**
      * Local cache.
      */
-    cache?: ClientCache,
+    cache: ClientCache,
     /**
      * Semantic tokens.
      */
-    tokens?: Token[]
-}
-
-export interface LegacyValidateResultLike extends ValidateResultLike {
-    /**
-     * Completions.
-     */
-    completions?: CompletionItem[]
-}
-
-export interface ValidateResult {
-    errors: ParsingError[],
-    cache: ClientCache,
     tokens: Token[]
 }
 
@@ -59,6 +46,9 @@ export interface ValidateResult {
  * ValidateResult with completions.
  */
 export interface LegacyValidateResult extends ValidateResult {
+    /**
+     * Completions.
+     */
     completions: CompletionItem[]
 }
 

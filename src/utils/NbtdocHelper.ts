@@ -823,7 +823,7 @@ export class NbtdocHelper {
             const quoteType = NbtdocHelper.getQuoteType(strTag.toString())
             if (quoteType) {
                 const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
-                const reader = new StringReader(strTag.valueOf()) 
+                const reader = new StringReader(strTag.valueOf())
                 const result = this.validateInnerString(reader, subCtx, description)
                 if (result && result.completions) {
                     result.completions = result.completions.map(

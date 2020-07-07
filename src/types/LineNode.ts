@@ -47,14 +47,7 @@ export interface LineNode {
     completions?: CompletionItem[]
 }
 
-/**
- * `Line` without optional properties.
- */
-export interface SaturatedLineNode extends LineNode {
-    cache: ClientCache,
-    errors: ParsingError[],
-    completions: CompletionItem[]
-}
+export type SaturatedLineNode = Required<LineNode>
 
 export interface LineArgumentNode<T> {
     data: T,

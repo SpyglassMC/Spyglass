@@ -1,6 +1,6 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { getDiagnosticMap, getOrCreateInfo } from '..'
-import { getJsonSchema, JsonSchemaType } from '../../../data/JsonSchema'
+import { getJsonSchemas, JsonSchemaType } from '../../../data/JsonSchema'
 import { ArgumentNode, GetCodeActions } from '../../../nodes'
 import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, isFunctionInfo, ReadFileFunction, Uri } from '../../../types'
 
@@ -9,9 +9,9 @@ export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, read
     const getTheConfig = async () => await fetchConfig(uri)
     const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
     const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource)
-    const getTheJsonSchema = async (config: Config, type: JsonSchemaType) => await getJsonSchema(config.env.jsonVersion, type)
+    const getTheJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
     const getText = async () => readFile(uri.fsPath, 'utf8')
-    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchema)
+    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchemas)
     /* istanbul ignore else */
     if (info) {
         if (isFunctionInfo(info)) {
