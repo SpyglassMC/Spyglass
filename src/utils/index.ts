@@ -1,7 +1,7 @@
 import clone from 'clone'
 import https from 'https'
 import { EOL } from 'os'
-import { CodeActionKind, CompletionItem, Diagnostic, TextEdit, Position, TextDocument } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
@@ -238,13 +238,13 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 }
 
 /**
- * Remap all the indexes in the specific TextRange object by the specific mapping.
+ * Remap all the indices in the specific TextRange object by the specific mapping.
  * @param completion The specific TextRange object.
  * @param param1 The mapping used to offset.
  */
 export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, getPosition: (offset:number) =>Position): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset:number) =>Position)) {
+export function remapCompletionItem(completion: CompletionItem, getPosition: (offset: number) => Position): CompletionItem
+export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset: number) => Position)) {
     const ans = clone(completion)
     if (ans.textEdit) {
         const range = ans.textEdit.range
@@ -282,6 +282,12 @@ export function handleCompletionText(origin: CompletionItem, cb: (str: string) =
         ...insertText ? { insertText } : {},
         ...textEdit ? { textEdit } : {}
     }
+}
+
+export function removeDupliateCompletions(completions: CompletionItem[]): CompletionItem[] {
+    return completions.filter((completion, i) =>
+        completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
+    )
 }
 
 export * as datafixers from './datafixers'

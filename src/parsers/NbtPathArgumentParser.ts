@@ -50,8 +50,15 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         return ans
     }
 
-    private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean) {
+    private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean): void {
         let isKey = false
+
+        if (NbtdocHelper.isOrDoc(doc)) {
+            return NbtdocHelper.forEachOrDoc(
+                ans, reader, doc,
+                (ans, reader, doc) => this.parseSpecifiedTypes(ans, reader, ctx, helper, doc, types, allowEmpty)
+            )
+        }
 
         if (types.includes('key')) {
             const firstChar = reader.peek()
@@ -188,11 +195,18 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     private parseCompoundFilter(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: CompoundDoc | IndexDoc | null) {
-        const result = ctx.parsers
-            .get('Nbt', ['Compound', this.category, helper?.resolveCompoundOrIndexDoc(doc, null, ctx), true])
-            .parse(reader, ctx)
-        ans.data.push(result.data as NbtCompoundNode)
-        combineArgumentParserResult(ans, result)
+        if (NbtdocHelper.isOrDoc(doc)) {
+            NbtdocHelper.forEachOrDoc(
+                ans, reader, doc,
+                (ans, reader, doc) => this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null)
+            )
+        } else {
+            const result = ctx.parsers
+                .get('Nbt', ['Compound', this.category, helper?.resolveCompoundOrIndexDoc(doc, null, ctx), true])
+                .parse(reader, ctx)
+            ans.data.push(result.data as NbtCompoundNode)
+            combineArgumentParserResult(ans, result)
+        }
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)

@@ -1,5 +1,6 @@
+import clone from 'clone'
 import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
-import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, validateStringQuote } from '.'
+import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, removeDupliateCompletions, validateStringQuote } from '.'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
@@ -22,7 +23,7 @@ import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
 import { LineParser } from '../parsers/LineParser'
-import { remapTokens, Token } from '../types'
+import { ArgumentParserResult, remapTokens, Token } from '../types'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
@@ -77,7 +78,7 @@ export type IndexDoc = { Index: { target: string, path: nbtdoc.FieldPath[] } }
 
 type IdDoc = { Id: string }
 
-type OrDoc = { Or: nbtdoc.NbtValue[] }
+export type OrDoc = { Or: nbtdoc.NbtValue[] }
 
 type NbtdocHelperOptions = {
     description: string | null,
@@ -1105,5 +1106,22 @@ export class NbtdocHelper {
         return `${NbtdocHelper.localeType(NbtdocHelper.getValueType(value))
             }\n* * * * * *\n${
             NbtdocHelper.handleDescription(description)}`
+    }
+
+    static forEachOrDoc<T>(ans: ArgumentParserResult<T>, reader: StringReader, doc: OrDoc, cb: (ans: ArgumentParserResult<T>, reader: StringReader, doc: nbtdoc.NbtValue) => any): void {
+        for (const [i, childDoc] of doc.Or.entries()) {
+            const childAns = clone(ans)
+            const clonedReader = reader.clone()
+            cb(childAns, clonedReader, childDoc)
+            ans.completions = removeDupliateCompletions(childAns.completions)
+            if (childAns.errors.length === ans.errors.length || i === doc.Or.length - 1) {
+                ans.cache = childAns.cache
+                ans.data = childAns.data
+                ans.errors = childAns.errors
+                ans.tokens = childAns.tokens
+                reader.cursor = clonedReader.cursor
+                return
+            }
+        }
     }
 }

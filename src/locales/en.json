@@ -157,7 +157,7 @@
     "unexpected-nbt": "This tag doesn't exist here",
     "unexpected-nbt-array-type": "Invalid array type %0%. Should be one of ‘B’, ‘I’, and ‘L’",
     "unexpected-nbt-path-filter": "Compound filters are only used for compound tags",
-    "unexpected-nbt-path-index": "Indexes are only used for lists/arrays tags",
+    "unexpected-nbt-path-index": "Indices are only used for lists/arrays tags",
     "unexpected-nbt-path-key": "Keys are only used for compound tags",
     "unexpected-nbt-path-sub": "The current tag doesn't have extra items",
     "unexpected-non-player-selector": "The selector contains non-player entities",
