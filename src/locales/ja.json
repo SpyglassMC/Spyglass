@@ -125,7 +125,7 @@
     "number-range.missing-min-and-max": "少なくとも最小値または最大値のどちらかを記入する必要があります",
     "number.<=": "%0%以下の数値",
     "number.>=": "%0%以上の数値",
-    "number.between": "%0% ~ %1%の範囲の値",
+    "number.between": "%0% ~ %1%の範囲の数値",
     "objective": "オブジェクト名",
     "punc.period": "。",
     "punc.quote": "「%0%」",
