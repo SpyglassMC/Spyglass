@@ -1233,7 +1233,7 @@ describe('NbtdocHelper Tests', () => {
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
-            it('Should remap range indexes', async () => {
+            it('Should remap range indices', async () => {
                 const ans = { cache: {}, completions: [], errors: [], tokens: [] }
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })

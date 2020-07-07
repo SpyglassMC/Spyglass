@@ -296,7 +296,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 8, end: 9 },
-                        'Indexes are only used for lists/arrays tags',
+                        'Indices are only used for lists/arrays tags',
                         true, DiagnosticSeverity.Warning
                     )
                 ])
@@ -465,7 +465,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(cache, {})
                 assert.deepStrictEqual(completions, [])
             })
-            it('Should return warnings for indexes under non-list tags', () => {
+            it('Should return warnings for indices under non-list tags', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:byte_array')
                 const reader = new StringReader('addition.[ { } ]')
 

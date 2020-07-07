@@ -150,7 +150,7 @@ export class StringReader {
     }
 
     /**
-     * @param out Stores a mapping from in-string indexes to real indexes. 
+     * @param out Stores a mapping from in-string indices to real indices. 
      */
     readUnquotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
         let ans = ''
@@ -163,7 +163,7 @@ export class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a mapping from in-string indexes to real indexes. 
+     * @param out Stores a mapping from in-string indices to real indices. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
@@ -189,7 +189,7 @@ export class StringReader {
     /**
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
-     * @param out Stores a mapping from in-string indexes to real indexes. 
+     * @param out Stores a mapping from in-string indices to real indices. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
@@ -254,7 +254,7 @@ export class StringReader {
 
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a mapping from in-string indexes to real indexes. 
+     * @param out Stores a mapping from in-string indices to real indices. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     readString(out: { mapping: IndexMapping } = { mapping: {} }) {

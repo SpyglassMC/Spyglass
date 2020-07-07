@@ -8,7 +8,7 @@ export interface TextRange {
 export const EmptyRange = { start: NaN, end: NaN }
 
 /**
- * Remap all the indexes in the specific TextRange object by the specific mapping.
+ * Remap all the indices in the specific TextRange object by the specific mapping.
  * @param range The specific TextRange object.
  * @param mapping The mapping used to offset.
  */
