@@ -1,3 +1,11 @@
+# [v2.1.11](https://github.com/SPGoding/datapack-language-server/compare/v2.1.10...v2.1.11) (2020-07-07)
+
+## 🐛 Bug Fixes
+- [`01739d7`](https://github.com/SPGoding/datapack-language-server/commit/01739d7)  Fix warnings for bossbars in add command (#564) (Issues: [`#564`](https://github.com/SPGoding/datapack-language-server/issues/564) [`#561`](https://github.com/SPGoding/datapack-language-server/issues/561))
+- [`ff315aa`](https://github.com/SPGoding/datapack-language-server/commit/ff315aa)  Fix merging tags when compile fallback docs (#565) (Issues: [`#565`](https://github.com/SPGoding/datapack-language-server/issues/565) [`#563`](https://github.com/SPGoding/datapack-language-server/issues/563))
+- [`f187fbf`](https://github.com/SPGoding/datapack-language-server/commit/f187fbf)  Fix warning custom compound children in itt (#567) (Issues: [`#567`](https://github.com/SPGoding/datapack-language-server/issues/567) [`#562`](https://github.com/SPGoding/datapack-language-server/issues/562))
+- [`e17d279`](https://github.com/SPGoding/datapack-language-server/commit/e17d279)  Fix bad handling of Or doc in NBT paths (#570) (Issues: [`#570`](https://github.com/SPGoding/datapack-language-server/issues/570) [`#566`](https://github.com/SPGoding/datapack-language-server/issues/566))
+
 # [v2.1.10](https://github.com/SPGoding/datapack-language-server/compare/v2.1.9...v2.1.10) (2020-07-06)
 
 ## 🐛 Bug Fixes
