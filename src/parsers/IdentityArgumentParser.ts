@@ -30,7 +30,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         private readonly type: string | string[],
         private readonly allowTag = false,
         private readonly isPredicate = false,
-        private readonly allowUnknown = false
+        private readonly allowUnknown = false,
+        private readonly isDefinition = false
     ) {
         super()
     }
@@ -66,6 +67,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         } else {
             this.addEmptyError(start, ans)
         }
+        //#endregion
+
+        //#region Cache.
+        this.addDefinitionCache(ans, stringID, start, reader.cursor)
         //#endregion
 
         //#region Tokens.
@@ -116,6 +121,22 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             ),
             false
         ))
+    }
+
+    private addDefinitionCache(ans: ArgumentParserResult<IdentityNode>, stringID: string, start: number, end: number) {
+        if (this.isDefinition) {
+            switch (this.type) {
+                case '$bossbars':
+                    ans.cache = {
+                        bossbars: {
+                            [stringID]: { def: [{ start, end }], ref: [] }
+                        }
+                    }
+                    break
+                default:
+                    break
+            }
+        }
     }
 
     private applyCompletions(ans: ArgumentParserResult<IdentityNode>, start: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
