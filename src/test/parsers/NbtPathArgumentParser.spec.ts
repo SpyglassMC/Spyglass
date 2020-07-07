@@ -1,8 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { NbtPathArgumentParser } from '../../parsers/NbtPathArgumentParser'
 import { NodeDescription, NodeRange } from '../../nodes/ArgumentNode'
 import { Keys, UnsortedKeys } from '../../nodes/MapNode'
 import { NbtByteNode } from '../../nodes/NbtByteNode'
@@ -10,6 +8,8 @@ import { NbtCompoundKeyNode } from '../../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
 import { NbtPathNode } from '../../nodes/NbtPathNode'
 import { NumberNode } from '../../nodes/NumberNode'
+import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
+import { NbtPathArgumentParser } from '../../parsers/NbtPathArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { NbtdocHelper } from '../../utils/NbtdocHelper'
@@ -238,12 +238,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
                 const { data, errors, cache, completions } = parser.parse(reader, ctx)
                 assert.deepStrictEqual(data, expected)
-                assert.deepStrictEqual(errors, [                    
-                    new ParsingError(
-                        { start: 9, end: 12 },
-                        'Unknown key ‘foo’',
-                        true, DiagnosticSeverity.Warning
-                    ),
+                assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 9, end: 12 },
                         'Keys are only used for compound tags',
