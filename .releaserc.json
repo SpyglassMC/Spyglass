@@ -1,12 +1,25 @@
 {
     "plugins": [
-        "semantic-release-gitmoji",
+        [
+            "semantic-release-gitmoji",
+            {
+                "releaseRules": {
+                    "patch": {
+                        "include": [
+                            "⚡"
+                        ]
+                    }
+                }
+            }
+        ],
         "@semantic-release/changelog",
         "@semantic-release/npm",
         [
             "@semantic-release/github",
             {
-                "releasedLabels": ["🚀 released"]
+                "releasedLabels": [
+                    "🚀 released"
+                ]
             }
         ],
         [
