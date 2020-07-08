@@ -291,20 +291,27 @@ export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[]
 }
 
 /* istanbul ignore next */
-export async function walk(workspaceRootPath: string, abs: string, cb: (abs: string, rel: string, stat: fs.Stats) => any) {
+export async function walk(
+    workspaceRootPath: string,
+    abs: string,
+    cb: (abs: string, rel: string, stat: fs.Stats) => any,
+    promises: Promise<any>[] = [],
+    awaitAll = true
+): Promise<void> {
     const names = await fs.readdir(abs)
-    const promises: Promise<any>[] = []
     for (const name of names) {
         const newAbs = path.join(abs, name)
         const stat = await fs.stat(newAbs)
         if (stat.isDirectory()) {
-            promises.push(walk(workspaceRootPath, newAbs, cb))
+            promises.push(walk(workspaceRootPath, newAbs, cb, promises, false))
         } else {
             const rel = path.relative(workspaceRootPath, newAbs)
             promises.push(cb(newAbs, rel, stat))
         }
     }
-    return Promise.all(promises)
+    if (awaitAll) {
+        return void Promise.all(promises)
+    }
 }
 
 export * from './commands'
