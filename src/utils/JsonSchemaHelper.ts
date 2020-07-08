@@ -1,6 +1,6 @@
 import { DataModel, INode, LOCALES as JsonLocales, PathElement, SchemaRegistry } from '@mcschema/core'
 import { ArrayASTNode, ASTNode, DiagnosticSeverity, ObjectASTNode } from 'vscode-json-languageservice'
-import { locale } from '../locales'
+import { resolveLocalePlaceholders } from '../locales'
 import { ParsingContext, ParsingError, TextRange, ValidateResult } from '../types'
 
 // TODO: JSON
@@ -10,16 +10,13 @@ export class JsonSchemaHelper {
         const model = new DataModel(schema, { historyMax: 1 })
         model.reset(JSON.parse(ctx.document.getText()))
 
-        for (const { path, error } of model.errors) {
+        for (const { path, error, params } of model.errors) {
             const pathElements = path.getArray()
             const targetedNode = this.navigate(node, pathElements)
             const range = this.getRange(targetedNode)
-            let message = JsonLocales.getLocale(error)
+            let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params)
             if (pathElements.length > 0) {
-                message = locale('json-schema.error-for-path',
-                    locale('punc.quote', pathElements.join('.')),
-                    message
-                )
+                message = `${pathElements.join('.')} - ${message}`
             }
             ans.errors.push(
                 new ParsingError(range, message, undefined, DiagnosticSeverity.Warning)

@@ -25,12 +25,16 @@ export function locale(key: string, ...params: any[]) {
         value = ''
     }
 
-    value = value.replace(/%\d+%/g, match => {
-        const index = parseInt(match.slice(1, -1))
-        return params[index] !== undefined ? params[index] : match
-    })
+    value = resolveLocalePlaceholders(value, params)
 
     return value
+}
+
+export function resolveLocalePlaceholders(val: string, params?: string[]) {
+    return val.replace(/%\d+%/g, match => {
+        const index = parseInt(match.slice(1, -1))
+        return params?.[index] !== undefined ? params[index] : match
+    })
 }
 
 async function setupLanguage(code: string) {

@@ -1,6 +1,7 @@
 import schema from 'datapack-json/src/shared/text_component.json'
 import { SynchronousPromise } from 'synchronous-promise'
 import { getLanguageService, TextDocument } from 'vscode-json-languageservice'
+import { JsonDocument } from '../nodes'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { TextComponentNode } from '../nodes/TextComponent'
 import { ArgumentParserResult } from '../types/Parser'
@@ -40,8 +41,8 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
 
         const text = ' '.repeat(start) + raw
         const document = TextDocument.create('dhp://text_component.json', 'json', 0, text)
-        const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document)
-        
+        const jsonDocument = TextComponentArgumentParser.Service.parseJSONDocument(document) as JsonDocument
+
         //#region Data.
         ans.data.document = document
         ans.data.jsonDocument = jsonDocument
