@@ -1,4 +1,4 @@
-import { DataModel, INode, LOCALES as JsonLocales, PathElement, SchemaRegistry } from '@mcschema/core'
+import { DataModel, INode, LOCALES as JsonLocales, PathElement, PathError, SchemaRegistry, Path, ValidationOption } from '@mcschema/core'
 import { ArrayASTNode, ASTNode, DiagnosticSeverity, ObjectASTNode } from 'vscode-json-languageservice'
 import { resolveLocalePlaceholders } from '../locales'
 import { ParsingContext, ParsingError, TextRange, ValidateResult } from '../types'
@@ -6,25 +6,84 @@ import { ParsingContext, ParsingError, TextRange, ValidateResult } from '../type
 // TODO: JSON
 
 export class JsonSchemaHelper {
-    static validate(ans: ValidateResult, node: ASTNode, schema: INode, { ctx, schemas }: JsonSchemaHelperOptions) {
+    static validate(ans: ValidateResult, node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
+        const { ctx } = options
         const model = new DataModel(schema, { historyMax: 1 })
         model.reset(JSON.parse(ctx.document.getText()))
 
-        for (const { path, error, params } of model.errors) {
-            const pathElements = path.getArray()
-            const targetedNode = this.navigate(node, pathElements)
-            const range = this.getRange(targetedNode)
-            let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params)
-            if (pathElements.length > 0) {
-                message = `${pathElements.join('.')} - ${message}`
+        for (const err of model.errors) {
+            ans.errors.push(this.convertSchemaError(err, node))
+        }
+
+        const path = new Path([], [], model)
+        this.walkAstNode(node, path, schema, (node, schema) => {
+            const selectedSchema = schema.navigate(path, -1)
+            const validationOption = selectedSchema?.validationOption()
+            if (validationOption) {
+                this.doDetailedValidate(ans, node, validationOption, options)
             }
-            ans.errors.push(
-                new ParsingError(range, message, undefined, DiagnosticSeverity.Warning)
-            )
+        })
+    }
+
+    /**
+     * @param cb A callback that is called on every node.
+     */
+    private static walkAstNode(node: ASTNode, path: Path, schema: INode, cb: (node: ASTNode, schema: INode) => any) {
+        cb(node, schema)
+        if (node.type === 'object') {
+            for (const { keyNode, valueNode } of node.properties) {
+                if (valueNode) {
+                    const childPath = path.push(keyNode.value)
+                    this.walkAstNode(valueNode, childPath, schema, cb)
+                }
+            }
+        } else if (node.type === 'array') {
+            for (const [i, childNode] of node.items.entries()) {
+                const childPath = path.push(i)
+                this.walkAstNode(childNode, childPath, schema, cb)
+            }
         }
     }
 
-    private static navigate(node: ASTNode, path: PathElement[]): ASTNode {
+    private static doDetailedValidate(ans: ValidateResult, node: ASTNode, { validator, params }: ValidationOption, { ctx }: JsonSchemaHelperOptions) {
+        // TODO: JSON
+        switch (validator) {
+            case 'block_state_map':
+                break
+            case 'command':
+                break
+            case 'entity':
+                break
+            case 'nbt':
+                break
+            case 'nbt_path':
+                break
+            case 'objective':
+                break
+            case 'resource':
+                break
+            case 'uuid':
+                break
+            case 'vector':
+                break
+            default:
+                console.error('doDetailedValidate', new Error(`Unknown validator ${validator}`))
+                break
+        }
+    }
+
+    private static convertSchemaError({ path, params, error }: PathError, node: ASTNode) {
+        const pathElements = path.getArray()
+        const targetedNode = this.navigateNodes(node, pathElements)
+        const range = this.getNodeRange(targetedNode)
+        let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params)
+        if (pathElements.length > 0) {
+            message = `${pathElements.join('.')} - ${message}`
+        }
+        return new ParsingError(range, message, undefined, DiagnosticSeverity.Warning)
+    }
+
+    private static navigateNodes(node: ASTNode, path: PathElement[]): ASTNode {
         if (path.length === 0) {
             return node
         }
@@ -36,13 +95,13 @@ export class JsonSchemaHelper {
             childNode = (node as ObjectASTNode).properties.find(prop => prop.keyNode.value === ele)?.valueNode
         }
         if (childNode) {
-            return this.navigate(childNode, (path.shift(), path))
+            return this.navigateNodes(childNode, (path.shift(), path))
         } else {
             return node
         }
     }
 
-    private static getRange(node: ASTNode): TextRange {
+    private static getNodeRange(node: ASTNode): TextRange {
         return { start: node.offset, end: node.offset + node.length }
     }
 }
