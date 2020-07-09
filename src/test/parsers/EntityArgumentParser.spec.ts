@@ -1,20 +1,17 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { EntityArgumentParser, getNbtdocRegistryId } from '../../parsers/EntityArgumentParser'
-import { constructConfig } from '../../types/Config'
 import { NodeRange } from '../../nodes/ArgumentNode'
 import { EntityNode } from '../../nodes/EntityNode'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { Keys, UnsortedKeys } from '../../nodes/MapNode'
-import { NbtByteNode } from '../../nodes/NbtByteNode'
-import { NbtCompoundKeyNode } from '../../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
 import { NumberNode } from '../../nodes/NumberNode'
 import { NumberRangeNode } from '../../nodes/NumberRangeNode'
 import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../nodes/SelectorArgumentsNode'
 import { StringNode } from '../../nodes/StringNode'
+import { EntityArgumentParser, getNbtdocRegistryId } from '../../parsers/EntityArgumentParser'
+import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
@@ -29,7 +26,6 @@ describe('EntityArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     const cache = {
         entities: {
             foo: { def: [], ref: [] },
@@ -56,7 +52,7 @@ describe('EntityArgumentParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers, cache })
+        ctx = constructContext({ cache })
     })
     describe('parse() Tests', () => {
         it('Should return untolerable error when the input is empty', () => {
@@ -111,7 +107,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 0 })
+                const ctx = constructContext({ cache, cursor: 0 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader(''), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -128,7 +124,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for score holders', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 0 })
+                const ctx = constructContext({ cache, cursor: 0 })
                 const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader(''), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -248,7 +244,7 @@ describe('EntityArgumentParser Tests', () => {
                 })
 
                 const actual = parser.parse(reader, ctx)
-                
+
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expected), [0, 116]))
                 assert.deepStrictEqual(actual.errors, [])
             })
@@ -313,7 +309,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions for variable', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 1 })
+                const ctx = constructContext({ cache, cursor: 1 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@'), ctx)
                 assert.deepStrictEqual(actual.completions,
@@ -370,7 +366,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for argument keys', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 3 })
+                const ctx = constructContext({ cache, cursor: 3 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@e[]'), ctx)
                 assert.deepStrictEqual(actual.data, $(
@@ -405,7 +401,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should omit certain keys in completions for @s selectors', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 3 })
+                const ctx = constructContext({ cache, cursor: 3 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@s[]'), ctx)
                 assert.deepStrictEqual(actual.data, $(
@@ -438,7 +434,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions for argument keys after comma', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 22 })
+                const ctx = constructContext({ cache, cursor: 22 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@e[gamemode=adventure,]'), ctx)
                 const expectedArguments = new SelectorArgumentsNode()
@@ -481,7 +477,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for ‘sort’ argument', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 11 })
+                const ctx = constructContext({ cache, cursor: 11 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ sort = ]'), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -492,7 +488,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for ‘gamemode’ argument', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 15 })
+                const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ]'), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -504,7 +500,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for negative ‘gamemode’ argument', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 17 })
+                const ctx = constructContext({ cache, cursor: 17 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -515,7 +511,7 @@ describe('EntityArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for objectives in ‘scores’', async () => {
-                const ctx = constructContext({ parsers, cache, cursor: 15 })
+                const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ scores = { } ]'), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -525,7 +521,7 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return completions for advancements in ‘advancements’', async () => {
                 const config = constructConfig({ env: { dependsOnVanilla: false } })
-                const ctx = constructContext({ parsers, config, cache, cursor: 21 })
+                const ctx = constructContext({ config, cache, cursor: 21 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ advancements = { } ]'), ctx)
                 assert.deepStrictEqual(actual.completions, [
@@ -583,7 +579,7 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return non-player error for @e[type=zombie]', async () => {
                 const config = constructConfig({ lint: { idOmitDefaultNamespace: ['warning', true] } })
-                const ctx = constructContext({ parsers, cache, config })
+                const ctx = constructContext({ cache, config })
                 const parser = new EntityArgumentParser('multiple', 'players')
                 const actual = parser.parse(new StringReader('@e[type=zombie]'), ctx)
 
@@ -617,7 +613,7 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should return error for unsorted keys', async () => {
                 const config = constructConfig({ lint: { selectorSortKeys: ['warning', ['tagNeg', 'tag']] } })
-                const ctx = constructContext({ parsers, config, cache })
+                const ctx = constructContext({ config, cache })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[tag=foo,tag=!bar]'), ctx)
                 assert.deepStrictEqual(actual.errors, [
@@ -631,7 +627,7 @@ describe('EntityArgumentParser Tests', () => {
             })
             it('Should not return error when the keys are already sorted', async () => {
                 const config = constructConfig({ lint: { selectorSortKeys: ['warning', ['tag', 'tagNeg']] } })
-                const ctx = constructContext({ parsers, config, cache })
+                const ctx = constructContext({ config, cache })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[tag=foo,tag=!bar]'), ctx)
                 assert.deepStrictEqual(actual.errors, [])

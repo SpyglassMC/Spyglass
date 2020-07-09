@@ -1,9 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { NumberRangeArgumentParser } from '../../parsers/NumberRangeArgumentParser'
 import { NumberNode } from '../../nodes/NumberNode'
 import { NumberRangeNode } from '../../nodes/NumberRangeNode'
+import { NumberRangeArgumentParser } from '../../parsers/NumberRangeArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
@@ -18,10 +17,9 @@ describe('NumberRangeArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers })
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data for int range without double periods', () => {
@@ -91,13 +89,13 @@ describe('NumberRangeArgumentParser Tests', () => {
             assert.deepStrictEqual(cache, {})
         })
         it('Should return completions for integer range', async () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new NumberRangeArgumentParser('integer')
             const { completions } = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(completions, [{ label: '-2147483648..2147483647' }])
         })
         it('Should return empty completions for float range', async () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new NumberRangeArgumentParser('float')
             const { completions } = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(completions, [])

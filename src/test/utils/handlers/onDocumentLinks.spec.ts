@@ -1,7 +1,5 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { VanillaConfig } from '../../../types/Config'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { Uri, UrisOfIds, UrisOfStrings } from '../../../types/handlers'
 import { onDocumentLinks } from '../../../utils/handlers/onDocumentLinks'
 import { mockFunctionInfo, mockLineNode } from '../../utils.spec'

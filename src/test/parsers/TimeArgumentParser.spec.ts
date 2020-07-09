@@ -1,8 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { TimeArgumentParser } from '../../parsers/TimeArgumentParser'
 import { TimeNode } from '../../nodes/TimeNode'
+import { TimeArgumentParser } from '../../parsers/TimeArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
@@ -17,10 +16,9 @@ describe('TimeArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers })
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data for time without unit', () => {
@@ -36,7 +34,7 @@ describe('TimeArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for units', async () => {
-            const ctx = constructContext({ parsers, cursor: 4 })
+            const ctx = constructContext({ cursor: 4 })
             const parser = new TimeArgumentParser()
             const actual = parser.parse(new StringReader('2.33'), ctx)
             assert.deepStrictEqual(actual.data, $(new TimeNode(2.33, '2.33', 't'), [0, 4]))

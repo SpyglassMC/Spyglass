@@ -1,6 +1,5 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { ItemSlotArgumentParser } from '../../parsers/ItemSlotArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
@@ -15,10 +14,9 @@ describe('ItemSlotArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers })
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data for number slot', () => {
@@ -37,7 +35,7 @@ describe('ItemSlotArgumentParser Tests', () => {
             assert(actual.data === 'weapon')
         })
         it('Should return completions for categories', async () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -55,7 +53,7 @@ describe('ItemSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘armor’', async () => {
-            const ctx = constructContext({ parsers, cursor: 6 })
+            const ctx = constructContext({ cursor: 6 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('armor.'), ctx)
             assert.deepStrictEqual(actual.data, 'armor.')
@@ -69,7 +67,7 @@ describe('ItemSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for sub values of ‘hotbar’', async () => {
-            const ctx = constructContext({ parsers, cursor: 7 })
+            const ctx = constructContext({ cursor: 7 })
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('hotbar.'), ctx)
             assert.deepStrictEqual(actual.data, 'hotbar.')

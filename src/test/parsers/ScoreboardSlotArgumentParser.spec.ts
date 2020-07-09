@@ -1,6 +1,5 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { ScoreboardSlotArgumentParser } from '../../parsers/ScoreboardSlotArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
@@ -15,10 +14,9 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers })
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data for normal literal slots', () => {
@@ -34,7 +32,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return completions for slots', async () => {
-            const ctx = constructContext({ parsers, cursor: 0 })
+            const ctx = constructContext({ cursor: 0 })
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
@@ -47,7 +45,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             )
         })
         it('Should return completions for teams under ‘sidebar’', async () => {
-            const ctx = constructContext({ parsers, cursor: 8 })
+            const ctx = constructContext({ cursor: 8 })
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.parse(new StringReader('sidebar.team.'), ctx)
             assert.deepStrictEqual(actual.data, 'sidebar.team.')

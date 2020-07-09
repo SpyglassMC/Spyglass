@@ -1,9 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
-import { constructConfig } from '../../types/Config'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { ItemNode } from '../../nodes/ItemNode'
 import { Keys, UnsortedKeys } from '../../nodes/MapNode'
@@ -12,6 +9,8 @@ import { NbtCompoundKeyNode } from '../../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
 import { SuperNode } from '../../nodes/NbtNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
+import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
+import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { StringReader } from '../../utils/StringReader'
 import { $ } from '../utils.spec'
@@ -34,10 +33,9 @@ describe('ItemArgumentParser Tests', () => {
             }
         }
     }
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ registry: registries, parsers })
+        ctx = constructContext({ registry: registries })
     })
     describe('parse() Tests', () => {
         it('Should return data without tag', () => {
@@ -71,7 +69,7 @@ describe('ItemArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
-            const context = constructContext({ registry: registries, parsers, config, cursor: 0 })
+            const context = constructContext({ registry: registries, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
 

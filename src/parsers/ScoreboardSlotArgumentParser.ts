@@ -5,6 +5,7 @@ import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { Parsers } from './Parsers'
 
 export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ScoreboardSlot'
@@ -28,7 +29,7 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
         }
 
         const start = reader.cursor
-        const categoryResult = ctx.parsers.get('Literal', ScoreboardSlotArgumentParser.Category).parse(reader, ctx)
+        const categoryResult = new Parsers.Literal(...ScoreboardSlotArgumentParser.Category).parse(reader, ctx)
         const category = categoryResult.data as 'list' | 'sidebar' | 'belowName' | ''
         categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
         combineArgumentParserResult(ans, categoryResult)
@@ -43,9 +44,9 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
             } else {
                 reader.skip()
                 const start = reader.cursor
-                const teamResult = ctx.parsers
-                    .get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`))
-                    .parse(reader, ctx)
+                const teamResult = new Parsers.Literal(
+                    ...ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`)
+                ).parse(reader, ctx)
                 const team = teamResult.data as string
                 teamResult.tokens = [Token.from(start, reader, TokenType.type)]
                 combineArgumentParserResult(ans, teamResult)

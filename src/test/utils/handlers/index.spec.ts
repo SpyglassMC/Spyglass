@@ -177,20 +177,21 @@ describe('common.ts Tests', () => {
         const getConfig = async () => VanillaConfig
         const getCommandTree = async () => CommandTree116
         const getVanillaData = async () => FallbackVanillaData
+        const getJsonSchema = async () => { throw new Error('getJsonSchema unimplemented') }
         const getText = async () => { throw 'Fake getText() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
             const info = mockFunctionInfo()
             const infos: InfosOfUris = new Map([[uri, info]])
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema)
 
             assert(actual === info)
         })
         it('Should return undefined when exceptions are thrown', async () => {
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema)
 
             assert(actual === undefined)
         })
@@ -198,7 +199,7 @@ describe('common.ts Tests', () => {
             const getText = async () => '# foo'
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, 2)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema, 2)
 
             assert(actual?.config === VanillaConfig)
             assert(actual.document.version === 2)
@@ -211,7 +212,7 @@ describe('common.ts Tests', () => {
             const getText = async () => hasReadFile = true
             const infos: InfosOfUris = new Map()
 
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText as any, getCommandTree, getVanillaData)
+            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText as any, getCommandTree, getVanillaData, getJsonSchema)
 
             if (hasReadFile) {
                 fail()

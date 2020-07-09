@@ -1,8 +1,8 @@
 import { ProposedFeatures } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { JsonNode } from '../nodes/JsonNode'
 import { Config } from './Config'
 import { LineNode } from './LineNode'
-import { JsonNode } from '../nodes/JsonNode'
 
 export interface FunctionInfo {
     builder?: ProposedFeatures.SemanticTokensBuilder,

@@ -2,17 +2,14 @@ import { TextDocument } from 'vscode-languageserver'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'
-import { ArgumentParser } from '../parsers/ArgumentParser'
-import { ArgumentParserManager } from '../parsers/ArgumentParserManager'
 import { BlockDefinition } from './BlockDefinition'
 import { ClientCache } from './ClientCache'
 import { CommandTree } from './CommandTree'
 import { Config, VanillaConfig } from './Config'
-import { Manager } from './Manager'
+import { Uri } from './handlers'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
-import { Uri } from './handlers'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,
@@ -24,7 +21,6 @@ export interface ParsingContext {
     id: IdentityNode | undefined,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
-    parsers: Manager<ArgumentParser<any>>,
     registry: Registry,
     rootIndex: number | null,
     roots: Uri[]
@@ -54,7 +50,6 @@ export function constructContext(
         id: undefined,
         namespaceSummary: vanillaData.NamespaceSummary,
         nbtdoc: vanillaData.Nbtdoc,
-        parsers: new ArgumentParserManager(),
         registry: vanillaData.Registry,
         rootIndex: null,
         roots: [],

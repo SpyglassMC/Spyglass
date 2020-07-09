@@ -1,5 +1,5 @@
 export * from './ArgumentParser'
-export * from './ArgumentParserManager'
+export * from './Parsers'
 export * from './BlockArgumentParser'
 export * from './CodeSnippetArgumentParser'
 export * from './DefinitionDescriptionArgumentParser'

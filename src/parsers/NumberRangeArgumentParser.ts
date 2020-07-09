@@ -8,6 +8,7 @@ import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { Parsers } from './Parsers'
 
 export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
     static identity = 'NumberRange'
@@ -49,7 +50,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
             let min: NumberNode | undefined
             let max: NumberNode | undefined
             if (!isDoublePeriods()) {
-                const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                const result = new Parsers.Number(this.type).parse(reader, ctx)
                 min = result.data
                 combineArgumentParserResult(ans, result)
             }
@@ -57,7 +58,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
                 ans.tokens.push(new Token({ start: reader.cursor, end: reader.cursor + 2 }, TokenType.keyword))
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
-                    const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                    const result = new Parsers.Number(this.type).parse(reader, ctx)
                     max = result.data
                     combineArgumentParserResult(ans, result)
                 }

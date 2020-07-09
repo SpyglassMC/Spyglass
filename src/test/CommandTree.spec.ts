@@ -6,11 +6,9 @@ import { BlockNode } from '../nodes/BlockNode'
 import { BlockStateNode } from '../nodes/BlockStateNode'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { NbtCompoundKeyNode } from '../nodes/NbtCompoundKeyNode'
 import { NbtPathNode } from '../nodes/NbtPathNode'
 import { StringNode } from '../nodes/StringNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
-import { ArgumentParserManager } from '../parsers/ArgumentParserManager'
 import { LineParser } from '../parsers/LineParser'
 import { CommandTree, CommandTreeNode } from '../types/CommandTree'
 import { } from '../types/nbtdoc'
@@ -178,7 +176,6 @@ describe('CommandTree Tests', () => {
             })
         })
     })
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
         const cache = {
@@ -186,12 +183,11 @@ describe('CommandTree Tests', () => {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
-        ctx = constructContext({ parsers, cache })
+        ctx = constructContext({ cache })
     })
     describe('Just fucking parse', () => {
-        const parsers = new ArgumentParserManager()
         it('advancement g', async () => {
-            const ctx = constructContext({ parsers, cursor: 13 })
+            const ctx = constructContext({ cursor: 13 })
             const parser = new LineParser(false)
             const reader = new StringReader('advancement g')
             const { data } = parser.parse(reader, ctx)
@@ -330,7 +326,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.completions, undefined)
         })
         it('setblock ~ ~ ~ minecraft:grass_block[]', async () => {
-            const ctx = constructContext({ parsers, cursor: 37 })
+            const ctx = constructContext({ cursor: 37 })
             const parser = new LineParser(false)
             const reader = new StringReader('setblock ~ ~ ~ minecraft:grass_block[]')
             const { data } = parser.parse(reader, ctx)

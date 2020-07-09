@@ -16,7 +16,6 @@ import { NbtLongArrayNode } from '../../nodes/NbtLongArrayNode'
 import { NbtLongNode } from '../../nodes/NbtLongNode'
 import { NbtShortNode } from '../../nodes/NbtShortNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { NbtArgumentParser } from '../../parsers/NbtArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
@@ -33,10 +32,9 @@ describe('NbtArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers, registry: TestRegistry, nbtdoc: TestNbtdoc })
+        ctx = constructContext({ registry: TestRegistry, nbtdoc: TestNbtdoc })
     })
     describe('parse() Tests', () => {
         it('Should report errors when the type does not match', () => {

@@ -22,6 +22,7 @@ import { NbtNumberNode } from '../nodes/NbtNumberNode'
 import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
+import { Parsers } from '../parsers/Parsers'
 import { LineParser } from '../parsers/LineParser'
 import { ArgumentParserResult, LegacyValidateResult, remapTokens, Token } from '../types'
 import { ClientCache, combineCache, remapCachePosition } from '../types/ClientCache'
@@ -321,9 +322,9 @@ export class NbtdocHelper {
     private completeIdField(ans: LegacyValidateResult, ctx: ParsingContext, doc: IdDoc, isPredicate: boolean) {
         const subCtx = { ...ctx, cursor: 0 }
         const reader = new StringReader('')
-        const result = ctx.parsers.get('Identity', [
+        const result = new Parsers.Identity(
             NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
-        ]).parse(reader, subCtx)
+        ).parse(reader, subCtx)
         for (const com of result.completions) {
             ans.completions.push(
                 NbtdocHelper.escapeCompletion(
@@ -722,9 +723,9 @@ export class NbtdocHelper {
             /// Identity.
             const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
             const reader = new StringReader(strTag.valueOf())
-            const result = ctx.parsers.get('Identity', [
+            const result = new Parsers.Identity(
                 NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
-            ]).parse(reader, subCtx)
+            ).parse(reader, subCtx)
             //#region Attribute name datafix: #381
             if (doc.Id === 'minecraft:attribute') {
                 for (const error of result.errors) {
@@ -852,18 +853,18 @@ export class NbtdocHelper {
         if (description.match(/command stored/i)) {
             result = new LineParser(null, 'commands').parse(reader, ctx).data
         } else if (description.match(/particle the area effect cloud/i)) {
-            result = ctx.parsers.get('Particle').parse(reader, ctx)
+            result = new Parsers.Particle().parse(reader, ctx)
         } else if (description.match(/tags on the entity/i)) {
-            result = ctx.parsers.get('Tag').parse(reader, ctx)
+            result = new Parsers.Tag().parse(reader, ctx)
         } else if (description.match(/team to join/i)) {
-            result = ctx.parsers.get('Team').parse(reader, ctx)
+            result = new Parsers.Team().parse(reader, ctx)
         } else if (description.match(/line of text/i) ||
             description.match(/name of th(?:e|is) (?:banner|brewing stand|command block|container|enchanting table|furance)/i) ||
             description.match(/JSON text component/i) ||
             description.match(/lore of an item/i)) {
-            result = ctx.parsers.get('TextComponent').parse(reader, ctx)
+            result = new Parsers.TextComponent().parse(reader, ctx)
         } else if (description.match(/can be placed on/i) || description.match(/can be destroyed/i)) {
-            result = ctx.parsers.get('Block', [true, true]).parse(reader, ctx)
+            result = new Parsers.Block(true, true).parse(reader, ctx)
         }
         return result
     }

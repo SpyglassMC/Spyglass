@@ -7,6 +7,7 @@ import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { Parsers } from './Parsers'
 
 export class ItemSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ItemSlot'
@@ -39,7 +40,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
             ans.tokens.push(Token.from(start, reader, TokenType.type))
         } else {
             const start = reader.cursor
-            const categoryResult = ctx.parsers.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
+            const categoryResult = new Parsers.Literal(...Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
             const category = categoryResult.data as 'armor' | 'container' | 'enderchest' | 'horse' | 'hotbar' | 'inventory' | 'villager' | 'weapon'
             categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
             combineArgumentParserResult(ans, categoryResult)
@@ -48,7 +49,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
                 reader.skip()
 
                 const start = reader.cursor
-                const subResult = ctx.parsers.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
+                const subResult = new Parsers.Literal(...ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
                 const sub: string = subResult.data
                 subResult.tokens = [Token.from(start, reader, TokenType.type)]
                 combineArgumentParserResult(ans, subResult)

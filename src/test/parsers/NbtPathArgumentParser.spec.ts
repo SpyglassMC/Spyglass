@@ -8,7 +8,6 @@ import { NbtCompoundKeyNode } from '../../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
 import { NbtPathNode } from '../../nodes/NbtPathNode'
 import { NumberNode } from '../../nodes/NumberNode'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { NbtPathArgumentParser } from '../../parsers/NbtPathArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
@@ -26,7 +25,6 @@ describe('NbtPathArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     describe('parse() Tests', () => {
         it('Should parse a simple key', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -209,7 +207,7 @@ describe('NbtPathArgumentParser Tests', () => {
 
         let ctx: ParsingContext
         before(async () => {
-            ctx = constructContext({ parsers, nbtdoc: TestNbtdoc })
+            ctx = constructContext({ nbtdoc: TestNbtdoc })
         })
         describe('schema Tests', () => {
             it('Should parse an existing child key without errors (#442)', () => {
@@ -318,7 +316,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(completions, [])
             })
             it('Should return completions for key', async () => {
-                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 0 })
+                const ctx = constructContext({ nbtdoc: TestNbtdoc, cursor: 0 })
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
                 const reader = new StringReader('')
 
@@ -365,7 +363,7 @@ describe('NbtPathArgumentParser Tests', () => {
             //     ])
             // })
             it('Should return completions for key in double quotation marks', async () => {
-                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 1 })
+                const ctx = constructContext({ nbtdoc: TestNbtdoc, cursor: 1 })
                 const parser = new NbtPathArgumentParser('minecraft:block', 'minecraft:one_boolean_field')
                 const reader = new StringReader('""')
 
@@ -381,7 +379,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 ])
             })
             it('Should return completions for sub keys under list tag', async () => {
-                const ctx = constructContext({ parsers, nbtdoc: TestNbtdoc, cursor: 18 })
+                const ctx = constructContext({ nbtdoc: TestNbtdoc, cursor: 18 })
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:list')
                 const reader = new StringReader('{ }.addition[ 1 ].')
 

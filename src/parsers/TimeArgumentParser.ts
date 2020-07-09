@@ -9,6 +9,7 @@ import { Token, TokenType } from '../types/Token'
 import { arrayToCompletions } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { Parsers } from './Parsers'
 
 export class TimeArgumentParser extends ArgumentParser<TimeNode> {
     static identity = 'Time'
@@ -31,7 +32,7 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
 
         const start = reader.cursor
 
-        const numberResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
+        const numberResult: ArgumentParserResult<NumberNode> = new Parsers.Number('float', 0).parse(reader, ctx)
         combineArgumentParserResult(ans, numberResult)
         ans.data.value = numberResult.data.valueOf()
         ans.data.raw = numberResult.data.toString()

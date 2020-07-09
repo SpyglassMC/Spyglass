@@ -9,6 +9,7 @@ import { arrayToCompletions, arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 import { ScoreboardSlotArgumentParser } from './ScoreboardSlotArgumentParser'
+import { Parsers } from './Parsers'
 
 const RegularSep = '.'
 const StatsSep = ':'
@@ -120,11 +121,11 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                     .skip()
                 let subResult: ArgumentParserResult<unknown>
                 if (subCriteria instanceof Array) {
-                    subResult = ctx.parsers.get('Literal', subCriteria).parse(reader, ctx)
+                    subResult = new Parsers.Literal(...subCriteria).parse(reader, ctx)
                 } else {
                     const newReader = reader.clone()
                     newReader.string = newReader.string.replace(new RegExp(`\\${RegularSep}`, 'g'), IdentityNode.NamespaceDelimiter)
-                    subResult = ctx.parsers.get('Identity', [subCriteria]).parse(newReader, ctx)
+                    subResult = new Parsers.Identity(subCriteria).parse(newReader, ctx)
                     reader.cursor = newReader.cursor
                 }
                 subResult.tokens = []
