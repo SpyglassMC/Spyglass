@@ -1005,7 +1005,7 @@ export class NbtdocHelper {
                             const ansField = ans!.fields[key]
                             const field = doc.fields[key]
                             if (this.isOrDoc(field.nbttype) && field.nbttype.Or.length === 0) {
-                                break
+                                continue
                             }
                             if (ansField) {
                                 if (this.isOrDoc(ansField.nbttype)) {
@@ -1032,6 +1032,8 @@ export class NbtdocHelper {
                     merge(index)
                 }
             }
+
+            this.CompiledFallbacks[type] = ans
         }
 
         return ans

@@ -1,3 +1,8 @@
+# [v2.1.13](https://github.com/SPGoding/datapack-language-server/compare/v2.1.12...v2.1.13) (2020-07-09)
+
+## 🐛 Bug Fixes
+- [`c0c7116`](https://github.com/SPGoding/datapack-language-server/commit/c0c7116)  Fix not merging all keys in NbtdocHelper (Issues: [`#572`](https://github.com/SPGoding/datapack-language-server/issues/572))
+
 # [v2.1.12](https://github.com/SPGoding/datapack-language-server/compare/v2.1.11...v2.1.12) (2020-07-08)
 
 # [v2.1.11](https://github.com/SPGoding/datapack-language-server/compare/v2.1.10...v2.1.11) (2020-07-07)
