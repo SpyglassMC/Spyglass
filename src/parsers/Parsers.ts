@@ -22,9 +22,11 @@ import { TextComponentArgumentParser } from './TextComponentArgumentParser'
 import { TimeArgumentParser } from './TimeArgumentParser'
 import { UuidArgumentParser } from './UuidArgumentParser'
 import { VectorArgumentParser } from './VectorArgumentParser'
+import { CodeSnippetArgumentParser } from './CodeSnippetArgumentParser'
 
 export namespace Parsers {
     export const Block = BlockArgumentParser
+    export const CodeSnippet = CodeSnippetArgumentParser
     export const DefinitionDescription = DefinitionDescriptionArgumentParser
     export const DefinitionID = DefinitionIDArgumentParser
     export const Entity = EntityArgumentParser

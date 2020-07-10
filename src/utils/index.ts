@@ -3,6 +3,7 @@ import https from 'https'
 import { EOL } from 'os'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { EntityNode } from '../nodes/EntityNode'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
 import { getOuterIndex, IndexMapping } from '../types/IndexMapping'
@@ -288,4 +289,15 @@ export function removeDupliateCompletions(completions: CompletionItem[]): Comple
     return completions.filter((completion, i) =>
         completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
     )
+}
+
+export function getNbtdocRegistryId(entity: EntityNode): null | string {
+    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
+        return 'minecraft:player'
+    }
+    const firstID = entity.argument.type?.[0]
+    if (firstID && !firstID.isTag) {
+        return firstID.toString()
+    }
+    return null
 }

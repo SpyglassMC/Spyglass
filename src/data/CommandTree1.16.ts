@@ -7,7 +7,7 @@ import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
 import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
 import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
-import { EntityArgumentParser, getNbtdocRegistryId } from '../parsers/EntityArgumentParser'
+import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
 import { ItemSlotArgumentParser } from '../parsers/ItemSlotArgumentParser'
@@ -31,6 +31,7 @@ import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { CacheKey } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
+import { getNbtdocRegistryId } from '../utils'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.

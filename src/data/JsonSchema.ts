@@ -2,15 +2,15 @@ import { SCHEMAS } from '@mcschema/core'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion } from '../types'
 
-export type JsonSchemaType = 'advancement' | 'dimension' | 'dimension-type' | 'loot-table' | 'predicate' | 'text-component'
+export type JsonSchemaType = 'advancement' | 'dimension' | 'dimension_type' | 'loot_table' | 'predicate' | 'text_component'
 
 const globPatterns = new Map<JsonSchemaType, string>([
     ['advancement', 'data/*/advancements/**/*.json'],
     ['dimension', 'data/minecraft/dimension/*/**/*.json'],
-    ['dimension-type', 'data/minecraft/dimension_type/*/**/*.json'],
-    ['loot-table', 'data/*/loot_tables/**/*.json'],
+    ['dimension_type', 'data/minecraft/dimension_type/*/**/*.json'],
+    ['loot_table', 'data/*/loot_tables/**/*.json'],
     ['predicate', 'data/*/predicates/**/*.json'],
-    ['text-component', 'data/*/text_components/**/*.json']
+    ['text_component', 'data/*/text_components/**/*.json']
 ])
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {

@@ -911,7 +911,8 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             // connection.console.info(`Walked ${ uriString }`)
             const uri = getUri(uriString, uris)
             const rel = getRel(uri, roots)
-            if (!rel) {
+            const config = await fetchConfig(uri)
+            if (!rel || !isRelIncluded(rel, config)) {
                 delete cacheFile.files[uriString]
                 continue
             }

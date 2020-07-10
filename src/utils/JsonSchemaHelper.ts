@@ -62,6 +62,12 @@ export class JsonSchemaHelper {
             const valueReader = new StringReader(value)
             let result: Partial<LegacyValidateResult> | undefined = undefined
             switch (option.validator) {
+                case 'block_state_key': {
+                    const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
+                    const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
+                    result = new Parsers.Literal(...keys).parse(valueReader, ctx)
+                    break
+                }
                 case 'command':
                     result = new LineParser(
                         option.params.leadingSlash, 'commands', option.params.allowPartial
@@ -85,6 +91,9 @@ export class JsonSchemaHelper {
                     }
                     break
                 case 'nbt_path':
+                    result = new Parsers.NbtPath(
+                        option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
+                    ).parse(valueReader, ctx)
                     break
                 case 'objective':
                     result = new Parsers.Objective().parse(valueReader, ctx)
@@ -93,6 +102,9 @@ export class JsonSchemaHelper {
                     result = new Parsers.Identity(
                         option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
                     ).parse(valueReader, ctx)
+                    break
+                case 'team':
+                    result = new Parsers.Team().parse(valueReader, ctx)
                     break
                 case 'uuid':
                     result = new Parsers.Uuid().parse(valueReader, ctx)
@@ -168,7 +180,10 @@ export class JsonSchemaHelper {
      * This function won't work if the path contains `pop` after `push`, which should be fine.
      * @param path Won't be changed.
      */
-    private static navigateRelativePath(node: ASTNode | undefined, path: RelativePath): ASTNode | undefined {
+    private static navigateRelativePath(node: ASTNode | undefined, path: RelativePath | undefined): ASTNode | undefined {
+        if (!path) {
+            return undefined
+        }
         if (path.length === 0) {
             return node
         }

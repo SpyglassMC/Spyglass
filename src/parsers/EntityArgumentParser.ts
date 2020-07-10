@@ -6,18 +6,17 @@ import { IsMapSorted, Keys, UnsortedKeys } from '../nodes/MapNode'
 import { NumberNode } from '../nodes/NumberNode'
 import { NumberRangeNode } from '../nodes/NumberRangeNode'
 import { EntitySelectorNodeChars, SelectorAdvancementsNode, SelectorArgumentKey, SelectorArgumentKeys, SelectorArgumentNodeChars, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode, SelectorSortMethod } from '../nodes/SelectorArgumentsNode'
-import { StringNode } from '../nodes/StringNode'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../types/ParsingError'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { Token, TokenType } from '../types/Token'
-import { arrayToCompletions } from '../utils'
+import { arrayToCompletions, getNbtdocRegistryId } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
-import { Parsers } from './Parsers'
 import { MapParser } from './MapParser'
+import { Parsers } from './Parsers'
 import { StringType } from './StringArgumentParser'
 
 export class EntityArgumentParser extends ArgumentParser<EntityNode> {
@@ -408,15 +407,4 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
     getExamples(): string[] {
         return ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498']
     }
-}
-
-export function getNbtdocRegistryId(entity: EntityNode): null | string {
-    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
-        return 'minecraft:player'
-    }
-    const firstID = entity.argument.type?.[0]
-    if (firstID && !firstID.isTag) {
-        return firstID.toString()
-    }
-    return null
 }

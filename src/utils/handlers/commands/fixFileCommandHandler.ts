@@ -1,8 +1,8 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getDiagnosticMap, getOrCreateInfo } from '../common'
-import { getJsonSchemas, JsonSchemaType } from '../../../data/JsonSchema'
+import { getJsonSchemas } from '../../../data/JsonSchema'
 import { ArgumentNode, GetCodeActions } from '../../../nodes'
 import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, isFunctionInfo, ReadFileFunction, Uri } from '../../../types'
+import { getDiagnosticMap, getOrCreateInfo } from '../common'
 
 export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
     const start = new Date().getTime()
