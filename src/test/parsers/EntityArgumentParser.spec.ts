@@ -27,24 +27,24 @@ describe('EntityArgumentParser Tests', () => {
     })
 
     const cache = {
-        entities: {
+        entity: {
             foo: { def: [], ref: [] },
             bar: { def: [], ref: [], doc: 'The doc of **bar**' }
         },
-        score_holders: {
+        score_holder: {
             '#holder': { def: [], ref: [] }
         },
-        'tags/entity_types': {
+        'tag/entity_type': {
             'spgoding:mobs': { def: [], ref: [] }
         },
-        predicates: {
+        predicate: {
             'spgoding:test/predicate': { def: [], ref: [] }
         },
-        objectives: {
+        objective: {
             foo: { def: [], ref: [] },
             bar: { def: [], ref: [] }
         },
-        advancements: {
+        advancement: {
             'spgoding:advancement/a': { def: [], ref: [] },
             'spgoding:advancement/b': { def: [], ref: [] },
             'spgoding:advancement/c': { def: [], ref: [] }
@@ -146,7 +146,7 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('foo'), ctx)
                 assert.deepStrictEqual(actual.data, $(new EntityNode('foo'), [0, 3]))
                 assert.deepStrictEqual(actual.cache, {
-                    entities: {
+                    entity: {
                         foo: {
                             def: [],
                             ref: [{ start: 0, end: 3 }]

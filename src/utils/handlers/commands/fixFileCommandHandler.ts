@@ -1,5 +1,5 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getDiagnosticMap, getOrCreateInfo } from '..'
+import { getDiagnosticMap, getOrCreateInfo } from '../common'
 import { getJsonSchemas, JsonSchemaType } from '../../../data/JsonSchema'
 import { ArgumentNode, GetCodeActions } from '../../../nodes'
 import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, isFunctionInfo, ReadFileFunction, Uri } from '../../../types'

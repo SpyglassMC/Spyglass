@@ -155,22 +155,22 @@ describe('IdentityNode Tests', () => {
     describe('toRel() Tests', () => {
         it('Should return correctly for entity_types tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('tags/entity_types')
+            const actual = id.toRel('tag/entity_type')
             assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for other tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('tags/blocks')
+            const actual = id.toRel('tag/block')
             assert(actual === ['data', 'spgoding', 'tags', 'blocks', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for loot tables', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('loot_tables')
+            const actual = id.toRel('loot_table')
             assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for functions', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('functions', 'data')
+            const actual = id.toRel('function', 'data')
             assert(actual === ['data', 'spgoding', 'functions', 'foo', 'bar.mcfunction'].join(path.sep))
         })
     })
@@ -199,19 +199,19 @@ describe('IdentityNode Tests', () => {
     })
     describe('static isExtValid() Tests', () => {
         it('Should return true for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'functions')
+            const actual = IdentityNode.isExtValid('.mcfunction', 'function')
             assert(actual === true)
         })
         it('Should return false for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'functions')
+            const actual = IdentityNode.isExtValid('.json', 'function')
             assert(actual === false)
         })
         it('Should return true for other files', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'advancements')
+            const actual = IdentityNode.isExtValid('.json', 'advancement')
             assert(actual === true)
         })
         it('Should return false for other files', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'advancements')
+            const actual = IdentityNode.isExtValid('.mcfunction', 'advancement')
             assert(actual === false)
         })
     })

@@ -9,17 +9,17 @@ describe('onDocumentLinks() Tests', () => {
     const roots: Uri[] = []
     const uris: UrisOfStrings = new Map()
     const urisOfIds: UrisOfIds = new Map([
-        ['functions|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')]
+        ['function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')]
     ])
 
     const info = mockFunctionInfo({
         nodes: [
             mockLineNode({
                 cache: {
-                    colors: {
+                    color: {
                         ignored: { ref: [{ start: 0, end: 15 }], def: [] }
                     },
-                    functions: {
+                    function: {
                         'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
                     }
                 }

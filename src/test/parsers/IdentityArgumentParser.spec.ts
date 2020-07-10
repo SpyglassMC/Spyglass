@@ -67,32 +67,32 @@ describe('IdentityArgumentParser Tests', () => {
         }
     }
     const cache = {
-        advancements: {
+        advancement: {
             'spgoding:advancement': { def: [], ref: [] }
         },
-        bossbars: {
+        bossbar: {
             'spgoding:bossbar/a': { def: [], ref: [] },
             'spgoding:bossbar/b': { def: [], ref: [] }
         },
-        'tags/functions': {
+        'tag/function': {
             'spgoding:function/1': { def: [], ref: [] },
             'spgoding:function/2': { def: [], ref: [] }
         },
-        'tags/fluids': {
+        'tag/fluid': {
             'minecraft:fluid_tag': { def: [], ref: [] }
         },
-        'tags/entity_types': {
+        'tag/entity_type': {
             'spgoding:entity_type/1': { def: [], ref: [] },
             'spgoding:entity_type/2': { def: [], ref: [] }
         },
-        'tags/blocks': {
+        'tag/block': {
             'minecraft:block/1': { def: [], ref: [] }
         },
-        'tags/items': {
+        'tag/item': {
             'spgoding:item/1': { def: [], ref: [] },
             'spgoding:item/2': { def: [], ref: [] }
         },
-        loot_tables: {
+        loot_table: {
             'spgoding:loot_table/foo': { def: [], ref: [] }
         }
     }
@@ -155,7 +155,7 @@ describe('IdentityArgumentParser Tests', () => {
                 registry: registries, cache, cursor: 0,
                 id: new IdentityNode('spgoding', ['this', 'is', 'the', 'current', 'function'])
             })
-            const parser = new IdentityArgumentParser('$advancements')
+            const parser = new IdentityArgumentParser('$advancement')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions.find(v => v.label === 'THIS'), {
                 label: 'THIS',
@@ -177,7 +177,7 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return completions for cache units', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
-            const parser = new IdentityArgumentParser('$bossbars')
+            const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -191,7 +191,7 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return completions in the vanilla datapack', async () => {
             const config = constructConfig({ env: { dependsOnVanilla: true }, lint: { idOmitDefaultNamespace: null } })
             const ctx = constructContext({ registry: registries, config, namespaceSummary: summary, cache, cursor: 0 })
-            const parser = new IdentityArgumentParser('$advancements')
+            const parser = new IdentityArgumentParser('$advancement')
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -212,7 +212,7 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return completions for advancements with Event kind', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 9 })
-            const parser = new IdentityArgumentParser('$advancements')
+            const parser = new IdentityArgumentParser('$advancement')
             const actual = parser.parse(new StringReader('spgoding:'), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -225,7 +225,7 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return completions for functions with Function kind', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 19 })
-            const parser = new IdentityArgumentParser('$functions', true)
+            const parser = new IdentityArgumentParser('$function', true)
             const actual = parser.parse(new StringReader('#spgoding:function/'), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -271,7 +271,7 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return completions for functions and function tags', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
-            const parser = new IdentityArgumentParser('$functions', true)
+            const parser = new IdentityArgumentParser('$function', true)
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.completions,
                 [
@@ -517,7 +517,7 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return errors for non [a-z0-9/._-] characters', async () => {
             const config = constructConfig({ lint: { strictBossbarCheck: null, idOmitDefaultNamespace: ['warning', false] } })
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$bossbars')
+            const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:QwQ'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['QwQ']), [0, 12]))
             assert.deepStrictEqual(actual.errors, [
@@ -527,13 +527,13 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return errors when the id cannot be resolved in cache category', async () => {
             const config = constructConfig({ lint: { strictBossbarCheck: ['warning', true], idOmitDefaultNamespace: null } })
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$bossbars')
+            const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbars’',
+                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbar’',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -541,13 +541,13 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return errors when the id cannot be resolved in loot table cache', async () => {
             const config = constructConfig({ lint: { strictLootTableCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$loot_tables')
+            const parser = new IdentityArgumentParser('$loot_table')
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_tables’',
+                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_table’',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -555,13 +555,13 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return errors when the id cannot be resolved in tag cache category', async () => {
             const config = constructConfig({ lint: { strictFunctionTagCheck: ['warning', true], idOmitDefaultNamespace: ['warning', true] } })
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$functions', true)
+            const parser = new IdentityArgumentParser('$function', true)
             const actual = parser.parse(new StringReader('#spgoding:function/42'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['function', '42'], true), [0, 21]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 21 },
-                    'Failed to resolve namespaced ID ‘spgoding:function/42’ in cache category ‘tags/functions’',
+                    'Failed to resolve namespaced ID ‘spgoding:function/42’ in cache category ‘tag/function’',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -596,11 +596,11 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return cache when the id is already defined', async () => {
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$bossbars')
+            const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:bossbar/a'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'a']), [0, 18]))
             assert.deepStrictEqual(actual.cache, {
-                bossbars: {
+                bossbar: {
                     'spgoding:bossbar/a': {
                         def: [],
                         ref: [{ start: 0, end: 18 }]
@@ -610,7 +610,7 @@ describe('IdentityArgumentParser Tests', () => {
         })
         it('Should return empty cache when the id is undefined', async () => {
             const ctx = constructContext({ registry: registries, cache, config })
-            const parser = new IdentityArgumentParser('$bossbars')
+            const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:bossbar/c'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c']), [0, 18]))
             assert.deepStrictEqual(actual.cache, {})

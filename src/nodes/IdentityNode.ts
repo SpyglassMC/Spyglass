@@ -121,14 +121,14 @@ export class IdentityNode extends ArgumentNode {
 
     /**
      * Convert the ID to a file path.
-     * @param category The category of this namespaced ID. e.g. `functions`, `advancements`, etc.
+     * @param category The category of this namespaced ID. e.g. `function`, `advancement`, etc.
      * @param ext The extension of the file. Defaults to `.json`.
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
-    toRel(category: keyof ClientCache, side: 'assets' | 'data' = 'data') {
-        const datapackCategory = category.replace(/\//g, sep)
+    toRel(category: CacheKey, side: 'assets' | 'data' = 'data') {
+        const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
         let ext: string
-        if (category === 'functions') {
+        if (category === 'function') {
             ext = '.mcfunction'
         } else {
             ext = '.json'
@@ -161,27 +161,24 @@ export class IdentityNode extends ArgumentNode {
                 if (datapackCategory === 'tags') {
                     switch (paths[0]) {
                         case 'entity_types':
-                            category = 'tags/entity_types'
-                            break
                         case 'blocks':
                         case 'fluids':
                         case 'functions':
                         case 'items':
-                            category = `tags/${paths[0]}` as CacheKey
+                            category = `tag/${paths[0].slice(0, -1)}` as CacheKey
                             break
                         default:
                             return undefined
                     }
                     paths.splice(0, 1)
-                } else if (datapackCategory === 'loot_tables') {
-                    category = 'loot_tables'
                 } else if (
+                    datapackCategory === 'loot_tables' ||
                     datapackCategory === 'advancements' ||
                     datapackCategory === 'functions' ||
                     datapackCategory === 'predicates' ||
                     datapackCategory === 'recipes'
                 ) {
-                    category = datapackCategory
+                    category = datapackCategory.slice(0, -1) as CacheKey
                 } else {
                     return undefined
                 }
@@ -206,8 +203,8 @@ export class IdentityNode extends ArgumentNode {
 
     static isExtValid(ext: string, category: CacheKey) {
         return (
-            (category === 'functions' && ext === '.mcfunction') ||
-            (category !== 'functions' && ext === '.json')
+            (category === 'function' && ext === '.mcfunction') ||
+            (category !== 'function' && ext === '.json')
         )
     }
 }

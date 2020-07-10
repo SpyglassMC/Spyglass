@@ -2,7 +2,7 @@ import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
 import { FunctionInfo } from '../../types/DocumentInfo'
 import { lineToLintedString } from '../../types/LineNode'
 import { NodeRange } from '../../nodes'
-import { getLspRange } from '.'
+import { getLspRange } from './common'
 
 export function onDocumentFormatting({ info }: { info: FunctionInfo }) {
     const ans: TextEdit[] = []

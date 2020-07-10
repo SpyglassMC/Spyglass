@@ -1,10 +1,8 @@
 import { NodeRange } from '../nodes/ArgumentNode'
-import { BlockNode } from '../nodes/BlockNode'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { ItemNode } from '../nodes/ItemNode'
 import { NumberNode } from '../nodes/NumberNode'
 import { ParticleNode } from '../nodes/ParticleNode'
-import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
+import { VectorElementNode, VectorElementType } from '../nodes/VectorNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { StringReader } from '../utils/StringReader'
@@ -47,7 +45,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     if (ans.errors.length === 0) {
                         const key = `${color[0].value} ${color[1].value} ${color[2].value}`
                         ans.cache = {
-                            colors: {
+                            color: {
                                 [key]: {
                                     def: [],
                                     ref: [{ start, end: reader.cursor }]
@@ -73,7 +71,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         .expect(' ')
                         .skip()
                     const blockResult = new Parsers.Block().parse(reader, ctx)
-                    const block = blockResult.data as BlockNode
+                    const block = blockResult.data
                     combineArgumentParserResult(ans, blockResult)
                     ans.data.param = block
                     break
@@ -82,7 +80,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         .expect(' ')
                         .skip()
                     const itemResult = new Parsers.Item().parse(reader, ctx)
-                    const item = itemResult.data as ItemNode
+                    const item = itemResult.data
                     combineArgumentParserResult(ans, itemResult)
                     ans.data.param = item
                     break

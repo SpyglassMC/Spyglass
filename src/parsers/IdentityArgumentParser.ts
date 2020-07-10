@@ -126,9 +126,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     private addDefinitionCache(ans: ArgumentParserResult<IdentityNode>, stringID: string, start: number, end: number) {
         if (this.isDefinition) {
             switch (this.type) {
-                case '$bossbars':
+                case '$bossbar':
                     ans.cache = {
-                        bossbars: {
+                        bossbar: {
                             [stringID]: { def: [{ start, end }], ref: [] }
                         }
                     }
@@ -147,11 +147,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         /// function (tag) file -> CompletionItemKind.Function
         let fileKind: CompletionItemKind
         switch (this.type) {
-            case '$advancements':
+            case '$advancement':
                 fileKind = CompletionItemKind.Event
                 break
-            case '$functions':
-            case '$tags/functions':
+            case '$function':
+            case '$tag/function':
                 fileKind = CompletionItemKind.Function
                 break
             default:
@@ -369,15 +369,15 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         /* istanbul ignore next */
         switch (this.type) {
             case 'minecraft:block':
-                return 'tags/blocks'
+                return 'tag/block'
             case 'minecraft:entity_type':
-                return 'tags/entity_types'
+                return 'tag/entity_type'
             case 'minecraft:fluid':
-                return 'tags/fluids'
+                return 'tag/fluid'
             case 'minecraft:item':
-                return 'tags/items'
-            case '$functions':
-                return 'tags/functions'
+                return 'tag/item'
+            case '$function':
+                return 'tag/function'
             default:
                 throw new Error(`faild to find a tag type for ‘${this.type}’`)
         }
@@ -410,29 +410,29 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         switch (key) {
-            case '$advancements':
+            case '$advancement':
                 return evalTrueConfig(lint.strictAdvancementCheck)
-            case '$functions':
+            case '$function':
                 return evalTrueConfig(lint.strictFunctionCheck)
-            case '$loot_tables':
+            case '$loot_table':
                 return evalTrueConfig(lint.strictLootTableCheck)
-            case '$predicates':
+            case '$predicate':
                 return evalTrueConfig(lint.strictPredicateCheck)
-            case '$recipes':
+            case '$recipe':
                 return evalTrueConfig(lint.strictRecipeCheck)
-            case '$tags/blocks':
+            case '$tag/block':
                 return evalTrueConfig(lint.strictBlockTagCheck)
-            case '$tags/entity_types':
+            case '$tag/entity_type':
                 return evalTrueConfig(lint.strictEntityTypeTagCheck)
-            case '$tags/fluids':
+            case '$tag/fluid':
                 return evalTrueConfig(lint.strictFluidTagCheck)
-            case '$tags/functions':
+            case '$tag/function':
                 return evalTrueConfig(lint.strictFunctionTagCheck)
-            case '$tags/items':
+            case '$tag/item':
                 return evalTrueConfig(lint.strictItemTagCheck)
-            case '$bossbars':
+            case '$bossbar':
                 return evalTrueConfig(lint.strictBossbarCheck)
-            case '$storages':
+            case '$storage':
                 return evalTrueConfig(lint.strictStorageCheck)
             case 'minecraft:mob_effect':
                 return evalStrictCheckConfig(lint.strictMobEffectCheck)
@@ -466,19 +466,19 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     /* istanbul ignore next: tired of writing tests */
     private getVanillaPool(type: CacheKey, vanilla: NamespaceSummary): string[] {
         switch (type) {
-            case 'advancements':
+            case 'advancement':
                 return vanilla.advancements
-            case 'loot_tables':
+            case 'loot_table':
                 return vanilla.loot_tables
-            case 'recipes':
+            case 'recipe':
                 return vanilla.recipes
-            case 'tags/blocks':
+            case 'tag/block':
                 return vanilla.tags.blocks
-            case 'tags/entity_types':
+            case 'tag/entity_type':
                 return vanilla.tags.entity_types
-            case 'tags/fluids':
+            case 'tag/fluid':
                 return vanilla.tags.fluids
-            case 'tags/items':
+            case 'tag/item':
                 return vanilla.tags.items
             default:
                 return []

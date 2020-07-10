@@ -466,7 +466,7 @@ export class NbtdocHelper {
             const g = ((num >> 8) & 255) / 255
             const b = (num & 255) / 255
             combineCache(ans.cache, {
-                colors: {
+                color: {
                     [`${r} ${g} ${b} 1`]: {
                         def: [], ref: [tag[NodeRange]]
                     }
@@ -707,9 +707,9 @@ export class NbtdocHelper {
             case 'minecraft:entity':
                 return 'minecraft:entity_type'
             case 'minecraft:loot_table':
-                return '$loot_tables'
+                return '$loot_table'
             case 'minecraft:recipe':
-                return '$recipes'
+                return '$recipe'
             case 'minecraft:structure':
                 return 'minecraft:structure_feature'
             default:
@@ -869,7 +869,7 @@ export class NbtdocHelper {
         return result
     }
 
-    private combineResult(ans: LegacyValidateResult, result: { cache?: ClientCache | undefined, errors?: ParsingError[] | undefined, completions?: CompletionItem[], tokens?: Token[] } | undefined, tag: NbtStringNode) {
+    private combineResult(ans: LegacyValidateResult, result: Partial<LegacyValidateResult> | undefined, tag: NbtStringNode) {
         if (result) {
             if (result.cache) {
                 remapCachePosition(result.cache, tag.mapping)

@@ -289,8 +289,3 @@ export function removeDupliateCompletions(completions: CompletionItem[]): Comple
         completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
     )
 }
-
-export * as datafixers from './datafixers'
-export * as handlers from './handlers'
-export * from './NbtdocHelper'
-export * from './StringReader'

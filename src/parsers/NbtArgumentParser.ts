@@ -52,9 +52,14 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
+        /**
+         * `null`: Use compiled fallback for the registry.
+         * `undefined`: No validations from registry.
+         */
         private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
         private readonly isPredicate = false,
-        private readonly superNode: NbtCompoundNode | null = null
+        private readonly superNode: NbtCompoundNode | null = null,
+        private readonly module: string | null = null
     ) {
         super()
         if (type instanceof Array) {

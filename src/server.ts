@@ -10,6 +10,7 @@ import { getCommandTree } from './data/CommandTree'
 import { getJsonSchemas } from './data/JsonSchema'
 import { DataSource, getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
+import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
 import { ParsingError } from './types'
@@ -21,7 +22,7 @@ import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { createInfo, fixFileCommandHandler, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNode, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk } from './utils/handlers'
+import { createInfo, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk, getNodesFromInfo } from './utils/handlers/common'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -44,6 +45,7 @@ import { onSelectionRanges } from './utils/handlers/onSelectionRanges'
 import { onSemanticTokens } from './utils/handlers/onSemanticTokens'
 import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
 import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
+import { fixFileCommandHandler } from './utils/handlers/commands/fixFileCommandHandler'
 
 const connection = createConnection(ProposedFeatures.all)
 const uris: UrisOfStrings = new Map<string, Uri>()
@@ -307,7 +309,7 @@ connection.onInitialized(() => {
                     const stat = await fs.stat(uri.fsPath)
                     if (stat.isFile()) {
                         const result = IdentityNode.fromRel(getRel(uri, roots)!)
-                        if (result && (result.category === 'tags/functions' || result.category === 'advancements')) {
+                        if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
                             const { category, ext, id } = result
                             if (IdentityNode.isExtValid(ext, category)) {
                                 await cacheFileOperations.fileModified(uri, category, id)
@@ -432,13 +434,9 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
-                }
-            } else {
-                // TODO: JSON
+            const { node } = getSelectedNodeFromInfo(info, offset)
+            if (node) {
+                return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
             }
         }
         return null
@@ -448,13 +446,9 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
-                }
-            } else {
-                // TODO: JSON
+            const { node } = getSelectedNodeFromInfo(info, offset)
+            if (node) {
+                return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
             }
         }
         return null
@@ -521,13 +515,9 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    return onPrepareRename({ info, node, offset })
-                }
-            } else {
-                // TODO: JSON
+            const { node } = getSelectedNodeFromInfo(info, offset)
+            if (node) {
+                return onPrepareRename({ info, node, offset })
             }
         }
         return null
@@ -537,13 +527,9 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info) {
             const offset = info.document.offsetAt(position)
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    return onRenameRequest({ infos, cacheFile, info, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
-                }
-            } else {
-                // TODO: JSON
+            const { node } = getSelectedNodeFromInfo(info, offset)
+            if (node) {
+                return onRenameRequest({ infos, cacheFile, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
             }
         }
         return null
@@ -553,11 +539,7 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.documentLinks) {
-            if (isFunctionInfo(info)) {
-                return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
-            } else {
-                // TODO: JSON
-            }
+            return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
         }
         return null
     })
@@ -566,11 +548,7 @@ connection.onInitialized(() => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.colors) {
-            if (isFunctionInfo(info)) {
-                return onDocumentColor({ info })
-            } else {
-                // TODO: JSON
-            }
+            return onDocumentColor({ info })
         }
         return null
     })
@@ -596,7 +574,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring && isFunctionInfo(info)) {
+        if (info && info.config.features.semanticColoring) {
             return onSemanticTokens({ info })
         }
         return { data: [] }
@@ -605,7 +583,7 @@ connection.onInitialized(() => {
     connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring && isFunctionInfo(info)) {
+        if (info && info.config.features.semanticColoring) {
             return onSemanticTokensEdits({ info, previousResultId })
         }
         return { edits: [] }
@@ -759,10 +737,10 @@ const cacheFileOperations = {
         if (info) {
             const cacheOfLines: ClientCache = {}
             let i = 0
-            const nodes = isFunctionInfo(info) ? info.nodes : [info.node]
+            const nodes = getNodesFromInfo(info)
             for (const node of nodes) {
                 const skippedChar = (node as any)[NodeRange]?.start ?? 0
-                combineCache(cacheOfLines, node.cache, { uri, startLine: i, endLine: i, skippedChar })
+                combineCache(cacheOfLines, node.cache, { uri, getPosition: offset => info.document.positionAt(offset) })
                 i++
             }
             combineCache(cacheFile.cache, cacheOfLines)
@@ -770,7 +748,7 @@ const cacheFileOperations = {
     },
     //#endregion
 
-    //#region tags/functions
+    //#region tag/function
     // ADDED/MODIFIED/DELETED: update the corresponding TagInfo.
     isStringArray(obj: any) {
         return obj &&
@@ -781,7 +759,7 @@ const cacheFileOperations = {
         const idString = id.toString()
         delete cacheFile.tags.functions[idString]
 
-        const rel = id.toRel('tags/functions')
+        const rel = id.toRel('tag/function')
         const ans: TagInfo = { values: [] }
         for (let i = roots.length - 1; i >= 0; i--) {
             // We should use the order in which Minecraft loads datapacks to load tags.
@@ -798,7 +776,7 @@ const cacheFileOperations = {
                     for (const value of content.values) {
                         try {
                             const id = IdentityNode.fromString(value)
-                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, id.isTag ? 'tags/functions' : 'functions')) {
+                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, id.isTag ? 'tag/function' : 'function')) {
                                 validValues.push(id.toTagString())
                             }
                         } catch (ignored) {
@@ -826,7 +804,7 @@ const cacheFileOperations = {
         const idString = id.toString()
         delete cacheFile.advancements[idString]
 
-        const rel = id.toRel('advancements')
+        const rel = id.toRel('advancement')
         const ans: AdvancementInfo = {}
         for (let i = roots.length - 1; i >= 0; i--) {
             // We should use the order in which Minecraft loads datapacks to load tags.
@@ -842,7 +820,7 @@ const cacheFileOperations = {
                     if (content.rewards && typeof content.rewards.function === 'string') {
                         try {
                             const id = IdentityNode.fromString(content.rewards.function)
-                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, 'functions')) {
+                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, 'function')) {
                                 ans.rewards = {
                                     function: content.rewards.function
                                 }
@@ -861,7 +839,7 @@ const cacheFileOperations = {
     },
     //#endregion
 
-    //#region advancements, functions, loot_tables, predicates, tags/*, recipes:
+    //#region advancement, function, loot_table, predicate, tag/*, recipe:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: CacheKey) => {
@@ -882,13 +860,15 @@ const cacheFileOperations = {
             return
         }
         cacheFileOperations.addDefault(id.toString(), type)
-        if (type === 'functions') {
+        if (type === 'function') {
             cacheFileOperations.removeCachePositionsWith(uri)
             await cacheFileOperations.combineCacheOfLines(uri, config)
-        } else if (type === 'tags/functions') {
+        } else if (type === 'tag/function') {
             await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(id)
+        } else if (type === 'advancement') {
+            cacheFileOperations.removeCachePositionsWith(uri)
+            await cacheFileOperations.combineCacheOfLines(uri, config)
+            // await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
     fileModified: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
@@ -897,23 +877,26 @@ const cacheFileOperations = {
         if (!isRelIncluded(getRel(uri, roots), config)) {
             return
         }
-        if (!uri.toString().startsWith('untitled:') && type === 'functions') {
+        if (!uri.toString().startsWith('untitled:') && type === 'function') {
             cacheFileOperations.removeCachePositionsWith(uri)
             await cacheFileOperations.combineCacheOfLines(uri, config)
-        } else if (type === 'tags/functions') {
+        } else if (type === 'tag/function') {
             await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(id)
+        } else if (type === 'advancement') {
+            cacheFileOperations.removeCachePositionsWith(uri)
+            await cacheFileOperations.combineCacheOfLines(uri, config)
+            // await cacheFileOperations.updateAdvancementInfo(id)
         }
     },
     fileDeleted: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
         // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
-        if (type === 'functions') {
+        if (type === 'function') {
             cacheFileOperations.removeCachePositionsWith(uri)
-        } else if (type === 'tags/functions') {
+        } else if (type === 'tag/function') {
             await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancements') {
-            await cacheFileOperations.updateAdvancementInfo(id)
+        } else if (type === 'advancement') {
+            cacheFileOperations.removeCachePositionsWith(uri)
+            // await cacheFileOperations.updateAdvancementInfo(id)
         }
         cacheFileOperations.deleteDefault(id.toString(), type)
     }

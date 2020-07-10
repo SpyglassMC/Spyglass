@@ -40,7 +40,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
             ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘ERROR’ and did get ‘ERROR’', false)]
         } else if (this.type === 'cache') {
             ans.cache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [{ start, end: start + data.length }],
                         ref: []
@@ -49,7 +49,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
             }
         } else if (this.type === 'CACHE') {
             ans.cache = {
-                entities: {
+                entity: {
                     foo: {
                         doc: '*foo*',
                         def: [{ start, end: start + data.length }],
@@ -105,7 +105,7 @@ describe('LineParser Tests', () => {
             const ctx = constructContext({
                 cursor: 0,
                 cache: {
-                    'aliases/uuid': {
+                    'alias/uuid': {
                         MyCustomUUID: {
                             doc: '12345678-90ab-cdef-1234-567890abcdef',
                             def: [{ start: -1, end: -1 }], ref: []

@@ -83,7 +83,7 @@ describe('ParticleArgumentParser Tests', () => {
                 })
             ), [0, 31]))
             assert.deepStrictEqual(actual.cache, {
-                colors: {
+                color: {
                     '0.93 0.4 0.8': {
                         def: [],
                         ref: [{ start: 0, end: 29 }]

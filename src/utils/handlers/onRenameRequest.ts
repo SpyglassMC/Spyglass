@@ -1,17 +1,16 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getOrCreateInfo, getUri, getUriFromId } from '.'
+import { getOrCreateInfo, getUri, getUriFromId } from './common'
 import { getCommandTree } from '../../data/CommandTree'
+import { getJsonSchemas } from '../../data/JsonSchema'
 import { getVanillaData } from '../../data/VanillaData'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { Config } from '../../types'
 import { CacheFile, canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/DocumentInfo'
 import { DocNode, FetchConfigFunction, InfosOfUris, PathExistsFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { VersionInformation } from '../../types/VersionInformation'
-import { JsonSchemaType, getJsonSchemas } from '../../data/JsonSchema'
 
-export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { info: FunctionInfo, node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
+export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { node: DocNode, offset: number, cacheFile: CacheFile, infos: InfosOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
 
     /* istanbul ignore next */
@@ -88,7 +87,7 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                     }
 
                     /* istanbul ignore else */
-                    if (result.type === 'functions') {
+                    if (result.type === 'function') {
                         removeCachePosition(cacheFile.cache, oldUri)
                     }
                 }

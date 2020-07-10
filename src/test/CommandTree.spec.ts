@@ -179,7 +179,7 @@ describe('CommandTree Tests', () => {
     let ctx: ParsingContext
     before(async () => {
         const cache = {
-            advancements: {
+            advancement: {
                 'minecraft:test': { def: [], ref: [] }
             }
         }
@@ -373,7 +373,7 @@ describe('CommandTree Tests', () => {
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
-                entities: {
+                entity: {
                     SPGoding: {
                         def: [{ start: 15, end: 23 }],
                         ref: []

@@ -18,13 +18,13 @@ describe('onRenameRequest() Tests', () => {
     const oldFunction2 = Uri.parse('file:///d:/data/spgoding/functions/bar.mcfunction').toString()
     const oldNode1 = mockLineNode({
         cache: {
-            colors: {
+            color: {
                 ignored: { ref: [{ start: 0, end: 2 }], def: [] }
             },
-            functions: {
+            function: {
                 'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
             },
-            objectives: {
+            objective: {
                 'oldObjective': { ref: [{ start: 16, end: 28 }], def: [] }
             }
         }
@@ -36,7 +36,7 @@ describe('onRenameRequest() Tests', () => {
     })
     const oldNode2 = mockLineNode({
         cache: {
-            functions: {
+            function: {
                 'spgoding:bar': { ref: [{ start: 3, end: 15 }], def: [] }
             }
         }
@@ -52,8 +52,8 @@ describe('onRenameRequest() Tests', () => {
         [oldFunction2, Uri.parse(oldFunction2)]
     ])
     const urisOfIds: UrisOfIds = new Map([
-        ['functions|spgoding:foo', uris.get(oldFunction1)!],
-        ['functions|spgoding:bar', uris.get(oldFunction2)!]
+        ['function|spgoding:foo', uris.get(oldFunction1)!],
+        ['function|spgoding:bar', uris.get(oldFunction2)!]
     ])
     const infos: InfosOfUris = new Map([
         [uris.get(oldFunction1)!, oldFunctionInfo1],
@@ -65,7 +65,7 @@ describe('onRenameRequest() Tests', () => {
         const offset = 2
         const newName = 'ruhuasiyu:foo'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert(actual === null)
     })
@@ -74,14 +74,14 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
+                function: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objective: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 28
         const newName = 'newObjective'
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [{
@@ -96,8 +96,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
-                objectives: { 'newObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
+                function: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objective: { 'newObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         })
     })
@@ -106,18 +106,18 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: {
+                function: {
                     'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] },
                     'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, start: 29, end: 529, startLine: 1, startChar: 14, endLine: 1, endChar: 514 }], def: [] }
                 },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
+                objective: { 'oldObjective': { ref: [{ uri: oldFunction1, line: 0, start: 16, end: 28 }], def: [] } }
             }
         }
         const offset = 15
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -138,8 +138,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
-                functions: { 'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, start: 29, end: 529, startLine: 1, startChar: 14, endLine: 1, endChar: 514 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [], def: [] } }
+                function: { 'ruhuasiyu:foo': { ref: [{ uri: oldFunction2, start: 29, end: 529, startLine: 1, startChar: 14, endLine: 1, endChar: 514 }], def: [] } },
+                objective: { 'oldObjective': { ref: [], def: [] } }
             }
         })
     })
@@ -148,15 +148,15 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction1]: 142857 },
             cache: {
-                functions: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
+                function: { 'spgoding:foo': { ref: [{ uri: oldFunction1, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objective: { 'oldObjective': { ref: [{ uri: oldFunction1, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 15
         const newName = 'ruhuasiyu:foo'
         const newFunction = Uri.parse('file:///c:/data/ruhuasiyu/functions/foo.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo1, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, node: oldNode1, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -177,8 +177,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
-                functions: { 'ruhuasiyu:foo': { ref: [], def: [] } },
-                objectives: { 'oldObjective': { ref: [], def: [] } }
+                function: { 'ruhuasiyu:foo': { ref: [], def: [] } },
+                objective: { 'oldObjective': { ref: [], def: [] } }
             }
         })
     })
@@ -187,15 +187,15 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [oldFunction2]: 142857 },
             cache: {
-                functions: { 'spgoding:bar': { ref: [{ uri: oldFunction2, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
-                objectives: { 'oldObjective': { ref: [{ uri: oldFunction2, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
+                function: { 'spgoding:bar': { ref: [{ uri: oldFunction2, start: 3, end: 15, startLine: 0, startChar: 3, endLine: 0, endChar: 15 }], def: [] } },
+                objective: { 'oldObjective': { ref: [{ uri: oldFunction2, start: 16, end: 28, startLine: 0, startChar: 16, endLine: 0, endChar: 28 }], def: [] } }
             }
         }
         const offset = 15
         const newName = 'ruhuasiyu:bar'
         const newFunction = Uri.parse('file:///d:/data/ruhuasiyu/functions/bar.mcfunction').toString()
 
-        const actual = await onRenameRequest({ cacheFile, pathExists, info: oldFunctionInfo2, node: oldNode2, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
+        const actual = await onRenameRequest({ cacheFile, pathExists, node: oldNode2, infos, roots, uris, urisOfIds, offset, newName, globalStoragePath: '', fetchConfig, readFile })
 
         assert.deepStrictEqual(actual, {
             documentChanges: [
@@ -216,8 +216,8 @@ describe('onRenameRequest() Tests', () => {
             version: 0, advancements: {}, tags: { functions: {} },
             files: { [newFunction]: 142857 },
             cache: {
-                functions: { 'ruhuasiyu:bar': { ref: [], def: [] } },
-                objectives: { 'oldObjective': { ref: [], def: [] } }
+                function: { 'ruhuasiyu:bar': { ref: [], def: [] } },
+                objective: { 'oldObjective': { ref: [], def: [] } }
             }
         })
     })

@@ -1,6 +1,7 @@
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
 import { DataSource, VanillaData } from '../data'
+import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheKey } from './ClientCache'
 import { Config } from './Config'
@@ -9,7 +10,7 @@ import { LineNode } from './LineNode'
 
 export const Uri = URI
 
-export type DocNode = LineNode
+export type DocNode = LineNode | JsonNode
 
 export type Uri = URI
 export type InfosOfUris = Map<Uri, DocumentInfo | Promise<DocumentInfo | undefined>>

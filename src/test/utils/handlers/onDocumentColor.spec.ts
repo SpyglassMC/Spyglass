@@ -8,7 +8,7 @@ describe('onDocumentColor() Tests', () => {
         nodes: [
             mockLineNode({
                 cache: {
-                    colors: {
+                    color: {
                         '1 1 1 1': {
                             def: [],
                             ref: [{ start: 9, end: 21 }]

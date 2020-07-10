@@ -17,7 +17,7 @@ describe('TeamArgumentParser Tests', () => {
     })
 
     const cache = {
-        teams: {
+        team: {
             foo: { def: [], ref: [] },
             bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
@@ -81,7 +81,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                teams: {
+                team: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -94,7 +94,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                teams: {
+                team: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []

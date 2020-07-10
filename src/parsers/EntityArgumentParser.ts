@@ -51,9 +51,9 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         // Completions
         if (ctx.cursor === start) {
-            ans.completions.push(...getCompletions(ctx.cache, 'entities'))
+            ans.completions.push(...getCompletions(ctx.cache, 'entity'))
             if (this.isScoreHolder) {
-                ans.completions.push(...getCompletions(ctx.cache, 'score_holders'))
+                ans.completions.push(...getCompletions(ctx.cache, 'score_holder'))
             }
             ans.completions.push(...arrayToCompletions(['@a', '@e', '@p', '@r', '@s']))
         }
@@ -97,10 +97,10 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
         }
 
         // Cache
-        const category = getSafeCategory(ctx.cache, 'entities')
+        const category = getSafeCategory(ctx.cache, 'entity')
         if (Object.keys(category).includes(plain)) {
             ans.cache = {
-                entities: {
+                entity: {
                     [plain]: {
                         def: [],
                         ref: [{ start, end: start + plain.length }]
@@ -266,7 +266,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                             'Compound', 'minecraft:entity', getNbtdocRegistryId(ans.data), true
                         ), key)
                     } else if (key === 'predicate') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Identity('$predicates'), key)
+                        dealWithNegativableArray(argumentAns, new Parsers.Identity('$predicate'), key)
                     } else if (key === 'tag') {
                         dealWithNegativableArray(argumentAns, new Parsers.Tag(), key)
                     } else if (key === 'team') {
@@ -293,7 +293,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         new MapParser<SelectorAdvancementsNode>(
                             SelectorArgumentNodeChars,
                             (ans, reader, ctx) => {
-                                const result = new Parsers.Identity('$advancements').parse(reader, ctx)
+                                const result = new Parsers.Identity('$advancement').parse(reader, ctx)
                                 const adv = result.data.toString()
                                 /* istanbul ignore else */
                                 if (adv) {

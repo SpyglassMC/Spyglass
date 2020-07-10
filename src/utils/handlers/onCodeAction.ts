@@ -1,6 +1,7 @@
 import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver'
-import { getDiagnosticMap, getSelectedNode } from '.'
+import { getDiagnosticMap } from './common'
 import { locale } from '../../locales'
+import { getSelectedNode } from '../../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../../nodes/ArgumentNode'
 import { CacheFile, FunctionInfo, Uri } from '../../types'
 import { areOverlapped } from '../../types/TextRange'

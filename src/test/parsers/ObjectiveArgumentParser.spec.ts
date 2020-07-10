@@ -17,7 +17,7 @@ describe('ObjectiveArgumentParser Tests', () => {
     })
 
     const cache = {
-        objectives: {
+        objective: {
             foo: { def: [], ref: [] },
             bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
@@ -89,7 +89,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                objectives: {
+                objective: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -102,7 +102,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                objectives: {
+                objective: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []

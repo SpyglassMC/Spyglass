@@ -42,7 +42,7 @@ describe('DefinitionDescriptionArgumentParser Tests', () => {
             reader.cursor = 18
             const { cache } = parser.parse(reader)
             assert.deepStrictEqual(cache, {
-                tags: {
+                tag: {
                     debug: {
                         doc: 'for debug',
                         def: [],

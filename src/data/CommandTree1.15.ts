@@ -60,7 +60,7 @@ export const CommandTree: ICommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new IdentityArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancement'),
                                             executable: true,
                                             children: {
                                                 criterion: {
@@ -75,7 +75,7 @@ export const CommandTree: ICommandTree = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new IdentityArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancement'),
                                             executable: true
                                         }
                                     }
@@ -149,7 +149,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars', undefined, undefined, undefined, true),
+                            parser: new IdentityArgumentParser('$bossbar', undefined, undefined, undefined, true),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
@@ -163,7 +163,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('get'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             children: {
                                 max_players_value_visible: {
                                     parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
@@ -181,7 +181,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             executable: true
                         }
                     }
@@ -190,7 +190,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             children: {
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
@@ -787,7 +787,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('function'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$functions', true),
+                    parser: new IdentityArgumentParser('$function', true),
                     executable: true
                 }
             }
@@ -1103,7 +1103,7 @@ export const CommandTree: ICommandTree = {
                                     executable: true
                                 },
                                 name: {
-                                    parser: new IdentityArgumentParser('$recipes'),
+                                    parser: new IdentityArgumentParser('$recipe'),
                                     executable: true
                                 }
                             }
@@ -1173,7 +1173,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('function'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$function', true),
                             children: {
                                 time: {
                                     parser: new TimeArgumentParser(),
@@ -1193,7 +1193,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('clear'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$function', true),
                             executable: true
                         }
                     }
@@ -2102,7 +2102,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('storage'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$storages')
+                    parser: new IdentityArgumentParser('$storage')
                 }
             }
         }
@@ -2138,7 +2138,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('fish'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$loot_tables'),
+                    parser: new IdentityArgumentParser('$loot_table'),
                     children: {
                         location: {
                             parser: new VectorArgumentParser(3),
@@ -2160,7 +2160,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('loot'),
             children: {
                 lootTable: {
-                    parser: new IdentityArgumentParser('$loot_tables')
+                    parser: new IdentityArgumentParser('$loot_table')
                 }
             }
         },
@@ -2350,7 +2350,7 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {
                                 id: {
-                                    parser: new IdentityArgumentParser('$bossbars'),
+                                    parser: new IdentityArgumentParser('$bossbar'),
                                     children: {
                                         max_value: {
                                             parser: new LiteralArgumentParser('max', 'value'),
@@ -2514,7 +2514,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('predicate'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$predicates'),
+                            parser: new IdentityArgumentParser('$predicate'),
                             executable: true,
                             children: {
                                 subcommand: {

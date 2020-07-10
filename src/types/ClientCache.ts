@@ -1,11 +1,11 @@
-import { CompletionItem, MarkupKind } from 'vscode-languageserver'
+import { CompletionItem, MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { AdvancementInfo } from './AdvancementInfo'
 import { IndexMapping } from './IndexMapping'
 import { TagInfo } from './TagInfo'
 import { remapTextRange, TextRange } from './TextRange'
 
-export const CacheVersion = 8
+export const CacheVersion = 9
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
@@ -28,33 +28,33 @@ export interface CacheFile {
 /**
  * Represent a cache which is used to accelerate renaming and computing completions. 
  * 
- * For advancements, functions, loot_tables, predicates, recipes, and tags/*: Should rename files.  
- * For entities, score_holders, storages, and tags: Should use #define comments to define.  
- * For bossbars, objectives, and teams: Should use respective `add` commands to define.  
- * For colors: Simply ignores.
+ * For advancement, function, loot_table, predicate, recipe, and tag/*: Should rename files.  
+ * For entity, score_holder, storage, and tag: Should use #define comments to define.  
+ * For bossbar, objective, and team: Should use respective `add` commands to define.  
+ * For color: Simply ignores.
  */
 export interface ClientCache {
-    advancements?: CacheCategory,
-    functions?: CacheCategory,
-    loot_tables?: CacheCategory,
-    predicates?: CacheCategory,
-    recipes?: CacheCategory,
-    'tags/blocks'?: CacheCategory,
-    'tags/entity_types'?: CacheCategory,
-    'tags/fluids'?: CacheCategory,
-    'tags/functions'?: CacheCategory,
-    'tags/items'?: CacheCategory,
-    bossbars?: CacheCategory,
-    entities?: CacheCategory,
-    objectives?: CacheCategory,
-    score_holders?: CacheCategory,
-    storages?: CacheCategory,
-    tags?: CacheCategory,
-    teams?: CacheCategory,
-    'aliases/entity'?: CacheCategory,
-    'aliases/uuid'?: CacheCategory,
-    'aliases/vector'?: CacheCategory,
-    colors?: CacheCategory
+    advancement?: CacheCategory,
+    function?: CacheCategory,
+    loot_table?: CacheCategory,
+    predicate?: CacheCategory,
+    recipe?: CacheCategory,
+    'tag/block'?: CacheCategory,
+    'tag/entity_type'?: CacheCategory,
+    'tag/fluid'?: CacheCategory,
+    'tag/function'?: CacheCategory,
+    'tag/item'?: CacheCategory,
+    bossbar?: CacheCategory,
+    entity?: CacheCategory,
+    objective?: CacheCategory,
+    score_holder?: CacheCategory,
+    storage?: CacheCategory,
+    tag?: CacheCategory,
+    team?: CacheCategory,
+    'alias/entity'?: CacheCategory,
+    'alias/uuid'?: CacheCategory,
+    'alias/vector'?: CacheCategory,
+    color?: CacheCategory
 }
 
 export type CacheKey = keyof ClientCache
@@ -82,7 +82,7 @@ export type CacheUnit = {
      * 
      * Duplicate definitions will override the first ones.
      * 
-     * Empty for all categories except for `bossbars`, `entities`, `objectives`, `storages` and `tags`.
+     * Empty for all categories except for `bossbar`, `entity`, `objective`, `storage` and `tag`.
      */
     def: CachePosition[],
     /**
@@ -154,7 +154,7 @@ export function removeCacheUnit(cache: ClientCache, type: CacheKey, id: string) 
  * @param base Base cache.
  * @param override Overriding cache.
  */
-export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, startLine: number, endLine: number, skippedChar: number }) {
+export function combineCache(base: ClientCache = {}, override: ClientCache = {}, addition?: { uri: Uri, getPosition: (offset: number) => Position }) {
     const ans: ClientCache = base
     function initUnit(type: CacheKey, id: string) {
         ans[type] = getSafeCategory(ans, type)
@@ -163,15 +163,17 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         const ansUnit = ansCategory[id] as CacheUnit
         return ansUnit
     }
-    function addPos(pos: CachePosition, poses: CachePosition[]) {
+    function addPos(pos: CachePosition, arr: CachePosition[]) {
         if (addition) {
             pos.uri = addition.uri.toString()
-            pos.startLine = addition.startLine
-            pos.startChar = pos.start - addition.skippedChar
-            pos.endLine = addition.endLine
-            pos.endChar = pos.end - addition.skippedChar
+            const startPos = addition.getPosition(pos.start)
+            const endPos = addition.getPosition(pos.end)
+            pos.startLine = startPos.line
+            pos.startChar = startPos.character
+            pos.endLine = endPos.line
+            pos.endChar = endPos.character
         }
-        poses.push(pos)
+        arr.push(pos)
     }
     for (const type in override) {
         const overrideCategory = override[type as CacheKey]
@@ -196,26 +198,26 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
 
 /* istanbul ignore next */
 export function isAliasType(type: CacheKey) {
-    return type.startsWith('aliases/')
+    return type.startsWith('alias/')
 }
 
 /* istanbul ignore next */
 export function canBeRenamed(type: CacheKey) {
-    return !isAliasType(type) && type !== 'colors'
+    return !isAliasType(type) && type !== 'color'
 }
 
 /* istanbul ignore next */
 export function shouldHaveDef(type: CacheKey) {
     return (
-        type === 'bossbars' ||
-        type === 'entities' ||
-        type === 'objectives' ||
-        type === 'tags' ||
-        type === 'teams' ||
-        type === 'score_holders' ||
-        type === 'storages' ||
+        type === 'bossbar' ||
+        type === 'entity' ||
+        type === 'objective' ||
+        type === 'tag' ||
+        type === 'team' ||
+        type === 'score_holder' ||
+        type === 'storage' ||
         isAliasType(type) ||
-        type === 'colors'
+        type === 'color'
     )
 }
 
@@ -292,49 +294,31 @@ export function isDefinitionType(value: string): value is DefinitionType {
     )
 }
 
-export function getCategoryKey(type: DefinitionType): CacheKey {
-    if (type === 'bossbar') {
-        return 'bossbars'
-    } else if (type === 'entity') {
-        return 'entities'
-    } else if (type === 'objective') {
-        return 'objectives'
-    } else if (type === 'team') {
-        return 'teams'
-    } else if (type === 'score_holder') {
-        return 'score_holders'
-    } else if (type === 'storage') {
-        return 'storages'
-    } else {
-        return 'tags'
-    }
-}
-
-type TagType = 'tags/blocks' | 'tags/entity_types' | 'tags/functions' | 'tags/fluids' | 'tags/items'
+type TagType = 'tag/block' | 'tag/entity_type' | 'tag/function' | 'tag/fluid' | 'tag/item'
 
 export function isTagType(type: CacheKey): type is TagType {
-    return type.startsWith('tags/')
+    return type.startsWith('tag/')
 }
 
-type FileType = 'advancements' | 'functions' | 'loot_tables' | 'predicates' | 'recipes' | TagType
+type FileType = 'advancement' | 'function' | 'loot_table' | 'predicate' | 'recipe' | TagType
 
 export function isFileType(type: string): type is FileType {
     return (
-        type === 'advancements' ||
-        type === 'functions' ||
-        type === 'loot_tables' ||
-        type === 'predicates' ||
-        type === 'recipes' ||
+        type === 'advancement' ||
+        type === 'function' ||
+        type === 'loot_table' ||
+        type === 'predicate' ||
+        type === 'recipe' ||
         isTagType(type as CacheKey)
     )
 }
 
-type NamespacedType = 'bossbars' | 'storages' | FileType
+type NamespacedType = 'bossbar' | 'storage' | FileType
 
 export function isNamespacedType(type: CacheKey): type is NamespacedType {
     return (
-        type === 'bossbars' ||
-        type === 'storages' ||
+        type === 'bossbar' ||
+        type === 'storage' ||
         isFileType(type as CacheKey)
     )
 }

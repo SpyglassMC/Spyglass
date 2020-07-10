@@ -8,7 +8,7 @@ describe('onDefOrRef() Tests', () => {
     const uri = Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction')
     const cacheFile = {
         cache: {
-            entities: {
+            entity: {
                 SPGoding: {
                     def: [{
                         uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
@@ -26,7 +26,7 @@ describe('onDefOrRef() Tests', () => {
     const offset = 12
     const node = mockLineNode({
         cache: {
-            entities: {
+            entity: {
                 SPGoding: {
                     def: [],
                     ref: [{ start: 4, end: 13 }]

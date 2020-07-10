@@ -111,11 +111,11 @@ describe('common.ts Tests', () => {
                 ['file:///c:/foo/data/spgoding/functions/foo.mcfunction', uri]
             ])
             const urisOfIds: UrisOfIds = new Map([
-                ['functions|spgoding:foo', uri]
+                ['function|spgoding:foo', uri]
             ])
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
 
             assert(uri === actual)
         })
@@ -124,7 +124,7 @@ describe('common.ts Tests', () => {
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
 
             assert(actual === null)
         })
@@ -136,7 +136,7 @@ describe('common.ts Tests', () => {
                 return !!abs.match(/^c:[\\\/]foo[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
@@ -148,7 +148,7 @@ describe('common.ts Tests', () => {
                 return !!abs.match(/^c:[\\\/]bar[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions')
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })
@@ -157,7 +157,7 @@ describe('common.ts Tests', () => {
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[0])
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function', roots[0])
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
@@ -166,7 +166,7 @@ describe('common.ts Tests', () => {
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'functions', roots[1])
+            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function', roots[1])
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })

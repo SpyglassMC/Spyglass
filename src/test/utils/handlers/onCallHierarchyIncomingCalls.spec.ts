@@ -21,11 +21,11 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         [functionTagCaller, Uri.parse(functionTagCaller)]
     ])
     const urisOfIds: UrisOfIds = new Map([
-        ['advancements|spgoding:caller', Uri.parse(advancementCaller)],
-        ['functions|spgoding:callee', Uri.parse(functionCallee)],
-        ['functions|spgoding:caller', Uri.parse(functionCaller)],
-        ['tags/functions|spgoding:callee', Uri.parse(functionTagCallee)],
-        ['tags/functions|spgoding:caller', Uri.parse(functionTagCaller)]
+        ['advancement|spgoding:caller', Uri.parse(advancementCaller)],
+        ['function|spgoding:callee', Uri.parse(functionCallee)],
+        ['function|spgoding:caller', Uri.parse(functionCaller)],
+        ['tag/function|spgoding:callee', Uri.parse(functionTagCallee)],
+        ['tag/function|spgoding:caller', Uri.parse(functionTagCaller)]
     ])
 
     it('Should return correctly (callee: advancement)', async () => {
@@ -74,7 +74,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const cacheFile = {
             files: {}, version: 0,
             cache: {
-                functions: {
+                function: {
                     'spgoding:callee': { ref: [{ uri: functionCaller, start: 8, end: 23, startLine: 3, startChar: 5, endLine: 3, endChar: 20 }], def: [] },
                 }
             },
@@ -130,7 +130,7 @@ describe('onCallHierarchyIncomingCalls() Tests', () => {
         const cacheFile = {
             files: {}, version: 0,
             cache: {
-                'tags/functions': {
+                'tag/function': {
                     'spgoding:callee': { ref: [{ uri: functionCaller, start: 8, end: 23, startLine: 3, startChar: 5, endLine: 3, endChar: 20 }], def: [] },
                 }
             },

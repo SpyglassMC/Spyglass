@@ -1,5 +1,5 @@
 import { locale } from '../locales'
-import { CacheCategory, getCategoryKey, isDefinitionType } from '../types/ClientCache'
+import { CacheCategory, isDefinitionType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
@@ -30,7 +30,7 @@ export class DefinitionDescriptionArgumentParser extends ArgumentParser<string> 
         if (description) {
             if (isDefinitionType(this.type)) {
                 if (this.id) {
-                    const key = getCategoryKey(this.type)
+                    const key = this.type
                     ans.cache[key] = {}
                     const category = ans.cache[key] as CacheCategory
                     category[this.id] = {
