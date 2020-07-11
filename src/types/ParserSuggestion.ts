@@ -1,6 +1,7 @@
 import { CompletionItem } from 'vscode-languageserver'
+import { TextRange } from './TextRange'
 
-export interface ParserSuggestion extends CompletionItem {
+export interface ParserSuggestion extends CompletionItem, TextRange {
     /**
      * The start offset of the CompletionItem.
      */
@@ -8,9 +9,5 @@ export interface ParserSuggestion extends CompletionItem {
     /**
      * The end offset of the CompletionItem in replacing cases.
      */
-    replaceEnd: number,
-    /**
-     * The end offset of the CompletionItem in inserting cases.
-     */
-    insertEnd: number
+    end: number
 }

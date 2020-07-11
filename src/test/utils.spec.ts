@@ -1,7 +1,9 @@
+import assert, { fail } from 'power-assert'
 import { CompletionItem, ProposedFeatures } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
-import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParserSuggestion, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { StringReader } from '../utils/StringReader'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }
@@ -96,6 +98,47 @@ export function mockLineNode(node: LineNodeMockOptions = {}): LineNode {
     }
 }
 
-export function assertCompletions(completions: (CompletionItem | ParserSuggestion)[], ) {
-    
+interface CompletionPredicate extends CompletionItem {
+    t: string
+}
+
+export function assertCompletions(string: string | StringReader, completions: (CompletionItem | ParserSuggestion)[] | undefined, predicates: CompletionPredicate[] = []) {
+    assert(completions?.length === predicates.length)
+    if (completions.length === 0) {
+        return
+    }
+    if (string instanceof StringReader) {
+        string = string.string
+    }
+    const getInsertText = (completion: CompletionItem) => completion.insertText ?? completion.label
+    const getCompletionItemForAssert = (completion: CompletionItem) => {
+        const ans = { ...completion } as any
+        delete ans.insertText; delete ans.start; delete ans.end; delete ans.t
+        return ans
+    }
+    for (const [i, completion] of completions?.entries()) {
+        let matched = false
+        for (const predicate of predicates.filter(p => p.label === completion.label)) {
+            let resolvedText = ''
+            if ((completion as ParserSuggestion).start !== undefined) {
+                const suggestion = completion as ParserSuggestion
+                resolvedText = string.slice(0, suggestion.start) + getInsertText(suggestion) + string.slice(suggestion.end)
+            } else {
+                resolvedText = predicate.t
+            }
+            if (resolvedText === predicate.t) {
+                try {
+                    assert.deepStrictEqual(getCompletionItemForAssert(completion), getCompletionItemForAssert(predicate))
+                    matched = true
+                    break
+                } catch (ignored) {
+                    continue
+                }
+            }
+        }
+        if (matched) {
+            continue
+        }
+        fail(undefined, undefined, `No matching predicate for [${i}] ${completion.label}`)
+    }
 }

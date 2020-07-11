@@ -13,7 +13,7 @@ import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -73,22 +73,23 @@ describe('ItemArgumentParser Tests', () => {
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
 
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'minecraft',
-                        kind: CompletionItemKind.Module
-                    },
-                    {
-                        label: 'stick',
-                        kind: CompletionItemKind.Field
-                    },
-                    {
-                        label: 'diamond_sword',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            assertCompletions('', actual.completions, [
+                {
+                    label: 'minecraft',
+                    t: 'minecraft',
+                    kind: CompletionItemKind.Module
+                },
+                {
+                    label: 'stick',
+                    t: 'stick',
+                    kind: CompletionItemKind.Field
+                },
+                {
+                    label: 'diamond_sword',
+                    t: 'diamond_sword',
+                    kind: CompletionItemKind.Field
+                }
+            ])
         })
     })
 })

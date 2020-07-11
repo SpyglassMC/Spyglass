@@ -57,8 +57,6 @@
     "code-snippets-invalid-for-game": "Code snippets are invalid for the game",
     "collection-length.between": "a collection with length between %0% and %1%",
     "collection-length.exact": "a collection with length %0%",
-    "completion.identity.this": "THIS",
-    "completion.uuid.random": "RANDOM",
     "conjunction.and_2": " and ",
     "conjunction.and_3+_1": ", ",
     "conjunction.and_3+_2": ", and ",

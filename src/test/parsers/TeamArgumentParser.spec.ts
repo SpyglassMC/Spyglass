@@ -6,6 +6,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('TeamArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -37,11 +38,12 @@ describe('TeamArgumentParser Tests', () => {
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: 'foo' },
+                    { label: 'foo', t: 'foo' },
                     {
                         label: 'bar',
+                        t: 'bar',
                         documentation: {
                             kind: 'markdown',
                             value: 'The doc of **bar**'

@@ -11,7 +11,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('ParticleArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -118,26 +118,31 @@ describe('ParticleArgumentParser Tests', () => {
             const ctx = constructContext({ config, registry: registries, cursor: 0 })
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'cloud',
+                        t: 'cloud',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'dust',
+                        t: 'dust',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'block',
+                        t: 'block',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'item',
+                        t: 'item',
                         kind: CompletionItemKind.Field
                     }
                 ]

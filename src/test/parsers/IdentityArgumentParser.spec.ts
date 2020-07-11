@@ -9,7 +9,7 @@ import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('IdentityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -143,10 +143,11 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions, [
+            assertCompletions('', actual.completions, [
                 {
                     label: 'spgoding',
-                    kind: CompletionItemKind.Module
+                    kind: CompletionItemKind.Module,
+                    t: 'spgoding'
                 }
             ])
         })
@@ -157,21 +158,24 @@ describe('IdentityArgumentParser Tests', () => {
             })
             const parser = new IdentityArgumentParser('$advancement')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions.find(v => v.label === 'THIS'), {
-                label: 'THIS',
-                insertText: 'spgoding:this/is/the/current/function',
-                detail: 'spgoding:this/is/the/current/function',
-                kind: CompletionItemKind.Snippet
-            })
+            assertCompletions('', actual.completions.filter(v => v.label === 'THIS'), [
+                {
+                    label: 'THIS',
+                    t: 'spgoding:this/is/the/current/function',
+                    detail: 'spgoding:this/is/the/current/function',
+                    kind: CompletionItemKind.Snippet
+                }
+            ])
         })
         it('Should return completions for array registry', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
             const parser = new IdentityArgumentParser(['spgoding:foo'])
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions, [
+            assertCompletions('', actual.completions, [
                 {
                     label: 'spgoding',
-                    kind: CompletionItemKind.Module
+                    kind: CompletionItemKind.Module,
+                    t: 'spgoding'
                 }
             ])
         })
@@ -179,63 +183,66 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'spgoding',
-                        kind: CompletionItemKind.Module
-                    }
-                ]
-            )
+            assertCompletions('', actual.completions, [
+                {
+                    label: 'spgoding',
+                    kind: CompletionItemKind.Module,
+                    t: 'spgoding'
+                }
+            ])
         })
         it('Should return completions in the vanilla datapack', async () => {
             const config = constructConfig({ env: { dependsOnVanilla: true }, lint: { idOmitDefaultNamespace: null } })
             const ctx = constructContext({ registry: registries, config, namespaceSummary: summary, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$advancement')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'spgoding',
-                        kind: CompletionItemKind.Module
-                    },
-                    {
-                        label: 'minecraft',
-                        kind: CompletionItemKind.Module
-                    },
-                    {
-                        label: 'adventure',
-                        kind: CompletionItemKind.Folder
-                    }
-                ]
-            )
+            assertCompletions('', actual.completions, [
+                {
+                    label: 'spgoding',
+                    kind: CompletionItemKind.Module,
+                    t: 'spgoding'
+                },
+                {
+                    label: 'minecraft',
+                    kind: CompletionItemKind.Module,
+                    t: 'minecraft'
+                },
+                {
+                    label: 'adventure',
+                    kind: CompletionItemKind.Folder,
+                    t: 'adventure'
+                }
+            ])
         })
         it('Should return completions for advancements with Event kind', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 9 })
             const parser = new IdentityArgumentParser('$advancement')
-            const actual = parser.parse(new StringReader('spgoding:'), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'advancement',
-                        kind: CompletionItemKind.Event
-                    }
-                ]
-            )
+            const reader = new StringReader('spgoding:')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions, [
+                {
+                    label: 'advancement',
+                    kind: CompletionItemKind.Event,
+                    t: 'spgoding:advancement'
+                }
+            ])
         })
         it('Should return completions for functions with Function kind', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 19 })
             const parser = new IdentityArgumentParser('$function', true)
-            const actual = parser.parse(new StringReader('#spgoding:function/'), ctx)
-            assert.deepStrictEqual(actual.completions,
+            const reader = new StringReader('#spgoding:function/')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions,
                 [
                     {
                         label: '1',
-                        kind: CompletionItemKind.Function
+                        kind: CompletionItemKind.Function,
+                        t: '#spgoding:function/1'
                     },
                     {
                         label: '2',
-                        kind: CompletionItemKind.Function
+                        kind: CompletionItemKind.Function,
+                        t: '#spgoding:function/2'
                     }
                 ]
             )
@@ -244,26 +251,31 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:fluid', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#minecraft',
+                        t: '#minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: '#fluid_tag',
+                        t: '#fluid_tag',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'water',
+                        t: 'water',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'lava',
+                        t: 'lava',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -273,10 +285,11 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })
             const parser = new IdentityArgumentParser('$function', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#spgoding',
+                        t: '#spgoding',
                         kind: CompletionItemKind.Module
                     }
                 ]
@@ -286,18 +299,21 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:item', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#spgoding',
+                        t: '#spgoding',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'stick',
+                        t: 'stick',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -307,22 +323,26 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:block', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#minecraft',
+                        t: '#minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: '#block',
+                        t: '#block',
                         kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'stone',
+                        t: 'stone',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -332,18 +352,21 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:entity_type', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#spgoding',
+                        t: '#spgoding',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'area_effect_cloud',
+                        t: 'area_effect_cloud',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -357,18 +380,21 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('minecraft:fluid', true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: '#fluid_tag',
+                        t: '#fluid_tag',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'water',
+                        t: 'water',
                         kind: CompletionItemKind.Field
                     },
                     {
                         label: 'lava',
+                        t: 'lava',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -378,22 +404,26 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: 'spgoding',
+                        t: 'spgoding',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'foo',
+                        t: 'foo',
                         kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'foo',
+                        t: 'foo',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -403,14 +433,16 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test', undefined, true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: 'spgoding',
+                        t: 'spgoding',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'minecraft',
+                        t: 'minecraft',
                         kind: CompletionItemKind.Module
                     }
                 ]
@@ -421,18 +453,21 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 0 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
                     {
                         label: 'spgoding',
+                        t: 'spgoding',
                         kind: CompletionItemKind.Module
                     },
                     {
                         label: 'foo',
+                        t: 'foo',
                         kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'foo',
+                        t: 'foo',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -441,16 +476,19 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return completions for the first path in non-default namespace', async () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 9 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
-            const actual = parser.parse(new StringReader('spgoding:'), ctx)
+            const reader = new StringReader('spgoding:')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['']), [0, 9]))
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions(reader, actual.completions,
                 [
                     {
                         label: 'foo',
+                        t: 'spgoding:foo',
                         kind: CompletionItemKind.Folder
                     },
                     {
                         label: 'foo',
+                        t: 'spgoding:foo',
                         kind: CompletionItemKind.Field
                     }
                 ]
@@ -459,52 +497,54 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return completions for the second path in non-default namespace', async () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 13 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
-            const actual = parser.parse(new StringReader('spgoding:foo/'), ctx)
+            const reader = new StringReader('spgoding:foo/')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', '']), [0, 13]))
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Folder
-                    },
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            assertCompletions(reader, actual.completions, [
+                {
+                    label: 'bar',
+                    t: 'spgoding:foo/bar',
+                    kind: CompletionItemKind.Folder
+                },
+                {
+                    label: 'bar',
+                    t: 'spgoding:foo/bar',
+                    kind: CompletionItemKind.Field
+                }
+            ])
         })
         it('Should return completions for the third path in non-default namespace', async () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 17 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
-            const actual = parser.parse(new StringReader('spgoding:foo/bar/'), ctx)
+            const reader = new StringReader('spgoding:foo/bar/')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', 'bar', '']), [0, 17]))
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'baz',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            assertCompletions(reader, actual.completions, [
+                {
+                    label: 'baz',
+                    t: 'spgoding:foo/bar/baz',
+                    kind: CompletionItemKind.Field
+                }
+            ])
         })
         it('Should return completions for the second path in default namespace', async () => {
             const ctx = constructContext({ registry: registries, cache, config, cursor: 4 })
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
-            const actual = parser.parse(new StringReader('foo/'), ctx)
+            const reader = new StringReader('foo/')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo', '']), [0, 4]))
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Folder
-                    },
-                    {
-                        label: 'bar',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            assertCompletions(reader, actual.completions, [
+                {
+                    label: 'bar',
+                    t: 'foo/bar',
+                    kind: CompletionItemKind.Folder
+                },
+                {
+                    label: 'bar',
+                    t: 'foo/bar',
+                    kind: CompletionItemKind.Field
+                }
+            ])
         })
         it('Should return untolerable error when the input is empty', async () => {
             const ctx = constructContext({ registry: registries, cache, config })

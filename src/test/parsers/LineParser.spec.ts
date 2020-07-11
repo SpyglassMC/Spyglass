@@ -10,6 +10,7 @@ import { ArgumentParserResult } from '../../types/Parser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 /**
  * Argument parser for testing.
@@ -114,10 +115,10 @@ describe('LineParser Tests', () => {
                 }
             })
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.completions, [
+            assertCompletions(input, line.completions, [
                 {
                     label: 'MyCustomUUID',
-                    insertText: '12345678-90ab-cdef-1234-567890abcdef',
+                    t: '12345678-90ab-cdef-1234-567890abcdef',
                     detail: '12345678-90ab-cdef-1234-567890abcdef',
                     kind: CompletionItemKind.Snippet
                 }
@@ -326,9 +327,9 @@ describe('LineParser Tests', () => {
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
             )
-            assert.deepStrictEqual(line.completions,
-                [{ label: 'completion' }]
-            )
+            assertCompletions(input, line.completions, [
+                { label: 'completion', t: 'foo completion' }
+            ])
         })
         it('Should return error when the permission level is too high', async () => {
             const input = 'foo'

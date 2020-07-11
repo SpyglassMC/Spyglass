@@ -13,7 +13,7 @@ import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { NbtdocHelper } from '../../utils/NbtdocHelper'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 import { TestNbtdoc } from '../utils/NbtdocHelper.spec'
 
 describe('NbtPathArgumentParser Tests', () => {
@@ -41,7 +41,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a simple compound filter', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -59,7 +59,7 @@ describe('NbtPathArgumentParser Tests', () => {
             }))
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a simple number index', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -76,7 +76,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a compound filter in index', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -102,7 +102,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a compound filter after key', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -131,7 +131,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a crazy key after key', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -153,7 +153,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a key after compound filter', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -182,7 +182,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
         it('Should parse a key after index', () => {
             const parser = new NbtPathArgumentParser('minecraft:block')
@@ -202,7 +202,7 @@ describe('NbtPathArgumentParser Tests', () => {
             assert.deepStrictEqual(data, expected)
             assert.deepStrictEqual(errors, [])
             assert.deepStrictEqual(cache, {})
-            assert.deepStrictEqual(completions, [])
+            assertCompletions(reader, completions, [])
         })
 
         let ctx: ParsingContext
@@ -244,7 +244,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should return warning when the compound filter is not in compound tags', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
@@ -273,7 +273,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should return warning when the index is not in list tags', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
@@ -299,7 +299,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should return error when the input is empty', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
@@ -313,7 +313,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should return completions for key', async () => {
                 const ctx = constructContext({ nbtdoc: TestNbtdoc, cursor: 0 })
@@ -328,19 +328,19 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [
+                assertCompletions(reader, completions, [
                     {
                         label: 'addition',
                         detail: 'Type: boolean',
                         documentation: 'The additional boolean',
-                        insertText: 'addition',
+                        t: 'addition',
                         kind: CompletionItemKind.Property
                     },
                     {
                         label: 'CustomModelData',
                         detail: 'Type: int',
                         documentation: 'The custom model data for this item',
-                        insertText: 'CustomModelData',
+                        t: 'CustomModelData',
                         kind: CompletionItemKind.Property
                     }
                 ])
@@ -352,12 +352,12 @@ describe('NbtPathArgumentParser Tests', () => {
             //     const reader = new StringReader("''")
 
             //     const { completions } = parser.parse(reader, ctx)
-            //     assert.deepStrictEqual(completions, [
+            //     assertCompletions(reader,  completions, [
             //         {
             //             label: 'foo',
             //             detail: 'Type: boolean',
             //             documentation: 'The only field of this compound',
-            //             insertText: 'foo',
+            //             t: "'foo'",
             //             kind: CompletionItemKind.Property
             //         }
             //     ])
@@ -368,12 +368,12 @@ describe('NbtPathArgumentParser Tests', () => {
                 const reader = new StringReader('""')
 
                 const { completions } = parser.parse(reader, ctx)
-                assert.deepStrictEqual(completions, [
+                assertCompletions(reader, completions, [
                     {
                         label: 'foo',
                         detail: 'Type: boolean',
                         documentation: 'The only field of this compound',
-                        insertText: 'foo',
+                        t: '"foo"',
                         kind: CompletionItemKind.Property
                     }
                 ])
@@ -413,12 +413,12 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [
+                assertCompletions(reader, completions, [
                     {
                         label: 'foo',
                         detail: 'Type: boolean',
                         documentation: 'The only field of this compound',
-                        insertText: 'foo',
+                        t: '{ }.addition[ 1 ].foo',
                         kind: CompletionItemKind.Property
                     }
                 ])
@@ -444,7 +444,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should not return warnings for unknown key when the compound tag allows additional children', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:boolean')
@@ -461,7 +461,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(data, expected)
                 assert.deepStrictEqual(errors, [])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
             it('Should return warnings for indices under non-list tags', () => {
                 const parser = new NbtPathArgumentParser('minecraft:item', 'minecraft:byte_array')
@@ -492,7 +492,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     )
                 ])
                 assert.deepStrictEqual(cache, {})
-                assert.deepStrictEqual(completions, [])
+                assertCompletions(reader, completions, [])
             })
         })
     })

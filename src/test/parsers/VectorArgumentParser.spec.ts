@@ -6,7 +6,7 @@ import { VectorArgumentParser } from '../../parsers/VectorArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('VectorArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -45,10 +45,10 @@ describe('VectorArgumentParser Tests', () => {
             const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, 'float', true, false)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: '^ ^', sortText: '2', insertText: '^$1 ^$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
-                    { label: '^', sortText: '2' }
+                    { label: '^ ^', sortText: '2', t: '^$1 ^$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '^', sortText: '2', t: '^' }
                 ]
             )
         })
@@ -56,32 +56,30 @@ describe('VectorArgumentParser Tests', () => {
             const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, 'float', false, true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: '~ ~', sortText: '1', insertText: '~$1 ~$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
-                    { label: '~', sortText: '1' }
+                    { label: '~ ~', sortText: '1', t: '~$1 ~$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '~', sortText: '1', t: '~' }
                 ]
             )
         })
         it('Should return completions at the beginning of an element', async () => {
             const ctx = constructContext({ cursor: 2 })
             const parser = new VectorArgumentParser(2, 'float', false, true)
-            const actual = parser.parse(new StringReader('~ '), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: '~', sortText: '1' }
-                ]
-            )
+            const reader = new StringReader('~ ')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions, [
+                { label: '~', t: '~ ~', sortText: '1' }
+            ])
         })
         it('Should not return completions for local elements when hasNonLocal', async () => {
             const ctx = constructContext({ cursor: 2 })
             const parser = new VectorArgumentParser(2, 'float', true, true)
-            const actual = parser.parse(new StringReader('~ '), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: '~', sortText: '1' }
-                ]
-            )
+            const reader = new StringReader('~ ')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions, [
+                { label: '~', t: '~ ~', sortText: '1' }
+            ])
         })
         it('Should return untolerable error when the input is empty', () => {
             const parser = new VectorArgumentParser(3)

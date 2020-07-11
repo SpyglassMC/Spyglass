@@ -4,6 +4,7 @@ import { ItemSlotArgumentParser } from '../../parsers/ItemSlotArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('ItemSlotArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -39,49 +40,49 @@ describe('ItemSlotArgumentParser Tests', () => {
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: 'armor' },
-                    { label: 'container' },
-                    { label: 'enderchest' },
-                    { label: 'horse' },
-                    { label: 'hotbar' },
-                    { label: 'inventory' },
-                    { label: 'villager' },
-                    { label: 'weapon' }
-                ]
-            )
+            assertCompletions('', actual.completions, [
+                { label: 'armor', t: 'armor' },
+                { label: 'container', t: 'container' },
+                { label: 'enderchest', t: 'enderchest' },
+                { label: 'horse', t: 'horse' },
+                { label: 'hotbar', t: 'hotbar' },
+                { label: 'inventory', t: 'inventory' },
+                { label: 'villager', t: 'villager' },
+                { label: 'weapon', t: 'weapon' },
+            ])
         })
         it('Should return completions for sub values of ‘armor’', async () => {
             const ctx = constructContext({ cursor: 6 })
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('armor.'), ctx)
+            const reader = new StringReader('armor.')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, 'armor.')
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions(reader, actual.completions,
                 [
-                    { label: 'chest' },
-                    { label: 'feet' },
-                    { label: 'head' },
-                    { label: 'legs' }
+                    { label: 'chest', t: 'armor.chest' },
+                    { label: 'feet', t: 'armor.feet' },
+                    { label: 'head', t: 'armor.head' },
+                    { label: 'legs', t: 'armor.legs' },
                 ]
             )
         })
         it('Should return completions for sub values of ‘hotbar’', async () => {
             const ctx = constructContext({ cursor: 7 })
             const parser = new ItemSlotArgumentParser()
-            const actual = parser.parse(new StringReader('hotbar.'), ctx)
+            const reader = new StringReader('hotbar.')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, 'hotbar.')
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions(reader, actual.completions,
                 [
-                    { label: '0' },
-                    { label: '1' },
-                    { label: '2' },
-                    { label: '3' },
-                    { label: '4' },
-                    { label: '5' },
-                    { label: '6' },
-                    { label: '7' },
-                    { label: '8' }
+                    { label: '0', t: 'hotbar.0' },
+                    { label: '1', t: 'hotbar.1' },
+                    { label: '2', t: 'hotbar.2' },
+                    { label: '3', t: 'hotbar.3' },
+                    { label: '4', t: 'hotbar.4' },
+                    { label: '5', t: 'hotbar.5' },
+                    { label: '6', t: 'hotbar.6' },
+                    { label: '7', t: 'hotbar.7' },
+                    { label: '8', t: 'hotbar.8' }
                 ]
             )
         })

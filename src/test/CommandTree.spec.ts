@@ -16,7 +16,7 @@ import { constructContext, ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { StringReader } from '../utils/StringReader'
 import { TestArgumentParser } from './parsers/LineParser.spec'
-import { $ } from './utils.spec'
+import { $, assertCompletions } from './utils.spec'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -186,14 +186,14 @@ describe('CommandTree Tests', () => {
         ctx = constructContext({ cache })
     })
     describe('Just fucking parse', () => {
-        it('advancement g', async () => {
+        it('advancement gr', async () => {
             const ctx = constructContext({ cursor: 13 })
             const parser = new LineParser(false)
-            const reader = new StringReader('advancement g')
+            const reader = new StringReader('advancement gr')
             const { data } = parser.parse(reader, ctx)
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
-                { data: 'g', parser: 'literal' }
+                { data: 'gr', parser: 'literal' }
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['advancement'],
@@ -201,10 +201,13 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, [
-                new ParsingError({ start: 12, end: 13 }, 'Expected ‘grant’ or ‘revoke’ but got ‘g’'),
-                new ParsingError({ start: 13, end: 15 }, 'Expected more arguments but got nothing')
+                new ParsingError({ start: 12, end: 14 }, 'Expected ‘grant’ or ‘revoke’ but got ‘gr’'),
+                new ParsingError({ start: 14, end: 16 }, 'Expected more arguments but got nothing')
             ])
-            assert.deepStrictEqual(data.completions, [{ label: 'grant' }])
+            assertCompletions(reader, data.completions, [
+                { label: 'grant', t: 'advancement grant' },
+                { label: 'revoke', t: 'advancement revoke' }
+            ])
         })
         it('advancement grant|revoke <targets> everything', () => {
             const parser = new LineParser(false)
@@ -222,7 +225,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('advancemen t grant|revoke <targets> only <advancement>', () => {
             const parser = new LineParser(false)
@@ -245,7 +248,7 @@ describe('CommandTree Tests', () => {
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('advancement grant|revoke <targets> only <advancement> <criterion>', () => {
             const parser = new LineParser(false)
@@ -271,7 +274,7 @@ describe('CommandTree Tests', () => {
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('advancement grant|revoke <targets> from|through|until <advancement>', () => {
             const parser = new LineParser(false)
@@ -296,7 +299,7 @@ describe('CommandTree Tests', () => {
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('data get block <targetPos> <path>', () => {
             const parser = new LineParser(false)
@@ -323,7 +326,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('setblock ~ ~ ~ minecraft:grass_block[]', async () => {
             const ctx = constructContext({ cursor: 37 })
@@ -357,7 +360,9 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, [{ label: 'snowy' }])
+            assertCompletions(reader, data.completions, [
+                { label: 'snowy', t: 'setblock ~ ~ ~ minecraft:grass_block[snowy]' }
+            ])
         })
         it('#define entity SPGoding', () => {
             const parser = new LineParser(false)
@@ -381,7 +386,7 @@ describe('CommandTree Tests', () => {
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
         it('# This is a comment.', () => {
             const parser = new LineParser(false)
@@ -396,7 +401,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, undefined)
-            assert.deepStrictEqual(data.completions, undefined)
+            assert(data.completions === undefined)
         })
     })
 })

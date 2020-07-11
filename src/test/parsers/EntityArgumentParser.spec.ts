@@ -15,7 +15,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('EntityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -110,35 +110,36 @@ describe('EntityArgumentParser Tests', () => {
                 const ctx = constructContext({ cache, cursor: 0 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader(''), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'foo' },
+                assertCompletions('', actual.completions, [
+                    { label: 'foo', t: 'foo' },
                     {
-                        label: 'bar',
+                        label: 'bar', t: 'bar',
                         documentation: { kind: 'markdown', value: 'The doc of **bar**' }
                     },
-                    { label: '@a' },
-                    { label: '@e' },
-                    { label: '@p' },
-                    { label: '@r' },
-                    { label: '@s' }
+                    { label: '@a', t: '@a' },
+                    { label: '@e', t: '@e' },
+                    { label: '@p', t: '@p' },
+                    { label: '@r', t: '@r' },
+                    { label: '@s', t: '@s' }
                 ])
             })
             it('Should return completions for score holders', async () => {
                 const ctx = constructContext({ cache, cursor: 0 })
                 const parser = new EntityArgumentParser('multiple', 'entities', true)
                 const actual = parser.parse(new StringReader(''), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'foo' },
+                assertCompletions('', actual.completions, [
+                    { label: 'foo', t: 'foo' },
                     {
                         label: 'bar',
-                        documentation: { kind: 'markdown', value: 'The doc of **bar**' }
+                        documentation: { kind: 'markdown', value: 'The doc of **bar**' },
+                        t: 'bar'
                     },
-                    { label: '#holder' },
-                    { label: '@a' },
-                    { label: '@e' },
-                    { label: '@p' },
-                    { label: '@r' },
-                    { label: '@s' }
+                    { label: '#holder', t: '#holder' },
+                    { label: '@a', t: '@a' },
+                    { label: '@e', t: '@e' },
+                    { label: '@p', t: '@p' },
+                    { label: '@r', t: '@r' },
+                    { label: '@s', t: '@s' }
                 ])
             })
             it('Should return cache when the entity is a plain name', () => {
@@ -311,14 +312,15 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return completions for variable', async () => {
                 const ctx = constructContext({ cache, cursor: 1 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@'), ctx)
-                assert.deepStrictEqual(actual.completions,
+                const reader = new StringReader('@')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions,
                     [
-                        { label: 'a' },
-                        { label: 'e' },
-                        { label: 'p' },
-                        { label: 'r' },
-                        { label: 's' }
+                        { label: 'a', t: 'a' },
+                        { label: 'e', t: 'e' },
+                        { label: 'p', t: 'p' },
+                        { label: 'r', t: 'r' },
+                        { label: 's', t: 's' }
                     ]
                 )
             })
@@ -368,75 +370,78 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return completions for argument keys', async () => {
                 const ctx = constructContext({ cache, cursor: 3 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@e[]'), ctx)
+                const reader = new StringReader('@e[]')
+                const actual = parser.parse(reader, ctx)
                 assert.deepStrictEqual(actual.data, $(
                     new EntityNode(undefined, 'e', $(
                         new SelectorArgumentsNode(), [2, 4]
                     )),
                     [0, 4]
                 ))
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'advancements', insertText: 'advancements' },
-                    { label: 'distance', insertText: 'distance' },
-                    { label: 'dx', insertText: 'dx' },
-                    { label: 'dy', insertText: 'dy' },
-                    { label: 'dz', insertText: 'dz' },
-                    { label: 'gamemode', insertText: 'gamemode' },
-                    { label: 'level', insertText: 'level' },
-                    { label: 'limit', insertText: 'limit' },
-                    { label: 'name', insertText: 'name' },
-                    { label: 'nbt', insertText: 'nbt' },
-                    { label: 'predicate', insertText: 'predicate' },
-                    { label: 'scores', insertText: 'scores' },
-                    { label: 'sort', insertText: 'sort' },
-                    { label: 'tag', insertText: 'tag' },
-                    { label: 'team', insertText: 'team' },
-                    { label: 'type', insertText: 'type' },
-                    { label: 'x', insertText: 'x' },
-                    { label: 'x_rotation', insertText: 'x_rotation' },
-                    { label: 'y', insertText: 'y' },
-                    { label: 'y_rotation', insertText: 'y_rotation' },
-                    { label: 'z', insertText: 'z' }
+                assertCompletions(reader, actual.completions, [
+                    { label: 'advancements', t: '@e[advancements]' },
+                    { label: 'distance', t: '@e[distance]' },
+                    { label: 'dx', t: '@e[dx]' },
+                    { label: 'dy', t: '@e[dy]' },
+                    { label: 'dz', t: '@e[dz]' },
+                    { label: 'gamemode', t: '@e[gamemode]' },
+                    { label: 'level', t: '@e[level]' },
+                    { label: 'limit', t: '@e[limit]' },
+                    { label: 'name', t: '@e[name]' },
+                    { label: 'nbt', t: '@e[nbt]' },
+                    { label: 'predicate', t: '@e[predicate]' },
+                    { label: 'scores', t: '@e[scores]' },
+                    { label: 'sort', t: '@e[sort]' },
+                    { label: 'tag', t: '@e[tag]' },
+                    { label: 'team', t: '@e[team]' },
+                    { label: 'type', t: '@e[type]' },
+                    { label: 'x', t: '@e[x]' },
+                    { label: 'x_rotation', t: '@e[x_rotation]' },
+                    { label: 'y', t: '@e[y]' },
+                    { label: 'y_rotation', t: '@e[y_rotation]' },
+                    { label: 'z', t: '@e[z]' }
                 ])
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should omit certain keys in completions for @s selectors', async () => {
                 const ctx = constructContext({ cache, cursor: 3 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@s[]'), ctx)
+                const reader = new StringReader('@s[]')
+                const actual = parser.parse(reader, ctx)
                 assert.deepStrictEqual(actual.data, $(
                     new EntityNode(undefined, 's', $(
                         new SelectorArgumentsNode(), [2, 4]
                     )),
                     [0, 4]
                 ))
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'advancements', insertText: 'advancements' },
-                    { label: 'distance', insertText: 'distance' },
-                    { label: 'dx', insertText: 'dx' },
-                    { label: 'dy', insertText: 'dy' },
-                    { label: 'dz', insertText: 'dz' },
-                    { label: 'gamemode', insertText: 'gamemode' },
-                    { label: 'level', insertText: 'level' },
-                    { label: 'name', insertText: 'name' },
-                    { label: 'nbt', insertText: 'nbt' },
-                    { label: 'predicate', insertText: 'predicate' },
-                    { label: 'scores', insertText: 'scores' },
-                    { label: 'tag', insertText: 'tag' },
-                    { label: 'team', insertText: 'team' },
-                    { label: 'type', insertText: 'type' },
-                    { label: 'x', insertText: 'x' },
-                    { label: 'x_rotation', insertText: 'x_rotation' },
-                    { label: 'y', insertText: 'y' },
-                    { label: 'y_rotation', insertText: 'y_rotation' },
-                    { label: 'z', insertText: 'z' }
+                assertCompletions(reader, actual.completions, [
+                    { label: 'advancements', t: '@s[advancements]' },
+                    { label: 'distance', t: '@s[distance]' },
+                    { label: 'dx', t: '@s[dx]' },
+                    { label: 'dy', t: '@s[dy]' },
+                    { label: 'dz', t: '@s[dz]' },
+                    { label: 'gamemode', t: '@s[gamemode]' },
+                    { label: 'level', t: '@s[level]' },
+                    { label: 'name', t: '@s[name]' },
+                    { label: 'nbt', t: '@s[nbt]' },
+                    { label: 'predicate', t: '@s[predicate]' },
+                    { label: 'scores', t: '@s[scores]' },
+                    { label: 'tag', t: '@s[tag]' },
+                    { label: 'team', t: '@s[team]' },
+                    { label: 'type', t: '@s[type]' },
+                    { label: 'x', t: '@s[x]' },
+                    { label: 'x_rotation', t: '@s[x_rotation]' },
+                    { label: 'y', t: '@s[y]' },
+                    { label: 'y_rotation', t: '@s[y_rotation]' },
+                    { label: 'z', t: '@s[z]' },
                 ])
                 assert.deepStrictEqual(actual.errors, [])
             })
             it('Should return completions for argument keys after comma', async () => {
                 const ctx = constructContext({ cache, cursor: 22 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@e[gamemode=adventure,]'), ctx)
+                const reader = new StringReader('@e[gamemode=adventure,]')
+                const actual = parser.parse(reader, ctx)
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 23 }
                 expectedArguments.gamemode = ['adventure']
@@ -444,28 +449,28 @@ describe('EntityArgumentParser Tests', () => {
                 expectedArguments[UnsortedKeys].push('gamemode')
 
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'e', expectedArguments), [0, 23]))
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'advancements', insertText: 'advancements' },
-                    { label: 'distance', insertText: 'distance' },
-                    { label: 'dx', insertText: 'dx' },
-                    { label: 'dy', insertText: 'dy' },
-                    { label: 'dz', insertText: 'dz' },
-                    { label: 'gamemode', insertText: 'gamemode' },
-                    { label: 'level', insertText: 'level' },
-                    { label: 'limit', insertText: 'limit' },
-                    { label: 'name', insertText: 'name' },
-                    { label: 'nbt', insertText: 'nbt' },
-                    { label: 'predicate', insertText: 'predicate' },
-                    { label: 'scores', insertText: 'scores' },
-                    { label: 'sort', insertText: 'sort' },
-                    { label: 'tag', insertText: 'tag' },
-                    { label: 'team', insertText: 'team' },
-                    { label: 'type', insertText: 'type' },
-                    { label: 'x', insertText: 'x' },
-                    { label: 'x_rotation', insertText: 'x_rotation' },
-                    { label: 'y', insertText: 'y' },
-                    { label: 'y_rotation', insertText: 'y_rotation' },
-                    { label: 'z', insertText: 'z' }
+                assertCompletions(reader, actual.completions, [
+                    { label: 'advancements', t: '@e[gamemode=adventure,advancements]' },
+                    { label: 'distance', t: '@e[gamemode=adventure,distance]' },
+                    { label: 'dx', t: '@e[gamemode=adventure,dx]' },
+                    { label: 'dy', t: '@e[gamemode=adventure,dy]' },
+                    { label: 'dz', t: '@e[gamemode=adventure,dz]' },
+                    { label: 'gamemode', t: '@e[gamemode=adventure,gamemode]' },
+                    { label: 'level', t: '@e[gamemode=adventure,level]' },
+                    { label: 'limit', t: '@e[gamemode=adventure,limit]' },
+                    { label: 'name', t: '@e[gamemode=adventure,name]' },
+                    { label: 'nbt', t: '@e[gamemode=adventure,nbt]' },
+                    { label: 'predicate', t: '@e[gamemode=adventure,predicate]' },
+                    { label: 'scores', t: '@e[gamemode=adventure,scores]' },
+                    { label: 'sort', t: '@e[gamemode=adventure,sort]' },
+                    { label: 'tag', t: '@e[gamemode=adventure,tag]' },
+                    { label: 'team', t: '@e[gamemode=adventure,team]' },
+                    { label: 'type', t: '@e[gamemode=adventure,type]' },
+                    { label: 'x', t: '@e[gamemode=adventure,x]' },
+                    { label: 'x_rotation', t: '@e[gamemode=adventure,x_rotation]' },
+                    { label: 'y', t: '@e[gamemode=adventure,y]' },
+                    { label: 'y_rotation', t: '@e[gamemode=adventure,y_rotation]' },
+                    { label: 'z', t: '@e[gamemode=adventure,z]' },
                 ])
                 assert.deepStrictEqual(actual.errors, [])
             })
@@ -479,55 +484,61 @@ describe('EntityArgumentParser Tests', () => {
             it('Should return completions for ‘sort’ argument', async () => {
                 const ctx = constructContext({ cache, cursor: 11 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[ sort = ]'), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'arbitrary' },
-                    { label: 'furthest' },
-                    { label: 'nearest' },
-                    { label: 'random' }
+                const reader = new StringReader('@a[ sort = ]')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions, [
+                    { label: 'arbitrary', t: '@a[ sort = arbitrary]' },
+                    { label: 'furthest', t: '@a[ sort = furthest]' },
+                    { label: 'nearest', t: '@a[ sort = nearest]' },
+                    { label: 'random', t: '@a[ sort = random]' }
                 ])
             })
             it('Should return completions for ‘gamemode’ argument', async () => {
                 const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[ gamemode = ]'), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: '!' },
-                    { label: 'adventure' },
-                    { label: 'creative' },
-                    { label: 'spectator' },
-                    { label: 'survival' }
+                const reader = new StringReader('@a[ gamemode = ]')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions, [
+                    { label: '!', t: '@a[ gamemode = ]!' },
+                    { label: 'adventure', t: '@a[ gamemode = adventure]' },
+                    { label: 'creative', t: '@a[ gamemode = creative]' },
+                    { label: 'spectator', t: '@a[ gamemode = spectator]' },
+                    { label: 'survival', t: '@a[ gamemode = survival]' },
                 ])
             })
             it('Should return completions for negative ‘gamemode’ argument', async () => {
                 const ctx = constructContext({ cache, cursor: 17 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[ gamemode = ! ]'), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'adventure' },
-                    { label: 'creative' },
-                    { label: 'spectator' },
-                    { label: 'survival' }
+                const reader = new StringReader('@a[ gamemode = ! ]')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions, [
+                    { label: 'adventure', t: '@a[ gamemode = ! adventure]' },
+                    { label: 'creative', t: '@a[ gamemode = ! creative]' },
+                    { label: 'spectator', t: '@a[ gamemode = ! spectator]' },
+                    { label: 'survival', t: '@a[ gamemode = ! survival]' },
                 ])
             })
             it('Should return completions for objectives in ‘scores’', async () => {
                 const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[ scores = { } ]'), ctx)
-                assert.deepStrictEqual(actual.completions, [
-                    { label: 'foo' },
-                    { label: 'bar' }
+                const reader = new StringReader('@a[ scores = { } ]')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions, [
+                    { label: 'foo', t: '@a[ scores = { foo} ]' },
+                    { label: 'bar', t: '@a[ scores = { bar} ]' },
                 ])
             })
             it('Should return completions for advancements in ‘advancements’', async () => {
                 const config = constructConfig({ env: { dependsOnVanilla: false } })
                 const ctx = constructContext({ config, cache, cursor: 21 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
-                const actual = parser.parse(new StringReader('@a[ advancements = { } ]'), ctx)
-                assert.deepStrictEqual(actual.completions, [
+                const reader = new StringReader('@a[ advancements = { } ]')
+                const actual = parser.parse(reader, ctx)
+                assertCompletions(reader, actual.completions, [
                     {
                         label: 'spgoding',
-                        kind: CompletionItemKind.Module
+                        kind: CompletionItemKind.Module,
+                        t: '@a[ advancements = { spgoding} ]'
                     }
                 ])
             })

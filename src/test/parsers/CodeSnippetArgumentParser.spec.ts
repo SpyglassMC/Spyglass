@@ -6,6 +6,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('CodeSnippetArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -32,21 +33,21 @@ describe('CodeSnippetArgumentParser Tests', () => {
             )])
         })
         it('Should return completions', async () => {
-            const context = constructContext({ config, cursor: 0 })
+            const ctx = constructContext({ config, cursor: 0 })
             const parser = new CodeSnippetArgumentParser()
-            const actual = parser.parse(new StringReader(''), context)
-            assert.deepStrictEqual(actual.completions, [{
+            const actual = parser.parse(new StringReader(''), ctx)
+            assertCompletions('', actual.completions, [{
+                t: 'say test',
                 label: 'test',
-                insertText: 'say test',
                 insertTextFormat: InsertTextFormat.Snippet,
-                kind: CompletionItemKind.Snippet,
+                kind: CompletionItemKind.Snippet
             }])
         })
         it('Should not return completions', async () => {
-            const context = constructContext({ config, cursor: -1 })
+            const ctx = constructContext({ config, cursor: -1 })
             const parser = new CodeSnippetArgumentParser()
-            const actual = parser.parse(new StringReader(''), context)
-            assert.deepStrictEqual(actual.completions, [])
+            const actual = parser.parse(new StringReader(''), ctx)
+            assertCompletions('', actual.completions, [])
         })
     })
 })

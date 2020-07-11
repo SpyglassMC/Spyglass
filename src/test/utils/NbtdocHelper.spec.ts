@@ -23,6 +23,7 @@ import { constructContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
 import { NbtdocHelper } from '../../utils/NbtdocHelper'
+import { assertCompletions } from '../utils.spec'
 
 export const TestNbtdoc: nbtdoc.Root = {
     registries: {
@@ -408,11 +409,11 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'false' },
-                    { label: 'true' },
-                    { label: '0b' },
-                    { label: '1b' }
+                assertCompletions('', ans.completions, [
+                    { label: 'false', t: 'false' },
+                    { label: 'true', t: 'true' },
+                    { label: '0b', t: '0b' },
+                    { label: '1b', t: '1b' }
                 ])
             })
             it('Should complete true/false when the config is true', async () => {
@@ -427,9 +428,9 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'false' },
-                    { label: 'true' }
+                assertCompletions('', ans.completions, [
+                    { label: 'false', t: 'false' },
+                    { label: 'true', t: 'true' }
                 ])
             })
             it('Should complete 1b/0b when the config is false', async () => {
@@ -444,9 +445,9 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '0b' },
-                    { label: '1b' }
+                assertCompletions('', ans.completions, [
+                    { label: '0b', t: '0b' },
+                    { label: '1b', t: '1b' }
                 ])
             })
         })
@@ -460,8 +461,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[B;]', insertText: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[B;]', t: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -475,8 +476,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '{}', insertText: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '{}', t: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -490,10 +491,10 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
-                    { label: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Green' },
-                    { label: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Blue' }
+                assertCompletions('', ans.completions, [
+                    { label: '"red"', t: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
+                    { label: '"green"', t: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Green' },
+                    { label: '"blue"', t: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Blue' }
                 ])
             })
             it('Should complete correctly for byte enum', async () => {
@@ -505,10 +506,10 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
-                    { label: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Two  \nThe second positive integer' },
-                    { label: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Three  \nThe third positive integer' }
+                assertCompletions('', ans.completions, [
+                    { label: '1b', t: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
+                    { label: '2b', t: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Two  \nThe second positive integer' },
+                    { label: '3b', t: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Three  \nThe third positive integer' }
                 ])
             })
         })
@@ -522,9 +523,9 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'minecraft', insertText: '"minecraft"', kind: CompletionItemKind.Module },
-                    { label: 'one_boolean_field', insertText: '"one_boolean_field"', kind: CompletionItemKind.Field }
+                assertCompletions('', ans.completions, [
+                    { label: 'minecraft', t: '"minecraft"', kind: CompletionItemKind.Module },
+                    { label: 'one_boolean_field', t: '"one_boolean_field"', kind: CompletionItemKind.Field }
                 ])
             })
         })
@@ -538,8 +539,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[I;]', insertText: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[I;]', t: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -553,8 +554,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[]', insertText: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[]', t: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -568,8 +569,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[L;]', insertText: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[L;]', t: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
@@ -584,8 +585,8 @@ describe('NbtdocHelper Tests', () => {
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'fooTag', insertText: '"fooTag"' }
+                assertCompletions('', ans.completions, [
+                    { label: 'fooTag', t: '"fooTag"' }
                 ])
             })
         })
@@ -602,10 +603,10 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
             ])
         })
         it('Should not include existing keys', async () => {
@@ -619,9 +620,9 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' }
             ])
         })
         it('Should return correctly for in-double-quote cases', async () => {
@@ -634,10 +635,10 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
+                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
             ])
         })
         it('Should return correctly for in-single-quote cases', async () => {
@@ -650,10 +651,10 @@ describe('NbtdocHelper Tests', () => {
             const helper = new NbtdocHelper(TestNbtdoc)
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
+                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
             ])
         })
     })

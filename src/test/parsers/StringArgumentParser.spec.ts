@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { StringArgumentParser, StringType } from '../../parsers/StringArgumentParser'
 import { StringNode } from '../../nodes/StringNode'
+import { StringArgumentParser, StringType } from '../../parsers/StringArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('StringArgumentParser Tests', () => {
     describe('parse() Tests', () => {
@@ -45,10 +45,10 @@ describe('StringArgumentParser Tests', () => {
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
             const ctx = constructContext({ cursor: 0 })
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'foo', insertText: '"foo"' },
-                { label: 'dou"ble', insertText: `'dou"ble'` },
-                { label: "sin'gle", insertText: `"sin'gle"` },
+            assertCompletions(reader, actual.completions, [
+                { label: 'foo', t: '"foo"' },
+                { label: 'dou"ble', t: `'dou"ble'` },
+                { label: "sin'gle", t: `"sin'gle"` },
             ])
         })
         it('Should return completions inside double quotation marks', async () => {
@@ -56,10 +56,10 @@ describe('StringArgumentParser Tests', () => {
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
             const ctx = constructContext({ cursor: 1 })
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'foo', insertText: 'foo' },
-                { label: 'dou"ble', insertText: 'dou\\"ble' },
-                { label: "sin'gle", insertText: "sin'gle" },
+            assertCompletions(reader, actual.completions, [
+                { label: 'foo', t: '"foo"' },
+                { label: 'dou"ble', t: '"dou\\"ble"' },
+                { label: "sin'gle", t: `"sin'gle"` },
             ])
         })
         it('Should return completions inside single quotation marks', async () => {
@@ -67,10 +67,10 @@ describe('StringArgumentParser Tests', () => {
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"], ['warning', true], ['warning', 'prefer double'])
             const ctx = constructContext({ cursor: 1 })
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'foo', insertText: 'foo' },
-                { label: 'dou"ble', insertText: 'dou"ble' },
-                { label: "sin'gle", insertText: "sin\\'gle" },
+            assertCompletions(reader, actual.completions, [
+                { label: 'foo', t: "'foo'" },
+                { label: 'dou"ble', t: `'dou"ble'` },
+                { label: "sin'gle", t: "'sin\\'gle'" },
             ])
         })
     })

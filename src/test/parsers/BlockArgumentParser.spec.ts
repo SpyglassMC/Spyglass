@@ -15,7 +15,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('BlockArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -138,42 +138,45 @@ describe('BlockArgumentParser Tests', () => {
         it('Should return completions at the beginning of input', async () => {
             const parser = new BlockArgumentParser(false)
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
-            const context = constructContext({ blockDefinition: blocks, registry: registries, config, cursor: 0 })
-            const actual = parser.parse(new StringReader(''), context)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'minecraft',
-                        kind: CompletionItemKind.Module
-                    },
-                    {
-                        label: 'stone',
-                        kind: CompletionItemKind.Field
-                    },
-                    {
-                        label: 'grass_block',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, config, cursor: 0 })
+            const actual = parser.parse(new StringReader(''), ctx)
+            assertCompletions('', actual.completions, [
+                {
+                    label: 'minecraft',
+                    kind: CompletionItemKind.Module,
+                    t: 'minecraft'
+                },
+                {
+                    label: 'stone',
+                    kind: CompletionItemKind.Field,
+                    t: 'stone'
+                },
+                {
+                    label: 'grass_block',
+                    kind: CompletionItemKind.Field,
+                    t: 'grass_block'
+                }
+            ])
         })
         it('Should return completions for state keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 16 })
-            const actual = parser.parse(new StringReader('minecraft:stone[]'), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 16 })
+            const reader = new StringReader('minecraft:stone[]')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), [0, 15]),
                 $(new BlockStateNode(), [15, 17])
             ), [0, 17]))
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'snowy' },
-                { label: 'age' }
+            assertCompletions(reader, actual.completions, [
+                { label: 'snowy', t: 'minecraft:stone[snowy]' },
+                { label: 'age', t: 'minecraft:stone[age]' }
             ])
         })
         it('Should not return redundant completions for state keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 27 })
-            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,]'), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 27 })
+            const reader = new StringReader('minecraft:stone[snowy=true,]')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('minecraft', ['stone']), [0, 15]),
                 $(new BlockStateNode(), [15, 28], {
@@ -181,45 +184,48 @@ describe('BlockArgumentParser Tests', () => {
                     [UnsortedKeys]: ['snowy']
                 })
             ), [0, 28]))
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'age' }
+            assertCompletions(reader, actual.completions, [
+                { label: 'age', t: 'minecraft:stone[snowy=true,age]' }
             ])
         })
         it('Should return completions for state values', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 22 })
-            const actual = parser.parse(new StringReader('minecraft:stone[snowy=]'), context)
-            assert.deepStrictEqual(actual.completions,
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 22 })
+            const reader = new StringReader('minecraft:stone[snowy=]')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions,
                 [
-                    { label: 'true' },
-                    { label: 'false' }
+                    { label: 'true', t: 'minecraft:stone[snowy=true]' },
+                    { label: 'false', t: 'minecraft:stone[snowy=false]' }
                 ]
             )
         })
         it('Should return empty completions if the ID does not have states', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 12 })
-            const actual = parser.parse(new StringReader('grass_block[]'), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 12 })
+            const reader = new StringReader('grass_block[]')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode(undefined, ['grass_block']), [0, 11]),
                 $(new BlockStateNode(), [11, 13])
             ), [0, 13]))
-            assert.deepStrictEqual(actual.completions, [])
+            assertCompletions(reader, actual.completions, [])
         })
         it('Should return empty completions if the ID does not exist', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 13 })
-            const actual = parser.parse(new StringReader('spgoding:wtf[]'), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 13 })
+            const reader = new StringReader('spgoding:wtf[]')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
                 $(new IdentityNode('spgoding', ['wtf']), [0, 12]),
                 $(new BlockStateNode(), [12, 14])
             ), [0, 14]))
-            assert.deepStrictEqual(actual.completions, [])
+            assertCompletions(reader, actual.completions, [])
         })
         it('Should return error for dupliate keys', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 0 })
-            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,snowy=false]'), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 0 })
+            const actual = parser.parse(new StringReader('minecraft:stone[snowy=true,snowy=false]'), ctx)
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
@@ -233,8 +239,8 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should return error when the end bracket is missing', async () => {
             const parser = new BlockArgumentParser(false)
-            const context = constructContext({ blockDefinition: blocks, registry: registries, cursor: 0 })
-            const actual = parser.parse(new StringReader('minecraft:stone[snowy='), context)
+            const ctx = constructContext({ blockDefinition: blocks, registry: registries, cursor: 0 })
+            const actual = parser.parse(new StringReader('minecraft:stone[snowy='), ctx)
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(

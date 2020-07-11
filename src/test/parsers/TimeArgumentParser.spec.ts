@@ -5,7 +5,7 @@ import { TimeArgumentParser } from '../../parsers/TimeArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('TimeArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -36,12 +36,13 @@ describe('TimeArgumentParser Tests', () => {
         it('Should return completions for units', async () => {
             const ctx = constructContext({ cursor: 4 })
             const parser = new TimeArgumentParser()
-            const actual = parser.parse(new StringReader('2.33'), ctx)
+            const reader = new StringReader('2.33')
+            const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new TimeNode(2.33, '2.33', 't'), [0, 4]))
-            assert.deepStrictEqual(actual.completions, [
-                { label: 'd' },
-                { label: 's' },
-                { label: 't' }
+            assertCompletions(reader, actual.completions, [
+                { label: 'd', t: '2.33d' },
+                { label: 's', t: '2.33s' },
+                { label: 't', t: '2.33t' }
             ])
         })
         it('Should return error when the unit is unexpected', () => {

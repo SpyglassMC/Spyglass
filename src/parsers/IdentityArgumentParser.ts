@@ -176,7 +176,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
         ) {
             ans.completions.push({
-                label: locale('completion.identity.this'),
+                label: 'THIS',
                 insertText: ctx.id.toTagString(),
                 detail: ctx.id.toTagString(),
                 kind: CompletionItemKind.Snippet

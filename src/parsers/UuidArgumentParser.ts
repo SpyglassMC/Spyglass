@@ -40,7 +40,7 @@ export class UuidArgumentParser extends ArgumentParser<string> {
         if (ctx.cursor === start) {
             const randomUuid = uuidV4()
             ans.completions.push({
-                label: locale('completion.uuid.random'),
+                label: 'RANDOM',
                 insertText: randomUuid,
                 detail: randomUuid,
                 kind: CompletionItemKind.Snippet
