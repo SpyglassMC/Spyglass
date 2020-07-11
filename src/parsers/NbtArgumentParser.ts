@@ -59,6 +59,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
         private readonly isPredicate = false,
         private readonly superNode: NbtCompoundNode | null = null,
+        // TODO: JSON
         private readonly module: string | null = null
     ) {
         super()

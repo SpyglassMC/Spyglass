@@ -240,8 +240,9 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 
 /**
  * Remap all the indices in the specific TextRange object by the specific mapping.
- * @param completion The specific TextRange object.
+ * @param completion The specific TextRange object. Won't be changed.
  * @param param1 The mapping used to offset.
+ * @returns A new cloned CompletionItem.
  */
 export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
 export function remapCompletionItem(completion: CompletionItem, getPosition: (offset: number) => Position): CompletionItem
@@ -260,7 +261,10 @@ export function remapCompletionItem(completion: CompletionItem, param1: IndexMap
     return ans
 }
 
-/* istanbul ignore next */
+/**
+ * @param origin Won't be changed.
+ * @returns A new CompletionItem.
+ */
 export function handleCompletionText(origin: CompletionItem, cb: (str: string) => string) {
     let label = origin.label
     let insertText: string | undefined

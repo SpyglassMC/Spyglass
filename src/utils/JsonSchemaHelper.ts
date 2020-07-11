@@ -1,9 +1,9 @@
 import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, SchemaRegistry, ValidationOption } from '@mcschema/core'
 import { ArrayASTNode, ASTNode, CompletionItem, ObjectASTNode } from 'vscode-json-languageservice'
-import { handleCompletionText, quoteString } from '.'
+import { handleCompletionText, quoteString, remapCompletionItem } from '.'
 import { resolveLocalePlaceholders } from '../locales'
 import { LineParser, Parsers } from '../parsers'
-import { combineCache, downgradeParsingError, IndexMapping, LegacyValidateResult, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
+import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
 
 // TODO: JSON
@@ -31,6 +31,37 @@ export class JsonSchemaHelper {
         )
     }
 
+    static suggest(ans: CompletionItem[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
+        const { ctx } = options
+        const model = new DataModel(schema, { historyMax: 1 })
+        const path = new Path([], [], model)
+
+        const { node: selectedNode, path: selectedPath, type: selectedType } = this.selectNode(node, ctx.cursor, path)
+        if (selectedNode) {
+            let result: Partial<LegacyValidateResult> | undefined = undefined
+            const out: { mapping: IndexMapping } = { mapping: {} }
+            const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
+            if (selectedType === 'value') {
+                const selectedSchema = schema.navigate(selectedPath, -1)
+                const validationOption = selectedSchema?.validationOption()
+                if (validationOption) {
+                    const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
+                    const value = rawReader.readString(out)
+                    const valueReader = new StringReader(value)
+                    result = this.getDetailedValidateResult(
+                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
+                    )
+                    // this.combineResult(ans, result, out.mapping)
+                }
+            } else {
+                // TODO
+            }
+            if (result?.completions) {
+                ans.push(...result.completions.map(v => remapCompletionItem(this.escapeCompletion(v), out.mapping)))
+            }
+        }
+    }
+
     /**
      * @param cb A callback that is called on every node.
      */
@@ -52,7 +83,7 @@ export class JsonSchemaHelper {
     }
 
     private static doDetailedValidate(ans: ValidateResult, node: ASTNode, option: ValidationOption, { ctx }: JsonSchemaHelperOptions) {
-        const valueRange = { start: node.offset, end: node.offset + node.length }
+        const valueRange = this.getNodeRange(node)
         if (option.validator === 'block_state_map') {
             // TODO: JSON block_state_map validation
         } else {
@@ -60,71 +91,66 @@ export class JsonSchemaHelper {
             const rawReader = new StringReader(ctx.document.getText(), valueRange.start, valueRange.end)
             const value = rawReader.readString(out)
             const valueReader = new StringReader(value)
-            let result: Partial<LegacyValidateResult> | undefined = undefined
-            switch (option.validator) {
-                case 'block_state_key': {
-                    const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
-                    const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
-                    result = new Parsers.Literal(...keys).parse(valueReader, ctx)
-                    break
-                }
-                case 'command':
-                    result = new LineParser(
-                        option.params.leadingSlash, 'commands', option.params.allowPartial
-                    ).parse(valueReader, ctx).data
-                    break
-                case 'entity':
-                    result = new Parsers.Entity(
-                        option.params.amount, option.params.type, option.params.isScoreHolder
-                    ).parse(valueReader, ctx)
-                    break
-                case 'nbt':
-                    if (option.params.registry) {
-                        const id = this.navigateRelativePath(node, option.params.registry.id)?.value?.toString() ?? null
-                        result = new Parsers.Nbt(
-                            'Compound', option.params.registry.category, id, option.params.isPredicate
-                        ).parse(valueReader, ctx)
-                    } else if (option.params.module) {
-                        result = new Parsers.Nbt(
-                            'Compound', 'minecraft:block', undefined, option.params.isPredicate, null, option.params.module
-                        ).parse(valueReader, ctx)
-                    }
-                    break
-                case 'nbt_path':
-                    result = new Parsers.NbtPath(
-                        option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
-                    ).parse(valueReader, ctx)
-                    break
-                case 'objective':
-                    result = new Parsers.Objective().parse(valueReader, ctx)
-                    break
-                case 'resource':
-                    result = new Parsers.Identity(
-                        option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
-                    ).parse(valueReader, ctx)
-                    break
-                case 'team':
-                    result = new Parsers.Team().parse(valueReader, ctx)
-                    break
-                case 'uuid':
-                    result = new Parsers.Uuid().parse(valueReader, ctx)
-                    break
-                case 'vector':
-                    result = new Parsers.Vector(
-                        option.params.dimension, option.params.isInteger ? 'integer' : 'float', !option.params.disableLocal, !option.params.disableRelative, option.params.min, option.params.max
-                    ).parse(valueReader, ctx)
-                    break
-                default:
-                    /* istanbul ignore next */
-                    console.error('doDetailedValidate', new Error(`Unknown validator ${(option as any).validator}`))
-                    break
-            }
+            const result = this.getDetailedValidateResult(valueReader, ctx, node, option)
             this.combineResult(ans, result, out.mapping)
         }
     }
 
+    private static getDetailedValidateResult(reader: StringReader, ctx: ParsingContext, node: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
+        switch (option.validator) {
+            case 'block_state_key': {
+                const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
+                const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
+                return new Parsers.Literal(...keys).parse(reader, ctx)
+            }
+            case 'command':
+                return new LineParser(
+                    option.params.leadingSlash, 'commands', option.params.allowPartial
+                ).parse(reader, ctx).data
+            case 'entity':
+                return new Parsers.Entity(
+                    option.params.amount, option.params.type, option.params.isScoreHolder
+                ).parse(reader, ctx)
+            case 'nbt':
+                if (option.params.registry) {
+                    const id = this.navigateRelativePath(node, option.params.registry.id)?.value?.toString() ?? null
+                    return new Parsers.Nbt(
+                        'Compound', option.params.registry.category, id, option.params.isPredicate
+                    ).parse(reader, ctx)
+                } else if (option.params.module) {
+                    return new Parsers.Nbt(
+                        'Compound', 'minecraft:block', undefined, option.params.isPredicate, null, option.params.module
+                    ).parse(reader, ctx)
+                }
+                break
+            case 'nbt_path':
+                return new Parsers.NbtPath(
+                    option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
+                ).parse(reader, ctx)
+            case 'objective':
+                return new Parsers.Objective().parse(reader, ctx)
+            case 'resource':
+                return new Parsers.Identity(
+                    option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
+                ).parse(reader, ctx)
+            case 'team':
+                return new Parsers.Team().parse(reader, ctx)
+            case 'uuid':
+                return new Parsers.Uuid().parse(reader, ctx)
+            case 'vector':
+                return new Parsers.Vector(
+                    option.params.dimension, option.params.isInteger ? 'integer' : 'float', !option.params.disableLocal, !option.params.disableRelative, option.params.min, option.params.max
+                ).parse(reader, ctx)
+            default:
+                /* istanbul ignore next */
+                console.error('doDetailedValidate', new Error(`Unknown validator ${(option as any).validator}`))
+                break
+        }
+        return {}
+    }
+
     private static escapeCompletion(origin: CompletionItem) {
-        return handleCompletionText(origin, str => quoteString(str, 'always double', true))
+        return handleCompletionText(origin, str => quoteString(str, 'always double', true).slice(1, -1))
     }
 
     private static combineResult(ans: ValidateResult, result: Partial<LegacyValidateResult> | undefined, mapping: IndexMapping) {
@@ -177,7 +203,7 @@ export class JsonSchemaHelper {
     }
 
     /**
-     * This function won't work if the path contains `pop` after `push`, which should be fine.
+     * This function won't work if the path contains any `pop` after `push`, which should be fine.
      * @param path Won't be changed.
      */
     private static navigateRelativePath(node: ASTNode | undefined, path: RelativePath | undefined): ASTNode | undefined {
@@ -191,15 +217,60 @@ export class JsonSchemaHelper {
         const ele = path[0]
         if (ele === 'pop') {
             nextNode = node?.parent
+            if (nextNode?.type === 'property') {
+                nextNode = nextNode.parent
+            }
         } else {
             nextNode = node?.type === 'object' ? node.properties.find(prop => prop.keyNode.value === ele.push)?.valueNode : undefined
         }
         return this.navigateRelativePath(nextNode, path.slice(1))
     }
 
+    private static selectNode(node: ASTNode, cursor: number, path: Path, type: 'key' | 'value' = 'value'): SelectNodeResult {
+        let ans: SelectNodeResult = { node: undefined, path, type }
+        if (!isInRange(cursor, this.getNodeRange(node))) {
+            return ans
+        }
+        const set = (result: SelectNodeResult) => {
+            if (result.node) {
+                ans = result
+            }
+        }
+        switch (node.type) {
+            case 'array':
+                for (const [i, item] of node.items.entries()) {
+                    set(this.selectNode(item, cursor, path.push(i), 'value'))
+                }
+                break
+            case 'object':
+                for (const property of node.properties) {
+                    set(this.selectNode(property, cursor, path, 'value'))
+                }
+                break
+            case 'property':
+                set(this.selectNode(node.keyNode, cursor, path.push(node.keyNode.value), 'key'))
+                if (node.valueNode) {
+                    set(this.selectNode(node.valueNode, cursor, path.push(node.keyNode.value), 'value'))
+                }
+                break
+            default:
+                break
+        }
+        if (!ans.node) {
+            ans = { node, path, type }
+        }
+        return ans
+    }
+
     private static getNodeRange(node: ASTNode): TextRange {
         return { start: node.offset, end: node.offset + node.length }
     }
+}
+
+type SelectNodeResult = {
+    node: ASTNode | undefined,
+    path: Path,
+    type: 'key' | 'value'
 }
 
 export interface JsonSchemaHelperOptions {

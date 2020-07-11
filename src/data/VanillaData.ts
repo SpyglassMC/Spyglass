@@ -8,6 +8,7 @@ import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
 import { requestText } from '../utils'
+import { COLLECTIONS as JsonCollections } from '@mcschema/core'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
@@ -125,7 +126,7 @@ export async function getVanillaData(versionOrLiteral: string | null, source: Da
     if (!versionInformation || !versionOrLiteral) {
         return FallbackVanillaData
     }
-    const ans: VanillaData = {} as any
+    const ans: VanillaData = { ...FallbackVanillaData }
     const types: DataType[] = ['BlockDefinition', 'NamespaceSummary', 'Nbtdoc', 'Registry']
     let version: string
     switch (versionOrLiteral.toLowerCase()) {
@@ -143,6 +144,13 @@ export async function getVanillaData(versionOrLiteral: string | null, source: Da
         ans[type] = await getSingleVanillaData(
             type, source, version, globalStoragePath, versionInformation.processedVersions, versionInformation.latestSnapshot
         ) as any
+    }
+    for (const key in ans.Registry) {
+        /* istanbul ignore else */
+        if (Object.prototype.hasOwnProperty.call(ans.Registry, key)) {
+            const reg = ans.Registry[key]
+            JsonCollections.register(key.replace(/^minecraft:/, ''), Object.keys(reg.entries))
+        }
     }
     return ans
 }

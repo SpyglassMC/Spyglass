@@ -24,8 +24,8 @@ export function getJsonSchemaType(rel: string): JsonSchemaType | null {
 
 /* istanbul ignore next */
 export async function getJsonSchemas(version: JsonSchemaVersion) {
-    // Note: The stupid Webpack can't load the entry point of a scoped package correctly.
     // FIXME: JSON when the registry is moved under different versions.
+    // Note: The stupid Webpack can't load the entry point of a scoped package correctly.
     await import(`@mcschema/java-${version}/lib/index.js`)
     return SCHEMAS
 }

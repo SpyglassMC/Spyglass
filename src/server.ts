@@ -1,7 +1,7 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
@@ -13,16 +13,17 @@ import { loadLocale, locale } from './locales'
 import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { ParsingError } from './types'
+import { constructContext, ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
-import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { DocumentInfo, isFunctionInfo } from './types/DocumentInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { createInfo, getInfo, getOrCreateInfo, getRel, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk, getNodesFromInfo } from './utils/handlers/common'
+import { fixFileCommandHandler } from './utils/handlers/commands/fixFileCommandHandler'
+import { createInfo, getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk } from './utils/handlers/common'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -45,7 +46,7 @@ import { onSelectionRanges } from './utils/handlers/onSelectionRanges'
 import { onSemanticTokens } from './utils/handlers/onSemanticTokens'
 import { onSemanticTokensEdits } from './utils/handlers/onSemanticTokensEdits'
 import { onSignatureHelp } from './utils/handlers/onSignatureHelp'
-import { fixFileCommandHandler } from './utils/handlers/commands/fixFileCommandHandler'
+import { JsonSchemaHelper, JsonSchemaHelperOptions } from './utils/JsonSchemaHelper'
 
 const connection = createConnection(ProposedFeatures.all)
 const uris: UrisOfStrings = new Map<string, Uri>()
@@ -363,16 +364,31 @@ connection.onInitialized(() => {
         const info = await getInfo(uri, infos)
         if (info && info.config.features.completions) {
             const offset = info.document.offsetAt(position)
+            const config = info.config
             if (isFunctionInfo(info)) {
                 const { node } = getSelectedNode(info.nodes, offset)
                 if (node) {
-                    const config = info.config
                     const commandTree = await getCommandTree(config.env.cmdVersion)
                     const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
                     return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
                 }
             } else {
-                // TODO: JSON
+                const ans: CompletionItem[] = []
+                const schemas = await getJsonSchemas(info.config.env.jsonVersion)
+                const schema = schemas.get(info.node.schemaType)
+                const ctx: JsonSchemaHelperOptions = {
+                    ctx: constructContext({
+                        cache: getCacheForUri(cacheFile.cache, uri),
+                        cursor: offset,
+                        document: info.document,
+                        id: getId(uri, roots),
+                        rootIndex: getRootIndex(uri, roots),
+                        config, roots
+                    }),
+                    schemas
+                }
+                JsonSchemaHelper.suggest(ans, info.node.json.root, schema, ctx)
+                return ans.length !== 0 ? ans : null
             }
         }
         return null
@@ -562,11 +578,7 @@ connection.onInitialized(() => {
         if (info && info.config.features.colors) {
             const start = info.document.offsetAt(startPos)
             const end = info.document.offsetAt(endPos)
-            if (isFunctionInfo(info)) {
-                return onColorPresentation({ r, g, b, a, start, end, info })
-            } else {
-                // TODO: JSON
-            }
+            return onColorPresentation({ r, g, b, a, start, end, info })
         }
         return null
     })
