@@ -180,7 +180,7 @@ describe('IdentityNode Tests', () => {
             assert(id.toString() === 'spgoding:foo/bar')
             assert(ext === '.mcfunction')
             assert(side === 'data')
-            assert(category === 'functions')
+            assert(category === 'function')
         })
     })
     describe('static fromString() Tests', () => {

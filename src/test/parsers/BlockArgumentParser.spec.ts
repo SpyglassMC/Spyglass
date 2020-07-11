@@ -248,11 +248,11 @@ describe('BlockArgumentParser Tests', () => {
         })
         it('Should not return errors for block tags', async () => {
             const parser = new BlockArgumentParser(true)
-            const cache: ClientCache = { "tag/block": { 'minecraft:stone': { def: [], ref: [] } } }
+            const cache: ClientCache = { "tag/block": { 'minecraft:qwert': { def: [], ref: [] } } }
             const ctx = constructContext({ blockDefinition: blocks, registry: registries, cache })
-            const actual = parser.parse(new StringReader('#minecraft:stone[snowy=true]'), ctx)
+            const actual = parser.parse(new StringReader('#minecraft:qwert[snowy=true]'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone'], true), [0, 16]),
+                $(new IdentityNode('minecraft', ['qwert'], true), [0, 16]),
                 $(new BlockStateNode(), [16, 28], {
                     snowy: 'true',
                     [UnsortedKeys]: ['snowy']

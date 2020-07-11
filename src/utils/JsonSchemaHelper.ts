@@ -2,7 +2,7 @@ import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError,
 import { ArrayASTNode, ASTNode, CompletionItem, ObjectASTNode } from 'vscode-json-languageservice'
 import { handleCompletionText, quoteString, remapCompletionItem } from '.'
 import { resolveLocalePlaceholders } from '../locales'
-import { LineParser, Parsers } from '../parsers'
+import { LineParser } from '../parsers'
 import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
 
@@ -101,44 +101,44 @@ export class JsonSchemaHelper {
             case 'block_state_key': {
                 const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
                 const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
-                return new Parsers.Literal(...keys).parse(reader, ctx)
+                return new ctx.parsers.Literal(...keys).parse(reader, ctx)
             }
             case 'command':
                 return new LineParser(
                     option.params.leadingSlash, 'commands', option.params.allowPartial
                 ).parse(reader, ctx).data
             case 'entity':
-                return new Parsers.Entity(
+                return new ctx.parsers.Entity(
                     option.params.amount, option.params.type, option.params.isScoreHolder
                 ).parse(reader, ctx)
             case 'nbt':
                 if (option.params.registry) {
                     const id = this.navigateRelativePath(node, option.params.registry.id)?.value?.toString() ?? null
-                    return new Parsers.Nbt(
+                    return new ctx.parsers.Nbt(
                         'Compound', option.params.registry.category, id, option.params.isPredicate
                     ).parse(reader, ctx)
                 } else if (option.params.module) {
-                    return new Parsers.Nbt(
+                    return new ctx.parsers.Nbt(
                         'Compound', 'minecraft:block', undefined, option.params.isPredicate, null, option.params.module
                     ).parse(reader, ctx)
                 }
                 break
             case 'nbt_path':
-                return new Parsers.NbtPath(
+                return new ctx.parsers.NbtPath(
                     option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
                 ).parse(reader, ctx)
             case 'objective':
-                return new Parsers.Objective().parse(reader, ctx)
+                return new ctx.parsers.Objective().parse(reader, ctx)
             case 'resource':
-                return new Parsers.Identity(
+                return new ctx.parsers.Identity(
                     option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
                 ).parse(reader, ctx)
             case 'team':
-                return new Parsers.Team().parse(reader, ctx)
+                return new ctx.parsers.Team().parse(reader, ctx)
             case 'uuid':
-                return new Parsers.Uuid().parse(reader, ctx)
+                return new ctx.parsers.Uuid().parse(reader, ctx)
             case 'vector':
-                return new Parsers.Vector(
+                return new ctx.parsers.Vector(
                     option.params.dimension, option.params.isInteger ? 'integer' : 'float', !option.params.disableLocal, !option.params.disableRelative, option.params.min, option.params.max
                 ).parse(reader, ctx)
             default:

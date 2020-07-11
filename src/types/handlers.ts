@@ -1,6 +1,6 @@
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
-import { DataSource, VanillaData } from '../data'
+import { DataSource, VanillaData } from '../data/VanillaData'
 import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheKey } from './ClientCache'

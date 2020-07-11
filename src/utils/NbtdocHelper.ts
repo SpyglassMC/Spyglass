@@ -23,7 +23,6 @@ import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
 import { LineParser } from '../parsers/LineParser'
-import { Parsers } from '../parsers/Parsers'
 import { combineCache, remapCachePosition } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
@@ -323,7 +322,7 @@ export class NbtdocHelper {
     private completeIdField(ans: LegacyValidateResult, ctx: ParsingContext, doc: IdDoc, isPredicate: boolean) {
         const subCtx = { ...ctx, cursor: 0 }
         const reader = new StringReader('')
-        const result = new Parsers.Identity(
+        const result = new ctx.parsers.Identity(
             NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
         ).parse(reader, subCtx)
         for (const com of result.completions) {
@@ -724,7 +723,7 @@ export class NbtdocHelper {
             /// Identity.
             const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
             const reader = new StringReader(strTag.valueOf())
-            const result = new Parsers.Identity(
+            const result = new ctx.parsers.Identity(
                 NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
             ).parse(reader, subCtx)
             //#region Attribute name datafix: #381
@@ -854,18 +853,18 @@ export class NbtdocHelper {
         if (description.match(/command stored/i)) {
             result = new LineParser(null, 'commands').parse(reader, ctx).data
         } else if (description.match(/particle the area effect cloud/i)) {
-            result = new Parsers.Particle().parse(reader, ctx)
+            result = new ctx.parsers.Particle().parse(reader, ctx)
         } else if (description.match(/tags on the entity/i)) {
-            result = new Parsers.Tag().parse(reader, ctx)
+            result = new ctx.parsers.Tag().parse(reader, ctx)
         } else if (description.match(/team to join/i)) {
-            result = new Parsers.Team().parse(reader, ctx)
+            result = new ctx.parsers.Team().parse(reader, ctx)
         } else if (description.match(/line of text/i) ||
             description.match(/name of th(?:e|is) (?:banner|brewing stand|command block|container|enchanting table|furance)/i) ||
             description.match(/JSON text component/i) ||
             description.match(/lore of an item/i)) {
-            result = new Parsers.TextComponent().parse(reader, ctx)
+            result = new ctx.parsers.TextComponent().parse(reader, ctx)
         } else if (description.match(/can be placed on/i) || description.match(/can be destroyed/i)) {
-            result = new Parsers.Block(true, true).parse(reader, ctx)
+            result = new ctx.parsers.Block(true, true).parse(reader, ctx)
         }
         return result
     }

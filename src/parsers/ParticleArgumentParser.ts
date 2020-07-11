@@ -7,7 +7,6 @@ import { ArgumentParserResult, combineArgumentParserResult } from '../types/Pars
 import { ParsingContext } from '../types/ParsingContext'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
-import { Parsers } from './Parsers'
 
 export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
     static identity = 'Particle'
@@ -23,7 +22,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
         }
         const start = reader.cursor
 
-        const typeResult = new Parsers.Identity('minecraft:particle_type').parse(reader, ctx)
+        const typeResult = new ctx.parsers.Identity('minecraft:particle_type').parse(reader, ctx)
         const type = typeResult.data as IdentityNode
         combineArgumentParserResult(ans, typeResult)
         ans.data.id = type
@@ -34,7 +33,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     reader
                         .expect(' ')
                         .skip()
-                    const colorResult = new Parsers.Vector(
+                    const colorResult = new ctx.parsers.Vector(
                         3, 'float', false, false,
                         [0, 0, 0],
                         [1, 1, 1]
@@ -57,7 +56,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         .expect(' ')
                         .skip()
                     const sizeStart = reader.cursor
-                    const sizeResult: ArgumentParserResult<NumberNode> = new Parsers.Number('float').parse(reader, ctx)
+                    const sizeResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
                     const sizeNode = new VectorElementNode(VectorElementType.Absolute, sizeResult.data.valueOf(), sizeResult.data.toString())
                     sizeNode[NodeRange] = { start: sizeStart, end: reader.cursor }
                     combineArgumentParserResult(ans, colorResult)
@@ -70,7 +69,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     reader
                         .expect(' ')
                         .skip()
-                    const blockResult = new Parsers.Block().parse(reader, ctx)
+                    const blockResult = new ctx.parsers.Block().parse(reader, ctx)
                     const block = blockResult.data
                     combineArgumentParserResult(ans, blockResult)
                     ans.data.param = block
@@ -79,7 +78,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     reader
                         .expect(' ')
                         .skip()
-                    const itemResult = new Parsers.Item().parse(reader, ctx)
+                    const itemResult = new ctx.parsers.Item().parse(reader, ctx)
                     const item = itemResult.data
                     combineArgumentParserResult(ans, itemResult)
                     ans.data.param = item

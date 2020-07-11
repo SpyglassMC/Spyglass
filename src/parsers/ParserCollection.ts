@@ -24,30 +24,30 @@ import { UuidArgumentParser } from './UuidArgumentParser'
 import { VectorArgumentParser } from './VectorArgumentParser'
 import { CodeSnippetArgumentParser } from './CodeSnippetArgumentParser'
 
-export namespace Parsers {
-    export const Block = BlockArgumentParser
-    export const CodeSnippet = CodeSnippetArgumentParser
-    export const DefinitionDescription = DefinitionDescriptionArgumentParser
-    export const DefinitionID = DefinitionIDArgumentParser
-    export const Entity = EntityArgumentParser
-    export const Item = ItemArgumentParser
-    export const ItemSlot = ItemSlotArgumentParser
-    export const Literal = LiteralArgumentParser
-    export const Message = MessageArgumentParser
-    export const Identity = IdentityArgumentParser
-    export const NbtPath = NbtPathArgumentParser
-    export const Nbt = NbtArgumentParser
-    export const Number = NumberArgumentParser
-    export const NumberRange = NumberRangeArgumentParser
-    export const Objective = ObjectiveArgumentParser
-    export const ObjectiveCriterion = ObjectiveCriterionArgumentParser
-    export const Particle = ParticleArgumentParser
-    export const ScoreboardSlot = ScoreboardSlotArgumentParser
-    export const String = StringArgumentParser
-    export const Tag = TagArgumentParser
-    export const Team = TeamArgumentParser
-    export const TextComponent = TextComponentArgumentParser
-    export const Time = TimeArgumentParser
-    export const Uuid = UuidArgumentParser
-    export const Vector = VectorArgumentParser
+export class ParserCollection {
+    readonly Block = BlockArgumentParser
+    readonly CodeSnippet = CodeSnippetArgumentParser
+    readonly DefinitionDescription = DefinitionDescriptionArgumentParser
+    readonly DefinitionID = DefinitionIDArgumentParser
+    readonly Entity = EntityArgumentParser
+    readonly Item = ItemArgumentParser
+    readonly ItemSlot = ItemSlotArgumentParser
+    readonly Literal = LiteralArgumentParser
+    readonly Message = MessageArgumentParser
+    readonly Identity = IdentityArgumentParser
+    readonly NbtPath = NbtPathArgumentParser
+    readonly Nbt = NbtArgumentParser
+    readonly Number = NumberArgumentParser
+    readonly NumberRange = NumberRangeArgumentParser
+    readonly Objective = ObjectiveArgumentParser
+    readonly ObjectiveCriterion = ObjectiveCriterionArgumentParser
+    readonly Particle = ParticleArgumentParser
+    readonly ScoreboardSlot = ScoreboardSlotArgumentParser
+    readonly String = StringArgumentParser
+    readonly Tag = TagArgumentParser
+    readonly Team = TeamArgumentParser
+    readonly TextComponent = TextComponentArgumentParser
+    readonly Time = TimeArgumentParser
+    readonly Uuid = UuidArgumentParser
+    readonly Vector = VectorArgumentParser
 }

@@ -579,7 +579,7 @@ describe('NbtdocHelper Tests', () => {
                 const ans = { cache: {}, completions: [], errors: [], tokens: [] }
                 const config = constructConfig({})
                 const ctx = constructContext({ config, cache: TestCache })
-                const description = ' The tagsA on the entity'
+                const description = ' The tags on the entity'
 
                 const helper = new NbtdocHelper(TestNbtdoc)
                 helper.completeField(ans, ctx, doc, isPredicate, description)

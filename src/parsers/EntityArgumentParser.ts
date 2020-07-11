@@ -16,7 +16,6 @@ import { arrayToCompletions, getNbtdocRegistryId } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 import { MapParser } from './MapParser'
-import { Parsers } from './Parsers'
 import { StringType } from './StringArgumentParser'
 
 export class EntityArgumentParser extends ArgumentParser<EntityNode> {
@@ -221,7 +220,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 EntitySelectorNodeChars,
                 (argumentAns, reader, ctx) => {
                     const start = reader.cursor
-                    const result = new Parsers.String(
+                    const result = new ctx.parsers.String(
                         StringType.String,
                         SelectorArgumentKeys.filter(v => !excludedArguments.includes(v)),
                         'selectorKeyQuote', 'selectorKeyQuoteType'
@@ -237,18 +236,18 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 (argumentAns, reader, ctx, key) => {
                     if (key === 'sort') {
                         const start = reader.cursor
-                        const result = new Parsers.Literal('arbitrary', 'furthest', 'nearest', 'random').parse(reader, ctx)
+                        const result = new ctx.parsers.Literal('arbitrary', 'furthest', 'nearest', 'random').parse(reader, ctx)
                         if (result.data) {
                             argumentAns.data.sort = result.data as SelectorSortMethod
                         }
                         result.tokens = [Token.from(start, reader, TokenType.string)]
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'x' || key === 'y' || key === 'z' || key === 'dx' || key === 'dy' || key === 'dz') {
-                        const result: ArgumentParserResult<NumberNode> = new Parsers.Number('float').parse(reader, ctx)
+                        const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
                         argumentAns.data[key] = result.data
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'limit') {
-                        const result: ArgumentParserResult<NumberNode> = new Parsers.Number('integer', 1).parse(reader, ctx)
+                        const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('integer', 1).parse(reader, ctx)
                         argumentAns.data.limit = result.data
                         if (argumentAns.data.limit.valueOf() === 1) {
                             isMultiple = false
@@ -257,31 +256,31 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         }
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'gamemode') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Literal('adventure', 'creative', 'spectator', 'survival'), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Literal('adventure', 'creative', 'spectator', 'survival'), key)
                     } else if (key === 'name') {
-                        dealWithNegativableArray(argumentAns, new Parsers.String(StringType.String, null, 'stringQuote', 'stringQuoteType'), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.String(StringType.String, null, 'stringQuote', 'stringQuoteType'), key)
                     } else if (key === 'nbt') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Nbt(
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Nbt(
                             'Compound', 'minecraft:entity', getNbtdocRegistryId(ans.data), true
                         ), key)
                     } else if (key === 'predicate') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Identity('$predicate'), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Identity('$predicate'), key)
                     } else if (key === 'tag') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Tag(), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Tag(), key)
                     } else if (key === 'team') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Team(), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Team(), key)
                     } else if (key === 'type') {
-                        dealWithNegativableArray(argumentAns, new Parsers.Identity('minecraft:entity_type', true), key)
+                        dealWithNegativableArray(argumentAns, new ctx.parsers.Identity('minecraft:entity_type', true), key)
                     } else if (key === 'distance') {
-                        const result = new Parsers.NumberRange('float').parse(reader, ctx)
+                        const result = new ctx.parsers.NumberRange('float').parse(reader, ctx)
                         argumentAns.data[key] = result.data
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'x_rotation' || key === 'y_rotation') {
-                        const result = new Parsers.NumberRange('float', true).parse(reader, ctx)
+                        const result = new ctx.parsers.NumberRange('float', true).parse(reader, ctx)
                         argumentAns.data[key] = result.data
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'level') {
-                        const result = new Parsers.NumberRange('integer').parse(reader, ctx)
+                        const result = new ctx.parsers.NumberRange('integer').parse(reader, ctx)
                         argumentAns.data[key] = result.data
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'advancements') {
@@ -292,7 +291,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         new MapParser<SelectorAdvancementsNode>(
                             SelectorArgumentNodeChars,
                             (ans, reader, ctx) => {
-                                const result = new Parsers.Identity('$advancement').parse(reader, ctx)
+                                const result = new ctx.parsers.Identity('$advancement').parse(reader, ctx)
                                 const adv = result.data.toString()
                                 /* istanbul ignore else */
                                 if (adv) {
@@ -311,7 +310,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                         SelectorArgumentNodeChars,
                                         (criteriaAns, reader, ctx) => {
                                             const start = reader.cursor
-                                            const result = new Parsers.String(
+                                            const result = new ctx.parsers.String(
                                                 StringType.String, null, 'selectorKeyQuote', 'selectorKeyQuoteType'
                                             ).parse(reader, ctx)
                                             result.tokens = [Token.from(start, reader, TokenType.property)]
@@ -324,7 +323,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                         },
                                         (criteriaAns, reader, ctx, crit) => {
                                             const start = reader.cursor
-                                            const boolResult: ArgumentParserResult<string> = new Parsers.Literal('false', 'true').parse(reader, ctx)
+                                            const boolResult: ArgumentParserResult<string> = new ctx.parsers.Literal('false', 'true').parse(reader, ctx)
                                             const bool = boolResult.data.toLowerCase() === 'true'
                                             boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
                                             criteriaAns.data[crit] = bool
@@ -334,7 +333,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                                     combineArgumentParserResult(ans, criteriaAns)
                                 } else {
                                     const start = reader.cursor
-                                    const boolResult: ArgumentParserResult<string> = new Parsers.Literal('false', 'true').parse(reader, ctx)
+                                    const boolResult: ArgumentParserResult<string> = new ctx.parsers.Literal('false', 'true').parse(reader, ctx)
                                     const bool = boolResult.data.toLowerCase() === 'true'
                                     boolResult.tokens = [Token.from(start, reader, TokenType.boolean)]
                                     ans.data[adv] = bool
@@ -353,10 +352,10 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         new MapParser<SelectorScoresNode>(
                             SelectorArgumentNodeChars,
                             (_scoresAns, reader, ctx) => {
-                                return new Parsers.Objective().parse(reader, ctx)
+                                return new ctx.parsers.Objective().parse(reader, ctx)
                             },
                             (scoresAns, reader, ctx, objective) => {
-                                const rangeResult: ArgumentParserResult<NumberRangeNode> = new Parsers.NumberRange('integer').parse(reader, ctx)
+                                const rangeResult: ArgumentParserResult<NumberRangeNode> = new ctx.parsers.NumberRange('integer').parse(reader, ctx)
                                 scoresAns.data[objective] = rangeResult.data
                                 combineArgumentParserResult(scoresAns, rangeResult)
                             }

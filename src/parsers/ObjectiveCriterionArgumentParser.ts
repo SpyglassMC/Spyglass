@@ -4,44 +4,11 @@ import { IdentityNode } from '../nodes/IdentityNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
+import { scoreboard } from '../types/scoreboard'
 import { Token, TokenType } from '../types/Token'
 import { arrayToCompletions, arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
-import { ScoreboardSlotArgumentParser } from './ScoreboardSlotArgumentParser'
-import { Parsers } from './Parsers'
-
-const RegularSep = '.'
-const StatsSep = ':'
-
-const StatsCategory: { [type: string]: string } = {
-    custom: 'minecraft:custom_stat',
-    crafted: 'minecraft:item',
-    used: 'minecraft:item',
-    broken: 'minecraft:item',
-    mined: 'minecraft:block',
-    killed: 'minecraft:entity_type',
-    killed_by: 'minecraft:entity_type',
-    picked_up: 'minecraft:item',
-    dropped: 'minecraft:item'
-}
-
-const Category: { [type: string]: null | string | string[] } = {
-    air: null,
-    armor: null,
-    deathCount: null,
-    dummy: null,
-    food: null,
-    health: null,
-    level: null,
-    playerKillCount: null,
-    teamkill: ScoreboardSlotArgumentParser.Colors,
-    killedByTeam: ScoreboardSlotArgumentParser.Colors,
-    totalKillCount: null,
-    trigger: null,
-    xp: null,
-    ...StatsCategory
-}
 
 export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     static identity = 'ObjectiveCriterion'
@@ -58,14 +25,14 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
         }
 
         const start = reader.cursor
-        let category = reader.readUntilOrEnd(' ', RegularSep, StatsSep)
-        const pool = ['', 'minecraft', ...Object.keys(Category)]
+        let category = reader.readUntilOrEnd(' ', scoreboard.CriteriaRegularSep, scoreboard.CriteriaStatsSep)
+        const pool = ['', 'minecraft', ...Object.keys(scoreboard.CriteriaCategory)]
         //#region Completions.
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
             ans.completions.push({ label: 'minecraft', kind: CompletionItemKind.Module })
             ans.completions.push(...arrayToCompletions(
-                Object.keys(Category),
-                c => typeof Category[c.label] === 'string' ?
+                Object.keys(scoreboard.CriteriaCategory),
+                c => typeof scoreboard.CriteriaCategory[c.label] === 'string' ?
                     { ...c, kind: CompletionItemKind.Field } : c
             ))
         }
@@ -85,11 +52,11 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
         if (category === 'minecraft' || category === '') {
             try {
                 reader
-                    .expect(RegularSep)
+                    .expect(scoreboard.CriteriaRegularSep)
                     .skip()
                 const start = reader.cursor
-                const statsPool = Object.keys(StatsCategory)
-                category = reader.readUntilOrEnd(' ', StatsSep)
+                const statsPool = Object.keys(scoreboard.CriteriaStatsCategory)
+                category = reader.readUntilOrEnd(' ', scoreboard.CriteriaStatsSep)
                 //#region Completions.
                 if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                     ans.completions.push(...arrayToCompletions(
@@ -113,19 +80,19 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                 ans.errors.push(p)
             }
         }
-        const subCriteria: string[] | string | null = Category[category]
+        const subCriteria: string[] | string | null = scoreboard.CriteriaCategory[category]
         if (subCriteria) {
             try {
                 reader
-                    .expect(typeof subCriteria === 'string' ? StatsSep : RegularSep)
+                    .expect(typeof subCriteria === 'string' ? scoreboard.CriteriaStatsSep : scoreboard.CriteriaRegularSep)
                     .skip()
                 let subResult: ArgumentParserResult<unknown>
                 if (subCriteria instanceof Array) {
-                    subResult = new Parsers.Literal(...subCriteria).parse(reader, ctx)
+                    subResult = new ctx.parsers.Literal(...subCriteria).parse(reader, ctx)
                 } else {
                     const newReader = reader.clone()
-                    newReader.string = newReader.string.replace(new RegExp(`\\${RegularSep}`, 'g'), IdentityNode.NamespaceDelimiter)
-                    subResult = new Parsers.Identity(subCriteria).parse(newReader, ctx)
+                    newReader.string = newReader.string.replace(new RegExp(`\\${scoreboard.CriteriaRegularSep}`, 'g'), IdentityNode.NamespaceDelimiter)
+                    subResult = new ctx.parsers.Identity(subCriteria).parse(newReader, ctx)
                     reader.cursor = newReader.cursor
                 }
                 subResult.tokens = []

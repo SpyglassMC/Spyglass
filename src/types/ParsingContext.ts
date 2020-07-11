@@ -10,6 +10,7 @@ import { Uri } from './handlers'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
+import { ParserCollection } from '../parsers/ParserCollection'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,
@@ -21,6 +22,7 @@ export interface ParsingContext {
     id: IdentityNode | undefined,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
+    parsers: ParserCollection,
     registry: Registry,
     rootIndex: number | null,
     roots: Uri[]
@@ -50,6 +52,7 @@ export function constructContext(
         id: undefined,
         namespaceSummary: vanillaData.NamespaceSummary,
         nbtdoc: vanillaData.Nbtdoc,
+        parsers: new ParserCollection(),
         registry: vanillaData.Registry,
         rootIndex: null,
         roots: [],

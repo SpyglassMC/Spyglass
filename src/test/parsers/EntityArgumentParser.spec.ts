@@ -10,7 +10,7 @@ import { NumberNode } from '../../nodes/NumberNode'
 import { NumberRangeNode } from '../../nodes/NumberRangeNode'
 import { SelectorAdvancementsNode, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode } from '../../nodes/SelectorArgumentsNode'
 import { StringNode } from '../../nodes/StringNode'
-import { EntityArgumentParser, getNbtdocRegistryId } from '../../parsers/EntityArgumentParser'
+import { EntityArgumentParser } from '../../parsers/EntityArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
@@ -632,42 +632,6 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@a[tag=foo,tag=!bar]'), ctx)
                 assert.deepStrictEqual(actual.errors, [])
             })
-        })
-    })
-    describe('getNbtdocRegistryId() Tests', () => {
-        it('Should return the respective id', () => {
-            const id = new IdentityNode('minecraft', ['spgoding'])
-            const argument = new SelectorArgumentsNode()
-            argument.type = [id]
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === 'minecraft:spgoding')
-        })
-        it('Should return minecraft:player for @a', () => {
-            const entity = new EntityNode(undefined, 'a', new SelectorArgumentsNode())
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === 'minecraft:player')
-        })
-        it('Should return null when there is no type', () => {
-            const argument = new SelectorArgumentsNode()
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
-        })
-        it('Should return null when the type is empty', () => {
-            const argument = new SelectorArgumentsNode()
-            argument.type = []
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
-        })
-        it('Should return null when the first type is a tag', () => {
-            const id = new IdentityNode('minecraft', ['spgoding'], true)
-            const argument = new SelectorArgumentsNode()
-            argument.type = [id]
-            const entity = new EntityNode(undefined, 'e', argument)
-            const actual = getNbtdocRegistryId(entity)
-            assert(actual === null)
         })
     })
 })
