@@ -1,7 +1,7 @@
 import { CompletionItem, ProposedFeatures } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
-import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParserSuggestion, ParsingError, TextRange, Token, VanillaConfig } from '../types'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }
@@ -94,4 +94,8 @@ export function mockLineNode(node: LineNodeMockOptions = {}): LineNode {
         errors: node.errors,
         completions: node.completions
     }
+}
+
+export function assertCompletions(completions: (CompletionItem | ParserSuggestion)[], ) {
+    
 }

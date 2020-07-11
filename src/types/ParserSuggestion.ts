@@ -1,6 +1,6 @@
 import { CompletionItem } from 'vscode-languageserver'
 
-interface ParserSuggestion extends CompletionItem {
+export interface ParserSuggestion extends CompletionItem {
     /**
      * The start offset of the CompletionItem.
      */
