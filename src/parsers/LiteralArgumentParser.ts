@@ -54,7 +54,7 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions.
         if (start <= cursor && cursor <= reader.cursor) {
-            ans.completions.push(...arrayToCompletions(this.literals))
+            ans.completions.push(...arrayToCompletions(this.literals, start, reader.cursor))
         }
         //#endregion
         //#region Tokens.

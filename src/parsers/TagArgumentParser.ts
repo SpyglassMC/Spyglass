@@ -28,7 +28,7 @@ export class TagArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'tag'))
+            ans.completions.push(...getCompletions(ctx.cache, 'tag', start, reader.cursor))
         }
         //#endregion
         //#region Tokens

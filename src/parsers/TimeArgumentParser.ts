@@ -37,7 +37,7 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
         ans.data.raw = numberResult.data.toString()
 
         if (ctx.cursor === reader.cursor) {
-            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
+            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units, ctx.cursor, ctx.cursor))
         }
 
         if (StringReader.canInUnquotedString(reader.peek())) {

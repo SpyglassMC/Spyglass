@@ -34,7 +34,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'objective'))
+            ans.completions.push(...getCompletions(ctx.cache, 'objective', start, reader.cursor))
         }
         //#endregion
         //#region Tokens

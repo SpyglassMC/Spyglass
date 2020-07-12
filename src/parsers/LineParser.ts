@@ -78,7 +78,7 @@ export class LineParser implements Parser<LineNode> {
                     ))
                 }
                 if (ctx.cursor === reader.cursor) {
-                    node.completions.push({ label: '/' })
+                    node.completions.push({ label: '/', start: ctx.cursor, end: ctx.cursor })
                 }
             }
         }
@@ -145,6 +145,7 @@ export class LineParser implements Parser<LineNode> {
                         completions.push({
                             label: alias,
                             insertText: unit.doc,
+                            start: reader.cursor, end: reader.cursor,
                             detail: unit.doc,
                             kind: CompletionItemKind.Snippet
                         })

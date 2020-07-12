@@ -4,6 +4,7 @@ import { AdvancementInfo } from './AdvancementInfo'
 import { IndexMapping } from './IndexMapping'
 import { TagInfo } from './TagInfo'
 import { remapTextRange, TextRange } from './TextRange'
+import { ParserSuggestion } from './ParserSuggestion'
 
 export const CacheVersion = 9
 
@@ -266,14 +267,14 @@ export function getSafeCategory(cache: ClientCache | undefined, type: CacheKey) 
     return cache[type] || {}
 }
 
-export function getCompletions(cache: ClientCache, type: CacheKey) {
+export function getCompletions(cache: ClientCache, type: CacheKey, start: number, end: number) {
     const category = getSafeCategory(cache, type)
-    const ans: CompletionItem[] = []
+    const ans: ParserSuggestion[] = []
     for (const id in category) {
         const unit = category[id] as CacheUnit
         const documentation = unit.doc || undefined
         ans.push({
-            ...{ label: id },
+            ...{ label: id, start, end },
             ...(documentation ? { documentation: { kind: MarkupKind.Markdown, value: documentation } } : {})
         })
     }

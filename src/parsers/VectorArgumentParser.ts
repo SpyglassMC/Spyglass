@@ -1,7 +1,8 @@
-import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
+import { ParserSuggestion } from '../types'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
@@ -29,9 +30,10 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         this.identity = `vector.${dimension}D`
     }
 
-    private getVectorCompletion(type: VectorElementType) {
-        const ans: CompletionItem = {
+    private getVectorCompletion(type: VectorElementType, cursor: number) {
+        const ans: ParserSuggestion = {
             label: type, insertText: `${type}$1`,
+            start: cursor, end: cursor,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Snippet,
             preselect: true,
@@ -55,10 +57,10 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         //#region Completions.
         if (start === cursor) {
             if (this.allowLocal) {
-                ans.completions.push(this.getVectorCompletion(VectorElementType.Local))
+                ans.completions.push(this.getVectorCompletion(VectorElementType.Local, cursor))
             }
             if (this.allowRelative) {
-                ans.completions.push(this.getVectorCompletion(VectorElementType.Relative))
+                ans.completions.push(this.getVectorCompletion(VectorElementType.Relative, cursor))
             }
         }
         //#endregion
@@ -118,7 +120,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
                 false
             ))
             if (cursor === start) {
-                this.getCompletionsForSymbols(ans, false, false)
+                this.getCompletionsForSymbols(ans, false, false, cursor)
             }
         }
 
@@ -139,7 +141,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         const start = reader.cursor
 
         if (cursor === reader.cursor) {
-            this.getCompletionsForSymbols(ans, hasLocal, hasNonLocal)
+            this.getCompletionsForSymbols(ans, hasLocal, hasNonLocal, cursor)
         }
 
         const firstChar = reader.peek()
@@ -208,15 +210,17 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
         return ansElement
     }
 
-    private getCompletionsForSymbols(ans: ArgumentParserResult<any>, hasLocal: boolean, hasNonLocal: boolean) {
+    private getCompletionsForSymbols(ans: ArgumentParserResult<any>, hasLocal: boolean, hasNonLocal: boolean, cursor: number) {
         if (this.allowRelative && !hasLocal) {
             ans.completions.push({
+                start: cursor, end: cursor,
                 label: VectorElementType.Relative,
                 sortText: VectorArgumentParser.RelativeSortText
             })
         }
         if (this.allowLocal && !hasNonLocal) {
             ans.completions.push({
+                start: cursor, end: cursor,
                 label: VectorElementType.Local,
                 sortText: VectorArgumentParser.LocalSortText
             })

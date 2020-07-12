@@ -3,6 +3,7 @@ import { StringReader } from '../utils/StringReader'
 import { ClientCache, combineCache } from './ClientCache'
 import { downgradeParsingError, ParsingError } from './ParsingError'
 import { Token } from './Token'
+import { ParserSuggestion } from './ParserSuggestion'
 
 /**
  * Represent an argument parser.
@@ -49,7 +50,7 @@ export interface LegacyValidateResult extends ValidateResult {
     /**
      * Completions.
      */
-    completions: CompletionItem[]
+    completions: ParserSuggestion[]
 }
 
 /**

@@ -1,7 +1,7 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
@@ -13,7 +13,7 @@ import { loadLocale, locale } from './locales'
 import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { constructContext, ParsingError } from './types'
+import { constructContext, ParserSuggestion, ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
@@ -373,7 +373,7 @@ connection.onInitialized(() => {
                     return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
                 }
             } else {
-                const ans: CompletionItem[] = []
+                const ans: ParserSuggestion[] = []
                 const schemas = await getJsonSchemas(info.config.env.jsonVersion)
                 const schema = schemas.get(info.node.schemaType)
                 const ctx: JsonSchemaHelperOptions = {

@@ -1,9 +1,9 @@
 import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, SchemaRegistry, ValidationOption } from '@mcschema/core'
-import { ArrayASTNode, ASTNode, CompletionItem, ObjectASTNode } from 'vscode-json-languageservice'
-import { handleCompletionText, quoteString, remapCompletionItem } from '.'
+import { ArrayASTNode, ASTNode, ObjectASTNode } from 'vscode-json-languageservice'
+import { handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
-import { LineParser } from '../parsers'
-import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
+import { LineParser } from '../parsers/LineParser'
+import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
 
 // TODO: JSON
@@ -31,7 +31,7 @@ export class JsonSchemaHelper {
         )
     }
 
-    static suggest(ans: CompletionItem[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
+    static suggest(ans: ParserSuggestion[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
         const { ctx } = options
         const model = new DataModel(schema, { historyMax: 1 })
         const path = new Path([], [], model)
@@ -57,7 +57,11 @@ export class JsonSchemaHelper {
                 // TODO
             }
             if (result?.completions) {
-                ans.push(...result.completions.map(v => remapCompletionItem(this.escapeCompletion(v), out.mapping)))
+                ans.push(...result.completions.map(v => {
+                    const ans = remapParserSuggestion(this.escapeCompletion(v), out.mapping)
+                    ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.document.positionAt(ans.start), end: ctx.document.positionAt(ans.end) } }
+                    return ans
+                }))
             }
         }
     }
@@ -149,7 +153,7 @@ export class JsonSchemaHelper {
         return {}
     }
 
-    private static escapeCompletion(origin: CompletionItem) {
+    private static escapeCompletion(origin: ParserSuggestion) {
         return handleCompletionText(origin, str => quoteString(str, 'always double', true).slice(1, -1))
     }
 

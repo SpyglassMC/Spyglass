@@ -12,7 +12,7 @@ describe('Parser Tests', () => {
                 tokens: [new Token({ start: 0, end: 1 }, TokenType.comment)],
                 cache: { entity: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
-                completions: [{ label: 'a' }]
+                completions: [{ label: 'a', start: 0, end: Infinity }]
             }
             const override = {
                 data: 'override',
@@ -25,7 +25,7 @@ describe('Parser Tests', () => {
                     }
                 },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
-                completions: [{ label: 'b' }]
+                completions: [{ label: 'b', start: 0, end: Infinity }]
             }
             combineArgumentParserResult(base, override)
             assert.deepStrictEqual(base.cache, {
@@ -43,7 +43,7 @@ describe('Parser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'Old'),
                 new ParsingError({ start: 0, end: 3 }, 'New')
             ])
-            assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
+            assert.deepStrictEqual(base.completions, [{ label: 'a', start: 0, end: Infinity }, { label: 'b', start: 0, end: Infinity }])
         })
     })
 })

@@ -6,6 +6,7 @@ import { ParsingError } from './ParsingError'
 import { Token } from './Token'
 import { NodeRange } from '../nodes'
 import { TextRange } from './TextRange'
+import { ParserSuggestion } from './ParserSuggestion'
 
 /**
  * Represent a parsed line in a function.
@@ -44,7 +45,7 @@ export interface LineNode {
     /**
      * All completions in this line.
      */
-    completions?: CompletionItem[]
+    completions?: ParserSuggestion[]
 }
 
 export type SaturatedLineNode = Required<LineNode>

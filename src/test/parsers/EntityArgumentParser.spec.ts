@@ -316,11 +316,11 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(reader, ctx)
                 assertCompletions(reader, actual.completions,
                     [
-                        { label: 'a', t: 'a' },
-                        { label: 'e', t: 'e' },
-                        { label: 'p', t: 'p' },
-                        { label: 'r', t: 'r' },
-                        { label: 's', t: 's' }
+                        { label: 'a', t: '@a' },
+                        { label: 'e', t: '@e' },
+                        { label: 'p', t: '@p' },
+                        { label: 'r', t: '@r' },
+                        { label: 's', t: '@s' }
                     ]
                 )
             })
@@ -499,7 +499,7 @@ describe('EntityArgumentParser Tests', () => {
                 const reader = new StringReader('@a[ gamemode = ]')
                 const actual = parser.parse(reader, ctx)
                 assertCompletions(reader, actual.completions, [
-                    { label: '!', t: '@a[ gamemode = ]!' },
+                    { label: '!', t: '@a[ gamemode = !]' },
                     { label: 'adventure', t: '@a[ gamemode = adventure]' },
                     { label: 'creative', t: '@a[ gamemode = creative]' },
                     { label: 'spectator', t: '@a[ gamemode = spectator]' },

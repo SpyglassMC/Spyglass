@@ -1,9 +1,11 @@
 import clone from 'clone'
+import deepEqual from 'deep-equal'
 import https from 'https'
 import { EOL } from 'os'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { EntityNode } from '../nodes/EntityNode'
+import { ParserSuggestion } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
 import { getOuterIndex, IndexMapping } from '../types/IndexMapping'
@@ -158,11 +160,11 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
 }
 
 /**
- * Convert an array of any to an array of `CompletionItem`.
+ * Convert an array of any to an array of `ParserSuggestion`.
  * @param array An array
  */
-export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c): CompletionItem[] {
-    return array.map(v => cb({ label: v.toString() }))
+export function arrayToCompletions(array: any[], start: number, end: number, cb = (c: ParserSuggestion) => c): ParserSuggestion[] {
+    return array.map(v => cb({ label: v.toString(), start, end }))
 }
 
 /**
@@ -244,19 +246,26 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
  * @param param1 The mapping used to offset.
  * @returns A new cloned CompletionItem.
  */
-export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, getPosition: (offset: number) => Position): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset: number) => Position)) {
+export function remapParserSuggestion(completion: ParserSuggestion, mapping: IndexMapping): ParserSuggestion
+export function remapParserSuggestion(completion: CompletionItem, getPosition: (offset: number) => Position): ParserSuggestion
+export function remapParserSuggestion(completion: ParserSuggestion, param1: IndexMapping | ((offset: number) => Position)) {
     const ans = clone(completion)
-    if (ans.textEdit) {
-        const range = ans.textEdit.range
-        if (param1 instanceof Function) {
-            range.start = param1(range.start.character)
-            range.end = param1(range.end.character)
-        } else {
+    if (param1 instanceof Function) {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
+            ans.start = range.start.character
+            ans.end = range.end.character
+            range.start = param1(ans.start)
+            range.end = param1(ans.end)
+        }
+    } else {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
             range.start.character = getOuterIndex(param1, range.start.character)
             range.end.character = getOuterIndex(param1, range.end.character)
         }
+        ans.start = getOuterIndex(param1, ans.start)
+        ans.end = getOuterIndex(param1, ans.end)
     }
     return ans
 }
@@ -265,7 +274,7 @@ export function remapCompletionItem(completion: CompletionItem, param1: IndexMap
  * @param origin Won't be changed.
  * @returns A new CompletionItem.
  */
-export function handleCompletionText(origin: CompletionItem, cb: (str: string) => string) {
+export function handleCompletionText<T extends CompletionItem>(origin: T, cb: (str: string) => string) {
     let label = origin.label
     let insertText: string | undefined
     let textEdit: TextEdit | undefined
@@ -289,9 +298,9 @@ export function handleCompletionText(origin: CompletionItem, cb: (str: string) =
     }
 }
 
-export function removeDupliateCompletions(completions: CompletionItem[]): CompletionItem[] {
+export function removeDupliateCompletions(completions: ParserSuggestion[]): ParserSuggestion[] {
     return completions.filter((completion, i) =>
-        completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
+        completions.findIndex(v => deepEqual(completion, v)) === i
     )
 }
 

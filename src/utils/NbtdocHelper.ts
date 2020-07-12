@@ -1,6 +1,6 @@
 import clone from 'clone'
-import { CompletionItem, CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
-import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapCompletionItem, removeDupliateCompletions, validateStringQuote } from '.'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
+import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapParserSuggestion, removeDupliateCompletions, validateStringQuote } from '.'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
@@ -23,6 +23,7 @@ import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
 import { LineParser } from '../parsers/LineParser'
+import { ParserSuggestion } from '../types'
 import { combineCache, remapCachePosition } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
@@ -205,7 +206,7 @@ export class NbtdocHelper {
         return null
     }
 
-    completeField(ans: LegacyValidateResult, ctx: ParsingContext, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string) {
+    completeField(ans: LegacyValidateResult, ctx: ParsingContext, doc: nbtdoc.NbtValue | null, isPredicate: boolean, description: string, start: number, end: number) {
         /* istanbul ignore else */
         if (doc) {
             /* istanbul ignore else */
@@ -216,7 +217,7 @@ export class NbtdocHelper {
             } else if (NbtdocHelper.isCompoundDoc(doc)) {
                 this.completeCompoundField(ans, ctx, doc)
             } else if (NbtdocHelper.isEnumDoc(doc)) {
-                this.completeEnumField(ans, ctx, doc)
+                this.completeEnumField(ans, ctx, doc, start, end)
             } else if (NbtdocHelper.isIdDoc(doc)) {
                 this.completeIdField(ans, ctx, doc, isPredicate)
             } else if (NbtdocHelper.isIntArrayDoc(doc)) {
@@ -234,45 +235,46 @@ export class NbtdocHelper {
         }
     }
 
-    private completeOpenCloseField(ans: LegacyValidateResult, lint: LintConfig, node: NbtCollectionNode<NbtNode> | NbtCompoundNode) {
+    private completeOpenCloseField(ans: LegacyValidateResult, lint: LintConfig, cursor: number, node: NbtCollectionNode<NbtNode> | NbtCompoundNode) {
         const open = node[GetFormattedOpen](lint)
         const close = node[GetFormattedClose](lint)
         ans.completions.push({
+            start: cursor, end: cursor,
             label: `${open}${close}`,
             insertText: `${open}$1${close}`,
             insertTextFormat: InsertTextFormat.Snippet
         })
     }
-    private completeByteArrayField(ans: LegacyValidateResult, { config: { lint } }: ParsingContext, _doc: ByteArrayDoc) {
-        this.completeOpenCloseField(ans, lint, new NbtByteArrayNode(null))
+    private completeByteArrayField(ans: LegacyValidateResult, { config: { lint }, cursor }: ParsingContext, _doc: ByteArrayDoc) {
+        this.completeOpenCloseField(ans, lint, cursor, new NbtByteArrayNode(null))
     }
-    private completeCompoundField(ans: LegacyValidateResult, { config: { lint } }: ParsingContext, _doc: CompoundDoc) {
-        this.completeOpenCloseField(ans, lint, new NbtCompoundNode(null))
+    private completeCompoundField(ans: LegacyValidateResult, { config: { lint }, cursor }: ParsingContext, _doc: CompoundDoc) {
+        this.completeOpenCloseField(ans, lint, cursor, new NbtCompoundNode(null))
     }
-    private completeIntArrayField(ans: LegacyValidateResult, { config: { lint } }: ParsingContext, _doc: IntArrayDoc) {
-        this.completeOpenCloseField(ans, lint, new NbtIntArrayNode(null))
+    private completeIntArrayField(ans: LegacyValidateResult, { config: { lint }, cursor }: ParsingContext, _doc: IntArrayDoc) {
+        this.completeOpenCloseField(ans, lint, cursor, new NbtIntArrayNode(null))
     }
-    private completeListField(ans: LegacyValidateResult, { config: { lint } }: ParsingContext, _doc: ListDoc) {
-        this.completeOpenCloseField(ans, lint, new NbtListNode(null))
+    private completeListField(ans: LegacyValidateResult, { config: { lint }, cursor }: ParsingContext, _doc: ListDoc) {
+        this.completeOpenCloseField(ans, lint, cursor, new NbtListNode(null))
     }
-    private completeLongArrayField(ans: LegacyValidateResult, { config: { lint } }: ParsingContext, _doc: LongArrayDoc) {
-        this.completeOpenCloseField(ans, lint, new NbtLongArrayNode(null))
+    private completeLongArrayField(ans: LegacyValidateResult, { config: { lint }, cursor }: ParsingContext, _doc: LongArrayDoc) {
+        this.completeOpenCloseField(ans, lint, cursor, new NbtLongArrayNode(null))
     }
     private completeBooleanField(ans: LegacyValidateResult, ctx: ParsingContext, _doc: BooleanDoc) {
         if (!ctx.config.lint.nbtBoolean || ctx.config.lint.nbtBoolean[1]) {
-            ans.completions.push(...arrayToCompletions(['false', 'true']))
+            ans.completions.push(...arrayToCompletions(['false', 'true'], ctx.cursor, ctx.cursor))
         }
         if (!ctx.config.lint.nbtBoolean || !ctx.config.lint.nbtBoolean[1]) {
             ans.completions.push(...arrayToCompletions([
                 NbtdocHelper.getFormattedString(ctx.config.lint, 'Byte', 0),
                 NbtdocHelper.getFormattedString(ctx.config.lint, 'Byte', 1)
-            ]))
+            ], ctx.cursor, ctx.cursor))
         }
     }
     private static handleDescription(str: string) {
         return str.trim().replace(/\n\s/g, '\n')
     }
-    completeCompoundKeys(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc | IndexDoc | null, currentType: 'always double' | 'always single' | null) {
+    completeCompoundKeys(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtCompoundNode, doc: CompoundDoc | IndexDoc | null, currentType: 'always double' | 'always single' | null, start: number, end: number) {
         const existingKeys = Object.keys(tag)
         const compoundDoc = this.readCompound(
             this.resolveCompoundOrIndexDoc(doc, tag[SuperNode], ctx)
@@ -290,6 +292,7 @@ export class NbtdocHelper {
                 NbtdocHelper.escapeCompletion(
                     {
                         label: key, insertText: key,
+                        start, end,
                         kind: CompletionItemKind.Property,
                         detail: NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype)),
                         /* istanbul ignore next */
@@ -302,7 +305,7 @@ export class NbtdocHelper {
             )
         }
     }
-    private completeEnumField(ans: LegacyValidateResult, ctx: ParsingContext, doc: EnumDoc) {
+    private completeEnumField(ans: LegacyValidateResult, ctx: ParsingContext, doc: EnumDoc, start: number, end: number) {
         const { et } = this.readEnum(doc.Enum)
         const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
         const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
@@ -311,6 +314,7 @@ export class NbtdocHelper {
                 const { description, value } = options[key]
                 const handledDescription = NbtdocHelper.handleDescription(description)
                 ans.completions.push({
+                    start, end,
                     label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
                     detail: NbtdocHelper.localeType(type),
                     documentation: handledDescription ? `${key}  \n${handledDescription}` : key,
@@ -583,7 +587,7 @@ export class NbtdocHelper {
     }
 
     /* istanbul ignore next */
-    private static escapeCompletion(origin: CompletionItem, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>, currentType: 'always double' | 'always single' | null) {
+    private static escapeCompletion(origin: ParserSuggestion, quoteConfig: DiagnosticConfig<boolean>, quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig>, currentType: 'always double' | 'always single' | null) {
         return handleCompletionText(origin, str => NbtdocHelper.quoteCompletionText(str, quoteConfig, quoteTypeConfig, currentType))
     }
 
@@ -881,7 +885,7 @@ export class NbtdocHelper {
                 ans.errors.push(...downgradedErrors)
             }
             if (result.completions) {
-                ans.completions.push(...result.completions.map(v => remapCompletionItem(v, tag.mapping)))
+                ans.completions.push(...result.completions.map(v => remapParserSuggestion(v, tag.mapping)))
             }
             if (result.tokens) {
                 ans.tokens.push(...remapTokens(result.tokens, tag.mapping))

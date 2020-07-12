@@ -59,7 +59,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
                 }
             }
         } else if (this.type === 'completion') {
-            ans.completions = [{ label: 'completion' }]
+            ans.completions = [{ label: 'completion', start, end: reader.cursor }]
         } else if (this.type === 'only_one_char') {
             ans.data = ans.data.slice(0, 1)
             reader.cursor = start + 1
@@ -685,7 +685,7 @@ describe('LineParser Tests', () => {
                         false
                     )],
                     completions: [
-                        { label: '/' }
+                        { label: '/', start: 0, end: 0 }
                     ]
                 }
             })

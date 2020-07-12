@@ -2,7 +2,7 @@ import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { Registry } from '../types'
+import { Registry, TextRange } from '../types'
 import { CacheKey, ClientCache, getSafeCategory, isFileType } from '../types/ClientCache'
 import { Config } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
@@ -53,12 +53,13 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#endregion
 
         //#region Data.
+        let selectedRange: TextRange | undefined = undefined
         let namespace: string | undefined = undefined;
-        ({ namespace, isTag, stringID } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
+        ({ namespace, isTag, stringID, selectedRange } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
         //#endregion
 
         //#region Completions: apply.
-        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles)
+        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles, selectedRange?.start ?? ctx.cursor, selectedRange?.end ?? ctx.cursor)
         //#endregion
 
         //#region Errors.
@@ -103,13 +104,15 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const namespaceSeverity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
 
         let path0 = this.readValidString(reader, ans)
-        this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool);
-        ({ path0, namespace, pool } = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths))
-        this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles)
+        let selectedRange = this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool)
+        const path0Result = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths);
+        ({ path0, namespace, pool, selectedRange } = path0Result)
+        selectedRange = path0Result.selectedRange ?? selectedRange
+        selectedRange = this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles) ?? selectedRange
 
         ans.data = new IdentityNode(namespace, paths, isTag)
         stringID = ans.data.toString()
-        return { namespace, isTag, stringID }
+        return { namespace, isTag, stringID, selectedRange }
     }
 
     private addEmptyError(start: number, ans: ArgumentParserResult<IdentityNode>) {
@@ -139,7 +142,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
-    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, start: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
+    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, idStart: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, suggestionStart: number, suggestionEnd: number) {
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
@@ -160,24 +163,28 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
         complNamespaces.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: CompletionItemKind.Module
         }))
         complFolders.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: CompletionItemKind.Folder
         }))
         complFiles.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: fileKind
         }))
 
         // Add 'THIS' to completions
-        if (start === ctx.cursor && ctx.id &&
+        if (idStart === ctx.cursor && ctx.id &&
             typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
         ) {
             ans.completions.push({
                 label: 'THIS',
                 insertText: ctx.id.toTagString(),
+                start: suggestionStart, end: suggestionEnd,
                 detail: ctx.id.toTagString(),
                 kind: CompletionItemKind.Snippet
             })
@@ -227,14 +234,24 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private completeBeginning(shouldOmit: boolean | null, start: number, cursor: number, reader: StringReader, isTag: boolean, tagPool: string[], complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, pool: string[]) {
+        let selectedRange: TextRange | undefined = undefined
         if (start <= cursor && cursor <= reader.cursor) {
             this.completeBeginningFromTagPoolIfApplicable(isTag, tagPool, shouldOmit, complNamespaces, complFolders, complFiles)
             this.completeBeginningFromCurrentPool(pool, shouldOmit, complNamespaces, complFolders, complFiles)
+            selectedRange = { start, end: reader.cursor }
         }
+        return selectedRange
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private parseNamespaceAndFirstPath(reader: StringReader, shouldOmit: boolean | null, path0: string, ans: ArgumentParserResult<IdentityNode>, start: number, severity: DiagnosticSeverity, namespace: string | undefined, pool: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>, paths: string[]) {
+        let selectedRange: TextRange | undefined = undefined
         if (reader.peek() === IdentityNode.NamespaceDelimiter) {
             // `path0` is the namespace.
             if (shouldOmit === true && path0 === IdentityNode.DefaultNamespace) {
@@ -257,6 +274,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles)
                 }
+                selectedRange = { start: pathStart, end: reader.cursor }
             }
             //#endregion
         } else {
@@ -273,10 +291,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         paths.push(path0)
-        return { path0, namespace, pool }
+        return { path0, namespace, pool, selectedRange }
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private parseRemaningPaths(reader: StringReader, ans: ArgumentParserResult<IdentityNode>, pool: string[], paths: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>) {
+        let selectedRange: TextRange | undefined = undefined
         while (reader.peek() === IdentityNode.PathSep) {
             reader.skip()
             const start = reader.cursor
@@ -288,10 +310,12 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles, paths.length)
                 }
+                selectedRange = { start, end: reader.cursor }
             }
             //#endregion
             paths.push(path)
         }
+        return selectedRange
     }
 
     private completeBeginningFromCurrentPool(pool: string[], shouldOmit: boolean | null, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
@@ -488,7 +512,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     /**
      * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
      */
-    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>) {
+    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>): string {
         const start = reader.cursor
         const value = reader.readUnquotedString()
         const end = reader.cursor

@@ -47,16 +47,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
         }
         const start = reader.cursor
 
-        // Completions
-        if (ctx.cursor === start) {
-            ans.completions.push(...getCompletions(ctx.cache, 'entity'))
-            if (this.isScoreHolder) {
-                ans.completions.push(...getCompletions(ctx.cache, 'score_holder'))
-            }
-            ans.completions.push(...arrayToCompletions(['@a', '@e', '@p', '@r', '@s']))
-        }
-
-        // Data
+        //#region Data.
         let plain
         if (this.isScoreHolder) {
             plain = reader.readUntilOrEnd(' ')
@@ -67,8 +58,19 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             ans.data.plain = plain
             ans.tokens.push(Token.from(start, reader, TokenType.entity))
         }
+        //#endregion
 
-        // Errors
+        //#region Completions.
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+            ans.completions.push(...getCompletions(ctx.cache, 'entity', start, ctx.cursor))
+            if (this.isScoreHolder) {
+                ans.completions.push(...getCompletions(ctx.cache, 'score_holder', start, ctx.cursor))
+            }
+            ans.completions.push(...arrayToCompletions(['@a', '@e', '@p', '@r', '@s'], start, ctx.cursor))
+        }
+        //#endregion
+
+        //#region Errors.
         if (!plain) {
             ans.errors.push(new ParsingError({ start, end: start + 1 },
                 locale('expected-got',
@@ -93,8 +95,9 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 )
             )
         }
+        //#endregion
 
-        // Cache
+        //#region Cache
         const category = getSafeCategory(ctx.cache, 'entity')
         if (Object.keys(category).includes(plain)) {
             ans.cache = {
@@ -106,6 +109,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 }
             }
         }
+        //#endregion
 
         ans.data[NodeRange] = { start, end: reader.cursor }
 
@@ -126,7 +130,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
 
         //#region Completions
         if (ctx.cursor === start + 1) {
-            ans.completions.push(...arrayToCompletions(['a', 'e', 'p', 'r', 's']))
+            ans.completions.push(...arrayToCompletions(['a', 'e', 'p', 'r', 's'], start + 1, start + 1))
         }
         //#endregion
 
@@ -177,7 +181,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             const dealWithNegativableArray = (ans: ArgumentParserResult<SelectorArgumentsNode>, parser: ArgumentParser<any>, key: string) => {
                 const keyNeg = `${key}Neg`
                 if (ctx.cursor === reader.cursor) {
-                    ans.completions.push({ label: '!' })
+                    ans.completions.push({ label: '!', start: reader.cursor, end: reader.cursor })
                 }
                 const isNegative = reader.peek() === '!'
                 if (isNegative) {

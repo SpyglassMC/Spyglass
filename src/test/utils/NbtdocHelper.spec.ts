@@ -407,7 +407,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: 'false', t: 'false' },
@@ -426,7 +426,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: 'false', t: 'false' },
@@ -443,7 +443,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '0b', t: '0b' },
@@ -459,7 +459,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '[B;]', t: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
@@ -474,7 +474,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '{}', t: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
@@ -489,7 +489,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '"red"', t: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
@@ -504,7 +504,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '1b', t: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
@@ -521,7 +521,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config, registry: TestRegistry })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: 'minecraft', t: '"minecraft"', kind: CompletionItemKind.Module },
@@ -537,7 +537,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '[I;]', t: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
@@ -552,7 +552,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '[]', t: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
@@ -567,7 +567,7 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: '[L;]', t: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
@@ -583,7 +583,7 @@ describe('NbtdocHelper Tests', () => {
                 const description = ' The tags on the entity'
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
                     { label: 'fooTag', t: '"fooTag"' }
@@ -601,7 +601,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
                 { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -618,7 +618,7 @@ describe('NbtdocHelper Tests', () => {
             tag.foo = new NbtByteNode(null, 1, 'true')
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
                 { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -633,7 +633,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
                 { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
@@ -649,7 +649,7 @@ describe('NbtdocHelper Tests', () => {
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
                 { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },

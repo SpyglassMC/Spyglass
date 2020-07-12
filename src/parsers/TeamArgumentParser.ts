@@ -34,7 +34,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'team'))
+            ans.completions.push(...getCompletions(ctx.cache, 'team', start, reader.cursor))
         }
         //#endregion
         //#region Tokens

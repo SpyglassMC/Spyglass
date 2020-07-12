@@ -7,7 +7,7 @@ import { TextComponentNode } from '../nodes/TextComponent'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
-import { remapCompletionItem } from '../utils'
+import { remapParserSuggestion } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -65,7 +65,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         //#region Completions.
         TextComponentArgumentParser.Service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
             if (completions) {
-                ans.completions.push(...completions.items.map(v => remapCompletionItem(v, (offset: number) => ctx.document.positionAt(offset))))
+                ans.completions.push(...completions.items.map(v => remapParserSuggestion(v, (offset: number) => ctx.document.positionAt(offset))))
             }
         })
         //#endregion

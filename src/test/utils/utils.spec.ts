@@ -2,15 +2,16 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import os from 'os'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { EntityNode } from '../../nodes/EntityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
+import { SelectorArgumentsNode } from '../../nodes/SelectorArgumentsNode'
 import { constructConfig, LintConfig } from '../../types/Config'
 import { Formattable, GetFormattedString } from '../../types/Formattable'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { QuoteTypeConfig } from '../../types/QuoteTypeConfig'
 import { DiagnosticConfig } from '../../types/StylisticConfig'
-import { arrayToCompletions, arrayToMessage, escapeString, getEol, quoteString, remapCompletionItem, toFormattedString, validateStringQuote, getNbtdocRegistryId } from '../../utils'
-import { IdentityNode } from '../../nodes/IdentityNode'
-import { SelectorArgumentsNode } from '../../nodes/SelectorArgumentsNode'
-import { EntityNode } from '../../nodes/EntityNode'
+import { arrayToCompletions, arrayToMessage, escapeString, getEol, getNbtdocRegistryId, quoteString, remapParserSuggestion, toFormattedString, validateStringQuote } from '../../utils'
+import { assertCompletions } from '../utils.spec'
 
 describe('utils.ts Tests', () => {
     describe('arrayToMessage() Tests', () => {
@@ -125,11 +126,11 @@ describe('utils.ts Tests', () => {
     describe('arrayToCompletions() Tests', () => {
         it('Should escape string.', () => {
             const arr = ['a', 2, 'c']
-            const actual = arrayToCompletions(arr)
-            assert.deepStrictEqual(actual, [
-                { label: 'a' },
-                { label: '2' },
-                { label: 'c' }
+            const actual = arrayToCompletions(arr, 0, Infinity)
+            assertCompletions('', actual, [
+                { label: 'a', t: 'a' },
+                { label: '2', t: '2' },
+                { label: 'c', t: 'c' }
             ])
         })
     })
@@ -209,12 +210,12 @@ describe('utils.ts Tests', () => {
         })
     })
     describe('remapCompletionItem() Tests', () => {
-        it('Should return as-is if the completion item does not contain any TextEdits', () => {
-            const actual = remapCompletionItem({ label: 'foo' }, { start: 1 })
-            assert.deepStrictEqual(actual, { label: 'foo' })
+        it('Should remap the start and end as needed', () => {
+            const actual = remapParserSuggestion({ label: 'foo', start: 0, end: 3 }, { start: 1 })
+            assert.deepStrictEqual(actual, { label: 'foo', start: 1, end: 4 })
         })
-        it('Should return remap the lineNumber as needed', () => {
-            const actual = remapCompletionItem({
+        it('Should remap the lineNumber as needed', () => {
+            const actual = remapParserSuggestion({
                 label: 'foo',
                 textEdit: {
                     range: { start: { line: 0, character: 12 }, end: { line: 0, character: 16 } },
@@ -223,15 +224,17 @@ describe('utils.ts Tests', () => {
             }, offset => ({ line: 42, character: offset }))
             assert.deepStrictEqual(actual, {
                 label: 'foo',
+                start: 12, end: 16,
                 textEdit: {
                     range: { start: { line: 42, character: 12 }, end: { line: 42, character: 16 } },
                     newText: 'foo'
                 }
             })
         })
-        it('Should return remap the characters as needed', () => {
-            const actual = remapCompletionItem({
+        it('Should remap the characters as needed', () => {
+            const actual = remapParserSuggestion({
                 label: 'foo',
+                start: 1, end: 3,
                 textEdit: {
                     range: { start: { line: 0, character: 1 }, end: { line: 0, character: 3 } },
                     newText: 'foo'
@@ -239,6 +242,7 @@ describe('utils.ts Tests', () => {
             }, { start: 1 })
             assert.deepStrictEqual(actual, {
                 label: 'foo',
+                start: 2, end: 4,
                 textEdit: {
                     range: { start: { line: 0, character: 2 }, end: { line: 0, character: 4 } },
                     newText: 'foo'

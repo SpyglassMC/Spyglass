@@ -3,6 +3,7 @@ import { describe, it } from 'mocha'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isDefinitionType, isFileType, isNamespacedType, isTagType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
+import { assertCompletions } from '../utils.spec'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -166,10 +167,10 @@ describe('ClientCache Tests', () => {
                         ref: []
                     }
                 }
-            }, 'tag')
-            assert.deepStrictEqual(actual, [
-                { label: 'foo' },
-                { label: 'bar', documentation: { kind: MarkupKind.Markdown, value: 'Documentation for **bar**' } }
+            }, 'tag', 0, Infinity)
+            assertCompletions('', actual, [
+                { label: 'foo', t: 'foo' },
+                { label: 'bar', t: 'bar', documentation: { kind: MarkupKind.Markdown, value: 'Documentation for **bar**' } }
             ])
         })
     })

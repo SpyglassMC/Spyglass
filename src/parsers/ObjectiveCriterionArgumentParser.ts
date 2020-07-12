@@ -29,9 +29,10 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
         const pool = ['', 'minecraft', ...Object.keys(scoreboard.CriteriaCategory)]
         //#region Completions.
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push({ label: 'minecraft', kind: CompletionItemKind.Module })
+            ans.completions.push({ label: 'minecraft', start, end: reader.cursor, kind: CompletionItemKind.Module })
             ans.completions.push(...arrayToCompletions(
                 Object.keys(scoreboard.CriteriaCategory),
+                start, reader.cursor,
                 c => typeof scoreboard.CriteriaCategory[c.label] === 'string' ?
                     { ...c, kind: CompletionItemKind.Field } : c
             ))
@@ -61,6 +62,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
                 if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                     ans.completions.push(...arrayToCompletions(
                         statsPool,
+                        start, reader.cursor,
                         c => ({ ...c, kind: CompletionItemKind.Field })
                     ))
                 }
