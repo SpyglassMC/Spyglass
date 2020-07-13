@@ -1,6 +1,6 @@
 import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, SchemaRegistry, ValidationOption } from '@mcschema/core'
 import deepEqual from 'deep-equal'
-import { ArrayASTNode, ASTNode, CompletionItem, InsertTextFormat, ObjectASTNode, PropertyASTNode, StringASTNode } from 'vscode-json-languageservice'
+import { ArrayASTNode, ASTNode, CompletionItem, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
 import { LineParser } from '../parsers/LineParser'
@@ -17,13 +17,16 @@ export class JsonSchemaHelper {
         LiteralEnd: '1xs2m6JwQaNtXzexThOAwmpTFCIRftZi'
     }
 
-    static validate(ans: ValidateResult, node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
-        const { ctx } = options
+    static validate(ans: ValidateResult, node: ASTNode | undefined, schema: INode, options: JsonSchemaHelperOptions) {
         const model = new DataModel(schema, { historyMax: 1 })
-        model.reset(JSON.parse(ctx.document.getText()))
+        model.reset(this.restoreValueFromNode(node))
 
         for (const err of model.errors) {
             ans.errors.push(this.convertSchemaError(err, node))
+        }
+
+        if (!node) {
+            return
         }
 
         const path = new Path([], [], model)
@@ -39,78 +42,105 @@ export class JsonSchemaHelper {
         )
     }
 
-    static suggest(ans: CompletionItem[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
+    static suggest(ans: CompletionItem[], node: ASTNode | undefined, schema: INode, options: JsonSchemaHelperOptions) {
+        if (!node) {
+            return
+        }
         try {
             const { ctx } = options
             const model = new DataModel(schema, { historyMax: 1 })
+            model.reset(this.restoreValueFromNode(node))
             const path = new Path([], [], model)
 
             const { node: selectedNode, path: selectedPath, type: selectedType } = this.selectNode(node, ctx.cursor, path)
-            if (selectedNode) {
-                let result: Partial<LegacyValidateResult> | undefined = undefined
-                const out: { mapping: IndexMapping } = { mapping: {} }
-                const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
-                if (selectedType === 'value') {
-                    const selectedSchema = schema.navigate(selectedPath, -1)
-                    const validationOption = selectedSchema?.validationOption()
-                    if (validationOption) {
-                        // Detailed suggestion for value.
-                        const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
-                        const value = rawReader.readString(out)
-                        const valueReader = new StringReader(value)
-                        result = this.doDetailedStringLegacyValidate(
-                            valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
-                        )
-                        if (result.completions) {
-                            result.completions = result.completions.map(this.escapeCompletion)
-                        }
-                    } else {
-                        // Regular suggestion for object value.
+            if (!selectedNode) {
+                return
+            }
+            let result: Partial<LegacyValidateResult> | undefined = undefined
+            const out: { mapping: IndexMapping } = { mapping: {} }
+            const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
+            if (selectedType === 'value') {
+                const selectedSchema = schema.navigate(selectedPath, -1)
+                const validationOption = selectedSchema?.validationOption()
+                if (validationOption) {
+                    // Detailed suggestions for selected value.
+                    const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
+                    const value = rawReader.readString(out)
+                    const valueReader = new StringReader(value)
+                    result = this.doDetailedStringLegacyValidate(
+                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
+                    )
+                    if (result.completions) {
+                        result.completions = result.completions.map(this.escapeCompletion)
+                    }
+                } else {
+                    // Regular suggestions for selected value.
+                    if (selectedNode.type === 'object') {
+                        // Regular key suggestions for selected object.
                         if (
-                            selectedNode.type === 'object' &&
-                            // The cursor isn't out of curly braces.
+                            // The cursor isn't out of the curly braces.
                             selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end &&
                             // The cursor is not in any properties.
                             selectedNode.properties.reduce<boolean>((p, c) => p && !isInRange(ctx.cursor, this.getNodeRange(c)), true)
                         ) {
-                            result = { completions: this.suggestKeys(selectedPath, selectedNode, undefined, undefined, schema, options) }
+                            result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options) }
                         }
+                    } else if (selectedNode.type === 'property') {
+                        // Regular value suggestions for selected property
+                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options) }
+                    } else {
+                        // Regular value suggestions for selected value
+                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, selectedNode, schema, options) }
                     }
-                } else {
-                    // Regular suggestion for key.
-                    const objectPath = selectedPath.pop()
-                    const keyNode = selectedNode as StringASTNode
-                    const propertyNode = selectedNode.parent as PropertyASTNode
-                    const objectNode = propertyNode.parent as ObjectASTNode
-                    result = { completions: this.suggestKeys(objectPath, objectNode, propertyNode, keyNode, schema, options) }
                 }
-                if (result?.completions) {
-                    ans.push(...result.completions.map(v => this.parserSuggestionToCompletionItem(v, out.mapping, ctx)))
-                }
+            } else {
+                // Regular key suggestions for selected key.
+                const objectPath = selectedPath.pop()
+                const keyNode = selectedNode as StringASTNode
+                const objectNode = selectedNode.parent!.parent as ObjectASTNode
+                result = { completions: this.doRegularSuggest(objectPath, objectNode, keyNode, schema, options) }
+            }
+            if (result?.completions) {
+                ans.push(...result.completions.map(v => this.parserSuggestionToCompletionItem(v, out.mapping, ctx)))
             }
         } catch (e) {
             console.error('JsonSchemaHelper#suggest', e)
         }
     }
 
-    private static suggestKeys(objectPath: Path, objectNode: ObjectASTNode, _propertyNode: PropertyASTNode | undefined, keyNode: StringASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions): ParserSuggestion[] {
-        const keyRange = keyNode ? this.getNodeRange(keyNode) : { start: ctx.cursor, end: ctx.cursor }
-        const objectSchema = schema.navigate(objectPath, -1)
-        const objectValue: any = {}
-        for (const { keyNode: { value: key } } of objectNode.properties) {
-            if (key !== keyNode?.value) {
-                objectValue[key] = 'exist'
+    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions): ParserSuggestion[] {
+        const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
+        const valueSchema = schema.navigate(valuePath, -1)
+        const value: any = {}
+        if (valueNode.type === 'object') {
+            for (const { keyNode: { value: key } } of valueNode.properties) {
+                if (key !== replacingNode?.value) {
+                    value[key] = 'exist'
+                }
             }
         }
-        const keys = objectSchema?.keys(objectPath, objectValue) ?? []
-        return arrayToCompletions(keys, keyRange.start, keyRange.end, c => {
-            const filterText = `"${c.label}"`
-            const defaultValue = schema.navigate(objectPath.push(c.label), -1)?.default() ?? undefined
-            const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
-            const defaultValueSnippet = this.resolveJsonSnippetMagicStrings(defaultValueJson)
-            const insertText = `"${c.label}": ${defaultValueSnippet}`
-            return { ...c, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
-        })
+        const result = valueSchema?.suggest(valuePath, value) ?? []
+        return arrayToCompletions(
+            result, replacingRange.start, replacingRange.end,
+            valueNode.type === 'object' ? c => {
+                // Operations to object keys.
+                const key = c.label.slice(1, -1)
+                const filterText = c.label
+                const valueSchema = schema.navigate(valuePath.push(key), -1)
+                const preselect = valueSchema?.force()
+                const defaultValue = valueSchema?.default() ?? undefined
+                const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
+                const defaultValueSnippet = this.resolveJsonSnippetMagicStrings(defaultValueJson)
+                const insertText = `${c.label}: ${defaultValueSnippet}`
+                return { ...c, preselect, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
+            } : c => {
+                // Operations to other suggestions.
+                if (c.label.startsWith('"')) {
+                    return { ...c, label: c.label.slice(1, -1), filterText: c.label, insertText: c.label }
+                }
+                return c
+            }
+        )
     }
 
     /**
@@ -274,11 +304,13 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static convertSchemaError({ path, params, error }: PathError, node: ASTNode) {
+    private static convertSchemaError({ path, params, error }: PathError, node: ASTNode | undefined) {
         const pathElements = path.getArray()
-        const targetedNode = this.navigateNodes(node, pathElements)
-        const range = this.getNodeRange(targetedNode)
-        let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params)
+        const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: Infinity }
+        let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params) ?? (
+            console.error(new Error(`Unknown JSON schema error ‘${error}’`)),
+            ''
+        )
         if (pathElements.length > 0) {
             message = `${pathElements.join('.')} - ${message}`
         }
@@ -344,17 +376,28 @@ export class JsonSchemaHelper {
             case 'array':
                 for (const [i, item] of node.items.entries()) {
                     set(this.selectNode(item, cursor, path.push(i), 'value'))
+                    if (ans.node) {
+                        break
+                    }
                 }
                 break
             case 'object':
                 for (const property of node.properties) {
                     set(this.selectNode(property, cursor, path, 'value'))
+                    if (ans.node) {
+                        break
+                    }
                 }
                 break
             case 'property':
                 set(this.selectNode(node.keyNode, cursor, path.push(node.keyNode.value), 'key'))
-                if (node.valueNode) {
-                    set(this.selectNode(node.valueNode, cursor, path.push(node.keyNode.value), 'value'))
+                if (!ans.node) {
+                    // Key isn't selected.
+                    if (node.valueNode) {
+                        set(this.selectNode(node.valueNode, cursor, path.push(node.keyNode.value), 'value'))
+                    } else {
+                        set({ node, path: path.push(node.keyNode.value), type: 'value' })
+                    }
                 }
                 break
             default:
@@ -364,6 +407,28 @@ export class JsonSchemaHelper {
             ans = { node, path, type }
         }
         return ans
+    }
+
+    private static restoreValueFromNode(node: ASTNode | undefined): any {
+        switch (node?.type) {
+            case 'object': {
+                const ans: any = {}
+                for (const { keyNode, valueNode } of node.properties) {
+                    if (valueNode) {
+                        ans[JsonSchemaHelper.restoreValueFromNode(keyNode)] = JsonSchemaHelper.restoreValueFromNode(valueNode)
+                    }
+                }
+                return ans
+            }
+            case 'array':
+                return node.items.map(JsonSchemaHelper.restoreValueFromNode)
+            case 'boolean':
+            case 'null':
+            case 'number':
+            case 'string':
+            default:
+                return node?.value
+        }
     }
 
     private static getNodeRange(node: ASTNode): TextRange {
