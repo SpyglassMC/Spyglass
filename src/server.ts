@@ -1,7 +1,7 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
@@ -13,7 +13,7 @@ import { loadLocale, locale } from './locales'
 import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { constructContext, ParserSuggestion, ParsingError } from './types'
+import { constructContext, ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
@@ -57,6 +57,9 @@ const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
  * iterate from the last element of this array to the first element.
  */
 const roots: Uri[] = []
+
+const generalTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
+const mcfunctionTriggerCharacters = [',', '{', '[']
 
 let globalStoragePath: string
 
@@ -121,7 +124,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             callHierarchyProvider: true,
             colorProvider: true,
             completionProvider: {
-                triggerCharacters: [' ', ',', '{', '[', '=', ':', '/', '!', "'", '"', '.', '@'],
+                triggerCharacters: generalTriggerCharacters.concat(mcfunctionTriggerCharacters),
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
@@ -359,7 +362,7 @@ connection.onInitialized(() => {
         }
     })
 
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position }) => {
+    connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
         const uri = getUri(uriString, uris)
         const info = await getInfo(uri, infos)
         if (info && info.config.features.completions) {
@@ -373,7 +376,10 @@ connection.onInitialized(() => {
                     return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
                 }
             } else {
-                const ans: ParserSuggestion[] = []
+                if (context?.triggerCharacter && !generalTriggerCharacters.includes(context.triggerCharacter)) {
+                    return null
+                }
+                const ans: CompletionItem[] = []
                 const schemas = await getJsonSchemas(info.config.env.jsonVersion)
                 const schema = schemas.get(info.node.schemaType)
                 const ctx: JsonSchemaHelperOptions = {

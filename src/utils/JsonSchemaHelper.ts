@@ -1,14 +1,22 @@
 import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, SchemaRegistry, ValidationOption } from '@mcschema/core'
-import { ArrayASTNode, ASTNode, ObjectASTNode } from 'vscode-json-languageservice'
-import { handleCompletionText, quoteString, remapParserSuggestion } from '.'
+import deepEqual from 'deep-equal'
+import { ArrayASTNode, ASTNode, CompletionItem, InsertTextFormat, ObjectASTNode, PropertyASTNode, StringASTNode } from 'vscode-json-languageservice'
+import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
 import { LineParser } from '../parsers/LineParser'
 import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
 
-// TODO: JSON
-
 export class JsonSchemaHelper {
+    private static readonly Replacers = {
+        EmptyObject: 'a6CJ_fNaoTKc1J7SavcrSMGmQjW6HEuk',
+        EmptyList: '09v6na643Rr0jeIcBFRGwXJFUvvB_773',
+        StringStart: 'WcfESEXkwL5a0nDMC7ZMib6RftqJyvQP',
+        StringEnd: 'NR9lafzlCwHbjOIrzXcpZFgNQVpn7kpY',
+        LiteralStart: 'gJK7ZIGIpFJlAal2UduKc93rHAOb5K3z',
+        LiteralEnd: '1xs2m6JwQaNtXzexThOAwmpTFCIRftZi'
+    }
+
     static validate(ans: ValidateResult, node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
         const { ctx } = options
         const model = new DataModel(schema, { historyMax: 1 })
@@ -31,37 +39,111 @@ export class JsonSchemaHelper {
         )
     }
 
-    static suggest(ans: ParserSuggestion[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
-        const { ctx } = options
-        const model = new DataModel(schema, { historyMax: 1 })
-        const path = new Path([], [], model)
+    static suggest(ans: CompletionItem[], node: ASTNode, schema: INode, options: JsonSchemaHelperOptions) {
+        try {
+            const { ctx } = options
+            const model = new DataModel(schema, { historyMax: 1 })
+            const path = new Path([], [], model)
 
-        const { node: selectedNode, path: selectedPath, type: selectedType } = this.selectNode(node, ctx.cursor, path)
-        if (selectedNode) {
-            let result: Partial<LegacyValidateResult> | undefined = undefined
-            const out: { mapping: IndexMapping } = { mapping: {} }
-            const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
-            if (selectedType === 'value') {
-                const selectedSchema = schema.navigate(selectedPath, -1)
-                const validationOption = selectedSchema?.validationOption()
-                if (validationOption) {
-                    const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
-                    const value = rawReader.readString(out)
-                    const valueReader = new StringReader(value)
-                    result = this.getDetailedValidateResult(
-                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
-                    )
-                    // this.combineResult(ans, result, out.mapping)
+            const { node: selectedNode, path: selectedPath, type: selectedType } = this.selectNode(node, ctx.cursor, path)
+            if (selectedNode) {
+                let result: Partial<LegacyValidateResult> | undefined = undefined
+                const out: { mapping: IndexMapping } = { mapping: {} }
+                const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
+                if (selectedType === 'value') {
+                    const selectedSchema = schema.navigate(selectedPath, -1)
+                    const validationOption = selectedSchema?.validationOption()
+                    if (validationOption) {
+                        // Detailed suggestion for value.
+                        const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
+                        const value = rawReader.readString(out)
+                        const valueReader = new StringReader(value)
+                        result = this.doDetailedStringLegacyValidate(
+                            valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
+                        )
+                        if (result.completions) {
+                            result.completions = result.completions.map(this.escapeCompletion)
+                        }
+                    } else {
+                        // Regular suggestion for object value.
+                        if (
+                            selectedNode.type === 'object' &&
+                            // The cursor isn't out of curly braces.
+                            selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end &&
+                            // The cursor is not in any properties.
+                            selectedNode.properties.reduce<boolean>((p, c) => p && !isInRange(ctx.cursor, this.getNodeRange(c)), true)
+                        ) {
+                            result = { completions: this.suggestKeys(selectedPath, selectedNode, undefined, undefined, schema, options) }
+                        }
+                    }
+                } else {
+                    // Regular suggestion for key.
+                    const objectPath = selectedPath.pop()
+                    const keyNode = selectedNode as StringASTNode
+                    const propertyNode = selectedNode.parent as PropertyASTNode
+                    const objectNode = propertyNode.parent as ObjectASTNode
+                    result = { completions: this.suggestKeys(objectPath, objectNode, propertyNode, keyNode, schema, options) }
                 }
-            } else {
-                // TODO
+                if (result?.completions) {
+                    ans.push(...result.completions.map(v => this.parserSuggestionToCompletionItem(v, out.mapping, ctx)))
+                }
             }
-            if (result?.completions) {
-                ans.push(...result.completions.map(v => {
-                    const ans = remapParserSuggestion(this.escapeCompletion(v), out.mapping)
-                    ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.document.positionAt(ans.start), end: ctx.document.positionAt(ans.end) } }
-                    return ans
-                }))
+        } catch (e) {
+            console.error('JsonSchemaHelper#suggest', e)
+        }
+    }
+
+    private static suggestKeys(objectPath: Path, objectNode: ObjectASTNode, _propertyNode: PropertyASTNode | undefined, keyNode: StringASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions): ParserSuggestion[] {
+        const keyRange = keyNode ? this.getNodeRange(keyNode) : { start: ctx.cursor, end: ctx.cursor }
+        const objectSchema = schema.navigate(objectPath, -1)
+        const objectValue: any = {}
+        for (const { keyNode: { value: key } } of objectNode.properties) {
+            if (key !== keyNode?.value) {
+                objectValue[key] = 'exist'
+            }
+        }
+        const keys = objectSchema?.keys(objectPath, objectValue) ?? []
+        return arrayToCompletions(keys, keyRange.start, keyRange.end, c => {
+            const filterText = `"${c.label}"`
+            const defaultValue = schema.navigate(objectPath.push(c.label), -1)?.default() ?? undefined
+            const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
+            const defaultValueSnippet = this.resolveJsonSnippetMagicStrings(defaultValueJson)
+            const insertText = `"${c.label}": ${defaultValueSnippet}`
+            return { ...c, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
+        })
+    }
+
+    /**
+     * Replaces some values that require snippet insert positions with some magic strings.
+     */
+    private static jsonSnippetReplacer(this: any, _key: string, value: any): any {
+        if (deepEqual(value, {})) {
+            return JsonSchemaHelper.Replacers.EmptyObject
+        } else if (deepEqual(value, [])) {
+            return JsonSchemaHelper.Replacers.EmptyList
+        } else if (typeof value === 'string') {
+            return `${JsonSchemaHelper.Replacers.StringStart} ${value} ${JsonSchemaHelper.Replacers.StringEnd}`
+        } else {
+            return `${JsonSchemaHelper.Replacers.LiteralStart} ${value} ${JsonSchemaHelper.Replacers.LiteralEnd}`
+        }
+    }
+
+    /**
+     * Resolve the magic strings provided from `jsonSnippetReplacer` function with the actual TextMate syntax.
+     */
+    private static resolveJsonSnippetMagicStrings(value: string) {
+        let insertIndex = 1
+        const replaceOneTurn = (value: string) => value
+            .replace(`"${this.Replacers.EmptyObject}"`, `{$${insertIndex++}}`)
+            .replace(`"${this.Replacers.EmptyList}"`, `[$${insertIndex++}]`)
+            .replace(new RegExp(`"${this.Replacers.StringStart} (.*?) ${this.Replacers.StringEnd}"`), `"$\${${insertIndex++}:$1}"`)
+            .replace(new RegExp(`"${this.Replacers.LiteralStart} (.*?) ${this.Replacers.LiteralEnd}"`), `$\${${insertIndex++}:$1}`)
+        while (true) {
+            const newValue = replaceOneTurn(value)
+            if (newValue === value) {
+                return newValue
+            } else {
+                value = newValue
             }
         }
     }
@@ -95,66 +177,84 @@ export class JsonSchemaHelper {
             const rawReader = new StringReader(ctx.document.getText(), valueRange.start, valueRange.end)
             const value = rawReader.readString(out)
             const valueReader = new StringReader(value)
-            const result = this.getDetailedValidateResult(valueReader, ctx, node, option)
+            const result = this.doDetailedStringLegacyValidate(valueReader, ctx, node, option)
             this.combineResult(ans, result, out.mapping)
         }
     }
 
-    private static getDetailedValidateResult(reader: StringReader, ctx: ParsingContext, node: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
+    private static doDetailedStringLegacyValidate(reader: StringReader, ctx: ParsingContext, node: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
+        let ans: Partial<LegacyValidateResult> = {}
         switch (option.validator) {
             case 'block_state_key': {
                 const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
                 const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
-                return new ctx.parsers.Literal(...keys).parse(reader, ctx)
+                ans = new ctx.parsers.Literal(...keys).parse(reader, ctx)
+                break
             }
             case 'command':
-                return new LineParser(
+                ans = new LineParser(
                     option.params.leadingSlash, 'commands', option.params.allowPartial
                 ).parse(reader, ctx).data
+                break
             case 'entity':
-                return new ctx.parsers.Entity(
+                ans = new ctx.parsers.Entity(
                     option.params.amount, option.params.type, option.params.isScoreHolder
                 ).parse(reader, ctx)
+                break
             case 'nbt':
                 if (option.params.registry) {
                     const id = this.navigateRelativePath(node, option.params.registry.id)?.value?.toString() ?? null
-                    return new ctx.parsers.Nbt(
+                    ans = new ctx.parsers.Nbt(
                         'Compound', option.params.registry.category, id, option.params.isPredicate
                     ).parse(reader, ctx)
                 } else if (option.params.module) {
-                    return new ctx.parsers.Nbt(
+                    ans = new ctx.parsers.Nbt(
                         'Compound', 'minecraft:block', undefined, option.params.isPredicate, null, option.params.module
                     ).parse(reader, ctx)
                 }
                 break
             case 'nbt_path':
-                return new ctx.parsers.NbtPath(
+                ans = new ctx.parsers.NbtPath(
                     option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
                 ).parse(reader, ctx)
+                break
             case 'objective':
-                return new ctx.parsers.Objective().parse(reader, ctx)
+                ans = new ctx.parsers.Objective().parse(reader, ctx)
+                break
             case 'resource':
-                return new ctx.parsers.Identity(
+                ans = new ctx.parsers.Identity(
                     option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
                 ).parse(reader, ctx)
+                break
             case 'team':
-                return new ctx.parsers.Team().parse(reader, ctx)
+                ans = new ctx.parsers.Team().parse(reader, ctx)
+                break
             case 'uuid':
-                return new ctx.parsers.Uuid().parse(reader, ctx)
+                ans = new ctx.parsers.Uuid().parse(reader, ctx)
+                break
             case 'vector':
-                return new ctx.parsers.Vector(
+                ans = new ctx.parsers.Vector(
                     option.params.dimension, option.params.isInteger ? 'integer' : 'float', !option.params.disableLocal, !option.params.disableRelative, option.params.min, option.params.max
                 ).parse(reader, ctx)
+                break
             default:
                 /* istanbul ignore next */
                 console.error('doDetailedValidate', new Error(`Unknown validator ${(option as any).validator}`))
                 break
         }
-        return {}
+        ans.completions = ans?.completions?.map(this.escapeCompletion)
+        return ans
     }
 
     private static escapeCompletion(origin: ParserSuggestion) {
         return handleCompletionText(origin, str => quoteString(str, 'always double', true).slice(1, -1))
+    }
+
+    private static parserSuggestionToCompletionItem(origin: ParserSuggestion, mapping: IndexMapping, ctx: ParsingContext) {
+        const ans = remapParserSuggestion(origin, mapping)
+        ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.document.positionAt(ans.start), end: ctx.document.positionAt(ans.end) } }
+        delete ans.start; delete ans.end
+        return ans
     }
 
     private static combineResult(ans: ValidateResult, result: Partial<LegacyValidateResult> | undefined, mapping: IndexMapping) {
