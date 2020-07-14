@@ -130,11 +130,13 @@ export class JsonSchemaHelper {
                 // Operations to object keys.
                 const key = c.label.slice(1, -1)
                 const filterText = c.label
-                const valueSchema = schema.navigate(valuePath.push(key), -1)
-                const preselect = valueSchema?.force()
-                const defaultValueSnippet = this.getDefaultValueSnippet(valueSchema?.default())
+                const childValuePath = valuePath.push(key)
+                const childValueSchema = schema.navigate(childValuePath, -1)
+                const preselect = childValueSchema?.force()
+                const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
+                const detail = childValuePath.locale()
                 const insertText = `${c.label}: ${defaultValueSnippet}`
-                return { ...c, preselect, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
+                return { ...c, preselect,detail, label: key, filterText, insertText,  insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
                 // Operations to other value suggestions.
                 if (c.label.startsWith('"')) {
