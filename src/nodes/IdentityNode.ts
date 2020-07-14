@@ -188,7 +188,7 @@ export class IdentityNode extends ArgumentNode {
                             // data/minecraft/worldgen/<worldgen type>/<namespace>/**/*.json
                             namespace = segs[4]
                             minimumSegsLength = 6
-                            category = `worldgen/${segs[3].slice(0, -1)}` as WorldgenRegistryFileType
+                            category = `worldgen/${segs[3]}` as WorldgenRegistryFileType
                         } else {
                             // data/minecraft/<registry file type>/<namespace>/**/*.json
                             namespace = segs[3]

@@ -7,6 +7,12 @@ export type JsonSchemaType =
     | 'advancement'
     | 'loot_table'
     | 'predicate'
+    /* tag */
+    | 'block_tag'
+    | 'entity_type_tag'
+    | 'fluid_tag'
+    | 'function_tag'
+    | 'item_tag'
     /* dimension */
     | 'dimension'
     | 'dimension_type'
@@ -24,6 +30,12 @@ const globPatterns = new Map<JsonSchemaType, string>([
     ['advancement', PathPatterns.advancement],
     ['loot_table', PathPatterns.loot_table],
     ['predicate', PathPatterns.predicate],
+    /* tag */
+    ['block_tag', PathPatterns['tag/block']],
+    ['entity_type_tag', PathPatterns['tag/entity_type']],
+    ['fluid_tag', PathPatterns['tag/fluid']],
+    ['function_tag', PathPatterns['tag/function']],
+    ['item_tag', PathPatterns['tag/item']],
     /* dimension */
     ['dimension', PathPatterns.dimension],
     ['dimension_type', PathPatterns.dimension_type],
