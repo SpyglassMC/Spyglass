@@ -26,6 +26,8 @@ export type JsonSchemaType =
     | 'configured_surface_builder'
     | 'processor_list'
     | 'template_pool'
+    /* misc */
+    | 'pack_mcmeta'
 
 const globPatterns = new Map<JsonSchemaType, string>([
     ['advancement', PathPatterns.advancement],
@@ -49,7 +51,8 @@ const globPatterns = new Map<JsonSchemaType, string>([
     ['configured_structure_feature', PathPatterns['worldgen/configured_structure_feature']],
     ['configured_surface_builder', PathPatterns['worldgen/configured_surface_builder']],
     ['processor_list', PathPatterns['worldgen/processor_list']],
-    ['template_pool', PathPatterns['worldgen/template_pool']]
+    ['template_pool', PathPatterns['worldgen/template_pool']],
+    ['pack_mcmeta', 'pack.mcmeta']
 ])
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {

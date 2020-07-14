@@ -192,14 +192,14 @@ export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInf
 }
 
 /* istanbul ignore next */
-export async function createInfo({ roots, uri, version, cacheFile, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DocumentInfo | undefined> {
+export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DocumentInfo | undefined> {
     try {
         const rel = getRel(uri, roots)!
         const config = await getConfig()
         if (isRelIncluded(rel, config)) {
             const text = await getText()
             const vanillaData = await getVanillaData(config)
-            const langId = rel.endsWith('.json') ? 'json' : 'mcfunction'
+            langId = langId ?? (rel.endsWith('json') || rel.endsWith('.mcmeta') ? 'json' : 'mcfunction')
             const document: TextDocument = TextDocument.create(uri.toString(), langId, version as number, text)
             if (langId === 'json') {
                 const schemaType = getJsonSchemaType(rel)

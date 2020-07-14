@@ -187,7 +187,7 @@ connection.onInitialized(() => {
         url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${ReleaseNotesVersion}`
     })
 
-    connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version } }) => {
+    connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
         const uri = getUri(uriString, uris)
         const promise = createInfo({
             getText: async () => text,
@@ -195,7 +195,7 @@ connection.onInitialized(() => {
             getCommandTree: async config => getCommandTree(config.env.cmdVersion),
             getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
             getJsonSchemas: async config => getJsonSchemas(config.env.jsonVersion),
-            roots, uri, version, cacheFile
+            roots, uri, version, cacheFile, langId
         })
         infos.set(uri, promise)
         const info = await promise
