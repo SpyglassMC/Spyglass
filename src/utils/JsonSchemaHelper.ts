@@ -120,7 +120,8 @@ export class JsonSchemaHelper {
             }
         }
         if (atEmptyValue && valueSchema) {
-            return [{ ...replacingRange, label: this.getDefaultValueSnippet(valueSchema), insertTextFormat: InsertTextFormat.Snippet }]
+            const defaultValue = valueSchema.default()
+            return [{ ...replacingRange, label: JSON.stringify(defaultValue), insertText: this.getDefaultValueSnippet(defaultValue), insertTextFormat: InsertTextFormat.Snippet }]
         }
         const suggestions = valueSchema?.suggest(valuePath, value) ?? []
         return arrayToCompletions(
@@ -131,7 +132,7 @@ export class JsonSchemaHelper {
                 const filterText = c.label
                 const valueSchema = schema.navigate(valuePath.push(key), -1)
                 const preselect = valueSchema?.force()
-                const defaultValueSnippet = this.getDefaultValueSnippet(valueSchema)
+                const defaultValueSnippet = this.getDefaultValueSnippet(valueSchema?.default())
                 const insertText = `${c.label}: ${defaultValueSnippet}`
                 return { ...c, preselect, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
@@ -144,8 +145,7 @@ export class JsonSchemaHelper {
         )
     }
 
-    private static getDefaultValueSnippet(schema: INode | undefined) {
-        const defaultValue = schema?.default?.()
+    private static getDefaultValueSnippet(defaultValue: any) {
         const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
         return this.resolveJsonSnippetMagicStrings(defaultValueJson)
     }
