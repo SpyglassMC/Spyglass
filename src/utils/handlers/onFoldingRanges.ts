@@ -75,7 +75,7 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
 
         return ans
     } catch (e) {
-        console.error('onFoldingRanges', e)
+        console.error('[onFoldingRanges]', e)
     }
     return null
 }

@@ -45,9 +45,11 @@ export async function loadLocale(console: Console, setting: string) {
     if (setting.toLowerCase() === 'default') {
         if (!language) {
             await loadVscodeLanguage(console)
+            await setupLanguage(vscodeLanguage)
             console.info(`[I18N] VS Code: ‘${language}’.`)
         } else if (language !== vscodeLanguage) {
             language = vscodeLanguage
+            await setupLanguage(vscodeLanguage)
             console.info(`[I18N] VS Code: ‘${language}’.`)
         }
     } else if (language !== setting) {

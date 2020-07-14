@@ -217,7 +217,7 @@ export async function createInfo({ roots, uri, version, cacheFile, langId, getTe
             }
         }
     } catch (e) {
-        console.error('createInfo', e)
+        console.error('[createInfo]', e)
     }
     return undefined
 }

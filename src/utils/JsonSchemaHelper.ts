@@ -136,7 +136,7 @@ export class JsonSchemaHelper {
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
                 const detail = childValuePath.locale()
                 const insertText = `${c.label}: ${defaultValueSnippet}`
-                return { ...c, preselect,detail, label: key, filterText, insertText,  insertTextFormat: InsertTextFormat.Snippet }
+                return { ...c, preselect, detail, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
                 // Operations to other value suggestions.
                 if (c.label.startsWith('"')) {
@@ -280,7 +280,7 @@ export class JsonSchemaHelper {
                 break
             default:
                 /* istanbul ignore next */
-                console.error('doDetailedValidate', new Error(`Unknown validator ${(option as any).validator}`))
+                console.error('[doDetailedValidate]', new Error(`Unknown validator ${(option as any).validator}`))
                 break
         }
         ans.completions = ans?.completions?.map(this.escapeCompletion)
@@ -319,7 +319,7 @@ export class JsonSchemaHelper {
         const pathElements = path.getArray()
         const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: Infinity }
         let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params) ?? (
-            console.error(new Error(`Unknown JSON schema error ‘${error}’`)),
+            console.error('[convertSchemaError]', new Error(`Unknown JSON schema error ‘${error}’`)),
             ''
         )
         if (pathElements.length > 0) {

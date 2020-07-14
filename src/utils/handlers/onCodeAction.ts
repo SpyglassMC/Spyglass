@@ -1,10 +1,10 @@
 import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver'
-import { getDiagnosticMap } from './common'
 import { locale } from '../../locales'
 import { getSelectedNode } from '../../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../../nodes/ArgumentNode'
 import { CacheFile, FunctionInfo, Uri } from '../../types'
 import { areOverlapped } from '../../types/TextRange'
+import { getDiagnosticMap } from './common'
 
 export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: FunctionInfo, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
     try {
@@ -43,7 +43,7 @@ export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info
 
         return ans
     } catch (e) {
-        console.error('onCodeAction', e)
+        console.error('[onCodeAction]', e)
     }
     return null
 }
