@@ -120,7 +120,9 @@
       "profile": "https://github.com/misode",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/592", "text": "#592" }
+        { "type": "ideas", "link": "issues/445", "text": "#445" },
+        { "type": "bug", "link": "issues/592", "text": "#592" },
+        { "type": "bug", "link": "issues/593", "text": "#593" }
       ]
     },
     {

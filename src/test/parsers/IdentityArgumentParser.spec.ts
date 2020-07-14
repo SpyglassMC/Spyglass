@@ -101,11 +101,8 @@ describe('IdentityArgumentParser Tests', () => {
         lint: { idOmitDefaultNamespace: null }
     })
     const summary: NamespaceSummary = {
-        advancements: ['minecraft:adventure/root'],
-        loot_tables: [],
-        recipes: [],
-        tags: { blocks: [], entity_types: [], fluids: [], items: [] }
-    }
+        advancement: ['minecraft:adventure/root']
+    } as NamespaceSummary
     let ctx: ParsingContext
     before(async () => {
         ctx = constructContext({ registry: registries, cache, config })
