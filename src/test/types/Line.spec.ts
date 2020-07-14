@@ -37,26 +37,26 @@ describe('Line Tests', () => {
         })
         it('Should combine cache', () => {
             const base = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: {}, hint: { fix: [], options: [] } }
-            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }, hint: { fix: [], options: [] } }
+            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }, hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, override)
         })
         it('Should return parsed completions', () => {
-            const base = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } }
+            const base = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], completions: [{ label: 'foo', start: 0, end: Infinity }], hint: { fix: [], options: [] } }
             const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, {
                 [NodeRange]: { start: NaN, end: NaN },
-                args: [], tokens: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] }
+                args: [], tokens: [], completions: [{ label: 'foo', start: 0, end: Infinity }], hint: { fix: [], options: [] }
             })
         })
         it('Should return new completions', () => {
             const base = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] } }
-            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] } }
+            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], completions: [{ label: 'foo', start: 0, end: Infinity }], hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, {
                 [NodeRange]: { start: NaN, end: NaN },
-                args: [], tokens: [], completions: [{ label: 'foo' }], hint: { fix: [], options: [] }
+                args: [], tokens: [], completions: [{ label: 'foo', start: 0, end: Infinity }], hint: { fix: [], options: [] }
             })
         })
         it('Should not return empty error array', () => {
@@ -117,19 +117,19 @@ describe('Line Tests', () => {
                 [NodeRange]: { start: NaN, end: NaN },
                 args: [{ data: 'execute', parser: 'test' }],
                 tokens: [new Token({ start: 0, end: 1 }, TokenType.comment)],
-                cache: { entities: {} },
+                cache: { entity: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
                 hint: { fix: ['a'], options: [['c', ['c']]] },
-                completions: [{ label: 'a' }]
+                completions: [{ label: 'a', start: 0, end: Infinity }]
             }
             const override: LineNode = {
                 [NodeRange]: { start: NaN, end: NaN },
                 args: [{ data: 'if', parser: 'test' }],
                 tokens: [new Token({ start: 1, end: 2 }, TokenType.string)],
-                cache: { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
+                cache: { entity: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
                 hint: { fix: ['b'], options: [['d', ['d']]] },
-                completions: [{ label: 'b' }]
+                completions: [{ label: 'b', start: 0, end: Infinity }]
             }
             combineSaturatedLine(base, override)
             assert.deepStrictEqual(base.args, [{ data: 'execute', parser: 'test' }, { data: 'if', parser: 'test' }])
@@ -138,13 +138,13 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base.hint.options, [['c', ['c']], ['d', ['d']]])
             assert.deepStrictEqual(
                 base.cache,
-                { entities: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } }
+                { entity: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } }
             )
             assert.deepStrictEqual(base.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'Old'),
                 new ParsingError({ start: 0, end: 3 }, 'New')
             ])
-            assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
+            assert.deepStrictEqual(base.completions, [{ label: 'a', start: 0, end: Infinity }, { label: 'b', start: 0, end: Infinity }])
         })
     })
     describe('saturatedLineToLine() Tests', () => {
@@ -163,17 +163,17 @@ describe('Line Tests', () => {
             const line = {
                 [NodeRange]: { start: NaN, end: NaN },
                 args: [], tokens: [], hint: { fix: [], options: [] },
-                cache: { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
+                cache: { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'Error')],
-                completions: [{ label: 'completion' }]
+                completions: [{ label: 'completion', start: 0, end: Infinity }]
             }
             saturatedLineToLine(line)
             assert.deepStrictEqual(line, {
                 [NodeRange]: { start: NaN, end: NaN },
                 args: [], tokens: [], hint: { fix: [], options: [] },
-                cache: { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
+                cache: { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } },
                 errors: [new ParsingError({ start: 0, end: 1 }, 'Error')],
-                completions: [{ label: 'completion' }]
+                completions: [{ label: 'completion', start: 0, end: Infinity }]
             })
         })
     })

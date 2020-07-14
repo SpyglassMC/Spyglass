@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { TextRange } from '../types/TextRange'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { NumberNode } from './NumberNode'

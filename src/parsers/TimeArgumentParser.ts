@@ -31,13 +31,13 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
 
         const start = reader.cursor
 
-        const numberResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
+        const numberResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float', 0).parse(reader, ctx)
         combineArgumentParserResult(ans, numberResult)
         ans.data.value = numberResult.data.valueOf()
         ans.data.raw = numberResult.data.toString()
 
         if (ctx.cursor === reader.cursor) {
-            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
+            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units, ctx.cursor, ctx.cursor))
         }
 
         if (StringReader.canInUnquotedString(reader.peek())) {

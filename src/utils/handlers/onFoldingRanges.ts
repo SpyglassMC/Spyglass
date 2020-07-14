@@ -1,7 +1,7 @@
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { StringReader } from '../StringReader'
-import { getStringLines } from '.'
+import { getStringLines } from './common'
 
 function getCommentSymbolAmount(string: string) {
     const reader = new StringReader(string)
@@ -75,7 +75,7 @@ export function onFoldingRanges({ info }: { info: FunctionInfo }) {
 
         return ans
     } catch (e) {
-        console.error('onFoldingRanges', e)
+        console.error('[onFoldingRanges]', e)
     }
     return null
 }

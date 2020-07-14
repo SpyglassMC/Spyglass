@@ -1,9 +1,11 @@
+import minimatch from 'minimatch'
 import path, { sep } from 'path'
-import { CacheKey, ClientCache } from '../types/ClientCache'
+import { CacheType, FileType, isRegularFileType, isTagRegularFileType, isWorldgenRegistryFileType, RegistryFileType, RegularFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
 import { ErrorCode } from '../types/ParsingError'
+import { PathPatterns } from '../types/PathPatterns'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
@@ -121,19 +123,31 @@ export class IdentityNode extends ArgumentNode {
 
     /**
      * Convert the ID to a file path.
-     * @param category The category of this namespaced ID. e.g. `functions`, `advancements`, etc.
+     * @param category The category of this namespaced ID. e.g. `function`, `advancement`, etc.
      * @param ext The extension of the file. Defaults to `.json`.
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
-    toRel(category: keyof ClientCache, side: 'assets' | 'data' = 'data') {
-        const datapackCategory = category.replace(/\//g, sep)
-        let ext: string
-        if (category === 'functions') {
-            ext = '.mcfunction'
+    toRel(category: FileType, side: 'assets' | 'data' = 'data') {
+        if (isRegularFileType(category)) {
+            const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
+            let ext: string
+            if (category === 'function') {
+                ext = '.mcfunction'
+            } else {
+                ext = '.json'
+            }
+            return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
         } else {
-            ext = '.json'
+            return `${side}${sep}minecraft${sep}${category}${sep}${this.getNamespace()}${sep}${this.path.join(sep)}.json`
         }
-        return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
+    }
+
+    /**
+     * - `$1`: Namespace.
+     * - `$2`
+     */
+    static readonly RelativePathPatterns = {
+        File: 'data/*/*'
     }
 
     /**
@@ -142,50 +156,55 @@ export class IdentityNode extends ArgumentNode {
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string | undefined): { id: IdentityNode, category: keyof ClientCache, ext: string, side: 'assets' | 'data' } | undefined {
+    static fromRel(rel: string | undefined): { id: IdentityNode, category: FileType, ext: string, side: 'assets' | 'data' } | undefined {
         if (!rel) {
             return undefined
         }
         rel = path.normalize(rel)
         const segs = rel.split(/[/\\]/)
         const ext = path.extname(rel)
-        if (segs[0] === 'assets' || segs[0] === 'data') {
-            const side = segs[0]
-            const namespace = segs[1]
-            const datapackCategory = segs[2]
-            const paths = segs.slice(3)
-            if (side && namespace && datapackCategory && paths.length > 0) {
-                paths[paths.length - 1] = path.basename(paths[paths.length - 1], ext)
-                const id = new IdentityNode(namespace, paths)
-                let category: keyof ClientCache
-                if (datapackCategory === 'tags') {
-                    switch (paths[0]) {
-                        case 'entity_types':
-                            category = 'tags/entity_types'
-                            break
-                        case 'blocks':
-                        case 'fluids':
-                        case 'functions':
-                        case 'items':
-                            category = `tags/${paths[0]}` as CacheKey
-                            break
-                        default:
+        const side = segs[0]
+        if (side === 'data') {
+            for (const type in PathPatterns) {
+                /* istanbul ignore else */
+                if (Object.prototype.hasOwnProperty.call(PathPatterns, type)) {
+                    const fileType = type as FileType
+                    const pattern = PathPatterns[fileType]
+                    if (minimatch(rel, pattern, { dot: true })) {
+                        let minimumSegsLength: number
+                        let category: CacheType
+                        let namespace: string
+                        if (isTagRegularFileType(fileType)) {
+                            // data/<namespace>/tags/<tag type>/**/*.json
+                            namespace = segs[1]
+                            minimumSegsLength = 5
+                            category = `tag/${segs[3].slice(0, -1)}` as TagRegularFileType
+                        } else if (isRegularFileType(fileType)) {
+                            // data/<namespace>/<regular file type>/**/*.json
+                            namespace = segs[1]
+                            minimumSegsLength = 4
+                            category = segs[2].slice(0, -1) as RegularFileType
+                        } else if (isWorldgenRegistryFileType(fileType)) {
+                            // data/minecraft/worldgen/<worldgen type>/<namespace>/**/*.json
+                            namespace = segs[4]
+                            minimumSegsLength = 6
+                            category = `worldgen/${segs[3]}` as WorldgenRegistryFileType
+                        } else {
+                            // data/minecraft/<registry file type>/<namespace>/**/*.json
+                            namespace = segs[3]
+                            minimumSegsLength = 5
+                            category = segs[2] as RegistryFileType
+                        }
+                        if (segs.length < minimumSegsLength) {
                             return undefined
+                        }
+                        const paths = segs.slice(minimumSegsLength - 1)
+                        const lastPath = paths[paths.length - 1]
+                        paths[paths.length - 1] = lastPath.slice(0, lastPath.lastIndexOf('.'))
+                        const id = new IdentityNode(namespace, paths)
+                        return { category, ext, id, side }
                     }
-                    paths.splice(0, 1)
-                } else if (datapackCategory === 'loot_tables') {
-                    category = 'loot_tables'
-                } else if (
-                    datapackCategory === 'advancements' ||
-                    datapackCategory === 'functions' ||
-                    datapackCategory === 'predicates' ||
-                    datapackCategory === 'recipes'
-                ) {
-                    category = datapackCategory
-                } else {
-                    return undefined
                 }
-                return { id, category, ext, side }
             }
         }
         return undefined
@@ -204,10 +223,10 @@ export class IdentityNode extends ArgumentNode {
         }
     }
 
-    static isExtValid(ext: string, category: CacheKey) {
+    static isExtValid(ext: string, category: FileType) {
         return (
-            (category === 'functions' && ext === '.mcfunction') ||
-            (category !== 'functions' && ext === '.json')
+            (category === 'function' && ext === '.mcfunction') ||
+            (category !== 'function' && ext === '.json')
         )
     }
 }

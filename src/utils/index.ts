@@ -1,8 +1,11 @@
 import clone from 'clone'
+import deepEqual from 'deep-equal'
 import https from 'https'
 import { EOL } from 'os'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { EntityNode } from '../nodes/EntityNode'
+import { ParserSuggestion } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
 import { getOuterIndex, IndexMapping } from '../types/IndexMapping'
@@ -157,11 +160,11 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
 }
 
 /**
- * Convert an array of any to an array of `CompletionItem`.
+ * Convert an array of any to an array of `ParserSuggestion`.
  * @param array An array
  */
-export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c): CompletionItem[] {
-    return array.map(v => cb({ label: v.toString() }))
+export function arrayToCompletions(array: any[], start: number, end: number, cb = (c: ParserSuggestion) => c): ParserSuggestion[] {
+    return array.map(v => cb({ label: v.toString(), start, end }))
 }
 
 /**
@@ -239,28 +242,39 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 
 /**
  * Remap all the indices in the specific TextRange object by the specific mapping.
- * @param completion The specific TextRange object.
+ * @param completion The specific TextRange object. Won't be changed.
  * @param param1 The mapping used to offset.
+ * @returns A new cloned CompletionItem.
  */
-export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, getPosition: (offset: number) => Position): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset: number) => Position)) {
+export function remapParserSuggestion(completion: ParserSuggestion, mapping: IndexMapping): ParserSuggestion
+export function remapParserSuggestion(completion: CompletionItem, getPosition: (offset: number) => Position): ParserSuggestion
+export function remapParserSuggestion(completion: ParserSuggestion, param1: IndexMapping | ((offset: number) => Position)) {
     const ans = clone(completion)
-    if (ans.textEdit) {
-        const range = ans.textEdit.range
-        if (param1 instanceof Function) {
-            range.start = param1(range.start.character)
-            range.end = param1(range.end.character)
-        } else {
+    if (param1 instanceof Function) {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
+            ans.start = range.start.character
+            ans.end = range.end.character
+            range.start = param1(ans.start)
+            range.end = param1(ans.end)
+        }
+    } else {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
             range.start.character = getOuterIndex(param1, range.start.character)
             range.end.character = getOuterIndex(param1, range.end.character)
         }
+        ans.start = getOuterIndex(param1, ans.start)
+        ans.end = getOuterIndex(param1, ans.end)
     }
     return ans
 }
 
-/* istanbul ignore next */
-export function handleCompletionText(origin: CompletionItem, cb: (str: string) => string) {
+/**
+ * @param origin Won't be changed.
+ * @returns A new CompletionItem.
+ */
+export function handleCompletionText<T extends CompletionItem>(origin: T, cb: (str: string) => string) {
     let label = origin.label
     let insertText: string | undefined
     let textEdit: TextEdit | undefined
@@ -284,13 +298,19 @@ export function handleCompletionText(origin: CompletionItem, cb: (str: string) =
     }
 }
 
-export function removeDupliateCompletions(completions: CompletionItem[]): CompletionItem[] {
+export function removeDupliateCompletions(completions: ParserSuggestion[]): ParserSuggestion[] {
     return completions.filter((completion, i) =>
-        completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
+        completions.findIndex(v => deepEqual(completion, v)) === i
     )
 }
 
-export * as datafixers from './datafixers'
-export * as handlers from './handlers'
-export * from './NbtdocHelper'
-export * from './StringReader'
+export function getNbtdocRegistryId(entity: EntityNode): null | string {
+    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
+        return 'minecraft:player'
+    }
+    const firstID = entity.argument.type?.[0]
+    if (firstID && !firstID.isTag) {
+        return firstID.toString()
+    }
+    return null
+}

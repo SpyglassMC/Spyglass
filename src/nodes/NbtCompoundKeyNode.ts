@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'

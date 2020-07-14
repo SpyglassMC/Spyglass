@@ -20,7 +20,7 @@ export class TagArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        const category = getSafeCategory(ctx.cache, 'tags')
+        const category = getSafeCategory(ctx.cache, 'tag')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -28,7 +28,7 @@ export class TagArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'tags'))
+            ans.completions.push(...getCompletions(ctx.cache, 'tag', start, reader.cursor))
         }
         //#endregion
         //#region Tokens
@@ -56,7 +56,7 @@ export class TagArgumentParser extends ArgumentParser<string> {
         //#region Cache
         if (Object.keys(category).includes(value)) {
             ans.cache = {
-                tags: {
+                tag: {
                     [value]: {
                         def: [],
                         ref: [{ start, end: start + value.length }]

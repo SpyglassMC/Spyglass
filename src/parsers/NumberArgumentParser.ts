@@ -1,6 +1,7 @@
 import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { NumberNode } from '../nodes/NumberNode'
+import { ParsingContext } from '../types'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
@@ -20,7 +21,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
         this.identity = `number.${type}`
     }
 
-    parse(reader: StringReader): ArgumentParserResult<NumberNode> {
+    parse(reader: StringReader, _ctx?: ParsingContext): ArgumentParserResult<NumberNode> {
         const ans: ArgumentParserResult<NumberNode> = {
             data: new NumberNode(NaN, ''),
             tokens: [],
@@ -59,7 +60,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
         }
 
         ans.data[NodeRange] = { start, end: reader.cursor }
-        
+
         return ans
     }
 

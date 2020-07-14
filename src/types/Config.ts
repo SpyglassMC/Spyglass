@@ -1,10 +1,11 @@
-import { CommandTreeVersion } from './CommandTreeVersion'
-import { NamingConventionConfig } from './NamingConventionConfig'
-import { StrictCheckConfig } from './StrictCheckConfig'
-import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
-import { QuoteTypeConfig } from './QuoteTypeConfig'
 import minimatch from 'minimatch'
 import { DataSource } from '../data/VanillaData'
+import { CommandTreeVersion } from './CommandTreeVersion'
+import { JsonSchemaVersion } from './JsonSchemaVersion'
+import { NamingConventionConfig } from './NamingConventionConfig'
+import { QuoteTypeConfig } from './QuoteTypeConfig'
+import { StrictCheckConfig } from './StrictCheckConfig'
+import { BracketSpacingConfig, DiagnosticConfig, SepSpacingConfig } from './StylisticConfig'
 
 export interface Config {
     /**
@@ -31,8 +32,10 @@ export interface EnvConfig {
     dataSource: DataSource,
     dataVersion: string,
     dependsOnVanilla: boolean,
+    detectionDepth: number,
     exclude: string[],
     include: string[],
+    jsonVersion: JsonSchemaVersion,
     language: string
 }
 
@@ -176,8 +179,10 @@ export const VanillaConfig: Config = {
         dataVersion: 'Latest snapshot',
         cmdVersion: '1.16',
         dependsOnVanilla: true,
+        detectionDepth: 1,
         exclude: [],
         include: [],
+        jsonVersion: '1.16',
         language: 'Default'
     },
     lint: {

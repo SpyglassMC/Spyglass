@@ -3,6 +3,7 @@ import { StringReader } from '../utils/StringReader'
 import { ClientCache, combineCache } from './ClientCache'
 import { downgradeParsingError, ParsingError } from './ParsingError'
 import { Token } from './Token'
+import { ParserSuggestion } from './ParserSuggestion'
 
 /**
  * Represent an argument parser.
@@ -27,16 +28,7 @@ export interface ParserResult<T> {
     data: T
 }
 
-/**
- * Represent a result parsed by argument parser.
- * @template T Type of the parsed data. Can be a string, Selector, NBT, etc.
- */
-export interface ArgumentParserResult<T> extends ParserResult<T> {
-    data: T,
-    /**
-     * Semantic tokens.
-     */
-    tokens: Token[],
+export interface ValidateResult {
     /**
      * All errors occurred while the process of parsing.
      */
@@ -46,10 +38,26 @@ export interface ArgumentParserResult<T> extends ParserResult<T> {
      */
     cache: ClientCache,
     /**
+     * Semantic tokens.
+     */
+    tokens: Token[]
+}
+
+/**
+ * ValidateResult with completions.
+ */
+export interface LegacyValidateResult extends ValidateResult {
+    /**
      * Completions.
      */
-    completions: CompletionItem[]
+    completions: ParserSuggestion[]
 }
+
+/**
+ * Represent a result parsed by argument parser.
+ * @template T Type of the parsed data. Can be a string, Selector, NBT, etc.
+ */
+export interface ArgumentParserResult<T> extends ParserResult<T>, LegacyValidateResult {}
 
 export function combineArgumentParserResult(base: ArgumentParserResult<any>, override: ArgumentParserResult<any>): void {
     // Cache.

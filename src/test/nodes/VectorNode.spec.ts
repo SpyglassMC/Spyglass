@@ -1,10 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { constructConfig, VanillaConfig } from '../../types/Config'
-import { GetFormattedString } from '../../types/Formattable'
-import { FunctionInfo } from '../../types/FunctionInfo'
 import { GetCodeActions } from '../../nodes/ArgumentNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../../nodes/VectorNode'
+import { constructConfig } from '../../types/Config'
+import { GetFormattedString } from '../../types/Formattable'
 import { getCodeAction } from '../../utils'
 import { $, mockFunctionInfo } from '../utils.spec'
 
@@ -25,7 +24,7 @@ describe('VectorNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
         const lineNumber = 10
-        const info=mockFunctionInfo()
+        const info = mockFunctionInfo()
         it('Should return align actions', () => {
             const range = { start: 1, end: 2 }
             const node = $(new VectorNode(), [0, 7], {

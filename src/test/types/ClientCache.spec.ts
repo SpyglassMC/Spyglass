@@ -1,8 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { isDefinitionType, combineCache, getCategoryKey, trimCache, getCompletions, getSafeCategory, ClientCache, removeCacheUnit, removeCachePosition, isTagType, isFileType, getCacheFromOffset, isNamespacedType, remapCachePosition } from '../../types/ClientCache'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
+import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isDefinitionType, isFileType, isNamespacedType, isTagRegularFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
+import { assertCompletions } from '../utils.spec'
 
 describe('ClientCache Tests', () => {
     describe('isDefinitionType() Tests', () => {
@@ -19,30 +20,30 @@ describe('ClientCache Tests', () => {
     })
     describe('removeCacheUnit() Tests', () => {
         it('Should remove the unit', () => {
-            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
-            removeCacheUnit(cache, 'entities', 'foo')
+            const cache: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
+            removeCacheUnit(cache, 'entity', 'foo')
             assert.deepStrictEqual(cache, {
-                entities: {}
+                entity: {}
             })
         })
     })
     describe('removeCachePosition() Tests', () => {
         it('Should remove the pos', () => {
-            const cache: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3, uri: 'file:///data/minecraft/functions/a.mcfunction' }], ref: [] } } }
+            const cache: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3, uri: 'file:///data/minecraft/functions/a.mcfunction' }], ref: [] } } }
             removeCachePosition(cache, Uri.parse('file:///data/minecraft/functions/a.mcfunction'))
             assert.deepStrictEqual(cache, {
-                entities: { foo: { def: [], ref: [] } }
+                entity: { foo: { def: [], ref: [] } }
             })
         })
     })
     describe('combineCache() Tests', () => {
         it('Should combine when base is undefiend', () => {
-            const override: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
+            const override: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
             const actual = combineCache(undefined, override)
             assert.deepStrictEqual(actual, override)
         })
         it('Should combine when override is undefiend', () => {
-            const base: ClientCache = { entities: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
+            const base: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
             const actual = combineCache(base, undefined)
             assert.deepStrictEqual(actual, base)
         })
@@ -53,7 +54,7 @@ describe('ClientCache Tests', () => {
         it('Should load def in override cache', () => {
             const base: ClientCache = {}
             const override: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []
@@ -66,7 +67,7 @@ describe('ClientCache Tests', () => {
         it('Should load ref in override cache', () => {
             const base: ClientCache = {}
             const override: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -79,18 +80,18 @@ describe('ClientCache Tests', () => {
         it('Should set additional information', () => {
             const base: ClientCache = {}
             const override: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []
                     }
                 }
             }
-            const actual = combineCache(base, override, { uri: Uri.parse('file:///blabla'), startLine: 0, endLine: 0, skippedChar: 0 })
+            const actual = combineCache(base, override, { uri: Uri.parse('file:///blabla'), getPosition: offset => ({ line: 1, character: offset }) })
             assert.deepStrictEqual(actual, {
-                entities: {
+                entity: {
                     foo: {
-                        def: [{ start: 0, end: 3, uri: 'file:///blabla', startLine: 0, startChar: 0, endLine: 0, endChar: 3  }],
+                        def: [{ start: 0, end: 3, uri: 'file:///blabla', startLine: 1, startChar: 0, endLine: 1, endChar: 3 }],
                         ref: []
                     }
                 }
@@ -99,7 +100,7 @@ describe('ClientCache Tests', () => {
         it('Should not combine when the override unit is empty', () => {
             const base: ClientCache = {}
             const override: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [],
                         ref: []
@@ -112,10 +113,10 @@ describe('ClientCache Tests', () => {
         it('Should complete base object', () => {
             const base1: ClientCache = {}
             const base2: ClientCache = {
-                entities: {}
+                entity: {}
             }
             const base3: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [],
                         ref: []
@@ -123,7 +124,7 @@ describe('ClientCache Tests', () => {
                 }
             }
             const override: ClientCache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -140,25 +141,25 @@ describe('ClientCache Tests', () => {
     })
     describe('getSafeCategory() Tests', () => {
         it('Should return category', () => {
-            const cache = { tags: {} }
-            const actual = getSafeCategory(cache, 'tags')
-            assert(actual === cache.tags)
+            const cache = { tag: {} }
+            const actual = getSafeCategory(cache, 'tag')
+            assert(actual === cache.tag)
         })
         it('Should return an empty object if the category does not exist', () => {
             const cache = {}
-            const actual = getSafeCategory(cache, 'tags')
+            const actual = getSafeCategory(cache, 'tag')
             assert.deepStrictEqual(actual, {})
         })
         it('Should return an empty object if the cache does not exist', () => {
             const cache = undefined
-            const actual = getSafeCategory(cache, 'tags')
+            const actual = getSafeCategory(cache, 'tag')
             assert.deepStrictEqual(actual, {})
         })
     })
     describe('getCompletions() Tests', () => {
         it('Should return completions', () => {
             const actual = getCompletions({
-                tags: {
+                tag: {
                     foo: { def: [], ref: [] },
                     bar: {
                         doc: 'Documentation for **bar**',
@@ -166,83 +167,46 @@ describe('ClientCache Tests', () => {
                         ref: []
                     }
                 }
-            }, 'tags')
-            assert.deepStrictEqual(actual, [
-                { label: 'foo' },
-                { label: 'bar', documentation: { kind: MarkupKind.Markdown, value: 'Documentation for **bar**' } }
+            }, 'tag', 0, Infinity)
+            assertCompletions('', actual, [
+                { label: 'foo', t: 'foo' },
+                { label: 'bar', t: 'bar', documentation: { kind: MarkupKind.Markdown, value: 'Documentation for **bar**' } }
             ])
         })
     })
     describe('remapCachePosition() Tests', () => {
         it('Should remap positions', () => {
-            const cache = { tags: { foo: { def: [{ start: 1, end: 3 }], ref: [{ start: 1, end: 3 }] } } }
+            const cache = { tag: { foo: { def: [{ start: 1, end: 3 }], ref: [{ start: 1, end: 3 }] } } }
             remapCachePosition(cache, { start: 1 })
-            assert.deepStrictEqual(cache, { tags: { foo: { def: [{ start: 2, end: 4 }], ref: [{ start: 2, end: 4 }] } } })
-        })
-    })
-    describe('getCategoryKey() Tests', () => {
-        it('Should return "bossbars" for "bossbar"', () => {
-            const type = 'bossbar'
-            const actual = getCategoryKey(type)
-            assert(actual === 'bossbars')
-        })
-        it('Should return "entities" for "entity"', () => {
-            const type = 'entity'
-            const actual = getCategoryKey(type)
-            assert(actual === 'entities')
-        })
-        it('Should return "objectives" for "objective"', () => {
-            const type = 'objective'
-            const actual = getCategoryKey(type)
-            assert(actual === 'objectives')
-        })
-        it('Should return "score_holders" for "score_holder"', () => {
-            const type = 'score_holder'
-            const actual = getCategoryKey(type)
-            assert(actual === 'score_holders')
-        })
-        it('Should return "storages" for "storage"', () => {
-            const type = 'storage'
-            const actual = getCategoryKey(type)
-            assert(actual === 'storages')
-        })
-        it('Should return "teams" for "team"', () => {
-            const type = 'team'
-            const actual = getCategoryKey(type)
-            assert(actual === 'teams')
-        })
-        it('Should return "tags" for "tag"', () => {
-            const type = 'tag'
-            const actual = getCategoryKey(type)
-            assert(actual === 'tags')
+            assert.deepStrictEqual(cache, { tag: { foo: { def: [{ start: 2, end: 4 }], ref: [{ start: 2, end: 4 }] } } })
         })
     })
     describe('getCacheFromOffset() Tests', () => {
         it('Should return def', () => {
             const actual = getCacheFromOffset({
-                tags: {
+                tag: {
                     foo: {
                         def: [{ start: 0, end: 1 }],
                         ref: []
                     }
                 }
             }, 1)
-            assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+            assert.deepStrictEqual(actual, { type: 'tag', id: 'foo', start: 0, end: 1 })
         })
         it('Should return ref', () => {
             const actual = getCacheFromOffset({
-                tags: {
+                tag: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 1 }]
                     }
                 }
             }, 1)
-            assert.deepStrictEqual(actual, { type: 'tags', id: 'foo', start: 0, end: 1 })
+            assert.deepStrictEqual(actual, { type: 'tag', id: 'foo', start: 0, end: 1 })
         })
         it('Should return undefined', () => {
             const actual = getCacheFromOffset({
-                tags: {
+                tag: {
                     foo: {
                         def: [{ start: 0, end: 1 }],
                         ref: [{ start: 0, end: 1 }]
@@ -255,7 +219,7 @@ describe('ClientCache Tests', () => {
     describe('trimCache() Tests', () => {
         it('Should not trim units with content', () => {
             const cache: ClientCache = {
-                advancements: {
+                advancement: {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -268,7 +232,7 @@ describe('ClientCache Tests', () => {
         })
         it('Should trim units', () => {
             const actual: ClientCache = {
-                objectives: {
+                objective: {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -281,7 +245,7 @@ describe('ClientCache Tests', () => {
             }
             trimCache(actual)
             assert.deepStrictEqual(actual, {
-                objectives: {
+                objective: {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -291,7 +255,7 @@ describe('ClientCache Tests', () => {
         })
         it("Should not trim units which doesn't need definitions", () => {
             const actual: ClientCache = {
-                advancements: {
+                advancement: {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -304,7 +268,7 @@ describe('ClientCache Tests', () => {
             }
             trimCache(actual)
             assert.deepStrictEqual(actual, {
-                advancements: {
+                advancement: {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -318,7 +282,7 @@ describe('ClientCache Tests', () => {
         })
         it('Should trim categories', () => {
             const actual: ClientCache = {
-                objectives: {
+                objective: {
                     test: {
                         def: [],
                         ref: []
@@ -329,33 +293,33 @@ describe('ClientCache Tests', () => {
             assert.deepStrictEqual(actual, {})
         })
     })
-    describe('isTagType() Tests', () => {
+    describe('isTagRegularFileType() Tests', () => {
         it('Should return true', () => {
-            const actual = isTagType('tags/blocks')
+            const actual = isTagRegularFileType('tag/block')
             assert(actual === true)
         })
         it('Should return false', () => {
-            const actual = isTagType('advancements')
+            const actual = isTagRegularFileType('advancement')
             assert(actual === false)
         })
     })
     describe('isFileType() Tests', () => {
         it('Should return true', () => {
-            const actual = isFileType('advancements')
+            const actual = isFileType('advancement')
             assert(actual === true)
         })
         it('Should return false', () => {
-            const actual = isFileType('entities')
+            const actual = isFileType('entity')
             assert(actual === false)
         })
     })
     describe('isNamespacedType() Tests', () => {
         it('Should return true', () => {
-            const actual = isNamespacedType('advancements')
+            const actual = isNamespacedType('advancement')
             assert(actual === true)
         })
         it('Should return false', () => {
-            const actual = isNamespacedType('entities')
+            const actual = isNamespacedType('entity')
             assert(actual === false)
         })
     })

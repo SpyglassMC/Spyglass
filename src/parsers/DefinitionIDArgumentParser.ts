@@ -1,6 +1,6 @@
 import { locale } from '../locales'
-import { CacheCategory, getCategoryKey, isDefinitionType } from '../types/ClientCache'
 import { IdentityNode } from '../nodes/IdentityNode'
+import { CacheCategory, isDefinitionType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
@@ -44,8 +44,8 @@ export class DefinitionIDArgumentParser extends ArgumentParser<string> {
                         break
                 }
                 //#endregion
-                ans.cache[getCategoryKey(this.type)] = {}
-                const category = ans.cache[getCategoryKey(this.type)] as CacheCategory
+                ans.cache[this.type] = {}
+                const category = ans.cache[this.type] as CacheCategory
                 category[id] = {
                     def: [{ start, end: start + id.length }],
                     ref: []

@@ -1,7 +1,6 @@
 import { Location } from 'vscode-languageserver'
 import { CacheFile, getCacheFromOffset, getSafeCategory } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
-import { Uri, DocNode } from '../../types/handlers'
+import { DocNode, Uri } from '../../types/handlers'
 
 export function onDefOrRef({ node, offset, cacheFile, type }: { uri: Uri, cacheFile: CacheFile, offset: number, node: DocNode, type: 'def' | 'ref' }): Location[] | null {
     /* istanbul ignore next */

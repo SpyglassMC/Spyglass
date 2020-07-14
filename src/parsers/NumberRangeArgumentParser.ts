@@ -32,10 +32,6 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
         const isDoublePeriods = () => reader.peek() === '.' && reader.peek(1) === '.'
         const start = reader.cursor
 
-        if (ctx.cursor === start && this.type === 'integer') {
-            ans.completions.push({ label: '-2147483648..2147483647' })
-        }
-
         if (!reader.canRead()) {
             ans.errors.push(new ParsingError(
                 { start: reader.cursor, end: reader.cursor + 1 },
@@ -49,7 +45,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
             let min: NumberNode | undefined
             let max: NumberNode | undefined
             if (!isDoublePeriods()) {
-                const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                const result = new ctx.parsers.Number(this.type).parse(reader, ctx)
                 min = result.data
                 combineArgumentParserResult(ans, result)
             }
@@ -57,7 +53,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
                 ans.tokens.push(new Token({ start: reader.cursor, end: reader.cursor + 2 }, TokenType.keyword))
                 reader.skip(2)
                 if (StringReader.canInNumber(reader.peek())) {
-                    const result: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', [this.type]).parse(reader, ctx)
+                    const result = new ctx.parsers.Number(this.type).parse(reader, ctx)
                     max = result.data
                     combineArgumentParserResult(ans, result)
                 }
@@ -75,6 +71,10 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
                 )
             }
             ans.data = new NumberRangeNode(this.type, min, max)
+        }
+
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor && this.type === 'integer') {
+            ans.completions.push({ label: '-2147483648..2147483647', start, end: reader.cursor })
         }
 
         ans.data[NodeRange] = { start, end: reader.cursor }

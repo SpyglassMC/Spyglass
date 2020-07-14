@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes'
-import { CacheKey } from '../types/ClientCache'
+import { CacheType } from '../types/ClientCache'
 import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
 import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
@@ -25,7 +25,11 @@ export class LineParser implements Parser<LineNode> {
         /**
          * The entry point will be used to access `tree`.
          */
-        private readonly entryPoint: 'line' | 'commands' = 'line'
+        private readonly entryPoint: 'line' | 'commands' = 'line',
+        /**
+         * Allow the command not hitting executable nodes.
+         */
+        private readonly allowPartial = false
     ) { }
 
     private static getParser(parserInNode: ArgumentParser<any> | ((parsedLine: SaturatedLineNode, ctx: ParsingContext) => ArgumentParser<any>), parsedLine: SaturatedLineNode, ctx: ParsingContext) {
@@ -42,11 +46,13 @@ export class LineParser implements Parser<LineNode> {
         const node: SaturatedLineNode = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: {}, errors: [], completions: [], hint: { fix: [], options: [] } }
         const start = reader.cursor
         const backupReader = reader.clone()
+        let shouldContinue = true
         //#region Check leading slash.
         if (reader.peek() === '/') {
             // Find a leading slash...
             if (this.leadingSlash === false) {
                 // ...which is unexpected
+                shouldContinue = false
                 node.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
                     locale('unexpected-leading-slash'),
@@ -58,22 +64,27 @@ export class LineParser implements Parser<LineNode> {
             // Don't find a leading slash...
             if (this.leadingSlash === true) {
                 // ...which is unexpected
-                node.errors.push(new ParsingError(
-                    { start: reader.cursor, end: reader.cursor + 1 },
-                    locale('expected-got',
-                        locale('leading-slash'),
-                        locale('punc.quote', reader.peek())
-                    ),
-                    false
-                ))
+                shouldContinue = false
+                if (this.allowPartial) {
+                    reader.readRemaining()
+                } else {
+                    node.errors.push(new ParsingError(
+                        { start: reader.cursor, end: reader.cursor + 1 },
+                        locale('expected-got',
+                            locale('leading-slash'),
+                            locale('punc.quote', reader.peek())
+                        ),
+                        false
+                    ))
+                }
                 if (ctx.cursor === reader.cursor) {
-                    node.completions.push({ label: '/' })
+                    node.completions.push({ label: '/', start: ctx.cursor, end: ctx.cursor })
                 }
             }
         }
         //#endregion
 
-        if (node.errors.length === 0) {
+        if (shouldContinue) {
             this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
         }
         saturatedLineToLine(node)
@@ -126,7 +137,7 @@ export class LineParser implements Parser<LineNode> {
             const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
             //#region Aliases.
             if (start === reader.cursor) {
-                const category = ctx.cache[`aliases/${parser.identity.split('.')[0]}` as CacheKey]
+                const category = ctx.cache[`alias/${parser.identity.split('.')[0]}` as CacheType]
                 for (const alias in category) {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(alias)) {
@@ -134,6 +145,7 @@ export class LineParser implements Parser<LineNode> {
                         completions.push({
                             label: alias,
                             insertText: unit.doc,
+                            start: reader.cursor, end: reader.cursor,
                             detail: unit.doc,
                             kind: CompletionItemKind.Snippet
                         })
@@ -163,7 +175,7 @@ export class LineParser implements Parser<LineNode> {
             //#region Handle trailing data or absent data.
             if (!reader.canRead(2) && (!reader.canRead() || reader.peek() === ' ')) {
                 // The input line is all parsed.
-                if (!node.executable) {
+                if (!node.executable && !this.allowPartial) {
                     parsedLine.errors.push(
                         new ParsingError({ start: reader.cursor, end: reader.cursor + 2 }, locale('expected-got',
                             locale('more-arguments'),

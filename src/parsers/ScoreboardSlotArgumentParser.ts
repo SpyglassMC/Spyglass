@@ -2,15 +2,13 @@ import { locale } from '../locales'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
+import { scoreboard } from '../types/scoreboard'
 import { Token, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
 export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     static identity = 'ScoreboardSlot'
-    static readonly Category = ['belowName', 'list', 'sidebar']
-    static readonly Colors = ['black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white']
-    static readonly Sep = '.'
 
     readonly identity = 'scoreboardSlot'
 
@@ -28,12 +26,12 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
         }
 
         const start = reader.cursor
-        const categoryResult = ctx.parsers.get('Literal', ScoreboardSlotArgumentParser.Category).parse(reader, ctx)
+        const categoryResult = new ctx.parsers.Literal(...scoreboard.SlotCategory).parse(reader, ctx)
         const category = categoryResult.data as 'list' | 'sidebar' | 'belowName' | ''
         categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
         combineArgumentParserResult(ans, categoryResult)
 
-        if (category && reader.peek() === ScoreboardSlotArgumentParser.Sep) {
+        if (category && reader.peek() === scoreboard.SlotSep) {
             if (category !== 'sidebar') {
                 ans.errors.push(new ParsingError(
                     { start: reader.cursor, end: reader.cursor + 1 },
@@ -43,13 +41,13 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
             } else {
                 reader.skip()
                 const start = reader.cursor
-                const teamResult = ctx.parsers
-                    .get('Literal', ScoreboardSlotArgumentParser.Colors.map(v => `team${ScoreboardSlotArgumentParser.Sep}${v}`))
-                    .parse(reader, ctx)
+                const teamResult = new ctx.parsers.Literal(
+                    ...scoreboard.SlotColors.map(v => `team${scoreboard.SlotSep}${v}`)
+                ).parse(reader, ctx)
                 const team = teamResult.data as string
                 teamResult.tokens = [Token.from(start, reader, TokenType.type)]
                 combineArgumentParserResult(ans, teamResult)
-                ans.data = `${category}${ScoreboardSlotArgumentParser.Sep}${team}`
+                ans.data = `${category}${scoreboard.SlotSep}${team}`
             }
         } else {
             ans.data = category

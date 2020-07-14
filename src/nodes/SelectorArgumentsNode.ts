@@ -1,7 +1,7 @@
 import { getCodeAction, toFormattedString } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { GameMode } from '../types/GameMode'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'

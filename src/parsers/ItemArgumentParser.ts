@@ -31,7 +31,7 @@ export class ItemArgumentParser extends ArgumentParser<ItemNode> {
 
         const start = reader.cursor
 
-        const idResult = ctx.parsers.get('Identity', ['minecraft:item', this.allowTag]).parse(reader, ctx)
+        const idResult = new ctx.parsers.Identity('minecraft:item', this.allowTag).parse(reader, ctx)
         const id = idResult.data as IdentityNode
         combineArgumentParserResult(ans, idResult)
         ans.data.id = id
@@ -47,9 +47,9 @@ export class ItemArgumentParser extends ArgumentParser<ItemNode> {
         if (reader.peek() === '{') {
             const dummySuperNode = new NbtCompoundNode(null)
             dummySuperNode.id = new NbtStringNode(dummySuperNode, ans.data.id.toString(), ans.data.id.toString(), {})
-            const tagResult = ctx.parsers.get('Nbt', [
+            const tagResult = new ctx.parsers.Nbt(
                 'Compound', 'minecraft:item', !id.isTag ? id.toString() : null, this.isPredicate, dummySuperNode
-            ]).parse(reader, ctx)
+            ).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag

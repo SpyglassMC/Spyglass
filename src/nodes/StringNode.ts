@@ -1,5 +1,5 @@
 import { getCodeAction, quoteString } from '../utils'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'

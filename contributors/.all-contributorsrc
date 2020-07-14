@@ -115,6 +115,17 @@
       ]
     },
     {
+      "name": "Misode",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
+      "profile": "https://github.com/misode",
+      "contributions": [],
+      "details": [
+        { "type": "ideas", "link": "issues/445", "text": "#445" },
+        { "type": "bug", "link": "issues/592", "text": "#592" },
+        { "type": "bug", "link": "issues/593", "text": "#593" }
+      ]
+    },
+    {
       "name": "NeunEinser",
       "avatar_url": "https://avatars3.githubusercontent.com/u/12124394?s=460&v=4",
       "profile": "https://github.com/NeunEinser",

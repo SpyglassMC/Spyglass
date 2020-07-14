@@ -16,7 +16,7 @@ describe('onDocumentHighlight() Tests', () => {
                     new Token({ start: 5, end: 13 }, TokenType.entity)
                 ],
                 cache: {
-                    entities: {
+                    entity: {
                         SPGoding: {
                             def: [],
                             ref: [{ start: 5, end: 13 }]
@@ -31,7 +31,7 @@ describe('onDocumentHighlight() Tests', () => {
                     new Token({ start: 19, end: 27 }, TokenType.entity)
                 ],
                 cache: {
-                    entities: {
+                    entity: {
                         SPGoding: {
                             def: [],
                             ref: [{ start: 19, end: 27 }]

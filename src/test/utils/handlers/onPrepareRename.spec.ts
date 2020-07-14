@@ -7,7 +7,7 @@ describe('onPrepareRename() Tests', () => {
     it('Should return the range of the cache stuff', () => {
         const node = mockLineNode({
             cache: {
-                entities: {
+                entity: {
                     SPGoding: {
                         def: [],
                         ref: [{ start: 0, end: 8 }]
@@ -30,7 +30,7 @@ describe('onPrepareRename() Tests', () => {
     it('Should return null for renaming colors', () => {
         const node = mockLineNode({
             cache: {
-                colors: {
+                color: {
                     '1 1 1 1': {
                         def: [],
                         ref: [{ start: 9, end: 21 }]

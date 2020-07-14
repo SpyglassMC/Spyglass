@@ -1,8 +1,7 @@
+import { DocNode, DocumentInfo } from '../../types'
 import { canBeRenamed, getCacheFromOffset } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
-import { DocNode } from '../../types'
 
-export function onPrepareRename({ info, node, offset }: { info: FunctionInfo, node: DocNode, offset: number }) {
+export function onPrepareRename({ info, node, offset }: { info: DocumentInfo, node: DocNode, offset: number }) {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
 

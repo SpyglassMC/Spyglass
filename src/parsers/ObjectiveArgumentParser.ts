@@ -26,7 +26,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        const category = getSafeCategory(ctx.cache, 'objectives')
+        const category = getSafeCategory(ctx.cache, 'objective')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -34,7 +34,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'objectives'))
+            ans.completions.push(...getCompletions(ctx.cache, 'objective', start, reader.cursor))
         }
         //#endregion
         //#region Tokens
@@ -57,7 +57,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
         } else {
             if (this.isDefinition) {
                 ans.cache = {
-                    objectives: {
+                    objective: {
                         [value]: {
                             def: [{ start, end: reader.cursor }],
                             ref: []
@@ -67,7 +67,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
             } else {
                 if (Object.keys(category).includes(value)) {
                     ans.cache = {
-                        objectives: {
+                        objective: {
                             [value]: {
                                 def: [],
                                 ref: [{ start, end: start + value.length }]

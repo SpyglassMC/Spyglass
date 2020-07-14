@@ -6,6 +6,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('ObjectiveArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -17,7 +18,7 @@ describe('ObjectiveArgumentParser Tests', () => {
     })
 
     const cache = {
-        objectives: {
+        objective: {
             foo: { def: [], ref: [] },
             bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
@@ -37,11 +38,12 @@ describe('ObjectiveArgumentParser Tests', () => {
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: 'foo' },
+                    { label: 'foo', t: 'foo' },
                     {
                         label: 'bar',
+                        t: 'bar',
                         documentation: {
                             kind: 'markdown',
                             value: 'The doc of **bar**'
@@ -89,7 +91,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                objectives: {
+                objective: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -102,7 +104,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                objectives: {
+                objective: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []

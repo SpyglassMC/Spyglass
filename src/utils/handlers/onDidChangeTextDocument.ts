@@ -1,13 +1,13 @@
 import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { getSelectedNode, getStringLines, parseStrings } from '.'
+import { getStringLines, parseFunctionNodes } from './common'
 import { VanillaData } from '../../data/VanillaData'
-import { NodeRange } from '../../nodes'
+import { getSelectedNode, NodeRange } from '../../nodes'
 import { LineNode, Uri } from '../../types'
 import { CacheFile } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config } from '../../types/Config'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 
 function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { range: Range, text: string } {
     return !!(val as any).range
@@ -48,7 +48,7 @@ export function onDidChangeTextDocument({ uri, info, roots, version, contentChan
 
     // Update `lines`.
     const changedNodes: LineNode[] = []
-    parseStrings(
+    parseFunctionNodes(
         info.document,
         info.document.offsetAt(Position.create(nodeChange.lineStart, 0)),
         info.document.offsetAt(Position.create(nodeChange.lineStop + lineDelta, Infinity)),

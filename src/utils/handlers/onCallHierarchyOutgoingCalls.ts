@@ -1,8 +1,8 @@
 import { Proposed } from 'vscode-languageserver'
-import { CacheCategory, CacheFile, CacheKey, getSafeCategory } from '../../types/ClientCache'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { getId, getUri, getUriFromId } from '.'
+import { CacheCategory, CacheFile, FileType, getSafeCategory } from '../../types/ClientCache'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { getId, getUri, getUriFromId } from './common'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
 /**
@@ -31,7 +31,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
             }
             const rewardIdString = advInfo.rewards.function
             const rewardId = IdentityNode.fromString(rewardIdString)
-            const rewardUri = await getUriFromId(pathExists, roots, uris, urisOfIds, rewardId, 'functions')
+            const rewardUri = await getUriFromId(pathExists, roots, uris, urisOfIds, rewardId, 'function')
             /* istanbul ignore else */
             if (rewardUri) {
                 ans.push({
@@ -45,7 +45,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
             break
         }
         case IdentityKind.Function: {
-            const pushItems = async (category: CacheCategory, type: CacheKey) => {
+            const pushItems = async (category: CacheCategory, type: FileType) => {
                 for (const outgoingIdString in category) {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(outgoingIdString)) {
@@ -60,9 +60,9 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
                                 if (outgoingUri) {
                                     ans.push({
                                         to: getCallHierarchyItem(
-                                            (type === 'tags/functions' ? IdentityNode.TagSymbol : '') + outgoingId.toString(),
+                                            (type === 'tag/function' ? IdentityNode.TagSymbol : '') + outgoingId.toString(),
                                             outgoingUri.toString(), 0, 0, 0, 0,
-                                            type === 'tags/functions' ? IdentityKind.FunctionTag : IdentityKind.Function
+                                            type === 'tag/function' ? IdentityKind.FunctionTag : IdentityKind.Function
                                         ),
                                         fromRanges: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }]
                                     })
@@ -72,8 +72,8 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
                     }
                 }
             }
-            await pushItems(getSafeCategory(cacheFile.cache, 'functions'), 'functions')
-            await pushItems(getSafeCategory(cacheFile.cache, 'tags/functions'), 'tags/functions')
+            await pushItems(getSafeCategory(cacheFile.cache, 'function'), 'function')
+            await pushItems(getSafeCategory(cacheFile.cache, 'tag/function'), 'tag/function')
             break
         }
         case IdentityKind.FunctionTag:
@@ -85,7 +85,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
             }
             for (const valueIdString of tagInfo.values) {
                 const valueId = IdentityNode.fromString(valueIdString)
-                const valueUri = await getUriFromId(pathExists, roots, uris, urisOfIds, valueId, valueId.isTag ? 'tags/functions' : 'functions')
+                const valueUri = await getUriFromId(pathExists, roots, uris, urisOfIds, valueId, valueId.isTag ? 'tag/function' : 'function')
                 /* istanbul ignore else */
                 if (valueUri) {
                     ans.push({

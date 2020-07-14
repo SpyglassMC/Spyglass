@@ -1,25 +1,26 @@
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
-import { DataSource, VanillaData } from '../data'
+import { DataSource, VanillaData } from '../data/VanillaData'
+import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { CacheKey } from './ClientCache'
+import { CacheType } from './ClientCache'
 import { Config } from './Config'
-import { FunctionInfo } from './FunctionInfo'
+import { DocumentInfo } from './DocumentInfo'
 import { LineNode } from './LineNode'
 
 export const Uri = URI
 
-export type DocNode = LineNode
+export type DocNode = LineNode | JsonNode
 
 export type Uri = URI
-export type InfosOfUris = Map<Uri, FunctionInfo | Promise<FunctionInfo | undefined>>
+export type InfosOfUris = Map<Uri, DocumentInfo | Promise<DocumentInfo | undefined>>
 export type UrisOfIds = Map<string, Uri | null>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
  */
 export type FetchConfigFunction = (uri: Uri) => Promise<Config>
 export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
-export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheKey, preferredRoot?: Uri) => Promise<Uri | null>
+export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
 export type PathExistsFunction = (path: string) => Promise<boolean>
 export type ReadFileFunction = (path: string, encoding: string) => Promise<string>

@@ -36,16 +36,8 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
             cache: {},
             completions: []
         }
-        //#region Get completions.
-        const lengthToCursor = cursor - reader.cursor
-        if (lengthToCursor >= 0) {
-            const textToCursor = reader.remainingString.slice(0, lengthToCursor).toLowerCase()
-            const candidates = this.literals.filter(v => v.toLowerCase().startsWith(textToCursor))
-            ans.completions.push(...arrayToCompletions(candidates))
-        }
-        //#endregion
-        //#region Data
         const start = reader.cursor
+        //#region Data
         let remaningLiterals = this.literals
         let value = ''
         while (reader.canRead() && (StringReader.canInUnquotedString(reader.peek()) || this.extraChars.includes(reader.peek()))) {
@@ -59,6 +51,11 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
             remaningLiterals = nextRemaningLiterals
         }
         ans.data = value
+        //#endregion
+        //#region Completions.
+        if (start <= cursor && cursor <= reader.cursor) {
+            ans.completions.push(...arrayToCompletions(this.literals, start, reader.cursor))
+        }
         //#endregion
         //#region Tokens.
         ans.tokens.push(Token.from(start, reader, TokenType.literal))

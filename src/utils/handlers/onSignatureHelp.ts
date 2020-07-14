@@ -1,16 +1,16 @@
 import { SignatureInformation } from 'vscode-languageserver'
-import { getId, getRootIndex } from '.'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
-import { DocNode, Uri } from '../../types'
+import { LineNode, Uri } from '../../types'
 import { CacheFile, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
-import { FunctionInfo } from '../../types/FunctionInfo'
+import { FunctionInfo } from '../../types/DocumentInfo'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
+import { getId, getRootIndex } from './common'
 
-export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: DocNode, info: FunctionInfo, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: LineNode, info: FunctionInfo, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
@@ -60,7 +60,7 @@ export async function onSignatureHelp({ offset, node, info, cacheFile, commandTr
 
         return { signatures, activeParameter: 1, activeSignature: signatures.length - 1 }
     } catch (e) {
-        console.error('onSignatureHelp', e)
+        console.error('[onSignatureHelp]', e)
     }
     return null
 }

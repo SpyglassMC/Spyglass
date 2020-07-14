@@ -2,7 +2,7 @@ import { Proposed } from 'vscode-languageserver'
 import { CacheFile, CacheUnit, getSafeCategory } from '../../types/ClientCache'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { getId, getUri, getUriFromId } from '.'
+import { getId, getUri, getUriFromId } from './common'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
 /**
@@ -22,11 +22,11 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
         case IdentityKind.Advancement:
             return null
         case IdentityKind.Function:
-            unit = getSafeCategory(cacheFile.cache, 'functions')[id]
+            unit = getSafeCategory(cacheFile.cache, 'function')[id]
             break
         case IdentityKind.FunctionTag:
         default:
-            unit = getSafeCategory(cacheFile.cache, 'tags/functions')[id.slice(1)]
+            unit = getSafeCategory(cacheFile.cache, 'tag/function')[id.slice(1)]
             break
     }
     /* istanbul ignore else */
@@ -62,7 +62,7 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
             /* istanbul ignore else */
             if (values.includes(id)) {
                 const tagId = IdentityNode.fromString(IdentityNode.TagSymbol + tagIdString)
-                const tagUri = await getUriFromId(pathExists, roots, uris, urisOfIds, tagId, 'tags/functions')
+                const tagUri = await getUriFromId(pathExists, roots, uris, urisOfIds, tagId, 'tag/function')
                 /* istanbul ignore else */
                 if (tagUri) {
                     ans.push(
@@ -89,7 +89,7 @@ export async function onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, 
                 /* istanbul ignore else */
                 if (rewards && rewards.function === id) {
                     const advId = IdentityNode.fromString(advIdString)
-                    const advUri = await getUriFromId(pathExists, roots, uris, urisOfIds, advId, 'advancements')
+                    const advUri = await getUriFromId(pathExists, roots, uris, urisOfIds, advId, 'advancement')
                     /* istanbul ignore else */
                     if (advUri) {
                         ans.push(

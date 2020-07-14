@@ -9,14 +9,14 @@ describe('onCallHierarchyPrepare() Tests', () => {
     const roots: Uri[] = []
     const uris: UrisOfStrings = new Map()
     const urisOfIds: UrisOfIds = new Map([
-        ['advancements|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/advancements/foo.json')],
-        ['functions|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')],
-        ['tags/functions|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.mcfunction')]
+        ['advancement|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/advancements/foo.json')],
+        ['function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')],
+        ['tag/function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.mcfunction')]
     ])
 
     const node = mockLineNode({
         cache: {
-            functions: {
+            function: {
                 'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
             }
         }
@@ -48,7 +48,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
         const offset = 15
         const node = mockLineNode({
             cache: {
-                'tags/functions': {
+                'tag/function': {
                     'spgoding:foo': { ref: [{ start: 9, end: 21 }], def: [] }
                 }
             }
@@ -78,7 +78,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
         const offset = 33
         const node = mockLineNode({
             cache: {
-                'advancements': {
+                advancement: {
                     'spgoding:foo': { ref: [{ start: 26, end: 38 }], def: [] }
                 }
             }

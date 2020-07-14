@@ -2,15 +2,15 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { CompletionItemKind } from 'vscode-languageserver'
+import { NodeRange } from '../../nodes/ArgumentNode'
 import { ArgumentParser } from '../../parsers/ArgumentParser'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
 import { LineParser } from '../../parsers/LineParser'
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from '../../types/CommandTree'
+import { CommandTree, CommandTreeNode } from '../../types/CommandTree'
 import { ArgumentParserResult } from '../../types/Parser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { NodeRange } from '../../nodes/ArgumentNode'
+import { assertCompletions } from '../utils.spec'
 
 /**
  * Argument parser for testing.
@@ -41,7 +41,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
             ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘ERROR’ and did get ‘ERROR’', false)]
         } else if (this.type === 'cache') {
             ans.cache = {
-                entities: {
+                entity: {
                     foo: {
                         def: [{ start, end: start + data.length }],
                         ref: []
@@ -50,7 +50,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
             }
         } else if (this.type === 'CACHE') {
             ans.cache = {
-                entities: {
+                entity: {
                     foo: {
                         doc: '*foo*',
                         def: [{ start, end: start + data.length }],
@@ -59,7 +59,7 @@ export class TestArgumentParser extends ArgumentParser<string> {
                 }
             }
         } else if (this.type === 'completion') {
-            ans.completions = [{ label: 'completion' }]
+            ans.completions = [{ label: 'completion', start, end: reader.cursor }]
         } else if (this.type === 'only_one_char') {
             ans.data = ans.data.slice(0, 1)
             reader.cursor = start + 1
@@ -79,10 +79,9 @@ export class TestUuidArgumentParser extends ArgumentParser<string> {
     }
 }
 
-const parsers = new ArgumentParserManager()
 let ctx: ParsingContext
 before(async () => {
-    ctx = constructContext({ parsers })
+    ctx = constructContext({})
 })
 describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
@@ -105,9 +104,9 @@ describe('LineParser Tests', () => {
             const node: CommandTreeNode<string> = { parser: new TestUuidArgumentParser(), executable: true }
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             const ctx = constructContext({
-                parsers, cursor: 0,
+                cursor: 0,
                 cache: {
-                    'aliases/uuid': {
+                    'alias/uuid': {
                         MyCustomUUID: {
                             doc: '12345678-90ab-cdef-1234-567890abcdef',
                             def: [{ start: -1, end: -1 }], ref: []
@@ -116,12 +115,12 @@ describe('LineParser Tests', () => {
                 }
             })
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.completions, [
-                { 
-                    label: 'MyCustomUUID', 
-                    insertText: '12345678-90ab-cdef-1234-567890abcdef', 
+            assertCompletions(input, line.completions, [
+                {
+                    label: 'MyCustomUUID',
+                    t: '12345678-90ab-cdef-1234-567890abcdef',
                     detail: '12345678-90ab-cdef-1234-567890abcdef',
-                    kind: CompletionItemKind.Snippet 
+                    kind: CompletionItemKind.Snippet
                 }
             ])
         })
@@ -143,7 +142,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect' }
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -160,7 +159,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -176,7 +175,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template', executable: true }
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -192,7 +191,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -208,7 +207,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -230,7 +229,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -253,7 +252,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -275,7 +274,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
@@ -294,7 +293,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -321,16 +320,16 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree, cursor: 4 })
+            const ctx = constructContext({ commandTree: tree, cursor: 4 })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.args,
                 [{ data: 'foo', parser: 'test' }]
             )
-            assert.deepStrictEqual(line.completions,
-                [{ label: 'completion' }]
-            )
+            assertCompletions(input, line.completions, [
+                { label: 'completion', t: 'foo completion' }
+            ])
         })
         it('Should return error when the permission level is too high', async () => {
             const input = 'foo'
@@ -343,7 +342,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
@@ -375,7 +374,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
@@ -395,7 +394,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
@@ -416,7 +415,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -436,7 +435,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -461,7 +460,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -481,7 +480,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], hint: { fix: [], options: [] }, errors: [new ParsingError({ start: 0, end: 1 }, 'Old error')], cache: {}, completions: [] }
@@ -506,7 +505,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree })
+            const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new LineParser()
             const line = { [NodeRange]: { start: NaN, end: NaN }, args: [{ data: 'parsed', parser: 'test' }], tokens: [], hint: { fix: [], options: [] }, cache: {}, errors: [], completions: [] }
@@ -549,7 +548,7 @@ describe('LineParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers, commandTree: tree })
+        ctx = constructContext({ commandTree: tree })
     })
     describe('parse() Test', () => {
         it('Should parse a line', () => {
@@ -601,7 +600,7 @@ describe('LineParser Tests', () => {
                     }
                 }
             }
-            const ctx = constructContext({ parsers, commandTree: tree, cursor: 9 })
+            const ctx = constructContext({ commandTree: tree, cursor: 9 })
             const reader = new StringReader('first second')
             const parser = new LineParser()
             const actual = parser.parse(reader, ctx)
@@ -670,7 +669,7 @@ describe('LineParser Tests', () => {
             })
         })
         it('Should return completions for the leading slash', async () => {
-            const ctx = constructContext({ parsers, commandTree: tree, cursor: 0 })
+            const ctx = constructContext({ commandTree: tree, cursor: 0 })
             const parser = new LineParser(true)
             const reader = new StringReader('')
             const actual = parser.parse(reader, ctx)
@@ -686,7 +685,7 @@ describe('LineParser Tests', () => {
                         false
                     )],
                     completions: [
-                        { label: '/' }
+                        { label: '/', start: 0, end: 0 }
                     ]
                 }
             })

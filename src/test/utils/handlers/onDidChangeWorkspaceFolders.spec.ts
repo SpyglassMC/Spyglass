@@ -5,32 +5,32 @@ import { onDidChangeWorkspaceFolders } from '../../../utils/handlers/onDidChange
 
 describe('onDidChangeWorkspaceFolders() Tests', () => {
     it('Should update correctly', () => {
-        const uri = Uri.parse('file:///c:/foo/')
-        const roots = [uri]
-        const uris = new Map([['file:///c:/foo/', uri]])
+        const uriString = 'file:///c:/foo/'
+        const uri = Uri.parse(uriString)
+        const workspaceRootUriStrings = [uriString]
         const urisOfIds = new Map([['function|foo', uri]])
 
         const folders = [{ uri: 'file:///c:/foo', name: 'foo' }, { uri: 'file:///c:/bar', name: 'foo' }]
 
-        onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
+        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
 
-        assert.deepStrictEqual(roots, [
-            Uri.parse('file:///c:/bar/'),
-            Uri.parse('file:///c:/foo/')
+        assert.deepStrictEqual(workspaceRootUriStrings, [
+            'file:///c:/bar',
+            'file:///c:/foo'
         ])
         assert.deepStrictEqual(urisOfIds, new Map())
     })
     it('Should deal with null', () => {
-        const uri = Uri.parse('file:///c:/foo/')
-        const roots = [uri]
-        const uris = new Map([['file:///c:/foo/', uri]])
-        const urisOfIds = new Map([['function|foo', uri]])
+        const uriString = 'file:///c:/foo/'
+        const uri = Uri.parse(uriString)
+        const workspaceRootUriStrings = [uriString]
+        const urisOfIds = new Map([[uriString, uri]])
 
         const folders = null
 
-        onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
+        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
 
-        assert.deepStrictEqual(roots, [])
+        assert.deepStrictEqual(workspaceRootUriStrings, [])
         assert.deepStrictEqual(urisOfIds, new Map())
     })
 })

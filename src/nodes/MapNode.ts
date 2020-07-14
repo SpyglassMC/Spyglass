@@ -1,7 +1,7 @@
 import { TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { toFormattedString } from '../utils'

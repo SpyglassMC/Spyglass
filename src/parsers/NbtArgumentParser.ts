@@ -52,9 +52,15 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
+        /**
+         * `null`: Use compiled fallback for the registry.
+         * `undefined`: No validations from registry.
+         */
         private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
         private readonly isPredicate = false,
-        private readonly superNode: NbtCompoundNode | null = null
+        private readonly superNode: NbtCompoundNode | null = null,
+        // TODO: JSON
+        private readonly module: string | null = null
     ) {
         super()
         if (type instanceof Array) {
@@ -168,7 +174,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         )
         //#region Completions.
         if (helper && ctx.cursor === start) {
-            helper.completeField(ans, ctx, doc, this.isPredicate, '')
+            helper.completeField(ans, ctx, doc, this.isPredicate, '', ctx.cursor, ctx.cursor)
         }
         //#endregion
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
@@ -239,9 +245,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                             if (StringReader.isQuote(firstChar)) {
                                 const quoteType = firstChar === "'" ? 'always single' : 'always double'
-                                helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType, start + 1, reader.cursor - 1)
                             } else {
-                                helper.completeCompoundKeys(result, ctx, ans.data, doc, null)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, null, start, reader.cursor)
                             }
                         }
                     }
@@ -314,7 +320,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 //#region Completions.
                 if (helper && ctx.cursor === reader.cursor) {
-                    helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '')
+                    helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '', ctx.cursor, ctx.cursor)
                 }
                 //#endregion
                 const result = this.parseTag(
@@ -512,7 +518,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 //#region Completions.
                 if (helper && ctx.cursor === start) {
                     /* istanbul ignore next */
-                    helper.completeField(ans, ctx, doc ? doc.List.value_type : null, this.isPredicate, description || '')
+                    helper.completeField(ans, ctx, doc ? doc.List.value_type : null, this.isPredicate, description || '', ctx.cursor, ctx.cursor)
                 }
                 //#endregion
                 if (!(reader.canRead() && reader.peek() !== ']')) {

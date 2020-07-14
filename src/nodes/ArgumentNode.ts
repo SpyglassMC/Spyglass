@@ -1,7 +1,7 @@
 import { CodeAction, Diagnostic, Hover, TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { FunctionInfo } from '../types/DocumentInfo'
 import { ErrorCode } from '../types/ParsingError'
 import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
 

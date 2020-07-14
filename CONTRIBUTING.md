@@ -18,7 +18,7 @@ Please note that only put one bug/suggestion in each issue to make it easier to 
 
 [![Localization status](https://l10n.spgoding.com/widgets/datapack-helper-plus/-/multi-auto.svg)](https://l10n.spgoding.com/engage/datapack-helper-plus/?utm_source=widget)
 
-Datapack Helper Plus supports multiple languages. If you'd like to help us translate this project to your language, it would be really appreciated!
+Data-pack Helper Plus supports multiple languages. If you'd like to help us translate this project to your language, it would be really appreciated!
 
 ### Steps
 

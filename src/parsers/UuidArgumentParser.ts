@@ -37,12 +37,14 @@ export class UuidArgumentParser extends ArgumentParser<string> {
         //#endregion
 
         //#region Completions.
-        if (ctx.cursor === start) {
+        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
             const randomUuid = uuidV4()
             ans.completions.push({
-                label: locale('completion.uuid.random'),
+                label: 'RANDOM',
+                start, end: reader.cursor,
                 insertText: randomUuid,
                 detail: randomUuid,
+                filterText: ans.data,
                 kind: CompletionItemKind.Snippet
             })
         }

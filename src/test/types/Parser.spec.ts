@@ -10,26 +10,26 @@ describe('Parser Tests', () => {
             const base = {
                 data: 'base',
                 tokens: [new Token({ start: 0, end: 1 }, TokenType.comment)],
-                cache: { entities: {} },
+                cache: { entity: {} },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
-                completions: [{ label: 'a' }]
+                completions: [{ label: 'a', start: 0, end: Infinity }]
             }
             const override = {
                 data: 'override',
                 tokens: [new Token({ start: 1, end: 2 }, TokenType.string)],
                 cache: {
-                    entities: {
+                    entity: {
                         foo: {
                             doc: 'foo', def: [{ start: 0, end: 3 }], ref: []
                         }
                     }
                 },
                 errors: [new ParsingError({ start: 0, end: 3 }, 'New')],
-                completions: [{ label: 'b' }]
+                completions: [{ label: 'b', start: 0, end: Infinity }]
             }
             combineArgumentParserResult(base, override)
             assert.deepStrictEqual(base.cache, {
-                entities: {
+                entity: {
                     foo: {
                         doc: 'foo', def: [{ start: 0, end: 3 }], ref: []
                     }
@@ -43,7 +43,7 @@ describe('Parser Tests', () => {
                 new ParsingError({ start: 0, end: 3 }, 'Old'),
                 new ParsingError({ start: 0, end: 3 }, 'New')
             ])
-            assert.deepStrictEqual(base.completions, [{ label: 'a' }, { label: 'b' }])
+            assert.deepStrictEqual(base.completions, [{ label: 'a', start: 0, end: Infinity }, { label: 'b', start: 0, end: Infinity }])
         })
     })
 })

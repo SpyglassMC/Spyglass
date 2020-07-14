@@ -19,17 +19,17 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
             completions: []
         }
         //#region Completions.
-        const startCursor = reader.cursor
+        const start = reader.cursor
         ans.data = reader.readUntilOrEnd(' ')
-        const endCursor = reader.cursor
-        if (startCursor <= cursor && cursor <= endCursor) {
+        const end = reader.cursor
+        if (start <= cursor && cursor <= end) {
             for (const label in snippets) {
                 /* istanbul ignore next */
                 if (snippets.hasOwnProperty(label)) {
                     const insertText = snippets[label]
                     ans.completions.push({
-                        label,
-                        insertText,
+                        start, end,
+                        label, insertText,
                         insertTextFormat: InsertTextFormat.Snippet,
                         kind: CompletionItemKind.Snippet
                     })

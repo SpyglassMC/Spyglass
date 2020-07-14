@@ -1,15 +1,15 @@
 import { DocumentLink } from 'vscode-languageserver'
-import { CacheUnit, isFileType } from '../../types/ClientCache'
-import { FunctionInfo } from '../../types/FunctionInfo'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { getUriFromId } from '.'
+import { CacheUnit, isFileType } from '../../types/ClientCache'
+import { DocumentInfo } from '../../types/DocumentInfo'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { getNodesFromInfo, getUriFromId } from './common'
 
-export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: FunctionInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
+export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: DocumentInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
     try {
         const ans: DocumentLink[] = []
 
-        for (const { cache } of info.nodes) {
+        for (const { cache } of getNodesFromInfo(info)) {
             for (const type in cache) {
                 if (isFileType(type)) {
                     const category = cache[type]
@@ -39,7 +39,7 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
 
         return ans
     } catch (e) {
-        console.error('onDocumentLinks', e)
+        console.error('[onDocumentLinks]', e)
     }
     return null
 }

@@ -21,8 +21,8 @@ describe('onCompletion() Tests', () => {
         const completions = await onCompletion({ roots, uri, info, node, cacheFile, offset })
 
         assert.deepStrictEqual(completions, [
-            { label: 'grant' },
-            { label: 'revoke' }
+            { label: 'grant', textEdit: { range: { start: { line: 0, character: 12 }, end: { line: 0, character: 12 } }, newText: 'grant' } },
+            { label: 'revoke', textEdit: { range: { start: { line: 0, character: 12 }, end: { line: 0, character: 12 } }, newText: 'revoke' } }
         ])
     })
 })

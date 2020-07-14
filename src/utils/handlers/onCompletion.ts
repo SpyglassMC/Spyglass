@@ -1,17 +1,18 @@
-import { InsertTextFormat } from 'vscode-languageserver'
-import { getId, getRootIndex } from '.'
+import { CompletionItem, InsertTextFormat } from 'vscode-languageserver'
 import { escapeString, handleCompletionText } from '..'
 import { VanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { LineParser } from '../../parsers/LineParser'
 import { CacheFile, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
-import { FunctionInfo } from '../../types/FunctionInfo'
-import { DocNode, Uri } from '../../types/handlers'
+import { FunctionInfo } from '../../types/DocumentInfo'
+import { Uri } from '../../types/handlers'
+import { LineNode } from '../../types/LineNode'
 import { constructContext } from '../../types/ParsingContext'
 import { StringReader } from '../StringReader'
+import { getId, getRootIndex } from './common'
 
-export async function onCompletion({ offset, info, cacheFile, node, roots, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: DocNode, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onCompletion({ offset, info, cacheFile, node, roots, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: LineNode, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }): Promise<CompletionItem[] | null> {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
@@ -37,13 +38,16 @@ export async function onCompletion({ offset, info, cacheFile, node, roots, comma
                 if (comp.insertTextFormat === InsertTextFormat.Snippet) {
                     return handleCompletionText(comp, str => escapeString(str, null))
                 }
+                comp.textEdit = comp.textEdit ?? { newText: comp.insertText ?? comp.label, range: { start: info.document.positionAt(comp.start), end: info.document.positionAt(comp.end) } }
+                delete comp.start
+                delete comp.end
                 return comp
             })
         }
 
-        return completions
+        return completions as CompletionItem[]
     } catch (e) {
-        console.error('onCompletion', e)
+        console.error('[onCompletion]', e)
     }
     return null
 }
