@@ -1,3 +1,8 @@
+# [v2.1.14](https://github.com/SPGoding/datapack-language-server/compare/v2.1.13...v2.1.14) (2020-07-14)
+
+## 🐛 Bug Fixes
+- [`50c8b0f`](https://github.com/SPGoding/datapack-language-server/commit/50c8b0f)  Remove vector range limit from dust particles (#587) (Issues: [`#587`](https://github.com/SPGoding/datapack-language-server/issues/587) [`#576`](https://github.com/SPGoding/datapack-language-server/issues/576))
+
 # [v2.1.13](https://github.com/SPGoding/datapack-language-server/compare/v2.1.12...v2.1.13) (2020-07-09)
 
 ## 🐛 Bug Fixes
