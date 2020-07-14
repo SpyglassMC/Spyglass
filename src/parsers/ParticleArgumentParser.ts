@@ -34,9 +34,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         .expect(' ')
                         .skip()
                     const colorResult = new ctx.parsers.Vector(
-                        3, 'float', false, false,
-                        [0, 0, 0],
-                        [1, 1, 1]
+                        3, 'float', false, false
                     ).parse(reader, ctx)
                     const color = colorResult.data
                     combineArgumentParserResult(ans, colorResult)

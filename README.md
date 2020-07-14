@@ -53,7 +53,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
     <td align="center"><a href="https://afdian.net/u/da477488928011ea8ea552540025c377"><img src="https://pic1.afdiancdn.com/default/avatar/avatar-purple.png?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>ColorRain_Tree</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">💛 <span style="color:gold;">(＃°Д°)</span></a></td>
   </tr>
   <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256" width="64px;" alt=""/><br /><sub><b>Grant</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/548" target="_blank" title="Bug reports">🐛 #548</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/558" target="_blank" title="Bug reports">🐛 #558</a></td>
+    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256" width="64px;" alt=""/><br /><sub><b>Grant</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/548" target="_blank" title="Bug reports">🐛 #548</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/558" target="_blank" title="Bug reports">🐛 #558</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/572" target="_blank" title="Bug reports">🐛 #572</a></td>
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/244517712032825344/870e7a9845aae2d82f18325436ed260f.webp?size=256" width="64px;" alt=""/><br /><sub><b>Green</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/562" target="_blank" title="Bug reports">🐛 #562</a></td>
   </tr>
   <tr>
@@ -78,10 +78,13 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   </tr>
   <tr>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
-    <td align="center"><a href="https://github.com/yulongjiuqiu"><img src="https://avatars3.githubusercontent.com/u/49058621?s=460&u=724cf689519843fdcb9fd78bf6d7f54ecf095f1c&v=4" width="64px;" alt=""/><br /><sub><b>yulongjiuqiu</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/494" target="_blank" title="Bug reports">🐛 #494</a></td>
+    <td align="center"><a href="https://github.com/kaputina"><img src="https://avatars3.githubusercontent.com/u/50991773?s=460&u=051a8dbbfdcb4f8ba3931e4fedc3c8d931a2136c&v=4" width="64px;" alt=""/><br /><sub><b>kaputina</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/576" target="_blank" title="Bug reports">🐛 #576</a></td>
   </tr>
   <tr>
+    <td align="center"><a href="https://github.com/yulongjiuqiu"><img src="https://avatars3.githubusercontent.com/u/49058621?s=460&u=724cf689519843fdcb9fd78bf6d7f54ecf095f1c&v=4" width="64px;" alt=""/><br /><sub><b>yulongjiuqiu</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/494" target="_blank" title="Bug reports">🐛 #494</a></td>
     <td align="center"><a href="https://afdian.net/u/43f152b898b511e8b5f552540025c377"><img src="https://pic1.afdiancdn.com/user/43f152b898b511e8b5f552540025c377/avatar/b35473b4f5d00311d3a3cabef38c60fd_w640_h640_s24.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>酱香卤鹅</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://afdian.net/@LTCat"><img src="https://pic1.afdiancdn.com/user/df2dfad2960911e89c5252540025c377/avatar/31c78ee63d5dce8ac4848c837fb04204_w160_h160_s35.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>龙腾猫跃</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
   </tr>
 </table>
