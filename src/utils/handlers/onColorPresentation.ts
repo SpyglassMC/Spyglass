@@ -25,7 +25,7 @@ export function onColorPresentation({ info, start, end, r, g, b, a }: { info: Do
 
         return ans
     } catch (e) {
-        console.error('onColorPresentation', e)
+        console.error('[onColorPresentation]', e)
     }
     return null
 }

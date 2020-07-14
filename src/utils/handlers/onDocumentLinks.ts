@@ -1,9 +1,9 @@
 import { DocumentLink } from 'vscode-languageserver'
-import { getNodesFromInfo, getUriFromId } from './common'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { CacheUnit, isFileType, CacheType } from '../../types/ClientCache'
+import { CacheUnit, isFileType } from '../../types/ClientCache'
 import { DocumentInfo } from '../../types/DocumentInfo'
 import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { getNodesFromInfo, getUriFromId } from './common'
 
 export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: DocumentInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
     try {
@@ -39,7 +39,7 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
 
         return ans
     } catch (e) {
-        console.error('onDocumentLinks', e)
+        console.error('[onDocumentLinks]', e)
     }
     return null
 }
