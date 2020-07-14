@@ -11,7 +11,7 @@ import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } fro
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { LineParser } from '../../parsers/LineParser'
 import { ErrorCode, isFunctionInfo, LineNode, TextRange } from '../../types'
-import { CacheFile, CacheKey, getCacheForUri } from '../../types/ClientCache'
+import { CacheFile, FileType, getCacheForUri } from '../../types/ClientCache'
 import { CommandTree } from '../../types/CommandTree'
 import { Config, isRelIncluded } from '../../types/Config'
 import { DocumentInfo } from '../../types/DocumentInfo'
@@ -42,7 +42,7 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
 /**
  * @returns Never be `null` if `preferredRoot` exists.
  */
-export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheKey, preferredRoot?: Uri): Promise<Uri | null> {
+export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
 
@@ -80,18 +80,20 @@ export function parseJsonNode({ document, config, cacheFile, uri, roots, schema,
         json: JsonLanguageService.parseJSONDocument(document) as JsonDocument,
         cache: {}, errors: [], tokens: [], schemaType
     }
-    if (ans.json.syntaxErrors.length === 0) {
-        const ctx: JsonSchemaHelperOptions = {
-            ctx: constructContext({
-                cache: getCacheForUri(cacheFile.cache, uri),
-                id: getId(uri, roots),
-                rootIndex: getRootIndex(uri, roots),
-                config, document, roots
-            }),
-            schemas: schemas
-        }
-        JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
+    const ctx: JsonSchemaHelperOptions = {
+        ctx: constructContext({
+            cache: getCacheForUri(cacheFile.cache, uri),
+            id: getId(uri, roots),
+            rootIndex: getRootIndex(uri, roots),
+            blockDefinition: vanillaData.BlockDefinition,
+            namespaceSummary: vanillaData.NamespaceSummary,
+            nbtdoc: vanillaData.Nbtdoc,
+            registry: vanillaData.Registry,
+            config, document, roots
+        }),
+        schemas: schemas
     }
+    JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
     return ans
 }
 

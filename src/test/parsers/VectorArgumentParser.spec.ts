@@ -47,7 +47,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assertCompletions('', actual.completions,
                 [
-                    { label: '^ ^', sortText: '2', t: '^$1 ^$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '^ ^', sortText: '2', t: '^$1 ^$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
                     { label: '^', sortText: '2', t: '^' }
                 ]
             )
@@ -58,7 +58,7 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader(''), ctx)
             assertCompletions('', actual.completions,
                 [
-                    { label: '~ ~', sortText: '1', t: '~$1 ~$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '~ ~', sortText: '1', t: '~$1 ~$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
                     { label: '~', sortText: '1', t: '~' }
                 ]
             )

@@ -1,14 +1,14 @@
 /* istanbul ignore file */
 
+import { COLLECTIONS as JsonCollections } from '@mcschema/core'
 import fs from 'fs-extra'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
-import { NamespaceSummary } from '../types/NamespaceSummary'
+import { compileNamespaceSummary, NamespaceSummary, RawNamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
 import { requestText } from '../utils'
-import { COLLECTIONS as JsonCollections } from '@mcschema/core'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
@@ -20,8 +20,11 @@ export type VanillaData = {
     NamespaceSummary: NamespaceSummary
 }
 
+
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
-export const FallbackNamespaceSummary: NamespaceSummary = require('./NamespaceSummary.json') as NamespaceSummary
+export const FallbackRawNamespaceSummary: RawNamespaceSummary = require('./NamespaceSummary.json') as RawNamespaceSummary
+export const RegistryNamespaceSummary: Partial<NamespaceSummary> = require('./RegistryNamespaceSummary.json') as Partial<NamespaceSummary>
+export const FallbackNamespaceSummary: NamespaceSummary = compileNamespaceSummary(FallbackRawNamespaceSummary, RegistryNamespaceSummary)
 export const FallbackNbtdoc: nbtdoc.Root = require('./Nbtdoc.json') as nbtdoc.Root
 export const FallbackRegistry: Registry = require('./Registry.json') as Registry
 
@@ -38,10 +41,10 @@ export const VanillaDataCache: {
     Nbtdoc: { [version: string]: nbtdoc.Root },
     Registry: { [version: string]: Registry }
 } = {
-    BlockDefinition: { '1.16-rc1': FallbackBlockDefinition },
-    NamespaceSummary: { '1.16-rc1': FallbackNamespaceSummary },
-    Nbtdoc: { '20w16a': FallbackNbtdoc },
-    Registry: { '1.16-rc1': FallbackRegistry }
+    BlockDefinition: { '20w28a': FallbackBlockDefinition },
+    NamespaceSummary: { '20w28a': FallbackNamespaceSummary },
+    Nbtdoc: { '1.16.1': FallbackNbtdoc },
+    Registry: { '20w28a': FallbackRegistry }
 }
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
@@ -109,6 +112,10 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     fs.writeJson(filePath, json, { encoding: 'utf8' })
                     console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source} and saved at ‘${filePath}’.`)
                     cache[version] = json
+                }
+                if (type === 'NamespaceSummary') {
+                    cache[version] = compileNamespaceSummary(cache[version] as unknown as RawNamespaceSummary, RegistryNamespaceSummary)
+                    console.info(`[VanillaData: ${type} for ${version}] Merged ‘RegistryNamespaceSummary.json’ in.`)
                 }
             } catch (e) {
                 console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)

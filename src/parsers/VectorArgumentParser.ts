@@ -43,7 +43,6 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
             ans.label += ` ${type}`
             ans.insertText += ` ${type}$${i}`
         }
-        ans.insertText += ' $0'
         return ans
     }
 

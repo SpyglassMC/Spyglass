@@ -2,6 +2,7 @@ import { TextDocument } from 'vscode-languageserver'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'
+import { ParserCollection } from '../parsers/ParserCollection'
 import { BlockDefinition } from './BlockDefinition'
 import { ClientCache } from './ClientCache'
 import { CommandTree } from './CommandTree'
@@ -10,7 +11,6 @@ import { Uri } from './handlers'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
-import { ParserCollection } from '../parsers/ParserCollection'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,

@@ -3,7 +3,7 @@ import { CommandTree } from '.'
 import { DataSource, VanillaData } from '../data/VanillaData'
 import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { CacheKey } from './ClientCache'
+import { CacheType } from './ClientCache'
 import { Config } from './Config'
 import { DocumentInfo } from './DocumentInfo'
 import { LineNode } from './LineNode'
@@ -20,7 +20,7 @@ export type UrisOfIds = Map<string, Uri | null>
  */
 export type FetchConfigFunction = (uri: Uri) => Promise<Config>
 export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
-export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheKey, preferredRoot?: Uri) => Promise<Uri | null>
+export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
 export type PathExistsFunction = (path: string) => Promise<boolean>
 export type ReadFileFunction = (path: string, encoding: string) => Promise<string>

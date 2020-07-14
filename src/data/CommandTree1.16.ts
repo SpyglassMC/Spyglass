@@ -28,7 +28,7 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
-import { CacheKey } from '../types/ClientCache'
+import { CacheType } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
@@ -2187,7 +2187,7 @@ export const CommandTree: ICommandTree = {
                                             const alias = getArgOrDefault<StringNode | null>(parsedLine.args, 2, null)
                                             const value = getArgOrDefault<StringNode | null>(parsedLine.args, 1, null)
                                             if (parser && alias && value) {
-                                                const key = `alias/${parser}` as CacheKey
+                                                const key = `alias/${parser}` as CacheType
                                                 parsedLine.cache = {
                                                     [key]: {
                                                         [alias.valueOf()]: { doc: value.valueOf(), def: [alias[NodeRange]], ref: [] }

@@ -15,23 +15,16 @@ let vscodeLanguage = ''
 
 /* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
-    let value = Locales[language][key]
-    if (value === undefined) {
-        value = Locales.en[key]
-    }
+    const value: string | undefined = Locales[language][key] ?? Locales.en[key]
 
-    if (!value) {
-        console.error(new Error(`Unknown locale key ‘${key}’`))
-        value = ''
-    }
-
-    value = resolveLocalePlaceholders(value, params)
-
-    return value
+    return resolveLocalePlaceholders(value, params) ?? (
+        console.error(new Error(`Unknown locale key ‘${key}’`)),
+        ''
+    )
 }
 
-export function resolveLocalePlaceholders(val: string, params?: string[]) {
-    return val.replace(/%\d+%/g, match => {
+export function resolveLocalePlaceholders(val: string | undefined, params?: string[]) {
+    return val?.replace(/%\d+%/g, match => {
         const index = parseInt(match.slice(1, -1))
         return params?.[index] !== undefined ? params[index] : match
     })

@@ -3,7 +3,7 @@ import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { Registry, TextRange } from '../types'
-import { CacheKey, ClientCache, getSafeCategory, isFileType } from '../types/ClientCache'
+import { CacheType, ClientCache, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
 import { Config } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
 import { ArgumentParserResult } from '../types/Parser'
@@ -64,7 +64,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 
         //#region Errors.
         if (reader.cursor - start && stringID) {
-            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry)
+            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry, ctx.namespaceSummary)
         } else {
             this.addEmptyError(start, ans)
         }
@@ -191,11 +191,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
-    private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry) {
+    private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry, namespaceSummary: NamespaceSummary) {
         if (isTag && this.allowTag) {
             // For tags.
             const tagType = this.getCacheTagType()
-            this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
+            this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache, namespaceSummary)
         } else {
             if (this.type instanceof Array) {
                 // For array IDs.
@@ -214,14 +214,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 //#endregion
             } else if (this.type.startsWith('$')) {
                 // For cache IDs.
-                const type = this.type.slice(1) as CacheKey
-                this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache)
+                const type = this.type.slice(1) as CacheType
+                this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache, namespaceSummary)
             } else {
                 // For registry IDs.
                 const registry = registries[this.type]
                 const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
                 //#region Errors
-                if (shouldCheck && registry && !Object.keys(registry.entries).includes(stringID)) {
+                if (shouldCheck && registry && !Object.keys(registry.entries).concat(this.getVanillaPool(this.type as FileType, namespaceSummary)).includes(stringID)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
@@ -370,7 +370,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         if (this.type instanceof Array) {
             idPool.push(...this.type)
         } else if (this.type.startsWith('$')) {
-            const type = this.type.slice(1) as CacheKey
+            const type = this.type.slice(1) as CacheType
             idPool.push(...Object.keys(getSafeCategory(cache, type)))
             if (config.env.dependsOnVanilla) {
                 idPool.push(...this.getVanillaPool(type, namespaceSummary))
@@ -436,6 +436,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         switch (key) {
             case '$advancement':
                 return evalTrueConfig(lint.strictAdvancementCheck)
+            case '$dimension_type':
+                return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
             case '$function':
                 return evalTrueConfig(lint.strictFunctionCheck)
             case '$loot_table':
@@ -466,8 +468,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 return evalStrictCheckConfig(lint.strictSoundEventCheck)
             case 'minecraft:entity_type':
                 return evalStrictCheckConfig(lint.strictEntityTypeCheck)
-            case 'minecraft:dimension_type':
-                return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
             case 'minecraft:attribute':
                 return evalStrictCheckConfig(lint.strictAttributeCheck)
             case 'minecraft:block':
@@ -488,25 +488,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private getVanillaPool(type: CacheKey, vanilla: NamespaceSummary): string[] {
-        switch (type) {
-            case 'advancement':
-                return vanilla.advancements
-            case 'loot_table':
-                return vanilla.loot_tables
-            case 'recipe':
-                return vanilla.recipes
-            case 'tag/block':
-                return vanilla.tags.blocks
-            case 'tag/entity_type':
-                return vanilla.tags.entity_types
-            case 'tag/fluid':
-                return vanilla.tags.fluids
-            case 'tag/item':
-                return vanilla.tags.items
-            default:
-                return []
-        }
+    private getVanillaPool(type: CacheType, vanilla: NamespaceSummary): string[] {
+        return vanilla[type as keyof NamespaceSummary] ?? []
     }
 
     /**
@@ -546,9 +529,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
      * @param stringID The stringified ID.
      * @param start The start of the whole parsing process of this ID.
      */
-    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheKey, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache) {
+    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheType, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache, namespaceSummary: NamespaceSummary) {
         const category = getSafeCategory(cache, type)
-        const canResolve = Object.keys(category).includes(stringID)
+        const canResolve = Object.keys(category)
+            .concat(this.getVanillaPool(type, namespaceSummary))
+            .includes(stringID)
 
         //#region Errors
         const [shouldCheck, severity] = this.shouldStrictCheck(`$${type}`, config, namespace)

@@ -59,16 +59,16 @@ export class JsonSchemaHelper {
             let result: Partial<LegacyValidateResult> | undefined = undefined
             const out: { mapping: IndexMapping } = { mapping: {} }
             const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
+            const selectedSchema = schema.navigate(selectedPath, -1)
+            const validationOption = selectedSchema?.validationOption()
             if (selectedType === 'value') {
-                const selectedSchema = schema.navigate(selectedPath, -1)
-                const validationOption = selectedSchema?.validationOption()
-                if (validationOption) {
-                    // Detailed suggestions for selected value.
+                if (validationOption && selectedNode.type === 'string') {
+                    // Detailed suggestions for the selected string value.
                     const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
                     const value = rawReader.readString(out)
                     const valueReader = new StringReader(value)
                     result = this.doDetailedStringLegacyValidate(
-                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, node, validationOption
+                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, selectedNode, validationOption
                     )
                     if (result.completions) {
                         result.completions = result.completions.map(this.escapeCompletion)
@@ -87,7 +87,7 @@ export class JsonSchemaHelper {
                         }
                     } else if (selectedNode.type === 'property') {
                         // Regular value suggestions for selected property
-                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options) }
+                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options, true) }
                     } else {
                         // Regular value suggestions for selected value
                         result = { completions: this.doRegularSuggest(selectedPath, selectedNode, selectedNode, schema, options) }
@@ -108,7 +108,7 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions): ParserSuggestion[] {
+    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
         const valueSchema = schema.navigate(valuePath, -1)
         const value: any = {}
@@ -119,28 +119,35 @@ export class JsonSchemaHelper {
                 }
             }
         }
-        const result = valueSchema?.suggest(valuePath, value) ?? []
+        if (atEmptyValue && valueSchema) {
+            return [{ ...replacingRange, label: this.getDefaultValueSnippet(valueSchema), insertTextFormat: InsertTextFormat.Snippet }]
+        }
+        const suggestions = valueSchema?.suggest(valuePath, value) ?? []
         return arrayToCompletions(
-            result, replacingRange.start, replacingRange.end,
+            suggestions, replacingRange.start, replacingRange.end,
             valueNode.type === 'object' ? c => {
                 // Operations to object keys.
                 const key = c.label.slice(1, -1)
                 const filterText = c.label
                 const valueSchema = schema.navigate(valuePath.push(key), -1)
                 const preselect = valueSchema?.force()
-                const defaultValue = valueSchema?.default() ?? undefined
-                const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
-                const defaultValueSnippet = this.resolveJsonSnippetMagicStrings(defaultValueJson)
+                const defaultValueSnippet = this.getDefaultValueSnippet(valueSchema)
                 const insertText = `${c.label}: ${defaultValueSnippet}`
                 return { ...c, preselect, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
-                // Operations to other suggestions.
+                // Operations to other value suggestions.
                 if (c.label.startsWith('"')) {
                     return { ...c, label: c.label.slice(1, -1), filterText: c.label, insertText: c.label }
                 }
                 return c
             }
         )
+    }
+
+    private static getDefaultValueSnippet(schema: INode | undefined) {
+        const defaultValue = schema?.default?.()
+        const defaultValueJson = JSON.stringify(defaultValue, this.jsonSnippetReplacer, 4) ?? ''
+        return this.resolveJsonSnippetMagicStrings(defaultValueJson)
     }
 
     /**
@@ -153,8 +160,10 @@ export class JsonSchemaHelper {
             return JsonSchemaHelper.Replacers.EmptyList
         } else if (typeof value === 'string') {
             return `${JsonSchemaHelper.Replacers.StringStart} ${value} ${JsonSchemaHelper.Replacers.StringEnd}`
-        } else {
+        } else if (typeof value === 'boolean' || typeof value === 'number' || value === null) {
             return `${JsonSchemaHelper.Replacers.LiteralStart} ${value} ${JsonSchemaHelper.Replacers.LiteralEnd}`
+        } else {
+            return value
         }
     }
 
@@ -299,7 +308,7 @@ export class JsonSchemaHelper {
                 ans.errors.push(...downgradedErrors)
             }
             if (result.tokens) {
-                ans.tokens.push(...remapTokens(result.tokens, mapping))
+                ans.tokens.push(...remapTokens(result.tokens, mapping, false))
             }
         }
     }

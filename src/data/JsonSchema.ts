@@ -1,6 +1,7 @@
 import { SCHEMAS } from '@mcschema/core'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion } from '../types'
+import { PathPatterns } from '../types/PathPatterns'
 
 export type JsonSchemaType =
     | 'advancement'
@@ -20,21 +21,21 @@ export type JsonSchemaType =
     | 'template_pool'
 
 const globPatterns = new Map<JsonSchemaType, string>([
-    ['advancement', 'data/*/advancements/**/*.json'],
-    ['loot_table', 'data/*/loot_tables/**/*.json'],
-    ['predicate', 'data/*/predicates/**/*.json'],
+    ['advancement', PathPatterns.advancement],
+    ['loot_table', PathPatterns.loot_table],
+    ['predicate', PathPatterns.predicate],
     /* dimension */
-    ['dimension', 'data/minecraft/dimension/*/**/*.json'],
-    ['dimension_type', 'data/minecraft/dimension_type/*/**/*.json'],
+    ['dimension', PathPatterns.dimension],
+    ['dimension_type', PathPatterns.dimension_type],
     /* worldgen */
-    ['biome', 'data/minecraft/worldgen/biome/*/**/*.json'],
-    ['configured_carver', 'data/minecraft/worldgen/configured_carver/*/**/*.json'],
-    ['configured_decorator', 'data/minecraft/worldgen/configured_decorator/*/**/*.json'],
-    ['configured_feature', 'data/minecraft/worldgen/configured_feature/*/**/*.json'],
-    ['configured_structure_feature', 'data/minecraft/worldgen/configured_structure_feature/*/**/*.json'],
-    ['configured_surface_builder', 'data/minecraft/worldgen/configured_surface_builder/*/**/*.json'],
-    ['processor_list', 'data/minecraft/worldgen/processor_list/*/**/*.json'],
-    ['template_pool', 'data/minecraft/worldgen/template_pool/*/**/*.json']
+    ['biome', PathPatterns['worldgen/biome']],
+    ['configured_carver', PathPatterns['worldgen/configured_carver']],
+    ['configured_decorator', PathPatterns['worldgen/configured_decorator']],
+    ['configured_feature', PathPatterns['worldgen/configured_feature']],
+    ['configured_structure_feature', PathPatterns['worldgen/configured_structure_feature']],
+    ['configured_surface_builder', PathPatterns['worldgen/configured_surface_builder']],
+    ['processor_list', PathPatterns['worldgen/processor_list']],
+    ['template_pool', PathPatterns['worldgen/template_pool']]
 ])
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {

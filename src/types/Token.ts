@@ -77,11 +77,13 @@ export class Token {
  * Remap specific tokens according to the mapping, and add the inString modifier.
  * @param tokens Input tokens.
  */
-export function remapTokens(tokens: Token[], mapping: IndexMapping) {
+export function remapTokens(tokens: Token[], mapping: IndexMapping, addInStringModifier = true) {
     const ans = clone(tokens)
     for (const token of ans) {
         token.range = remapTextRange(token.range, mapping)
-        token.modifiers.add(TokenModifier.inString)
+        if (addInStringModifier) {
+            token.modifiers.add(TokenModifier.inString)
+        }
     }
     return ans
 }

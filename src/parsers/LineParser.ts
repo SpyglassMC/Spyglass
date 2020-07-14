@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes'
-import { CacheKey } from '../types/ClientCache'
+import { CacheType } from '../types/ClientCache'
 import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
 import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
@@ -137,7 +137,7 @@ export class LineParser implements Parser<LineNode> {
             const { cache, completions, data, errors, tokens } = parser.parse(reader, ctx)
             //#region Aliases.
             if (start === reader.cursor) {
-                const category = ctx.cache[`alias/${parser.identity.split('.')[0]}` as CacheKey]
+                const category = ctx.cache[`alias/${parser.identity.split('.')[0]}` as CacheType]
                 for (const alias in category) {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(alias)) {

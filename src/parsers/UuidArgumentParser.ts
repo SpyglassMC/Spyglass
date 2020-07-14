@@ -44,6 +44,7 @@ export class UuidArgumentParser extends ArgumentParser<string> {
                 start, end: reader.cursor,
                 insertText: randomUuid,
                 detail: randomUuid,
+                filterText: ans.data,
                 kind: CompletionItemKind.Snippet
             })
         }

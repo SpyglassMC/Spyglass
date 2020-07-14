@@ -15,7 +15,7 @@ import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
 import { constructContext, ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
-import { CacheFile, CacheKey, CacheVersion, ClientCache, combineCache, DefaultCacheFile, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { DocumentInfo, isFunctionInfo } from './types/DocumentInfo'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
@@ -860,53 +860,52 @@ const cacheFileOperations = {
     //#region advancement, function, loot_table, predicate, tag/*, recipe:
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
-    addDefault: (id: string, type: CacheKey) => {
+    addDefault: (id: string, type: FileType) => {
         const category = getSafeCategory(cacheFile.cache, type)
         category[id] = category[id] || { def: [], ref: [] }
         cacheFile.cache[type] = category
     },
-    deleteDefault: (id: string, type: CacheKey) => {
+    deleteDefault: (id: string, type: FileType) => {
         removeCacheUnit(cacheFile.cache, type, id)
     },
     //#endregion
 
     // Hooks.
-    fileAdded: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
+    fileAdded: async (uri: Uri, type: FileType, id: IdentityNode) => {
         // connection.console.info(`Added ${type} ${id}`)
         const config = await fetchConfig(uri)
         if (!isRelIncluded(getRel(uri, roots), config)) {
             return
         }
         cacheFileOperations.addDefault(id.toString(), type)
-        if (type === 'function') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            await cacheFileOperations.combineCacheOfLines(uri, config)
-        } else if (type === 'tag/function') {
-            await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancement') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            await cacheFileOperations.combineCacheOfLines(uri, config)
-            // await cacheFileOperations.updateAdvancementInfo(id)
-        }
+        // if (type === 'function') {
+        cacheFileOperations.removeCachePositionsWith(uri)
+        await cacheFileOperations.combineCacheOfLines(uri, config)
+        // } else if (type === 'tag/function') {
+        //     // await cacheFileOperations.updateTagInfo(id)
+        // } else if (type === 'advancement') {
+        //     cacheFileOperations.removeCachePositionsWith(uri)
+        //     // await cacheFileOperations.updateAdvancementInfo(id)
+        // }
     },
-    fileModified: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
+    fileModified: async (uri: Uri, type: FileType, id: IdentityNode) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         const config = await fetchConfig(uri)
         if (!isRelIncluded(getRel(uri, roots), config)) {
             return
         }
-        if (!uri.toString().startsWith('untitled:') && type === 'function') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            await cacheFileOperations.combineCacheOfLines(uri, config)
-        } else if (type === 'tag/function') {
-            await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancement') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            await cacheFileOperations.combineCacheOfLines(uri, config)
-            // await cacheFileOperations.updateAdvancementInfo(id)
-        }
+        // if (!uri.toString().startsWith('untitled:') && type === 'function') {
+        cacheFileOperations.removeCachePositionsWith(uri)
+        await cacheFileOperations.combineCacheOfLines(uri, config)
+        // } else if (type === 'tag/function') {
+        //     await cacheFileOperations.updateTagInfo(id)
+        // } else if (type === 'advancement') {
+        //     cacheFileOperations.removeCachePositionsWith(uri)
+        //     await cacheFileOperations.combineCacheOfLines(uri, config)
+        //     await cacheFileOperations.updateAdvancementInfo(id)
+        // }
     },
-    fileDeleted: async (uri: Uri, type: CacheKey, id: IdentityNode) => {
+    fileDeleted: async (uri: Uri, type: FileType, id: IdentityNode) => {
         // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
         if (type === 'function') {
             cacheFileOperations.removeCachePositionsWith(uri)
@@ -953,49 +952,26 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
         }
     }
 
-    const addedFiles: [Uri, CacheKey, IdentityNode][] = []
+    const addedFiles: [Uri, FileType, IdentityNode][] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
-        const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
-        for (const namespace of namespaces) {
-            const namespacePath = path.join(dataPath, namespace)
-            const advancementsPath = path.join(namespacePath, 'advancements')
-            const functionsPath = path.join(namespacePath, 'functions')
-            const lootTablesPath = path.join(namespacePath, 'loot_tables')
-            const predicatesPath = path.join(namespacePath, 'predicates')
-            const recipesPath = path.join(namespacePath, 'recipes')
-            const tagsPath = path.join(namespacePath, 'tags')
-            const blockTagsPath = path.join(tagsPath, 'blocks')
-            const entityTypeTagsPath = path.join(tagsPath, 'entity_types')
-            const fluidTagsPath = path.join(tagsPath, 'fluids')
-            const functionTagsPath = path.join(tagsPath, 'functions')
-            const itemTagsPath = path.join(tagsPath, 'items')
-            const datapackCategoryPaths = [
-                advancementsPath, functionsPath, lootTablesPath, predicatesPath, recipesPath,
-                blockTagsPath, entityTypeTagsPath, fluidTagsPath, functionTagsPath, itemTagsPath
-            ]
-            for (const datapackCategoryPath of datapackCategoryPaths) {
-                if (await fs.pathExists(datapackCategoryPath)) {
-                    await walk(
-                        root.fsPath,
-                        datapackCategoryPath,
-                        (abs, rel, stat) => {
-                            const result = IdentityNode.fromRel(rel)
-                            const uri = getUri(Uri.file(abs).toString(), uris)
-                            const uriString = uri.toString()
-                            if (result && IdentityNode.isExtValid(result.ext, result.category)) {
-                                const { id, category: key } = result
-                                if (cacheFile.files[uriString] === undefined) {
-                                    cacheFileOperations.fileAdded(uri, key, id)
-                                    cacheFile.files[uriString] = stat.mtimeMs
-                                    addedFiles.push([uri, key, id])
-                                }
-                            }
-                        }
-                    )
+        await walk(
+            root.fsPath,
+            dataPath,
+            (abs, rel, stat) => {
+                const result = IdentityNode.fromRel(rel)
+                const uri = getUri(Uri.file(abs).toString(), uris)
+                const uriString = uri.toString()
+                if (result && IdentityNode.isExtValid(result.ext, result.category)) {
+                    const { id, category: key } = result
+                    if (cacheFile.files[uriString] === undefined) {
+                        cacheFileOperations.fileAdded(uri, key, id)
+                        cacheFile.files[uriString] = stat.mtimeMs
+                        addedFiles.push([uri, key, id])
+                    }
                 }
             }
-        }
+        )
     }
 
     await Promise.all(addedFiles.map(

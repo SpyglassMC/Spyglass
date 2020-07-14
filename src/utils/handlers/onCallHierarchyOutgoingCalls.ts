@@ -1,7 +1,7 @@
 import { Proposed } from 'vscode-languageserver'
-import { CacheCategory, CacheFile, CacheKey, getSafeCategory } from '../../types/ClientCache'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityNode } from '../../nodes/IdentityNode'
+import { CacheCategory, CacheFile, FileType, getSafeCategory } from '../../types/ClientCache'
+import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { getId, getUri, getUriFromId } from './common'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
@@ -45,7 +45,7 @@ export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, 
             break
         }
         case IdentityKind.Function: {
-            const pushItems = async (category: CacheCategory, type: CacheKey) => {
+            const pushItems = async (category: CacheCategory, type: FileType) => {
                 for (const outgoingIdString in category) {
                     /* istanbul ignore else */
                     if (category.hasOwnProperty(outgoingIdString)) {
