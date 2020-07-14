@@ -23,7 +23,7 @@ import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
 import { fixFileCommandHandler } from './utils/handlers/commands/fixFileCommandHandler'
-import { createInfo, getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walk } from './utils/handlers/common'
+import { createInfo, getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walkFile, walkRoot } from './utils/handlers/common'
 import { onCallHierarchyIncomingCalls } from './utils/handlers/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './utils/handlers/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './utils/handlers/onCallHierarchyPrepare'
@@ -52,6 +52,7 @@ const connection = createConnection(ProposedFeatures.all)
 const uris: UrisOfStrings = new Map<string, Uri>()
 const infos: InfosOfUris = new Map<Uri, DocumentInfo>()
 const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
+const workspaceRootUriStrings: string[] = []
 /**
  * Sorted by priority. If you want to read something in the same order as Minecraft does,
  * iterate from the last element of this array to the first element.
@@ -72,19 +73,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     progress.begin(locale('server.initializing'))
 
     if (workspaceFolders) {
-        // The later the root folder is, the later it will be loaded, the higher the priority it has.
-        // So the roots stored in `roots` is sorted by priority DESC.
-        for (let i = workspaceFolders.length - 1; i >= 0; i--) {
-            const { uri: uriString } = workspaceFolders[i]
-            const uri = getRootUri(uriString, uris)
-            roots.push(uri)
-            connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
-            // Show messages for legacy cache file which was saved in the root of your workspace. 
-            const legacyDotPath = path.join(uri.fsPath, '.datapack')
-            if (await fs.pathExists(legacyDotPath)) {
-                connection.window.showInformationMessage(locale('server.remove-cache-file'))
-            }
-        }
+        workspaceFolders.forEach(v => workspaceRootUriStrings.push(v.uri))
+        await getRoots()
 
         globalStoragePath = gsPath
         if (!await fs.pathExists(globalStoragePath)) {
@@ -265,7 +255,10 @@ connection.onInitialized(() => {
             const uri = getUri(uriString, uris)
 
             // connection.console.info(JSON.stringify({ uri, type }))
-            // connection.console.info(rel)
+
+            if (uriString.endsWith('data') || uriString.endsWith('data/') || uriString.endsWith('pack.mcmeta')) {
+                await getRoots()
+            }
 
             switch (type) {
                 case FileChangeType.Created: {
@@ -273,7 +266,7 @@ connection.onInitialized(() => {
                     if (stat.isDirectory()) {
                         for (const root of roots) {
                             if (uri.fsPath.startsWith(root.fsPath)) {
-                                await walk(
+                                await walkFile(
                                     root.fsPath,
                                     uri.fsPath,
                                     async (abs, rel, stat) => {
@@ -353,13 +346,9 @@ connection.onInitialized(() => {
 
     connection.workspace.onDidChangeWorkspaceFolders(async () => {
         const folders = await connection.workspace.getWorkspaceFolders()
-        onDidChangeWorkspaceFolders({ folders, roots, uris, urisOfIds })
+        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
 
-        connection.console.info('Roots have been modified:')
-        for (let i = 0; i < roots.length; i++) {
-            const root = roots[i]
-            connection.console.info(`rootUri (priority = ${i + 1}) = ${root.toString()}`)
-        }
+        await getRoots()
     })
 
     connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
@@ -637,7 +626,7 @@ connection.onInitialized(() => {
                             const namespacePath = path.join(dataPath, namespace)
                             const functionsPath = path.join(namespacePath, 'functions')
                             if (fs.pathExistsSync(functionsPath)) {
-                                await walk(root.fsPath, functionsPath, async abs => {
+                                await walkFile(root.fsPath, functionsPath, async abs => {
                                     try {
                                         const uri = getUri(Uri.file(abs).toString(), uris)
                                         await fixFileCommandHandler({
@@ -675,6 +664,39 @@ connection.onInitialized(() => {
         }
     })
 })
+
+async function getRoots() {
+    roots.splice(0)
+    const rootCandidatePaths: Set<string> = new Set()
+    for (let i = workspaceRootUriStrings.length - 1; i >= 0; i--) {
+        const uriString = workspaceRootUriStrings[i]
+        const uri = getRootUri(uriString, uris)
+        const path = uri.fsPath
+        rootCandidatePaths.add(path)
+        const config = await fetchConfig(uri)
+        await walkRoot(
+            uri, path,
+            abs => rootCandidatePaths.add(abs),
+            config.env.detectionDepth
+        )
+    }
+    connection.console.info('Getting data pack roots:')
+    for (const candidatePath of rootCandidatePaths) {
+        const dataPath = path.join(candidatePath, 'data')
+        const packMcmetaPath = path.join(candidatePath, 'pack.mcmeta')
+        if (fs.existsSync(dataPath) && fs.existsSync(packMcmetaPath)) {
+            const uri = getRootUri(Uri.file(candidatePath).toString(), uris)
+            roots.push(uri)
+
+            connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
+            // Show messages for legacy cache file which was saved in the root of your workspace. 
+            const legacyDotPath = path.join(candidatePath, '.datapack')
+            if (await fs.pathExists(legacyDotPath)) {
+                connection.window.showInformationMessage(locale('server.remove-cache-file'))
+            }
+        }
+    }
+}
 
 async function getLatestVersions() {
     try {
@@ -955,7 +977,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     const addedFiles: [Uri, FileType, IdentityNode][] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
-        await walk(
+        await walkFile(
             root.fsPath,
             dataPath,
             (abs, rel, stat) => {

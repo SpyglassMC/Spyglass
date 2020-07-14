@@ -194,9 +194,9 @@ export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInf
 /* istanbul ignore next */
 export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DocumentInfo | undefined> {
     try {
-        const rel = getRel(uri, roots)!
+        const rel = getRel(uri, roots)
         const config = await getConfig()
-        if (isRelIncluded(rel, config)) {
+        if (rel && isRelIncluded(rel, config)) {
             const text = await getText()
             const vanillaData = await getVanillaData(config)
             langId = langId ?? (rel.endsWith('json') || rel.endsWith('.mcmeta') ? 'json' : 'mcfunction')
@@ -278,7 +278,7 @@ export function getNodesFromInfo(info: DocumentInfo) {
 }
 
 /* istanbul ignore next */
-export async function walk(
+export async function walkFile(
     workspaceRootPath: string,
     abs: string,
     cb: (abs: string, rel: string, stat: fs.Stats) => any,
@@ -290,10 +290,36 @@ export async function walk(
         const newAbs = path.join(abs, name)
         const stat = await fs.stat(newAbs)
         if (stat.isDirectory()) {
-            promises.push(walk(workspaceRootPath, newAbs, cb, promises, false))
+            promises.push(walkFile(workspaceRootPath, newAbs, cb, promises, false))
         } else {
             const rel = path.relative(workspaceRootPath, newAbs)
             promises.push(cb(newAbs, rel, stat))
+        }
+    }
+    if (awaitAll) {
+        return void Promise.all(promises)
+    }
+}
+
+/* istanbul ignore next */
+export async function walkRoot(
+    workspaceRoot: Uri,
+    abs: string,
+    cb: (xabs: string, stat: fs.Stats) => any,
+    depth = Infinity,
+    promises: Promise<any>[] = [],
+    awaitAll = true
+): Promise<void> {
+    if (depth <= 0) {
+        return
+    }
+    const names = await fs.readdir(abs)
+    for (const name of names) {
+        const newAbs = path.join(abs, name)
+        const stat = await fs.stat(newAbs)
+        if (stat.isDirectory()) {
+            cb(newAbs, stat)
+            promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1, promises, false))
         }
     }
     if (awaitAll) {
