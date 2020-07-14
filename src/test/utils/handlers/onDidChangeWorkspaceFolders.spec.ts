@@ -15,8 +15,8 @@ describe('onDidChangeWorkspaceFolders() Tests', () => {
         onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
 
         assert.deepStrictEqual(workspaceRootUriStrings, [
-            'file:///c:/bar/',
-            'file:///c:/foo/'
+            'file:///c:/bar',
+            'file:///c:/foo'
         ])
         assert.deepStrictEqual(urisOfIds, new Map())
     })
