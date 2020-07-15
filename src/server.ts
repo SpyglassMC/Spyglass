@@ -1,7 +1,7 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, FileChangeType, InitializeResult, Proposed, ProposedFeatures, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
@@ -13,7 +13,7 @@ import { loadLocale, locale } from './locales'
 import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { constructContext, ParsingError } from './types'
+import { ClientCapabilities, constructContext, getClientCapabilities, ParsingError } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
@@ -66,11 +66,14 @@ let globalStoragePath: string
 
 let cachePath: string | undefined
 let cacheFile: CacheFile = clone(DefaultCacheFile)
+let clientCapabilities: ClientCapabilities
 
 let versionInformation: VersionInformation | undefined
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath } }, _, progress) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath }, capabilities }, _, progress) => {
     progress.begin(locale('server.initializing'))
+
+    clientCapabilities = getClientCapabilities(capabilities)
 
     if (workspaceFolders) {
         workspaceFolders.forEach(v => workspaceRootUriStrings.push(v.uri))
@@ -118,8 +121,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
-            documentFormattingProvider: true,
-            documentHighlightProvider: true,
+            documentFormattingProvider: !clientCapabilities.dynamicRegistration.documentFormatting || undefined,
+            documentHighlightProvider: !clientCapabilities.dynamicRegistration.documentHighlight || undefined,
             documentLinkProvider: {},
             executeCommandProvider: {
                 commands: [
@@ -129,7 +132,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 ],
                 workDoneProgress: true
             },
-            foldingRangeProvider: true,
+            foldingRangeProvider: !clientCapabilities.dynamicRegistration.foldingRange || undefined,
             hoverProvider: true,
             codeActionProvider: {
                 codeActionKinds: [CodeActionKind.QuickFix, CodeActionKind.SourceFixAll]
@@ -138,7 +141,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             renameProvider: {
                 prepareProvider: true
             },
-            selectionRangeProvider: true,
+            selectionRangeProvider: !clientCapabilities.dynamicRegistration.selectionRange || undefined,
             semanticTokensProvider: {
                 legend: getSemanticTokensLegend(),
                 documentProvider: {
@@ -168,7 +171,21 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 })
 
 connection.onInitialized(() => {
-    connection.client.register(DidChangeConfigurationNotification.type, { section: 'datapack' })
+    if (clientCapabilities.dynamicRegistration.didChangeConfiguration) {
+        connection.client.register(DidChangeConfigurationNotification.type, { section: 'datapack' })
+    }
+    if (clientCapabilities.dynamicRegistration.documentFormatting) {
+        connection.client.register(DocumentFormattingRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
+    }
+    if (clientCapabilities.dynamicRegistration.documentHighlight) {
+        connection.client.register(DocumentHighlightRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
+    }
+    if (clientCapabilities.dynamicRegistration.foldingRange) {
+        connection.client.register(FoldingRangeRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
+    }
+    if (clientCapabilities.dynamicRegistration.selectionRange) {
+        connection.client.register(SelectionRangeRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
+    }
 
     connection.sendNotification('datapackLanguageServer/checkVersion', {
         currentVersion: ReleaseNotesVersion,
@@ -177,492 +194,491 @@ connection.onInitialized(() => {
         url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${ReleaseNotesVersion}`
     })
 
-    connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
-        const uri = getUri(uriString, uris)
-        const promise = createInfo({
-            getText: async () => text,
-            getConfig: async () => fetchConfig(uri),
-            getCommandTree: async config => getCommandTree(config.env.cmdVersion),
-            getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
-            getJsonSchemas: async config => getJsonSchemas(config.env.jsonVersion),
-            roots, uri, version, cacheFile, langId
-        })
-        infos.set(uri, promise)
-        const info = await promise
-        if (info) {
-            updateDiagnostics(uri, info)
-        }
+    connection.workspace.onDidChangeWorkspaceFolders(async () => {
+        const folders = await connection.workspace.getWorkspaceFolders()
+        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
+        await getRoots()
     })
-    connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
-        // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (!info) {
-            return
-        }
+})
 
-        const config = info.config
-        const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-        if (isFunctionInfo(info)) {
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
-        } else {
-            const schemas = await getJsonSchemas(config.env.jsonVersion)
-            const schema = schemas.get(info.node.schemaType)
-            TextDocument.update(info.document, contentChanges, version!)
-            info.node = parseJsonNode({ uri, roots, config, cacheFile, schema, schemas, vanillaData, document: info.document, schemaType: info.node.schemaType })
-        }
-
-        const rel = getRel(uri, roots)
-        if (rel) {
-            const result = IdentityNode.fromRel(rel)
-            if (result) {
-                cacheFileOperations.fileModified(uri, result.category, result.id)
-                trimCache(cacheFile.cache)
-            }
-        }
-
+connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
+    const uri = getUri(uriString, uris)
+    const promise = createInfo({
+        getText: async () => text,
+        getConfig: async () => fetchConfig(uri),
+        getCommandTree: async config => getCommandTree(config.env.cmdVersion),
+        getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
+        getJsonSchemas: async config => getJsonSchemas(config.env.jsonVersion),
+        roots, uri, version, cacheFile, langId
+    })
+    infos.set(uri, promise)
+    const info = await promise
+    if (info) {
         updateDiagnostics(uri, info)
-        // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
-    })
-    connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
+    }
+})
+connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
+    // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (!info) {
+        return
+    }
+
+    const config = info.config
+    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+    if (isFunctionInfo(info)) {
+        const commandTree = await getCommandTree(config.env.cmdVersion)
+        onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
+    } else {
+        const schemas = await getJsonSchemas(config.env.jsonVersion)
+        const schema = schemas.get(info.node.schemaType)
+        TextDocument.update(info.document, contentChanges, version!)
+        info.node = parseJsonNode({ uri, roots, config, cacheFile, schema, schemas, vanillaData, document: info.document, schemaType: info.node.schemaType })
+    }
+
+    const rel = getRel(uri, roots)
+    if (rel) {
+        const result = IdentityNode.fromRel(rel)
+        if (result) {
+            cacheFileOperations.fileModified(uri, result.category, result.id)
+            trimCache(cacheFile.cache)
+        }
+    }
+
+    updateDiagnostics(uri, info)
+    // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
+})
+connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+
+    onDidCloseTextDocument({ uri, infos })
+})
+
+connection.onDidChangeConfiguration(async () => {
+    return Promise.all(
+        Array
+            .from(infos.entries())
+            .map(async ([uri, promise]) => {
+                const info = await promise
+                if (info) {
+                    info.config = await fetchConfig(uri)
+                }
+            })
+    )
+})
+
+connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
+    // console.log(`WillSave: ‘${uriString}’`)
+})
+
+connection.onDidChangeWatchedFiles(async ({ changes }) => {
+    // connection.console.info(`BW: ${JSON.stringify(cacheFile)}`)
+    // connection.console.info(`WC: ${JSON.stringify(changes)}`)
+    for (const { uri: uriString, type } of changes) {
         const uri = getUri(uriString, uris)
 
-        onDidCloseTextDocument({ uri, infos })
-    })
+        // connection.console.info(JSON.stringify({ uri, type }))
 
-    connection.onDidChangeConfiguration(async () => {
-        return Promise.all(
-            Array
-                .from(infos.entries())
-                .map(async ([uri, promise]) => {
-                    const info = await promise
-                    if (info) {
-                        info.config = await fetchConfig(uri)
-                    }
-                })
-        )
-    })
+        if (uriString.endsWith('data') || uriString.endsWith('data/') || uriString.endsWith('pack.mcmeta')) {
+            await getRoots()
+        }
 
-    connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
-        // console.log(`WillSave: ‘${uriString}’`)
-    })
-
-    connection.onDidChangeWatchedFiles(async ({ changes }) => {
-        // connection.console.info(`BW: ${JSON.stringify(cacheFile)}`)
-        // connection.console.info(`WC: ${JSON.stringify(changes)}`)
-        for (const { uri: uriString, type } of changes) {
-            const uri = getUri(uriString, uris)
-
-            // connection.console.info(JSON.stringify({ uri, type }))
-
-            if (uriString.endsWith('data') || uriString.endsWith('data/') || uriString.endsWith('pack.mcmeta')) {
-                await getRoots()
-            }
-
-            switch (type) {
-                case FileChangeType.Created: {
-                    const stat = await fs.stat(uri.fsPath)
-                    if (stat.isDirectory()) {
-                        for (const root of roots) {
-                            if (uri.fsPath.startsWith(root.fsPath)) {
-                                await walkFile(
-                                    root.fsPath,
-                                    uri.fsPath,
-                                    async (abs, rel, stat) => {
-                                        const result = IdentityNode.fromRel(rel)
-                                        if (result) {
-                                            const { category, id, ext } = result
-                                            const uri = getUri(Uri.file(abs).toString(), uris)
-                                            const uriString = uri.toString()
-                                            if (IdentityNode.isExtValid(ext, category)) {
-                                                await cacheFileOperations.fileAdded(uri, category, id)
-                                                cacheFile.files[uriString] = stat.mtimeMs
-                                            }
+        switch (type) {
+            case FileChangeType.Created: {
+                const stat = await fs.stat(uri.fsPath)
+                if (stat.isDirectory()) {
+                    for (const root of roots) {
+                        if (uri.fsPath.startsWith(root.fsPath)) {
+                            await walkFile(
+                                root.fsPath,
+                                uri.fsPath,
+                                async (abs, rel, stat) => {
+                                    const result = IdentityNode.fromRel(rel)
+                                    if (result) {
+                                        const { category, id, ext } = result
+                                        const uri = getUri(Uri.file(abs).toString(), uris)
+                                        const uriString = uri.toString()
+                                        if (IdentityNode.isExtValid(ext, category)) {
+                                            await cacheFileOperations.fileAdded(uri, category, id)
+                                            cacheFile.files[uriString] = stat.mtimeMs
                                         }
                                     }
-                                )
-                            }
-                        }
-                    } else {
-                        const result = IdentityNode.fromRel(getRel(uri, roots) as string)
-                        if (result) {
-                            const { category, id, ext } = result
-                            if (IdentityNode.isExtValid(ext, category)) {
-                                await cacheFileOperations.fileAdded(uri, category, id)
-                                cacheFile.files[uriString] = stat.mtimeMs
-                            }
+                                }
+                            )
                         }
                     }
-                    break
+                } else {
+                    const result = IdentityNode.fromRel(getRel(uri, roots) as string)
+                    if (result) {
+                        const { category, id, ext } = result
+                        if (IdentityNode.isExtValid(ext, category)) {
+                            await cacheFileOperations.fileAdded(uri, category, id)
+                            cacheFile.files[uriString] = stat.mtimeMs
+                        }
+                    }
                 }
-                case FileChangeType.Changed: {
-                    // TODO(#252): Check if external changes or workspace edits will trigger
-                    // onDidChangeTextDocument for opened ocuments.
-                    // TODO(#252): Only trigger update for non-opened documents.
+                break
+            }
+            case FileChangeType.Changed: {
+                // TODO(#252): Check if external changes or workspace edits will trigger
+                // onDidChangeTextDocument for opened ocuments.
+                // TODO(#252): Only trigger update for non-opened documents.
 
-                    // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
-                    // console.log(`Changed : ‘${uriString}’`)
-                    const stat = await fs.stat(uri.fsPath)
-                    if (stat.isFile()) {
-                        const result = IdentityNode.fromRel(getRel(uri, roots)!)
-                        if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
-                            const { category, ext, id } = result
-                            if (IdentityNode.isExtValid(ext, category)) {
-                                await cacheFileOperations.fileModified(uri, category, id)
-                                cacheFile.files[uriString] = stat.mtimeMs
-                            }
+                // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
+                // console.log(`Changed : ‘${uriString}’`)
+                const stat = await fs.stat(uri.fsPath)
+                if (stat.isFile()) {
+                    const result = IdentityNode.fromRel(getRel(uri, roots)!)
+                    if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
+                        const { category, ext, id } = result
+                        if (IdentityNode.isExtValid(ext, category)) {
+                            await cacheFileOperations.fileModified(uri, category, id)
+                            cacheFile.files[uriString] = stat.mtimeMs
                         }
                     }
-                    break
                 }
-                case FileChangeType.Deleted:
-                default: {
-                    // connection.console.info(`FileChangeType.Deleted ${rel}`)
-                    for (const fileUriString in cacheFile.files) {
-                        if (cacheFile.files.hasOwnProperty(fileUriString)) {
-                            if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
-                                const fileUri = getUri(fileUriString, uris)
-                                const result = IdentityNode.fromRel(getRel(fileUri, roots)!)
-                                // connection.console.info(`result = ${JSON.stringify(result)}`)
-                                if (result) {
-                                    const { category, id, ext } = result
-                                    if (IdentityNode.isExtValid(ext, category)) {
-                                        await cacheFileOperations.fileDeleted(fileUri, category, id)
-                                        delete cacheFile.files[fileUriString]
-                                    }
+                break
+            }
+            case FileChangeType.Deleted:
+            default: {
+                // connection.console.info(`FileChangeType.Deleted ${rel}`)
+                for (const fileUriString in cacheFile.files) {
+                    if (cacheFile.files.hasOwnProperty(fileUriString)) {
+                        if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
+                            const fileUri = getUri(fileUriString, uris)
+                            const result = IdentityNode.fromRel(getRel(fileUri, roots)!)
+                            // connection.console.info(`result = ${JSON.stringify(result)}`)
+                            if (result) {
+                                const { category, id, ext } = result
+                                if (IdentityNode.isExtValid(ext, category)) {
+                                    await cacheFileOperations.fileDeleted(fileUri, category, id)
+                                    delete cacheFile.files[fileUriString]
                                 }
                             }
                         }
                     }
-                    break
                 }
+                break
             }
         }
+    }
 
-        trimCache(cacheFile.cache)
-        // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
-    })
+    trimCache(cacheFile.cache)
+    // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
+})
 
-    connection.workspace.onDidChangeWorkspaceFolders(async () => {
-        const folders = await connection.workspace.getWorkspaceFolders()
-        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
-
-        await getRoots()
-    })
-
-    connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.completions) {
-            const offset = info.document.offsetAt(position)
-            const config = info.config
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    const commandTree = await getCommandTree(config.env.cmdVersion)
-                    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                    return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
-                }
-            } else {
-                if (context?.triggerCharacter && !generalTriggerCharacters.includes(context.triggerCharacter)) {
-                    return null
-                }
-                const ans: CompletionItem[] = []
-                const schemas = await getJsonSchemas(info.config.env.jsonVersion)
-                const schema = schemas.get(info.node.schemaType)
-                const ctx: JsonSchemaHelperOptions = {
-                    ctx: constructContext({
-                        cache: getCacheForUri(cacheFile.cache, uri),
-                        cursor: offset,
-                        document: info.document,
-                        id: getId(uri, roots),
-                        rootIndex: getRootIndex(uri, roots),
-                        config, roots
-                    }),
-                    schemas
-                }
-                JsonSchemaHelper.suggest(ans, info.node.json.root, schema, ctx)
-                return ans.length !== 0 ? ans : null
-            }
-        }
-        return null
-    })
-
-    connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.signatures && isFunctionInfo(info)) {
-            const offset = info.document.offsetAt(position)
+connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.completions) {
+        const offset = info.document.offsetAt(position)
+        const config = info.config
+        if (isFunctionInfo(info)) {
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                const config = info.config
                 const commandTree = await getCommandTree(config.env.cmdVersion)
                 const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                return onSignatureHelp({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
+                return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
             }
-        }
-        return null
-    })
-
-    connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.foldingRanges && isFunctionInfo(info)) {
-            return onFoldingRanges({ info })
-        }
-        return null
-    })
-
-    connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.hover) {
-            const offset = info.document.offsetAt(position)
-            if (isFunctionInfo(info)) {
-                const { node } = getSelectedNode(info.nodes, offset)
-                if (node) {
-                    return onHover({ info, offset, node, cacheFile })
-                }
-            } else {
-                // TODO: JSON
+        } else {
+            if (context?.triggerCharacter && !generalTriggerCharacters.includes(context.triggerCharacter)) {
+                return null
             }
-        }
-        return null
-    })
-
-    connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.formatting && isFunctionInfo(info)) {
-            return onDocumentFormatting({ info })
-        }
-        return null
-    })
-
-    connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info) {
-            const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNodeFromInfo(info, offset)
-            if (node) {
-                return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
+            const ans: CompletionItem[] = []
+            const schemas = await getJsonSchemas(info.config.env.jsonVersion)
+            const schema = schemas.get(info.node.schemaType)
+            const ctx: JsonSchemaHelperOptions = {
+                ctx: constructContext({
+                    cache: getCacheForUri(cacheFile.cache, uri),
+                    cursor: offset,
+                    document: info.document,
+                    id: getId(uri, roots),
+                    rootIndex: getRootIndex(uri, roots),
+                    config, roots
+                }),
+                schemas
             }
+            JsonSchemaHelper.suggest(ans, info.node.json.root, schema, ctx)
+            return ans.length !== 0 ? ans : null
         }
-        return null
-    })
-    connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info) {
-            const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNodeFromInfo(info, offset)
-            if (node) {
-                return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
-            }
-        }
-        return null
-    })
+    }
+    return null
+})
 
-    connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.documentHighlighting && isFunctionInfo(info)) {
-            const offset = info.document.offsetAt(position)
+connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.signatures && isFunctionInfo(info)) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNode(info.nodes, offset)
+        if (node) {
+            const config = info.config
+            const commandTree = await getCommandTree(config.env.cmdVersion)
+            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
+            return onSignatureHelp({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
+        }
+    }
+    return null
+})
+
+connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.foldingRanges && isFunctionInfo(info)) {
+        return onFoldingRanges({ info })
+    }
+    return null
+})
+
+connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.hover) {
+        const offset = info.document.offsetAt(position)
+        if (isFunctionInfo(info)) {
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
-                return onDocumentHighlight({ info, node, position, offset })
+                return onHover({ info, offset, node, cacheFile })
             }
+        } else {
+            // TODO: JSON
         }
-        return null
-    })
+    }
+    return null
+})
 
-    connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.selectionRanges && isFunctionInfo(info)) {
-            return onSelectionRanges({ positions, info })
+connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.formatting && isFunctionInfo(info)) {
+        return onDocumentFormatting({ info })
+    }
+    return null
+})
+
+connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNodeFromInfo(info, offset)
+        if (node) {
+            return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
         }
-        return null
-    })
+    }
+    return null
+})
+connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNodeFromInfo(info, offset)
+        if (node) {
+            return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
+        }
+    }
+    return null
+})
 
-    connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.codeActions) {
-            if (isFunctionInfo(info)) {
-                return onCodeAction({ uri, info, diagnostics, range, cacheFile })
-            } else {
-                // TODO: JSON
+connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.documentHighlighting && isFunctionInfo(info)) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNode(info.nodes, offset)
+        if (node) {
+            return onDocumentHighlight({ info, node, position, offset })
+        }
+    }
+    return null
+})
+
+connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.selectionRanges && isFunctionInfo(info)) {
+        return onSelectionRanges({ positions, info })
+    }
+    return null
+})
+
+connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.codeActions) {
+        if (isFunctionInfo(info)) {
+            return onCodeAction({ uri, info, diagnostics, range, cacheFile })
+        } else {
+            // TODO: JSON
+        }
+    }
+    return null
+})
+
+connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && isFunctionInfo(info)) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNode(info.nodes, offset)
+        if (node) {
+            return onCallHierarchyPrepare({ info, offset, node, uris, roots, urisOfIds, pathExists: fs.pathExists })
+        }
+    }
+    return null
+})
+
+connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
+    return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
+})
+
+connection.languages.callHierarchy.onOutgoingCalls(async ({ item: { kind, name: id } }) => {
+    return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
+})
+
+connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNodeFromInfo(info, offset)
+        if (node) {
+            return onPrepareRename({ info, node, offset })
+        }
+    }
+    return null
+})
+connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info) {
+        const offset = info.document.offsetAt(position)
+        const { node } = getSelectedNodeFromInfo(info, offset)
+        if (node) {
+            return onRenameRequest({ infos, cacheFile, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
+        }
+    }
+    return null
+})
+
+connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.documentLinks) {
+        return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
+    }
+    return null
+})
+
+connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.colors) {
+        return onDocumentColor({ info })
+    }
+    return null
+})
+
+connection.onColorPresentation(async ({
+    color: { red: r, green: g, blue: b, alpha: a }, textDocument: { uri: uriString },
+    range: { start: startPos, end: endPos }
+}) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.colors) {
+        const start = info.document.offsetAt(startPos)
+        const end = info.document.offsetAt(endPos)
+        return onColorPresentation({ r, g, b, a, start, end, info })
+    }
+    return null
+})
+
+connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.semanticColoring) {
+        return onSemanticTokens({ info })
+    }
+    return { data: [] }
+})
+
+connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
+    const uri = getUri(uriString, uris)
+    const info = await getInfo(uri, infos)
+    if (info && info.config.features.semanticColoring) {
+        return onSemanticTokensEdits({ info, previousResultId })
+    }
+    return { edits: [] }
+})
+
+/*
+ * datapack.fixFile <Uri>    -  Fix all auto-fixable problems in <Uri>.
+ * datapack.fixWorkspace     -  Fix all auto-fixable problems in the workspace.
+ * datapack.regenerateCache  -  Regenerate cache.
+ */
+connection.onExecuteCommand(async ({ command, arguments: args }) => {
+    let progress: WorkDoneProgress | undefined = undefined
+    try {
+        switch (command) {
+            case 'datapack.fixFile': {
+                const uri = getUri(args![0], uris)
+                await fixFileCommandHandler({
+                    cacheFile, infos, roots, uri,
+                    getCommandTree, fetchConfig,
+                    applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
+                    getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
+                    readFile: fs.readFile
+                })
+                break
             }
-        }
-        return null
-    })
-
-    connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && isFunctionInfo(info)) {
-            const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNode(info.nodes, offset)
-            if (node) {
-                return onCallHierarchyPrepare({ info, offset, node, uris, roots, urisOfIds, pathExists: fs.pathExists })
-            }
-        }
-        return null
-    })
-
-    connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
-        return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
-    })
-
-    connection.languages.callHierarchy.onOutgoingCalls(async ({ item: { kind, name: id } }) => {
-        return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
-    })
-
-    connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info) {
-            const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNodeFromInfo(info, offset)
-            if (node) {
-                return onPrepareRename({ info, node, offset })
-            }
-        }
-        return null
-    })
-    connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info) {
-            const offset = info.document.offsetAt(position)
-            const { node } = getSelectedNodeFromInfo(info, offset)
-            if (node) {
-                return onRenameRequest({ infos, cacheFile, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
-            }
-        }
-        return null
-    })
-
-    connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.documentLinks) {
-            return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
-        }
-        return null
-    })
-
-    connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.colors) {
-            return onDocumentColor({ info })
-        }
-        return null
-    })
-
-    connection.onColorPresentation(async ({
-        color: { red: r, green: g, blue: b, alpha: a }, textDocument: { uri: uriString },
-        range: { start: startPos, end: endPos }
-    }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.colors) {
-            const start = info.document.offsetAt(startPos)
-            const end = info.document.offsetAt(endPos)
-            return onColorPresentation({ r, g, b, a, start, end, info })
-        }
-        return null
-    })
-
-    connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring) {
-            return onSemanticTokens({ info })
-        }
-        return { data: [] }
-    })
-
-    connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
-        const uri = getUri(uriString, uris)
-        const info = await getInfo(uri, infos)
-        if (info && info.config.features.semanticColoring) {
-            return onSemanticTokensEdits({ info, previousResultId })
-        }
-        return { edits: [] }
-    })
-
-    /*
-     * datapack.fixFile <Uri>    -  Fix all auto-fixable problems in <Uri>.
-     * datapack.fixWorkspace     -  Fix all auto-fixable problems in the workspace.
-     * datapack.regenerateCache  -  Regenerate cache.
-     */
-    connection.onExecuteCommand(async ({ command, arguments: args }) => {
-        let progress: WorkDoneProgress | undefined = undefined
-        try {
-            switch (command) {
-                case 'datapack.fixFile': {
-                    const uri = getUri(args![0], uris)
-                    await fixFileCommandHandler({
-                        cacheFile, infos, roots, uri,
-                        getCommandTree, fetchConfig,
-                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
-                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
-                        readFile: fs.readFile
-                    })
-                    break
-                }
-                case 'datapack.fixWorkspace': {
-                    progress = await connection.window.createWorkDoneProgress()
-                    progress.begin(locale('server.fixing-workspace'))
-                    for (const root of roots) {
-                        const dataPath = path.join(root.fsPath, 'data')
-                        const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
-                        for (const namespace of namespaces) {
-                            const namespacePath = path.join(dataPath, namespace)
-                            const functionsPath = path.join(namespacePath, 'functions')
-                            if (fs.pathExistsSync(functionsPath)) {
-                                await walkFile(root.fsPath, functionsPath, async abs => {
-                                    try {
-                                        const uri = getUri(Uri.file(abs).toString(), uris)
-                                        await fixFileCommandHandler({
-                                            cacheFile, infos, roots, uri,
-                                            getCommandTree, fetchConfig,
-                                            applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
-                                            getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
-                                            readFile: fs.readFile
-                                        })
-                                    } catch (e) {
-                                        console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
-                                    }
-                                })
-                            }
+            case 'datapack.fixWorkspace': {
+                progress = await connection.window.createWorkDoneProgress()
+                progress.begin(locale('server.fixing-workspace'))
+                for (const root of roots) {
+                    const dataPath = path.join(root.fsPath, 'data')
+                    const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
+                    for (const namespace of namespaces) {
+                        const namespacePath = path.join(dataPath, namespace)
+                        const functionsPath = path.join(namespacePath, 'functions')
+                        if (fs.pathExistsSync(functionsPath)) {
+                            await walkFile(root.fsPath, functionsPath, async abs => {
+                                try {
+                                    const uri = getUri(Uri.file(abs).toString(), uris)
+                                    await fixFileCommandHandler({
+                                        cacheFile, infos, roots, uri,
+                                        getCommandTree, fetchConfig,
+                                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
+                                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
+                                        readFile: fs.readFile
+                                    })
+                                } catch (e) {
+                                    console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
+                                }
+                            })
                         }
                     }
-                    break
                 }
-                case 'datapack.regenerateCache': {
-                    progress = await connection.window.createWorkDoneProgress()
-                    progress.begin(locale('server.regenerating-cache'))
-                    cacheFile = clone(DefaultCacheFile)
-                    await updateCacheFile(cacheFile, roots, progress)
-                    break
-                }
-                default:
-                    throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
+                break
             }
-        } catch (e) {
-            console.error('[onExecuteCommand]', e)
-        } finally {
-            if (progress) {
-                progress.done()
+            case 'datapack.regenerateCache': {
+                progress = await connection.window.createWorkDoneProgress()
+                progress.begin(locale('server.regenerating-cache'))
+                cacheFile = clone(DefaultCacheFile)
+                await updateCacheFile(cacheFile, roots, progress)
+                break
             }
+            default:
+                throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
         }
-    })
+    } catch (e) {
+        console.error('[onExecuteCommand]', e)
+    } finally {
+        if (progress) {
+            progress.done()
+        }
+    }
 })
 
 async function getRoots() {

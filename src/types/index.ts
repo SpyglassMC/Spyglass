@@ -1,6 +1,7 @@
 export * from './AdvancementInfo'
 export * from './BlockDefinition'
 export * from './ClientCache'
+export * from './ClientCapabilities'
 export * from './CommandTree'
 export * from './CommandTreeVersion'
 export * from './Config'
