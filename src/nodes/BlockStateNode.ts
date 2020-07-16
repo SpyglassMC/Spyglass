@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
@@ -26,7 +26,7 @@ export class BlockStateNode extends MapNode<string, string> {
 
     protected readonly [Chars] = BlockStateNodeChars;
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
         if (relevantDiagnostics && info.config.lint.blockStateSortKeys) {

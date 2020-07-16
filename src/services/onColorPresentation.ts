@@ -1,7 +1,7 @@
 import { ColorPresentation, Range } from 'vscode-languageserver'
-import { DocumentInfo } from '../types/DocumentInfo'
+import { DatapackDocument } from '../types/DatapackDocument'
 
-export function onColorPresentation({ info, start, end, r, g, b, a }: { info: DocumentInfo, start: number, end: number, r: number, g: number, b: number, a: number }) {
+export function onColorPresentation({ info, start, end, r, g, b, a }: { info: DatapackDocument, start: number, end: number, r: number, g: number, b: number, a: number }) {
     try {
         const ans: ColorPresentation[] = []
         const range = Range.create(

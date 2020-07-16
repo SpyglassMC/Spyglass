@@ -1,3 +1,4 @@
+import { PublishDiagnosticsParams } from 'vscode-languageserver'
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
 import { DataSource, VanillaData } from '../data/VanillaData'
@@ -5,7 +6,7 @@ import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheType } from './ClientCache'
 import { Config } from './Config'
-import { DocumentInfo } from './DocumentInfo'
+import { DatapackDocument } from './DatapackDocument'
 import { LineNode } from './LineNode'
 
 export const Uri = URI
@@ -13,7 +14,7 @@ export const Uri = URI
 export type DocNode = LineNode | JsonNode
 
 export type Uri = URI
-export type InfosOfUris = Map<Uri, DocumentInfo | Promise<DocumentInfo | undefined>>
+export type DocsOfUris = Map<Uri, Promise<DatapackDocument | undefined>>
 export type UrisOfIds = Map<string, Uri | null>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
@@ -23,5 +24,6 @@ export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
 export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
 export type PathExistsFunction = (path: string) => Promise<boolean>
+export type PublishDiagnostics = (params: PublishDiagnosticsParams) => void
 export type ReadFileFunction = (path: string, encoding: string) => Promise<string>
 export type UrisOfStrings = Map<string, Uri>

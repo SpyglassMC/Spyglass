@@ -2,11 +2,11 @@ import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-l
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
-import { CacheFile, FunctionInfo, Uri } from '../types'
+import { CacheFile, McfunctionDocument, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
 import { getDiagnosticMap } from './common'
 
-export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: FunctionInfo, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
+export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: McfunctionDocument, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
     try {
         const ans: CodeAction[] = []
 

@@ -13,17 +13,9 @@ import { loadLocale, locale } from './locales'
 import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { ClientCapabilities, constructContext, getClientCapabilities, ParsingError } from './types'
-import { AdvancementInfo } from './types/AdvancementInfo'
-import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
-import { Config, isRelIncluded, VanillaConfig } from './types/Config'
-import { DocumentInfo, isFunctionInfo } from './types/DocumentInfo'
-import { InfosOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
-import { TagInfo } from './types/TagInfo'
-import { VersionInformation } from './types/VersionInformation'
-import { requestText } from './utils'
 import { fixFileCommandHandler } from './services/commands/fixFileCommandHandler'
-import { createInfo, getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getUri, getUriFromId, parseJsonNode, walkFile, walkRoot } from './services/common'
+import { getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getTextDocument, getUri, getUriFromId, parseJsonNode, walkFile, walkRoot } from './services/common'
+import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { onCallHierarchyIncomingCalls } from './services/onCallHierarchyIncomingCalls'
 import { onCallHierarchyOutgoingCalls } from './services/onCallHierarchyOutgoingCalls'
 import { onCallHierarchyPrepare } from './services/onCallHierarchyPrepare'
@@ -46,11 +38,20 @@ import { onSelectionRanges } from './services/onSelectionRanges'
 import { onSemanticTokens } from './services/onSemanticTokens'
 import { onSemanticTokensEdits } from './services/onSemanticTokensEdits'
 import { onSignatureHelp } from './services/onSignatureHelp'
+import { ClientCapabilities, constructContext, getClientCapabilities, ParsingError } from './types'
+import { AdvancementInfo } from './types/AdvancementInfo'
+import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import { Config, isRelIncluded, VanillaConfig } from './types/Config'
+import { DatapackDocument, isMcfunctionDocument } from './types/DatapackDocument'
+import { DocsOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
+import { TagInfo } from './types/TagInfo'
+import { VersionInformation } from './types/VersionInformation'
+import { requestText } from './utils'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from './utils/JsonSchemaHelper'
 
 const connection = createConnection(ProposedFeatures.all)
 const uris: UrisOfStrings = new Map<string, Uri>()
-const infos: InfosOfUris = new Map<Uri, DocumentInfo>()
+const infos: DocsOfUris = new Map<Uri, DatapackDocument>()
 const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
 const workspaceRootUriStrings: string[] = []
 /**
@@ -66,51 +67,52 @@ let globalStoragePath: string
 
 let cachePath: string | undefined
 let cacheFile: CacheFile = clone(DefaultCacheFile)
-let clientCapabilities: ClientCapabilities
+let capabilities: ClientCapabilities
 
 let versionInformation: VersionInformation | undefined
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath }, capabilities }, _, progress) => {
+let service: DatapackLanguageService
+
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath }, capabilities: lspCapabilities }, _, progress) => {
     progress.begin(locale('server.initializing'))
 
-    clientCapabilities = getClientCapabilities(capabilities)
+    capabilities = getClientCapabilities(lspCapabilities)
 
-    if (workspaceFolders) {
-        workspaceFolders.forEach(v => workspaceRootUriStrings.push(v.uri))
-        await getRoots()
-
-        globalStoragePath = gsPath
-        if (!await fs.pathExists(globalStoragePath)) {
-            await fs.mkdirp(globalStoragePath)
-        }
-        connection.console.info(`CacheVersion = ‘${CacheVersion}’`)
-        connection.console.info(`ReleaseNotesVersion = ‘${ReleaseNotesVersion}’`)
-
-        connection.console.info(`globalStoragePath = ‘${globalStoragePath}’`)
-
-        if (!await fs.pathExists(storagePath)) {
-            await fs.mkdirp(storagePath)
-        }
-        connection.console.info(`storagePath = ‘${storagePath}’`)
-
-        cachePath = path.join(storagePath, './cache.json')
-        connection.console.info(`cachePath = ‘${cachePath}’`)
-
-        if (fs.existsSync(cachePath)) {
-            try {
-                cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
-            } catch (e) {
-                connection.console.error(`Error occurred while reading cache (‘${cachePath}’): ${e}`)
-                cacheFile = clone(DefaultCacheFile)
-            }
-            if (cacheFile.version !== CacheVersion) {
-                cacheFile = clone(DefaultCacheFile)
-            }
-        }
-        await getLatestVersions()
-        await updateCacheFile(cacheFile, roots, progress)
-        saveCacheFile()
+    if (!await fs.pathExists(gsPath)) {
+        await fs.mkdirp(gsPath)
     }
+    if (!await fs.pathExists(storagePath)) {
+        await fs.mkdirp(storagePath)
+    }
+
+    let cacheFile: CacheFile | undefined
+    const cachePath = path.join(storagePath, './cache.json')
+    if (fs.existsSync(cachePath)) {
+        try {
+            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+        } catch (e) {
+            console.error('[onInitialize] Reading cache', e)
+        }
+    }
+    cacheFile = cacheFile ?? clone(DefaultCacheFile)
+    await updateCacheFile(cacheFile, roots, progress)
+    saveCacheFile()
+
+    console.log(`[onInitialize] CacheVersion = ${CacheVersion}`)
+    console.log(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
+    console.log(`[onInitialize] globalStoragePath = ${globalStoragePath}`)
+    console.log(`[onInitialize] cachePath = ${cachePath}`)
+
+    service = new DatapackLanguageService({
+        cacheFile,
+        capabilities,
+        fetchConfig: capabilities.configuration ? fetchConfig : undefined,
+        publishDiagnostics: connection.sendDiagnostics,
+        showInformationMessage: connection.window.showInformationMessage,
+        versionInformation: await getLatestVersions()
+    })
+
+    await updateRoots(service.roots)
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
@@ -121,8 +123,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
             },
             definitionProvider: true,
-            documentFormattingProvider: !clientCapabilities.dynamicRegistration.documentFormatting || undefined,
-            documentHighlightProvider: !clientCapabilities.dynamicRegistration.documentHighlight || undefined,
+            documentFormattingProvider: !capabilities.dynamicRegistration.documentFormatting,
+            documentHighlightProvider: !capabilities.dynamicRegistration.documentHighlight,
             documentLinkProvider: {},
             executeCommandProvider: {
                 commands: [
@@ -132,7 +134,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 ],
                 workDoneProgress: true
             },
-            foldingRangeProvider: !clientCapabilities.dynamicRegistration.foldingRange || undefined,
+            foldingRangeProvider: !capabilities.dynamicRegistration.foldingRange,
             hoverProvider: true,
             codeActionProvider: {
                 codeActionKinds: [CodeActionKind.QuickFix, CodeActionKind.SourceFixAll]
@@ -141,7 +143,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             renameProvider: {
                 prepareProvider: true
             },
-            selectionRangeProvider: !clientCapabilities.dynamicRegistration.selectionRange || undefined,
+            selectionRangeProvider: !capabilities.dynamicRegistration.selectionRange,
             semanticTokensProvider: {
                 legend: getSemanticTokensLegend(),
                 documentProvider: {
@@ -171,19 +173,19 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 })
 
 connection.onInitialized(() => {
-    if (clientCapabilities.dynamicRegistration.didChangeConfiguration) {
+    if (capabilities.dynamicRegistration.didChangeConfiguration) {
         connection.client.register(DidChangeConfigurationNotification.type, { section: 'datapack' })
     }
-    if (clientCapabilities.dynamicRegistration.documentFormatting) {
+    if (capabilities.dynamicRegistration.documentFormatting) {
         connection.client.register(DocumentFormattingRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
     }
-    if (clientCapabilities.dynamicRegistration.documentHighlight) {
+    if (capabilities.dynamicRegistration.documentHighlight) {
         connection.client.register(DocumentHighlightRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
     }
-    if (clientCapabilities.dynamicRegistration.foldingRange) {
+    if (capabilities.dynamicRegistration.foldingRange) {
         connection.client.register(FoldingRangeRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
     }
-    if (clientCapabilities.dynamicRegistration.selectionRange) {
+    if (capabilities.dynamicRegistration.selectionRange) {
         connection.client.register(SelectionRangeRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
     }
 
@@ -195,27 +197,18 @@ connection.onInitialized(() => {
     })
 
     connection.workspace.onDidChangeWorkspaceFolders(async () => {
-        const folders = await connection.workspace.getWorkspaceFolders()
-        onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
-        await getRoots()
+        if (capabilities.workspaceFolders) {
+            const folders = await connection.workspace.getWorkspaceFolders()
+            onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
+            await updateRoots(service.roots)
+        }
     })
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
-    const uri = getUri(uriString, uris)
-    const promise = createInfo({
-        getText: async () => text,
-        getConfig: async () => fetchConfig(uri),
-        getCommandTree: async config => getCommandTree(config.env.cmdVersion),
-        getVanillaData: async config => getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath),
-        getJsonSchemas: async config => getJsonSchemas(config.env.jsonVersion),
-        roots, uri, version, cacheFile, langId
-    })
-    infos.set(uri, promise)
-    const info = await promise
-    if (info) {
-        updateDiagnostics(uri, info)
-    }
+    const uri = service.parseUri(uriString)
+    service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }))
+    service.publishDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
     // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
@@ -227,7 +220,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri:
 
     const config = info.config
     const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-    if (isFunctionInfo(info)) {
+    if (isMcfunctionDocument(info)) {
         const commandTree = await getCommandTree(config.env.cmdVersion)
         onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
     } else {
@@ -246,7 +239,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri:
         }
     }
 
-    updateDiagnostics(uri, info)
+    service.publishDiagnostics(uri)
     // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
@@ -281,7 +274,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
         // connection.console.info(JSON.stringify({ uri, type }))
 
         if (uriString.endsWith('data') || uriString.endsWith('data/') || uriString.endsWith('pack.mcmeta')) {
-            await getRoots()
+            await updateRoots(service.roots)
         }
 
         switch (type) {
@@ -374,7 +367,7 @@ connection.onCompletion(async ({ textDocument: { uri: uriString }, position, con
     if (info && info.config.features.completions) {
         const offset = info.document.offsetAt(position)
         const config = info.config
-        if (isFunctionInfo(info)) {
+        if (isMcfunctionDocument(info)) {
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 const commandTree = await getCommandTree(config.env.cmdVersion)
@@ -409,7 +402,7 @@ connection.onCompletion(async ({ textDocument: { uri: uriString }, position, con
 connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && info.config.features.signatures && isFunctionInfo(info)) {
+    if (info && info.config.features.signatures && isMcfunctionDocument(info)) {
         const offset = info.document.offsetAt(position)
         const { node } = getSelectedNode(info.nodes, offset)
         if (node) {
@@ -425,7 +418,7 @@ connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }
 connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && info.config.features.foldingRanges && isFunctionInfo(info)) {
+    if (info && info.config.features.foldingRanges && isMcfunctionDocument(info)) {
         return onFoldingRanges({ info })
     }
     return null
@@ -436,7 +429,7 @@ connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
     const info = await getInfo(uri, infos)
     if (info && info.config.features.hover) {
         const offset = info.document.offsetAt(position)
-        if (isFunctionInfo(info)) {
+        if (isMcfunctionDocument(info)) {
             const { node } = getSelectedNode(info.nodes, offset)
             if (node) {
                 return onHover({ info, offset, node, cacheFile })
@@ -451,7 +444,7 @@ connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
 connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && info.config.features.formatting && isFunctionInfo(info)) {
+    if (info && info.config.features.formatting && isMcfunctionDocument(info)) {
         return onDocumentFormatting({ info })
     }
     return null
@@ -485,7 +478,7 @@ connection.onReferences(async ({ textDocument: { uri: uriString }, position }) =
 connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && info.config.features.documentHighlighting && isFunctionInfo(info)) {
+    if (info && info.config.features.documentHighlighting && isMcfunctionDocument(info)) {
         const offset = info.document.offsetAt(position)
         const { node } = getSelectedNode(info.nodes, offset)
         if (node) {
@@ -498,7 +491,7 @@ connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, positi
 connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && info.config.features.selectionRanges && isFunctionInfo(info)) {
+    if (info && info.config.features.selectionRanges && isMcfunctionDocument(info)) {
         return onSelectionRanges({ positions, info })
     }
     return null
@@ -508,7 +501,7 @@ connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, contex
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
     if (info && info.config.features.codeActions) {
-        if (isFunctionInfo(info)) {
+        if (isMcfunctionDocument(info)) {
             return onCodeAction({ uri, info, diagnostics, range, cacheFile })
         } else {
             // TODO: JSON
@@ -520,7 +513,7 @@ connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, contex
 connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
     const uri = getUri(uriString, uris)
     const info = await getInfo(uri, infos)
-    if (info && isFunctionInfo(info)) {
+    if (info && isMcfunctionDocument(info)) {
         const offset = info.document.offsetAt(position)
         const { node } = getSelectedNode(info.nodes, offset)
         if (node) {
@@ -681,7 +674,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
     }
 })
 
-async function getRoots() {
+async function updateRoots(roots: Uri[]) {
     roots.splice(0)
     const rootCandidatePaths: Set<string> = new Set()
     for (let i = workspaceRootUriStrings.length - 1; i >= 0; i--) {
@@ -715,6 +708,7 @@ async function getRoots() {
 }
 
 async function getLatestVersions() {
+    let ans: VersionInformation | undefined
     try {
         connection.console.info('[LatestVersions] Fetching the latest versions...')
         const str = await Promise.race([
@@ -727,30 +721,12 @@ async function getLatestVersions() {
         const processedVersion = '20w10a'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
-        versionInformation = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
+        ans = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
         connection.console.warn(`[LatestVersions] ${e}`)
     }
-    connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(versionInformation)}`)
-}
-
-function updateDiagnostics(uri: Uri, info: DocumentInfo) {
-    const diagnostics: Diagnostic[] = []
-    const pusher = (err: ParsingError) => {
-        try {
-            diagnostics.push(err.toDiagnostic(info.document))
-        } catch (ignored) {
-            console.error(`Error occurred while transforming ParsingError to Diagnostic: ${JSON.stringify(err, undefined, 4)}`)
-        }
-    }
-    if (isFunctionInfo(info)) {
-        info?.nodes.forEach(line => {
-            line.errors?.forEach(pusher)
-        })
-    } else {
-        info.node.errors.forEach(pusher)
-    }
-    connection.sendDiagnostics({ uri: uri.toString(), diagnostics })
+    connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(ans)}`)
+    return ans
 }
 
 async function fetchConfig(uri: Uri): Promise<Config> {

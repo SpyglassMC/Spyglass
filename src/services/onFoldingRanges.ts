@@ -1,5 +1,5 @@
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { StringReader } from '../utils/StringReader'
 import { getStringLines } from './common'
 
@@ -17,7 +17,7 @@ function getCommentSymbolAmount(string: string) {
     return ans
 }
 
-export function onFoldingRanges({ info }: { info: FunctionInfo }) {
+export function onFoldingRanges({ info }: { info: McfunctionDocument }) {
     try {
         const ans: FoldingRange[] = []
 

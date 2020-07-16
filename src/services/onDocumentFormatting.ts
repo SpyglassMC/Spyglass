@@ -1,10 +1,10 @@
 import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { lineToLintedString } from '../types/LineNode'
 import { NodeRange } from '../nodes'
 import { getLspRange } from './common'
 
-export function onDocumentFormatting({ info }: { info: FunctionInfo }) {
+export function onDocumentFormatting({ info }: { info: McfunctionDocument }) {
     const ans: TextEdit[] = []
 
     info.nodes.forEach(line => {

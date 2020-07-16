@@ -7,13 +7,13 @@ import { LineNode, Uri } from '../types'
 import { CacheFile } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 
 function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { range: Range, text: string } {
     return !!(val as any).range
 }
 
-export function onDidChangeTextDocument({ uri, info, roots, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { uri: Uri, info: FunctionInfo, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export function onDidChangeTextDocument({ uri, info, roots, version, contentChanges, config, cacheFile, commandTree, vanillaData }: { uri: Uri, info: McfunctionDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     const lineAmount = getStringLines(info.document.getText()).length
     let lineDelta = 0
     let nodeChange: { nodeStart: number, nodeStop: number, lineStart: number, lineStop: number } | undefined

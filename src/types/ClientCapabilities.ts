@@ -7,7 +7,10 @@ export interface ClientCapabilities {
         documentHighlight: boolean,
         foldingRange: boolean,
         selectionRange: boolean
-    }
+    },
+    configuration: boolean,
+    diagnostics: boolean,
+    workspaceFolders: boolean
 }
 
 export function getClientCapabilities(lspCapabilities: LspClientCapabilities) {
@@ -18,7 +21,10 @@ export function getClientCapabilities(lspCapabilities: LspClientCapabilities) {
             foldingRange: !!lspCapabilities.textDocument?.foldingRange?.dynamicRegistration,
             selectionRange: !!lspCapabilities.textDocument?.selectionRange?.dynamicRegistration,
             didChangeConfiguration: !!lspCapabilities.workspace?.didChangeConfiguration
-        }
+        },
+        configuration: !!lspCapabilities.workspace?.configuration,
+        diagnostics: !!lspCapabilities.textDocument?.publishDiagnostics,
+        workspaceFolders: !!lspCapabilities.workspace?.workspaceFolders
     }
     return ans
 }

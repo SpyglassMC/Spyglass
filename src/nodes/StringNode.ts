@@ -1,5 +1,5 @@
 import { getCodeAction, quoteString } from '../utils'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
@@ -27,7 +27,7 @@ export class StringNode extends ArgumentNode {
     /**
      * Return code actions for changing quotation marks when relevant diagnostics exist.
      */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         const unquoteDiagnostics = diagnostics[ErrorCode.StringUnquote]

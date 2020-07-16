@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
@@ -28,7 +28,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         //#region UUID datafix: #377

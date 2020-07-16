@@ -1,8 +1,8 @@
 import { Position, Range } from 'vscode-languageserver'
 import { getSelectedNode } from '../nodes'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 
-export function onSelectionRanges({ info, positions }: { info: FunctionInfo, positions: Position[] }) {
+export function onSelectionRanges({ info, positions }: { info: McfunctionDocument, positions: Position[] }) {
     const ans: { range: Range }[] = []
 
     for (const pos of positions) {

@@ -1,6 +1,6 @@
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
@@ -34,7 +34,7 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
 
     protected [Chars] = NbtCompoundNodeChars;
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const sortKeysDiagnostics = diagnostics[ErrorCode.NbtCompoundSortKeys]
         if (sortKeysDiagnostics && info.config.lint.nbtCompoundSortKeys) {

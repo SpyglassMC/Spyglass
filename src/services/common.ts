@@ -10,12 +10,12 @@ import { VanillaData } from '../data/VanillaData'
 import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LineParser } from '../parsers/LineParser'
-import { ErrorCode, isFunctionInfo, LineNode, TextRange } from '../types'
+import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
 import { CacheFile, FileType, getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config, isRelIncluded } from '../types/Config'
-import { DocumentInfo } from '../types/DocumentInfo'
-import { DocNode, InfosOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
+import { DatapackDocument } from '../types/DatapackDocument'
+import { DocNode, DocsOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
 import { constructContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
@@ -177,7 +177,7 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
 }
 
 /* istanbul ignore next */
-export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInfo | undefined> {
+export async function getInfo(uri: Uri, infos: DocsOfUris): Promise<DatapackDocument | undefined> {
     const result = infos.get(uri)
     if (result instanceof Promise) {
         const ans = await result
@@ -191,8 +191,13 @@ export async function getInfo(uri: Uri, infos: InfosOfUris): Promise<DocumentInf
     return undefined
 }
 
+export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId: string | undefined, getText: () => Promise<string>, version: number | null }) {
+    langId = langId ?? (uri.fsPath.endsWith('json') || uri.fsPath.endsWith('.mcmeta') ? 'json' : 'mcfunction')
+    return TextDocument.create(uri.toString(), langId, version as number, await getText())
+}
+
 /* istanbul ignore next */
-export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DocumentInfo | undefined> {
+export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DatapackDocument | undefined> {
     try {
         const rel = getRel(uri, roots)
         const config = await getConfig()
@@ -222,7 +227,7 @@ export async function createInfo({ roots, uri, version, cacheFile, langId, getTe
     return undefined
 }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DocumentInfo | undefined> {
+export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DatapackDocument | undefined> {
     let info = infos.get(uri)
 
     if (!info) {
@@ -269,12 +274,12 @@ export function getStringLines(string: string) {
     return string.split(/\r\n|\r|\n/)
 }
 
-export function getSelectedNodeFromInfo(info: DocumentInfo, offset: number): { index: number, node: JsonNode | LineNode | null } {
-    return isFunctionInfo(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.node }
+export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | LineNode | null } {
+    return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.node }
 }
 
-export function getNodesFromInfo(info: DocumentInfo) {
-    return isFunctionInfo(info) ? info.nodes : [info.node]
+export function getNodesFromInfo(info: DatapackDocument) {
+    return isMcfunctionDocument(info) ? info.nodes : [info.node]
 }
 
 /* istanbul ignore next */

@@ -1,9 +1,9 @@
 import { ProposedFeatures } from 'vscode-languageserver'
 import { getNodesFromInfo } from './common'
-import { DocumentInfo } from '../types/DocumentInfo'
+import { DatapackDocument } from '../types/DatapackDocument'
 
 /** istanbul ignore next: mostly reply on the builder, not ourselves. */
-export function onSemanticTokensEdits({ info, previousResultId }: { info: DocumentInfo, previousResultId: string }) {
+export function onSemanticTokensEdits({ info, previousResultId }: { info: DatapackDocument, previousResultId: string }) {
     info.builder = info.builder || new ProposedFeatures.SemanticTokensBuilder()
 
     info.builder.previousResult(previousResultId)

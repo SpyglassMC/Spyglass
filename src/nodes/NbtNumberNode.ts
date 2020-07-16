@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { DiagnosticMap, GetCodeActions, NodeRange } from './ArgumentNode'
@@ -23,7 +23,7 @@ export abstract class NbtNumberNode<T = number> extends NbtPrimitiveNode<T> {
         return `${this}${suffix}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const pushActions = (code: ErrorCode, actionId: string, getNode: () => NbtNumberNode<any>) => {
             const relevantDiagnostics = diagnostics[code]

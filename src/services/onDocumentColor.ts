@@ -1,9 +1,9 @@
 import { ColorInformation } from 'vscode-languageserver'
 import { getNodesFromInfo } from './common'
 import { getSafeCategory } from '../types/ClientCache'
-import { DocumentInfo } from '../types/DocumentInfo'
+import { DatapackDocument } from '../types/DatapackDocument'
 
-export function onDocumentColor({ info }: { info: DocumentInfo }) {
+export function onDocumentColor({ info }: { info: DatapackDocument }) {
     const ans: ColorInformation[] = []
 
     for (const node of getNodesFromInfo(info)) {

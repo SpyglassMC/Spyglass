@@ -1,9 +1,9 @@
 import { DocumentLink } from 'vscode-languageserver'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { getNodesFromInfo, getUriFromId } from './common'
-import { isFileType, DocumentInfo, Uri, UrisOfStrings, UrisOfIds, PathExistsFunction, CacheUnit } from '../types'
+import { isFileType, DatapackDocument, Uri, UrisOfStrings, UrisOfIds, PathExistsFunction, CacheUnit } from '../types'
 
-export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: DocumentInfo, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
+export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: DatapackDocument, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathExistsFunction }) {
     try {
         const ans: DocumentLink[] = []
 

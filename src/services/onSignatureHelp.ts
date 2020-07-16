@@ -2,11 +2,11 @@ import { SignatureInformation } from 'vscode-languageserver'
 import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
 import { LineParser } from '../parsers/LineParser'
-import { LineNode, Uri, FunctionInfo, CacheFile, CommandTree, constructContext, getCacheForUri } from '../types'
+import { LineNode, Uri, McfunctionDocument, CacheFile, CommandTree, constructContext, getCacheForUri } from '../types'
 import { getId, getRootIndex } from './common'
 import { StringReader } from '../utils/StringReader'
 
-export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: LineNode, info: FunctionInfo, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: LineNode, info: McfunctionDocument, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 

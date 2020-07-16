@@ -1,7 +1,7 @@
 import { TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { toFormattedString } from '../utils'
@@ -122,7 +122,7 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         for (const key of this[GetPlainKeys]()) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {

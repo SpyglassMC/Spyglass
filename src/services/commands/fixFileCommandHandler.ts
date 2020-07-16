@@ -1,10 +1,10 @@
 import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { getJsonSchemas } from '../../data/JsonSchema'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
-import { areOverlapped, CacheFile, Config, FetchConfigFunction, FunctionInfo, GetCommandTreeFunction, GetVanillaDataFunction, InfosOfUris, isFunctionInfo, ReadFileFunction, Uri } from '../../types'
+import { areOverlapped, CacheFile, Config, FetchConfigFunction, McfunctionDocument, GetCommandTreeFunction, GetVanillaDataFunction, DocsOfUris, isMcfunctionDocument, ReadFileFunction, Uri } from '../../types'
 import { getDiagnosticMap, getOrCreateInfo } from '../common'
 
-export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: InfosOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
+export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
     const start = new Date().getTime()
     const getTheConfig = async () => await fetchConfig(uri)
     const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
@@ -14,7 +14,7 @@ export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, read
     const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchemas)
     /* istanbul ignore else */
     if (info) {
-        if (isFunctionInfo(info)) {
+        if (isMcfunctionDocument(info)) {
             const edit = getMergedPreferredEdit(info, uri)
             if (edit) {
                 applyEdit(edit)
@@ -27,14 +27,14 @@ export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, read
     }
 }
 
-function getMergedPreferredEdit(info: FunctionInfo, uri: Uri) {
+function getMergedPreferredEdit(info: McfunctionDocument, uri: Uri) {
     const preferredActions = getActions(info, uri)
         .filter(v => v.isPreferred)
 
     return mergeActionEdit(info, preferredActions)
 }
 
-function getActions(info: FunctionInfo, uri: Uri) {
+function getActions(info: McfunctionDocument, uri: Uri) {
     const ans: CodeAction[] = []
 
     for (const node of info.nodes) {
@@ -55,7 +55,7 @@ function getActions(info: FunctionInfo, uri: Uri) {
     return ans
 }
 
-function mergeActionEdit(info: FunctionInfo, actions: CodeAction[]) {
+function mergeActionEdit(info: McfunctionDocument, actions: CodeAction[]) {
     let ans: CodeAction | undefined
 
     if (actions.length > 0) {

@@ -1,7 +1,7 @@
 import { CodeAction, Diagnostic, Hover, TextDocument } from 'vscode-languageserver'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
 
@@ -37,7 +37,7 @@ export abstract class ArgumentNode implements Formattable {
         }
     }
 
-    protected [FilterDiagnostics](info: FunctionInfo, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
+    protected [FilterDiagnostics](info: McfunctionDocument, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
         const ans: DiagnosticMap = {}
         for (const codeString in diagnosticMap) {
             /* istanbul ignore else */
@@ -60,7 +60,7 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         this[Triage](
             key => {

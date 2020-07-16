@@ -1,10 +1,10 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
 import { DocNode } from '../types'
 import { getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { onSelectionRanges } from './onSelectionRanges'
 
-export function onDocumentHighlight({ offset, info, node, position }: { position: Position, offset: number, info: FunctionInfo, node: DocNode }): DocumentHighlight[] {
+export function onDocumentHighlight({ offset, info, node, position }: { position: Position, offset: number, info: McfunctionDocument, node: DocNode }): DocumentHighlight[] {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     if (result) {

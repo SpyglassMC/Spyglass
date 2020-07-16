@@ -1,7 +1,7 @@
 import { getCodeAction, toFormattedString } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { GameMode } from '../types/GameMode'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
@@ -78,7 +78,7 @@ export class SelectorArgumentsNode extends MapNode<StringNode, any> {
         return ans
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         const relevantDiagnostics = diagnostics[ErrorCode.SelectorSortKeys]
         if (relevantDiagnostics && info.config.lint.selectorSortKeys) {

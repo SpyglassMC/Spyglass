@@ -2,7 +2,7 @@ import { getCodeAction } from '../utils'
 import { attributeNameToIdentity } from '../utils/datafixers/attributeName'
 import { bufferFromString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
@@ -25,7 +25,7 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const node = new StringNode(this.value, this.raw, this.mapping)
         node[NodeRange] = this[NodeRange]
         const ans = node[GetCodeActions](uri, info, range, diagnostics)

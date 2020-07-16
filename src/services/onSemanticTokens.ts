@@ -1,8 +1,8 @@
 import { ProposedFeatures } from 'vscode-languageserver'
 import { getNodesFromInfo } from './common'
-import { DocumentInfo } from '../types/DocumentInfo'
+import { DatapackDocument } from '../types/DatapackDocument'
 
-export function onSemanticTokens({ info }: { info: DocumentInfo }) {
+export function onSemanticTokens({ info }: { info: DatapackDocument }) {
     info.builder = info.builder || new ProposedFeatures.SemanticTokensBuilder()
 
     for (const { tokens } of getNodesFromInfo(info)) {

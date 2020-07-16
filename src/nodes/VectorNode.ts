@@ -1,7 +1,7 @@
 import { getCodeAction } from '../utils'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { TextRange } from '../types/TextRange'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { NumberNode } from './NumberNode'
@@ -51,7 +51,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         }
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
         if (Array.prototype.some.call(this,
             (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')

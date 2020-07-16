@@ -1,5 +1,5 @@
-import { InfosOfUris, Uri } from '../types/handlers'
+import { DocsOfUris, Uri } from '../types/handlers'
 
-export function onDidCloseTextDocument({ infos, uri }: { uri: Uri, infos: InfosOfUris }) {
+export function onDidCloseTextDocument({ infos, uri }: { uri: Uri, infos: DocsOfUris }) {
     infos.delete(uri)
 }

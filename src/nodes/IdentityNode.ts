@@ -2,7 +2,7 @@ import minimatch from 'minimatch'
 import path, { sep } from 'path'
 import { CacheType, FileType, isRegularFileType, isTagRegularFileType, isWorldgenRegistryFileType, RegistryFileType, RegularFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { PathPatterns } from '../types/PathPatterns'
@@ -85,7 +85,7 @@ export class IdentityNode extends ArgumentNode {
         return `${this.getTagSymbolPart()}${id}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, info, range, diagnostics)
 
         const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]

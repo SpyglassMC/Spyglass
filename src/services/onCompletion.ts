@@ -5,14 +5,14 @@ import { NodeRange } from '../nodes'
 import { LineParser } from '../parsers/LineParser'
 import { CacheFile, getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { Uri } from '../types/handlers'
 import { LineNode } from '../types/LineNode'
 import { constructContext } from '../types/ParsingContext'
 import { StringReader } from '../utils/StringReader'
 import { getId, getRootIndex } from './common'
 
-export async function onCompletion({ offset, info, cacheFile, node, roots, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: FunctionInfo, node: LineNode, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }): Promise<CompletionItem[] | null> {
+export async function onCompletion({ offset, info, cacheFile, node, roots, commandTree, vanillaData, uri }: { uri: Uri, offset: number, info: McfunctionDocument, node: LineNode, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }): Promise<CompletionItem[] | null> {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
