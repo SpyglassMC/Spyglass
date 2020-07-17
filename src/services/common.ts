@@ -191,7 +191,7 @@ export async function getInfo(uri: Uri, infos: DocsOfUris): Promise<DatapackDocu
     return undefined
 }
 
-export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId: string | undefined, getText: () => Promise<string>, version: number | null }) {
+export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId?: string, getText: () => Promise<string>, version: number | null }) {
     langId = langId ?? (uri.fsPath.endsWith('json') || uri.fsPath.endsWith('.mcmeta') ? 'json' : 'mcfunction')
     return TextDocument.create(uri.toString(), langId, version as number, await getText())
 }

@@ -1,85 +1,44 @@
 import clone from 'clone'
 import fs from 'fs-extra'
 import path from 'path'
-import { CodeActionKind, CompletionItem, createConnection, Diagnostic, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { getCommandTree } from './data/CommandTree'
 import { getJsonSchemas } from './data/JsonSchema'
-import { DataSource, getVanillaData } from './data/VanillaData'
+import { getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
-import { getSelectedNode } from './nodes'
 import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { fixFileCommandHandler } from './services/commands/fixFileCommandHandler'
-import { getId, getInfo, getNodesFromInfo, getOrCreateInfo, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getSemanticTokensLegend, getTextDocument, getUri, getUriFromId, parseJsonNode, walkFile, walkRoot } from './services/common'
+import { getInfo, getNodesFromInfo, getRel, getSemanticTokensLegend, getTextDocument, parseJsonNode, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
-import { onCallHierarchyIncomingCalls } from './services/onCallHierarchyIncomingCalls'
-import { onCallHierarchyOutgoingCalls } from './services/onCallHierarchyOutgoingCalls'
-import { onCallHierarchyPrepare } from './services/onCallHierarchyPrepare'
-import { onCodeAction } from './services/onCodeAction'
-import { onColorPresentation } from './services/onColorPresentation'
-import { onCompletion } from './services/onCompletion'
-import { onDefOrRef } from './services/onDefOrRef'
 import { onDidChangeTextDocument } from './services/onDidChangeTextDocument'
-import { onDidChangeWorkspaceFolders } from './services/onDidChangeWorkspaceFolders'
-import { onDidCloseTextDocument } from './services/onDidCloseTextDocument'
-import { onDocumentColor } from './services/onDocumentColor'
-import { onDocumentFormatting } from './services/onDocumentFormatting'
-import { onDocumentHighlight } from './services/onDocumentHighlight'
-import { onDocumentLinks } from './services/onDocumentLinks'
-import { onFoldingRanges } from './services/onFoldingRanges'
-import { onHover } from './services/onHover'
-import { onPrepareRename } from './services/onPrepareRename'
-import { onRenameRequest } from './services/onRenameRequest'
-import { onSelectionRanges } from './services/onSelectionRanges'
-import { onSemanticTokens } from './services/onSemanticTokens'
-import { onSemanticTokensEdits } from './services/onSemanticTokensEdits'
-import { onSignatureHelp } from './services/onSignatureHelp'
-import { ClientCapabilities, constructContext, getClientCapabilities, ParsingError } from './types'
+import { ClientCapabilities, getClientCapabilities } from './types'
 import { AdvancementInfo } from './types/AdvancementInfo'
-import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getCacheForUri, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
-import { DatapackDocument, isMcfunctionDocument } from './types/DatapackDocument'
-import { DocsOfUris, UrisOfIds, UrisOfStrings } from './types/handlers'
+import { isMcfunctionDocument } from './types/DatapackDocument'
 import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
 import { requestText } from './utils'
-import { JsonSchemaHelper, JsonSchemaHelperOptions } from './utils/JsonSchemaHelper'
 
 const connection = createConnection(ProposedFeatures.all)
-const uris: UrisOfStrings = new Map<string, Uri>()
-const infos: DocsOfUris = new Map<Uri, DatapackDocument>()
-const urisOfIds: UrisOfIds = new Map<string, Uri | null>()
 const workspaceRootUriStrings: string[] = []
-/**
- * Sorted by priority. If you want to read something in the same order as Minecraft does,
- * iterate from the last element of this array to the first element.
- */
-const roots: Uri[] = []
-
-const generalTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
-const mcfunctionTriggerCharacters = [',', '{', '[']
-
-let globalStoragePath: string
 
 let cachePath: string | undefined
-let cacheFile: CacheFile = clone(DefaultCacheFile)
 let capabilities: ClientCapabilities
-
-let versionInformation: VersionInformation | undefined
 
 let service: DatapackLanguageService
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath: gsPath }, capabilities: lspCapabilities }, _, progress) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }, _, progress) => {
     progress.begin(locale('server.initializing'))
 
     capabilities = getClientCapabilities(lspCapabilities)
 
-    if (!await fs.pathExists(gsPath)) {
-        await fs.mkdirp(gsPath)
+    if (!await fs.pathExists(globalStoragePath)) {
+        await fs.mkdirp(globalStoragePath)
     }
     if (!await fs.pathExists(storagePath)) {
         await fs.mkdirp(storagePath)
@@ -95,8 +54,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         }
     }
     cacheFile = cacheFile ?? clone(DefaultCacheFile)
-    await updateCacheFile(cacheFile, roots, progress)
-    saveCacheFile()
 
     console.log(`[onInitialize] CacheVersion = ${CacheVersion}`)
     console.log(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
@@ -104,6 +61,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     console.log(`[onInitialize] cachePath = ${cachePath}`)
 
     service = new DatapackLanguageService({
+        applyEdit: capabilities.applyEdit ? connection.workspace.applyEdit.bind(connection.workspace) : undefined,
         cacheFile,
         capabilities,
         fetchConfig: capabilities.configuration ? fetchConfig : undefined,
@@ -112,16 +70,19 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         versionInformation: await getLatestVersions()
     })
 
+    await updateCacheFile(service.cacheFile, service.roots, progress)
+    saveCacheFile()
+
     await updateRoots(service.roots)
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
             callHierarchyProvider: true,
             colorProvider: true,
-            completionProvider: {
-                triggerCharacters: generalTriggerCharacters.concat(mcfunctionTriggerCharacters),
-                allCommitCharacters: [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
-            },
+            completionProvider: !capabilities.dynamicRegistration.competion ? {
+                triggerCharacters: DatapackLanguageService.AllTriggerCharacters,
+                allCommitCharacters: DatapackLanguageService.AllCommitCharacters
+            } : undefined,
             definitionProvider: true,
             documentFormattingProvider: !capabilities.dynamicRegistration.documentFormatting,
             documentHighlightProvider: !capabilities.dynamicRegistration.documentHighlight,
@@ -150,9 +111,9 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                     edits: true
                 }
             },
-            signatureHelpProvider: {
+            signatureHelpProvider: !capabilities.dynamicRegistration.signatureHelp ? {
                 triggerCharacters: [' ']
-            },
+            } : undefined,
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
                 willSave: true,
@@ -173,6 +134,18 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 })
 
 connection.onInitialized(() => {
+    if (capabilities.dynamicRegistration.competion) {
+        connection.client.register(CompletionRequest.type, {
+            documentSelector: [{ language: 'mcfunction' }],
+            allCommitCharacters: DatapackLanguageService.AllCommitCharacters,
+            triggerCharacters: DatapackLanguageService.AllTriggerCharacters
+        })
+        connection.client.register(CompletionRequest.type, {
+            documentSelector: [{ scheme: 'file', pattern: '**/*.{json,mcmeta}' }],
+            allCommitCharacters: DatapackLanguageService.AllCommitCharacters,
+            triggerCharacters: DatapackLanguageService.GeneralTriggerCharacters
+        })
+    }
     if (capabilities.dynamicRegistration.didChangeConfiguration) {
         connection.client.register(DidChangeConfigurationNotification.type, { section: 'datapack' })
     }
@@ -188,6 +161,12 @@ connection.onInitialized(() => {
     if (capabilities.dynamicRegistration.selectionRange) {
         connection.client.register(SelectionRangeRequest.type, { documentSelector: [{ language: 'mcfunction' }] })
     }
+    if (capabilities.dynamicRegistration.signatureHelp) {
+        connection.client.register(SignatureHelpRequest.type, {
+            documentSelector: [{ language: 'mcfunction' }],
+            triggerCharacters: [' ']
+        })
+    }
 
     connection.sendNotification('datapackLanguageServer/checkVersion', {
         currentVersion: ReleaseNotesVersion,
@@ -199,7 +178,14 @@ connection.onInitialized(() => {
     connection.workspace.onDidChangeWorkspaceFolders(async () => {
         if (capabilities.workspaceFolders) {
             const folders = await connection.workspace.getWorkspaceFolders()
-            onDidChangeWorkspaceFolders({ folders, workspaceRootUriStrings, urisOfIds })
+            service.onDidChangeWorkspaceFolders()
+            workspaceRootUriStrings.splice(0)
+            if (folders) {
+                for (let i = folders.length - 1; i >= 0; i--) {
+                    const { uri: uriString } = folders[i]
+                    workspaceRootUriStrings.push(uriString)
+                }
+            }
             await updateRoots(service.roots)
         }
     })
@@ -211,8 +197,9 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, 
     service.publishDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
+    // FIXME
     // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
-    const uri = getUri(uriString, uris)
+    const uri = service.parseUri(uriString)
     const info = await getInfo(uri, infos)
     if (!info) {
         return
@@ -243,23 +230,11 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri:
     // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-
-    onDidCloseTextDocument({ uri, infos })
+    const uri = service.parseUri(uriString)
+    service.onDidCloseTextDocument(uri)
 })
 
-connection.onDidChangeConfiguration(async () => {
-    return Promise.all(
-        Array
-            .from(infos.entries())
-            .map(async ([uri, promise]) => {
-                const info = await promise
-                if (info) {
-                    info.config = await fetchConfig(uri)
-                }
-            })
-    )
-})
+connection.onDidChangeConfiguration(async () => service.refetchConfigs())
 
 connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
     // console.log(`WillSave: ‘${uriString}’`)
@@ -269,7 +244,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // connection.console.info(`BW: ${JSON.stringify(cacheFile)}`)
     // connection.console.info(`WC: ${JSON.stringify(changes)}`)
     for (const { uri: uriString, type } of changes) {
-        const uri = getUri(uriString, uris)
+        const uri = service.parseUri(uriString)
 
         // connection.console.info(JSON.stringify({ uri, type }))
 
@@ -281,7 +256,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
             case FileChangeType.Created: {
                 const stat = await fs.stat(uri.fsPath)
                 if (stat.isDirectory()) {
-                    for (const root of roots) {
+                    for (const root of service.roots) {
                         if (uri.fsPath.startsWith(root.fsPath)) {
                             await walkFile(
                                 root.fsPath,
@@ -290,11 +265,11 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                                     const result = IdentityNode.fromRel(rel)
                                     if (result) {
                                         const { category, id, ext } = result
-                                        const uri = getUri(Uri.file(abs).toString(), uris)
+                                        const uri = service.parseUri(Uri.file(abs).toString())
                                         const uriString = uri.toString()
                                         if (IdentityNode.isExtValid(ext, category)) {
                                             await cacheFileOperations.fileAdded(uri, category, id)
-                                            cacheFile.files[uriString] = stat.mtimeMs
+                                            service.cacheFile.files[uriString] = stat.mtimeMs
                                         }
                                     }
                                 }
@@ -302,12 +277,12 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                         }
                     }
                 } else {
-                    const result = IdentityNode.fromRel(getRel(uri, roots) as string)
+                    const result = IdentityNode.fromRel(service.getRel(uri)!)
                     if (result) {
                         const { category, id, ext } = result
                         if (IdentityNode.isExtValid(ext, category)) {
                             await cacheFileOperations.fileAdded(uri, category, id)
-                            cacheFile.files[uriString] = stat.mtimeMs
+                            service.cacheFile.files[uriString] = stat.mtimeMs
                         }
                     }
                 }
@@ -322,12 +297,12 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                 // console.log(`Changed : ‘${uriString}’`)
                 const stat = await fs.stat(uri.fsPath)
                 if (stat.isFile()) {
-                    const result = IdentityNode.fromRel(getRel(uri, roots)!)
+                    const result = IdentityNode.fromRel(service.getRel(uri)!)
                     if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
                         const { category, ext, id } = result
                         if (IdentityNode.isExtValid(ext, category)) {
                             await cacheFileOperations.fileModified(uri, category, id)
-                            cacheFile.files[uriString] = stat.mtimeMs
+                            service.cacheFile.files[uriString] = stat.mtimeMs
                         }
                     }
                 }
@@ -336,17 +311,17 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
             case FileChangeType.Deleted:
             default: {
                 // connection.console.info(`FileChangeType.Deleted ${rel}`)
-                for (const fileUriString in cacheFile.files) {
-                    if (cacheFile.files.hasOwnProperty(fileUriString)) {
+                for (const fileUriString in service.cacheFile.files) {
+                    if (service.cacheFile.files.hasOwnProperty(fileUriString)) {
                         if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
-                            const fileUri = getUri(fileUriString, uris)
-                            const result = IdentityNode.fromRel(getRel(fileUri, roots)!)
+                            const fileUri = service.parseUri(fileUriString)
+                            const result = IdentityNode.fromRel(service.getRel(fileUri)!)
                             // connection.console.info(`result = ${JSON.stringify(result)}`)
                             if (result) {
                                 const { category, id, ext } = result
                                 if (IdentityNode.isExtValid(ext, category)) {
                                     await cacheFileOperations.fileDeleted(fileUri, category, id)
-                                    delete cacheFile.files[fileUriString]
+                                    delete service.cacheFile.files[fileUriString]
                                 }
                             }
                         }
@@ -357,253 +332,104 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
         }
     }
 
-    trimCache(cacheFile.cache)
+    trimCache(service.cacheFile.cache)
     // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
 })
 
 connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.completions) {
-        const offset = info.document.offsetAt(position)
-        const config = info.config
-        if (isMcfunctionDocument(info)) {
-            const { node } = getSelectedNode(info.nodes, offset)
-            if (node) {
-                const commandTree = await getCommandTree(config.env.cmdVersion)
-                const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                return onCompletion({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
-            }
-        } else {
-            if (context?.triggerCharacter && !generalTriggerCharacters.includes(context.triggerCharacter)) {
-                return null
-            }
-            const ans: CompletionItem[] = []
-            const schemas = await getJsonSchemas(info.config.env.jsonVersion)
-            const schema = schemas.get(info.node.schemaType)
-            const ctx: JsonSchemaHelperOptions = {
-                ctx: constructContext({
-                    cache: getCacheForUri(cacheFile.cache, uri),
-                    cursor: offset,
-                    document: info.document,
-                    id: getId(uri, roots),
-                    rootIndex: getRootIndex(uri, roots),
-                    config, roots
-                }),
-                schemas
-            }
-            JsonSchemaHelper.suggest(ans, info.node.json.root, schema, ctx)
-            return ans.length !== 0 ? ans : null
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onCompletion(uri, position, context)
 })
 
 connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.signatures && isMcfunctionDocument(info)) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNode(info.nodes, offset)
-        if (node) {
-            const config = info.config
-            const commandTree = await getCommandTree(config.env.cmdVersion)
-            const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-            return onSignatureHelp({ uri, cacheFile, offset, info, roots, node, commandTree, vanillaData })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onSignatureHelp(uri, position)
 })
 
 connection.onFoldingRanges(async ({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.foldingRanges && isMcfunctionDocument(info)) {
-        return onFoldingRanges({ info })
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onFoldingRanges(uri)
 })
 
 connection.onHover(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.hover) {
-        const offset = info.document.offsetAt(position)
-        if (isMcfunctionDocument(info)) {
-            const { node } = getSelectedNode(info.nodes, offset)
-            if (node) {
-                return onHover({ info, offset, node, cacheFile })
-            }
-        } else {
-            // TODO: JSON
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onHover(uri, position)
 })
 
 connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.formatting && isMcfunctionDocument(info)) {
-        return onDocumentFormatting({ info })
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onDocumentFormatting(uri)
 })
 
 connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNodeFromInfo(info, offset)
-        if (node) {
-            return onDefOrRef({ uri, node, cacheFile, offset, type: 'def' })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onDefinition(uri, position)
 })
 connection.onReferences(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNodeFromInfo(info, offset)
-        if (node) {
-            return onDefOrRef({ uri, node, cacheFile, offset, type: 'ref' })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onReferences(uri, position)
 })
 
 connection.onDocumentHighlight(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.documentHighlighting && isMcfunctionDocument(info)) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNode(info.nodes, offset)
-        if (node) {
-            return onDocumentHighlight({ info, node, position, offset })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onDocumentHighlight(uri, position)
 })
 
 connection.onSelectionRanges(async ({ textDocument: { uri: uriString }, positions }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.selectionRanges && isMcfunctionDocument(info)) {
-        return onSelectionRanges({ positions, info })
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onSelectionRanges(uri, positions)
 })
 
 connection.onCodeAction(async ({ textDocument: { uri: uriString }, range, context: { diagnostics } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.codeActions) {
-        if (isMcfunctionDocument(info)) {
-            return onCodeAction({ uri, info, diagnostics, range, cacheFile })
-        } else {
-            // TODO: JSON
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onCodeAction(uri, range, diagnostics)
 })
 
 connection.languages.callHierarchy.onPrepare(async ({ position, textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && isMcfunctionDocument(info)) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNode(info.nodes, offset)
-        if (node) {
-            return onCallHierarchyPrepare({ info, offset, node, uris, roots, urisOfIds, pathExists: fs.pathExists })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onCallHierarchyPrepare(uri, position)
 })
 
-connection.languages.callHierarchy.onIncomingCalls(async ({ item: { kind, name: id } }) => {
-    return onCallHierarchyIncomingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
+connection.languages.callHierarchy.onIncomingCalls(async ({ item }) => {
+    return service.onCallHierarchyIncomingCalls(item)
 })
 
-connection.languages.callHierarchy.onOutgoingCalls(async ({ item: { kind, name: id } }) => {
-    return onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, urisOfIds, pathExists: fs.pathExists })
+connection.languages.callHierarchy.onOutgoingCalls(async ({ item }) => {
+    return service.onCallHierarchyOutgoingCalls(item)
 })
 
 connection.onPrepareRename(async ({ textDocument: { uri: uriString }, position }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNodeFromInfo(info, offset)
-        if (node) {
-            return onPrepareRename({ info, node, offset })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onPrepareRename(uri, position)
 })
 connection.onRenameRequest(async ({ textDocument: { uri: uriString }, position, newName }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info) {
-        const offset = info.document.offsetAt(position)
-        const { node } = getSelectedNodeFromInfo(info, offset)
-        if (node) {
-            return onRenameRequest({ infos, cacheFile, node, offset, newName, roots, uris, urisOfIds, versionInformation, globalStoragePath, fetchConfig, pathExists: fs.pathExists, readFile: fs.readFile })
-        }
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onRename(uri, position, newName)
 })
 
 connection.onDocumentLinks(async ({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.documentLinks) {
-        return onDocumentLinks({ info, pathExists: fs.pathExists, roots, uris, urisOfIds })
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onDocumentLinks(uri)
 })
 
 connection.onDocumentColor(async ({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.colors) {
-        return onDocumentColor({ info })
-    }
-    return null
+    const uri = service.parseUri(uriString)
+    return service.onDocumentColor(uri)
 })
 
-connection.onColorPresentation(async ({
-    color: { red: r, green: g, blue: b, alpha: a }, textDocument: { uri: uriString },
-    range: { start: startPos, end: endPos }
-}) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.colors) {
-        const start = info.document.offsetAt(startPos)
-        const end = info.document.offsetAt(endPos)
-        return onColorPresentation({ r, g, b, a, start, end, info })
-    }
-    return null
+connection.onColorPresentation(async ({ textDocument: { uri: uriString }, color, range }) => {
+    const uri = service.parseUri(uriString)
+    return service.onColorPresentation(uri, range, color)
 })
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString } }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.semanticColoring) {
-        return onSemanticTokens({ info })
-    }
-    return { data: [] }
+    const uri = service.parseUri(uriString)
+    return service.onSemanticTokens(uri)
 })
 
 connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
-    const uri = getUri(uriString, uris)
-    const info = await getInfo(uri, infos)
-    if (info && info.config.features.semanticColoring) {
-        return onSemanticTokensEdits({ info, previousResultId })
-    }
-    return { edits: [] }
+    const uri = service.parseUri(uriString)
+    return service.onSemanticTokensEdits(uri, previousResultId)
 })
 
 /*
@@ -616,20 +442,14 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
     try {
         switch (command) {
             case 'datapack.fixFile': {
-                const uri = getUri(args![0], uris)
-                await fixFileCommandHandler({
-                    cacheFile, infos, roots, uri,
-                    getCommandTree, fetchConfig,
-                    applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
-                    getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
-                    readFile: fs.readFile
-                })
+                const uri = service.parseUri(args![0])
+                service.onExecuteFixFileCommand(uri)
                 break
             }
             case 'datapack.fixWorkspace': {
                 progress = await connection.window.createWorkDoneProgress()
                 progress.begin(locale('server.fixing-workspace'))
-                for (const root of roots) {
+                for (const root of service.roots) {
                     const dataPath = path.join(root.fsPath, 'data')
                     const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
                     for (const namespace of namespaces) {
@@ -638,14 +458,8 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                         if (fs.pathExistsSync(functionsPath)) {
                             await walkFile(root.fsPath, functionsPath, async abs => {
                                 try {
-                                    const uri = getUri(Uri.file(abs).toString(), uris)
-                                    await fixFileCommandHandler({
-                                        cacheFile, infos, roots, uri,
-                                        getCommandTree, fetchConfig,
-                                        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
-                                        getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, versionInformation, globalStoragePath),
-                                        readFile: fs.readFile
-                                    })
+                                    const uri = service.parseUri(Uri.file(abs).toString())
+                                    service.onExecuteFixFileCommand(uri)
                                 } catch (e) {
                                     console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
                                 }
@@ -658,8 +472,8 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
             case 'datapack.regenerateCache': {
                 progress = await connection.window.createWorkDoneProgress()
                 progress.begin(locale('server.regenerating-cache'))
-                cacheFile = clone(DefaultCacheFile)
-                await updateCacheFile(cacheFile, roots, progress)
+                service.cacheFile = clone(DefaultCacheFile)
+                await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
             }
             default:
@@ -679,7 +493,7 @@ async function updateRoots(roots: Uri[]) {
     const rootCandidatePaths: Set<string> = new Set()
     for (let i = workspaceRootUriStrings.length - 1; i >= 0; i--) {
         const uriString = workspaceRootUriStrings[i]
-        const uri = getRootUri(uriString, uris)
+        const uri = service.parseRootUri(uriString)
         const path = uri.fsPath
         rootCandidatePaths.add(path)
         const config = await fetchConfig(uri)
@@ -694,7 +508,7 @@ async function updateRoots(roots: Uri[]) {
         const dataPath = path.join(candidatePath, 'data')
         const packMcmetaPath = path.join(candidatePath, 'pack.mcmeta')
         if (fs.existsSync(dataPath) && fs.existsSync(packMcmetaPath)) {
-            const uri = getRootUri(Uri.file(candidatePath).toString(), uris)
+            const uri = service.parseRootUri(Uri.file(candidatePath).toString())
             roots.push(uri)
 
             connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
@@ -745,7 +559,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
 
 async function saveCacheFile() {
     if (cachePath) {
-        await fs.writeFile(cachePath, JSON.stringify(cacheFile), { encoding: 'utf8' })
+        await fs.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
     }
 }
 
@@ -757,25 +571,22 @@ const cacheFileOperations = {
     // MODIFIED: Combine all caches of all lines.
     // DELETED: Remove from functions cache category.
     removeCachePositionsWith: (uri: Uri) => {
-        removeCachePosition(cacheFile.cache, uri)
+        removeCachePosition(service.cacheFile.cache, uri)
     },
     combineCacheOfLines: async (uri: Uri, config: Config) => {
-        const getTheConfig = async () => config
-        const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
-        const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-        const getTheJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
         const getText = async () => fs.readFile(uri.fsPath, 'utf8')
-        const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchemas)
-        if (info) {
+        const textDoc = await getTextDocument({ uri, version: null, getText })
+        const doc = await service.parseDocument(textDoc)
+        if (doc) {
             const cacheOfLines: ClientCache = {}
             let i = 0
-            const nodes = getNodesFromInfo(info)
+            const nodes = getNodesFromInfo(doc)
             for (const node of nodes) {
                 const skippedChar = (node as any)[NodeRange]?.start ?? 0
-                combineCache(cacheOfLines, node.cache, { uri, getPosition: offset => info.document.positionAt(offset) })
+                combineCache(cacheOfLines, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
                 i++
             }
-            combineCache(cacheFile.cache, cacheOfLines)
+            combineCache(service.cacheFile.cache, cacheOfLines)
         }
     },
     //#endregion
@@ -789,14 +600,14 @@ const cacheFileOperations = {
     },
     updateTagInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
         const idString = id.toString()
-        delete cacheFile.tags.functions[idString]
+        delete service.cacheFile.tags.functions[idString]
 
         const rel = id.toRel('tag/function')
         const ans: TagInfo = { values: [] }
-        for (let i = roots.length - 1; i >= 0; i--) {
+        for (let i = service.roots.length - 1; i >= 0; i--) {
             // We should use the order in which Minecraft loads datapacks to load tags.
             // So that we can treat `replace` correctly.
-            const root = roots[i]
+            const root = service.roots[i]
             const p = path.join(root.fsPath, rel)
             if (await pathExists(p)) {
                 try {
@@ -808,7 +619,7 @@ const cacheFileOperations = {
                     for (const value of content.values) {
                         try {
                             const id = IdentityNode.fromString(value)
-                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, id.isTag ? 'tag/function' : 'function')) {
+                            if (await service.getUriFromId(id, id.isTag ? 'tag/function' : 'function')) {
                                 validValues.push(id.toTagString())
                             }
                         } catch (ignored) {
@@ -826,7 +637,7 @@ const cacheFileOperations = {
             }
         }
 
-        cacheFile.tags.functions[idString] = ans
+        service.cacheFile.tags.functions[idString] = ans
     },
     //#endregion
 
@@ -834,14 +645,14 @@ const cacheFileOperations = {
     // ADDED/MODIFIED/DELETED: update the corresponding AdvancementInfo.
     updateAdvancementInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
         const idString = id.toString()
-        delete cacheFile.advancements[idString]
+        delete service.cacheFile.advancements[idString]
 
         const rel = id.toRel('advancement')
         const ans: AdvancementInfo = {}
-        for (let i = roots.length - 1; i >= 0; i--) {
+        for (let i = service.roots.length - 1; i >= 0; i--) {
             // We should use the order in which Minecraft loads datapacks to load tags.
             // So that we can treat overrides correctly.
-            const root = roots[i]
+            const root = service.roots[i]
             const p = path.join(root.fsPath, rel)
             if (await pathExists(p)) {
                 try {
@@ -852,7 +663,7 @@ const cacheFileOperations = {
                     if (content.rewards && typeof content.rewards.function === 'string') {
                         try {
                             const id = IdentityNode.fromString(content.rewards.function)
-                            if (await getUriFromId(fs.pathExists, roots, uris, urisOfIds, id, 'function')) {
+                            if (await service.getUriFromId(id, 'function')) {
                                 ans.rewards = {
                                     function: content.rewards.function
                                 }
@@ -867,7 +678,7 @@ const cacheFileOperations = {
             }
         }
 
-        cacheFile.advancements[idString] = ans
+        service.cacheFile.advancements[idString] = ans
     },
     //#endregion
 
@@ -875,12 +686,12 @@ const cacheFileOperations = {
     // ADDED: Add to respective cache category.
     // DELETED: Remove from respective cache category.
     addDefault: (id: string, type: FileType) => {
-        const category = getSafeCategory(cacheFile.cache, type)
+        const category = getSafeCategory(service.cacheFile.cache, type)
         category[id] = category[id] || { def: [], ref: [] }
-        cacheFile.cache[type] = category
+        service.cacheFile.cache[type] = category
     },
     deleteDefault: (id: string, type: FileType) => {
-        removeCacheUnit(cacheFile.cache, type, id)
+        removeCacheUnit(service.cacheFile.cache, type, id)
     },
     //#endregion
 
@@ -888,7 +699,7 @@ const cacheFileOperations = {
     fileAdded: async (uri: Uri, type: FileType, id: IdentityNode) => {
         // connection.console.info(`Added ${type} ${id}`)
         const config = await fetchConfig(uri)
-        if (!isRelIncluded(getRel(uri, roots), config)) {
+        if (!isRelIncluded(service.getRel(uri), config)) {
             return
         }
         cacheFileOperations.addDefault(id.toString(), type)
@@ -905,7 +716,7 @@ const cacheFileOperations = {
     fileModified: async (uri: Uri, type: FileType, id: IdentityNode) => {
         // connection.console.info(`Modified ${rel} ${type}`)
         const config = await fetchConfig(uri)
-        if (!isRelIncluded(getRel(uri, roots), config)) {
+        if (!isRelIncluded(service.getRel(uri), config)) {
             return
         }
         // if (!uri.toString().startsWith('untitled:') && type === 'function') {
@@ -940,7 +751,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
         if (cacheFile.files.hasOwnProperty(uriString)) {
             progress.report(locale('server.checking-file', uriString))
             // connection.console.info(`Walked ${ uriString }`)
-            const uri = getUri(uriString, uris)
+            const uri = service.parseUri(uriString)
             const rel = getRel(uri, roots)
             const config = await fetchConfig(uri)
             if (!rel || !isRelIncluded(rel, config)) {
@@ -974,7 +785,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             dataPath,
             (abs, rel, stat) => {
                 const result = IdentityNode.fromRel(rel)
-                const uri = getUri(Uri.file(abs).toString(), uris)
+                const uri = service.parseUri(Uri.file(abs).toString())
                 const uriString = uri.toString()
                 if (result && IdentityNode.isExtValid(result.ext, result.category)) {
                     const { id, category: key } = result

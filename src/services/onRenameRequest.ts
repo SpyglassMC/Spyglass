@@ -10,7 +10,7 @@ import { DocNode, FetchConfigFunction, DocsOfUris, PathExistsFunction, ReadFileF
 import { VersionInformation } from '../types/VersionInformation'
 import { getOrCreateInfo, getUri, getUriFromId } from './common'
 
-export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { node: DocNode, offset: number, cacheFile: CacheFile, infos: DocsOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
+export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { node: DocNode, offset: number, cacheFile: CacheFile, infos: DocsOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string|undefined, pathExists: PathExistsFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
     // console.log(`BR: ${JSON.stringify(cacheFile)}`)
 
     /* istanbul ignore next */
