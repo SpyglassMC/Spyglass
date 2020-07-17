@@ -1,12 +1,10 @@
 import { MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
-import { AdvancementInfo } from './AdvancementInfo'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
-import { TagInfo } from './TagInfo'
 import { remapTextRange, TextRange } from './TextRange'
 
-export const CacheVersion = 9
+export const CacheVersion = 10
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
@@ -14,14 +12,6 @@ export interface CacheFile {
     cache: ClientCache,
     files: {
         [uri: string]: number | undefined
-    },
-    advancements: {
-        [id: string]: AdvancementInfo | undefined
-    },
-    tags: {
-        functions: {
-            [id: string]: TagInfo | undefined
-        }
     },
     version: number
 }
