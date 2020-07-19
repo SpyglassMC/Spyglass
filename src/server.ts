@@ -1,28 +1,19 @@
 import clone from 'clone'
-import fs from 'fs-extra'
+import {promises as fsp} from 'fs'
 import path from 'path'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
-import { TextDocument } from 'vscode-languageserver-textdocument'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
-import { getCommandTree } from './data/CommandTree'
-import { getJsonSchemas } from './data/JsonSchema'
-import { getVanillaData } from './data/VanillaData'
 import { loadLocale, locale } from './locales'
-import { NodeRange } from './nodes/ArgumentNode'
 import { IdentityNode } from './nodes/IdentityNode'
-import { getInfo, getNodesFromInfo, getRel, getSemanticTokensLegend, getTextDocument, parseJsonNode, walkFile, walkRoot } from './services/common'
+import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
-import { onDidChangeTextDocument } from './services/onDidChangeTextDocument'
 import { ClientCapabilities, getClientCapabilities } from './types'
-import { AdvancementInfo } from './types/AdvancementInfo'
 import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
-import { isMcfunctionDocument } from './types/DatapackDocument'
-import { TagInfo } from './types/TagInfo'
 import { VersionInformation } from './types/VersionInformation'
-import { requestText } from './utils'
+import { requestText, pathAccessible, readFile } from './utils'
 
 const connection = createConnection(ProposedFeatures.all)
 const workspaceRootUriStrings: string[] = []
@@ -37,18 +28,18 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
     capabilities = getClientCapabilities(lspCapabilities)
 
-    if (!await fs.pathExists(globalStoragePath)) {
-        await fs.mkdirp(globalStoragePath)
+    if (!await pathAccessible(globalStoragePath)) {
+        await fsp.mkdir(globalStoragePath, {recursive:true})
     }
-    if (!await fs.pathExists(storagePath)) {
-        await fs.mkdirp(storagePath)
+    if (!await pathAccessible(storagePath)) {
+        await fsp.mkdir(storagePath, {recursive:true})
     }
 
     let cacheFile: CacheFile | undefined
     const cachePath = path.join(storagePath, './cache.json')
-    if (fs.existsSync(cachePath)) {
+    if (pathAccessible(cachePath)) {
         try {
-            cacheFile = await fs.readJson(cachePath, { encoding: 'utf8' })
+            cacheFile = JSON.parse(await readFile(cachePath))
         } catch (e) {
             console.error('[onInitialize] Reading cache', e)
         }
@@ -197,37 +188,9 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, 
     service.publishDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
-    // FIXME
-    // connection.console.info(`BC: ${JSON.stringify(cacheFile)}`)
     const uri = service.parseUri(uriString)
-    const info = await getInfo(uri, infos)
-    if (!info) {
-        return
-    }
-
-    const config = info.config
-    const vanillaData = await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-    if (isMcfunctionDocument(info)) {
-        const commandTree = await getCommandTree(config.env.cmdVersion)
-        onDidChangeTextDocument({ uri, roots, info, version: version!, contentChanges, config, cacheFile, commandTree, vanillaData })
-    } else {
-        const schemas = await getJsonSchemas(config.env.jsonVersion)
-        const schema = schemas.get(info.node.schemaType)
-        TextDocument.update(info.document, contentChanges, version!)
-        info.node = parseJsonNode({ uri, roots, config, cacheFile, schema, schemas, vanillaData, document: info.document, schemaType: info.node.schemaType })
-    }
-
-    const rel = getRel(uri, roots)
-    if (rel) {
-        const result = IdentityNode.fromRel(rel)
-        if (result) {
-            cacheFileOperations.fileModified(uri, result.category, result.id)
-            trimCache(cacheFile.cache)
-        }
-    }
-
+    service.onDidChangeTextDocument(uri, contentChanges, version)
     service.publishDiagnostics(uri)
-    // connection.console.info(`AC: ${JSON.stringify(cacheFile)}`)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
     const uri = service.parseUri(uriString)
@@ -254,7 +217,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
 
         switch (type) {
             case FileChangeType.Created: {
-                const stat = await fs.stat(uri.fsPath)
+                const stat = await fsp.stat(uri.fsPath)
                 if (stat.isDirectory()) {
                     for (const root of service.roots) {
                         if (uri.fsPath.startsWith(root.fsPath)) {
@@ -295,7 +258,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
 
                 // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
                 // console.log(`Changed : ‘${uriString}’`)
-                const stat = await fs.stat(uri.fsPath)
+                const stat = await fsp.stat(uri.fsPath)
                 if (stat.isFile()) {
                     const result = IdentityNode.fromRel(service.getRel(uri)!)
                     if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
@@ -451,11 +414,11 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 progress.begin(locale('server.fixing-workspace'))
                 for (const root of service.roots) {
                     const dataPath = path.join(root.fsPath, 'data')
-                    const namespaces = fs.pathExistsSync(dataPath) ? await fs.readdir(dataPath) : []
+                    const namespaces = await pathAccessible(dataPath) ? await fsp.readdir(dataPath) : []
                     for (const namespace of namespaces) {
                         const namespacePath = path.join(dataPath, namespace)
                         const functionsPath = path.join(namespacePath, 'functions')
-                        if (fs.pathExistsSync(functionsPath)) {
+                        if (await pathAccessible(functionsPath)) {
                             await walkFile(root.fsPath, functionsPath, async abs => {
                                 try {
                                     const uri = service.parseUri(Uri.file(abs).toString())
@@ -496,7 +459,7 @@ async function updateRoots(roots: Uri[]) {
         const uri = service.parseRootUri(uriString)
         const path = uri.fsPath
         rootCandidatePaths.add(path)
-        const config = await fetchConfig(uri)
+        const config = await service.getConfig(uri)
         await walkRoot(
             uri, path,
             abs => rootCandidatePaths.add(abs),
@@ -507,14 +470,14 @@ async function updateRoots(roots: Uri[]) {
     for (const candidatePath of rootCandidatePaths) {
         const dataPath = path.join(candidatePath, 'data')
         const packMcmetaPath = path.join(candidatePath, 'pack.mcmeta')
-        if (fs.existsSync(dataPath) && fs.existsSync(packMcmetaPath)) {
+        if (await pathAccessible(dataPath) && await pathAccessible(packMcmetaPath)) {
             const uri = service.parseRootUri(Uri.file(candidatePath).toString())
             roots.push(uri)
 
             connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
             const legacyDotPath = path.join(candidatePath, '.datapack')
-            if (await fs.pathExists(legacyDotPath)) {
+            if (await pathAccessible(legacyDotPath)) {
                 connection.window.showInformationMessage(locale('server.remove-cache-file'))
             }
         }
@@ -559,188 +522,55 @@ async function fetchConfig(uri: Uri): Promise<Config> {
 
 async function saveCacheFile() {
     if (cachePath) {
-        await fs.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
+        await fsp.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
     }
 }
 
 setInterval(saveCacheFile, 30_000)
 
 const cacheFileOperations = {
-    //#region functions
-    // MODIFIED & DELETED: Remove all cache positions with the specific rel.
-    // MODIFIED: Combine all caches of all lines.
-    // DELETED: Remove from functions cache category.
-    removeCachePositionsWith: (uri: Uri) => {
-        removeCachePosition(service.cacheFile.cache, uri)
-    },
-    combineCacheOfLines: async (uri: Uri, config: Config) => {
-        const getText = async () => fs.readFile(uri.fsPath, 'utf8')
-        const textDoc = await getTextDocument({ uri, version: null, getText })
-        const doc = await service.parseDocument(textDoc)
-        if (doc) {
-            const cacheOfLines: ClientCache = {}
-            let i = 0
-            const nodes = getNodesFromInfo(doc)
-            for (const node of nodes) {
-                const skippedChar = (node as any)[NodeRange]?.start ?? 0
-                combineCache(cacheOfLines, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
-                i++
-            }
-            combineCache(service.cacheFile.cache, cacheOfLines)
-        }
-    },
-    //#endregion
-
-    //#region tag/function
-    // ADDED/MODIFIED/DELETED: update the corresponding TagInfo.
-    isStringArray(obj: any) {
-        return obj &&
-            obj instanceof Array &&
-            obj.map((v: any) => typeof v === 'string').indexOf(false) === -1
-    },
-    updateTagInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
-        const idString = id.toString()
-        delete service.cacheFile.tags.functions[idString]
-
-        const rel = id.toRel('tag/function')
-        const ans: TagInfo = { values: [] }
-        for (let i = service.roots.length - 1; i >= 0; i--) {
-            // We should use the order in which Minecraft loads datapacks to load tags.
-            // So that we can treat `replace` correctly.
-            const root = service.roots[i]
-            const p = path.join(root.fsPath, rel)
-            if (await pathExists(p)) {
-                try {
-                    const content = await readJson(p)
-                    if (!(content && cacheFileOperations.isStringArray(content.values))) {
-                        throw new Error(`Function tag ‘${id}’ has a bad format: ‘${JSON.stringify(content)}’`)
-                    }
-                    const validValues: string[] = []
-                    for (const value of content.values) {
-                        try {
-                            const id = IdentityNode.fromString(value)
-                            if (await service.getUriFromId(id, id.isTag ? 'tag/function' : 'function')) {
-                                validValues.push(id.toTagString())
-                            }
-                        } catch (ignored) {
-                            // Ignore this bad value.
-                        }
-                    }
-                    if (content.replace) {
-                        ans.values = validValues
-                    } else {
-                        ans.values.push(...validValues)
-                    }
-                } catch (e) {
-                    connection.console.info(`updateTagInfo - ${e.message}`)
-                }
-            }
-        }
-
-        service.cacheFile.tags.functions[idString] = ans
-    },
-    //#endregion
-
-    //#region advancements
-    // ADDED/MODIFIED/DELETED: update the corresponding AdvancementInfo.
-    updateAdvancementInfo: async (id: IdentityNode, pathExists = fs.pathExists, readJson = fs.readJson) => {
-        const idString = id.toString()
-        delete service.cacheFile.advancements[idString]
-
-        const rel = id.toRel('advancement')
-        const ans: AdvancementInfo = {}
-        for (let i = service.roots.length - 1; i >= 0; i--) {
-            // We should use the order in which Minecraft loads datapacks to load tags.
-            // So that we can treat overrides correctly.
-            const root = service.roots[i]
-            const p = path.join(root.fsPath, rel)
-            if (await pathExists(p)) {
-                try {
-                    const content = await readJson(p)
-                    if (!content) {
-                        throw new Error(`Advancement ‘${id}’ has a bad format: ‘${JSON.stringify(content)}’`)
-                    }
-                    if (content.rewards && typeof content.rewards.function === 'string') {
-                        try {
-                            const id = IdentityNode.fromString(content.rewards.function)
-                            if (await service.getUriFromId(id, 'function')) {
-                                ans.rewards = {
-                                    function: content.rewards.function
-                                }
-                            }
-                        } catch (ignored) {
-                            // Ignore this bad value.
-                        }
-                    }
-                } catch (e) {
-                    connection.console.info(`updateAdvancementInfo - ${e.message}`)
-                }
-            }
-        }
-
-        service.cacheFile.advancements[idString] = ans
-    },
-    //#endregion
-
-    //#region advancement, function, loot_table, predicate, tag/*, recipe:
-    // ADDED: Add to respective cache category.
-    // DELETED: Remove from respective cache category.
-    addDefault: (id: string, type: FileType) => {
+    addCacheUnit: (id: string, type: FileType) => {
         const category = getSafeCategory(service.cacheFile.cache, type)
         category[id] = category[id] || { def: [], ref: [] }
         service.cacheFile.cache[type] = category
     },
-    deleteDefault: (id: string, type: FileType) => {
-        removeCacheUnit(service.cacheFile.cache, type, id)
+    removeCachePositionsWith: (uri: Uri) => {
+        removeCachePosition(service.cacheFile.cache, uri)
     },
-    //#endregion
-
-    // Hooks.
+    combineCacheOfNodes: async (uri: Uri) => {
+        const getText = async () => readFile(uri.fsPath)
+        const textDoc = await getTextDocument({ uri, version: null, getText })
+        const doc = await service.parseDocument(textDoc)
+        if (doc && textDoc) {
+            const cacheOfNodes: ClientCache = {}
+            let i = 0
+            for (const node of doc.nodes) {
+                combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
+                i++
+            }
+            combineCache(service.cacheFile.cache, cacheOfNodes)
+        }
+    },
     fileAdded: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        // connection.console.info(`Added ${type} ${id}`)
-        const config = await fetchConfig(uri)
+        const config = await service.getConfig(uri)
         if (!isRelIncluded(service.getRel(uri), config)) {
             return
         }
-        cacheFileOperations.addDefault(id.toString(), type)
-        // if (type === 'function') {
+        cacheFileOperations.addCacheUnit(id.toString(), type)
         cacheFileOperations.removeCachePositionsWith(uri)
-        await cacheFileOperations.combineCacheOfLines(uri, config)
-        // } else if (type === 'tag/function') {
-        //     // await cacheFileOperations.updateTagInfo(id)
-        // } else if (type === 'advancement') {
-        //     cacheFileOperations.removeCachePositionsWith(uri)
-        //     // await cacheFileOperations.updateAdvancementInfo(id)
-        // }
+        await cacheFileOperations.combineCacheOfNodes(uri)
     },
     fileModified: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        // connection.console.info(`Modified ${rel} ${type}`)
-        const config = await fetchConfig(uri)
+        const config = await service.getConfig(uri)
         if (!isRelIncluded(service.getRel(uri), config)) {
             return
         }
-        // if (!uri.toString().startsWith('untitled:') && type === 'function') {
         cacheFileOperations.removeCachePositionsWith(uri)
-        await cacheFileOperations.combineCacheOfLines(uri, config)
-        // } else if (type === 'tag/function') {
-        //     await cacheFileOperations.updateTagInfo(id)
-        // } else if (type === 'advancement') {
-        //     cacheFileOperations.removeCachePositionsWith(uri)
-        //     await cacheFileOperations.combineCacheOfLines(uri, config)
-        //     await cacheFileOperations.updateAdvancementInfo(id)
-        // }
+        await cacheFileOperations.combineCacheOfNodes(uri)
     },
     fileDeleted: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        // connection.console.info(`#fileDeleted ${rel} ${type} ${id}`)
-        if (type === 'function') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-        } else if (type === 'tag/function') {
-            await cacheFileOperations.updateTagInfo(id)
-        } else if (type === 'advancement') {
-            cacheFileOperations.removeCachePositionsWith(uri)
-            // await cacheFileOperations.updateAdvancementInfo(id)
-        }
-        cacheFileOperations.deleteDefault(id.toString(), type)
+        removeCacheUnit(service.cacheFile.cache, type, id.toString())
+        cacheFileOperations.removeCachePositionsWith(uri)
     }
 }
 
@@ -753,7 +583,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             // connection.console.info(`Walked ${ uriString }`)
             const uri = service.parseUri(uriString)
             const rel = getRel(uri, roots)
-            const config = await fetchConfig(uri)
+            const config = await service.getConfig(uri)
             if (!rel || !isRelIncluded(rel, config)) {
                 delete cacheFile.files[uriString]
                 continue
@@ -761,11 +591,11 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             const result = IdentityNode.fromRel(rel)
             if (result) {
                 const { id, category: key } = result
-                if (!(await fs.pathExists(uri.fsPath))) {
+                if (!(await pathAccessible(uri.fsPath))) {
                     await cacheFileOperations.fileDeleted(uri, key, id)
                     delete cacheFile.files[uriString]
                 } else {
-                    const stat = await fs.stat(uri.fsPath)
+                    const stat = await fsp.stat(uri.fsPath)
                     const lastModified = stat.mtimeMs
                     const lastUpdated = cacheFile.files[uriString]!
                     if (lastModified > lastUpdated) {

@@ -1,5 +1,6 @@
 import clone from 'clone'
 import deepEqual from 'deep-equal'
+import { promises as fs } from 'fs'
 import https from 'https'
 import { EOL } from 'os'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
@@ -313,4 +314,14 @@ export function getNbtdocRegistryId(entity: EntityNode): null | string {
         return firstID.toString()
     }
     return null
+}
+
+export async function pathAccessible(path: string) {
+    return fs.access(path)
+        .then(() => true)
+        .catch(() => false)
+}
+
+export async function readFile(path: string) {
+    return fs.readFile(path, { encoding: 'utf-8' })
 }

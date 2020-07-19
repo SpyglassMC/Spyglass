@@ -1,11 +1,12 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
-import fs from 'fs-extra'
+import * as fs from 'fs'
+import { promises as fsp } from 'fs'
 import path from 'path'
 import { getLanguageService } from 'vscode-json-languageservice'
 import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
-import { getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
+import { JsonSchemaType } from '../data/JsonSchema'
 import { VanillaData } from '../data/VanillaData'
 import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
@@ -13,9 +14,9 @@ import { LineParser } from '../parsers/LineParser'
 import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
 import { CacheFile, FileType, getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
-import { Config, isRelIncluded } from '../types/Config'
+import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
-import { DocNode, DocsOfUris, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
+import { DocNode, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
 import { constructContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
@@ -177,19 +178,19 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
 }
 
 /* istanbul ignore next */
-export async function getInfo(uri: Uri, infos: DocsOfUris): Promise<DatapackDocument | undefined> {
-    const result = infos.get(uri)
-    if (result instanceof Promise) {
-        const ans = await result
-        if (ans) {
-            infos.set(uri, ans)
-            return ans
-        }
-    } else {
-        return result
-    }
-    return undefined
-}
+// export async function getInfo(uri: Uri, infos: DocsOfUris): Promise<DatapackDocument | undefined> {
+//     const result = infos.get(uri)
+//     if (result instanceof Promise) {
+//         const ans = await result
+//         if (ans) {
+//             infos.set(uri, ans)
+//             return ans
+//         }
+//     } else {
+//         return result
+//     }
+//     return undefined
+// }
 
 export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId?: string, getText: () => Promise<string>, version: number | null }) {
     langId = langId ?? (uri.fsPath.endsWith('json') || uri.fsPath.endsWith('.mcmeta') ? 'json' : 'mcfunction')
@@ -197,45 +198,45 @@ export async function getTextDocument({ uri, langId, getText, version }: { uri: 
 }
 
 /* istanbul ignore next */
-export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DatapackDocument | undefined> {
-    try {
-        const rel = getRel(uri, roots)
-        const config = await getConfig()
-        if (rel && isRelIncluded(rel, config)) {
-            const text = await getText()
-            const vanillaData = await getVanillaData(config)
-            langId = langId ?? (rel.endsWith('json') || rel.endsWith('.mcmeta') ? 'json' : 'mcfunction')
-            const document: TextDocument = TextDocument.create(uri.toString(), langId, version as number, text)
-            if (langId === 'json') {
-                const schemaType = getJsonSchemaType(rel)
-                if (schemaType) {
-                    const schemas = await getJsonSchemas(config)
-                    const schema = schemas.get(schemaType)
-                    const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, schemas, schemaType, vanillaData })
-                    return { config, document, node }
-                }
-            } else {
-                const commandTree = await getCommandTree(config)
-                const nodes: LineNode[] = []
-                parseFunctionNodes(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
-                return { config, document, nodes }
-            }
-        }
-    } catch (e) {
-        console.error('[createInfo]', e)
-    }
-    return undefined
-}
+// export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DatapackDocument | undefined> {
+//     try {
+//         const rel = getRel(uri, roots)
+//         const config = await getConfig()
+//         if (rel && isRelIncluded(rel, config)) {
+//             const text = await getText()
+//             const vanillaData = await getVanillaData(config)
+//             langId = langId ?? (rel.endsWith('json') || rel.endsWith('.mcmeta') ? 'json' : 'mcfunction')
+//             const document: TextDocument = TextDocument.create(uri.toString(), langId, version as number, text)
+//             if (langId === 'json') {
+//                 const schemaType = getJsonSchemaType(rel)
+//                 if (schemaType) {
+//                     const schemas = await getJsonSchemas(config)
+//                     const schema = schemas.get(schemaType)
+//                     const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, schemas, schemaType, vanillaData })
+//                     return { config, document, node }
+//                 }
+//             } else {
+//                 const commandTree = await getCommandTree(config)
+//                 const nodes: LineNode[] = []
+//                 parseFunctionNodes(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
+//                 return { config, document, nodes }
+//             }
+//         }
+//     } catch (e) {
+//         console.error('[createInfo]', e)
+//     }
+//     return undefined
+// }
 
-export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DatapackDocument | undefined> {
-    let info = infos.get(uri)
+// export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DatapackDocument | undefined> {
+//     let info = infos.get(uri)
 
-    if (!info) {
-        info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchemas })
-    }
+//     if (!info) {
+//         info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchemas })
+//     }
 
-    return info
-}
+//     return info
+// }
 
 export function getDiagnosticMap(diagnostics: Diagnostic[]) {
     const diagnosticsMap: DiagnosticMap = {}
@@ -275,11 +276,7 @@ export function getStringLines(string: string) {
 }
 
 export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | LineNode | null } {
-    return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.node }
-}
-
-export function getNodesFromInfo(info: DatapackDocument) {
-    return isMcfunctionDocument(info) ? info.nodes : [info.node]
+    return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.nodes[0] }
 }
 
 /* istanbul ignore next */
@@ -290,10 +287,10 @@ export async function walkFile(
     promises: Promise<any>[] = [],
     awaitAll = true
 ): Promise<void> {
-    const names = await fs.readdir(abs)
+    const names = await fsp.readdir(abs)
     for (const name of names) {
         const newAbs = path.join(abs, name)
-        const stat = await fs.stat(newAbs)
+        const stat = await fsp.stat(newAbs)
         if (stat.isDirectory()) {
             promises.push(walkFile(workspaceRootPath, newAbs, cb, promises, false))
         } else {
@@ -318,10 +315,10 @@ export async function walkRoot(
     if (depth <= 0) {
         return
     }
-    const names = await fs.readdir(abs)
+    const names = await fsp.readdir(abs)
     for (const name of names) {
         const newAbs = path.join(abs, name)
-        const stat = await fs.stat(newAbs)
+        const stat = await fsp.stat(newAbs)
         if (stat.isDirectory()) {
             cb(newAbs, stat)
             promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1, promises, false))

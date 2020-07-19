@@ -1,14 +1,14 @@
 /* istanbul ignore file */
 
 import { COLLECTIONS as JsonCollections } from '@mcschema/core'
-import fs from 'fs-extra'
+import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
 import { compileNamespaceSummary, NamespaceSummary, RawNamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
-import { requestText } from '../utils'
+import { requestText, pathAccessible, readFile } from '../utils'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
@@ -92,9 +92,9 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
             const versionPath = globalStoragePath ? path.join(globalStoragePath, version) : undefined
             const filePath = versionPath ? path.join(versionPath, `${type}.json`) : undefined
             try {
-                if (filePath && await fs.pathExists(filePath)) {
+                if (filePath && await pathAccessible(filePath)) {
                     console.info(`[VanillaData: ${type} for ${version}] Loading from local file ${filePath}...`)
-                    const json = await fs.readJson(filePath, { encoding: 'utf8' })
+                    const json = JSON.parse(await readFile(filePath))
                     console.info(`[VanillaData: ${type} for ${version}] Loaded from local file.`)
                     cache[version] = json
                 } else {
@@ -110,8 +110,8 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     const json = JSON.parse(str)
                     console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source}.`)
                     if (versionPath && filePath) {
-                        await fs.mkdirp(versionPath)
-                        fs.writeJson(filePath, json, { encoding: 'utf8' })
+                        await fsp.mkdir(versionPath, { recursive: true })
+                        fsp.writeFile(filePath, JSON.stringify(json), { encoding: 'utf8' })
                         console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath}.`)
                     }
                     cache[version] = json

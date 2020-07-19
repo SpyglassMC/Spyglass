@@ -25,5 +25,5 @@ export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[]
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
 export type PathExistsFunction = (path: string) => Promise<boolean>
 export type PublishDiagnostics = (params: PublishDiagnosticsParams) => void
-export type ReadFileFunction = (path: string, encoding: string) => Promise<string>
+export type ReadFileFunction = (path: string) => Promise<string>
 export type UrisOfStrings = Map<string, Uri>

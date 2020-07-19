@@ -21,7 +21,7 @@ export function getClientCapabilities(lspCapabilities: LspClientCapabilities = {
     const ans: ClientCapabilities = {
         dynamicRegistration: {
             competion: !!lspCapabilities.textDocument?.completion?.dynamicRegistration,
-            didChangeConfiguration: !!lspCapabilities.workspace?.didChangeConfiguration,
+            didChangeConfiguration: !!lspCapabilities.workspace?.didChangeConfiguration?.dynamicRegistration,
             documentFormatting: !!lspCapabilities.textDocument?.formatting?.dynamicRegistration,
             documentHighlight: !!lspCapabilities.textDocument?.documentHighlight?.dynamicRegistration,
             foldingRange: !!lspCapabilities.textDocument?.foldingRange?.dynamicRegistration,
