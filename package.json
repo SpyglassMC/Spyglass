@@ -28,7 +28,7 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.4.1",
+        "@mcschema/core": "^0.5.0",
         "@mcschema/java-1.16": "^0.2.5",
         "clone": "^2.1.2",
         "datapack-json": "^2.0.10",
