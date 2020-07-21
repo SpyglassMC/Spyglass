@@ -16,7 +16,7 @@ import { CacheFile, FileType, getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
-import { DocNode, PathExistsFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
+import { DocNode, PathAccessibleFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
 import { constructContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
@@ -43,7 +43,7 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
 /**
  * @returns Never be `null` if `preferredRoot` exists.
  */
-export async function getUriFromId(pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Promise<Uri | null> {
+export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
 

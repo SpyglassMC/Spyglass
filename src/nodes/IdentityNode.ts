@@ -222,11 +222,4 @@ export class IdentityNode extends ArgumentNode {
             return new IdentityNode(parts[0], parts[1].split(IdentityNode.PathSep), isTag)
         }
     }
-
-    static isExtValid(ext: string, category: FileType) {
-        return (
-            (category === 'function' && ext === '.mcfunction') ||
-            (category !== 'function' && ext === '.json')
-        )
-    }
 }

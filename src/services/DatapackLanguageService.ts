@@ -1,6 +1,5 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
 import clone from 'clone'
-import { promises as fs } from 'fs'
 import * as lsp from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDefOrRef, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
@@ -8,10 +7,10 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { DataSource, getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCapabilities, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, DocsOfUris, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathExistsFunction, PublishDiagnostics, ReadFileFunction, trimCache, Uri, UrisOfIds, UrisOfStrings, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, DocsOfUris, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, UrisOfIds, UrisOfStrings, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
-import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
+import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
 
 type ShowMessage = (message: string) => void
 
@@ -20,9 +19,9 @@ export class DatapackLanguageService {
     public cacheFile: CacheFile
     readonly capabilities: Readonly<ClientCapabilities>
     readonly globalStoragePath: string | undefined
-    readonly pathExists: PathExistsFunction
+    readonly pathAccessible: PathAccessibleFunction
     readonly rawFetchConfig: FetchConfigFunction
-    readonly rawPublishDiagnostics: PublishDiagnostics | undefined
+    readonly rawPublishDiagnostics: PublishDiagnosticsFunction | undefined
     readonly readFile: ReadFileFunction
     /**
      * Sorted by priority. If you want to read something in the same order as Minecraft does,
@@ -50,8 +49,8 @@ export class DatapackLanguageService {
         capabilities?: ClientCapabilities,
         globalStoragePath?: string,
         fetchConfig?: FetchConfigFunction,
-        pathExist?: PathExistsFunction,
-        publishDiagnostics?: PublishDiagnostics,
+        pathAccessible?: PathAccessibleFunction,
+        publishDiagnostics?: PublishDiagnosticsFunction,
         readFile?: ReadFileFunction,
         showInformationMessage?: ShowMessage,
         versionInformation?: VersionInformation
@@ -60,7 +59,7 @@ export class DatapackLanguageService {
         this.cacheFile = options?.cacheFile ?? clone(DefaultCacheFile)
         this.capabilities = Object.freeze(options?.capabilities ?? getClientCapabilities())
         this.globalStoragePath = options?.globalStoragePath
-        this.pathExists = options?.pathExist ?? pathAccessible
+        this.pathAccessible = options?.pathAccessible ?? pathAccessible
         this.rawFetchConfig = options?.fetchConfig ?? (async () => VanillaConfig)
         this.rawPublishDiagnostics = options?.publishDiagnostics
         this.readFile = options?.readFile ?? readFile
@@ -173,7 +172,7 @@ export class DatapackLanguageService {
      * ID will be resolved as a file path in the `preferredRoot` no matter if that file actually exists.
      */
     getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri) {
-        return getUriFromId(this.pathExists, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot)
+        return getUriFromId(this.pathAccessible, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot)
     }
 
     /**
@@ -200,6 +199,15 @@ export class DatapackLanguageService {
     }
 
     /**
+     * Returns if the documents for the specific URI are cached, i.e. have been parsed by 
+     * the `parseDocument` function and have not received any close notification.
+     * @param uri A URI object.
+     */
+    isOpen(uri: Uri) {
+        return this.docs.has(uri) && this.textDocs.has(uri)
+    }
+
+    /**
      * Publishes all the diagnostics within a certain file to the language client.
      * @param uri A URI object.
      */
@@ -210,64 +218,75 @@ export class DatapackLanguageService {
     /**
      * Returns a `DatapackDocument` from the specific `TextDocument`.
      * @param isReal The text content is the real one as shown in the editor, which is not outdated 
-     * and could be updated by relevant notifications.
+     * and could be updated by relevant notifications. If set to `true`, the result of this function will
+     * be cached for use in the `getDocuments` function.
      */
-    async parseDocument(document: TextDocument, isReal = false): Promise<DatapackDocument | undefined> {
-        const uri = getUri(document.uri, this.uris)
-        const ans = this.rawParseDocument(document, uri)
+    async parseDocument(textDoc: TextDocument, isReal = false): Promise<DatapackDocument | undefined> {
+        const uri = getUri(textDoc.uri, this.uris)
+        const ans = this.rawParseDocument(textDoc, uri)
         if (isReal) {
-            this.textDocs.set(uri, document)
+            this.textDocs.set(uri, textDoc)
             this.docs.set(uri, ans)
         }
         return ans
     }
 
     /**
-     * 
-     * @param uri 
+     * Get the documents for the specific URI. Will read the text document from the file system when
+     * no parsed document has been cached. The one read from the file system will never be cached as
+     * it is possible for it to be changed without any notifications from the client and therefore
+     * leads to de-sync.
+     * @param uri A URI object.
      */
-    async getDocument(uri: Uri): Promise<DatapackDocument | undefined> {
-        throw ''
-    }
-
-    private async rawParseDocument(document: TextDocument, uri: Uri) {
-        let ans: DatapackDocument | undefined
+    async getDocuments(uri: Uri): Promise<{ doc: DatapackDocument | undefined, textDoc: TextDocument | undefined }> {
         try {
-            const config = await this.getConfig(uri)
-            const rel = getRel(uri, this.roots)
-            if (rel && isRelIncluded(rel, config)) {
-                const vanillaData = await this.getVanillaData(config)
-                if (document.languageId === 'json') {
-                    const schemaType = getJsonSchemaType(rel)
-                    if (schemaType) {
-                        const schemas = await this.getJsonSchemas(config)
-                        const schema = schemas.get(schemaType)
-                        ans = {
-                            type: 'json',
-                            nodes: this.parseJsonDocument({ document, config, uri, vanillaData, schema, schemas, schemaType })
-                        }
-                    }
-                } else {
-                    const commandTree = await this.getCommandTree(config)
-                    ans = {
-                        type: 'mcfunction',
-                        nodes: this.parseMcfunctionDocument({ document, commandTree, config, uri, vanillaData })
-                    }
-                }
+            if (this.docs.has(uri) && this.textDocs.has(uri)) {
+                return { doc: await this.docs.get(uri)!, textDoc: this.textDocs.get(uri)! }
+            } else {
+                const getText = async () => this.readFile(uri.fsPath)
+                const textDoc = await getTextDocument({ uri, version: null, getText })
+                return { doc: await this.parseDocument(textDoc, false), textDoc }
             }
         } catch (e) {
-            console.error('[parseDocument]', e)
+            console.error('[getDocuments]', e)
+            return { doc: undefined, textDoc: undefined }
+        }
+    }
+
+    private async rawParseDocument(textDoc: TextDocument, uri: Uri) {
+        let ans: DatapackDocument | undefined
+        const config = await this.getConfig(uri)
+        const rel = getRel(uri, this.roots)
+        if (rel && isRelIncluded(rel, config)) {
+            const vanillaData = await this.getVanillaData(config)
+            if (textDoc.languageId === 'json') {
+                const schemaType = getJsonSchemaType(rel)
+                if (schemaType) {
+                    const schemas = await this.getJsonSchemas(config)
+                    const schema = schemas.get(schemaType)
+                    ans = {
+                        type: 'json',
+                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, schemas, schemaType })
+                    }
+                }
+            } else {
+                const commandTree = await this.getCommandTree(config)
+                ans = {
+                    type: 'mcfunction',
+                    nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData })
+                }
+            }
         }
         return ans
     }
 
-    private parseJsonDocument({ document, config, uri, vanillaData, schema, schemas, schemaType }: { document: TextDocument, config: Config, schema: INode, schemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData }) {
-        return [parseJsonNode({ uri, document, config, schema, schemas, schemaType, vanillaData, roots: this.roots, cacheFile: this.cacheFile })]
+    private parseJsonDocument({ textDoc, config, uri, vanillaData, schema, schemas, schemaType }: { textDoc: TextDocument, config: Config, schema: INode, schemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData }) {
+        return [parseJsonNode({ uri, document: textDoc, config, schema, schemas, schemaType, vanillaData, roots: this.roots, cacheFile: this.cacheFile })]
     }
 
-    private parseMcfunctionDocument({ document, commandTree, config, uri, vanillaData }: { document: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData }) {
+    private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData }) {
         const ans: LineNode[] = []
-        parseFunctionNodes(document, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData)
+        parseFunctionNodes(textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData)
         return ans
     }
 
@@ -290,14 +309,8 @@ export class DatapackLanguageService {
             doc.nodes[0] = parseJsonNode({ uri, roots: this.roots, config, cacheFile: this.cacheFile, schema, schemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
         }
 
-        const rel = this.getRel(uri)
-        if (rel) {
-            const result = IdentityNode.fromRel(rel)
-            if (result) {
-                cacheFileOperations.fileModified(uri, result.category, result.id)
-                trimCache(this.cacheFile.cache)
-            }
-        }
+        this.onModifiedFile(uri)
+        trimCache(this.cacheFile.cache)
     }
 
     onDidCloseTextDocument(uri: Uri) {
@@ -487,15 +500,15 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onCallHierarchyPrepare({ info: doc, offset, node, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathExists })
+        return onCallHierarchyPrepare({ info: doc, offset, node, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
     }
 
     async onCallHierarchyIncomingCalls({ kind, name: id }: lsp.Proposed.CallHierarchyItem) {
-        return onCallHierarchyIncomingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathExists })
+        return onCallHierarchyIncomingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
     }
 
     async onCallHierarchyOutgoingCalls({ kind, name: id }: lsp.Proposed.CallHierarchyItem) {
-        return onCallHierarchyOutgoingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathExists })
+        return onCallHierarchyOutgoingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
     }
 
     async onPrepareRename(uri: Uri, position: lsp.Position) {
@@ -523,7 +536,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onRenameRequest({ infos: this.docs, cacheFile: this.cacheFile, node, offset, newName, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds, versionInformation: this.versionInformation, globalStoragePath: this.globalStoragePath, fetchConfig: this.getConfig, pathExists: this.pathExists, readFile: this.readFile })
+        return onRenameRequest({ infos: this.docs, cacheFile: this.cacheFile, node, offset, newName, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds, versionInformation: this.versionInformation, globalStoragePath: this.globalStoragePath, fetchConfig: this.getConfig, pathExists: this.pathAccessible, readFile: this.readFile })
     }
 
     async onDocumentLinks(uri: Uri) {
@@ -533,7 +546,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.documentLinks)) {
             return null
         }
-        return onDocumentLinks({ info: doc, pathExists: this.pathExists, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds })
+        return onDocumentLinks({ info: doc, pathExists: this.pathAccessible, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds })
     }
 
     async onDocumentColor(uri: Uri) {
@@ -589,5 +602,88 @@ export class DatapackLanguageService {
             getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, this.versionInformation, this.globalStoragePath),
             readFile: this.readFile
         })
+    }
+
+    private addCacheUnit(id: string, type: FileType) {
+        const category = getSafeCategory(this.cacheFile.cache, type)
+        category[id] = category[id] || { def: [], ref: [] }
+        this.cacheFile.cache[type] = category
+    }
+
+    private removeCachePositionsWith(uri: Uri) {
+        removeCachePosition(this.cacheFile.cache, uri)
+    }
+
+    private async combineCacheOfNodes(uri: Uri) {
+        const { doc, textDoc } = await this.getDocuments(uri)
+        if (doc && textDoc) {
+            const cacheOfNodes: ClientCache = {}
+            let i = 0
+            for (const node of doc.nodes) {
+                combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
+                i++
+            }
+            combineCache(this.cacheFile.cache, cacheOfNodes)
+        }
+    }
+
+    /**
+     * Notifies a file addition in the file system. The ID of this file will be added to the
+     * cache for completion usage, and the content of this file will also be analysed to
+     * accelerate the process of renaming, etc.
+     * 
+     * Nothing will happen if the URI can't be resolved to an identity.
+     * @param uri A URI object.
+     */
+    async onAddedFile(uri: Uri) {
+        const rel = this.getRel(uri)
+        const result = IdentityNode.fromRel(rel)
+        if (!result) {
+            return
+        }
+        const { category, id } = result
+        const config = await this.getConfig(uri)
+        if (!isRelIncluded(this.getRel(uri), config)) {
+            return
+        }
+        this.addCacheUnit(id.toString(), category)
+        this.removeCachePositionsWith(uri)
+        return this.combineCacheOfNodes(uri)
+    }
+
+    /**
+     * Notifies a file modification in the file system. It is _not_ recommended to call this method
+     * for changes of already opened documents as this function is called internally in the 
+     * `onDidChangeTextDocument` function. The content of this file will be re-analysed to accelerate
+     * the process of renaming, etc.
+     * 
+     * Nothing will happen if the URI can't be resolved to an identity.
+     * @param uri A URI object.
+     */
+    async onModifiedFile(uri: Uri) {
+        const config = await this.getConfig(uri)
+        if (!isRelIncluded(this.getRel(uri), config)) {
+            return
+        }
+        this.removeCachePositionsWith(uri)
+        return this.combineCacheOfNodes(uri)
+    }
+
+    /**
+     * Notifies a file removal in the file system. The ID of this file will be removed from the cache
+     * for completions, and all the references of this URI will also be deleted.
+     * 
+     * Nothing will happen if the URI can't be resolved to an identity.
+     * @param uri A URI object.
+     */
+    onDeletedFile(uri: Uri) {
+        const rel = this.getRel(uri)
+        const result = IdentityNode.fromRel(rel)
+        if (!result) {
+            return
+        }
+        const { category, id } = result
+        removeCacheUnit(this.cacheFile.cache, category, id.toString())
+        this.removeCachePositionsWith(uri)
     }
 }

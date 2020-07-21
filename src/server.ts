@@ -1,25 +1,24 @@
 import clone from 'clone'
-import {promises as fsp} from 'fs'
+import { promises as fsp } from 'fs'
 import path from 'path'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { IdentityNode } from './nodes/IdentityNode'
 import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
-import { CacheFile, CacheVersion, ClientCache, combineCache, DefaultCacheFile, FileType, getSafeCategory, removeCachePosition, removeCacheUnit, trimCache } from './types/ClientCache'
+import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { VersionInformation } from './types/VersionInformation'
-import { requestText, pathAccessible, readFile } from './utils'
+import { pathAccessible, readFile, requestText } from './utils'
 
 const connection = createConnection(ProposedFeatures.all)
-const workspaceRootUriStrings: string[] = []
 
 let cachePath: string | undefined
 let capabilities: ClientCapabilities
+let workspaceRootUriStrings: string[] = []
 
 let service: DatapackLanguageService
 
@@ -28,16 +27,16 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
     capabilities = getClientCapabilities(lspCapabilities)
 
-    if (!await pathAccessible(globalStoragePath)) {
-        await fsp.mkdir(globalStoragePath, {recursive:true})
+    if (globalStoragePath && !await pathAccessible(globalStoragePath)) {
+        await fsp.mkdir(globalStoragePath, { recursive: true })
     }
-    if (!await pathAccessible(storagePath)) {
-        await fsp.mkdir(storagePath, {recursive:true})
+    if (storagePath && !await pathAccessible(storagePath)) {
+        await fsp.mkdir(storagePath, { recursive: true })
     }
 
     let cacheFile: CacheFile | undefined
-    const cachePath = path.join(storagePath, './cache.json')
-    if (pathAccessible(cachePath)) {
+    const cachePath = storagePath ? path.join(storagePath, './cache.json') : undefined
+    if (cachePath && pathAccessible(cachePath)) {
         try {
             cacheFile = JSON.parse(await readFile(cachePath))
         } catch (e) {
@@ -56,6 +55,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         cacheFile,
         capabilities,
         fetchConfig: capabilities.configuration ? fetchConfig : undefined,
+        globalStoragePath,
         publishDiagnostics: connection.sendDiagnostics,
         showInformationMessage: connection.window.showInformationMessage,
         versionInformation: await getLatestVersions()
@@ -64,6 +64,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     await updateCacheFile(service.cacheFile, service.roots, progress)
     saveCacheFile()
 
+    workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
     await updateRoots(service.roots)
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
@@ -184,7 +185,7 @@ connection.onInitialized(() => {
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
     const uri = service.parseUri(uriString)
-    service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }))
+    service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }), true)
     service.publishDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
@@ -224,49 +225,28 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                             await walkFile(
                                 root.fsPath,
                                 uri.fsPath,
-                                async (abs, rel, stat) => {
-                                    const result = IdentityNode.fromRel(rel)
-                                    if (result) {
-                                        const { category, id, ext } = result
-                                        const uri = service.parseUri(Uri.file(abs).toString())
-                                        const uriString = uri.toString()
-                                        if (IdentityNode.isExtValid(ext, category)) {
-                                            await cacheFileOperations.fileAdded(uri, category, id)
-                                            service.cacheFile.files[uriString] = stat.mtimeMs
-                                        }
-                                    }
+                                async (abs, _rel, stat) => {
+                                    const uri = service.parseUri(Uri.file(abs).toString())
+                                    const uriString = uri.toString()
+                                    await service.onAddedFile(uri)
+                                    service.cacheFile.files[uriString] = stat.mtimeMs
                                 }
                             )
                         }
                     }
                 } else {
-                    const result = IdentityNode.fromRel(service.getRel(uri)!)
-                    if (result) {
-                        const { category, id, ext } = result
-                        if (IdentityNode.isExtValid(ext, category)) {
-                            await cacheFileOperations.fileAdded(uri, category, id)
-                            service.cacheFile.files[uriString] = stat.mtimeMs
-                        }
-                    }
+                    await service.onAddedFile(uri)
+                    service.cacheFile.files[uriString] = stat.mtimeMs
                 }
                 break
             }
             case FileChangeType.Changed: {
-                // TODO(#252): Check if external changes or workspace edits will trigger
-                // onDidChangeTextDocument for opened ocuments.
-                // TODO(#252): Only trigger update for non-opened documents.
-
-                // TODO(#252): ALTERNATIVELY, check onWillSaveDocument to see if this Changed should be handled.
                 // console.log(`Changed : ‘${uriString}’`)
                 const stat = await fsp.stat(uri.fsPath)
                 if (stat.isFile()) {
-                    const result = IdentityNode.fromRel(service.getRel(uri)!)
-                    if (result && (result.category === 'tag/function' || result.category === 'advancement')) {
-                        const { category, ext, id } = result
-                        if (IdentityNode.isExtValid(ext, category)) {
-                            await cacheFileOperations.fileModified(uri, category, id)
-                            service.cacheFile.files[uriString] = stat.mtimeMs
-                        }
+                    service.cacheFile.files[uriString] = stat.mtimeMs
+                    if (!service.isOpen(uri)) {
+                        await service.onModifiedFile(uri)
                     }
                 }
                 break
@@ -278,15 +258,9 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                     if (service.cacheFile.files.hasOwnProperty(fileUriString)) {
                         if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
                             const fileUri = service.parseUri(fileUriString)
-                            const result = IdentityNode.fromRel(service.getRel(fileUri)!)
                             // connection.console.info(`result = ${JSON.stringify(result)}`)
-                            if (result) {
-                                const { category, id, ext } = result
-                                if (IdentityNode.isExtValid(ext, category)) {
-                                    await cacheFileOperations.fileDeleted(fileUri, category, id)
-                                    delete service.cacheFile.files[fileUriString]
-                                }
-                            }
+                            service.onDeletedFile(fileUri)
+                            delete service.cacheFile.files[fileUriString]
                         }
                     }
                 }
@@ -528,52 +502,6 @@ async function saveCacheFile() {
 
 setInterval(saveCacheFile, 30_000)
 
-const cacheFileOperations = {
-    addCacheUnit: (id: string, type: FileType) => {
-        const category = getSafeCategory(service.cacheFile.cache, type)
-        category[id] = category[id] || { def: [], ref: [] }
-        service.cacheFile.cache[type] = category
-    },
-    removeCachePositionsWith: (uri: Uri) => {
-        removeCachePosition(service.cacheFile.cache, uri)
-    },
-    combineCacheOfNodes: async (uri: Uri) => {
-        const getText = async () => readFile(uri.fsPath)
-        const textDoc = await getTextDocument({ uri, version: null, getText })
-        const doc = await service.parseDocument(textDoc)
-        if (doc && textDoc) {
-            const cacheOfNodes: ClientCache = {}
-            let i = 0
-            for (const node of doc.nodes) {
-                combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
-                i++
-            }
-            combineCache(service.cacheFile.cache, cacheOfNodes)
-        }
-    },
-    fileAdded: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        const config = await service.getConfig(uri)
-        if (!isRelIncluded(service.getRel(uri), config)) {
-            return
-        }
-        cacheFileOperations.addCacheUnit(id.toString(), type)
-        cacheFileOperations.removeCachePositionsWith(uri)
-        await cacheFileOperations.combineCacheOfNodes(uri)
-    },
-    fileModified: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        const config = await service.getConfig(uri)
-        if (!isRelIncluded(service.getRel(uri), config)) {
-            return
-        }
-        cacheFileOperations.removeCachePositionsWith(uri)
-        await cacheFileOperations.combineCacheOfNodes(uri)
-    },
-    fileDeleted: async (uri: Uri, type: FileType, id: IdentityNode) => {
-        removeCacheUnit(service.cacheFile.cache, type, id.toString())
-        cacheFileOperations.removeCachePositionsWith(uri)
-    }
-}
-
 async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
     // Check the files saved in the cache file.
     for (const uriString in cacheFile.files) {
@@ -588,50 +516,40 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                 delete cacheFile.files[uriString]
                 continue
             }
-            const result = IdentityNode.fromRel(rel)
-            if (result) {
-                const { id, category: key } = result
-                if (!(await pathAccessible(uri.fsPath))) {
-                    await cacheFileOperations.fileDeleted(uri, key, id)
-                    delete cacheFile.files[uriString]
-                } else {
-                    const stat = await fsp.stat(uri.fsPath)
-                    const lastModified = stat.mtimeMs
-                    const lastUpdated = cacheFile.files[uriString]!
-                    if (lastModified > lastUpdated) {
-                        await cacheFileOperations.fileModified(uri, key, id)
-                        cacheFile.files[uriString] = lastModified
-                    }
+            if (!(await pathAccessible(uri.fsPath))) {
+                service.onDeletedFile(uri)
+                delete cacheFile.files[uriString]
+            } else {
+                const stat = await fsp.stat(uri.fsPath)
+                const lastModified = stat.mtimeMs
+                const lastUpdated = cacheFile.files[uriString]!
+                if (lastModified > lastUpdated) {
+                    await service.onModifiedFile(uri)
+                    cacheFile.files[uriString] = lastModified
                 }
             }
         }
     }
 
-    const addedFiles: [Uri, FileType, IdentityNode][] = []
+    const addedFiles: Uri[] = []
     for (const root of roots) {
         const dataPath = path.join(root.fsPath, 'data')
         await walkFile(
             root.fsPath,
             dataPath,
-            (abs, rel, stat) => {
-                const result = IdentityNode.fromRel(rel)
+            async (abs, _rel, stat) => {
                 const uri = service.parseUri(Uri.file(abs).toString())
                 const uriString = uri.toString()
-                if (result && IdentityNode.isExtValid(result.ext, result.category)) {
-                    const { id, category: key } = result
-                    if (cacheFile.files[uriString] === undefined) {
-                        cacheFileOperations.fileAdded(uri, key, id)
-                        cacheFile.files[uriString] = stat.mtimeMs
-                        addedFiles.push([uri, key, id])
-                    }
+                if (cacheFile.files[uriString] === undefined) {
+                    await service.onAddedFile(uri)
+                    cacheFile.files[uriString] = stat.mtimeMs
+                    addedFiles.push(uri)
                 }
             }
         )
     }
 
-    await Promise.all(addedFiles.map(
-        ([uri, key, id]) => cacheFileOperations.fileModified(uri, key, id)
-    ))
+    await Promise.all(addedFiles.map(service.onModifiedFile))
 
     trimCache(cacheFile.cache)
 }

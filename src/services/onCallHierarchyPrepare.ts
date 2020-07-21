@@ -1,11 +1,11 @@
 import { Proposed, SymbolKind } from 'vscode-languageserver'
 import { getCacheFromOffset } from '../types/ClientCache'
 import { McfunctionDocument } from '../types/DatapackDocument'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings, DocNode } from '../types/handlers'
+import { PathAccessibleFunction, Uri, UrisOfIds, UrisOfStrings, DocNode } from '../types/handlers'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { getUriFromId } from './common'
 
-export async function onCallHierarchyPrepare({ info, offset, node, pathExists, urisOfIds, roots, uris }: { info: McfunctionDocument, offset: number, node: DocNode, pathExists: PathExistsFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
+export async function onCallHierarchyPrepare({ info, offset, node, pathExists, urisOfIds, roots, uris }: { info: McfunctionDocument, offset: number, node: DocNode, pathExists: PathAccessibleFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     /* istanbul ignore next */

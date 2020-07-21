@@ -15,15 +15,15 @@ export type DocNode = LineNode | JsonNode
 
 export type Uri = URI
 export type DocsOfUris = Map<Uri, Promise<DatapackDocument | undefined>>
-export type UrisOfIds = Map<string, Uri | null>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
  */
+export type UrisOfIds = Map<string, Uri | null>
 export type FetchConfigFunction = (uri: Uri) => Promise<Config>
 export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
-export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
+export type GetUriFromIdFunction = (pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
-export type PathExistsFunction = (path: string) => Promise<boolean>
-export type PublishDiagnostics = (params: PublishDiagnosticsParams) => void
+export type PathAccessibleFunction = (path: string) => Promise<boolean>
+export type PublishDiagnosticsFunction = (params: PublishDiagnosticsParams) => void
 export type ReadFileFunction = (path: string) => Promise<string>
 export type UrisOfStrings = Map<string, Uri>

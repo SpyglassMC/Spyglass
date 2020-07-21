@@ -1,7 +1,7 @@
 import { Proposed } from 'vscode-languageserver'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheCategory, CacheFile, FileType, getSafeCategory } from '../types/ClientCache'
-import { PathExistsFunction, Uri, UrisOfIds, UrisOfStrings } from '../types/handlers'
+import { PathAccessibleFunction, Uri, UrisOfIds, UrisOfStrings } from '../types/handlers'
 import { getId, getUri, getUriFromId } from './common'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
@@ -19,7 +19,7 @@ import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
  * 
  * See also #298.
  */
-export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathExistsFunction, urisOfIds: UrisOfIds }): Promise<Proposed.CallHierarchyOutgoingCall[] | null> {
+export async function onCallHierarchyOutgoingCalls({ cacheFile, kind, id, uris, roots, pathExists, urisOfIds }: { cacheFile: CacheFile, kind: IdentityKind, id: string, uris: UrisOfStrings, roots: Uri[], pathExists: PathAccessibleFunction, urisOfIds: UrisOfIds }): Promise<Proposed.CallHierarchyOutgoingCall[] | null> {
     const ans: Proposed.CallHierarchyOutgoingCall[] = []
 
     switch (kind) {
