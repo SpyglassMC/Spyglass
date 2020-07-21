@@ -1,29 +1,31 @@
 import { SignatureInformation } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
 import { LineParser } from '../parsers/LineParser'
-import { LineNode, Uri, McfunctionDocument, CacheFile, CommandTree, constructContext, getCacheForUri } from '../types'
-import { getId, getRootIndex } from './common'
+import { CommandTree, Config, constructContext, getCacheForUri, LineNode, Uri } from '../types'
 import { StringReader } from '../utils/StringReader'
+import { getRootIndex } from './common'
+import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onSignatureHelp({ offset, node, info, cacheFile, commandTree, vanillaData, uri, roots }: { uri: Uri, offset: number, node: LineNode, info: McfunctionDocument, cacheFile: CacheFile, roots: Uri[], commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, commandTree, vanillaData, uri, service, config, textDoc }: { uri: Uri, offset: number, node: LineNode, textDoc: TextDocument, config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData }) {
     try {
         const signatures: SignatureInformation[] = []
 
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
-            info.document.getText(),
+            textDoc.getText(),
             node[NodeRange].start,
             node[NodeRange].end
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cache: getCacheForUri(cacheFile.cache, uri),
-            config: info.config,
+            cache: getCacheForUri(service.cacheFile.cache, uri),
+            config: config,
             cursor: offset,
-            document: info.document,
-            id: getId(uri, roots),
-            rootIndex: getRootIndex(uri, roots),
-            roots
+            document: textDoc,
+            id: service.getId(uri),
+            rootIndex: getRootIndex(uri, service.roots),
+            roots: service.roots
         }, commandTree, vanillaData))
 
         const fixLabel = fix.join(' ')

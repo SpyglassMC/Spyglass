@@ -1,12 +1,12 @@
 import { ColorInformation } from 'vscode-languageserver'
-import { getNodesFromInfo } from './common'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { getSafeCategory } from '../types/ClientCache'
 import { DatapackDocument } from '../types/DatapackDocument'
 
-export function onDocumentColor({ info }: { info: DatapackDocument }) {
+export function onDocumentColor({ doc, textDoc }: { doc: DatapackDocument, textDoc: TextDocument }) {
     const ans: ColorInformation[] = []
 
-    for (const node of getNodesFromInfo(info)) {
+    for (const node of doc.nodes) {
         const colorCategory = getSafeCategory(node.cache, 'color')
         for (const key in colorCategory) {
             /* istanbul ignore next */
@@ -22,8 +22,8 @@ export function onDocumentColor({ info }: { info: DatapackDocument }) {
                 for (const { start, end } of unit.ref) {
                     ans.push({
                         range: {
-                            start: info.document.positionAt(start),
-                            end: info.document.positionAt(end)
+                            start: textDoc.positionAt(start),
+                            end: textDoc.positionAt(end)
                         },
                         color
                     })

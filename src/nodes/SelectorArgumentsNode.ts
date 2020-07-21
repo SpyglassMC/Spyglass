@@ -1,10 +1,10 @@
-import { getCodeAction, toFormattedString } from '../utils'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { McfunctionDocument } from '../types/DatapackDocument'
 import { GameMode } from '../types/GameMode'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction, toFormattedString } from '../utils'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { IdentityNode } from './IdentityNode'
 import { Chars, ConfigKeys, IsMapSorted, MapNode, UnsortedKeys } from './MapNode'
@@ -78,14 +78,14 @@ export class SelectorArgumentsNode extends MapNode<StringNode, any> {
         return ans
     }
 
-    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         const relevantDiagnostics = diagnostics[ErrorCode.SelectorSortKeys]
-        if (relevantDiagnostics && info.config.lint.selectorSortKeys) {
+        if (relevantDiagnostics && ctx.config.lint.selectorSortKeys) {
             ans.push(getCodeAction(
                 'selector-sort-keys', relevantDiagnostics,
-                info.document, this[NodeRange],
-                this[GetFormattedString](info.config.lint, this.getSortedKeys(info.config.lint.selectorSortKeys[1]))
+                ctx.document, this[NodeRange],
+                this[GetFormattedString](ctx.config.lint, this.getSortedKeys(ctx.config.lint.selectorSortKeys[1]))
             ))
         }
         return ans

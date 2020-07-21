@@ -1,13 +1,14 @@
 import { DocumentLink } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { getNodesFromInfo, getUriFromId } from './common'
-import { isFileType, DatapackDocument, Uri, UrisOfStrings, UrisOfIds, PathAccessibleFunction, CacheUnit } from '../types'
+import { CacheUnit, DatapackDocument, isFileType } from '../types'
+import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists }: { info: DatapackDocument, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, pathExists: PathAccessibleFunction }) {
+export async function onDocumentLinks({ doc, textDoc, service }: { doc: DatapackDocument, textDoc: TextDocument, service: DatapackLanguageService }) {
     try {
         const ans: DocumentLink[] = []
 
-        for (const { cache } of getNodesFromInfo(info)) {
+        for (const { cache } of doc.nodes) {
             for (const type in cache) {
                 if (isFileType(type)) {
                     const category = cache[type]
@@ -19,10 +20,10 @@ export async function onDocumentLinks({ info, roots, uris, urisOfIds, pathExists
                             for (const pos of ref) {
                                 const link = {
                                     range: {
-                                        start: info.document.positionAt(pos.start),
-                                        end: info.document.positionAt(pos.end)
+                                        start: textDoc.positionAt(pos.start),
+                                        end: textDoc.positionAt(pos.end)
                                     },
-                                    target: await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(id), type)
+                                    target: await service.getUriFromId(IdentityNode.fromString(id), type)
                                 }
                                 /* istanbul ignore next */
                                 if (link.target) {

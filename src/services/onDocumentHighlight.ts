@@ -1,17 +1,18 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { DocNode } from '../types'
 import { getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
 import { McfunctionDocument } from '../types/DatapackDocument'
 import { onSelectionRanges } from './onSelectionRanges'
 
-export function onDocumentHighlight({ offset, info, node, position }: { position: Position, offset: number, info: McfunctionDocument, node: DocNode }): DocumentHighlight[] {
+export function onDocumentHighlight({ offset, doc, node, position, textDoc }: { position: Position, offset: number, doc: McfunctionDocument, node: DocNode, textDoc: TextDocument }): DocumentHighlight[] {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     if (result) {
         // Highlight all the references/definitions of the selected stuff.
         const ans: DocumentHighlight[] = []
 
-        for (const node of info.nodes) {
+        for (const node of doc.nodes) {
             const unit = getSafeCategory(node.cache, result.type)[result.id]
             /* istanbul ignore else */
             if (unit) {
@@ -20,8 +21,8 @@ export function onDocumentHighlight({ offset, info, node, position }: { position
                 if (ref.length > 0) {
                     ans.push(...ref.map(v => ({
                         range: {
-                            start: info.document.positionAt(v.start),
-                            end: info.document.positionAt(v.end)
+                            start: textDoc.positionAt(v.start),
+                            end: textDoc.positionAt(v.end)
                         }
                     })))
                 }
@@ -32,5 +33,5 @@ export function onDocumentHighlight({ offset, info, node, position }: { position
     }
 
     // Highlight the selected token.
-    return onSelectionRanges({ info, positions: [position] })
+    return onSelectionRanges({ doc, textDoc, positions: [position] })
 }

@@ -1,22 +1,22 @@
 import { Proposed, SymbolKind } from 'vscode-languageserver'
-import { getCacheFromOffset } from '../types/ClientCache'
-import { McfunctionDocument } from '../types/DatapackDocument'
-import { PathAccessibleFunction, Uri, UrisOfIds, UrisOfStrings, DocNode } from '../types/handlers'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { getUriFromId } from './common'
+import { getCacheFromOffset } from '../types/ClientCache'
+import { DocNode } from '../types/handlers'
+import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onCallHierarchyPrepare({ info, offset, node, pathExists, urisOfIds, roots, uris }: { info: McfunctionDocument, offset: number, node: DocNode, pathExists: PathAccessibleFunction, urisOfIds: UrisOfIds, roots: Uri[], uris: UrisOfStrings }) {
+export async function onCallHierarchyPrepare({ offset, node, service, textDoc }: { service: DatapackLanguageService, textDoc: TextDocument, offset: number, node: DocNode }) {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     /* istanbul ignore next */
     if (result && (result.type === 'advancement' || result.type === 'function' || result.type === 'tag/function')) {
-        const uri = await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(result.id), result.type)
+        const uri = await service.getUriFromId(IdentityNode.fromString(result.id), result.type)
         /* istanbul ignore next */
         if (!uri) {
             return null
         }
-        const startPos = info.document.positionAt(result.start)
-        const endPos = info.document.positionAt(result.end)
+        const startPos = textDoc.positionAt(result.start)
+        const endPos = textDoc.positionAt(result.end)
         return [
             getCallHierarchyItem(
                 (result.type === 'tag/function' ? IdentityNode.TagSymbol : '') + result.id,

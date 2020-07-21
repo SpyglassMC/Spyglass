@@ -1,4 +1,4 @@
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'

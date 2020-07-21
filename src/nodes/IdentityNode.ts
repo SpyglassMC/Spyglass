@@ -1,8 +1,8 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
+import { ParsingContext } from '../types'
 import { CacheType, FileType, isRegularFileType, isTagRegularFileType, isWorldgenRegistryFileType, RegistryFileType, RegularFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
-import { McfunctionDocument } from '../types/DatapackDocument'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { PathPatterns } from '../types/PathPatterns'
@@ -85,8 +85,8 @@ export class IdentityNode extends ArgumentNode {
         return `${this.getTagSymbolPart()}${id}`
     }
 
-    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
 
         const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]
         const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
@@ -95,14 +95,14 @@ export class IdentityNode extends ArgumentNode {
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
-                info.document, this[NodeRange],
+                ctx.document, this[NodeRange],
                 this.toTagString()
             ))
         }
         if (omitDiagnostics && omitDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
-                info.document, this[NodeRange],
+                ctx.document, this[NodeRange],
                 this.toShortestTagString()
             ))
         }
@@ -111,7 +111,7 @@ export class IdentityNode extends ArgumentNode {
             if (this.toTagString() === 'minecraft:zombie_pigman') {
                 ans.push(getCodeAction(
                     'id-zombified-piglin-datafix', unknownDiagnostics,
-                    info.document, this[NodeRange],
+                    ctx.document, this[NodeRange],
                     new IdentityNode(this.namespace, ['zombified_piglin'])[GetFormattedString]()
                 ))
             }

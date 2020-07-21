@@ -1,9 +1,11 @@
-import { CodeAction, Diagnostic, Hover, TextDocument } from 'vscode-languageserver'
+import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { LintConfig } from '../types/Config'
-import { Formattable, GetFormattedString } from '../types/Formattable'
 import { McfunctionDocument } from '../types/DatapackDocument'
+import { Formattable, GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
+import { ParsingContext } from '../types'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('NodeRange')
@@ -37,7 +39,7 @@ export abstract class ArgumentNode implements Formattable {
         }
     }
 
-    protected [FilterDiagnostics](info: McfunctionDocument, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
+    protected [FilterDiagnostics](ctx: ParsingContext, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
         const ans: DiagnosticMap = {}
         for (const codeString in diagnosticMap) {
             /* istanbul ignore else */
@@ -46,8 +48,8 @@ export abstract class ArgumentNode implements Formattable {
                 const diagnostics = diagnosticMap[code]!
                 for (const diag of diagnostics) {
                     const diagRange = {
-                        start: info.document.offsetAt(diag.range.start),
-                        end: info.document.offsetAt(diag.range.end)
+                        start: ctx.document.offsetAt(diag.range.start),
+                        end: ctx.document.offsetAt(diag.range.end)
                     }
                     if (areOverlapped(diagRange, nodeRange)) {
                         ans[code] = ans[code] ?? []
@@ -60,7 +62,7 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
         const ans: CodeAction[] = []
         this[Triage](
             key => {
@@ -69,7 +71,7 @@ export abstract class ArgumentNode implements Formattable {
                 for (const item of arr) {
                     if (item instanceof ArgumentNode && areOverlapped(range, item[NodeRange])) {
                         ans.push(...item[GetCodeActions](
-                            uri, info, range, this[FilterDiagnostics](info, diagnostics, item[NodeRange])
+                            uri, ctx, range, this[FilterDiagnostics](ctx, diagnostics, item[NodeRange])
                         ))
                     }
                 }
@@ -79,14 +81,14 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetHoverInformation](content: TextDocument, offset: number) {
+    [GetHoverInformation](textDoc: TextDocument, offset: number) {
         let ans: Hover | null = null
         if (this[NodeDescription]) {
             ans = {
                 contents: { kind: 'markdown', value: this[NodeDescription] },
                 range: {
-                    start: content.positionAt(this[NodeRange].start),
-                    end: content.positionAt(this[NodeRange].end)
+                    start: textDoc.positionAt(this[NodeRange].start),
+                    end: textDoc.positionAt(this[NodeRange].end)
                 }
             }
         } else {
@@ -96,7 +98,7 @@ export abstract class ArgumentNode implements Formattable {
                     const arr = value instanceof Array ? value : [value]
                     for (const item of arr) {
                         if (item instanceof ArgumentNode && isInRange(offset, item[NodeRange])) {
-                            ans = item[GetHoverInformation](content, offset)
+                            ans = item[GetHoverInformation](textDoc, offset)
                         }
                     }
                 }

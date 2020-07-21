@@ -2,6 +2,7 @@ import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
 import { McfunctionDocument } from '../types/DatapackDocument'
 import { StringReader } from '../utils/StringReader'
 import { getStringLines } from './common'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 
 function getCommentSymbolAmount(string: string) {
     const reader = new StringReader(string)
@@ -17,11 +18,11 @@ function getCommentSymbolAmount(string: string) {
     return ans
 }
 
-export function onFoldingRanges({ info }: { info: McfunctionDocument }) {
+export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
     try {
         const ans: FoldingRange[] = []
 
-        const strings = getStringLines(info.document.getText())
+        const strings = getStringLines(textDoc.getText())
         const regionStartLines: number[] = []
         const commentStartLines: { [level: number]: number | undefined } = {}
         let i = 0

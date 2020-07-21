@@ -1,23 +1,18 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getCommandTree } from '../data/CommandTree'
-import { getJsonSchemas } from '../data/JsonSchema'
-import { getVanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { Config } from '../types'
-import { CacheFile, canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../types/ClientCache'
-import { DocNode, FetchConfigFunction, DocsOfUris, PathAccessibleFunction, ReadFileFunction, Uri, UrisOfIds, UrisOfStrings } from '../types/handlers'
-import { VersionInformation } from '../types/VersionInformation'
-import { getOrCreateInfo, getUri, getUriFromId } from './common'
+import { canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../types/ClientCache'
+import { DocNode, Uri } from '../types/handlers'
+import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node, offset, newName, cacheFile, infos, versionInformation, globalStoragePath, fetchConfig, readFile }: { node: DocNode, offset: number, cacheFile: CacheFile, infos: DocsOfUris, newName: string, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, versionInformation?: VersionInformation, globalStoragePath: string|undefined, pathExists: PathAccessibleFunction, fetchConfig: FetchConfigFunction, readFile: ReadFileFunction }): Promise<WorkspaceEdit | null> {
-    // console.log(`BR: ${JSON.stringify(cacheFile)}`)
+export async function onRenameRequest({ node, offset, newName, service }: { node: DocNode, offset: number, newName: string, service: DatapackLanguageService }): Promise<WorkspaceEdit | null> {
+    // console.log(`BR: ${JSON.stringify(service.cacheFile)}`)
 
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     if (result && canBeRenamed(result.type)) {
         const documentChanges: (TextDocumentEdit | RenameFile)[] = []
-        const category = getSafeCategory(cacheFile.cache, result.type)
+        const category = getSafeCategory(service.cacheFile.cache, result.type)
         const unit = category[result.id]
         /* istanbul ignore else */
         if (unit) {
@@ -29,17 +24,12 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                     /* istanbul ignore else */
                     if (key === 'def' || key === 'ref') {
                         for (const pos of unit[key]) {
-                            const affectedUri = getUri(pos.uri!, uris)
-                            const getAffectedConfig = async () => await fetchConfig(affectedUri)
-                            const getAffectedCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
-                            const getAffectedVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource, versionInformation, globalStoragePath)
-                            const getAffectedJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
-                            const getText = async () => readFile(affectedUri.fsPath, 'utf8')
-                            const affectedInfo = await getOrCreateInfo(affectedUri, roots, infos, cacheFile, getAffectedConfig, getText, getAffectedCommandTree, getAffectedVanillaData, getAffectedJsonSchemas)
+                            const affectedUri = service.parseUri(pos.uri!)
+                            const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
                             /* istanbul ignore else */
-                            if (affectedInfo) {
+                            if (affectedTextDoc) {
                                 documentChanges.push({
-                                    textDocument: { uri: pos.uri!, version: affectedInfo.document.version },
+                                    textDocument: { uri: pos.uri!, version: affectedTextDoc.version },
                                     edits: [{
                                         newText: newName,
                                         range: {
@@ -56,7 +46,7 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                 // Rename file if necessary.
                 if (isFileType(result.type)) {
                     const oldID = IdentityNode.fromString(result.id)
-                    const oldUri = await getUriFromId(pathExists, roots, uris, urisOfIds, oldID, result.type)
+                    const oldUri = await service.getUriFromId(oldID, result.type)
                     /* istanbul ignore next */
                     if (!oldUri) {
                         return null
@@ -64,9 +54,9 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
 
                     let preferredRoot: Uri | undefined
                     const oldRel = oldID.toRel(result.type)
-                    for (const root of roots) {
+                    for (const root of service.roots) {
                         const abs = path.join(root.fsPath, oldRel)
-                        if (await pathExists(abs)) {
+                        if (await service.pathAccessible(abs)) {
                             preferredRoot = root
                         }
                     }
@@ -75,20 +65,20 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                         return null
                     }
 
-                    const newUri = (await getUriFromId(pathExists, roots, uris, urisOfIds, IdentityNode.fromString(newName), result.type, preferredRoot))!
+                    const newUri = await service.getUriFromId(IdentityNode.fromString(newName), result.type, preferredRoot)
                     documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
 
                     // Update cache.
-                    const oldTimestamp = cacheFile.files[oldUri.toString()]
+                    const oldTimestamp = service.cacheFile.files[oldUri.toString()]
                     /* istanbul ignore else */
                     if (oldTimestamp !== undefined) {
-                        cacheFile.files[newUri.toString()] = oldTimestamp
-                        delete cacheFile.files[oldUri.toString()]
+                        service.cacheFile.files[newUri.toString()] = oldTimestamp
+                        delete service.cacheFile.files[oldUri.toString()]
                     }
 
                     /* istanbul ignore else */
                     if (result.type === 'function') {
-                        removeCachePosition(cacheFile.cache, oldUri)
+                        removeCachePosition(service.cacheFile.cache, oldUri)
                     }
                 }
 
@@ -99,7 +89,7 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
                     targetUnit.ref.push(...unit.ref)
                 } else {
                     category[newID] = unit
-                    cacheFile.cache[result.type] = category
+                    service.cacheFile.cache[result.type] = category
                 }
                 delete category[result.id]
             } catch (ignored) {
@@ -109,7 +99,7 @@ export async function onRenameRequest({ roots, uris, urisOfIds, pathExists, node
         }
 
         // console.log(`DC: ${JSON.stringify(documentChanges)}`)
-        // console.log(`AR: ${JSON.stringify(cacheFile)}`)
+        // console.log(`AR: ${JSON.stringify(service.cacheFile)}`)
         return { documentChanges }
     }
 

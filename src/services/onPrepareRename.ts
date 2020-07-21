@@ -1,14 +1,15 @@
-import { DocNode, DatapackDocument } from '../types'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { DocNode } from '../types'
 import { canBeRenamed, getCacheFromOffset } from '../types/ClientCache'
 
-export function onPrepareRename({ info, node, offset }: { info: DatapackDocument, node: DocNode, offset: number }) {
+export function onPrepareRename({ textDoc, node, offset }: { textDoc: TextDocument, node: DocNode, offset: number }) {
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
 
     if (result && canBeRenamed(result.type)) {
         return {
-            start: info.document.positionAt(result.start),
-            end: info.document.positionAt(result.end)
+            start: textDoc.positionAt(result.start),
+            end: textDoc.positionAt(result.end)
         }
     }
 

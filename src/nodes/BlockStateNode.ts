@@ -1,9 +1,9 @@
-import { getCodeAction } from '../utils'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { Chars, ConfigKeys, MapNode, UnsortedKeys } from './MapNode'
 
@@ -26,17 +26,17 @@ export class BlockStateNode extends MapNode<string, string> {
 
     protected readonly [Chars] = BlockStateNodeChars;
 
-    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
-        if (relevantDiagnostics && info.config.lint.blockStateSortKeys) {
+        if (relevantDiagnostics && ctx.config.lint.blockStateSortKeys) {
             /* istanbul ignore next */
-            const keys = info.config.lint.blockStateSortKeys[1] === 'alphabetically' ?
+            const keys = ctx.config.lint.blockStateSortKeys[1] === 'alphabetically' ?
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'block-state-sort-keys', relevantDiagnostics,
-                info.document, this[NodeRange],
-                this[GetFormattedString](info.config.lint, keys)
+                ctx.document, this[NodeRange],
+                this[GetFormattedString](ctx.config.lint, keys)
             ))
         }
         return ans

@@ -1,23 +1,20 @@
-import { CodeAction, Diagnostic, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
-import { getJsonSchemas } from '../../data/JsonSchema'
+import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
-import { areOverlapped, CacheFile, Config, FetchConfigFunction, McfunctionDocument, GetCommandTreeFunction, GetVanillaDataFunction, DocsOfUris, isMcfunctionDocument, ReadFileFunction, Uri } from '../../types'
-import { getDiagnosticMap, getOrCreateInfo } from '../common'
+import { areOverlapped, Config, constructContext, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
+import { getDiagnosticMap } from '../common'
+import { DatapackLanguageService } from '../DatapackLanguageService'
 
-export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, readFile, applyEdit, fetchConfig, getCommandTree, getVanillaData }: { uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, readFile: ReadFileFunction, applyEdit: (edit: WorkspaceEdit) => void, fetchConfig: FetchConfigFunction, getCommandTree: GetCommandTreeFunction, getVanillaData: GetVanillaDataFunction }) {
+export async function fixFileCommandHandler({ uri, service }: { uri: Uri, service: DatapackLanguageService }) {
     const start = new Date().getTime()
-    const getTheConfig = async () => await fetchConfig(uri)
-    const getTheCommandTree = async (config: Config) => await getCommandTree(config.env.cmdVersion)
-    const getTheVanillaData = async (config: Config) => await getVanillaData(config.env.dataVersion, config.env.dataSource)
-    const getTheJsonSchemas = async (config: Config) => await getJsonSchemas(config.env.jsonVersion)
-    const getText = async () => readFile(uri.fsPath, 'utf8')
-    const info = await getOrCreateInfo(uri, roots, infos, cacheFile, getTheConfig, getText, getTheCommandTree, getTheVanillaData, getTheJsonSchemas)
+    const { doc, textDoc } = await service.getDocuments(uri)
     /* istanbul ignore else */
-    if (info) {
-        if (isMcfunctionDocument(info)) {
-            const edit = getMergedPreferredEdit(info, uri)
+    if (doc && textDoc) {
+        if (isMcfunctionDocument(doc)) {
+            const config = await service.getConfig(uri)
+            const edit = getMergedPreferredEdit(doc, textDoc, config, uri)
             if (edit) {
-                applyEdit(edit)
+                service.applyEdit?.(edit)
             }
             // TODO: Finish command part when we have any quick fixes using it}
         } else {
@@ -27,19 +24,19 @@ export async function fixFileCommandHandler({ uri, roots, infos, cacheFile, read
     }
 }
 
-function getMergedPreferredEdit(info: McfunctionDocument, uri: Uri) {
-    const preferredActions = getActions(info, uri)
+function getMergedPreferredEdit(doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+    const preferredActions = getActions(doc, textDoc, config, uri)
         .filter(v => v.isPreferred)
 
-    return mergeActionEdit(info, preferredActions)
+    return mergeActionEdit(doc, textDoc, preferredActions)
 }
 
-function getActions(info: McfunctionDocument, uri: Uri) {
+function getActions(doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
     const ans: CodeAction[] = []
 
-    for (const node of info.nodes) {
+    for (const node of doc.nodes) {
         const diagnostics: Diagnostic[] = []
-        node.errors?.forEach(err => diagnostics.push(err.toDiagnostic(info.document)))
+        node.errors?.forEach(err => diagnostics.push(err.toDiagnostic(textDoc)))
         const diagnosticsMap = getDiagnosticMap(diagnostics)
 
         const selectedRange = { start: 0, end: Infinity }
@@ -47,7 +44,11 @@ function getActions(info: McfunctionDocument, uri: Uri) {
         for (const { data } of node.args) {
             /* istanbul ignore else */
             if (data instanceof ArgumentNode) {
-                ans.push(...data[GetCodeActions](uri.toString(), info, selectedRange, diagnosticsMap))
+                const ctx = constructContext({
+                    document: textDoc,
+                    config
+                })
+                ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
             }
         }
     }
@@ -55,7 +56,7 @@ function getActions(info: McfunctionDocument, uri: Uri) {
     return ans
 }
 
-function mergeActionEdit(info: McfunctionDocument, actions: CodeAction[]) {
+function mergeActionEdit(doc: McfunctionDocument, textDoc: TextDocument, actions: CodeAction[]) {
     let ans: CodeAction | undefined
 
     if (actions.length > 0) {
@@ -77,11 +78,11 @@ function mergeActionEdit(info: McfunctionDocument, actions: CodeAction[]) {
                         ans.edit.documentChanges.push(existingChange)
                     }
                     for (const upEdit of upChange.edits) {
-                        const upStart = info.document.offsetAt(upEdit.range.start)
-                        const upEnd = info.document.offsetAt(upEdit.range.end)
+                        const upStart = textDoc.offsetAt(upEdit.range.start)
+                        const upEnd = textDoc.offsetAt(upEdit.range.end)
                         const overlappedExistingEdit = existingChange.edits.find(v => {
-                            const existingStart = info.document.offsetAt(v.range.start)
-                            const existingEnd = info.document.offsetAt(v.range.end)
+                            const existingStart = textDoc.offsetAt(v.range.start)
+                            const existingEnd = textDoc.offsetAt(v.range.end)
                             return areOverlapped(
                                 { start: upStart, end: upEnd },
                                 { start: existingStart, end: existingEnd }

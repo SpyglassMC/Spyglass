@@ -1,14 +1,14 @@
 import { ColorPresentation, Range } from 'vscode-languageserver'
-import { DatapackDocument } from '../types/DatapackDocument'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 
-export function onColorPresentation({ info, start, end, r, g, b, a }: { info: DatapackDocument, start: number, end: number, r: number, g: number, b: number, a: number }) {
+export function onColorPresentation({ textDoc, start, end, r, g, b }: { textDoc: TextDocument, start: number, end: number, r: number, g: number, b: number, a: number }) {
     try {
         const ans: ColorPresentation[] = []
         const range = Range.create(
-            info.document.positionAt(start),
-            info.document.positionAt(end)
+            textDoc.positionAt(start),
+            textDoc.positionAt(end)
         )
-        const string = info.document.getText(range)
+        const string = textDoc.getText(range)
         if (string.startsWith('dust')) {
             ans.push({ label: `dust ${r} ${g} ${b}` })
         } else if (string.startsWith('minecraft:dust')) {

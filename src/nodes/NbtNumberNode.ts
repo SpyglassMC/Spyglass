@@ -1,9 +1,9 @@
-import { getCodeAction } from '../utils'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
 import { DiagnosticMap, GetCodeActions, NodeRange } from './ArgumentNode'
 import { NbtCompoundNode } from './NbtCompoundNode'
 import { SuperNode } from './NbtNode'
@@ -23,16 +23,16 @@ export abstract class NbtNumberNode<T = number> extends NbtPrimitiveNode<T> {
         return `${this}${suffix}`
     }
 
-    [GetCodeActions](uri: string, info: McfunctionDocument, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         const pushActions = (code: ErrorCode, actionId: string, getNode: () => NbtNumberNode<any>) => {
             const relevantDiagnostics = diagnostics[code]
             if (relevantDiagnostics) {
                 const newNode = getNode()
                 ans.push(getCodeAction(
                     `nbt-type-to-${actionId}`, relevantDiagnostics,
-                    info.document, this[NodeRange],
-                    newNode[GetFormattedString](info.config.lint)
+                    ctx.document, this[NodeRange],
+                    newNode[GetFormattedString](ctx.config.lint)
                 ))
             }
         }

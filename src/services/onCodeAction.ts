@@ -1,26 +1,27 @@
 import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
-import { CacheFile, McfunctionDocument, Uri } from '../types'
+import { CacheFile, Config, constructContext, McfunctionDocument, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
 import { getDiagnosticMap } from './common'
 
-export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info: McfunctionDocument, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile }): CodeAction[] | null {
+export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], config: Config, range: Range, cacheFile: CacheFile }): CodeAction[] | null {
     try {
         const ans: CodeAction[] = []
 
         const diagnosticMap = getDiagnosticMap(diagnostics)
 
-        const start = info.document.offsetAt(range.start)
-        const end = info.document.offsetAt(range.end)
+        const start = textDoc.offsetAt(range.start)
+        const end = textDoc.offsetAt(range.end)
         const selectedRange = { start, end }
 
-        const { index: startNodeIndex } = getSelectedNode(info.nodes, start)
-        const { index: endNodeIndex } = getSelectedNode(info.nodes, end)
+        const { index: startNodeIndex } = getSelectedNode(doc.nodes, start)
+        const { index: endNodeIndex } = getSelectedNode(doc.nodes, end)
 
         for (let i = startNodeIndex; i <= endNodeIndex; i++) {
-            const node = info.nodes[i]
+            const node = doc.nodes[i]
             /* istanbul ignore else */
             if (node) {
                 for (const { data } of node.args) {
@@ -28,7 +29,11 @@ export function onCodeAction({ uri, info, diagnostics, range }: { uri: Uri, info
                     if (data instanceof ArgumentNode) {
                         const nodeRange = data[NodeRange]
                         if (areOverlapped(selectedRange, nodeRange)) {
-                            ans.push(...data[GetCodeActions](uri.toString(), info, selectedRange, diagnosticMap))
+                            const ctx = constructContext({
+                                document: textDoc,
+                                config
+                            })
+                            ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))
                         }
                     }
                 }

@@ -1,15 +1,13 @@
 import { ProposedFeatures } from 'vscode-languageserver'
-import { getNodesFromInfo } from './common'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { DatapackDocument } from '../types/DatapackDocument'
 
-export function onSemanticTokens({ info }: { info: DatapackDocument }) {
-    info.builder = info.builder || new ProposedFeatures.SemanticTokensBuilder()
-
-    for (const { tokens } of getNodesFromInfo(info)) {
+export function onSemanticTokens({ doc, textDoc, builder }: { doc: DatapackDocument, builder: ProposedFeatures.SemanticTokensBuilder, textDoc: TextDocument }) {
+    for (const { tokens } of doc.nodes) {
         tokens
             .sort((a, b) => a.range.start - b.range.start)
-            .forEach(t => info.builder!.push(...t.toArray(info.document)))
+            .forEach(t => builder!.push(...t.toArray(textDoc)))
     }
 
-    return info.builder.build()
+    return builder.build()
 }

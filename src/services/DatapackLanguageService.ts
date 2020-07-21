@@ -5,7 +5,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDefOrRef, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
-import { DataSource, getVanillaData, VanillaData } from '../data/VanillaData'
+import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
 import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, DocsOfUris, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, UrisOfIds, UrisOfStrings, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
@@ -155,11 +155,19 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Returns the relative file path of a URI object from the corresponding data pack root folder.
+     * Returns the relative file path of a URI from the corresponding data pack root folder.
      * @param uri A URI object.
      */
     getRel(uri: Uri) {
         return getRel(uri, this.roots)
+    }
+
+    /**
+     * Returns the identity of a URI.
+     * @param uri A URI object.
+     */
+    getId(uri: Uri) {
+        return getId(uri, this.roots)
     }
 
     /**
@@ -171,7 +179,9 @@ export class DatapackLanguageService {
      * if all data pack root folders have been tried and none of them contain, `null` is returned. Otherwise the
      * ID will be resolved as a file path in the `preferredRoot` no matter if that file actually exists.
      */
-    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri) {
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot: Uri): Promise<Uri>
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Promise<Uri | null>
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Promise<Uri | null> {
         return getUriFromId(this.pathAccessible, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot)
     }
 
@@ -301,7 +311,7 @@ export class DatapackLanguageService {
         const vanillaData = await this.getVanillaData(config)
         if (isMcfunctionDocument(doc)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
-            onDidChangeTextDocument({ uri, roots: this.roots, info: doc, version: version!, contentChanges, config, cacheFile: this.cacheFile, commandTree, vanillaData })
+            onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData })
         } else {
             const schemas = await getJsonSchemas(config.env.jsonVersion)
             const schema = schemas.get(doc.nodes[0].schemaType)
@@ -339,7 +349,7 @@ export class DatapackLanguageService {
             }
             const commandTree = await this.getCommandTree(config)
             const vanillaData = await this.getVanillaData(config)
-            return onCompletion({ uri, cacheFile: this.cacheFile, offset, info: doc, roots: this.roots, node, commandTree, vanillaData })
+            return onCompletion({ uri, offset, textDoc, service: this, config, node, commandTree, vanillaData })
         } else {
             if (!this.capabilities.dynamicRegistration.competion && !this.capabilities.completionContext && context?.triggerCharacter && !DatapackLanguageService.GeneralTriggerCharacters.includes(context.triggerCharacter)) {
                 return null
@@ -378,7 +388,7 @@ export class DatapackLanguageService {
         }
         const commandTree = await this.getCommandTree(config)
         const vanillaData = await this.getVanillaData(config)
-        return onSignatureHelp({ uri, cacheFile: this.cacheFile, offset, info: doc, roots: this.roots, node, commandTree, vanillaData })
+        return onSignatureHelp({ uri, service: this, offset, textDoc, config, node, commandTree, vanillaData })
     }
 
     async onFoldingRanges(uri: Uri) {
@@ -388,7 +398,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.foldingRanges && isMcfunctionDocument(doc))) {
             return null
         }
-        return onFoldingRanges({ info: doc })
+        return onFoldingRanges({ textDoc })
     }
 
     async onHover(uri: Uri, position: lsp.Position) {
@@ -404,7 +414,7 @@ export class DatapackLanguageService {
             if (!node) {
                 return null
             }
-            return onHover({ info: doc, offset, node, cacheFile: this.cacheFile })
+            return onHover({ textDoc, offset, node, cacheFile: this.cacheFile })
         } else {
             // TODO: JSON
             return null
@@ -418,7 +428,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.formatting && isMcfunctionDocument(doc))) {
             return null
         }
-        return onDocumentFormatting({ info: doc })
+        return onDocumentFormatting({ config, textDoc, doc })
     }
 
     async onDefinition(uri: Uri, position: lsp.Position) {
@@ -462,16 +472,17 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onDocumentHighlight({ info: doc, node, position, offset })
+        return onDocumentHighlight({ textDoc, doc, node, position, offset })
     }
 
     async onSelectionRanges(uri: Uri, positions: lsp.Position[]) {
         const doc = await this.docs.get(uri)
+        const textDoc = await this.textDocs.get(uri)
         const config = await this.getConfig(uri)
-        if (!(doc && config.features.selectionRanges && isMcfunctionDocument(doc))) {
+        if (!(doc && textDoc && config.features.selectionRanges && isMcfunctionDocument(doc))) {
             return null
         }
-        return onSelectionRanges({ positions, info: doc })
+        return onSelectionRanges({ positions, doc, textDoc })
     }
 
     async onCodeAction(uri: Uri, range: lsp.Range, diagnostics: lsp.Diagnostic[]) {
@@ -482,7 +493,7 @@ export class DatapackLanguageService {
             return null
         }
         if (isMcfunctionDocument(doc)) {
-            return onCodeAction({ uri, info: doc, diagnostics, range, cacheFile: this.cacheFile })
+            return onCodeAction({ uri, doc, textDoc, diagnostics, config, range, cacheFile: this.cacheFile })
         } else {
             // TODO: JSON
             return null
@@ -500,15 +511,15 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onCallHierarchyPrepare({ info: doc, offset, node, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
+        return onCallHierarchyPrepare({ service: this, textDoc, offset, node })
     }
 
     async onCallHierarchyIncomingCalls({ kind, name: id }: lsp.Proposed.CallHierarchyItem) {
-        return onCallHierarchyIncomingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
+        return onCallHierarchyIncomingCalls({ kind, id, service: this })
     }
 
-    async onCallHierarchyOutgoingCalls({ kind, name: id }: lsp.Proposed.CallHierarchyItem) {
-        return onCallHierarchyOutgoingCalls({ cacheFile: this.cacheFile, kind, id, uris: this.uris, roots: this.roots, urisOfIds: this.urisOfIds, pathExists: this.pathAccessible })
+    async onCallHierarchyOutgoingCalls({ name: id }: lsp.Proposed.CallHierarchyItem) {
+        return onCallHierarchyOutgoingCalls({ id, service: this })
     }
 
     async onPrepareRename(uri: Uri, position: lsp.Position) {
@@ -522,7 +533,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onPrepareRename({ info: doc, node, offset })
+        return onPrepareRename({ textDoc, node, offset })
     }
 
     async onRename(uri: Uri, position: lsp.Position, newName: string) {
@@ -536,7 +547,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onRenameRequest({ infos: this.docs, cacheFile: this.cacheFile, node, offset, newName, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds, versionInformation: this.versionInformation, globalStoragePath: this.globalStoragePath, fetchConfig: this.getConfig, pathExists: this.pathAccessible, readFile: this.readFile })
+        return onRenameRequest({ node, offset, newName, service: this })
     }
 
     async onDocumentLinks(uri: Uri) {
@@ -546,7 +557,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.documentLinks)) {
             return null
         }
-        return onDocumentLinks({ info: doc, pathExists: this.pathAccessible, roots: this.roots, uris: this.uris, urisOfIds: this.urisOfIds })
+        return onDocumentLinks({ doc, textDoc, service: this })
     }
 
     async onDocumentColor(uri: Uri) {
@@ -556,7 +567,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.colors)) {
             return null
         }
-        return onDocumentColor({ info: doc })
+        return onDocumentColor({ doc, textDoc })
     }
 
     async onColorPresentation(uri: Uri, range: lsp.Range, { red: r, green: g, blue: b, alpha: a }: lsp.Color) {
@@ -568,7 +579,7 @@ export class DatapackLanguageService {
         }
         const start = textDoc.offsetAt(range.start)
         const end = textDoc.offsetAt(range.end)
-        return onColorPresentation({ info: doc, r, g, b, a, start, end })
+        return onColorPresentation({ textDoc, r, g, b, a, start, end })
     }
 
     async onSemanticTokens(uri: Uri) {
@@ -576,9 +587,10 @@ export class DatapackLanguageService {
         const config = await this.getConfig(uri)
         const textDoc = this.textDocs.get(uri)
         if (!(doc && textDoc && config.features.semanticColoring)) {
-            return null
+            return { data: [] }
         }
-        return onSemanticTokens({ info: doc })
+        const builder = this.getBuilder(uri)
+        return onSemanticTokens({ doc, builder, textDoc })
     }
 
     async onSemanticTokensEdits(uri: Uri, previousResultId: string) {
@@ -586,22 +598,17 @@ export class DatapackLanguageService {
         const config = await this.getConfig(uri)
         const textDoc = this.textDocs.get(uri)
         if (!(doc && textDoc && config.features.semanticColoring)) {
-            return null
+            return { data: [] }
         }
-        return onSemanticTokensEdits({ info: doc, previousResultId })
+        const builder = this.getBuilder(uri)
+        return onSemanticTokensEdits({ doc, builder, previousResultId, textDoc })
     }
 
     async onExecuteFixFileCommand(uri: Uri) {
         if (!this.applyEdit) {
             return null
         }
-        return fixFileCommandHandler({
-            cacheFile: this.cacheFile, infos: this.docs, roots: this.roots, uri,
-            getCommandTree, fetchConfig: this.getConfig,
-            applyEdit: this.applyEdit,
-            getVanillaData: (versionOrLiteral: string, source: DataSource) => getVanillaData(versionOrLiteral, source, this.versionInformation, this.globalStoragePath),
-            readFile: this.readFile
-        })
+        return fixFileCommandHandler({ uri, service: this })
     }
 
     private addCacheUnit(id: string, type: FileType) {
@@ -685,5 +692,15 @@ export class DatapackLanguageService {
         const { category, id } = result
         removeCacheUnit(this.cacheFile.cache, category, id.toString())
         this.removeCachePositionsWith(uri)
+    }
+
+    private createBuilder(uri: Uri) {
+        const builder = new lsp.ProposedFeatures.SemanticTokensBuilder()
+        this.builders.set(uri, builder)
+        return builder
+    }
+
+    private getBuilder(uri: Uri) {
+        return this.builders.get(uri) ?? this.createBuilder(uri)
     }
 }
