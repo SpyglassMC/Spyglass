@@ -5,12 +5,12 @@ import { IdentityNode } from '../../nodes/IdentityNode'
 import { constructConfig } from '../../types/Config'
 import { ParsingError } from '../../types/ParsingError'
 import { onDocumentFormatting } from '../../services/onDocumentFormatting'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onDocumentFormatting() Tests', () => {
     const config = constructConfig({})
     it('Should return correctly', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 20 },
@@ -31,7 +31,7 @@ describe('onDocumentFormatting() Tests', () => {
         }])
     })
     it('Should keep leading spaces', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [
                 mockLineNode({
                     range: { start: 5, end: 25 },
@@ -52,7 +52,7 @@ describe('onDocumentFormatting() Tests', () => {
         }])
     })
     it('Should skip lines which have errors', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 21 },

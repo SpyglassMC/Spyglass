@@ -1,10 +1,11 @@
 import deepEqual from 'deep-equal'
 import assert, { fail } from 'power-assert'
-import { CompletionItem, ProposedFeatures } from 'vscode-languageserver'
+import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
-import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParserSuggestion, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { ClientCache, Config, constructContext, LineArgumentNode, LineNode, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
 import { StringReader } from '../utils/StringReader'
+import { DatapackLanguageService } from '../services/DatapackLanguageService'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }
@@ -53,26 +54,22 @@ export function $<T extends ArgumentNode>(node: T, param1: Range | Object, param
     return node
 }
 
-interface FunctionInfoMockOptions {
-    builder?: ProposedFeatures.SemanticTokensBuilder,
+interface ParsingContextMockOptions {
     config?: Config,
-    nodes?: LineNode[],
     uri?: string,
     version?: number,
     content?: string
 }
-export function mockFunctionInfo(info: FunctionInfoMockOptions = {}): FunctionInfo {
-    return {
-        builder: info.builder,
-        config: info.config ?? VanillaConfig,
-        nodes: info.nodes ?? [],
-        document: TextDocument.create(
-            info.uri ?? 'dhp://document.mcfunction',
+export function mockParsingContext(options: ParsingContextMockOptions = {}): ParsingContext {
+    return constructContext({
+        config: options.config ?? VanillaConfig,
+        textDoc: TextDocument.create(
+            options.uri ?? 'dhp://document.mcfunction',
             'mcfunction',
-            info.version ?? 0,
-            info.content ?? '                                                                                                    '
+            options.version ?? 0,
+            options.content ?? '                                                                                                    '
         )
-    }
+    })
 }
 
 interface LineNodeMockOptions {

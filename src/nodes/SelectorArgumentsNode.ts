@@ -84,7 +84,7 @@ export class SelectorArgumentsNode extends MapNode<StringNode, any> {
         if (relevantDiagnostics && ctx.config.lint.selectorSortKeys) {
             ans.push(getCodeAction(
                 'selector-sort-keys', relevantDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this[GetFormattedString](ctx.config.lint, this.getSortedKeys(ctx.config.lint.selectorSortKeys[1]))
             ))
         }

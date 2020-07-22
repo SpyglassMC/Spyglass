@@ -1,11 +1,10 @@
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
-import { McfunctionDocument } from '../types/DatapackDocument'
 import { Formattable, GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { areOverlapped, EmptyRange, isInRange, TextRange } from '../types/TextRange'
-import { ParsingContext } from '../types'
 
 export const NodeType = Symbol('NodeType')
 export const NodeRange = Symbol('NodeRange')
@@ -48,8 +47,8 @@ export abstract class ArgumentNode implements Formattable {
                 const diagnostics = diagnosticMap[code]!
                 for (const diag of diagnostics) {
                     const diagRange = {
-                        start: ctx.document.offsetAt(diag.range.start),
-                        end: ctx.document.offsetAt(diag.range.end)
+                        start: ctx.textDoc.offsetAt(diag.range.start),
+                        end: ctx.textDoc.offsetAt(diag.range.end)
                     }
                     if (areOverlapped(diagRange, nodeRange)) {
                         ans[code] = ans[code] ?? []

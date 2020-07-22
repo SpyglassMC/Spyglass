@@ -90,7 +90,7 @@ export function parseJsonNode({ document, config, cacheFile, uri, roots, schema,
             namespaceSummary: vanillaData.NamespaceSummary,
             nbtdoc: vanillaData.Nbtdoc,
             registry: vanillaData.Registry,
-            config, document, roots
+            config, textDoc: document, roots
         }),
         schemas: schemas
     }
@@ -145,7 +145,7 @@ export function parseFunctionNode({ document, start, end, nodes, config, cacheFi
             cache: getCacheForUri(cacheFile.cache, uri),
             config,
             cursor,
-            document,
+            textDoc: document,
             id,
             rootIndex,
             roots

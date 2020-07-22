@@ -1,9 +1,10 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
-import { Token, TokenType } from '../../types/Token'
 import { onSelectionRanges } from '../../services/onSelectionRanges'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { Token, TokenType } from '../../types/Token'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onSelectionRanges() Tests', () => {
     it('Should return selection ranges', () => {
@@ -11,7 +12,11 @@ describe('onSelectionRanges() Tests', () => {
             line: 0,
             character: 4
         }]
-        const info = mockFunctionInfo({
+        const ctx = mockParsingContext({
+            content: 'tp ~ ~ ~'
+        })
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 8 },
@@ -21,10 +26,9 @@ describe('onSelectionRanges() Tests', () => {
                     ]
                 })
             ],
-            content: 'tp ~ ~ ~'
-        })
+        }
 
-        const ranges = onSelectionRanges({ info, positions })
+        const ranges = onSelectionRanges({ doc, textDoc: ctx.textDoc, positions })
 
         assert.deepStrictEqual(ranges, [
             {

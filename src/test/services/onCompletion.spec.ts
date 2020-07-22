@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri } from '../../types'
 import { onCompletion } from '../../services/onCompletion'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onCompletion() Tests', () => {
     const roots: Uri[] = []
@@ -13,7 +13,7 @@ describe('onCompletion() Tests', () => {
         const node = mockLineNode({
             range: { start: 0, end: 12 }
         })
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [node],
             content: 'advancement '
         })

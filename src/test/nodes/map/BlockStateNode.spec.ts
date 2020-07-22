@@ -7,7 +7,7 @@ import { GetFormattedString } from '../../../types/Formattable'
 import { FunctionInfo } from '../../../types/DocumentInfo'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { $, mockParsingContext } from '../../utils.spec'
 
 describe('BlockStateNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
@@ -68,7 +68,7 @@ describe('BlockStateNode Tests', () => {
             }
         })
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info: FunctionInfo = mockFunctionInfo({ config })
+        const info: FunctionInfo = mockParsingContext({ config })
         const diags: any = [{ message: 'A diagnostic message' }]
         it('Should return empty actions', () => {
             const range = { start: 3, end: 3 }

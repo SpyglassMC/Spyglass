@@ -18,14 +18,14 @@ export interface ParsingContext {
     commandTree: CommandTree,
     config: Config,
     cursor: number,
-    document: TextDocument,
     id: IdentityNode | undefined,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
     parsers: ParserCollection,
     registry: Registry,
     rootIndex: number | null,
-    roots: Uri[]
+    roots: Uri[],
+    textDoc: TextDocument
 }
 
 /**
@@ -48,7 +48,7 @@ export function constructContext(
         commandTree,
         config: VanillaConfig,
         cursor: -1,
-        document: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
+        textDoc: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         id: undefined,
         namespaceSummary: vanillaData.NamespaceSummary,
         nbtdoc: vanillaData.Nbtdoc,

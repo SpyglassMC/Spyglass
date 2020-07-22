@@ -95,14 +95,14 @@ export class IdentityNode extends ArgumentNode {
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.toTagString()
             ))
         }
         if (omitDiagnostics && omitDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.toShortestTagString()
             ))
         }
@@ -111,7 +111,7 @@ export class IdentityNode extends ArgumentNode {
             if (this.toTagString() === 'minecraft:zombie_pigman') {
                 ans.push(getCodeAction(
                     'id-zombified-piglin-datafix', unknownDiagnostics,
-                    ctx.document, this[NodeRange],
+                    ctx.textDoc, this[NodeRange],
                     new IdentityNode(this.namespace, ['zombified_piglin'])[GetFormattedString]()
                 ))
             }

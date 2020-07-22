@@ -6,7 +6,7 @@ import { IdentityNode } from '../../nodes/IdentityNode'
 import { GetFormattedString } from '../../types/Formattable'
 import { ErrorCode } from '../../types/ParsingError'
 import { getCodeAction } from '../../utils'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
@@ -100,7 +100,7 @@ describe('IdentityNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info = mockFunctionInfo()
+        const info = mockParsingContext()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should complete the namespace', () => {
             const range = { start: 0, end: 7 }
@@ -111,7 +111,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-complete-default-namespace', diags, info.document, range,
+                'id-complete-default-namespace', diags, info.textDoc, range,
                 'minecraft:foo/bar'
             )])
         })
@@ -124,7 +124,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-omit-default-namespace', diags, info.document, range,
+                'id-omit-default-namespace', diags, info.textDoc, range,
                 'foo/bar'
             )])
         })
@@ -137,7 +137,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-zombified-piglin-datafix', diags, info.document, range,
+                'id-zombified-piglin-datafix', diags, info.textDoc, range,
                 'minecraft:zombified_piglin'
             )])
         })

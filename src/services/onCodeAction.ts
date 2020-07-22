@@ -30,7 +30,7 @@ export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range }: 
                         const nodeRange = data[NodeRange]
                         if (areOverlapped(selectedRange, nodeRange)) {
                             const ctx = constructContext({
-                                document: textDoc,
+                                textDoc: textDoc,
                                 config
                             })
                             ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))

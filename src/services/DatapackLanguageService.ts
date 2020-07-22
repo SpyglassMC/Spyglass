@@ -52,6 +52,7 @@ export class DatapackLanguageService {
         pathAccessible?: PathAccessibleFunction,
         publishDiagnostics?: PublishDiagnosticsFunction,
         readFile?: ReadFileFunction,
+        roots?: Uri[],
         showInformationMessage?: ShowMessage,
         versionInformation?: VersionInformation
     }) {
@@ -63,6 +64,7 @@ export class DatapackLanguageService {
         this.rawFetchConfig = options?.fetchConfig ?? (async () => VanillaConfig)
         this.rawPublishDiagnostics = options?.publishDiagnostics
         this.readFile = options?.readFile ?? readFile
+        this.roots = options?.roots ?? []
         this.showInformationMessage = options?.showInformationMessage
         this.versionInformation = options?.versionInformation
     }
@@ -361,7 +363,7 @@ export class DatapackLanguageService {
                 ctx: constructContext({
                     cache: getCacheForUri(this.cacheFile.cache, uri),
                     cursor: offset,
-                    document: textDoc,
+                    textDoc: textDoc,
                     id: getId(uri, this.roots),
                     rootIndex: getRootIndex(uri, this.roots),
                     roots: this.roots,

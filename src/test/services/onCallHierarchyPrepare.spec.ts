@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { IdentityKind, onCallHierarchyPrepare } from '../../services/onCallHierarchyPrepare'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onCallHierarchyPrepare() Tests', () => {
     const pathExists = async () => false
@@ -21,7 +21,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
             }
         }
     })
-    const info = mockFunctionInfo({
+    const info = mockParsingContext({
         nodes: [node],
         content: '#> spgoding:foo'
     })
@@ -53,7 +53,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
                 }
             }
         })
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [node],
             content: 'function #spgoding:foo'
         })
@@ -83,7 +83,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
                 }
             }
         })
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [node],
             content: 'advancement grant @s only spgoding:foo'
         })

@@ -1,8 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Uri } from '../../types'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onSignatureHelp } from '../../services/onSignatureHelp'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { Uri } from '../../types'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onSignatureHelp() Tests', () => {
     const roots: Uri[] = []
@@ -10,14 +11,15 @@ describe('onSignatureHelp() Tests', () => {
     it('Should return signatures', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
         const offset = 12
-        const info = mockFunctionInfo({
+        const ctx = mockParsingContext({
             content: 'advancement '
         })
         const node = mockLineNode({
             range: { start: 0, end: 12 }
         })
+        const service = new DatapackLanguageService({ roots, cacheFile })
 
-        const signatures = await onSignatureHelp({ roots, uri, info, cacheFile, offset, node })
+        const signatures = await onSignatureHelp({ uri, config: ctx.config, textDoc: ctx.textDoc, service, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
@@ -35,14 +37,15 @@ describe('onSignatureHelp() Tests', () => {
     it('Should return signatures when there are no options', async () => {
         const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
         const offset = 4
-        const info = mockFunctionInfo({
+        const ctx = mockParsingContext({
             content: 'say '
         })
         const node = mockLineNode({
             range: { start: 0, end: 4 }
         })
+        const service = new DatapackLanguageService({ roots, cacheFile })
 
-        const signatures = await onSignatureHelp({ roots, uri, info, cacheFile, offset, node })
+        const signatures = await onSignatureHelp({ service, uri, textDoc: ctx.textDoc, config: ctx.config, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{

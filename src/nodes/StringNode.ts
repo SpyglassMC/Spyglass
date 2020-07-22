@@ -37,21 +37,21 @@ export class StringNode extends ArgumentNode {
         if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-unquote', unquoteDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.value
             ))
         }
         if (doubleQuoteDiagnostics && doubleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-double-quote', doubleQuoteDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 quoteString(this.value, 'always double', true)
             ))
         }
         if (singleQuoteDiagnostics && singleQuoteDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'string-single-quote', singleQuoteDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 quoteString(this.value, 'always single', true)
             ))
         }

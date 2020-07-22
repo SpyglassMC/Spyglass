@@ -37,7 +37,7 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
                 const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    ctx.document, this[NodeRange],
+                    ctx.textDoc, this[NodeRange],
                     newNode[GetFormattedString](ctx.config.lint)
                 ))
             } catch (ignored) {
@@ -51,7 +51,7 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
         if (attributeDiagnostics) {
             ans.push(getCodeAction(
                 'id-attribute-datafix', attributeDiagnostics,
-                ctx.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 `"${attributeNameToIdentity(this.valueOf())}"`
             ))
         }

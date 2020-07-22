@@ -22,7 +22,7 @@ export async function onSignatureHelp({ offset, node, commandTree, vanillaData, 
             cache: getCacheForUri(service.cacheFile.cache, uri),
             config: config,
             cursor: offset,
-            document: textDoc,
+            textDoc: textDoc,
             id: service.getId(uri),
             rootIndex: getRootIndex(uri, service.roots),
             roots: service.roots

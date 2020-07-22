@@ -4,10 +4,10 @@ import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
 import { Token, TokenType } from '../../types/Token'
 import { onDocumentHighlight } from '../../services/onDocumentHighlight'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onDocumentHighlight() Tests', () => {
-    const info = mockFunctionInfo({
+    const info = mockParsingContext({
         nodes: [
             mockLineNode({
                 range: { start: 0, end: 13 },

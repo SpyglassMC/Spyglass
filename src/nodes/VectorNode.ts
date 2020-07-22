@@ -58,7 +58,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         )) {
             ans.push(
                 getCodeAction(
-                    'vector-align-0.0', [], ctx.document, this[NodeRange],
+                    'vector-align-0.0', [], ctx.textDoc, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {
@@ -70,7 +70,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                     undefined, false
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], ctx.document, this[NodeRange],
+                    'vector-align-0.5', [], ctx.textDoc, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {

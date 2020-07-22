@@ -6,7 +6,7 @@ import { VanillaConfig } from '../../types/Config'
 import { Uri } from '../../types/handlers'
 import { Token, TokenType } from '../../types/Token'
 import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
@@ -15,7 +15,7 @@ describe('onDidChangeTextDocument() Tests', () => {
     const roots: Uri[] = []
     const uri = Uri.parse('file:///c:/foo')
     it('Should handle with full update', async () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 8 },
@@ -42,8 +42,8 @@ describe('onDidChangeTextDocument() Tests', () => {
 
         await onDidChangeTextDocument({ uri, info, version, cacheFile, roots, config, contentChanges })
 
-        assert(info.document.getText() === '# Modified')
-        assert(info.document.version === version)
+        assert(info.textDoc.getText() === '# Modified')
+        assert(info.textDoc.version === version)
         assert.deepStrictEqual(info.nodes, [{
             [NodeRange]: { start: 0, end: 10 },
             args: [{ data: '# Modified', parser: 'string' }],

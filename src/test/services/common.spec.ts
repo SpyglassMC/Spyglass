@@ -12,7 +12,7 @@ import { constructConfig, VanillaConfig } from '../../types/Config'
 import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { LineNode } from '../../types/LineNode'
 import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseFunctionNodes } from '../../services/common'
-import { mockFunctionInfo } from '../utils.spec'
+import { mockParsingContext } from '../utils.spec'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -182,7 +182,7 @@ describe('common.ts Tests', () => {
         const getText = async () => { throw 'Fake getText() Intended Exception' }
         const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
         it('Should return the info directly if it exists in infos', async () => {
-            const info = mockFunctionInfo()
+            const info = mockParsingContext()
             const infos: InfosOfUris = new Map([[uri, info]])
 
             const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema)

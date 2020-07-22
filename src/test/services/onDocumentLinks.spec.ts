@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { onDocumentLinks } from '../../services/onDocumentLinks'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onDocumentLinks() Tests', () => {
     const pathExists = async () => false
@@ -12,7 +12,7 @@ describe('onDocumentLinks() Tests', () => {
         ['function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')]
     ])
 
-    const info = mockFunctionInfo({
+    const info = mockParsingContext({
         nodes: [
             mockLineNode({
                 cache: {

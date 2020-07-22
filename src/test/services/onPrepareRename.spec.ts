@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onPrepareRename } from '../../services/onPrepareRename'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { mockParsingContext, mockLineNode } from '../utils.spec'
 
 describe('onPrepareRename() Tests', () => {
     it('Should return the range of the cache stuff', () => {
@@ -15,7 +15,7 @@ describe('onPrepareRename() Tests', () => {
                 }
             }
         })
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [node]
         })
         const offset = 4
@@ -38,7 +38,7 @@ describe('onPrepareRename() Tests', () => {
                 }
             }
         })
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             nodes: [node],
             content: 'particle dust 1 1 1 1'
         })

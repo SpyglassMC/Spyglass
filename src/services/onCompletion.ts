@@ -26,7 +26,7 @@ export async function onCompletion({ offset, service, node, textDoc, commandTree
             cursor: offset,
             cache: getCacheForUri(service.cacheFile.cache, uri),
             config: config,
-            document: textDoc,
+            textDoc: textDoc,
             id: getId(uri, service.roots),
             rootIndex: getRootIndex(uri, service.roots),
             roots: service.roots

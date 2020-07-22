@@ -3,11 +3,11 @@ import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { FoldingRangeKind } from 'vscode-languageserver'
 import { onFoldingRanges } from '../../services/onFoldingRanges'
-import { mockFunctionInfo } from '../utils.spec'
+import { mockParsingContext } from '../utils.spec'
 
 describe('onFoldingRanges() Tests', () => {
     it('Should return for normal #region blocks', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             #region haha
             Hello world!
@@ -25,7 +25,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return empty array for single #endregion comment', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             Hello world!
             #endregion`
@@ -36,7 +36,7 @@ describe('onFoldingRanges() Tests', () => {
         assert.deepStrictEqual(ranges, [])
     })
     it('Should return for normal comments', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             # Hi
             Hello World`
@@ -53,7 +53,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multiple normal comments', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             # First
             Hello World
@@ -77,7 +77,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multi-level normal comments', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             # First
             Hello World
@@ -109,7 +109,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return end normal comment regions before #endregion comment', () => {
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: dedent`
             #region
             # First

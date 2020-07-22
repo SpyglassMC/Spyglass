@@ -1,12 +1,18 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Token, TokenType } from '../../types/Token'
+import { ProposedFeatures } from 'vscode-languageserver'
 import { onSemanticTokens } from '../../services/onSemanticTokens'
-import { mockFunctionInfo, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { Token, TokenType } from '../../types/Token'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onSemanticTokens() Tests', () => {
     it('Should return correctly', () => {
-        const info = mockFunctionInfo({
+        const ctx = mockParsingContext({
+            content: '# Test 0\n# Test 1'
+        })
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
@@ -14,11 +20,10 @@ describe('onSemanticTokens() Tests', () => {
                 mockLineNode({
                     tokens: [new Token({ start: 9, end: 17 }, TokenType.comment)]
                 })
-            ],
-            content: '# Test 0\n# Test 1'
-        })
+            ]
+        }
 
-        const actual = onSemanticTokens({ info })
+        const actual = onSemanticTokens({ doc, textDoc: ctx.textDoc, builder: new ProposedFeatures.SemanticTokensBuilder() })
 
         assert.deepStrictEqual(actual.data, [
             0, 0, 8, TokenType.comment, 0,

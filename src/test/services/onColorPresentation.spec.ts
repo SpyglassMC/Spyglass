@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onColorPresentation } from '../../services/onColorPresentation'
-import { mockFunctionInfo } from '../utils.spec'
+import { mockParsingContext } from '../utils.spec'
 
 describe('onColorPresentation() Tests', () => {
     it('Should return correctly for dust', () => {
@@ -11,7 +11,7 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 9
         const end = 21
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: 'particle dust 0 0 0 0'
         })
 
@@ -26,7 +26,7 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 9
         const end = 31
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: 'particle minecraft:dust 0 0 0 0'
         })
 
@@ -41,7 +41,7 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 19
         const end = 19
-        const info = mockFunctionInfo({
+        const info = mockParsingContext({
             content: '{display: {color: 0}}'
         })
 
