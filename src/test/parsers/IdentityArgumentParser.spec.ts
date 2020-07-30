@@ -570,7 +570,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘bossbar’',
+                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “bossbar”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -584,7 +584,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID ‘minecraft:foo’ in cache category ‘loot_table’',
+                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “loot_table”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -598,7 +598,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 21 },
-                    'Failed to resolve namespaced ID ‘spgoding:function/42’ in cache category ‘tag/function’',
+                    'Failed to resolve namespaced ID “spgoding:function/42” in cache category “tag/function”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -612,7 +612,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID ‘minecraft:qux’ in registry ‘minecraft:block’',
+                    'Failed to resolve namespaced ID “minecraft:qux” in registry “minecraft:block”',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )
             ])
@@ -626,7 +626,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Expected ‘spgoding:foo’ but got ‘minecraft:qux’',
+                    'Expected “spgoding:foo” but got “minecraft:qux”',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )
             ])

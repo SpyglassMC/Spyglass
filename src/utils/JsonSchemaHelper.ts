@@ -319,7 +319,7 @@ export class JsonSchemaHelper {
         const pathElements = path.getArray()
         const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: Infinity }
         let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params) ?? (
-            console.error('[convertSchemaError]', new Error(`Unknown JSON schema error ‘${error}’`)),
+            console.error('[convertSchemaError]', new Error(`Unknown JSON schema error “${error}”`)),
             ''
         )
         if (pathElements.length > 0) {

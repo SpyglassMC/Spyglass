@@ -21,8 +21,8 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { TestNbtdoc, TestRegistry } from '../utils/NbtdocHelper.spec'
 import { assertCompletions } from '../utils.spec'
+import { TestNbtdoc, TestRegistry } from '../utils/NbtdocHelper.spec'
 
 describe('NbtArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -360,12 +360,12 @@ describe('NbtArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 1, end: 21 },
-                        "Invalid key ‘this_is_a_custom_key’ which doesn't follow ‘PascalCase’ convention",
+                        "Invalid key “this_is_a_custom_key” which doesn't follow “PascalCase” convention",
                         undefined, DiagnosticSeverity.Warning
                     ),
                     new ParsingError(
                         { start: 1, end: 21 },
-                        "Unknown key ‘this_is_a_custom_key’",
+                        "Unknown key “this_is_a_custom_key”",
                         undefined, DiagnosticSeverity.Warning
                     )
                 ])
@@ -399,7 +399,7 @@ describe('NbtArgumentParser Tests', () => {
 
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 10, end: 13 },
-                    "Duplicate key ‘foo’",
+                    "Duplicate key “foo”",
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -412,7 +412,7 @@ describe('NbtArgumentParser Tests', () => {
 
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 34 },
-                    "Unsorted keys (rule: ‘datapack.lint.nbtCompoundSortKeys’)",
+                    "Unsorted keys (rule: “datapack.lint.nbtCompoundSortKeys”)",
                     undefined, DiagnosticSeverity.Warning,
                     ErrorCode.NbtCompoundSortKeys
                 )])
@@ -624,7 +624,7 @@ describe('NbtArgumentParser Tests', () => {
                 assert.deepStrictEqual(data, expected)
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 1, end: 2 },
-                    'Invalid array type ‘X’. Should be one of ‘B’, ‘I’, and ‘L’'
+                    'Invalid array type “X”. Should be one of “B”, “I”, and “L”'
                 )])
                 assert.deepStrictEqual(cache, {})
                 assertCompletions(reader, completions, [])

@@ -229,10 +229,10 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 27, end: 32 }, 'Expected ‘age’ but got ‘snowy’'
+                        { start: 27, end: 32 }, 'Expected “age” but got “snowy”'
                     ),
                     new ParsingError(
-                        { start: 27, end: 32 }, 'Duplicate key ‘snowy’'
+                        { start: 27, end: 32 }, 'Duplicate key “snowy”'
                     )
                 ]
             )
@@ -244,10 +244,10 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 22, end: 23 }, 'Expected ‘true’ or ‘false’ but got nothing'
+                        { start: 22, end: 23 }, 'Expected “true” or “false” but got nothing'
                     ),
                     new ParsingError(
-                        { start: 22, end: 23 }, 'Expected ‘]’ but got nothing'
+                        { start: 22, end: 23 }, 'Expected “]” but got nothing'
                     )
                 ]
             )
@@ -274,7 +274,7 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 15, end: 33 },
-                    'Unsorted keys (rule: ‘datapack.lint.blockStateSortKeys’)',
+                    'Unsorted keys (rule: “datapack.lint.blockStateSortKeys”)',
                     undefined, DiagnosticSeverity.Warning,
                     ErrorCode.BlockStateSortKeys
                 )

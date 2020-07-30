@@ -36,9 +36,9 @@ export class TestArgumentParser extends ArgumentParser<string> {
         const data = reader.readUntilOrEnd(' ')
         const ans: ArgumentParserResult<string> = { data, tokens: [], cache: {}, completions: [], errors: [] }
         if (this.type === 'error') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘error’ and did get ‘error’')]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected “error” and did get “error”')]
         } else if (this.type === 'ERROR') {
-            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected ‘ERROR’ and did get ‘ERROR’', false)]
+            ans.errors = [new ParsingError({ start, end: start + data.length }, 'Expected “ERROR” and did get “ERROR”', false)]
         } else if (this.type === 'cache') {
             ans.cache = {
                 entity: {
@@ -85,7 +85,7 @@ before(async () => {
 })
 describe('LineParser Tests', () => {
     describe('parseSinge() Tests', () => {
-        it('Should throw error when Got none of ‘parser’, ‘redirect’, and ‘template’ were specified in node', () => {
+        it('Should throw error when Got none of “parser”, “redirect”, and “template” were specified in node', () => {
             const input = 'foo'
             const parser = new LineParser()
             const node: CommandTreeNode<string> = {}
@@ -95,7 +95,7 @@ describe('LineParser Tests', () => {
                 fail()
             } catch (e) {
                 const { message } = e
-                assert(message === 'unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
+                assert(message === 'unexpected error. Got none of “parser”, “redirect”, and “template” in node')
             }
         })
         it('Should return aliases in completions', async () => {
@@ -280,7 +280,7 @@ describe('LineParser Tests', () => {
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
             assert.deepStrictEqual(line.args, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 4, end: 7 }, 'Expected ‘ERROR’ and did get ‘ERROR’')]
+                [new ParsingError({ start: 4, end: 7 }, 'Expected “ERROR” and did get “ERROR”')]
             )
         })
         it('Should return error when there are trailing data but no children', async () => {
@@ -301,7 +301,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got ‘ bar’')]
+                [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got “ bar”')]
             )
         })
         it('Should return completions for empty argument', async () => {
@@ -444,7 +444,7 @@ describe('LineParser Tests', () => {
                 [{ data: 'foo', parser: 'test' }]
             )
             assert.deepStrictEqual(line.errors,
-                [new ParsingError({ start: 0, end: 3 }, 'Expected ‘error’ and did get ‘error’')]
+                [new ParsingError({ start: 0, end: 3 }, 'Expected “error” and did get “error”')]
             )
         })
         it('Should return the last child if untolerable error occurrs', async () => {
@@ -565,8 +565,8 @@ describe('LineParser Tests', () => {
                         options: []
                     },
                     errors: [
-                        new ParsingError({ start: 2, end: 3 }, 'Expected ‘error’ and did get ‘error’'),
-                        new ParsingError({ start: 4, end: 5 }, 'Expected ‘ERROR’ and did get ‘ERROR’')
+                        new ParsingError({ start: 2, end: 3 }, 'Expected “error” and did get “error”'),
+                        new ParsingError({ start: 4, end: 5 }, 'Expected “ERROR” and did get “ERROR”')
                     ]
                 }
             })
@@ -644,7 +644,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'Unexpected leading slash ‘/’',
+                        'Unexpected leading slash “/”',
                         false
                     )]
                 }
@@ -662,7 +662,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'Expected a leading slash ‘/’ but got ‘f’',
+                        'Expected a leading slash “/” but got “f”',
                         false
                     )]
                 }
@@ -681,7 +681,7 @@ describe('LineParser Tests', () => {
                     hint: { fix: [], options: [] },
                     errors: [new ParsingError(
                         { start: 0, end: 1 },
-                        'Expected a leading slash ‘/’ but got ‘’',
+                        'Expected a leading slash “/” but got “”',
                         false
                     )],
                     completions: [

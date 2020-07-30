@@ -30,7 +30,7 @@ export function bufferFromNbtString(node: NbtCompoundNode, key: string) {
     if (stringNode instanceof NbtStringNode) {
         return bufferFromString(stringNode.valueOf())
     } else {
-        throw new Error(`Expected a string node for ‘${key}’`)
+        throw new Error(`Expected a string node for “${key}”`)
     }
 }
 
@@ -53,7 +53,7 @@ export function bufferFromNbtLongs(node: NbtCompoundNode, mostKey: string, least
     if (mostNode instanceof NbtNumberNode && leastNode instanceof NbtNumberNode) {
         return bufferFromLongs(BigInt(mostNode.valueOf()), BigInt(leastNode.valueOf()))
     } else {
-        throw new Error(`Expected two number nodes for ‘${mostKey}’ and ‘${leastKey}’`)
+        throw new Error(`Expected two number nodes for “${mostKey}” and “${leastKey}”`)
     }
 }
 
@@ -65,7 +65,7 @@ export function bufferFromNbtCompound(node: NbtCompoundNode, key: string) {
     if (childNode instanceof NbtCompoundNode) {
         return bufferFromNbtLongs(childNode, 'M', 'L')
     } else {
-        throw new Error(`Expected a compound node for ‘${key}’`)
+        throw new Error(`Expected a compound node for “${key}”`)
     }
 }
 

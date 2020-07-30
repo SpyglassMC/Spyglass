@@ -68,7 +68,7 @@ describe('ParticleArgumentParser Tests', () => {
                 $(new IdentityNode('minecraft', ['cloud']), [0, 15])
             ), [0, 15]))
         })
-        it('Should return data for ‘dust’ particle', () => {
+        it('Should return data for “dust” particle', () => {
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader('minecraft:dust 0.93 0.40 0.80 1'), ctx)
             assert.deepStrictEqual(actual.errors, [])
@@ -91,7 +91,7 @@ describe('ParticleArgumentParser Tests', () => {
                 }
             })
         })
-        it('Should return data for ‘block’ particle', () => {
+        it('Should return data for “block” particle', () => {
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader('minecraft:block minecraft:stone'), ctx)
             assert.deepStrictEqual(actual.errors, [])
@@ -102,7 +102,7 @@ describe('ParticleArgumentParser Tests', () => {
                 ), [16, 31])
             ), [0, 31]))
         })
-        it('Should return data for ‘item’ particle', () => {
+        it('Should return data for “item” particle', () => {
             const parser = new ParticleArgumentParser()
             const actual = parser.parse(new StringReader('minecraft:item minecraft:diamond'), ctx)
             assert.deepStrictEqual(actual.errors, [])
@@ -154,7 +154,7 @@ describe('ParticleArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors,
                 [
                     new ParsingError(
-                        { start: 14, end: 15 }, 'Expected ‘ ’ but got nothing'
+                        { start: 14, end: 15 }, 'Expected “ ” but got nothing'
                     )
                 ]
             )

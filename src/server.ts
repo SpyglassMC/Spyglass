@@ -201,7 +201,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
 connection.onDidChangeConfiguration(async () => service.refetchConfigs())
 
 connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
-    // console.log(`WillSave: ‘${uriString}’`)
+    // console.log(`WillSave: “${uriString}”`)
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
@@ -241,7 +241,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                 break
             }
             case FileChangeType.Changed: {
-                // console.log(`Changed : ‘${uriString}’`)
+                // console.log(`Changed : “${uriString}”`)
                 const stat = await fsp.stat(uri.fsPath)
                 if (stat.isFile()) {
                     service.cacheFile.files[uriString] = stat.mtimeMs
@@ -397,7 +397,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                                     const uri = service.parseUri(Uri.file(abs).toString())
                                     service.onExecuteFixFileCommand(uri)
                                 } catch (e) {
-                                    console.error(`datapack.fixWorkspace failed for ‘${abs}’`, e)
+                                    console.error(`datapack.fixWorkspace failed for “${abs}”`, e)
                                 }
                             })
                         }
@@ -413,7 +413,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 break
             }
             default:
-                throw new Error(`Unknown ‘workspace/executeCommand’ request for ‘${command}’.`)
+                throw new Error(`Unknown “workspace/executeCommand” request for “${command}”.`)
         }
     } catch (e) {
         console.error('[onExecuteCommand]', e)
@@ -447,7 +447,7 @@ async function updateRoots(roots: Uri[]) {
             const uri = service.parseRootUri(Uri.file(candidatePath).toString())
             roots.push(uri)
 
-            connection.console.info(`rootUri (priority = ${roots.length}) = ‘${uri.toString()}’`)
+            connection.console.info(`rootUri (priority = ${roots.length}) = “${uri.toString()}”`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
             const legacyDotPath = path.join(candidatePath, '.datapack')
             if (await pathAccessible(legacyDotPath)) {
@@ -488,7 +488,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
         loadLocale(connection.console as unknown as Console, config.env.language)
         return config
     } catch (e) {
-        // connection.console.warn(`Error occurred while fetching config for ‘${uri.toString()}’: ${e}`)
+        // connection.console.warn(`Error occurred while fetching config for “${uri.toString()}”: ${e}`)
         return VanillaConfig
     }
 }

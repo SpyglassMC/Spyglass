@@ -242,7 +242,7 @@ export class LineParser implements Parser<LineNode> {
             }
             //#endregion
         } else {
-            throw new Error('unexpected error. Got none of ‘parser’, ‘redirect’, and ‘template’ in node')
+            throw new Error('unexpected error. Got none of “parser”, “redirect”, and “template” in node')
         }
     }
 

@@ -25,10 +25,10 @@ import { StringReader } from './StringReader'
  * @returns Human-readable message.
  * @example // Using English
  * arrayToMessage([]) // "nothing"
- * arrayToMessage('foo') // "‘foo’"
- * arrayToMessage(['foo']) // "‘foo’"
- * arrayToMessage(['bar', 'foo']) // "‘bar’ and ‘foo’"
- * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’, and ‘foo’"
+ * arrayToMessage('foo') // "“foo”"
+ * arrayToMessage(['foo']) // "“foo”"
+ * arrayToMessage(['bar', 'foo']) // "“bar” and “foo”"
+ * arrayToMessage(['bar', 'baz', 'foo']) // "“bar”, “baz”, and “foo”"
  * @example // Using Locale
  * arrayToMessage([], false) // "nothing"
  * arrayToMessage(['A'], false) // "A"

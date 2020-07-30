@@ -439,7 +439,7 @@ describe('NbtPathArgumentParser Tests', () => {
                 assert.deepStrictEqual(errors, [
                     new ParsingError(
                         { start: 0, end: 3 },
-                        'Unknown key ‘bar’',
+                        'Unknown key “bar”',
                         true, DiagnosticSeverity.Warning
                     )
                 ])

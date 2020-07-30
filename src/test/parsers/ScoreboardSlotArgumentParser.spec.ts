@@ -45,7 +45,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for teams under ‘sidebar’', async () => {
+        it('Should return completions for teams under “sidebar”', async () => {
             const ctx = constructContext({ cursor: 8 })
             const parser = new ScoreboardSlotArgumentParser()
             const reader = new StringReader('sidebar.team.')
@@ -79,7 +79,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Expected ‘belowName’, ‘list’, or ‘sidebar’ but got ‘foo’'
+                    'Expected “belowName”, “list”, or “sidebar” but got “foo”'
                 )
             ])
         })
@@ -90,7 +90,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 4, end: 5 },
-                    'Only ‘sidebar’ has sub slots'
+                    'Only “sidebar” has sub slots'
                 )
             ])
         })

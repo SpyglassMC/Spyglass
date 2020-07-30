@@ -679,7 +679,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -715,7 +715,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 5 },
-                    'Expected a byte tag but got ‘false’',
+                    'Expected a byte tag but got “false”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToNumber
                 )])
             })
@@ -735,7 +735,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected ‘false’ or ‘true’',
+                    'Expected “false” or “true”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToLiteral
                 )])
             })
@@ -754,7 +754,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte array tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte array tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -770,7 +770,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a byte array tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte array tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByteArray
                 )])
             })
@@ -858,7 +858,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -874,7 +874,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a byte tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByte
                 )])
             })
@@ -939,7 +939,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a compound tag but got a list tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a compound tag but got a list tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1015,7 +1015,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(asdfghjklKey[NodeDescription] === '')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 10 },
-                    'Unknown key ‘asdfghjkl’',
+                    'Unknown key “asdfghjkl”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1034,7 +1034,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a double tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a double tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1050,7 +1050,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a double tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a double tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToDouble
                 )])
             })
@@ -1082,7 +1082,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: string\n* * * * * *\nA simple string enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1100,7 +1100,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: string\n* * * * * *\nA simple string enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 11 },
-                    'Expected ‘red’, ‘green’, or ‘blue’ but got ‘asdfghjkl’',
+                    'Expected “red”, “green”, or “blue” but got “asdfghjkl”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1132,7 +1132,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: byte\n* * * * * *\nA simple byte enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1150,7 +1150,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: byte\n* * * * * *\nA simple byte enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected ‘1’, ‘2’, or ‘3’ but got ‘5’',
+                    'Expected “1”, “2”, or “3” but got “5”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1183,7 +1183,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a float tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a float tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1199,7 +1199,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a float tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a float tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToFloat
                 )])
             })
@@ -1230,7 +1230,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1246,7 +1246,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 28 },
-                    'Failed to resolve namespaced ID ‘minecraft:asdfghjklqwertyui’ in registry ‘minecraft:block’',
+                    'Failed to resolve namespaced ID “minecraft:asdfghjklqwertyui” in registry “minecraft:block”',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )])
             })
@@ -1279,7 +1279,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a compound tag but got a list tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a compound tag but got a list tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1327,7 +1327,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 7, end: 9 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1346,7 +1346,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected an int array tag but got a byte tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int array tag but got a byte tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1362,7 +1362,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected an int array tag but got a byte array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int array tag but got a byte array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToIntArray
                 )])
             })
@@ -1393,7 +1393,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected an int tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1424,7 +1424,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a list tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a list tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1440,7 +1440,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a list tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a list tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToList
                 )])
             })
@@ -1474,7 +1474,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a long array tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long array tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1490,7 +1490,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a long array tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long array tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLongArray
                 )])
             })
@@ -1521,7 +1521,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a long tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1537,7 +1537,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a long tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLong
                 )])
             })
@@ -1609,7 +1609,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1628,7 +1628,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a short tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a short tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1644,7 +1644,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a short tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a short tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToShort
                 )])
             })
@@ -1675,7 +1675,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })

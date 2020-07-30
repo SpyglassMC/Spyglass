@@ -30,7 +30,7 @@ describe('ItemSlotArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('weapon.mainhand'), ctx)
             assert(actual.data === 'weapon.mainhand')
         })
-        it('Should return data for ‘weapon’', () => {
+        it('Should return data for “weapon”', () => {
             const parser = new ItemSlotArgumentParser()
             const actual = parser.parse(new StringReader('weapon'), ctx)
             assert(actual.data === 'weapon')
@@ -51,7 +51,7 @@ describe('ItemSlotArgumentParser Tests', () => {
                 { label: 'weapon', t: 'weapon' },
             ])
         })
-        it('Should return completions for sub values of ‘armor’', async () => {
+        it('Should return completions for sub values of “armor”', async () => {
             const ctx = constructContext({ cursor: 6 })
             const parser = new ItemSlotArgumentParser()
             const reader = new StringReader('armor.')
@@ -66,7 +66,7 @@ describe('ItemSlotArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘hotbar’', async () => {
+        it('Should return completions for sub values of “hotbar”', async () => {
             const ctx = constructContext({ cursor: 7 })
             const parser = new ItemSlotArgumentParser()
             const reader = new StringReader('hotbar.')
@@ -93,11 +93,11 @@ describe('ItemSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Expected ‘armor’, ‘container’, ‘enderchest’, ‘horse’, ‘hotbar’, ‘inventory’, ‘villager’, or ‘weapon’ but got ‘foo’'
+                    'Expected “armor”, “container”, “enderchest”, “horse”, “hotbar”, “inventory”, “villager”, or “weapon” but got “foo”'
                 ),
                 new ParsingError(
                     { start: 3, end: 4 },
-                    'Expected ‘.’ but got ‘’'
+                    'Expected “.” but got “”'
                 )
             ])
         })

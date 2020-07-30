@@ -20,7 +20,7 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
         } else {
             // TODO: JSON
         }
-        console.log(`[Fix All] ${new Date().getTime() - start}ms in ‘${uri}’`)
+        console.log(`[Fix All] ${new Date().getTime() - start}ms in “${uri}”`)
     }
 }
 

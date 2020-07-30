@@ -91,7 +91,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 0, end: 17 },
-                        '‘12345678901234567’ exceeds the max length of an entity, which is 16'
+                        '“12345678901234567” exceeds the max length of an entity, which is 16'
                     )
                 ])
             })
@@ -102,7 +102,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 0, end: 41 },
-                        '‘12345678901234567890123456789012345678901’ exceeds the max length of a score holder, which is 40'
+                        '“12345678901234567890123456789012345678901” exceeds the max length of a score holder, which is 40'
                     )
                 ])
             })
@@ -263,7 +263,7 @@ describe('EntityArgumentParser Tests', () => {
                 })), [0, 61]))
                 assert.deepStrictEqual(actual.errors, [])
             })
-            it('Should return data with ‘scores’ argument', () => {
+            it('Should return data with “scores” argument', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ scores = { foo = 123.. , bar = ..456 } ]'), ctx)
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', $(new SelectorArgumentsNode(), [2, 44], {
@@ -279,7 +279,7 @@ describe('EntityArgumentParser Tests', () => {
                 })), [0, 44]))
                 assert.deepStrictEqual(actual.errors, [])
             })
-            it('Should return data with ‘advancements’ argument', () => {
+            it('Should return data with “advancements” argument', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[ advancements = { spgoding:advancement/a = true , spgoding:advancement/b = { critA = false , critB = true } , spgoding:advancement/c = { } } ]'), ctx)
                 assert.deepStrictEqual(actual.data, $(new EntityNode(undefined, 'a', $(new SelectorArgumentsNode(), [2, 145], {
@@ -328,7 +328,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@b'), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 1, end: 2 }, 'Unexpected selector variable ‘b’')
+                    new ParsingError({ start: 1, end: 2 }, 'Unexpected selector variable “b”')
                 ])
             })
             it('Should return error for unexpected argument key', () => {
@@ -336,35 +336,35 @@ describe('EntityArgumentParser Tests', () => {
                 const actual = parser.parse(new StringReader('@e[foo=bar]'), ctx)
                 assert.deepStrictEqual(
                     actual.errors[0],
-                    new ParsingError({ start: 3, end: 6 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘foo’')
+                    new ParsingError({ start: 3, end: 6 }, 'Expected “advancements”, “distance”, “dx”, “dy”, “dz”, “gamemode”, “level”, “limit”, “name”, “nbt”, “predicate”, “scores”, “sort”, “tag”, “team”, “type”, “x”, “x_rotation”, “y”, “y_rotation”, or “z” but got “foo”')
                 )
             })
             it('Should return error for "type" of @a', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a[type=bee]'), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                    new ParsingError({ start: 3, end: 7 }, 'Expected “advancements”, “distance”, “dx”, “dy”, “dz”, “gamemode”, “level”, “limit”, “name”, “nbt”, “predicate”, “scores”, “sort”, “tag”, “team”, “x”, “x_rotation”, “y”, “y_rotation”, or “z” but got “type”')
                 ])
             })
             it('Should return error for "type" of @p', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@p[type=bee]'), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                    new ParsingError({ start: 3, end: 7 }, 'Expected “advancements”, “distance”, “dx”, “dy”, “dz”, “gamemode”, “level”, “limit”, “name”, “nbt”, “predicate”, “scores”, “sort”, “tag”, “team”, “x”, “x_rotation”, “y”, “y_rotation”, or “z” but got “type”')
                 ])
             })
             it('Should return error for "type" of @r', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@r[type=bee]'), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 7 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘limit’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘sort’, ‘tag’, ‘team’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘type’')
+                    new ParsingError({ start: 3, end: 7 }, 'Expected “advancements”, “distance”, “dx”, “dy”, “dz”, “gamemode”, “level”, “limit”, “name”, “nbt”, “predicate”, “scores”, “sort”, “tag”, “team”, “x”, “x_rotation”, “y”, “y_rotation”, or “z” but got “type”')
                 ])
             })
             it('Should return error for "limit" of @s', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@s[limit=1]'), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 8 }, 'Expected ‘advancements’, ‘distance’, ‘dx’, ‘dy’, ‘dz’, ‘gamemode’, ‘level’, ‘name’, ‘nbt’, ‘predicate’, ‘scores’, ‘tag’, ‘team’, ‘type’, ‘x’, ‘x_rotation’, ‘y’, ‘y_rotation’, or ‘z’ but got ‘limit’')
+                    new ParsingError({ start: 3, end: 8 }, 'Expected “advancements”, “distance”, “dx”, “dy”, “dz”, “gamemode”, “level”, “name”, “nbt”, “predicate”, “scores”, “tag”, “team”, “type”, “x”, “x_rotation”, “y”, “y_rotation”, or “z” but got “limit”')
                 ])
             })
             it('Should return completions for argument keys', async () => {
@@ -478,10 +478,10 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const actual = parser.parse(new StringReader('@a['), ctx)
                 assert.deepStrictEqual(actual.errors, [
-                    new ParsingError({ start: 3, end: 4 }, 'Expected ‘]’ but got nothing')
+                    new ParsingError({ start: 3, end: 4 }, 'Expected “]” but got nothing')
                 ])
             })
-            it('Should return completions for ‘sort’ argument', async () => {
+            it('Should return completions for “sort” argument', async () => {
                 const ctx = constructContext({ cache, cursor: 11 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const reader = new StringReader('@a[ sort = ]')
@@ -493,7 +493,7 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'random', t: '@a[ sort = random]' }
                 ])
             })
-            it('Should return completions for ‘gamemode’ argument', async () => {
+            it('Should return completions for “gamemode” argument', async () => {
                 const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const reader = new StringReader('@a[ gamemode = ]')
@@ -506,7 +506,7 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'survival', t: '@a[ gamemode = survival]' },
                 ])
             })
-            it('Should return completions for negative ‘gamemode’ argument', async () => {
+            it('Should return completions for negative “gamemode” argument', async () => {
                 const ctx = constructContext({ cache, cursor: 17 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const reader = new StringReader('@a[ gamemode = ! ]')
@@ -518,7 +518,7 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'survival', t: '@a[ gamemode = ! survival]' },
                 ])
             })
-            it('Should return completions for objectives in ‘scores’', async () => {
+            it('Should return completions for objectives in “scores”', async () => {
                 const ctx = constructContext({ cache, cursor: 15 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
                 const reader = new StringReader('@a[ scores = { } ]')
@@ -528,7 +528,7 @@ describe('EntityArgumentParser Tests', () => {
                     { label: 'bar', t: '@a[ scores = { bar} ]' },
                 ])
             })
-            it('Should return completions for advancements in ‘advancements’', async () => {
+            it('Should return completions for advancements in “advancements”', async () => {
                 const config = constructConfig({ env: { dependsOnVanilla: false } })
                 const ctx = constructContext({ config, cache, cursor: 21 })
                 const parser = new EntityArgumentParser('multiple', 'entities')
@@ -630,7 +630,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 2, end: 20 },
-                        'Unsorted keys (rule: ‘datapack.lint.selectorSortKeys’)',
+                        'Unsorted keys (rule: “datapack.lint.selectorSortKeys”)',
                         undefined, DiagnosticSeverity.Warning,
                         ErrorCode.SelectorSortKeys
                     )

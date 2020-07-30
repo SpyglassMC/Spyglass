@@ -37,13 +37,13 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert(actual.data === 'dummy')
             assert.deepStrictEqual(actual.errors, [])
         })
-        it('Should return data for ‘teamkill.*’', () => {
+        it('Should return data for “teamkill.*”', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('teamkill.red'), ctx)
             assert(actual.data === 'teamkill.red')
             assert.deepStrictEqual(actual.errors, [])
         })
-        it('Should return data for ‘minecraft.custom:minecraft.*’', () => {
+        it('Should return data for “minecraft.custom:minecraft.*”', () => {
             const parser = new ObjectiveCriterionArgumentParser()
             const actual = parser.parse(new StringReader('minecraft.custom:minecraft.custom_stat_1'), ctx)
             assert(actual.data === 'minecraft.custom:minecraft.custom_stat_1')
@@ -82,7 +82,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘minecraft’', async () => {
+        it('Should return completions for sub values of “minecraft”', async () => {
             const ctx = constructContext({ registry: registries, cursor: 10 })
             const parser = new ObjectiveCriterionArgumentParser()
             const reader = new StringReader('minecraft.')
@@ -102,7 +102,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘teamkill’', async () => {
+        it('Should return completions for sub values of “teamkill”', async () => {
             const ctx = constructContext({ registry: registries, cursor: 9 })
             const parser = new ObjectiveCriterionArgumentParser()
             const reader = new StringReader('teamkill.')
@@ -129,7 +129,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘minecraft.custom:', async () => {
+        it('Should return completions for sub values of “minecraft.custom:', async () => {
             const ctx = constructContext({ registry: registries, cursor: 17 })
             const parser = new ObjectiveCriterionArgumentParser()
             const reader = new StringReader('minecraft.custom:')
@@ -144,7 +144,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
                 ]
             )
         })
-        it('Should return completions for sub values of ‘minecraft.custom:minecraft’', async () => {
+        it('Should return completions for sub values of “minecraft.custom:minecraft”', async () => {
             const ctx = constructContext({ registry: registries, cursor: 27 })
             const parser = new ObjectiveCriterionArgumentParser()
             const reader = new StringReader('minecraft.custom:minecraft.')
@@ -164,7 +164,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 6 },
-                    'Expected ‘’, ‘minecraft’, ‘air’, ‘armor’, ‘deathCount’, ‘dummy’, ‘food’, ‘health’, ‘level’, ‘playerKillCount’, ‘teamkill’, ‘killedByTeam’, ‘totalKillCount’, ‘trigger’, ‘xp’, ‘custom’, ‘crafted’, ‘used’, ‘broken’, ‘mined’, ‘killed’, ‘killed_by’, ‘picked_up’, or ‘dropped’ but got ‘foobar’'
+                    'Expected “”, “minecraft”, “air”, “armor”, “deathCount”, “dummy”, “food”, “health”, “level”, “playerKillCount”, “teamkill”, “killedByTeam”, “totalKillCount”, “trigger”, “xp”, “custom”, “crafted”, “used”, “broken”, “mined”, “killed”, “killed_by”, “picked_up”, or “dropped” but got “foobar”'
                 )
             ])
         })
@@ -174,7 +174,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 10, end: 16 },
-                    'Expected ‘custom’, ‘crafted’, ‘used’, ‘broken’, ‘mined’, ‘killed’, ‘killed_by’, ‘picked_up’, or ‘dropped’ but got ‘foobar’'
+                    'Expected “custom”, “crafted”, “used”, “broken”, “mined”, “killed”, “killed_by”, “picked_up”, or “dropped” but got “foobar”'
                 )
             ])
         })
@@ -185,7 +185,7 @@ describe('ObjectiveCriterionArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 8, end: 9 },
-                    'Expected ‘.’ but got nothing'
+                    'Expected “.” but got nothing'
                 )
             ])
         })

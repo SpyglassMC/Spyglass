@@ -65,7 +65,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('123456789012345678'), ctx)
             assert.deepStrictEqual(actual.data, '123456789012345678')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 18 }, '‘123456789012345678’ exceeds the max length of an objective, which is 16')
+                new ParsingError({ start: 0, end: 18 }, '“123456789012345678” exceeds the max length of an objective, which is 16')
             ])
         })
         it('Should not return warning when the strict objective check pass', async () => {
@@ -83,7 +83,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Undefined objective ‘qux’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Undefined objective “qux”', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache when the objective is a reference', () => {

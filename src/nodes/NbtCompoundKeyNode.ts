@@ -61,7 +61,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
                                     newList.push(nbtIntArrayFromBuffer(bufferFromNbtLongs(oldElement, 'M', 'L')))
                                 }
                             } else {
-                                throw new Error('Expected a list node for ‘TrustedUUIDs’')
+                                throw new Error('Expected a list node for “TrustedUUIDs”')
                             }
                             newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'OwnerUUID'))
                         } else {

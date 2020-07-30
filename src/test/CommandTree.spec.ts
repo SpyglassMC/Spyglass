@@ -201,7 +201,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, undefined)
             assert.deepStrictEqual(data.errors, [
-                new ParsingError({ start: 12, end: 14 }, 'Expected ‘grant’ or ‘revoke’ but got ‘gr’'),
+                new ParsingError({ start: 12, end: 14 }, 'Expected “grant” or “revoke” but got “gr”'),
                 new ParsingError({ start: 14, end: 16 }, 'Expected more arguments but got nothing')
             ])
             assertCompletions(reader, data.completions, [

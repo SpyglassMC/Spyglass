@@ -38,7 +38,7 @@ describe('StringArgumentParser Tests', () => {
             const reader = new StringReader('qux')
             const parser = new StringArgumentParser(StringType.String, ['foo', 'dou"ble', "sin'gle"])
             const { errors } = parser.parse(reader, ctx)
-            assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 3 }, `Expected ‘foo’, ‘dou"ble’, or ‘sin'gle’ but got ‘qux’`)])
+            assert.deepStrictEqual(errors, [new ParsingError({ start: 0, end: 3 }, `Expected “foo”, “dou"ble”, or “sin'gle” but got “qux”`)])
         })
         it('Should return completions outside the quotation marks', async () => {
             const reader = new StringReader('')

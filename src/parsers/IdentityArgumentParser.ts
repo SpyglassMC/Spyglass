@@ -383,7 +383,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             if (registry) {
                 idPool.push(...Object.keys(registry.entries))
             } else {
-                console.error(`Identity registry ‘${this.type}’ doesn't exist!`)
+                console.error(`Identity registry “${this.type}” doesn't exist!`)
             }
         }
         const complNamespaces = new Set<string>()
@@ -406,7 +406,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             case '$function':
                 return 'tag/function'
             default:
-                throw new Error(`faild to find a tag type for ‘${this.type}’`)
+                throw new Error(`faild to find a tag type for “${this.type}”`)
         }
     }
 

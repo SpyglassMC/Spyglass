@@ -23,27 +23,27 @@ describe('utils.ts Tests', () => {
         it('Should return message for a string', () => {
             const str = 'foo'
             const actual = arrayToMessage(str)
-            assert(actual === '‘foo’')
+            assert(actual === '“foo”')
         })
         it('Should return message for an one-element array', () => {
             const arr = ['foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘foo’')
+            assert(actual === '“foo”')
         })
         it('Should return message for a two-element array', () => {
             const arr = ['bar', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘bar’ and ‘foo’')
+            assert(actual === '“bar” and “foo”')
         })
         it('Should return message for a multi-element array', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘bar’, ‘baz’, and ‘foo’')
+            assert(actual === '“bar”, “baz”, and “foo”')
         })
         it('Should use another conjuction when specified', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr, undefined, 'or')
-            assert(actual === '‘bar’, ‘baz’, or ‘foo’')
+            assert(actual === '“bar”, “baz”, or “foo”')
         })
         it('Should not quote when specified', () => {
             const arr = ['bar', 'baz', 'foo']
@@ -278,7 +278,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected an unquoted string but got ‘"’ (rule: ‘stringQuote’)`,
+                `Expected an unquoted string but got “"” (rule: “stringQuote”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringUnquote
             )])
@@ -292,7 +292,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected an unquoted string but got ‘"’`,
+                `Expected an unquoted string but got “"”`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringUnquote
             )])
@@ -315,7 +315,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected a quote (‘'’ or ‘"’) but got ‘f’ (rule: ‘stringQuote’)`,
+                `Expected a quote (“'” or “"”) but got “f” (rule: “stringQuote”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])
@@ -338,7 +338,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Single quote (‘'’) is preferable here (rule: ‘stringQuoteType’)`,
+                `Single quote (“'”) is preferable here (rule: “stringQuoteType”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringSingleQuote
             )])
@@ -352,7 +352,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Single quote (‘'’) is preferable here`,
+                `Single quote (“'”) is preferable here`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringSingleQuote
             )])
@@ -375,7 +375,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Double quote (‘"’) is preferable here (rule: ‘stringQuoteType’)`,
+                `Double quote (“"”) is preferable here (rule: “stringQuoteType”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])

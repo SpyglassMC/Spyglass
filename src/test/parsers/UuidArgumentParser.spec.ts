@@ -41,7 +41,7 @@ describe('UuidArgumentParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.errors, [new ParsingError(
                 { start: 0, end: 9 },
-                'Expected a UUID but got ‘ASDASDASD’'
+                'Expected a UUID but got “ASDASDASD”'
             )])
             assert.deepStrictEqual(actual.data, 'ASDASDASD')
             assertCompletions(reader, actual.completions, [])

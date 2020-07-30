@@ -52,7 +52,7 @@ describe('TimeArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 4, end: 5 },
-                    'Expected a time unit but got ‘q’'
+                    'Expected a time unit but got “q”'
                 )
             ])
         })
