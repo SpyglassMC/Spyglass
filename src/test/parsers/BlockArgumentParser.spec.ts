@@ -274,7 +274,7 @@ describe('BlockArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 15, end: 33 },
-                    'Unsorted keys (rule: “datapack.lint.blockStateSortKeys”)',
+                    'Unsorted keys (rule: “blockStateSortKeys”)',
                     undefined, DiagnosticSeverity.Warning,
                     ErrorCode.BlockStateSortKeys
                 )

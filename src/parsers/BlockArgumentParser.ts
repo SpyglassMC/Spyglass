@@ -103,7 +103,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                     { start, end: reader.cursor },
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
-                        locale('punc.quote', 'datapack.lint.blockStateSortKeys')
+                        locale('punc.quote', 'blockStateSortKeys')
                     ),
                     undefined, getDiagnosticSeverity(ctx.config.lint.blockStateSortKeys[0]),
                     ErrorCode.BlockStateSortKeys

@@ -54,6 +54,7 @@
       "contributions": [],
       "details": [
         { "type": "ideas", "link": "issues/402", "text": "#402" },
+        { "type": "ideas", "link": "issues/410", "text": "#410" },
         { "type": "bug", "link": "issues/458", "text": "#458" },
         { "type": "bug", "link": "issues/487", "text": "#487" },
         { "type": "bug", "link": "issues/515", "text": "#515" },

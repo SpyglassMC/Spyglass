@@ -375,7 +375,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                     ans.data.argument[NodeRange],
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
-                        locale('punc.quote', 'datapack.lint.selectorSortKeys')
+                        locale('punc.quote', 'selectorSortKeys')
                     ),
                     undefined, getDiagnosticSeverity(ctx.config.lint.selectorSortKeys[0]),
                     ErrorCode.SelectorSortKeys

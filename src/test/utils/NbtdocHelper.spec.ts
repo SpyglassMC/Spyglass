@@ -799,7 +799,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a collection with length between 1 and 2',
+                    'Expected a collection with length between 1 and 2 (rule: “nbtArrayLengthCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -819,7 +819,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a collection with length 1',
+                    'Expected a collection with length 1 (rule: “nbtArrayLengthCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })

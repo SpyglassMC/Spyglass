@@ -25,7 +25,7 @@ import { NbtStringNode } from '../nodes/NbtStringNode'
 import { LineParser } from '../parsers/LineParser'
 import { ParserSuggestion } from '../types'
 import { combineCache, remapCachePosition } from '../types/ClientCache'
-import { LintConfig } from '../types/Config'
+import { LintConfig, Config } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { getInnerIndex } from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
@@ -440,21 +440,24 @@ export class NbtdocHelper {
         return isLooselyMatched
     }
 
-    private validateCollectionLength(ans: LegacyValidateResult, _ctx: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number, number], _isPredicate: boolean) {
-        if (!(min <= tag.length && tag.length <= max)) {
+    private validateCollectionLength(ans: LegacyValidateResult, { config }: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number, number], _isPredicate: boolean, configKey: 'nbtArrayLengthCheck' | 'nbtListLengthCheck') {
+        if (config.lint[configKey] && config.lint[configKey]![1] && !(min <= tag.length && tag.length <= max)) {
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
-                locale('expected',
-                    min === max ? locale('collection-length.exact', min) : locale('collection-length.between', min, max)
+                locale('diagnostic-rule',
+                    locale('expected',
+                        min === max ? locale('collection-length.exact', min) : locale('collection-length.between', min, max)
+                    ),
+                    locale('punc.quote', configKey)
                 ),
-                true, DiagnosticSeverity.Warning
+                undefined, getDiagnosticSeverity(config.lint[configKey]![0])
             ))
         }
     }
 
     private validateNumberArrayField(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtArrayNode<NbtNumberNode<number | bigint>>, { length_range: lengthRange, value_range: valueRange }: nbtdoc.NumberArrayTag, isPredicate: boolean, description: string) {
         if (lengthRange) {
-            this.validateCollectionLength(ans, ctx, tag, lengthRange, isPredicate)
+            this.validateCollectionLength(ans, ctx, tag, lengthRange, isPredicate, 'nbtArrayLengthCheck')
         }
         for (const item of tag) {
             this.validateNumberField(ans, ctx, item, valueRange, isPredicate, description)
@@ -778,7 +781,7 @@ export class NbtdocHelper {
             const listTag = tag as NbtListNode<NbtNode>
             const { length_range: lengthRange, value_type: childDoc } = doc.List
             if (lengthRange) {
-                this.validateCollectionLength(ans, ctx, listTag, lengthRange, isPredicate)
+                this.validateCollectionLength(ans, ctx, listTag, lengthRange, isPredicate, 'nbtListLengthCheck')
             }
             for (const item of listTag) {
                 this.validateField(ans, ctx, item, childDoc, isPredicate, description)

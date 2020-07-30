@@ -412,7 +412,7 @@ describe('NbtArgumentParser Tests', () => {
 
                 assert.deepStrictEqual(errors, [new ParsingError(
                     { start: 0, end: 34 },
-                    "Unsorted keys (rule: “datapack.lint.nbtCompoundSortKeys”)",
+                    "Unsorted keys (rule: “nbtCompoundSortKeys”)",
                     undefined, DiagnosticSeverity.Warning,
                     ErrorCode.NbtCompoundSortKeys
                 )])

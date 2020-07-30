@@ -630,7 +630,7 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.errors, [
                     new ParsingError(
                         { start: 2, end: 20 },
-                        'Unsorted keys (rule: “datapack.lint.selectorSortKeys”)',
+                        'Unsorted keys (rule: “selectorSortKeys”)',
                         undefined, DiagnosticSeverity.Warning,
                         ErrorCode.SelectorSortKeys
                     )

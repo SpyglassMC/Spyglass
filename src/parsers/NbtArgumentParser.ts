@@ -343,7 +343,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 { start, end: reader.cursor },
                 locale('diagnostic-rule',
                     locale('unsorted-keys'),
-                    locale('punc.quote', 'datapack.lint.nbtCompoundSortKeys')
+                    locale('punc.quote', 'nbtCompoundSortKeys')
                 ),
                 undefined, getDiagnosticSeverity(ctx.config.lint.nbtCompoundSortKeys[0]),
                 ErrorCode.NbtCompoundSortKeys
