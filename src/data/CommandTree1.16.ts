@@ -1017,7 +1017,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('locatebiome'),
             children: {
                 type: {
-                    parser: new IdentityArgumentParser('minecraft:biome'),
+                    parser: new IdentityArgumentParser('$worldgen/biome'),
                     executable: true
                 }
             }
