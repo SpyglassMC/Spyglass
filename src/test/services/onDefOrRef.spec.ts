@@ -36,7 +36,7 @@ describe('onDefOrRef() Tests', () => {
     })
 
     it('Should return definitions', () => {
-        const definitions = onDefOrRef({ node, uri, cacheFile, offset, type: 'def' })
+        const definitions = onDefOrRef({ node, cacheFile, offset, type: 'def' })
 
         assert.deepStrictEqual(definitions, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
@@ -47,7 +47,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return references', () => {
-        const references = onDefOrRef({ node, uri, cacheFile, offset, type: 'ref' })
+        const references = onDefOrRef({ node, cacheFile, offset, type: 'ref' })
 
         assert.deepStrictEqual(references, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction').toString(),
@@ -58,7 +58,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return null when selects nothing', () => {
-        const definitions = onDefOrRef({ node, uri, cacheFile, offset: 0, type: 'def' })
+        const definitions = onDefOrRef({ node, cacheFile, offset: 0, type: 'def' })
 
         assert(definitions === null)
     })

@@ -197,22 +197,4 @@ describe('IdentityNode Tests', () => {
             assert(`${id}` === 'spgoding:foo/bar')
         })
     })
-    describe('static isExtValid() Tests', () => {
-        it('Should return true for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'function')
-            assert(actual === true)
-        })
-        it('Should return false for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'function')
-            assert(actual === false)
-        })
-        it('Should return true for other files', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'advancement')
-            assert(actual === true)
-        })
-        it('Should return false for other files', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'advancement')
-            assert(actual === false)
-        })
-    })
 })

@@ -2,15 +2,17 @@ import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { constructConfig } from '../../types/Config'
-import { ParsingError } from '../../types/ParsingError'
 import { onDocumentFormatting } from '../../services/onDocumentFormatting'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { VanillaConfig } from '../../types/Config'
+import { ParsingError } from '../../types/ParsingError'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentFormatting() Tests', () => {
-    const config = constructConfig({})
+    const config = VanillaConfig
     it('Should return correctly', () => {
-        const info = mockParsingContext({
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 20 },
@@ -19,11 +21,13 @@ describe('onDocumentFormatting() Tests', () => {
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
                 })
-            ],
+            ]
+        }
+        const { textDoc } = mockParsingContext({
             content: 'fake minecraft:stone'
         })
 
-        const edits = onDocumentFormatting({ info })
+        const edits = onDocumentFormatting({ textDoc, doc, config })
 
         assert.deepStrictEqual(edits, [{
             range: { start: { line: 0, character: 0 }, end: { line: 0, character: 20 } },
@@ -31,7 +35,8 @@ describe('onDocumentFormatting() Tests', () => {
         }])
     })
     it('Should keep leading spaces', () => {
-        const info = mockParsingContext({
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     range: { start: 5, end: 25 },
@@ -40,11 +45,13 @@ describe('onDocumentFormatting() Tests', () => {
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
                 })
-            ],
+            ]
+        }
+        const { textDoc } = mockParsingContext({
             content: '     fake minecraft:stone'
         })
 
-        const edits = onDocumentFormatting({ info })
+        const edits = onDocumentFormatting({ textDoc, doc, config })
 
         assert.deepStrictEqual(edits, [{
             range: { start: { line: 0, character: 5 }, end: { line: 0, character: 25 } },
@@ -52,7 +59,8 @@ describe('onDocumentFormatting() Tests', () => {
         }])
     })
     it('Should skip lines which have errors', () => {
-        const info = mockParsingContext({
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 21 },
@@ -71,13 +79,15 @@ describe('onDocumentFormatting() Tests', () => {
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
                 })
-            ],
+            ]
+        }
+        const { textDoc } = mockParsingContext({
             content: dedent`
             wrong minecraft:stone
             fake minecraft:stone`
         })
 
-        const edits = onDocumentFormatting({ info })
+        const edits = onDocumentFormatting({ doc, textDoc, config })
 
         assert.deepStrictEqual(edits, [{
             range: { start: { line: 1, character: 0 }, end: { line: 1, character: 20 } },

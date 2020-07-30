@@ -1,6 +1,6 @@
 import { Proposed } from 'vscode-languageserver'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { FileType, getSafeCategory, isTagRegularFileType } from '../types/ClientCache'
+import { FileType, getSafeCategory, isTagFileType } from '../types/ClientCache'
 import { DatapackLanguageService } from './DatapackLanguageService'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
@@ -23,7 +23,7 @@ export async function onCallHierarchyOutgoingCalls({ service, id }: { service: D
                         if (calleeUri) {
                             ans.push({
                                 to: getCallHierarchyItem(
-                                    (isTagRegularFileType(type) ? IdentityNode.TagSymbol : '') + calleeId.toString(),
+                                    (isTagFileType(type) ? IdentityNode.TagSymbol : '') + calleeId.toString(),
                                     calleeUri.toString(), 0, 0, 0, 0,
                                     type === 'advancement' ? IdentityKind.Advancement :
                                         type === 'function' ? IdentityKind.Function :

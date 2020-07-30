@@ -61,7 +61,7 @@
         "@typescript-eslint/parser": "^3.0.0",
         "all-contributors-cli": "^6.14.2",
         "circular-dependency-plugin": "^5.2.0",
-        "codecov": "^3.6.5",
+        "codecov": "^3.7.2",
         "dedent-js": "^1.0.1",
         "eslint": "^7.0.0",
         "espower-typescript": "^9.0.2",

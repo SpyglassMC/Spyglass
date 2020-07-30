@@ -1,24 +1,24 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Uri } from '../../types'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onCompletion } from '../../services/onCompletion'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { Uri, VanillaConfig } from '../../types'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onCompletion() Tests', () => {
-    const roots: Uri[] = []
     const uri = Uri.parse('file:///c:/foo')
     it('Should return completions', async () => {
-        const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: 0 }
         const offset = 12
         const node = mockLineNode({
             range: { start: 0, end: 12 }
         })
-        const info = mockParsingContext({
-            nodes: [node],
+        const { textDoc } = mockParsingContext({
             content: 'advancement '
         })
+        const config = VanillaConfig
+        const service = new DatapackLanguageService()
 
-        const completions = await onCompletion({ roots, uri, info, node, cacheFile, offset })
+        const completions = await onCompletion({ service, uri, textDoc, node, config, offset })
 
         assert.deepStrictEqual(completions, [
             { label: 'grant', textEdit: { range: { start: { line: 0, character: 12 }, end: { line: 0, character: 12 } }, newText: 'grant' } },

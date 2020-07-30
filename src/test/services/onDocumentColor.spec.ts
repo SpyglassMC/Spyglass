@@ -1,10 +1,12 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onDocumentColor } from '../../services/onDocumentColor'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentColor() Tests', () => {
-    const info = mockParsingContext({
+    const doc: McfunctionDocument = {
+        type: 'mcfunction',
         nodes: [
             mockLineNode({
                 cache: {
@@ -16,11 +18,13 @@ describe('onDocumentColor() Tests', () => {
                     }
                 }
             })
-        ],
+        ]
+    }
+    const { textDoc } = mockParsingContext({
         content: 'particle dust 1 1 1 1'
     })
     it('Should return correctly', () => {
-        const colors = onDocumentColor({ info })
+        const colors = onDocumentColor({ doc, textDoc })
 
         assert.deepStrictEqual(colors, [
             {

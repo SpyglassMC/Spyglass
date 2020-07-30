@@ -2,12 +2,19 @@ import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { Position } from 'vscode-languageserver'
-import { Token, TokenType } from '../../types/Token'
 import { onDocumentHighlight } from '../../services/onDocumentHighlight'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { Token, TokenType } from '../../types/Token'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentHighlight() Tests', () => {
-    const info = mockParsingContext({
+    const { textDoc } = mockParsingContext({
+        content: dedent`
+        kill SPGoding
+        kill SPGoding`
+    })
+    const doc: McfunctionDocument = {
+        type: 'mcfunction',
         nodes: [
             mockLineNode({
                 range: { start: 0, end: 13 },
@@ -40,10 +47,7 @@ describe('onDocumentHighlight() Tests', () => {
                 }
             })
         ],
-        content: dedent`
-        kill SPGoding
-        kill SPGoding`
-    })
+    }
     it('Should return ranges for all references of the selected cache stuff', () => {
         const position: Position = {
             line: 0,
@@ -51,7 +55,7 @@ describe('onDocumentHighlight() Tests', () => {
         }
         const offset = 8
 
-        const ranges = onDocumentHighlight({ info, node: info.nodes[0], position, offset })
+        const ranges = onDocumentHighlight({ node: doc.nodes[0], doc, textDoc, position, offset })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -75,7 +79,7 @@ describe('onDocumentHighlight() Tests', () => {
         }
         const offset = 2
 
-        const ranges = onDocumentHighlight({ info, node: info.nodes[0], position, offset })
+        const ranges = onDocumentHighlight({ node: doc.nodes[0], doc, textDoc, position, offset })
 
         assert.deepStrictEqual(ranges, [
             {

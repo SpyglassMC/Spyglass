@@ -1,18 +1,18 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onDocumentLinks } from '../../services/onDocumentLinks'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { McfunctionDocument } from '../../types'
+import { Uri } from '../../types/handlers'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentLinks() Tests', () => {
-    const pathExists = async () => false
-    const roots: Uri[] = []
-    const uris: UrisOfStrings = new Map()
-    const urisOfIds: UrisOfIds = new Map([
-        ['function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')]
-    ])
-
-    const info = mockParsingContext({
+    const pathAccessible = async () => true
+    const { textDoc } = mockParsingContext({
+        content: '#> spgoding:foo'
+    })
+    const doc: McfunctionDocument = {
+        type: 'mcfunction',
         nodes: [
             mockLineNode({
                 cache: {
@@ -24,11 +24,16 @@ describe('onDocumentLinks() Tests', () => {
                     }
                 }
             })
-        ],
-        content: '#> spgoding:foo'
-    })
+        ]
+    }
+    const roots: Uri[] = []
+    const service = new DatapackLanguageService({ pathAccessible, roots })
+    roots.push(service.parseRootUri('file:///c:/foo/'))
+    const uri = service.parseUri('file:///c:/foo/data/spgoding/functions/foo.mcfunction')
+    service.setDocuments(uri, doc, textDoc)
+
     it('Should return correctly for functions', async () => {
-        const links = await onDocumentLinks({ info, pathExists, roots, uris, urisOfIds })
+        const links = await onDocumentLinks({ textDoc, doc, service })
 
         assert.deepStrictEqual(links, [{
             range: {

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onPrepareRename } from '../../services/onPrepareRename'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onPrepareRename() Tests', () => {
     it('Should return the range of the cache stuff', () => {
@@ -15,12 +15,10 @@ describe('onPrepareRename() Tests', () => {
                 }
             }
         })
-        const info = mockParsingContext({
-            nodes: [node]
-        })
+        const { textDoc } = mockParsingContext()
         const offset = 4
 
-        const range = onPrepareRename({ info, node, offset })
+        const range = onPrepareRename({ textDoc, node, offset })
 
         assert.deepStrictEqual(range, {
             start: { line: 0, character: 0 },
@@ -38,13 +36,12 @@ describe('onPrepareRename() Tests', () => {
                 }
             }
         })
-        const info = mockParsingContext({
-            nodes: [node],
+        const { textDoc } = mockParsingContext({
             content: 'particle dust 1 1 1 1'
         })
         const offset = 16
 
-        const range = onPrepareRename({ info, node, offset })
+        const range = onPrepareRename({ textDoc, node, offset })
 
         assert.deepStrictEqual(range, null)
     })

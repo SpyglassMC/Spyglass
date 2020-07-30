@@ -1,18 +1,20 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { URI as Uri } from 'vscode-uri'
-import { InfosOfUris } from '../../types/handlers'
 import { onDidCloseTextDocument } from '../../services/onDidCloseTextDocument'
-import { mockParsingContext } from '../utils.spec'
+import { DocsOfUris, McfunctionDocument } from '../../types'
 
 describe('onDidCloseTextDocument() Tests', () => {
     it('Should do nothing', () => {
         const uri = Uri.parse('file:///c:/foo')
-        const info = mockParsingContext()
-        const infos: InfosOfUris = new Map([[uri, info]])
+        const doc: Promise<McfunctionDocument> = Promise.resolve({
+            type: 'mcfunction',
+            nodes: []
+        })
+        const docs: DocsOfUris = new Map([[uri, doc]])
 
-        onDidCloseTextDocument({ uri, infos })
+        onDidCloseTextDocument({ uri, docs })
 
-        assert(infos.size === 0)
+        assert(docs.size === 0)
     })
 })

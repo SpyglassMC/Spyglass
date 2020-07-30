@@ -2,20 +2,20 @@ import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { NodeRange } from '../../nodes'
+import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
+import { McfunctionDocument } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { Uri } from '../../types/handlers'
 import { Token, TokenType } from '../../types/Token'
-import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 
 describe('onDidChangeTextDocument() Tests', () => {
-    const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
     const config = VanillaConfig
     const version = 1
-    const roots: Uri[] = []
-    const uri = Uri.parse('file:///c:/foo')
     it('Should handle with full update', async () => {
-        const info = mockParsingContext({
+        const doc: McfunctionDocument = {
+            type: 'mcfunction',
             nodes: [
                 mockLineNode({
                     range: { start: 0, end: 8 },
@@ -32,19 +32,23 @@ describe('onDidChangeTextDocument() Tests', () => {
                     args: [{ data: '# Test 2', parser: 'string' }],
                     tokens: [new Token({ start: 17, end: 25 }, TokenType.comment)]
                 })
-            ],
+            ]
+        }
+        const { textDoc } = mockParsingContext({
             content: dedent`
             # Test 0
             # Test 1
             # Test 2`
         })
         const contentChanges = [{ text: '# Modified' }]
+        const service = new DatapackLanguageService()
+        const uri = service.parseUri('file:///c:/foo')
 
-        await onDidChangeTextDocument({ uri, info, version, cacheFile, roots, config, contentChanges })
+        onDidChangeTextDocument({ service, uri, doc, textDoc, version, config, contentChanges })
 
-        assert(info.textDoc.getText() === '# Modified')
-        assert(info.textDoc.version === version)
-        assert.deepStrictEqual(info.nodes, [{
+        assert(textDoc.getText() === '# Modified')
+        assert(textDoc.version === version)
+        assert.deepStrictEqual(doc.nodes, [{
             [NodeRange]: { start: 0, end: 10 },
             args: [{ data: '# Modified', parser: 'string' }],
             tokens: [],

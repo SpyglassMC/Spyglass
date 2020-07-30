@@ -7,14 +7,14 @@ import { mockParsingContext } from '../utils.spec'
 
 describe('onFoldingRanges() Tests', () => {
     it('Should return for normal #region blocks', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             #region haha
             Hello world!
             #endregion`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -25,24 +25,24 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return empty array for single #endregion comment', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             Hello world!
             #endregion`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [])
     })
     it('Should return for normal comments', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             # Hi
             Hello World`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -53,7 +53,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multiple normal comments', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             # First
             Hello World
@@ -61,7 +61,7 @@ describe('onFoldingRanges() Tests', () => {
             Cool`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -77,7 +77,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return for multi-level normal comments', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             # First
             Hello World
@@ -88,7 +88,7 @@ describe('onFoldingRanges() Tests', () => {
             Awesome`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [
             {
@@ -109,7 +109,7 @@ describe('onFoldingRanges() Tests', () => {
         ])
     })
     it('Should return end normal comment regions before #endregion comment', () => {
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: dedent`
             #region
             # First
@@ -122,7 +122,7 @@ describe('onFoldingRanges() Tests', () => {
             Awesome`
         })
 
-        const ranges = onFoldingRanges({ info })
+        const ranges = onFoldingRanges({ textDoc })
 
         assert.deepStrictEqual(ranges, [
             {

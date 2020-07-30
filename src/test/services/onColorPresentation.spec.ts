@@ -11,11 +11,11 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 9
         const end = 21
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: 'particle dust 0 0 0 0'
         })
 
-        const colors = onColorPresentation({ info, r, g, b, a, start, end })
+        const colors = onColorPresentation({ textDoc, r, g, b, a, start, end })
 
         assert.deepStrictEqual(colors, [{ label: 'dust 1 1 1' }])
     })
@@ -26,11 +26,11 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 9
         const end = 31
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: 'particle minecraft:dust 0 0 0 0'
         })
 
-        const colors = onColorPresentation({ info, r, g, b, a, start, end })
+        const colors = onColorPresentation({ textDoc, r, g, b, a, start, end })
 
         assert.deepStrictEqual(colors, [{ label: 'minecraft:dust 1 1 1' }])
     })
@@ -41,11 +41,11 @@ describe('onColorPresentation() Tests', () => {
         const a = 1
         const start = 19
         const end = 19
-        const info = mockParsingContext({
+        const { textDoc } = mockParsingContext({
             content: '{display: {color: 0}}'
         })
 
-        const colors = onColorPresentation({ info, r, g, b, a, start, end })
+        const colors = onColorPresentation({ textDoc, r, g, b, a, start, end })
 
         assert.deepStrictEqual(colors, [{ label: '16777215' }])
     })

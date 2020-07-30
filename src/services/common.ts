@@ -50,7 +50,6 @@ export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Ur
     if (preferredRoot) {
         const rel = id.toRel(category, 'data')
         const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
-        urisOfIds.set(key, uri)
         return uri
     }
 

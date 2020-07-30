@@ -1,18 +1,13 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { fail } from 'power-assert'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
-import { CommandTree as CommandTree116 } from '../../data/CommandTree1.16'
-import { FallbackVanillaData } from '../../data/VanillaData'
 import { NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { CacheFile } from '../../types/ClientCache'
-import { constructConfig, VanillaConfig } from '../../types/Config'
-import { InfosOfUris, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { getId, getRel, getRootUri, getUri, getUriFromId, parseFunctionNodes } from '../../services/common'
+import { VanillaConfig } from '../../types/Config'
+import { UrisOfIds, UrisOfStrings } from '../../types/handlers'
 import { LineNode } from '../../types/LineNode'
-import { getId, getOrCreateInfo, getRel, getRootUri, getUri, getUriFromId, parseFunctionNodes } from '../../services/common'
-import { mockParsingContext } from '../utils.spec'
 
 describe('common.ts Tests', () => {
     describe('getUri() Tests', () => {
@@ -170,55 +165,6 @@ describe('common.ts Tests', () => {
             const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function', roots[1])
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
-        })
-    })
-    describe('getOrCreateInfo() Tests', () => {
-        const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
-        const roots = [Uri.parse('file:///c:/bar/')]
-        const getConfig = async () => VanillaConfig
-        const getCommandTree = async () => CommandTree116
-        const getVanillaData = async () => FallbackVanillaData
-        const getJsonSchema = async () => { throw new Error('getJsonSchema unimplemented') }
-        const getText = async () => { throw 'Fake getText() Intended Exception' }
-        const cacheFile: CacheFile = { version: 0, files: {}, cache: {}, advancements: {}, tags: { functions: {} } }
-        it('Should return the info directly if it exists in infos', async () => {
-            const info = mockParsingContext()
-            const infos: InfosOfUris = new Map([[uri, info]])
-
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema)
-
-            assert(actual === info)
-        })
-        it('Should return undefined when exceptions are thrown', async () => {
-            const infos: InfosOfUris = new Map()
-
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema)
-
-            assert(actual === undefined)
-        })
-        it('Should return the info correctly', async () => {
-            const getText = async () => '# foo'
-            const infos: InfosOfUris = new Map()
-
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText, getCommandTree, getVanillaData, getJsonSchema, 2)
-
-            assert(actual?.config === VanillaConfig)
-            assert(actual.document.version === 2)
-            assert(actual.document.uri === uri.toString())
-            assert(actual.document.getText() === '# foo')
-        })
-        it('Should return undefined when the file is excluded', async () => {
-            let hasReadFile = false
-            const getConfig = async () => constructConfig({ env: { exclude: ['**'] } })
-            const getText = async () => hasReadFile = true
-            const infos: InfosOfUris = new Map()
-
-            const actual = await getOrCreateInfo(uri, roots, infos, cacheFile, getConfig, getText as any, getCommandTree, getVanillaData, getJsonSchema)
-
-            if (hasReadFile) {
-                fail()
-            }
-            assert(actual === undefined)
         })
     })
 })

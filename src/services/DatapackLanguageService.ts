@@ -7,7 +7,7 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, DocsOfUris, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, UrisOfIds, UrisOfStrings, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
@@ -34,9 +34,9 @@ export class DatapackLanguageService {
     private readonly builders: Map<Uri, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
     private readonly configs: Map<Uri, Config> = new Map()
     private readonly textDocs: Map<Uri, TextDocument> = new Map()
-    private readonly docs: DocsOfUris = new Map()
-    private readonly uris: UrisOfStrings = new Map()
-    private readonly urisOfIds: UrisOfIds = new Map()
+    private readonly docs: Map<Uri, Promise<DatapackDocument | undefined>> = new Map()
+    private readonly uris: Map<string, Uri> = new Map()
+    private readonly urisOfIds: Map<string, Uri | null> = new Map()
 
     static readonly GeneralTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
     static readonly McfunctionTriggerCharacters = [',', '{', '[']
@@ -265,6 +265,17 @@ export class DatapackLanguageService {
         }
     }
 
+    /**
+     * Set the documents for the specific URI. 
+     * @param uri A URI object.
+     * @param doc A datapack document.
+     * @param textDoc A text document.
+     */
+    setDocuments(uri: Uri, doc: DatapackDocument | Promise<DatapackDocument>, textDoc: TextDocument): void {
+        this.docs.set(uri, Promise.resolve(doc))
+        this.textDocs.set(uri, textDoc)
+    }
+
     private async rawParseDocument(textDoc: TextDocument, uri: Uri) {
         let ans: DatapackDocument | undefined
         const config = await this.getConfig(uri)
@@ -444,7 +455,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onDefOrRef({ uri, node, cacheFile: this.cacheFile, offset, type: 'def' })
+        return onDefOrRef({ node, cacheFile: this.cacheFile, offset, type: 'def' })
     }
 
     async onReferences(uri: Uri, position: lsp.Position) {
@@ -458,7 +469,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onDefOrRef({ uri, node, cacheFile: this.cacheFile, offset, type: 'ref' })
+        return onDefOrRef({ node, cacheFile: this.cacheFile, offset, type: 'ref' })
     }
 
     async onDocumentHighlight(uri: Uri, position: lsp.Position) {

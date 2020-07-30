@@ -1,14 +1,13 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Uri, UrisOfIds, UrisOfStrings } from '../../types/handlers'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { IdentityKind, onCallHierarchyPrepare } from '../../services/onCallHierarchyPrepare'
-import { mockParsingContext, mockLineNode } from '../utils.spec'
+import { Uri } from '../../types/handlers'
+import { mockLineNode, mockParsingContext } from '../utils.spec'
 
 describe('onCallHierarchyPrepare() Tests', () => {
-    const pathExists = async () => false
-    const roots: Uri[] = []
-    const uris: UrisOfStrings = new Map()
-    const urisOfIds: UrisOfIds = new Map([
+    const pathAccessible = async () => true
+    new Map([
         ['advancement|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/advancements/foo.json')],
         ['function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')],
         ['tag/function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.mcfunction')]
@@ -21,14 +20,16 @@ describe('onCallHierarchyPrepare() Tests', () => {
             }
         }
     })
-    const info = mockParsingContext({
-        nodes: [node],
+    const { textDoc } = mockParsingContext({
         content: '#> spgoding:foo'
     })
+    const roots: Uri[] = []
+    const service = new DatapackLanguageService({ pathAccessible, roots })
+    roots.push(service.parseRootUri('file:///c:/foo/'))
     it('Should return correctly for functions', async () => {
         const offset = 5
 
-        const items = await onCallHierarchyPrepare({ info, node, offset, pathExists, roots, uris, urisOfIds })
+        const items = await onCallHierarchyPrepare({ service, textDoc, node, offset })
 
         assert.deepStrictEqual(items, [{
             name: 'spgoding:foo',
@@ -53,12 +54,11 @@ describe('onCallHierarchyPrepare() Tests', () => {
                 }
             }
         })
-        const info = mockParsingContext({
-            nodes: [node],
+        const { textDoc } = mockParsingContext({
             content: 'function #spgoding:foo'
         })
 
-        const items = await onCallHierarchyPrepare({ info, node, offset, pathExists, roots, uris, urisOfIds })
+        const items = await onCallHierarchyPrepare({ service, textDoc, node, offset })
 
         assert.deepStrictEqual(items, [{
             name: '#spgoding:foo',
@@ -70,7 +70,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
                 start: { line: 0, character: 9 },
                 end: { line: 0, character: 21 }
             },
-            uri: Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.mcfunction').toString(),
+            uri: Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.json').toString(),
             kind: IdentityKind.FunctionTag
         }])
     })
@@ -83,12 +83,11 @@ describe('onCallHierarchyPrepare() Tests', () => {
                 }
             }
         })
-        const info = mockParsingContext({
-            nodes: [node],
+        const { textDoc } = mockParsingContext({
             content: 'advancement grant @s only spgoding:foo'
         })
 
-        const items = await onCallHierarchyPrepare({ info, node, offset, pathExists, roots, uris, urisOfIds })
+        const items = await onCallHierarchyPrepare({ service, textDoc, node, offset })
 
         assert.deepStrictEqual(items, [{
             name: 'spgoding:foo',
@@ -107,7 +106,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
     it('Should return null when there are not any function', async () => {
         const offset = 0
 
-        const items = await onCallHierarchyPrepare({ info, node, offset, pathExists, roots, uris, urisOfIds })
+        const items = await onCallHierarchyPrepare({ service, textDoc, node, offset })
 
         assert(items === null)
     })
