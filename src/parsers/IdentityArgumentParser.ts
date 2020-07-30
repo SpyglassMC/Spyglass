@@ -375,6 +375,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             if (config.env.dependsOnVanilla) {
                 idPool.push(...this.getVanillaPool(type, namespaceSummary))
             }
+            if (type === 'loot_table') {
+                idPool.push('minecraft:empty')
+            }
         } else {
             const registry = registries[this.type]
             if (registry) {
