@@ -1,7 +1,7 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
 import { ParsingContext } from '../types'
-import { CacheType, FileType, isTagFileType, isWorldgenRegistryFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
+import { CacheType, FileType, isTagFileType, isWorldgenRegistryFileType, TagRegularFileType, WorldgenRegistryFileType, getFileTypeFromCategory } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
@@ -181,7 +181,7 @@ export class IdentityNode extends ArgumentNode {
                         } else {
                             // data/<namespace>/<regular file type>/**/*.json
                             minimumSegsLength = 4
-                            category = segs[2].slice(0, -1) as FileType
+                            category = getFileTypeFromCategory(segs[2])
                         }
                         if (segs.length < minimumSegsLength) {
                             return undefined

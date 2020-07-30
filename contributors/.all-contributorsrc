@@ -4,7 +4,7 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "2.1.0.md",
+    "3.0.0.md",
     "../README.md"
   ],
   "imageSize": 64,
@@ -215,6 +215,15 @@
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/576", "text": "#576" }
+      ]
+    },
+    {
+      "name": "pca006132",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12198657?s=460&v=4",
+      "profile": "https://github.com/pca006132",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/605", "text": "#605" }
       ]
     },
     {
