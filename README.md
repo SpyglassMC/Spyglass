@@ -8,9 +8,9 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack language server can provide many heavy language features for documents in your datapack, including advancements, functions, loot tables, predicates, recipes, and all kinds of tags.
+Data-pack Language Server can provide many heavy language features for documents in your datapack, including advancements, dimensions, dimension types, functions, loot tables, predicates, recipes, all kinds of tags, and all kinds of worldgen files.
 
-For use please install our VSCode extension: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server).
+For use please install our VSCode extension: [Data-pack Helper Plus ![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server).
 
 - [Installation](#installation)
   - [For Use](#for-use)
@@ -29,6 +29,11 @@ We have a [VSCode](https://code.visualstudio.com/) extension for you to install:
 ## For Developers
 
 See our [wiki](https://github.com/SPGoding/datapack-language-server/wiki/Language%20Server%20Details) for more information.
+
+Also please note that _only_ the `DatapackLanguageService` class and its methods are considered as public API. _All_ other
+exported classes/functions/variables, including but not limited to _everything_ under the `nodes` directory, are not part 
+of the public API and are subject to change breakingly in even patch/minor versions. _Do not_ make your systems depend on 
+them.
 
 # Contributors
 

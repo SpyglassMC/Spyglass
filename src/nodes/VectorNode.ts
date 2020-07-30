@@ -1,8 +1,8 @@
-import { getCodeAction } from '../utils'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { NumberNode } from './NumberNode'
 
@@ -51,14 +51,14 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         }
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         if (Array.prototype.some.call(this,
             (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')
         )) {
             ans.push(
                 getCodeAction(
-                    'vector-align-0.0', [], info.document, this[NodeRange],
+                    'vector-align-0.0', [], ctx.textDoc, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {
@@ -70,7 +70,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                     undefined, false
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], info.document, this[NodeRange],
+                    'vector-align-0.5', [], ctx.textDoc, this[NodeRange],
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {

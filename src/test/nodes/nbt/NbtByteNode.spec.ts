@@ -6,7 +6,7 @@ import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { $, mockParsingContext } from '../../utils.spec'
 
 describe('NbtByteNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
@@ -45,7 +45,7 @@ describe('NbtByteNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info = mockFunctionInfo()
+        const info = mockParsingContext()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should convert it to short', () => {
             const diagnostics = {
@@ -55,7 +55,7 @@ describe('NbtByteNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, { start: 1, end: 1 }, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-type-to-short', diags, info.document, { start: 0, end: 3 },
+                'nbt-type-to-short', diags, info.textDoc, { start: 0, end: 3 },
                 '17s'
             )])
         })

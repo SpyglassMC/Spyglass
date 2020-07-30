@@ -35,7 +35,7 @@ async function setupLanguage(code: string) {
     Locales[code] = locale
     language = code
 
-    const jsonLocale = await import(`@mcschema/core/locales/${code}.json`)
+    const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
     JsonLocales.register(code, jsonLocale)
     JsonLocales.language = code
 }

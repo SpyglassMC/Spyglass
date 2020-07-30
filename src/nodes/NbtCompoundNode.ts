@@ -1,6 +1,6 @@
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
+import { McfunctionDocument } from '../types/DatapackDocument'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
@@ -9,6 +9,7 @@ import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNo
 import { Chars, ConfigKeys, MapNode, UnsortedKeys } from './MapNode'
 import { NbtCompoundKeyNode } from './NbtCompoundKeyNode'
 import { NbtNode, NbtNodeType, SuperNode } from './NbtNode'
+import { ParsingContext } from '../types'
 
 export const NbtCompoundNodeChars = {
     openBracket: '{', sep: ':', pairSep: ',', closeBracket: '}'
@@ -34,17 +35,17 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
 
     protected [Chars] = NbtCompoundNodeChars;
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         const sortKeysDiagnostics = diagnostics[ErrorCode.NbtCompoundSortKeys]
-        if (sortKeysDiagnostics && info.config.lint.nbtCompoundSortKeys) {
+        if (sortKeysDiagnostics && ctx.config.lint.nbtCompoundSortKeys) {
             /* istanbul ignore next */
-            const keys = info.config.lint.nbtCompoundSortKeys[1] === 'alphabetically' ?
+            const keys = ctx.config.lint.nbtCompoundSortKeys[1] === 'alphabetically' ?
                 this[UnsortedKeys].sort() : this[UnsortedKeys]
             ans.push(getCodeAction(
                 'nbt-compound-sort-keys', sortKeysDiagnostics,
-                info.document, this[NodeRange],
-                this[GetFormattedString](info.config.lint, keys)
+                ctx.textDoc, this[NodeRange],
+                this[GetFormattedString](ctx.config.lint, keys)
             ))
         }
         //#region UUID datafix: #377
@@ -57,8 +58,8 @@ export class NbtCompoundNode extends MapNode<NbtCompoundKeyNode, NbtNode> implem
                 ))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    info.document, this[NodeRange],
-                    newArrayNode[GetFormattedString](info.config.lint)
+                    ctx.textDoc, this[NodeRange],
+                    newArrayNode[GetFormattedString](ctx.config.lint)
                 ))
             } catch (ignored) {
                 // Ignored.

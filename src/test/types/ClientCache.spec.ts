@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
-import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isDefinitionType, isFileType, isNamespacedType, isTagRegularFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
+import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isDefinitionType, isFileType, isNamespacedType, isTagFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
 import { assertCompletions } from '../utils.spec'
 
 describe('ClientCache Tests', () => {
@@ -295,11 +295,11 @@ describe('ClientCache Tests', () => {
     })
     describe('isTagRegularFileType() Tests', () => {
         it('Should return true', () => {
-            const actual = isTagRegularFileType('tag/block')
+            const actual = isTagFileType('tag/block')
             assert(actual === true)
         })
         it('Should return false', () => {
-            const actual = isTagRegularFileType('advancement')
+            const actual = isTagFileType('advancement')
             assert(actual === false)
         })
     })

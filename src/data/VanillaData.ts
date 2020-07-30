@@ -1,14 +1,14 @@
 /* istanbul ignore file */
 
 import { COLLECTIONS as JsonCollections } from '@mcschema/core'
-import fs from 'fs-extra'
+import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
 import { compileNamespaceSummary, NamespaceSummary, RawNamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
-import { requestText } from '../utils'
+import { requestText, pathAccessible, readFile } from '../utils'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
@@ -85,22 +85,22 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
     }
 }
 
-async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string, processedVersions: string[], latestSnapshot: string) {
+async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string | undefined, processedVersions: string[], latestSnapshot: string) {
     const cache = VanillaDataCache[type]
     if (!cache[version]) {
         if (faildTimes < MaxFaildTimes) {
-            const versionPath = path.join(globalStoragePath, version)
-            const filePath = path.join(versionPath, `${type}.json`)
+            const versionPath = globalStoragePath ? path.join(globalStoragePath, version) : undefined
+            const filePath = versionPath ? path.join(versionPath, `${type}.json`) : undefined
             try {
-                if (await fs.pathExists(filePath)) {
-                    console.info(`[VanillaData: ${type} for ${version}] Loading from local file ‘${filePath}’...`)
-                    const json = await fs.readJson(filePath, { encoding: 'utf8' })
+                if (filePath && await pathAccessible(filePath)) {
+                    console.info(`[VanillaData: ${type} for ${version}] Loading from local file ${filePath}...`)
+                    const json = JSON.parse(await readFile(filePath))
                     console.info(`[VanillaData: ${type} for ${version}] Loaded from local file.`)
                     cache[version] = json
                 } else {
                     const isLatestSnapshot = version === latestSnapshot
                     const uri = getReportUri(type, source, version, processedVersions, isLatestSnapshot)
-                    console.info(`[VanillaData: ${type} for ${version}] Fetching from ${source} ‘${uri}’...`)
+                    console.info(`[VanillaData: ${type} for ${version}] Fetching from ${source} ${uri}...`)
                     const str = await Promise.race([
                         requestText(uri),
                         new Promise<string>((_, reject) => {
@@ -108,14 +108,17 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                         })
                     ])
                     const json = JSON.parse(str)
-                    await fs.mkdirp(versionPath)
-                    fs.writeJson(filePath, json, { encoding: 'utf8' })
-                    console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source} and saved at ‘${filePath}’.`)
+                    console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source}.`)
+                    if (versionPath && filePath) {
+                        await fsp.mkdir(versionPath, { recursive: true })
+                        fsp.writeFile(filePath, JSON.stringify(json), { encoding: 'utf8' })
+                        console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath}.`)
+                    }
                     cache[version] = json
                 }
                 if (type === 'NamespaceSummary') {
                     cache[version] = compileNamespaceSummary(cache[version] as unknown as RawNamespaceSummary, RegistryNamespaceSummary)
-                    console.info(`[VanillaData: ${type} for ${version}] Merged ‘RegistryNamespaceSummary.json’ in.`)
+                    console.info(`[VanillaData: ${type} for ${version}] Merged RegistryNamespaceSummary.json in.`)
                 }
             } catch (e) {
                 console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)
@@ -129,7 +132,7 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
     return cache[version]
 }
 
-export async function getVanillaData(versionOrLiteral: string | null, source: DataSource, versionInformation: VersionInformation | undefined, globalStoragePath: string) {
+export async function getVanillaData(versionOrLiteral: string | null, source: DataSource, versionInformation: VersionInformation | undefined, globalStoragePath: string | undefined) {
     if (!versionInformation || !versionOrLiteral) {
         return FallbackVanillaData
     }

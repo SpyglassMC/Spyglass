@@ -1,7 +1,7 @@
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/DocumentInfo'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { toFormattedString } from '../utils'
@@ -122,15 +122,15 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         for (const key of this[GetPlainKeys]()) {
             if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                 const keyInfo = this[Keys]![key]
                 if (keyInfo instanceof ArgumentNode) {
                     if (areOverlapped(keyInfo[NodeRange], range)) {
                         ans.push(...keyInfo[GetCodeActions](
-                            uri, info, range, this[FilterDiagnostics](info, diagnostics, keyInfo[NodeRange])
+                            uri, ctx, range, this[FilterDiagnostics](ctx, diagnostics, keyInfo[NodeRange])
                         ))
                     }
                 }
