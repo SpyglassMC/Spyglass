@@ -37,12 +37,12 @@ export interface RawNamespaceSummary {
 
 export function compileNamespaceSummary(raw: RawNamespaceSummary, partial: Partial<NamespaceSummary>) {
     const ans = clone(partial)
-    ans.advancement = raw.advancements
-    ans.loot_table = raw.loot_tables
-    ans.recipe = raw.recipes
-    ans['tag/block'] = raw.tags.blocks
-    ans['tag/entity_type'] = raw.tags.entity_types
-    ans['tag/fluid'] = raw.tags.fluids
-    ans['tag/item'] = raw.tags.items
+    ans.advancement = (ans.advancement ?? []).concat(raw.advancements)
+    ans.loot_table = (ans.loot_table ?? []).concat(raw.loot_tables)
+    ans.recipe = (ans.loot_table ?? []).concat(raw.recipes)
+    ans['tag/block'] = (ans['tag/block'] ?? []).concat(raw.tags.blocks)
+    ans['tag/entity_type'] = (ans['tag/entity_type'] ?? []).concat(raw.tags.entity_types)
+    ans['tag/fluid'] = (ans['tag/fluid'] ?? []).concat(raw.tags.fluids)
+    ans['tag/item'] = (ans['tag/item'] ?? []).concat(raw.tags.items)
     return ans as NamespaceSummary
 }

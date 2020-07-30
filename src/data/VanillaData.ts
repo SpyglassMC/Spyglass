@@ -23,8 +23,8 @@ export type VanillaData = {
 
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
 export const FallbackRawNamespaceSummary: RawNamespaceSummary = require('./NamespaceSummary.json') as RawNamespaceSummary
-export const RegistryNamespaceSummary: Partial<NamespaceSummary> = require('./RegistryNamespaceSummary.json') as Partial<NamespaceSummary>
-export const FallbackNamespaceSummary: NamespaceSummary = compileNamespaceSummary(FallbackRawNamespaceSummary, RegistryNamespaceSummary)
+export const MyNamespaceSummary: Partial<NamespaceSummary> = require('./MyNamespaceSummary.json') as Partial<NamespaceSummary>
+export const FallbackNamespaceSummary: NamespaceSummary = compileNamespaceSummary(FallbackRawNamespaceSummary, MyNamespaceSummary)
 export const FallbackNbtdoc: nbtdoc.Root = require('./Nbtdoc.json') as nbtdoc.Root
 export const FallbackRegistry: Registry = require('./Registry.json') as Registry
 
@@ -117,8 +117,8 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     cache[version] = json
                 }
                 if (type === 'NamespaceSummary') {
-                    cache[version] = compileNamespaceSummary(cache[version] as unknown as RawNamespaceSummary, RegistryNamespaceSummary)
-                    console.info(`[VanillaData: ${type} for ${version}] Merged RegistryNamespaceSummary.json in.`)
+                    cache[version] = compileNamespaceSummary(cache[version] as unknown as RawNamespaceSummary, MyNamespaceSummary)
+                    console.info(`[VanillaData: ${type} for ${version}] Merged MyNamespaceSummary.json in.`)
                 }
             } catch (e) {
                 console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)
