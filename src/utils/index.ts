@@ -145,10 +145,7 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
     if (isQuoted && quoteTypeConfig) {
         const severity = quoteTypeConfig[0]
         if (firstChar !== expectedChar) {
-            const message = locale('expected-got',
-                locale('punc.quote', expectedChar),
-                locale('punc.quote', firstChar)
-            )
+            const message = expectedChar === '"' ? locale('quote_prefer_double') : locale('quote_prefer_single')
             ans.push(new ParsingError(
                 range,
                 quoteConfigRule ? locale('diagnostic-rule', message, locale('punc.quote', quoteTypeConfigRule)) : message,

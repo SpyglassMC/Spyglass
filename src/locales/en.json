@@ -128,6 +128,8 @@
     "punc.period": ".",
     "punc.quote": "‘%0%’",
     "quote": "a quote (‘'’ or ‘\"’)",
+    "quote_prefer_double": "Double quote (‘\"’) is preferable here",
+    "quote_prefer_single": "Single quote (‘'’) is preferable here",
     "score-holder": "a score holder",
     "server.checking-file": "Checking ‘%0%’",
     "server.fixing-workspace": "Fixing all auto-fixable problems in the workspace",
