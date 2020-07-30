@@ -68,6 +68,7 @@
         { "type": "bug", "link": "issues/539", "text": "#539" },
         { "type": "bug", "link": "issues/561", "text": "#561" },
         { "type": "bug", "link": "issues/568", "text": "#568" },
+        { "type": "bug", "link": "issues/604", "text": "#604" },
         { "type": "bug", "link": "issues/606", "text": "#606" }
       ]
     },

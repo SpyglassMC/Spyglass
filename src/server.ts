@@ -185,13 +185,13 @@ connection.onInitialized(() => {
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
     const uri = service.parseUri(uriString)
-    service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }), true)
-    service.publishDiagnostics(uri)
+    await service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }), true)
+    return service.publishDiagnostics(uri)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
     const uri = service.parseUri(uriString)
-    service.onDidChangeTextDocument(uri, contentChanges, version)
-    service.publishDiagnostics(uri)
+    await service.onDidChangeTextDocument(uri, contentChanges, version)
+    return service.publishDiagnostics(uri)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
     const uri = service.parseUri(uriString)
