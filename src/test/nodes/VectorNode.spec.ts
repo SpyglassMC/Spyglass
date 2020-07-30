@@ -5,7 +5,7 @@ import { VectorElementNode, VectorElementType, VectorNode } from '../../nodes/Ve
 import { constructConfig } from '../../types/Config'
 import { GetFormattedString } from '../../types/Formattable'
 import { getCodeAction } from '../../utils'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 describe('VectorNode Tests', () => {
     const { lint } = constructConfig({})
@@ -24,7 +24,7 @@ describe('VectorNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
         const lineNumber = 10
-        const info = mockFunctionInfo()
+        const info = mockParsingContext()
         it('Should return align actions', () => {
             const range = { start: 1, end: 2 }
             const node = $(new VectorNode(), [0, 7], {
@@ -36,11 +36,11 @@ describe('VectorNode Tests', () => {
             const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [
                 getCodeAction(
-                    'vector-align-0.0', [], info.document, { start: 0, end: 7 },
+                    'vector-align-0.0', [], info.textDoc, { start: 0, end: 7 },
                     '1.0 ~1 1.2', undefined, false
                 ),
                 getCodeAction(
-                    'vector-align-0.5', [], info.document, { start: 0, end: 7 },
+                    'vector-align-0.5', [], info.textDoc, { start: 0, end: 7 },
                     '1.5 ~1 1.2', undefined, false
                 )
             ])

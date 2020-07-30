@@ -1,5 +1,5 @@
 import clone from 'clone'
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { StringReader } from '../utils/StringReader'
 import { IndexMapping } from './IndexMapping'
 import { remapTextRange, TextRange } from './TextRange'

@@ -3,7 +3,7 @@ import { JsonDocument } from './JsonDocument'
 import { JsonSchemaType } from '../data/JsonSchema'
 
 /**
- * Represent an root node in a JSON file.
+ * Represents a root node in a JSON file.
  */
 export interface JsonNode {
     json: JsonDocument,

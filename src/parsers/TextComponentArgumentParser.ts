@@ -65,7 +65,7 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         //#region Completions.
         TextComponentArgumentParser.Service.doComplete(document, { line: 0, character: ctx.cursor }, jsonDocument).then(completions => {
             if (completions) {
-                ans.completions.push(...completions.items.map(v => remapParserSuggestion(v, (offset: number) => ctx.document.positionAt(offset))))
+                ans.completions.push(...completions.items.map(v => remapParserSuggestion(v, (offset: number) => ctx.textDoc.positionAt(offset))))
             }
         })
         //#endregion

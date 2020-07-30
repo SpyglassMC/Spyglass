@@ -7,7 +7,7 @@ import { NbtCompoundNode } from '../../../nodes/NbtCompoundNode'
 import { NbtLongNode } from '../../../nodes/NbtLongNode'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { $, mockParsingContext } from '../../utils.spec'
 
 describe('NbtCompoundNode Tests', () => {
     describe('[GetCodeActions]() Tests', () => {
@@ -21,7 +21,7 @@ describe('NbtCompoundNode Tests', () => {
             }
         })
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info = mockFunctionInfo({ config })
+        const info = mockParsingContext({ config })
         const diags: any = [{ message: 'A diagnostic message' }]
         it('Should return empty actions', () => {
             const range = { start: 3, end: 3 }
@@ -46,7 +46,7 @@ describe('NbtCompoundNode Tests', () => {
             })
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-compound-sort-keys', diags, info.document, { start: 0, end: 7 },
+                'nbt-compound-sort-keys', diags, info.textDoc, { start: 0, end: 7 },
                 '{bar: 0b, foo: 1b}'
             )])
         })
@@ -62,7 +62,7 @@ describe('NbtCompoundNode Tests', () => {
             })
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-uuid-datafix', diags, info.document, { start: 0, end: 7 },
+                'nbt-uuid-datafix', diags, info.textDoc, { start: 0, end: 7 },
                 '[I; 287, 1912276171, 1063, -1955079488]'
             )])
         })
@@ -78,7 +78,7 @@ describe('NbtCompoundNode Tests', () => {
             })
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'nbt-uuid-datafix', diags, info.document, { start: 0, end: 7 },
+                'nbt-uuid-datafix', diags, info.textDoc, { start: 0, end: 7 },
                 '[I; 287, 1912276171, 1063, -1955079488]'
             )])
         })

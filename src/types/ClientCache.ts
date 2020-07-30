@@ -1,12 +1,10 @@
 import { MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
-import { AdvancementInfo } from './AdvancementInfo'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
-import { TagInfo } from './TagInfo'
 import { remapTextRange, TextRange } from './TextRange'
 
-export const CacheVersion = 9
+export const CacheVersion = 10
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
@@ -15,32 +13,17 @@ export interface CacheFile {
     files: {
         [uri: string]: number | undefined
     },
-    advancements: {
-        [id: string]: AdvancementInfo | undefined
-    },
-    tags: {
-        functions: {
-            [id: string]: TagInfo | undefined
-        }
-    },
     version: number
 }
 
-interface TagRegularFileCache {
+interface TagFileCache {
     'tag/block'?: CacheCategory,
     'tag/entity_type'?: CacheCategory,
     'tag/fluid'?: CacheCategory,
     'tag/function'?: CacheCategory,
     'tag/item'?: CacheCategory
 }
-interface RegularFileCache extends TagRegularFileCache {
-    advancement?: CacheCategory,
-    function?: CacheCategory,
-    loot_table?: CacheCategory,
-    predicate?: CacheCategory,
-    recipe?: CacheCategory
-}
-interface WorldgenRegistryFileCache {
+interface WorldgenFileCache {
     'worldgen/biome'?: CacheCategory,
     'worldgen/configured_carver'?: CacheCategory,
     'worldgen/configured_decorator'?: CacheCategory,
@@ -50,11 +33,15 @@ interface WorldgenRegistryFileCache {
     'worldgen/processor_list'?: CacheCategory,
     'worldgen/template_pool'?: CacheCategory
 }
-interface RegistryFileCache extends WorldgenRegistryFileCache {
+interface FileCache extends TagFileCache, WorldgenFileCache {
+    advancement?: CacheCategory,
     dimension?: CacheCategory,
-    dimension_type?: CacheCategory
+    dimension_type?: CacheCategory,
+    function?: CacheCategory,
+    loot_table?: CacheCategory,
+    predicate?: CacheCategory,
+    recipe?: CacheCategory
 }
-interface FileCache extends RegularFileCache, RegistryFileCache { }
 interface AliasCache {
     'alias/entity'?: CacheCategory,
     'alias/uuid'?: CacheCategory,
@@ -77,12 +64,10 @@ interface MiscCache extends AliasCache {
 export interface ClientCache extends FileCache, MiscCache { }
 export type CacheType = keyof ClientCache
 /**/ export type FileType = keyof FileCache
-/*******/ export type RegularFileType = keyof RegularFileCache
-/************/ export type TagRegularFileType = keyof TagRegularFileCache
-/*******/ export type RegistryFileType = keyof RegistryFileCache
-/************/ export type WorldgenRegistryFileType = keyof WorldgenRegistryFileCache
-/*******/ export type MiscType = keyof MiscCache
-/************/ export type AliasType = keyof AliasCache
+/*******/ export type TagRegularFileType = keyof TagFileCache
+/*******/ export type WorldgenRegistryFileType = keyof WorldgenFileCache
+/**/ export type MiscType = keyof MiscCache
+/*******/ export type AliasType = keyof AliasCache
 
 /**
  * A category in `ClientCache`.
@@ -254,41 +239,29 @@ export function shouldHaveDef(type: CacheType) {
     )
 }
 
-export function isTagRegularFileType(type: CacheType): type is TagRegularFileType {
+export function isTagFileType(type: CacheType): type is TagRegularFileType {
     return type.startsWith('tag/')
-}
-
-export function isRegularFileType(type: string): type is RegularFileType {
-    return (
-        type === 'advancement' ||
-        type === 'function' ||
-        type === 'loot_table' ||
-        type === 'predicate' ||
-        type === 'recipe' ||
-        isTagRegularFileType(type as CacheType)
-    )
 }
 
 export function isWorldgenRegistryFileType(type: CacheType): type is WorldgenRegistryFileType {
     return type.startsWith('worldgen/')
 }
 
-export function isRegistryFileType(type: CacheType): type is RegistryFileType {
+export function isFileType(type: string): type is FileType {
     return (
+        type === 'advancement' ||
         type === 'dimension' ||
         type === 'dimension_type' ||
+        type === 'function' ||
+        type === 'loot_table' ||
+        type === 'predicate' ||
+        type === 'recipe' ||
+        isTagFileType(type as CacheType) ||
         isWorldgenRegistryFileType(type as CacheType)
     )
 }
 
-export function isFileType(type: string): type is FileType {
-    return (
-        isRegularFileType(type as CacheType)||
-        isRegistryFileType(type as CacheType)
-    )
-}
-
-export type NamespacedType = 'bossbar' | 'storage' | RegularFileType
+export type NamespacedType = 'bossbar' | 'storage' | FileType
 
 export function isNamespacedType(type: CacheType): type is NamespacedType {
     return (

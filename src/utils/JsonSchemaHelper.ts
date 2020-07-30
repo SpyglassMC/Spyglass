@@ -34,7 +34,7 @@ export class JsonSchemaHelper {
             node, path, schema,
             (node, path, schema) => {
                 const selectedSchema = schema.navigate(path, -1)
-                const validationOption = selectedSchema?.validationOption()
+                const validationOption = selectedSchema?.validationOption(this.restoreValueFromNode(node))
                 if (validationOption) {
                     this.doDetailedValidate(ans, node, validationOption, options)
                 }
@@ -60,11 +60,11 @@ export class JsonSchemaHelper {
             const out: { mapping: IndexMapping } = { mapping: {} }
             const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
             const selectedSchema = schema.navigate(selectedPath, -1)
-            const validationOption = selectedSchema?.validationOption()
+            const validationOption = selectedSchema?.validationOption(this.restoreValueFromNode(selectedNode))
             if (selectedType === 'value') {
                 if (validationOption && selectedNode.type === 'string') {
                     // Detailed suggestions for the selected string value.
-                    const rawReader = new StringReader(ctx.document.getText(), selectedRange.start, selectedRange.end)
+                    const rawReader = new StringReader(ctx.textDoc.getText(), selectedRange.start, selectedRange.end)
                     const value = rawReader.readString(out)
                     const valueReader = new StringReader(value)
                     result = this.doDetailedStringLegacyValidate(
@@ -215,7 +215,7 @@ export class JsonSchemaHelper {
             // TODO: JSON block_state_map validation
         } else {
             const out: { mapping: IndexMapping } = { mapping: {} }
-            const rawReader = new StringReader(ctx.document.getText(), valueRange.start, valueRange.end)
+            const rawReader = new StringReader(ctx.textDoc.getText(), valueRange.start, valueRange.end)
             const value = rawReader.readString(out)
             const valueReader = new StringReader(value)
             const result = this.doDetailedStringLegacyValidate(valueReader, ctx, node, option)
@@ -293,7 +293,7 @@ export class JsonSchemaHelper {
 
     private static parserSuggestionToCompletionItem(origin: ParserSuggestion, mapping: IndexMapping, ctx: ParsingContext) {
         const ans = remapParserSuggestion(origin, mapping)
-        ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.document.positionAt(ans.start), end: ctx.document.positionAt(ans.end) } }
+        ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.textDoc.positionAt(ans.start), end: ctx.textDoc.positionAt(ans.end) } }
         delete ans.start; delete ans.end
         return ans
     }

@@ -2,14 +2,14 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { ArgumentNode, GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../nodes/ArgumentNode'
 import { GetFormattedString } from '../../types/Formattable'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 class TestArgumentNode extends ArgumentNode {
     readonly [NodeType] = 'Test'
 }
 
 describe('ArgumentNode Tests', () => {
-    const info = mockFunctionInfo()
+    const info = mockParsingContext()
     describe('[GetFormattedString]() Tests', () => {
         it('Should return the same value as toString()', () => {
             const node = new TestArgumentNode()
@@ -36,7 +36,7 @@ describe('ArgumentNode Tests', () => {
         it('Should return null when there is no description', () => {
             const node = new TestArgumentNode()
 
-            const actual = node[GetHoverInformation](info.document, offset)
+            const actual = node[GetHoverInformation](info.textDoc, offset)
 
             assert(actual === null)
         })
@@ -44,7 +44,7 @@ describe('ArgumentNode Tests', () => {
             const node = $(new TestArgumentNode(), [38, 45])
             node[NodeDescription] = 'This is the description for the TestArgumentNode'
 
-            const actual = node[GetHoverInformation](info.document, offset)
+            const actual = node[GetHoverInformation](info.textDoc, offset)
 
             assert.deepStrictEqual(actual, {
                 contents: { kind: 'markdown', value: 'This is the description for the TestArgumentNode' },

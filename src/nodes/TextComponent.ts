@@ -1,8 +1,8 @@
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { GetFormattedString } from '../types/Formattable'
 import { ArgumentNode, NodeType } from './ArgumentNode'
-import { NbtCompoundNode } from './NbtCompoundNode'
 import { JsonDocument } from './JsonDocument'
+import { NbtCompoundNode } from './NbtCompoundNode'
 
 export type TextComponentType = NbtCompoundNode | string | TextComponentType[]
 

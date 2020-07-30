@@ -1,8 +1,8 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
-import { CacheType, FileType, isRegularFileType, isTagRegularFileType, isWorldgenRegistryFileType, RegistryFileType, RegularFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
+import { ParsingContext } from '../types'
+import { CacheType, FileType, isTagFileType, isWorldgenRegistryFileType, TagRegularFileType, WorldgenRegistryFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
-import { FunctionInfo } from '../types/DocumentInfo'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
 import { PathPatterns } from '../types/PathPatterns'
@@ -85,8 +85,8 @@ export class IdentityNode extends ArgumentNode {
         return `${this.getTagSymbolPart()}${id}`
     }
 
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
 
         const completeDiagnostics = diagnostics[ErrorCode.IdentityCompleteDefaultNamespace]
         const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
@@ -95,14 +95,14 @@ export class IdentityNode extends ArgumentNode {
         if (completeDiagnostics && completeDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.toTagString()
             ))
         }
         if (omitDiagnostics && omitDiagnostics.length > 0) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.toShortestTagString()
             ))
         }
@@ -111,7 +111,7 @@ export class IdentityNode extends ArgumentNode {
             if (this.toTagString() === 'minecraft:zombie_pigman') {
                 ans.push(getCodeAction(
                     'id-zombified-piglin-datafix', unknownDiagnostics,
-                    info.document, this[NodeRange],
+                    ctx.textDoc, this[NodeRange],
                     new IdentityNode(this.namespace, ['zombified_piglin'])[GetFormattedString]()
                 ))
             }
@@ -128,18 +128,14 @@ export class IdentityNode extends ArgumentNode {
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
     toRel(category: FileType, side: 'assets' | 'data' = 'data') {
-        if (isRegularFileType(category)) {
-            const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
-            let ext: string
-            if (category === 'function') {
-                ext = '.mcfunction'
-            } else {
-                ext = '.json'
-            }
-            return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
+        const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
+        let ext: string
+        if (category === 'function') {
+            ext = '.mcfunction'
         } else {
-            return `${side}${sep}minecraft${sep}${category}${sep}${this.getNamespace()}${sep}${this.path.join(sep)}.json`
+            ext = '.json'
         }
+        return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
     }
 
     /**
@@ -171,29 +167,21 @@ export class IdentityNode extends ArgumentNode {
                     const fileType = type as FileType
                     const pattern = PathPatterns[fileType]
                     if (minimatch(rel, pattern, { dot: true })) {
+                        const namespace = segs[1]
                         let minimumSegsLength: number
                         let category: CacheType
-                        let namespace: string
-                        if (isTagRegularFileType(fileType)) {
+                        if (isTagFileType(fileType)) {
                             // data/<namespace>/tags/<tag type>/**/*.json
-                            namespace = segs[1]
                             minimumSegsLength = 5
                             category = `tag/${segs[3].slice(0, -1)}` as TagRegularFileType
-                        } else if (isRegularFileType(fileType)) {
-                            // data/<namespace>/<regular file type>/**/*.json
-                            namespace = segs[1]
-                            minimumSegsLength = 4
-                            category = segs[2].slice(0, -1) as RegularFileType
                         } else if (isWorldgenRegistryFileType(fileType)) {
-                            // data/minecraft/worldgen/<worldgen type>/<namespace>/**/*.json
-                            namespace = segs[4]
-                            minimumSegsLength = 6
+                            // data/<namespace>/worldgen/<worldgen type>/**/*.json
+                            minimumSegsLength = 5
                             category = `worldgen/${segs[3]}` as WorldgenRegistryFileType
                         } else {
-                            // data/minecraft/<registry file type>/<namespace>/**/*.json
-                            namespace = segs[3]
-                            minimumSegsLength = 5
-                            category = segs[2] as RegistryFileType
+                            // data/<namespace>/<regular file type>/**/*.json
+                            minimumSegsLength = 4
+                            category = segs[2].slice(0, -1) as FileType
                         }
                         if (segs.length < minimumSegsLength) {
                             return undefined
@@ -221,12 +209,5 @@ export class IdentityNode extends ArgumentNode {
         } else {
             return new IdentityNode(parts[0], parts[1].split(IdentityNode.PathSep), isTag)
         }
-    }
-
-    static isExtValid(ext: string, category: FileType) {
-        return (
-            (category === 'function' && ext === '.mcfunction') ||
-            (category !== 'function' && ext === '.json')
-        )
     }
 }

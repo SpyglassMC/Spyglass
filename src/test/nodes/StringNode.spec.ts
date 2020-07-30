@@ -5,7 +5,7 @@ import { StringNode } from '../../nodes/StringNode'
 import { GetFormattedString } from '../../types/Formattable'
 import { ErrorCode } from '../../types/ParsingError'
 import { getCodeAction } from '../../utils'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 describe('StringNode Tests', () => {
     describe('toString() Tests', () => {
@@ -31,7 +31,7 @@ describe('StringNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info = mockFunctionInfo()
+        const info = mockParsingContext()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should unquote the string', () => {
             const range = { start: 0, end: 5 }
@@ -42,7 +42,7 @@ describe('StringNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-unquote', diags, info.document, range,
+                'string-unquote', diags, info.textDoc, range,
                 'foo'
             )])
         })
@@ -55,7 +55,7 @@ describe('StringNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-double-quote', diags, info.document, range,
+                'string-double-quote', diags, info.textDoc, range,
                 '"foo"'
             )])
         })
@@ -68,7 +68,7 @@ describe('StringNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'string-single-quote', diags, info.document, range,
+                'string-single-quote', diags, info.textDoc, range,
                 "'foo'"
             )])
         })
