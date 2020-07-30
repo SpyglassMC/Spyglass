@@ -35,8 +35,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     }
 
     let cacheFile: CacheFile | undefined
-    const cachePath = storagePath ? path.join(storagePath, './cache.json') : undefined
-    if (cachePath && pathAccessible(cachePath)) {
+    cachePath = storagePath ? path.join(storagePath, './cache.json') : undefined
+    if (cachePath && await pathAccessible(cachePath)) {
         try {
             cacheFile = JSON.parse(await readFile(cachePath))
         } catch (e) {
@@ -61,11 +61,11 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         versionInformation: await getLatestVersions()
     })
 
-    await updateCacheFile(service.cacheFile, service.roots, progress)
-    saveCacheFile()
-
     workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
     await updateRoots(service.roots)
+
+    await updateCacheFile(service.cacheFile, service.roots, progress)
+    saveCacheFile()
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
@@ -260,7 +260,6 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                             const fileUri = service.parseUri(fileUriString)
                             // connection.console.info(`result = ${JSON.stringify(result)}`)
                             service.onDeletedFile(fileUri)
-                            delete service.cacheFile.files[fileUriString]
                         }
                     }
                 }
@@ -469,7 +468,7 @@ async function getLatestVersions() {
             })
         ])
         const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
-        const processedVersion = '20w10a'
+        const processedVersion = '1.16.2-pre1'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         ans = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
@@ -496,7 +495,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
 
 async function saveCacheFile() {
     if (cachePath) {
-        await fsp.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
+        return fsp.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
     }
 }
 
@@ -518,7 +517,6 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             }
             if (!(await pathAccessible(uri.fsPath))) {
                 service.onDeletedFile(uri)
-                delete cacheFile.files[uriString]
             } else {
                 const stat = await fsp.stat(uri.fsPath)
                 const lastModified = stat.mtimeMs
@@ -532,9 +530,10 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     }
 
     const addedFiles: Uri[] = []
-    for (const root of roots) {
+
+    await Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
-        await walkFile(
+        return walkFile(
             root.fsPath,
             dataPath,
             async (abs, _rel, stat) => {
@@ -547,7 +546,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                 }
             }
         )
-    }
+    }))
 
     await Promise.all(addedFiles.map(service.onModifiedFile))
 

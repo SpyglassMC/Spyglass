@@ -216,6 +216,14 @@ export function canBeRenamed(type: CacheType) {
     return !isAliasType(type) && type !== 'color'
 }
 
+export function getFileTypeFromCategory(category: string) : FileType {
+    if (category === 'dimension' || category === 'dimension_type') {
+        return category
+    } else {
+        return category.slice(0, -1) as FileType
+    }
+}
+
 export type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'score_holder' | 'storage'
 
 export function isDefinitionType(value: string): value is DefinitionType {

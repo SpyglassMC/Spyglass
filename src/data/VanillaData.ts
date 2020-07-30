@@ -20,7 +20,6 @@ export type VanillaData = {
     NamespaceSummary: NamespaceSummary
 }
 
-
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
 export const FallbackRawNamespaceSummary: RawNamespaceSummary = require('./NamespaceSummary.json') as RawNamespaceSummary
 export const MyNamespaceSummary: Partial<NamespaceSummary> = require('./MyNamespaceSummary.json') as Partial<NamespaceSummary>
@@ -36,15 +35,15 @@ export const FallbackVanillaData: VanillaData = {
 }
 
 export const VanillaDataCache: {
-    BlockDefinition: { [version: string]: BlockDefinition },
-    NamespaceSummary: { [version: string]: NamespaceSummary },
-    Nbtdoc: { [version: string]: nbtdoc.Root },
-    Registry: { [version: string]: Registry }
+    BlockDefinition: { [version: string]: Promise<BlockDefinition> },
+    NamespaceSummary: { [version: string]: Promise<NamespaceSummary> },
+    Nbtdoc: { [version: string]: Promise<nbtdoc.Root> },
+    Registry: { [version: string]: Promise<Registry> }
 } = {
-    BlockDefinition: { '20w28a': FallbackBlockDefinition },
-    NamespaceSummary: { '20w28a': FallbackNamespaceSummary },
-    Nbtdoc: { '1.16.1': FallbackNbtdoc },
-    Registry: { '20w28a': FallbackRegistry }
+    BlockDefinition: { '20w28a': Promise.resolve(FallbackBlockDefinition) },
+    NamespaceSummary: { '20w28a': Promise.resolve(FallbackNamespaceSummary) },
+    Nbtdoc: { '1.16.1': Promise.resolve(FallbackNbtdoc) },
+    Registry: { '20w28a': Promise.resolve(FallbackRegistry) }
 }
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
@@ -63,13 +62,13 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
     switch (type) {
         case 'BlockDefinition':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/blocks/blocks.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/blocks/data.min.json`)
             } else {
                 return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/blocks.json`)
             }
         case 'NamespaceSummary':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/data/minecraft/minecraft.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/data/minecraft/data.min.json`)
             } else {
                 throw new Error(`No namespace summary for version ${version}.`)
             }
@@ -78,7 +77,7 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
         case 'Registry':
         default:
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/registries/registries.min.json`)
+                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/registries/data.min.json`)
             } else {
                 return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/registries.json`)
             }
@@ -87,8 +86,9 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
 
 async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string | undefined, processedVersions: string[], latestSnapshot: string) {
     const cache = VanillaDataCache[type]
-    if (!cache[version]) {
+    cache[version] = cache[version] ?? new Promise(async (resolve) => {
         if (faildTimes < MaxFaildTimes) {
+            let ans: any
             const versionPath = globalStoragePath ? path.join(globalStoragePath, version) : undefined
             const filePath = versionPath ? path.join(versionPath, `${type}.json`) : undefined
             try {
@@ -96,7 +96,7 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     console.info(`[VanillaData: ${type} for ${version}] Loading from local file ${filePath}...`)
                     const json = JSON.parse(await readFile(filePath))
                     console.info(`[VanillaData: ${type} for ${version}] Loaded from local file.`)
-                    cache[version] = json
+                    ans = json
                 } else {
                     const isLatestSnapshot = version === latestSnapshot
                     const uri = getReportUri(type, source, version, processedVersions, isLatestSnapshot)
@@ -114,21 +114,22 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                         fsp.writeFile(filePath, JSON.stringify(json), { encoding: 'utf8' })
                         console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath}.`)
                     }
-                    cache[version] = json
+                    ans = json
                 }
                 if (type === 'NamespaceSummary') {
-                    cache[version] = compileNamespaceSummary(cache[version] as unknown as RawNamespaceSummary, MyNamespaceSummary)
+                    ans = compileNamespaceSummary(ans as RawNamespaceSummary, MyNamespaceSummary)
                     console.info(`[VanillaData: ${type} for ${version}] Merged MyNamespaceSummary.json in.`)
                 }
+                resolve(ans)
             } catch (e) {
                 console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)
                 console.info(`[VanillaData: ${type} for ${version}] Used the fallback.`)
-                return FallbackVanillaData[type]
+                resolve(FallbackVanillaData[type])
             }
         } else {
-            return FallbackVanillaData[type]
+            resolve(FallbackVanillaData[type])
         }
-    }
+    })
     return cache[version]
 }
 

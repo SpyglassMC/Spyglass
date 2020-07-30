@@ -626,7 +626,7 @@ export class DatapackLanguageService {
 
     private addCacheUnit(id: string, type: FileType) {
         const category = getSafeCategory(this.cacheFile.cache, type)
-        category[id] = category[id] || { def: [], ref: [] }
+        category[id] = category[id] ?? { def: [], ref: [] }
         this.cacheFile.cache[type] = category
     }
 
@@ -648,7 +648,7 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Notifies a file addition in the file system. The ID of this file will be added to the
+     * Notifies a file addition from the file system. The ID of this file will be added to the
      * cache for completion usage, and the content of this file will also be analysed to
      * accelerate the process of renaming, etc.
      * 
@@ -668,11 +668,14 @@ export class DatapackLanguageService {
         }
         this.addCacheUnit(id.toString(), category)
         this.removeCachePositionsWith(uri)
+        this.cacheFile.cache[category]![id.toString()]!.def.push({
+            uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0
+        })
         return this.combineCacheOfNodes(uri)
     }
 
     /**
-     * Notifies a file modification in the file system. It is _not_ recommended to call this method
+     * Notifies a file modification from the file system. It is _not_ recommended to call this method
      * for changes of already opened documents as this function is called internally in the 
      * `onDidChangeTextDocument` function. The content of this file will be re-analysed to accelerate
      * the process of renaming, etc.
@@ -690,7 +693,7 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Notifies a file removal in the file system. The ID of this file will be removed from the cache
+     * Notifies a file removal from the file system. The ID of this file will be removed from the cache
      * for completions, and all the references of this URI will also be deleted.
      * 
      * Nothing will happen if the URI can't be resolved to an identity.
@@ -705,6 +708,7 @@ export class DatapackLanguageService {
         const { category, id } = result
         removeCacheUnit(this.cacheFile.cache, category, id.toString())
         this.removeCachePositionsWith(uri)
+        delete this.cacheFile.files[uri.toString()]
     }
 
     private createBuilder(uri: Uri) {
