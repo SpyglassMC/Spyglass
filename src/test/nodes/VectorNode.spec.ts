@@ -102,7 +102,7 @@ describe('VectorNode Tests', () => {
                 1: new VectorElementNode(VectorElementType.Relative, 2, '2')
             })
             const actual = vector1.volumeTo(vector2)
-            assert(actual === 4)
+            assert(actual === 9)
         })
     })
     describe('[GetFormattedString]() Tests', () => {

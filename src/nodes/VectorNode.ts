@@ -51,7 +51,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
             if (e1.type !== type || e2.type !== type) {
                 return undefined
             }
-            ans *= Math.abs(this[i].valueOf() - other[i].valueOf())
+            ans *= Math.abs(this[i].valueOf() - other[i].valueOf()) + 1
         }
         return ans
     }
