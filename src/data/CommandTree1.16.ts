@@ -1,5 +1,5 @@
 import { getArgOrDefault } from '../CommandTree'
-import { NodeRange } from '../nodes'
+import { NodeRange, VectorNode } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { StringNode } from '../nodes/StringNode'
@@ -32,6 +32,9 @@ import { CacheType } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
+import { ParsingError } from '../types'
+import { locale } from '../locales'
+import { DiagnosticSeverity } from 'vscode-languageserver'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -407,6 +410,17 @@ export const CommandTree: ICommandTree = {
                     children: {
                         end: {
                             parser: new VectorArgumentParser(3, 'integer'),
+                            run: ({ args, errors }) => {
+                                const v1 = getArgOrDefault<VectorNode>(args, 2, new VectorNode())
+                                const v2 = getArgOrDefault<VectorNode>(args, 1, new VectorNode())
+                                const volume = v1.volumeTo(v2)
+                                if (volume && volume > 32768) {
+                                    errors.push(new ParsingError(
+                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                        locale('too-many-block-affected', 32768, volume)
+                                    ))
+                                }
+                            },
                             children: {
                                 destination: {
                                     parser: new VectorArgumentParser(3, 'integer'),
@@ -820,6 +834,18 @@ export const CommandTree: ICommandTree = {
                     children: {
                         to: {
                             parser: new VectorArgumentParser(3, 'integer'),
+                            run: ({ args, errors }) => {
+                                const v1 = getArgOrDefault<VectorNode>(args, 2, new VectorNode())
+                                const v2 = getArgOrDefault<VectorNode>(args, 1, new VectorNode())
+                                const volume = v1.volumeTo(v2)
+                                if (volume && volume > 32768) {
+                                    errors.push(new ParsingError(
+                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                        locale('too-many-block-affected', 32768, volume),
+                                        undefined, DiagnosticSeverity.Warning
+                                    ))
+                                }
+                            },
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(false),

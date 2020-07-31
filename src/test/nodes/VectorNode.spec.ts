@@ -9,6 +9,102 @@ import { $, mockParsingContext } from '../utils.spec'
 
 describe('VectorNode Tests', () => {
     const { lint } = constructConfig({})
+    describe('distanceTo() Tests', () => {
+        it('Should return undefined for two vectors of different dimensions', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Absolute, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Absolute, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 3,
+                0: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
+                2: new VectorElementNode(VectorElementType.Absolute, 1, '1')
+            })
+            const actual = vector1.distanceTo(vector2)
+            assert(actual === undefined)
+        })
+        it('Should return undefined for vectors with different types', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Absolute, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Absolute, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Absolute, 1, '1')
+            })
+            const actual = vector1.distanceTo(vector2)
+            assert(actual === undefined)
+        })
+        it('Should return correctly', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Relative, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Relative, 1, '1')
+            })
+            const actual = vector1.distanceTo(vector2)
+            assert(actual === Math.sqrt(2))
+        })
+    })
+    describe('volumeTo() Tests', () => {
+        it('Should return undefined for two vectors of different dimensions', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Absolute, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Absolute, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 3,
+                0: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Absolute, 1, '1'),
+                2: new VectorElementNode(VectorElementType.Absolute, 1, '1')
+            })
+            const actual = vector1.volumeTo(vector2)
+            assert(actual === undefined)
+        })
+        it('Should return undefined for vectors with different types', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Absolute, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Absolute, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 1, '1'),
+                1: new VectorElementNode(VectorElementType.Absolute, 1, '1')
+            })
+            const actual = vector1.volumeTo(vector2)
+            assert(actual === undefined)
+        })
+        it('Should return 0 for vectors without elements', () => {
+            const vector1 = $(new VectorNode(), { length: 0 })
+            const vector2 = $(new VectorNode(), { length: 0 })
+            const actual = vector1.volumeTo(vector2)
+            assert(actual === 0)
+        })
+        it('Should return correctly', () => {
+            const vector1 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 0, '0'),
+                1: new VectorElementNode(VectorElementType.Relative, 0, '0')
+            })
+            const vector2 = $(new VectorNode(), {
+                length: 2,
+                0: new VectorElementNode(VectorElementType.Relative, 2, '2'),
+                1: new VectorElementNode(VectorElementType.Relative, 2, '2')
+            })
+            const actual = vector1.volumeTo(vector2)
+            assert(actual === 4)
+        })
+    })
     describe('[GetFormattedString]() Tests', () => {
         it('Should return correctly', () => {
             const vector = $(new VectorNode(), {

@@ -36,6 +36,43 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         super()
     }
 
+    volumeTo(other: VectorNode) {
+        if (this.length !== other.length) {
+            return undefined
+        }
+        if (this.length === 0) {
+            return 0
+        }
+        let ans = 1
+        let type: VectorElementType | undefined
+        for (let i = 0; i < this.length; i++) {
+            const e1 = this[i], e2 = other[i]
+            type = type ?? e1.type
+            if (e1.type !== type || e2.type !== type) {
+                return undefined
+            }
+            ans *= Math.abs(this[i].valueOf() - other[i].valueOf())
+        }
+        return ans
+    }
+
+    distanceTo(other: VectorNode) {
+        if (this.length !== other.length) {
+            return undefined
+        }
+        let distSquared = 0
+        let type: VectorElementType | undefined
+        for (let i = 0; i < this.length; i++) {
+            const e1 = this[i], e2 = other[i]
+            type = type ?? e1.type
+            if (e1.type !== type || e2.type !== type) {
+                return undefined
+            }
+            distSquared += (this[i].valueOf() - other[i].valueOf()) ** 2
+        }
+        return Math.sqrt(distSquared)
+    }
+
     push(...values: VectorElementNode[]) {
         for (const value of values) {
             this[this.length++] = value
