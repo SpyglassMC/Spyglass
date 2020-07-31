@@ -27,6 +27,7 @@
       "details": [
         { "type": "ideas", "link": "issues/410", "text": "#410" },
         { "type": "ideas", "link": "issues/582", "text": "#582" },
+        { "type": "bug", "link": "issues/603", "text": "#603" },
         { "type": "bug", "link": "issues/604", "text": "#604" },
         { "type": "bug", "link": "issues/606", "text": "#606" }
       ]

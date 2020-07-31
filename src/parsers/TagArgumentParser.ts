@@ -1,5 +1,5 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -44,12 +44,12 @@ export class TagArgumentParser extends ArgumentParser<string> {
                 ),
                 false
             ))
-        } else if (ctx.config.lint.strictTagCheck && !Object.keys(category).includes(value)) {
+        } else if (ctx.config.lint.strictTagCheck && ctx.config.lint.strictTagCheck![1] && !Object.keys(category).includes(value)) {
             ans.errors.push(new ParsingError(
                 { start, end: start + value.length },
                 locale('undefined-tag', locale('punc.quote', value)),
                 undefined,
-                DiagnosticSeverity.Warning
+                getDiagnosticSeverity(ctx.config.lint.strictTagCheck![0])
             ))
         }
         //#endregion
