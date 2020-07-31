@@ -1,23 +1,11 @@
-import { ClientCache, ParsingError, Token } from '../types'
-import { JsonDocument } from './JsonDocument'
 import { JsonSchemaType } from '../data/JsonSchema'
+import { ValidateResult } from '../types'
+import { JsonDocument } from './JsonDocument'
 
 /**
  * Represents a root node in a JSON file.
  */
-export interface JsonNode {
+export interface JsonNode extends ValidateResult {
     json: JsonDocument,
-    schemaType: JsonSchemaType,
-    /**
-     * Semantic tokens of the node.
-     */
-    tokens: Token[],
-    /**
-     * All cache of the node.
-     */
-    cache: ClientCache,
-    /**
-     * All errors of the node.
-     */
-    errors: ParsingError[]
+    schemaType: JsonSchemaType
 }

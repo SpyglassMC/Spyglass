@@ -11,6 +11,9 @@ import { Uri } from './handlers'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
+import { DatapackLanguageService } from '../services/DatapackLanguageService'
+import { SchemaRegistry } from '@mcschema/core'
+import { FallbackJsonSchemaRegistry } from '../data/JsonSchema'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,
@@ -19,12 +22,14 @@ export interface ParsingContext {
     config: Config,
     cursor: number,
     id: IdentityNode | undefined,
+    jsonSchemas: SchemaRegistry,
     namespaceSummary: NamespaceSummary,
     nbtdoc: nbtdoc.Root,
     parsers: ParserCollection,
     registry: Registry,
     rootIndex: number | null,
     roots: Uri[],
+    service: DatapackLanguageService,
     textDoc: TextDocument
 }
 
@@ -40,7 +45,8 @@ export function constructContext(
         NamespaceSummary: FallbackNamespaceSummary,
         Nbtdoc: FallbackNbtdoc,
         Registry: FallbackRegistry
-    }
+    },
+    jsonSchemas: SchemaRegistry = FallbackJsonSchemaRegistry
 ): ParsingContext {
     const ans: ParsingContext = {
         blockDefinition: vanillaData.BlockDefinition,
@@ -48,7 +54,6 @@ export function constructContext(
         commandTree,
         config: VanillaConfig,
         cursor: -1,
-        textDoc: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         id: undefined,
         namespaceSummary: vanillaData.NamespaceSummary,
         nbtdoc: vanillaData.Nbtdoc,
@@ -56,6 +61,9 @@ export function constructContext(
         registry: vanillaData.Registry,
         rootIndex: null,
         roots: [],
+        jsonSchemas,
+        service: new DatapackLanguageService(),
+        textDoc: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         ...custom
     }
 

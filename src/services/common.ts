@@ -2,7 +2,6 @@ import { INode, SchemaRegistry } from '@mcschema/core'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
-import { getLanguageService } from 'vscode-json-languageservice'
 import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
@@ -12,15 +11,16 @@ import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } fro
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LineParser } from '../parsers/LineParser'
 import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
-import { CacheFile, FileType, getCacheForUri } from '../types/ClientCache'
+import { CacheFile, ClientCache, FileType, getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
 import { DocNode, PathAccessibleFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
 import { constructContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
-import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
+import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { StringReader } from '../utils/StringReader'
+import { DatapackLanguageService } from './DatapackLanguageService'
 
 export function getUri(str: string, uris: UrisOfStrings) {
     const value = uris.get(str)
@@ -73,31 +73,26 @@ export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Ur
     return null
 }
 
-export const JsonLanguageService = getLanguageService({})
-
-export function parseJsonNode({ document, config, cacheFile, uri, roots, schema, vanillaData, schemas, schemaType }: { document: TextDocument, config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], schema: INode, schemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
+export function parseJsonNode({ service, document, config, cache, uri, roots, schema, vanillaData, jsonSchemas, schemaType }: { service: DatapackLanguageService, document: TextDocument, config: Config, cache: ClientCache, uri: Uri, roots: Uri[], schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
     const ans: JsonNode = {
-        json: JsonLanguageService.parseJSONDocument(document) as JsonDocument,
+        json: service.jsonService.parseJSONDocument(document) as JsonDocument,
         cache: {}, errors: [], tokens: [], schemaType
     }
-    const ctx: JsonSchemaHelperOptions = {
-        ctx: constructContext({
-            cache: getCacheForUri(cacheFile.cache, uri),
-            id: getId(uri, roots),
-            rootIndex: getRootIndex(uri, roots),
-            blockDefinition: vanillaData.BlockDefinition,
-            namespaceSummary: vanillaData.NamespaceSummary,
-            nbtdoc: vanillaData.Nbtdoc,
-            registry: vanillaData.Registry,
-            config, textDoc: document, roots
-        }),
-        schemas: schemas
-    }
+    const ctx = constructContext({
+        cache: getCacheForUri(cache, uri),
+        id: getId(uri, roots),
+        rootIndex: getRootIndex(uri, roots),
+        blockDefinition: vanillaData.BlockDefinition,
+        namespaceSummary: vanillaData.NamespaceSummary,
+        nbtdoc: vanillaData.Nbtdoc,
+        registry: vanillaData.Registry,
+        config, textDoc: document, roots, service
+    }, undefined, vanillaData, jsonSchemas)
     JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
     return ans
 }
 
-export function parseFunctionNodes(document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData) {
+export function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
     const startPos = document.positionAt(start)
     const lines = getStringLines(
         document.getText(Range.create(startPos, document.positionAt(end)))
@@ -109,12 +104,12 @@ export function parseFunctionNodes(document: TextDocument, start: number = 0, en
             end: document.offsetAt(Position.create(startPos.line + i, Infinity)),
             id: getId(uri, roots),
             rootIndex: getRootIndex(uri, roots),
-            nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData
+            nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData, service, jsonSchemas
         })
     }
 }
 
-export function parseFunctionNode({ document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, id, rootIndex }: { document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export function parseFunctionNode({ service, document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, jsonSchemas, id, rootIndex }: { service: DatapackLanguageService, document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
@@ -147,8 +142,9 @@ export function parseFunctionNode({ document, start, end, nodes, config, cacheFi
             textDoc: document,
             id,
             rootIndex,
-            roots
-        }, commandTree, vanillaData))
+            roots,
+            service
+        }, commandTree, vanillaData, jsonSchemas))
         nodes.push(data)
     }
 }

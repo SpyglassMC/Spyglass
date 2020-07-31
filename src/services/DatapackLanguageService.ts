@@ -1,5 +1,7 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
 import clone from 'clone'
+import { SynchronousPromise } from 'synchronous-promise'
+import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
 import * as lsp from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDefOrRef, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
@@ -7,9 +9,9 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
-import { JsonSchemaHelper, JsonSchemaHelperOptions } from '../utils/JsonSchemaHelper'
+import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
 
 type ShowMessage = (message: string) => void
@@ -19,6 +21,7 @@ export class DatapackLanguageService {
     public cacheFile: CacheFile
     readonly capabilities: Readonly<ClientCapabilities>
     readonly globalStoragePath: string | undefined
+    readonly jsonService: JsonLanguageService
     readonly pathAccessible: PathAccessibleFunction
     readonly rawFetchConfig: FetchConfigFunction
     readonly rawPublishDiagnostics: PublishDiagnosticsFunction | undefined
@@ -47,8 +50,9 @@ export class DatapackLanguageService {
         applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
         cacheFile?: CacheFile,
         capabilities?: ClientCapabilities,
-        globalStoragePath?: string,
         fetchConfig?: FetchConfigFunction,
+        globalStoragePath?: string,
+        jsonService?: JsonLanguageService,
         pathAccessible?: PathAccessibleFunction,
         publishDiagnostics?: PublishDiagnosticsFunction,
         readFile?: ReadFileFunction,
@@ -60,6 +64,7 @@ export class DatapackLanguageService {
         this.cacheFile = options?.cacheFile ?? clone(DefaultCacheFile)
         this.capabilities = Object.freeze(options?.capabilities ?? getClientCapabilities())
         this.globalStoragePath = options?.globalStoragePath
+        this.jsonService = options?.jsonService ?? getJsonLanguageService({ promiseConstructor: SynchronousPromise })
         this.pathAccessible = options?.pathAccessible ?? pathAccessible
         this.rawFetchConfig = options?.fetchConfig ?? (async () => VanillaConfig)
         this.rawPublishDiagnostics = options?.publishDiagnostics
@@ -282,34 +287,34 @@ export class DatapackLanguageService {
         const rel = getRel(uri, this.roots)
         if (rel && isRelIncluded(rel, config)) {
             const vanillaData = await this.getVanillaData(config)
+            const jsonSchemas = await this.getJsonSchemas(config)
             if (textDoc.languageId === 'json') {
                 const schemaType = getJsonSchemaType(rel)
                 if (schemaType) {
-                    const schemas = await this.getJsonSchemas(config)
-                    const schema = schemas.get(schemaType)
+                    const schema = jsonSchemas.get(schemaType)
                     ans = {
                         type: 'json',
-                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, schemas, schemaType })
+                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType })
                     }
                 }
             } else {
                 const commandTree = await this.getCommandTree(config)
                 ans = {
                     type: 'mcfunction',
-                    nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData })
+                    nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
                 }
             }
         }
         return ans
     }
 
-    private parseJsonDocument({ textDoc, config, uri, vanillaData, schema, schemas, schemaType }: { textDoc: TextDocument, config: Config, schema: INode, schemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData }) {
-        return [parseJsonNode({ uri, document: textDoc, config, schema, schemas, schemaType, vanillaData, roots: this.roots, cacheFile: this.cacheFile })]
+    private parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType }: { textDoc: TextDocument, config: Config, schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData }) {
+        return [parseJsonNode({ service: this, uri, document: textDoc, config, schema, jsonSchemas, schemaType, vanillaData, roots: this.roots, cache: this.cacheFile.cache })]
     }
 
-    private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData }) {
+    private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
         const ans: LineNode[] = []
-        parseFunctionNodes(textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData)
+        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
         return ans
     }
 
@@ -322,14 +327,14 @@ export class DatapackLanguageService {
         }
 
         const vanillaData = await this.getVanillaData(config)
+        const jsonSchemas = await getJsonSchemas(config.env.jsonVersion)
         if (isMcfunctionDocument(doc)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
-            onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData })
+            onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas })
         } else {
-            const schemas = await getJsonSchemas(config.env.jsonVersion)
-            const schema = schemas.get(doc.nodes[0].schemaType)
+            const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             TextDocument.update(textDoc, contentChanges, version!)
-            doc.nodes[0] = parseJsonNode({ uri, roots: this.roots, config, cacheFile: this.cacheFile, schema, schemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
+            doc.nodes[0] = parseJsonNode({ service: this, uri, roots: this.roots, config, cache: this.cacheFile.cache, schema, jsonSchemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
         }
 
         this.onModifiedFile(uri)
@@ -355,35 +360,39 @@ export class DatapackLanguageService {
             return null
         }
         const offset = textDoc.offsetAt(position)
+        const commandTree = await this.getCommandTree(config)
+        const vanillaData = await this.getVanillaData(config)
+        const jsonSchemas = await this.getJsonSchemas(config)
         if (isMcfunctionDocument(doc)) {
             const { node } = getSelectedNode(doc.nodes, offset)
             if (!node) {
                 return null
             }
-            const commandTree = await this.getCommandTree(config)
-            const vanillaData = await this.getVanillaData(config)
-            return onCompletion({ uri, offset, textDoc, service: this, config, node, commandTree, vanillaData })
+            return onCompletion({ uri, offset, textDoc, service: this, config, node, commandTree, vanillaData, jsonSchemas })
         } else {
             if (!this.capabilities.dynamicRegistration.competion && !this.capabilities.completionContext && context?.triggerCharacter && !DatapackLanguageService.GeneralTriggerCharacters.includes(context.triggerCharacter)) {
                 return null
             }
-            const ans: lsp.CompletionItem[] = []
+            const ans: ParserSuggestion[] = []
             const schemas = await getJsonSchemas(config.env.jsonVersion)
             const schema = schemas.get(doc.nodes[0].schemaType)
-            const ctx: JsonSchemaHelperOptions = {
-                ctx: constructContext({
-                    cache: getCacheForUri(this.cacheFile.cache, uri),
-                    cursor: offset,
-                    textDoc: textDoc,
-                    id: getId(uri, this.roots),
-                    rootIndex: getRootIndex(uri, this.roots),
-                    roots: this.roots,
-                    config
-                }),
-                schemas
-            }
+            const ctx = constructContext({
+                cache: getCacheForUri(this.cacheFile.cache, uri),
+                cursor: offset,
+                textDoc,
+                id: getId(uri, this.roots),
+                rootIndex: getRootIndex(uri, this.roots),
+                roots: this.roots,
+                config,
+                service: this
+            }, commandTree, vanillaData, jsonSchemas)
             JsonSchemaHelper.suggest(ans, doc.nodes[0].json.root, schema, ctx)
-            return ans.length !== 0 ? ans : null
+            return ans.map(v => {
+                const ans = clone(v)
+                ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: textDoc.positionAt(ans.start), end: textDoc.positionAt(ans.end) } }
+                delete ans.start; delete ans.end
+                return ans as CompletionItem
+            })
         }
     }
 
@@ -401,7 +410,8 @@ export class DatapackLanguageService {
         }
         const commandTree = await this.getCommandTree(config)
         const vanillaData = await this.getVanillaData(config)
-        return onSignatureHelp({ uri, service: this, offset, textDoc, config, node, commandTree, vanillaData })
+        const jsonSchemas = await this.getJsonSchemas(config)
+        return onSignatureHelp({ uri, service: this, offset, textDoc, config, node, commandTree, vanillaData, jsonSchemas })
     }
 
     async onFoldingRanges(uri: Uri) {
@@ -506,7 +516,7 @@ export class DatapackLanguageService {
             return null
         }
         if (isMcfunctionDocument(doc)) {
-            return onCodeAction({ uri, doc, textDoc, diagnostics, config, range, cacheFile: this.cacheFile })
+            return onCodeAction({ service: this, uri, doc, textDoc, diagnostics, config, range, cacheFile: this.cacheFile })
         } else {
             // TODO: JSON
             return null

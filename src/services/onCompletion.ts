@@ -13,8 +13,9 @@ import { escapeString, handleCompletionText } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { getId, getRootIndex } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
+import { SchemaRegistry } from '@mcschema/core'
 
-export async function onCompletion({ offset, service, node, textDoc, commandTree, vanillaData, uri, config }: { uri: Uri, offset: number, textDoc: TextDocument, node: LineNode, service: DatapackLanguageService, config: Config, commandTree?: CommandTree, vanillaData?: VanillaData }): Promise<CompletionItem[] | null> {
+export async function onCompletion({ offset, service, node, textDoc, commandTree, vanillaData, jsonSchemas, uri, config }: { uri: Uri, offset: number, textDoc: TextDocument, node: LineNode, service: DatapackLanguageService, config: Config, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }): Promise<CompletionItem[] | null> {
     try {
         const parser = new LineParser(false, 'line')
         const reader = new StringReader(
@@ -29,8 +30,9 @@ export async function onCompletion({ offset, service, node, textDoc, commandTree
             textDoc: textDoc,
             id: getId(uri, service.roots),
             rootIndex: getRootIndex(uri, service.roots),
-            roots: service.roots
-        }, commandTree, vanillaData))
+            roots: service.roots,
+            service
+        }, commandTree, vanillaData, jsonSchemas))
 
         // Escape for TextMate: #431
         /* istanbul ignore else */

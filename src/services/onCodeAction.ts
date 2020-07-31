@@ -6,8 +6,9 @@ import { ArgumentNode, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
 import { CacheFile, Config, constructContext, McfunctionDocument, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
 import { getDiagnosticMap } from './common'
+import { DatapackLanguageService } from '..'
 
-export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], config: Config, range: Range, cacheFile: CacheFile }): CodeAction[] | null {
+export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range, service }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], config: Config, range: Range, cacheFile: CacheFile, service: DatapackLanguageService }): CodeAction[] | null {
     try {
         const ans: CodeAction[] = []
 
@@ -31,7 +32,8 @@ export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range }: 
                         if (areOverlapped(selectedRange, nodeRange)) {
                             const ctx = constructContext({
                                 textDoc: textDoc,
-                                config
+                                config,
+                                service
                             })
                             ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))
                         }

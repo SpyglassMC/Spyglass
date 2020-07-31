@@ -7,8 +7,9 @@ import { CommandTree, Config, constructContext, getCacheForUri, LineNode, Uri } 
 import { StringReader } from '../utils/StringReader'
 import { getRootIndex } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
+import { SchemaRegistry } from '@mcschema/core'
 
-export async function onSignatureHelp({ offset, node, commandTree, vanillaData, uri, service, config, textDoc }: { uri: Uri, offset: number, node: LineNode, textDoc: TextDocument, config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData }) {
+export async function onSignatureHelp({ offset, node, commandTree, vanillaData, jsonSchemas, uri, service, config, textDoc }: { uri: Uri, offset: number, node: LineNode, textDoc: TextDocument, config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     try {
         const signatures: SignatureInformation[] = []
 
@@ -25,8 +26,9 @@ export async function onSignatureHelp({ offset, node, commandTree, vanillaData, 
             textDoc: textDoc,
             id: service.getId(uri),
             rootIndex: getRootIndex(uri, service.roots),
-            roots: service.roots
-        }, commandTree, vanillaData))
+            roots: service.roots,
+            service
+        }, commandTree, vanillaData, jsonSchemas))
 
         const fixLabel = fix.join(' ')
 
