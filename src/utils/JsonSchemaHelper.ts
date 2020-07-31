@@ -1,6 +1,7 @@
-import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, SchemaRegistry, ValidationOption } from '@mcschema/core'
+import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
 import deepEqual from 'deep-equal'
-import { ArrayASTNode, ASTNode, CompletionItem, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
+import { ArrayASTNode, ASTNode, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
 import { LineParser } from '../parsers/LineParser'
@@ -17,7 +18,7 @@ export class JsonSchemaHelper {
         LiteralEnd: '1xs2m6JwQaNtXzexThOAwmpTFCIRftZi'
     }
 
-    static validate(ans: ValidateResult, node: ASTNode | undefined, schema: INode, options: JsonSchemaHelperOptions) {
+    static validate(ans: ValidateResult, node: ASTNode | undefined, schema: INode, ctx: ParsingContext) {
         const model = new DataModel(schema, { historyMax: 1 })
         model.reset(this.restoreValueFromNode(node))
 
@@ -36,18 +37,17 @@ export class JsonSchemaHelper {
                 const selectedSchema = schema.navigate(path, -1)
                 const validationOption = selectedSchema?.validationOption(this.restoreValueFromNode(node))
                 if (validationOption) {
-                    this.doDetailedValidate(ans, node, validationOption, options)
+                    this.doDetailedValidate(ans, node, validationOption, ctx)
                 }
             }
         )
     }
 
-    static suggest(ans: CompletionItem[], node: ASTNode | undefined, schema: INode, options: JsonSchemaHelperOptions) {
+    static suggest(ans: ParserSuggestion[], node: ASTNode | undefined, schema: INode, ctx: ParsingContext) {
         if (!node) {
             return
         }
         try {
-            const { ctx } = options
             const model = new DataModel(schema, { historyMax: 1 })
             model.reset(this.restoreValueFromNode(node))
             const path = new Path([], [], model)
@@ -67,9 +67,12 @@ export class JsonSchemaHelper {
                     const rawReader = new StringReader(ctx.textDoc.getText(), selectedRange.start, selectedRange.end)
                     const value = rawReader.readString(out)
                     const valueReader = new StringReader(value)
-                    result = this.doDetailedStringLegacyValidate(
-                        valueReader, { ...ctx, cursor: getInnerIndex(out.mapping, ctx.cursor) }, selectedNode, validationOption
-                    )
+                    const subCtx = {
+                        ...ctx,
+                        textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, value),
+                        cursor: getInnerIndex(out.mapping, ctx.cursor)
+                    }
+                    result = this.doDetailedStringLegacyValidate(valueReader, subCtx, selectedNode, validationOption)
                     if (result.completions) {
                         result.completions = result.completions.map(this.escapeCompletion)
                     }
@@ -83,14 +86,14 @@ export class JsonSchemaHelper {
                             // The cursor is not in any properties.
                             selectedNode.properties.reduce<boolean>((p, c) => p && !isInRange(ctx.cursor, this.getNodeRange(c)), true)
                         ) {
-                            result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options) }
+                            result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, ctx) }
                         }
                     } else if (selectedNode.type === 'property') {
                         // Regular value suggestions for selected property
-                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, options, true) }
+                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, ctx, true) }
                     } else {
                         // Regular value suggestions for selected value
-                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, selectedNode, schema, options) }
+                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, selectedNode, schema, ctx) }
                     }
                 }
             } else {
@@ -98,17 +101,17 @@ export class JsonSchemaHelper {
                 const objectPath = selectedPath.pop()
                 const keyNode = selectedNode as StringASTNode
                 const objectNode = selectedNode.parent!.parent as ObjectASTNode
-                result = { completions: this.doRegularSuggest(objectPath, objectNode, keyNode, schema, options) }
+                result = { completions: this.doRegularSuggest(objectPath, objectNode, keyNode, schema, ctx) }
             }
             if (result?.completions) {
-                ans.push(...result.completions.map(v => this.parserSuggestionToCompletionItem(v, out.mapping, ctx)))
+                ans.push(...result.completions.map(v => remapParserSuggestion(v, out.mapping)))
             }
         } catch (e) {
-            console.error('JsonSchemaHelper#suggest', e)
+            console.error('[JsonSchemaHelper#suggest]', e)
         }
     }
 
-    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, { ctx }: JsonSchemaHelperOptions, atEmptyValue = false): ParserSuggestion[] {
+    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
         const valueSchema = schema.navigate(valuePath, -1)
         const value: any = {}
@@ -209,7 +212,7 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static doDetailedValidate(ans: ValidateResult, node: ASTNode, option: ValidationOption, { ctx }: JsonSchemaHelperOptions) {
+    private static doDetailedValidate(ans: ValidateResult, node: ASTNode, option: ValidationOption, ctx: ParsingContext) {
         const valueRange = this.getNodeRange(node)
         if (option.validator === 'block_state_map') {
             // TODO: JSON block_state_map validation
@@ -289,13 +292,6 @@ export class JsonSchemaHelper {
 
     private static escapeCompletion(origin: ParserSuggestion) {
         return handleCompletionText(origin, str => quoteString(str, 'always double', true).slice(1, -1))
-    }
-
-    private static parserSuggestionToCompletionItem(origin: ParserSuggestion, mapping: IndexMapping, ctx: ParsingContext) {
-        const ans = remapParserSuggestion(origin, mapping)
-        ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: ctx.textDoc.positionAt(ans.start), end: ctx.textDoc.positionAt(ans.end) } }
-        delete ans.start; delete ans.end
-        return ans
     }
 
     private static combineResult(ans: ValidateResult, result: Partial<LegacyValidateResult> | undefined, mapping: IndexMapping) {
@@ -451,9 +447,4 @@ type SelectNodeResult = {
     node: ASTNode | undefined,
     path: Path,
     type: 'key' | 'value'
-}
-
-export interface JsonSchemaHelperOptions {
-    ctx: ParsingContext,
-    schemas: SchemaRegistry
 }

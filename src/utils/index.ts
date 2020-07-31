@@ -240,8 +240,8 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 }
 
 /**
- * Remap all the indices in the specific TextRange object by the specific mapping.
- * @param completion The specific TextRange object. Won't be changed.
+ * Remap all the indices in the specific ParserSuggestion object by the specific mapping.
+ * @param completion The specific ParserSuggestion object. Won't be changed.
  * @param param1 The mapping used to offset.
  * @returns A new cloned CompletionItem.
  */

@@ -190,7 +190,6 @@ export class StringReader {
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
      * @param out Stores a mapping from in-string indices to real indices. 
-     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
         const start = this.cursor

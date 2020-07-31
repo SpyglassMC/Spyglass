@@ -32,7 +32,6 @@
         "@mcschema/java-1.16": "^0.2.10",
         "@mcschema/locales": "^0.1.2",
         "clone": "^2.1.2",
-        "datapack-json": "^2.0.10",
         "deep-equal": "^2.0.3",
         "fs-extra": "^9.0.0",
         "minimatch": "^3.0.4",

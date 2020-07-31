@@ -12,7 +12,7 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
     if (doc && textDoc) {
         if (isMcfunctionDocument(doc)) {
             const config = await service.getConfig(uri)
-            const edit = getMergedPreferredEdit(doc, textDoc, config, uri)
+            const edit = getMergedPreferredEdit(service, doc, textDoc, config, uri)
             if (edit) {
                 service.applyEdit?.(edit)
             }
@@ -24,14 +24,14 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
     }
 }
 
-function getMergedPreferredEdit(doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
-    const preferredActions = getActions(doc, textDoc, config, uri)
+function getMergedPreferredEdit(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+    const preferredActions = getActions(service, doc, textDoc, config, uri)
         .filter(v => v.isPreferred)
 
     return mergeActionEdit(doc, textDoc, preferredActions)
 }
 
-function getActions(doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+function getActions(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
     const ans: CodeAction[] = []
 
     for (const node of doc.nodes) {
@@ -46,7 +46,8 @@ function getActions(doc: McfunctionDocument, textDoc: TextDocument, config: Conf
             if (data instanceof ArgumentNode) {
                 const ctx = constructContext({
                     textDoc: textDoc,
-                    config
+                    config,
+                    service
                 })
                 ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
             }

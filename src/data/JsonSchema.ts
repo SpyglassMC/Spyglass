@@ -3,8 +3,12 @@ import minimatch from 'minimatch'
 import { JsonSchemaVersion } from '../types'
 import { PathPatterns } from '../types/PathPatterns'
 
+export const FallbackJsonSchemaRegistry = SCHEMAS
+
 export type JsonSchemaType =
     | 'advancement'
+    | 'dimension'
+    | 'dimension_type'
     | 'loot_table'
     | 'predicate'
     | 'recipe'
@@ -14,9 +18,6 @@ export type JsonSchemaType =
     | 'fluid_tag'
     | 'function_tag'
     | 'item_tag'
-    /* dimension */
-    | 'dimension'
-    | 'dimension_type'
     /* worldgen */
     | 'biome'
     | 'configured_carver'
@@ -28,6 +29,7 @@ export type JsonSchemaType =
     | 'template_pool'
     /* misc */
     | 'pack_mcmeta'
+    | 'text_component'
 
 const globPatterns = new Map<JsonSchemaType, string>([
     ['advancement', PathPatterns.advancement],
@@ -52,7 +54,9 @@ const globPatterns = new Map<JsonSchemaType, string>([
     ['configured_surface_builder', PathPatterns['worldgen/configured_surface_builder']],
     ['processor_list', PathPatterns['worldgen/processor_list']],
     ['template_pool', PathPatterns['worldgen/template_pool']],
-    ['pack_mcmeta', 'pack.mcmeta']
+    /* misc */
+    ['pack_mcmeta', 'pack.mcmeta'],
+    ['text_component', 'text_component.json']
 ])
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {

@@ -1,5 +1,6 @@
 import clone from 'clone'
 import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapParserSuggestion, removeDupliateCompletions, validateStringQuote } from '.'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
@@ -25,7 +26,7 @@ import { NbtStringNode } from '../nodes/NbtStringNode'
 import { LineParser } from '../parsers/LineParser'
 import { ParserSuggestion } from '../types'
 import { combineCache, remapCachePosition } from '../types/ClientCache'
-import { LintConfig, Config } from '../types/Config'
+import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { getInnerIndex } from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
@@ -324,7 +325,11 @@ export class NbtdocHelper {
         }
     }
     private completeIdField(ans: LegacyValidateResult, ctx: ParsingContext, doc: IdDoc, isPredicate: boolean) {
-        const subCtx = { ...ctx, cursor: 0 }
+        const subCtx = {
+            ...ctx,
+            textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, ''),
+            cursor: 0
+        }
         const reader = new StringReader('')
         const result = new ctx.parsers.Identity(
             NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
@@ -339,7 +344,11 @@ export class NbtdocHelper {
         }
     }
     private completeStringField(ans: LegacyValidateResult, ctx: ParsingContext, _doc: StringDoc, _isPredicate: boolean, description: string) {
-        const subCtx = { ...ctx, cursor: 0 }
+        const subCtx = {
+            ...ctx,
+            textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, ''),
+            cursor: 0
+        }
         const reader = new StringReader('')
         const result = this.validateInnerString(reader, subCtx, description)
         if (result && result.completions) {
@@ -728,7 +737,11 @@ export class NbtdocHelper {
         if (shouldValidate) {
             const strTag = tag as NbtStringNode
             /// Identity.
-            const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
+            const subCtx = {
+                ...ctx,
+                textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, strTag.valueOf()),
+                cursor: getInnerIndex(strTag.mapping, ctx.cursor)
+            }
             const reader = new StringReader(strTag.valueOf())
             const result = new ctx.parsers.Identity(
                 NbtdocHelper.getIdentityTypeFromRegistry(doc.Id), false, isPredicate
@@ -830,7 +843,11 @@ export class NbtdocHelper {
             const strTag = tag as NbtStringNode
             const quoteType = NbtdocHelper.getQuoteType(strTag.toString())
             if (quoteType) {
-                const subCtx = { ...ctx, cursor: getInnerIndex(strTag.mapping, ctx.cursor) }
+                const subCtx = {
+                    ...ctx,
+                    textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, strTag.valueOf()),
+                    cursor: getInnerIndex(strTag.mapping, ctx.cursor)
+                }
                 const reader = new StringReader(strTag.valueOf())
                 const result = this.validateInnerString(reader, subCtx, description)
                 if (result && result.completions) {
