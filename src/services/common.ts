@@ -274,26 +274,13 @@ export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number):
     return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.nodes[0] }
 }
 
-/* istanbul ignore next */
-export async function walkFile(
-    workspaceRootPath: string,
-    abs: string,
-    cb: (abs: string, rel: string, stat: fs.Stats) => any
-): Promise<any> {
-    const names = (await fsp.readdir(abs)).values()
-    return new Promise((resolve, reject) => {
+export function partitionedIteration<T>(iterator: IterableIterator<T>, onEachItem: (item: T) => any) {
+    return new Promise<void>((resolve, reject) => {
         try {
             const help = async () => {
-                const { done, value: name } = names.next()
+                const { done, value: item } = iterator.next()
                 if (!done) {
-                    const newAbs = path.join(abs, name)
-                    const stat = await fsp.stat(newAbs)
-                    if (stat.isDirectory()) {
-                        await walkFile(workspaceRootPath, newAbs, cb)
-                    } else {
-                        const rel = path.relative(workspaceRootPath, newAbs)
-                        await cb(newAbs, rel, stat)
-                    }
+                    await onEachItem(item)
                     setImmediate(help)
                 } else {
                     resolve()
@@ -302,6 +289,25 @@ export async function walkFile(
             help()
         } catch (e) {
             reject(e)
+        }
+    })
+}
+
+/* istanbul ignore next */
+export async function walkFile(
+    workspaceRootPath: string,
+    abs: string,
+    cb: (abs: string, rel: string, stat: fs.Stats) => any
+): Promise<any> {
+    const names = (await fsp.readdir(abs)).values()
+    return partitionedIteration(names, async name => {
+        const newAbs = path.join(abs, name)
+        const stat = await fsp.stat(newAbs)
+        if (stat.isDirectory()) {
+            return walkFile(workspaceRootPath, newAbs, cb)
+        } else {
+            const rel = path.relative(workspaceRootPath, newAbs)
+            return cb(newAbs, rel, stat)
         }
     })
 }

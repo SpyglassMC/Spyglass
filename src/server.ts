@@ -6,7 +6,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot } from './services/common'
+import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot, partitionedIteration } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
@@ -22,9 +22,7 @@ let workspaceRootUriStrings: string[] = []
 
 let service: DatapackLanguageService
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }, _, progress) => {
-    progress.begin(locale('server.initializing'))
-
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }) => {
     capabilities = getClientCapabilities(lspCapabilities)
 
     if (globalStoragePath && !await pathAccessible(globalStoragePath)) {
@@ -116,8 +114,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             }
         }
     }
-
-    progress.done()
 
     return result
 })
@@ -505,28 +501,23 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     try {
         // Check the files saved in the cache file.
         await checkFilesInCache(cacheFile, roots, progress)
-        const time = new Date().getTime()
         await addNewFilesToCache(cacheFile, roots, progress)
         trimCache(cacheFile.cache)
-        console.log(`${new Date().getTime()} 【${new Date().getTime() - time}】`)
     } catch (e) {
         console.error('[updateCacheFile] ', e)
     }
 }
 
 async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
-    let config: Config | undefined
-    for (const uriString in cacheFile.files) {
-        /* istanbul ignore next */
-        if (cacheFile.files.hasOwnProperty(uriString)) {
-            progress.report(locale('server.checking-file', uriString))
-            const uri = service.parseUri(uriString)
-            const rel = getRel(uri, roots)
-            config = config ?? await service.getConfig(uri)
-            if (!rel || !isRelIncluded(rel, config)) {
-                delete cacheFile.files[uriString]
-                continue
-            }
+    const uriStrings = Object.keys(cacheFile.files).values()
+    return partitionedIteration(uriStrings, async uriString => {
+        progress.report(locale('server.checking-file', uriString))
+        const uri = service.parseUri(uriString)
+        const rel = getRel(uri, roots)
+        const config = await service.getConfig(uri)
+        if (!rel || !isRelIncluded(rel, config)) {
+            delete cacheFile.files[uriString]
+        } else {
             if (!(await pathAccessible(uri.fsPath))) {
                 service.onDeletedFile(uri)
             } else {
@@ -539,7 +530,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
                 }
             }
         }
-    }
+    })
 }
 
 async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
