@@ -79,8 +79,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                     'datapack.fixFile',
                     'datapack.fixWorkspace',
                     'datapack.regenerateCache'
-                ],
-                workDoneProgress: capabilities.workDoneProgress
+                ]
             },
             foldingRangeProvider: !capabilities.dynamicRegistration.foldingRange,
             hoverProvider: true,
@@ -370,7 +369,7 @@ connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriStr
  * datapack.fixWorkspace     -  Fix all auto-fixable problems in the workspace.
  * datapack.regenerateCache  -  Regenerate cache.
  */
-connection.onExecuteCommand(async ({ command, arguments: args, workDoneToken }) => {
+connection.onExecuteCommand(async ({ command, arguments: args }) => {
     let progress: WorkDoneProgress | undefined = undefined
     try {
         switch (command) {
@@ -380,8 +379,8 @@ connection.onExecuteCommand(async ({ command, arguments: args, workDoneToken }) 
                 break
             }
             case 'datapack.fixWorkspace': {
-                progress = connection.window.attachWorkDoneProgress(workDoneToken)
-                progress.begin(locale('server.fixing-workspace'))
+                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
+                progress?.begin(locale('server.progress.fixing-workspace.begin'))
                 for (const root of service.roots) {
                     const dataPath = path.join(root.fsPath, 'data')
                     const namespaces = await pathAccessible(dataPath) ? await fsp.readdir(dataPath) : []
@@ -391,6 +390,7 @@ connection.onExecuteCommand(async ({ command, arguments: args, workDoneToken }) 
                         if (await pathAccessible(functionsPath)) {
                             await walkFile(root.fsPath, functionsPath, async abs => {
                                 try {
+                                    progress?.report(locale('server.progress.fixing-workspace.report', locale('punc.quote', abs)))
                                     const uri = service.parseUri(Uri.file(abs).toString())
                                     service.onExecuteFixFileCommand(uri)
                                 } catch (e) {
@@ -403,8 +403,7 @@ connection.onExecuteCommand(async ({ command, arguments: args, workDoneToken }) 
                 break
             }
             case 'datapack.regenerateCache': {
-                progress = await connection.window.createWorkDoneProgress()
-                progress.begin(locale('server.regenerating-cache'))
+                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
                 service.cacheFile = clone(DefaultCacheFile)
                 await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
@@ -415,9 +414,7 @@ connection.onExecuteCommand(async ({ command, arguments: args, workDoneToken }) 
     } catch (e) {
         console.error('[onExecuteCommand]', e)
     } finally {
-        if (progress) {
-            progress.done()
-        }
+            progress?.done()
     }
 })
 
@@ -497,21 +494,29 @@ async function saveCacheFile() {
 
 setInterval(saveCacheFile, 30_000)
 
-async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
     try {
         // Check the files saved in the cache file.
+        progress?.begin(locale('server.progress.updating-cache.begin'))
+        const time1 = new Date().getTime()
         await checkFilesInCache(cacheFile, roots, progress)
+        const time2 = new Date().getTime()
         await addNewFilesToCache(cacheFile, roots, progress)
         trimCache(cacheFile.cache)
+        const time3 = new Date().getTime()
+        console.info(`[updateCacheFile] [1] ${time2 - time1} ms`)
+        console.info(`[updateCacheFile] [2] ${time3 - time2} ms`)
+        console.info(`[updateCacheFile] [T] ${time3 - time1} ms`)
+        progress?.done()
     } catch (e) {
         console.error('[updateCacheFile] ', e)
     }
 }
 
-async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
+async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
     const uriStrings = Object.keys(cacheFile.files).values()
     return partitionedIteration(uriStrings, async uriString => {
-        progress.report(locale('server.checking-file', uriString))
+        progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
         const uri = service.parseUri(uriString)
         const rel = getRel(uri, roots)
         const config = await service.getConfig(uri)
@@ -533,7 +538,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
     })
 }
 
-async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
+async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
     return Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(
@@ -542,11 +547,16 @@ async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: 
             async (abs, _rel, stat) => {
                 const uri = service.parseUri(Uri.file(abs).toString())
                 const uriString = uri.toString()
-                progress.report(locale('server.checking-file', uriString))
+                progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', abs)))
                 if (cacheFile.files[uriString] === undefined) {
                     await service.onAddedFile(uri)
                     cacheFile.files[uriString] = stat.mtimeMs
                 }
+            },
+            async (abs, rel) => {
+                const uri = service.parseUri(Uri.file(abs).toString())
+                const config = await service.getConfig(uri)
+                return isRelIncluded(rel, config)
             }
         )
     }))

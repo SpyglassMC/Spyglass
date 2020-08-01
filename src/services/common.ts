@@ -297,17 +297,21 @@ export function partitionedIteration<T>(iterator: IterableIterator<T>, onEachIte
 export async function walkFile(
     workspaceRootPath: string,
     abs: string,
-    cb: (abs: string, rel: string, stat: fs.Stats) => any
+    onFile: (abs: string, rel: string, stat: fs.Stats) => any,
+    pathFilter: (abs: string, rel: string, stat: fs.Stats) => Promise<boolean> = () => Promise.resolve(true)
 ): Promise<any> {
     const names = (await fsp.readdir(abs)).values()
     return partitionedIteration(names, async name => {
         const newAbs = path.join(abs, name)
         const stat = await fsp.stat(newAbs)
+        const rel = path.relative(workspaceRootPath, newAbs)
+        if (!await pathFilter(newAbs, rel, stat)) {
+            return
+        }
         if (stat.isDirectory()) {
-            return walkFile(workspaceRootPath, newAbs, cb)
+            return walkFile(workspaceRootPath, newAbs, onFile)
         } else {
-            const rel = path.relative(workspaceRootPath, newAbs)
-            return cb(newAbs, rel, stat)
+            return onFile(newAbs, rel, stat)
         }
     })
 }
