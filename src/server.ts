@@ -543,10 +543,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
 }
 
 async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
-    const addedFiles: Uri[] = []
-
-    console.log(`${new Date().getTime()} START`)
-    await Promise.all(roots.map(root => {
+    return Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(
             root.fsPath,
@@ -556,18 +553,12 @@ async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: 
                 const uriString = uri.toString()
                 progress.report(locale('server.checking-file', uriString))
                 if (cacheFile.files[uriString] === undefined) {
-                    console.log(`${new Date().getTime()} ${uri.toString()} B`)
                     await service.onAddedFile(uri)
                     cacheFile.files[uriString] = stat.mtimeMs
-                    addedFiles.push(uri)
-                    console.log(`${new Date().getTime()} ${uri.toString()} A`)
                 }
             }
         )
     }))
-    console.log(`${new Date().getTime()} END`)
-
-    return Promise.all(addedFiles.map(service.onModifiedFile.bind(service)))
 }
 
 connection.listen()
