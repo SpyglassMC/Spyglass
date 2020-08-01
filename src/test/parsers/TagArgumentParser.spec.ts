@@ -61,7 +61,7 @@ describe('TagArgumentParser Tests', () => {
             ])
         })
         it('Should not return warning when the strict tag check pass', async () => {
-            const config = constructConfig({ lint: { strictTagCheck: true } })
+            const config = constructConfig({ lint: { strictTagCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
@@ -69,7 +69,7 @@ describe('TagArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warning when the strict tag check fail', async () => {
-            const config = constructConfig({ lint: { strictTagCheck: true } })
+            const config = constructConfig({ lint: { strictTagCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })
             const parser = new TagArgumentParser()
             const actual = parser.parse(new StringReader('qux'), ctx)

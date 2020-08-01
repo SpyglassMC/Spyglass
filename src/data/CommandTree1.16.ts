@@ -1,4 +1,6 @@
+import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getArgOrDefault } from '../CommandTree'
+import { locale } from '../locales'
 import { NodeRange, VectorNode } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
@@ -28,13 +30,11 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
+import { AlwaysValidates, ParsingError, Switchable } from '../types'
 import { CacheType } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
-import { ParsingError } from '../types'
-import { locale } from '../locales'
-import { DiagnosticSeverity } from 'vscode-languageserver'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -50,6 +50,14 @@ export const CommandTree: ICommandTree = {
         }
     },
     commands: {
+        [Switchable]: true,
+        [AlwaysValidates]: {
+            snippet: {
+                parser: new CodeSnippetArgumentParser(),
+                permission: 0,
+                executable: true
+            }
+        },
         advancement: {
             parser: new LiteralArgumentParser('advancement'),
             description: 'Grant or revoke advancements from players.',
@@ -104,9 +112,11 @@ export const CommandTree: ICommandTree = {
                         attribute: {
                             parser: new IdentityArgumentParser('minecraft:attribute'),
                             children: {
+                                [Switchable]: true,
                                 base: {
                                     parser: new LiteralArgumentParser('base'),
                                     children: {
+                                        [Switchable]: true,
                                         get: {
                                             parser: new LiteralArgumentParser('get'),
                                             executable: true,
@@ -141,6 +151,7 @@ export const CommandTree: ICommandTree = {
                                 modifier: {
                                     parser: new LiteralArgumentParser('modifier'),
                                     children: {
+                                        [Switchable]: true,
                                         add: {
                                             parser: new LiteralArgumentParser('add'),
                                             children: {
@@ -261,6 +272,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('bossbar'),
             description: 'Adds, removes or modifies boss bars.',
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -308,6 +320,7 @@ export const CommandTree: ICommandTree = {
                         id: {
                             parser: new IdentityArgumentParser('$bossbar'),
                             children: {
+                                [Switchable]: true,
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
                                     children: {
@@ -462,6 +475,7 @@ export const CommandTree: ICommandTree = {
         datapack: {
             parser: new LiteralArgumentParser('datapack'),
             children: {
+                [Switchable]: true,
                 disable: {
                     parser: new LiteralArgumentParser('disable'),
                     children: {
@@ -510,6 +524,7 @@ export const CommandTree: ICommandTree = {
         data: {
             parser: new LiteralArgumentParser('data'),
             children: {
+                [Switchable]: true,
                 get: {
                     parser: new LiteralArgumentParser('get'),
                     children: {
@@ -588,6 +603,7 @@ export const CommandTree: ICommandTree = {
                                         modification: {
                                             template: 'data_modification',
                                             children: {
+                                                [Switchable]: true,
                                                 from: {
                                                     parser: new LiteralArgumentParser('from'),
                                                     children: {
@@ -709,6 +725,7 @@ export const CommandTree: ICommandTree = {
         effect: {
             parser: new LiteralArgumentParser('effect'),
             children: {
+                [Switchable]: true,
                 clear: {
                     parser: new LiteralArgumentParser('clear'),
                     executable: true,
@@ -783,48 +800,12 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('execute'),
             children: {
                 subcommand: {
-                    template: 'execute_subcommand'
+                    redirect: 'execute_subcommand'
                 }
             }
         },
         experience: {
-            parser: new LiteralArgumentParser('experience', 'xp'),
-            children: {
-                add_set: {
-                    parser: new LiteralArgumentParser('add', 'set'),
-                    children: {
-                        player: {
-                            parser: new EntityArgumentParser('multiple', 'players'),
-                            children: {
-                                amount: {
-                                    parser: new NumberArgumentParser('integer'),
-                                    executable: true,
-                                    children: {
-                                        points_levels: {
-                                            parser: new LiteralArgumentParser('points', 'levels'),
-                                            executable: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                query: {
-                    parser: new LiteralArgumentParser('query'),
-                    children: {
-                        player: {
-                            parser: new EntityArgumentParser('single', 'players'),
-                            children: {
-                                points_levels: {
-                                    parser: new LiteralArgumentParser('points', 'levels'),
-                                    executable: true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            redirect: 'templates.experience'
         },
         fill: {
             parser: new LiteralArgumentParser('fill'),
@@ -876,6 +857,7 @@ export const CommandTree: ICommandTree = {
         forceload: {
             parser: new LiteralArgumentParser('forceload'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -950,7 +932,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning', 'universalAnger', 'forgiveDeadPlayers'),
                     executable: true,
                     children: {
                         value: {
@@ -1108,6 +1090,9 @@ export const CommandTree: ICommandTree = {
                     executable: true
                 }
             }
+        },
+        msg: {
+            redirect: 'templates.msg'
         },
         op: {
             parser: new LiteralArgumentParser('op'),
@@ -1301,7 +1286,12 @@ export const CommandTree: ICommandTree = {
             }
         },
         'save-off': {
-            parser: new LiteralArgumentParser('save-off', 'save-on'),
+            parser: new LiteralArgumentParser('save-off'),
+            permission: 4,
+            executable: true
+        },
+        'save-on': {
+            parser: new LiteralArgumentParser('save-on'),
             permission: 4,
             executable: true
         },
@@ -1317,6 +1307,7 @@ export const CommandTree: ICommandTree = {
         schedule: {
             parser: new LiteralArgumentParser('schedule'),
             children: {
+                [Switchable]: true,
                 function: {
                     parser: new LiteralArgumentParser('function'),
                     children: {
@@ -1351,9 +1342,11 @@ export const CommandTree: ICommandTree = {
         scoreboard: {
             parser: new LiteralArgumentParser('scoreboard'),
             children: {
+                [Switchable]: true,
                 objectives: {
                     parser: new LiteralArgumentParser('objectives'),
                     children: {
+                        [Switchable]: true,
                         add: {
                             parser: new LiteralArgumentParser('add'),
                             children: {
@@ -1435,8 +1428,9 @@ export const CommandTree: ICommandTree = {
                 players: {
                     parser: new LiteralArgumentParser('players'),
                     children: {
-                        add_remove: {
-                            parser: new LiteralArgumentParser('add', 'remove'),
+                        [Switchable]: true,
+                        add: {
+                            parser: new LiteralArgumentParser('add'),
                             children: {
                                 targets: {
                                     template: 'templates.multiple_score',
@@ -1508,6 +1502,20 @@ export const CommandTree: ICommandTree = {
                                                     executable: true
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        remove: {
+                            parser: new LiteralArgumentParser('remove'),
+                            children: {
+                                targets: {
+                                    template: 'templates.multiple_score',
+                                    children: {
+                                        score: {
+                                            parser: new NumberArgumentParser('integer', 0),
+                                            executable: true
                                         }
                                     }
                                 }
@@ -1727,18 +1735,12 @@ export const CommandTree: ICommandTree = {
             }
         },
         teammsg: {
-            parser: new LiteralArgumentParser('teammsg', 'tm'),
-            permission: 0,
-            children: {
-                message: {
-                    parser: new MessageArgumentParser(),
-                    executable: true
-                }
-            }
+            redirect: 'templates.teammsg'
         },
         team: {
             parser: new LiteralArgumentParser('team'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -1754,8 +1756,8 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
-                empty_remove: {
-                    parser: new LiteralArgumentParser('empty', 'remove'),
+                empty: {
+                    parser: new LiteralArgumentParser('empty'),
                     children: {
                         team: {
                             parser: new TeamArgumentParser(),
@@ -1851,61 +1853,23 @@ export const CommandTree: ICommandTree = {
                             }
                         }
                     }
-                }
-            }
-        },
-        teleport: {
-            parser: new LiteralArgumentParser('teleport', 'tp'),
-            children: {
-                destination: {
-                    parser: new VectorArgumentParser(3),
-                    executable: true
                 },
-                entity: {
-                    parser: new EntityArgumentParser('multiple', 'entities'),
-                    executable: true,
+                remove: {
+                    parser: new LiteralArgumentParser('remove'),
                     children: {
-                        destination: {
-                            parser: new VectorArgumentParser(3),
-                            executable: true,
-                            children: {
-                                facing: {
-                                    parser: new LiteralArgumentParser('facing'),
-                                    children: {
-                                        entity: {
-                                            parser: new LiteralArgumentParser('entity'),
-                                            children: {
-                                                facingEntity: {
-                                                    parser: new EntityArgumentParser('single', 'entities'),
-                                                    executable: true,
-                                                    children: {
-                                                        facingAnchor: {
-                                                            parser: new LiteralArgumentParser('feet', 'eyes'),
-                                                            executable: true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        pos: {
-                                            parser: new VectorArgumentParser(3),
-                                            executable: true
-                                        }
-                                    }
-                                },
-                                rotation: {
-                                    parser: new VectorArgumentParser(2, 'float', false),
-                                    executable: true
-                                }
-                            }
-                        },
-                        entity: {
-                            parser: new EntityArgumentParser('single', 'entities'),
+                        team: {
+                            parser: new TeamArgumentParser(),
                             executable: true
                         }
                     }
                 }
             }
+        },
+        teleport: {
+            redirect: 'templates.teleport'
+        },
+        tell: {
+            redirect: 'templates.msg'
         },
         tellraw: {
             parser: new LiteralArgumentParser('tellraw'),
@@ -1924,6 +1888,7 @@ export const CommandTree: ICommandTree = {
         time: {
             parser: new LiteralArgumentParser('time'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -1999,6 +1964,12 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        tm: {
+            redirect: 'templates.teammsg'
+        },
+        tp: {
+            redirect: 'templates.teleport'
+        },
         trigger: {
             parser: new LiteralArgumentParser('trigger'),
             permission: 0,
@@ -2042,7 +2013,7 @@ export const CommandTree: ICommandTree = {
                 add_remove: {
                     parser: new LiteralArgumentParser('add', 'remove'),
                     children: {
-                        plauer: {
+                        player: {
                             parser: new EntityArgumentParser('multiple', 'players'),
                             executable: true
                         }
@@ -2057,6 +2028,7 @@ export const CommandTree: ICommandTree = {
         worldborder: {
             parser: new LiteralArgumentParser('worldborder'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -2131,26 +2103,14 @@ export const CommandTree: ICommandTree = {
             }
         },
         w: {
-            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    children: {
-                        message: {
-                            parser: new MessageArgumentParser(),
-                            executable: true
-                        }
-                    }
-                }
-            }
+            redirect: 'templates.msg'
         },
-        snippet: {
-            parser: new CodeSnippetArgumentParser(),
-            permission: 0,
-            executable: true
+        xp: {
+            redirect: 'templates.experience'
         }
     },
     comments: {
+        [Switchable]: true,
         // #define bossbar|entity|objective|storage|tag|team <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
@@ -2239,394 +2199,13 @@ export const CommandTree: ICommandTree = {
                 lastToken.type = TokenType.boolean
             }
         },
-        single_score: {
-            parser: new EntityArgumentParser('single', 'entities', true),
-            children: {
-                objective: {
-                    parser: new ObjectiveArgumentParser()
-                }
-            }
-        },
-        multiple_score: {
-            parser: new EntityArgumentParser('multiple', 'entities', true),
-            children: {
-                objective: {
-                    parser: new ObjectiveArgumentParser()
-                }
-            }
-        },
         color: {
             parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
-        }
-    },
-    data_modification: {
-        simple: {
-            parser: new LiteralArgumentParser('append', 'merge', 'prepend', 'set')
         },
-        insert: {
-            parser: new LiteralArgumentParser('insert'),
-            children: {
-                index: {
-                    parser: new NumberArgumentParser('integer')
-                }
-            }
-        }
-    },
-    item_holder: {
-        block: {
-            parser: new LiteralArgumentParser('block'),
-            children: {
-                pos: {
-                    parser: new VectorArgumentParser(3, 'integer')
-                }
-            }
-        },
-        entity: {
-            parser: new LiteralArgumentParser('entity'),
-            children: {
-                entity: {
-                    parser: new EntityArgumentParser('multiple', 'entities')
-                }
-            }
-        }
-    },
-    nbt_holder: {
-        block: {
-            parser: new LiteralArgumentParser('block'),
-            children: {
-                pos: {
-                    parser: new VectorArgumentParser(3, 'integer')
-                }
-            }
-        },
-        entity: {
-            parser: new LiteralArgumentParser('entity'),
-            children: {
-                entity: {
-                    parser: new EntityArgumentParser('single', 'entities')
-                }
-            }
-        },
-        storage: {
-            parser: new LiteralArgumentParser('storage'),
-            children: {
-                id: {
-                    parser: new IdentityArgumentParser('$storage')
-                }
-            }
-        }
-    },
-    loot_target_without_replace: {
-        spawn: {
-            parser: new LiteralArgumentParser('spawn'),
-            children: {
-                pos: {
-                    parser: new VectorArgumentParser(3)
-                }
-            }
-        },
-        give: {
-            parser: new LiteralArgumentParser('give'),
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players')
-                }
-            }
-        },
-        insert: {
-            parser: new LiteralArgumentParser('insert'),
-            children: {
-                pos: {
-                    parser: new VectorArgumentParser(3)
-                }
-            }
-        }
-    },
-    loot_source: {
-        fish: {
-            parser: new LiteralArgumentParser('fish'),
-            children: {
-                id: {
-                    parser: new IdentityArgumentParser('$loot_table'),
-                    children: {
-                        location: {
-                            parser: new VectorArgumentParser(3, 'integer'),
-                            executable: true,
-                            children: {
-                                mainhand_offhand: {
-                                    parser: new LiteralArgumentParser('mainhand', 'offhand')
-                                },
-                                item: {
-                                    parser: new ItemArgumentParser(false)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        loot: {
-            parser: new LiteralArgumentParser('loot'),
-            children: {
-                lootTable: {
-                    parser: new IdentityArgumentParser('$loot_table')
-                }
-            }
-        },
-        kill: {
-            parser: new LiteralArgumentParser('kill'),
-            children: {
-                entity: {
-                    parser: new EntityArgumentParser('single', 'entities')
-                }
-            }
-        },
-        mine: {
-            parser: new LiteralArgumentParser('mine'),
-            children: {
-                pos: {
-                    parser: new VectorArgumentParser(3, 'integer'),
-                    executable: true,
-                    children: {
-                        mainhand_offhand: {
-                            parser: new LiteralArgumentParser('mainhand', 'offhand')
-                        },
-                        item: {
-                            parser: new ItemArgumentParser(false)
-                        }
-                    }
-                }
-            }
-        }
-    },
-    execute_subcommand: {
-        align: {
-            parser: new LiteralArgumentParser('align'),
-            children: {
-                axes: {
-                    parser: new LiteralArgumentParser('x', 'xy', 'xyz', 'xz', 'xzy', 'y', 'yx', 'yxz', 'yz', 'yzx', 'z', 'zx', 'zxy', 'zy', 'zyx'),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        anchored: {
-            parser: new LiteralArgumentParser('anchored'),
-            children: {
-                eyes_feet: {
-                    parser: new LiteralArgumentParser('eyes', 'feet'),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        as: {
-            parser: new LiteralArgumentParser('as'),
-            children: {
-                entity: {
-                    parser: new EntityArgumentParser('multiple', 'entities'),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        at: {
-            parser: new LiteralArgumentParser('at'),
-            children: {
-                entity: {
-                    parser: new EntityArgumentParser('multiple', 'entities'),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        facing: {
-            parser: new LiteralArgumentParser('facing'),
-            children: {
-                entity: {
-                    parser: new LiteralArgumentParser('entity'),
-                    children: {
-                        target: {
-                            parser: new EntityArgumentParser('single', 'entities'),
-                            children: {
-                                eyes_feet: {
-                                    parser: new LiteralArgumentParser('eyes', 'feet'),
-                                    children: {
-                                        subcommand: {
-                                            redirect: 'execute_subcommand'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                pos: {
-                    parser: new VectorArgumentParser(3),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        in: {
-            parser: new LiteralArgumentParser('in'),
-            children: {
-                dimension: {
-                    // parser: new IdentityArgumentParser('minecraft:dimension_type'),
-                    parser: new IdentityArgumentParser(['minecraft:overworld', 'minecraft:the_end', 'minecraft:the_nether'], undefined, undefined, true),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        positioned: {
-            parser: new LiteralArgumentParser('positioned'),
-            children: {
-                as: {
-                    parser: new LiteralArgumentParser('as'),
-                    children: {
-                        entity: {
-                            parser: new EntityArgumentParser('multiple', 'entities'),
-                            children: {
-                                subcommand: {
-                                    redirect: 'execute_subcommand'
-                                }
-                            }
-                        }
-                    }
-                },
-                pos: {
-                    parser: new VectorArgumentParser(3),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        rotated: {
-            parser: new LiteralArgumentParser('rotated'),
-            children: {
-                as: {
-                    parser: new LiteralArgumentParser('as'),
-                    children: {
-                        entity: {
-                            parser: new EntityArgumentParser('multiple', 'entities'),
-                            children: {
-                                subcommand: {
-                                    redirect: 'execute_subcommand'
-                                }
-                            }
-                        }
-                    }
-                },
-                rot: {
-                    parser: new VectorArgumentParser(2, 'float', false),
-                    children: {
-                        subcommand: {
-                            redirect: 'execute_subcommand'
-                        }
-                    }
-                }
-            }
-        },
-        store: {
-            parser: new LiteralArgumentParser('store'),
-            children: {
-                result_success: {
-                    parser: new LiteralArgumentParser('result', 'success'),
-                    children: {
-                        bossbar: {
-                            parser: new LiteralArgumentParser('bossbar'),
-                            children: {
-                                id: {
-                                    parser: new IdentityArgumentParser('$bossbar'),
-                                    children: {
-                                        max_value: {
-                                            parser: new LiteralArgumentParser('max', 'value'),
-                                            children: {
-                                                subcommand: {
-                                                    redirect: 'execute_subcommand'
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        score: {
-                            parser: new LiteralArgumentParser('score'),
-                            children: {
-                                score: {
-                                    template: 'templates.multiple_score',
-                                    children: {
-                                        subcommand: {
-                                            redirect: 'execute_subcommand'
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        nbt_holder: {
-                            template: 'nbt_holder',
-                            children: {
-                                path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
-                                        if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
-                                            const id = getNbtdocRegistryId(entity)
-                                            return new NbtPathArgumentParser('minecraft:entity', id)
-                                        } else if (type === 'block') {
-                                            return new NbtPathArgumentParser('minecraft:block', null)
-                                        } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
-                                        }
-                                    },
-                                    children: {
-                                        type: {
-                                            parser: new LiteralArgumentParser('byte', 'short', 'int', 'long', 'float', 'double'),
-                                            children: {
-                                                scale: {
-                                                    parser: new NumberArgumentParser('float'),
-                                                    children: {
-                                                        subcommand: {
-                                                            redirect: 'execute_subcommand'
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        if_unless: {
+        execute_if_unless: {
             parser: new LiteralArgumentParser('if', 'unless'),
             children: {
+                [Switchable]: true,
                 blocks: {
                     parser: new LiteralArgumentParser('blocks'),
                     children: {
@@ -2779,6 +2358,437 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        experience: {
+            parser: new LiteralArgumentParser('experience', 'xp'),
+            children: {
+                add_set: {
+                    parser: new LiteralArgumentParser('add', 'set'),
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('multiple', 'players'),
+                            children: {
+                                amount: {
+                                    parser: new NumberArgumentParser('integer'),
+                                    executable: true,
+                                    children: {
+                                        points_levels: {
+                                            parser: new LiteralArgumentParser('points', 'levels'),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                query: {
+                    parser: new LiteralArgumentParser('query'),
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('single', 'players'),
+                            children: {
+                                points_levels: {
+                                    parser: new LiteralArgumentParser('points', 'levels'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        msg: {
+            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    children: {
+                        message: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        },
+        multiple_score: {
+            parser: new EntityArgumentParser('multiple', 'entities', true),
+            children: {
+                objective: {
+                    parser: new ObjectiveArgumentParser()
+                }
+            }
+        },
+        single_score: {
+            parser: new EntityArgumentParser('single', 'entities', true),
+            children: {
+                objective: {
+                    parser: new ObjectiveArgumentParser()
+                }
+            }
+        },
+        teammsg: {
+            parser: new LiteralArgumentParser('teammsg', 'tm'),
+            permission: 0,
+            children: {
+                message: {
+                    parser: new MessageArgumentParser(),
+                    executable: true
+                }
+            }
+        },
+        teleport: {
+            parser: new LiteralArgumentParser('teleport', 'tp'),
+            children: {
+                destination: {
+                    parser: new VectorArgumentParser(3),
+                    executable: true
+                },
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    executable: true,
+                    children: {
+                        destination: {
+                            parser: new VectorArgumentParser(3),
+                            executable: true,
+                            children: {
+                                facing: {
+                                    parser: new LiteralArgumentParser('facing'),
+                                    children: {
+                                        entity: {
+                                            parser: new LiteralArgumentParser('entity'),
+                                            children: {
+                                                facingEntity: {
+                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                    executable: true,
+                                                    children: {
+                                                        facingAnchor: {
+                                                            parser: new LiteralArgumentParser('feet', 'eyes'),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        pos: {
+                                            parser: new VectorArgumentParser(3),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                rotation: {
+                                    parser: new VectorArgumentParser(2, 'float', false),
+                                    executable: true
+                                }
+                            }
+                        },
+                        entity: {
+                            parser: new EntityArgumentParser('single', 'entities'),
+                            executable: true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    data_modification: {
+        simple: {
+            parser: new LiteralArgumentParser('append', 'merge', 'prepend', 'set')
+        },
+        insert: {
+            parser: new LiteralArgumentParser('insert'),
+            children: {
+                index: {
+                    parser: new NumberArgumentParser('integer')
+                }
+            }
+        }
+    },
+    item_holder: {
+        [Switchable]: true,
+        block: {
+            parser: new LiteralArgumentParser('block'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3, 'integer')
+                }
+            }
+        },
+        entity: {
+            parser: new LiteralArgumentParser('entity'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'entities')
+                }
+            }
+        }
+    },
+    nbt_holder: {
+        [Switchable]: true,
+        block: {
+            parser: new LiteralArgumentParser('block'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3, 'integer')
+                }
+            }
+        },
+        entity: {
+            parser: new LiteralArgumentParser('entity'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('single', 'entities')
+                }
+            }
+        },
+        storage: {
+            parser: new LiteralArgumentParser('storage'),
+            children: {
+                id: {
+                    parser: new IdentityArgumentParser('$storage')
+                }
+            }
+        }
+    },
+    loot_target_without_replace: {
+        [Switchable]: true,
+        spawn: {
+            parser: new LiteralArgumentParser('spawn'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3)
+                }
+            }
+        },
+        give: {
+            parser: new LiteralArgumentParser('give'),
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players')
+                }
+            }
+        },
+        insert: {
+            parser: new LiteralArgumentParser('insert'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3)
+                }
+            }
+        }
+    },
+    loot_source: {
+        [Switchable]: true,
+        fish: {
+            parser: new LiteralArgumentParser('fish'),
+            children: {
+                id: {
+                    parser: new IdentityArgumentParser('$loot_table'),
+                    children: {
+                        location: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            executable: true,
+                            children: {
+                                mainhand_offhand: {
+                                    parser: new LiteralArgumentParser('mainhand', 'offhand')
+                                },
+                                item: {
+                                    parser: new ItemArgumentParser(false)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        loot: {
+            parser: new LiteralArgumentParser('loot'),
+            children: {
+                lootTable: {
+                    parser: new IdentityArgumentParser('$loot_table')
+                }
+            }
+        },
+        kill: {
+            parser: new LiteralArgumentParser('kill'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('single', 'entities')
+                }
+            }
+        },
+        mine: {
+            parser: new LiteralArgumentParser('mine'),
+            children: {
+                pos: {
+                    parser: new VectorArgumentParser(3, 'integer'),
+                    executable: true,
+                    children: {
+                        mainhand_offhand: {
+                            parser: new LiteralArgumentParser('mainhand', 'offhand')
+                        },
+                        item: {
+                            parser: new ItemArgumentParser(false)
+                        }
+                    }
+                }
+            }
+        }
+    },
+    execute_subcommand: {
+        [Switchable]: true,
+        align: {
+            parser: new LiteralArgumentParser('align'),
+            children: {
+                axes: {
+                    parser: new LiteralArgumentParser('x', 'xy', 'xyz', 'xz', 'xzy', 'y', 'yx', 'yxz', 'yz', 'yzx', 'z', 'zx', 'zxy', 'zy', 'zyx'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        anchored: {
+            parser: new LiteralArgumentParser('anchored'),
+            children: {
+                eyes_feet: {
+                    parser: new LiteralArgumentParser('eyes', 'feet'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        as: {
+            parser: new LiteralArgumentParser('as'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        at: {
+            parser: new LiteralArgumentParser('at'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        facing: {
+            parser: new LiteralArgumentParser('facing'),
+            children: {
+                entity: {
+                    parser: new LiteralArgumentParser('entity'),
+                    children: {
+                        target: {
+                            parser: new EntityArgumentParser('single', 'entities'),
+                            children: {
+                                eyes_feet: {
+                                    parser: new LiteralArgumentParser('eyes', 'feet'),
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                pos: {
+                    parser: new VectorArgumentParser(3),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        if: {
+            redirect: 'templates.execute_if_unless'
+        },
+        in: {
+            parser: new LiteralArgumentParser('in'),
+            children: {
+                dimension: {
+                    // parser: new IdentityArgumentParser('minecraft:dimension_type'),
+                    parser: new IdentityArgumentParser(['minecraft:overworld', 'minecraft:the_end', 'minecraft:the_nether'], undefined, undefined, true),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        positioned: {
+            parser: new LiteralArgumentParser('positioned'),
+            children: {
+                as: {
+                    parser: new LiteralArgumentParser('as'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                pos: {
+                    parser: new VectorArgumentParser(3),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
+        rotated: {
+            parser: new LiteralArgumentParser('rotated'),
+            children: {
+                as: {
+                    parser: new LiteralArgumentParser('as'),
+                    children: {
+                        entity: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                rot: {
+                    parser: new VectorArgumentParser(2, 'float', false),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
         run: {
             parser: new LiteralArgumentParser('run'),
             children: {
@@ -2786,6 +2796,84 @@ export const CommandTree: ICommandTree = {
                     redirect: 'commands'
                 }
             }
+        },
+        store: {
+            parser: new LiteralArgumentParser('store'),
+            children: {
+                result_success: {
+                    parser: new LiteralArgumentParser('result', 'success'),
+                    children: {
+                        bossbar: {
+                            parser: new LiteralArgumentParser('bossbar'),
+                            children: {
+                                id: {
+                                    parser: new IdentityArgumentParser('$bossbar'),
+                                    children: {
+                                        max_value: {
+                                            parser: new LiteralArgumentParser('max', 'value'),
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'execute_subcommand'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        score: {
+                            parser: new LiteralArgumentParser('score'),
+                            children: {
+                                score: {
+                                    template: 'templates.multiple_score',
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        nbt_holder: {
+                            template: 'nbt_holder',
+                            children: {
+                                path: {
+                                    parser: ({ args }) => {
+                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
+                                        } else if (type === 'block') {
+                                            return new NbtPathArgumentParser('minecraft:block', null)
+                                        } else {
+                                            return new NbtPathArgumentParser('minecraft:block')
+                                        }
+                                    },
+                                    children: {
+                                        type: {
+                                            parser: new LiteralArgumentParser('byte', 'short', 'int', 'long', 'float', 'double'),
+                                            children: {
+                                                scale: {
+                                                    parser: new NumberArgumentParser('float'),
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'execute_subcommand'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        unless: {
+            redirect: 'templates.execute_if_unless'
         }
     }
 }

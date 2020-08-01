@@ -6,7 +6,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot } from './services/common'
+import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot, partitionedIteration } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
@@ -22,9 +22,7 @@ let workspaceRootUriStrings: string[] = []
 
 let service: DatapackLanguageService
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }, _, progress) => {
-    progress.begin(locale('server.initializing'))
-
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }) => {
     capabilities = getClientCapabilities(lspCapabilities)
 
     if (globalStoragePath && !await pathAccessible(globalStoragePath)) {
@@ -45,10 +43,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     }
     cacheFile = cacheFile ?? clone(DefaultCacheFile)
 
-    console.log(`[onInitialize] CacheVersion = ${CacheVersion}`)
-    console.log(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
-    console.log(`[onInitialize] globalStoragePath = ${globalStoragePath}`)
-    console.log(`[onInitialize] cachePath = ${cachePath}`)
+    console.info(`[onInitialize] CacheVersion = ${CacheVersion}`)
+    console.info(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
+    console.info(`[onInitialize] globalStoragePath = ${globalStoragePath}`)
+    console.info(`[onInitialize] cachePath = ${cachePath}`)
 
     service = new DatapackLanguageService({
         applyEdit: capabilities.applyEdit ? connection.workspace.applyEdit.bind(connection.workspace) : undefined,
@@ -63,9 +61,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
     workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
     await updateRoots(service.roots)
-
-    await updateCacheFile(service.cacheFile, service.roots, progress)
-    saveCacheFile()
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
@@ -84,8 +79,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                     'datapack.fixFile',
                     'datapack.fixWorkspace',
                     'datapack.regenerateCache'
-                ],
-                workDoneProgress: true
+                ]
             },
             foldingRangeProvider: !capabilities.dynamicRegistration.foldingRange,
             hoverProvider: true,
@@ -120,12 +114,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         }
     }
 
-    progress.done()
-
     return result
 })
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
     if (capabilities.dynamicRegistration.competion) {
         connection.client.register(CompletionRequest.type, {
             documentSelector: [{ language: 'mcfunction' }],
@@ -181,6 +173,10 @@ connection.onInitialized(() => {
             await updateRoots(service.roots)
         }
     })
+
+    const progress = await connection.window.createWorkDoneProgress()
+    await updateCacheFile(service.cacheFile, service.roots, progress)
+    saveCacheFile()
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
@@ -205,12 +201,12 @@ connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
 })
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
-    // connection.console.info(`BW: ${JSON.stringify(cacheFile)}`)
-    // connection.console.info(`WC: ${JSON.stringify(changes)}`)
+    // console.info(`BW: ${JSON.stringify(cacheFile)}`)
+    // console.info(`WC: ${JSON.stringify(changes)}`)
     for (const { uri: uriString, type } of changes) {
         const uri = service.parseUri(uriString)
 
-        // connection.console.info(JSON.stringify({ uri, type }))
+        // console.info(JSON.stringify({ uri, type }))
 
         if (uriString.endsWith('data') || uriString.endsWith('data/') || uriString.endsWith('pack.mcmeta')) {
             await updateRoots(service.roots)
@@ -253,12 +249,12 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
             }
             case FileChangeType.Deleted:
             default: {
-                // connection.console.info(`FileChangeType.Deleted ${rel}`)
+                // console.info(`FileChangeType.Deleted ${rel}`)
                 for (const fileUriString in service.cacheFile.files) {
                     if (service.cacheFile.files.hasOwnProperty(fileUriString)) {
                         if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
                             const fileUri = service.parseUri(fileUriString)
-                            // connection.console.info(`result = ${JSON.stringify(result)}`)
+                            // console.info(`result = ${JSON.stringify(result)}`)
                             service.onDeletedFile(fileUri)
                         }
                     }
@@ -269,7 +265,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
     }
 
     trimCache(service.cacheFile.cache)
-    // connection.console.info(`AW: ${JSON.stringify(cacheFile)}`)
+    // console.info(`AW: ${JSON.stringify(cacheFile)}`)
 })
 
 connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
@@ -383,8 +379,8 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 break
             }
             case 'datapack.fixWorkspace': {
-                progress = await connection.window.createWorkDoneProgress()
-                progress.begin(locale('server.fixing-workspace'))
+                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
+                progress?.begin(locale('server.progress.fixing-workspace.begin'))
                 for (const root of service.roots) {
                     const dataPath = path.join(root.fsPath, 'data')
                     const namespaces = await pathAccessible(dataPath) ? await fsp.readdir(dataPath) : []
@@ -394,6 +390,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                         if (await pathAccessible(functionsPath)) {
                             await walkFile(root.fsPath, functionsPath, async abs => {
                                 try {
+                                    progress?.report(locale('server.progress.fixing-workspace.report', locale('punc.quote', abs)))
                                     const uri = service.parseUri(Uri.file(abs).toString())
                                     service.onExecuteFixFileCommand(uri)
                                 } catch (e) {
@@ -406,8 +403,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 break
             }
             case 'datapack.regenerateCache': {
-                progress = await connection.window.createWorkDoneProgress()
-                progress.begin(locale('server.regenerating-cache'))
+                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
                 service.cacheFile = clone(DefaultCacheFile)
                 await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
@@ -418,9 +414,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
     } catch (e) {
         console.error('[onExecuteCommand]', e)
     } finally {
-        if (progress) {
-            progress.done()
-        }
+            progress?.done()
     }
 })
 
@@ -439,7 +433,6 @@ async function updateRoots(roots: Uri[]) {
             config.env.detectionDepth
         )
     }
-    connection.console.info('Getting data pack roots:')
     for (const candidatePath of rootCandidatePaths) {
         const dataPath = path.join(candidatePath, 'data')
         const packMcmetaPath = path.join(candidatePath, 'pack.mcmeta')
@@ -447,7 +440,7 @@ async function updateRoots(roots: Uri[]) {
             const uri = service.parseRootUri(Uri.file(candidatePath).toString())
             roots.push(uri)
 
-            connection.console.info(`rootUri (priority = ${roots.length}) = “${uri.toString()}”`)
+            console.info(`[updateRoots] Data pack ${roots.length} = “${uri.toString()}”`)
             // Show messages for legacy cache file which was saved in the root of your workspace. 
             const legacyDotPath = path.join(candidatePath, '.datapack')
             if (await pathAccessible(legacyDotPath)) {
@@ -460,7 +453,7 @@ async function updateRoots(roots: Uri[]) {
 async function getLatestVersions() {
     let ans: VersionInformation | undefined
     try {
-        connection.console.info('[LatestVersions] Fetching the latest versions...')
+        console.info('[LatestVersions] Fetching the latest versions...')
         const str = await Promise.race([
             requestText('https://launchermeta.mojang.com/mc/game/version_manifest.json'),
             new Promise<string>((_, reject) => {
@@ -473,9 +466,9 @@ async function getLatestVersions() {
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         ans = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined
     } catch (e) {
-        connection.console.warn(`[LatestVersions] ${e}`)
+        console.warn(`[LatestVersions] ${e}`)
     }
-    connection.console.info(`[LatestVersions] versionInformation = ${JSON.stringify(ans)}`)
+    console.info(`[LatestVersions] versionInformation = ${JSON.stringify(ans)}`)
     return ans
 }
 
@@ -485,10 +478,10 @@ async function fetchConfig(uri: Uri): Promise<Config> {
             scopeUri: uri.toString(),
             section: 'datapack'
         })
-        loadLocale(connection.console as unknown as Console, config.env.language)
+        loadLocale(config.env.language)
         return config
     } catch (e) {
-        // connection.console.warn(`Error occurred while fetching config for “${uri.toString()}”: ${e}`)
+        // console.warn(`Error occurred while fetching config for “${uri.toString()}”: ${e}`)
         return VanillaConfig
     }
 }
@@ -501,20 +494,35 @@ async function saveCacheFile() {
 
 setInterval(saveCacheFile, 30_000)
 
-async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
-    // Check the files saved in the cache file.
-    for (const uriString in cacheFile.files) {
-        /* istanbul ignore next */
-        if (cacheFile.files.hasOwnProperty(uriString)) {
-            progress.report(locale('server.checking-file', uriString))
-            // connection.console.info(`Walked ${ uriString }`)
-            const uri = service.parseUri(uriString)
-            const rel = getRel(uri, roots)
-            const config = await service.getConfig(uri)
-            if (!rel || !isRelIncluded(rel, config)) {
-                delete cacheFile.files[uriString]
-                continue
-            }
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+    try {
+        // Check the files saved in the cache file.
+        progress?.begin(locale('server.progress.updating-cache.begin'))
+        const time1 = new Date().getTime()
+        await checkFilesInCache(cacheFile, roots, progress)
+        const time2 = new Date().getTime()
+        await addNewFilesToCache(cacheFile, roots, progress)
+        trimCache(cacheFile.cache)
+        const time3 = new Date().getTime()
+        console.info(`[updateCacheFile] [1] ${time2 - time1} ms`)
+        console.info(`[updateCacheFile] [2] ${time3 - time2} ms`)
+        console.info(`[updateCacheFile] [T] ${time3 - time1} ms`)
+        progress?.done()
+    } catch (e) {
+        console.error('[updateCacheFile] ', e)
+    }
+}
+
+async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+    const uriStrings = Object.keys(cacheFile.files).values()
+    return partitionedIteration(uriStrings, async uriString => {
+        progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
+        const uri = service.parseUri(uriString)
+        const rel = getRel(uri, roots)
+        const config = await service.getConfig(uri)
+        if (!rel || !isRelIncluded(rel, config)) {
+            delete cacheFile.files[uriString]
+        } else {
             if (!(await pathAccessible(uri.fsPath))) {
                 service.onDeletedFile(uri)
             } else {
@@ -527,11 +535,11 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
                 }
             }
         }
-    }
+    })
+}
 
-    const addedFiles: Uri[] = []
-
-    await Promise.all(roots.map(root => {
+async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+    return Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(
             root.fsPath,
@@ -539,18 +547,19 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
             async (abs, _rel, stat) => {
                 const uri = service.parseUri(Uri.file(abs).toString())
                 const uriString = uri.toString()
+                progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', abs)))
                 if (cacheFile.files[uriString] === undefined) {
                     await service.onAddedFile(uri)
                     cacheFile.files[uriString] = stat.mtimeMs
-                    addedFiles.push(uri)
                 }
+            },
+            async (abs, rel) => {
+                const uri = service.parseUri(Uri.file(abs).toString())
+                const config = await service.getConfig(uri)
+                return isRelIncluded(rel, config)
             }
         )
     }))
-
-    await Promise.all(addedFiles.map(service.onModifiedFile))
-
-    trimCache(cacheFile.cache)
 }
 
 connection.listen()

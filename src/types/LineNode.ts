@@ -1,12 +1,11 @@
-import { CompletionItem } from 'vscode-languageserver'
+import { NodeRange } from '../nodes'
 import { toFormattedString } from '../utils'
 import { ClientCache, combineCache } from './ClientCache'
 import { LintConfig } from './Config'
-import { ParsingError } from './ParsingError'
-import { Token } from './Token'
-import { NodeRange } from '../nodes'
-import { TextRange } from './TextRange'
 import { ParserSuggestion } from './ParserSuggestion'
+import { ParsingError } from './ParsingError'
+import { TextRange } from './TextRange'
+import { Token } from './Token'
 
 /**
  * Represent a parsed line in a function.

@@ -41,7 +41,7 @@ async function setupLanguage(code: string) {
 }
 
 /* istanbul ignore next */
-export async function loadLocale(console: Console, setting: string) {
+export async function loadLocale(setting: string) {
     if (setting.toLowerCase() === 'default') {
         if (!language) {
             await loadVscodeLanguage(console)

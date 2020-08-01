@@ -38,14 +38,6 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
         }
         //#endregion
 
-        //#region Errors.
-        ans.errors = [new ParsingError(
-            { start: reader.cursor, end: reader.cursor + 1 },
-            locale('code-snippets-invalid-for-game'),
-            false
-        )]
-        //#endregion
-
         return ans
     }
 

@@ -3,6 +3,7 @@ import { URI as Uri } from 'vscode-uri'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
+import clone from 'clone'
 
 export const CacheVersion = 10
 
@@ -300,7 +301,7 @@ export function trimCache(cache: ClientCache) {
  * Pure function.
  */
 export function getCacheForUri(cache: ClientCache, _uri: Uri) {
-    const ans = JSON.parse(JSON.stringify(cache))
+    const ans = clone(cache)
     for (const type in ans) {
         const category = ans[type as CacheType] as CacheCategory
         if (shouldHaveDef(type as CacheType)) {

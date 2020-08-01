@@ -1,4 +1,4 @@
-import { CommandTree, CommandTreeNode, CommandTreeNodeChildren } from './types/CommandTree'
+import { CommandTree, CommandTreeNode, CommandTreeNodes } from './types/CommandTree'
 import { LineArgumentNode } from './types/LineNode'
 
 /**
@@ -11,8 +11,8 @@ export function getArgOrDefault<T>(args: LineArgumentNode<T>[], lastIndex: numbe
 /**
  * Get the `children` of specific `CommandTreeNode`.
  */
-export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodeChildren | undefined {
-    let children: CommandTreeNodeChildren | undefined
+export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): CommandTreeNodes | undefined {
+    let children: CommandTreeNodes | undefined
     if (node && node.children) {
         children = node.children
     } else if (node && node.redirect) {
@@ -49,7 +49,7 @@ export function getChildren(tree: CommandTree, node: CommandTreeNode<any>): Comm
 export function fillSingleTemplate(currentNode: CommandTreeNode<any>, singleTemplate: CommandTreeNode<any>): CommandTreeNode<any> {
     if (singleTemplate.children) {
         const ans = { ...singleTemplate }
-        ans.children = fillChildrenTemplate(currentNode, ans.children as CommandTreeNodeChildren)
+        ans.children = fillChildrenTemplate(currentNode, ans.children as CommandTreeNodes)
         return ans
     } else {
         const ans = { ...singleTemplate, ...currentNode }
@@ -63,8 +63,8 @@ export function fillSingleTemplate(currentNode: CommandTreeNode<any>, singleTemp
  * @param currentNode Node which contains `template`.
  * @param childrenTemplate NodeChildren whose path is the `template` defined in `currentNode`.
  */
-export function fillChildrenTemplate(currentNode: CommandTreeNode<any>, childrenTemplate: CommandTreeNodeChildren): CommandTreeNodeChildren {
-    const ans: CommandTreeNodeChildren = {}
+export function fillChildrenTemplate(currentNode: CommandTreeNode<any>, childrenTemplate: CommandTreeNodes): CommandTreeNodes {
+    const ans: CommandTreeNodes = {}
     for (const key in childrenTemplate) {
         /* istanbul ignore else */
         if (childrenTemplate.hasOwnProperty(key)) {

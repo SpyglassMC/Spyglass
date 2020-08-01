@@ -274,28 +274,46 @@ export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number):
     return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.nodes[0] }
 }
 
+export function partitionedIteration<T>(iterator: IterableIterator<T>, onEachItem: (item: T) => any) {
+    return new Promise<void>((resolve, reject) => {
+        try {
+            const help = async () => {
+                const { done, value: item } = iterator.next()
+                if (!done) {
+                    await onEachItem(item)
+                    setImmediate(help)
+                } else {
+                    resolve()
+                }
+            }
+            help()
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 /* istanbul ignore next */
 export async function walkFile(
     workspaceRootPath: string,
     abs: string,
-    cb: (abs: string, rel: string, stat: fs.Stats) => any,
-    promises: Promise<any>[] = [],
-    awaitAll = true
-): Promise<void> {
-    const names = await fsp.readdir(abs)
-    for (const name of names) {
+    onFile: (abs: string, rel: string, stat: fs.Stats) => any,
+    pathFilter: (abs: string, rel: string, stat: fs.Stats) => Promise<boolean> = () => Promise.resolve(true)
+): Promise<any> {
+    const names = (await fsp.readdir(abs)).values()
+    return partitionedIteration(names, async name => {
         const newAbs = path.join(abs, name)
         const stat = await fsp.stat(newAbs)
-        if (stat.isDirectory()) {
-            promises.push(walkFile(workspaceRootPath, newAbs, cb, promises, false))
-        } else {
-            const rel = path.relative(workspaceRootPath, newAbs)
-            promises.push(cb(newAbs, rel, stat))
+        const rel = path.relative(workspaceRootPath, newAbs)
+        if (!await pathFilter(newAbs, rel, stat)) {
+            return
         }
-    }
-    if (awaitAll) {
-        return void Promise.all(promises)
-    }
+        if (stat.isDirectory()) {
+            return walkFile(workspaceRootPath, newAbs, onFile)
+        } else {
+            return onFile(newAbs, rel, stat)
+        }
+    })
 }
 
 /* istanbul ignore next */
@@ -303,23 +321,20 @@ export async function walkRoot(
     workspaceRoot: Uri,
     abs: string,
     cb: (xabs: string, stat: fs.Stats) => any,
-    depth = Infinity,
-    promises: Promise<any>[] = [],
-    awaitAll = true
-): Promise<void> {
+    depth = Infinity
+): Promise<any> {
     if (depth <= 0) {
         return
     }
     const names = await fsp.readdir(abs)
+    const promises: Promise<any>[] = []
     for (const name of names) {
         const newAbs = path.join(abs, name)
         const stat = await fsp.stat(newAbs)
         if (stat.isDirectory()) {
             cb(newAbs, stat)
-            promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1, promises, false))
+            promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1))
         }
     }
-    if (awaitAll) {
-        return void Promise.all(promises)
-    }
+    return Promise.all(promises)
 }
