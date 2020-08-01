@@ -294,10 +294,10 @@ export async function walkFile(
                         const rel = path.relative(workspaceRootPath, newAbs)
                         await cb(newAbs, rel, stat)
                     }
+                    setImmediate(help)
                 } else {
                     resolve()
                 }
-                setImmediate(help)
             }
             help()
         } catch (e) {

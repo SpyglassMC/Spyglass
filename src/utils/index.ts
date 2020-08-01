@@ -325,7 +325,7 @@ export async function readFile(path: string): Promise<string> {
     return new Promise((resolve, reject) => {
         let data = ''
         fs
-            .createReadStream(path, { encoding: 'utf-8' })
+            .createReadStream(path, { encoding: 'utf-8', highWaterMark: 128 * 1024 })
             .on('data', chunk => {
                 data += chunk
             })
