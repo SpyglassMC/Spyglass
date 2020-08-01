@@ -14,6 +14,7 @@ export interface ClientCapabilities {
     completionContext: boolean,
     configuration: boolean,
     diagnostics: boolean,
+    workDoneProgress: boolean,
     workspaceFolders: boolean
 }
 
@@ -32,6 +33,7 @@ export function getClientCapabilities(lspCapabilities: LspClientCapabilities = {
         completionContext: !!lspCapabilities.textDocument?.completion?.contextSupport,
         configuration: !!lspCapabilities.workspace?.configuration,
         diagnostics: !!lspCapabilities.textDocument?.publishDiagnostics,
+        workDoneProgress: !!lspCapabilities.window?.workDoneProgress,
         workspaceFolders: !!lspCapabilities.workspace?.workspaceFolders
     }
     return ans

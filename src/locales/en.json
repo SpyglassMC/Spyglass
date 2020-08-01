@@ -54,7 +54,6 @@
     "code-action.string-unquote": "Unquote this string",
     "code-action.vector-align-0.0": "Align this vector to block origin",
     "code-action.vector-align-0.5": "Align this vector to block center",
-    "code-snippets-invalid-for-game": "Code snippets are invalid for the game",
     "collection-length.between": "a collection with length between %0% and %1%",
     "collection-length.exact": "a collection with length %0%",
     "conjunction.and_2": " and ",

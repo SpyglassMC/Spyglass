@@ -3,7 +3,7 @@ import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes'
 import { CacheType } from '../types/ClientCache'
-import { CommandTreeNode, CommandTreeNodeChildren } from '../types/CommandTree'
+import { CommandTreeNode, CommandTreeNodes, Switchable } from '../types/CommandTree'
 import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -11,6 +11,7 @@ import { downgradeParsingError, ParsingError } from '../types/ParsingError'
 import { TokenModifier } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
+import { arrayToCompletions, arrayToMessage } from '../utils'
 
 export class LineParser implements Parser<LineNode> {
     /* istanbul ignore next */
@@ -65,6 +66,9 @@ export class LineParser implements Parser<LineNode> {
             if (this.leadingSlash === true) {
                 // ...which is unexpected
                 shouldContinue = false
+                if (ctx.cursor === reader.cursor) {
+                    node.completions.push({ label: '/', start: ctx.cursor, end: ctx.cursor })
+                }
                 if (this.allowPartial) {
                     reader.readRemaining()
                 } else {
@@ -76,9 +80,6 @@ export class LineParser implements Parser<LineNode> {
                         ),
                         false
                     ))
-                }
-                if (ctx.cursor === reader.cursor) {
-                    node.completions.push({ label: '/', start: ctx.cursor, end: ctx.cursor })
                 }
             }
         }
@@ -246,43 +247,89 @@ export class LineParser implements Parser<LineNode> {
         }
     }
 
-    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodeChildren, parsedLine: SaturatedLineNode, optional = false, isFirstArgument = false) {
-        const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
+    parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional = false, isFirstArgument = false) {
+        // TODO: AlwaysValidates
+        if (children[Switchable]) {
+            this.parseSwitchableChildren(reader, ctx, children, parsedLine, optional, isFirstArgument)
+        } else {
+            this.parseNormalChildren(reader, ctx, children, parsedLine, optional, isFirstArgument)
+        }
+    }
+
+    private parseSwitchableChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean) {
+        const start = reader.cursor
+        const options = Object.keys(children)
+        const newReader = reader.clone()
+        const literal = newReader.readUntilOrEnd(' ')
+        //#region Completions.
+        if (start <= ctx.cursor && ctx.cursor <= newReader.cursor) {
+            parsedLine.completions.push(...arrayToCompletions(options, start, newReader.cursor))
+        }
+        //#endregion
+        const node = children[literal]
+        if (node) {
+            this.tryParsingNodeInChildren(reader, ctx, literal, node, children, parsedLine, optional, isFirstArgument, true)
+        } else {
+            parsedLine.errors.push(new ParsingError(
+                { start, end: start + literal.length },
+                locale('expected-got',
+                    arrayToMessage(options, true, 'or'),
+                    locale('punc.quote', literal)
+                ),
+                false
+            ))
+        }
+    }
+
+    private parseNormalChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean) {
+        const start = reader.cursor
         const hasSoleChild = Object.keys(children).length === 1
         for (const key in children) {
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
                 const node = children[key]
-                const newReader = reader.clone()
-                const oldErrors = [...parsedLine.errors]
-                const oldTokens = [...parsedLine.tokens]
-                this.parseSingle(newReader, ctx, key, node, parsedLine, hasSoleChild, optional)
-                //#region Add `firstArgument` token modifer.
-                if (isFirstArgument) {
-                    const firstArgumentToken = parsedLine.tokens[oldTokens.length]
-                    if (firstArgumentToken) {
-                        firstArgumentToken.modifiers.add(TokenModifier.firstArgument)
-                    }
-                }
-                //#endregion
-                if (!hasSoleChild && hasUntolerableErrors(parsedLine.errors)) {
-                    parsedLine.args.pop()
-                    parsedLine.hint.fix.pop()
-                    parsedLine.errors = oldErrors
-                    parsedLine.tokens = oldTokens
+                const result = this.tryParsingNodeInChildren(reader, ctx, key, node, children, parsedLine, optional, isFirstArgument, hasSoleChild)
+                if (result) {
+                    return
+                } else {
                     continue
                 }
-                reader.cursor = newReader.cursor
-                return
             }
         }
-        const start = reader.cursor
         reader.readRemaining()
         parsedLine.errors.push(new ParsingError(
             { start, end: reader.cursor },
             locale('not-matching-any-child'),
             false
         ))
+    }
+
+    /**
+     * @returns If parsed successfully.
+     */
+    private tryParsingNodeInChildren(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean, isSoleChild: boolean) {
+        const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
+        const newReader = reader.clone()
+        const oldErrors = [...parsedLine.errors]
+        const oldTokens = [...parsedLine.tokens]
+        this.parseSingle(newReader, ctx, key, node, parsedLine, isSoleChild, optional)
+        //#region Add `firstArgument` token modifer.
+        if (isFirstArgument) {
+            const firstArgumentToken = parsedLine.tokens[oldTokens.length]
+            if (firstArgumentToken) {
+                firstArgumentToken.modifiers.add(TokenModifier.firstArgument)
+            }
+        }
+        //#endregion
+        if (!isSoleChild && hasUntolerableErrors(parsedLine.errors)) {
+            parsedLine.args.pop()
+            parsedLine.hint.fix.pop()
+            parsedLine.errors = oldErrors
+            parsedLine.tokens = oldTokens
+            return false
+        }
+        reader.cursor = newReader.cursor
+        return true
     }
 
     getHintsInChildren(ctx: ParsingContext, node: CommandTreeNode<any>) {

@@ -278,24 +278,21 @@ export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number):
 export async function walkFile(
     workspaceRootPath: string,
     abs: string,
-    cb: (abs: string, rel: string, stat: fs.Stats) => any,
-    promises: Promise<any>[] = [],
-    awaitAll = true
-): Promise<void> {
+    cb: (abs: string, rel: string, stat: fs.Stats) => any
+): Promise<any> {
     const names = await fsp.readdir(abs)
+    const promises: Promise<any>[] = []
     for (const name of names) {
         const newAbs = path.join(abs, name)
         const stat = await fsp.stat(newAbs)
         if (stat.isDirectory()) {
-            promises.push(walkFile(workspaceRootPath, newAbs, cb, promises, false))
+            promises.push(walkFile(workspaceRootPath, newAbs, cb))
         } else {
             const rel = path.relative(workspaceRootPath, newAbs)
             promises.push(cb(newAbs, rel, stat))
         }
     }
-    if (awaitAll) {
-        return void Promise.all(promises)
-    }
+    return Promise.all(promises)
 }
 
 /* istanbul ignore next */
@@ -303,23 +300,20 @@ export async function walkRoot(
     workspaceRoot: Uri,
     abs: string,
     cb: (xabs: string, stat: fs.Stats) => any,
-    depth = Infinity,
-    promises: Promise<any>[] = [],
-    awaitAll = true
-): Promise<void> {
+    depth = Infinity
+): Promise<any> {
     if (depth <= 0) {
         return
     }
     const names = await fsp.readdir(abs)
+    const promises: Promise<any>[] = []
     for (const name of names) {
         const newAbs = path.join(abs, name)
         const stat = await fsp.stat(newAbs)
         if (stat.isDirectory()) {
             cb(newAbs, stat)
-            promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1, promises, false))
+            promises.push(walkRoot(workspaceRoot, newAbs, cb, depth - 1))
         }
     }
-    if (awaitAll) {
-        return void Promise.all(promises)
-    }
+    return Promise.all(promises)
 }
