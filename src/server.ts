@@ -504,15 +504,11 @@ setInterval(saveCacheFile, 30_000)
 async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
     try {
         // Check the files saved in the cache file.
-        const startTime1 = new Date().getTime()
         await checkFilesInCache(cacheFile, roots, progress)
-        const startTime2 = new Date().getTime()
-        console.log(`【1】${startTime2 - startTime1}`)
+        const time = new Date().getTime()
         await addNewFilesToCache(cacheFile, roots, progress)
         trimCache(cacheFile.cache)
-        const startTime3 = new Date().getTime()
-        console.log(`【2】${startTime3 - startTime2}`)
-        console.log(`【T】${startTime3 - startTime1}`)
+        console.log(`${new Date().getTime()} 【${new Date().getTime() - time}】`)
     } catch (e) {
         console.error('[updateCacheFile] ', e)
     }
@@ -549,6 +545,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
 async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress) {
     const addedFiles: Uri[] = []
 
+    console.log(`${new Date().getTime()} START`)
     await Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(
@@ -557,14 +554,18 @@ async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: 
             async (abs, _rel, stat) => {
                 const uri = service.parseUri(Uri.file(abs).toString())
                 const uriString = uri.toString()
+                progress.report(locale('server.checking-file', uriString))
                 if (cacheFile.files[uriString] === undefined) {
+                    console.log(`${new Date().getTime()} ${uri.toString()} B`)
                     await service.onAddedFile(uri)
                     cacheFile.files[uriString] = stat.mtimeMs
                     addedFiles.push(uri)
+                    console.log(`${new Date().getTime()} ${uri.toString()} A`)
                 }
             }
         )
     }))
+    console.log(`${new Date().getTime()} END`)
 
     return Promise.all(addedFiles.map(service.onModifiedFile.bind(service)))
 }

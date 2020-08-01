@@ -1,6 +1,7 @@
 import clone from 'clone'
 import deepEqual from 'deep-equal'
-import { promises as fs } from 'fs'
+import * as fs from 'fs'
+import { promises as fsp } from 'fs'
 import https from 'https'
 import { EOL } from 'os'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextEdit } from 'vscode-languageserver'
@@ -315,11 +316,24 @@ export function getNbtdocRegistryId(entity: EntityNode): null | string {
 }
 
 export async function pathAccessible(path: string) {
-    return fs.access(path)
+    return fsp.access(path)
         .then(() => true)
         .catch(() => false)
 }
 
-export async function readFile(path: string) {
-    return fs.readFile(path, { encoding: 'utf-8' })
+export async function readFile(path: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        let data = ''
+        fs
+            .createReadStream(path, { encoding: 'utf-8' })
+            .on('data', chunk => {
+                data += chunk
+            })
+            .on('end', () => {
+                resolve(data)
+            })
+            .on('error', e => {
+                reject(e)
+            })
+    })
 }

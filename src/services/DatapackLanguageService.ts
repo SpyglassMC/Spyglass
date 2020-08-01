@@ -3,6 +3,7 @@ import clone from 'clone'
 import { SynchronousPromise } from 'synchronous-promise'
 import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
 import * as lsp from 'vscode-languageserver'
+import { promises as fsp } from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDefOrRef, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
 import { getCommandTree } from '../data/CommandTree'
@@ -25,6 +26,7 @@ export class DatapackLanguageService {
     readonly pathAccessible: PathAccessibleFunction
     readonly rawFetchConfig: FetchConfigFunction
     readonly rawPublishDiagnostics: PublishDiagnosticsFunction | undefined
+    readonly read: any // TODO
     readonly readFile: ReadFileFunction
     /**
      * Sorted by priority. If you want to read something in the same order as Minecraft does,

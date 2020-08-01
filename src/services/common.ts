@@ -280,19 +280,30 @@ export async function walkFile(
     abs: string,
     cb: (abs: string, rel: string, stat: fs.Stats) => any
 ): Promise<any> {
-    const names = await fsp.readdir(abs)
-    const promises: Promise<any>[] = []
-    for (const name of names) {
-        const newAbs = path.join(abs, name)
-        const stat = await fsp.stat(newAbs)
-        if (stat.isDirectory()) {
-            promises.push(walkFile(workspaceRootPath, newAbs, cb))
-        } else {
-            const rel = path.relative(workspaceRootPath, newAbs)
-            promises.push(cb(newAbs, rel, stat))
+    const names = (await fsp.readdir(abs)).values()
+    return new Promise((resolve, reject) => {
+        try {
+            const help = async () => {
+                const { done, value: name } = names.next()
+                if (!done) {
+                    const newAbs = path.join(abs, name)
+                    const stat = await fsp.stat(newAbs)
+                    if (stat.isDirectory()) {
+                        await walkFile(workspaceRootPath, newAbs, cb)
+                    } else {
+                        const rel = path.relative(workspaceRootPath, newAbs)
+                        await cb(newAbs, rel, stat)
+                    }
+                } else {
+                    resolve()
+                }
+                setImmediate(help)
+            }
+            help()
+        } catch (e) {
+            reject(e)
         }
-    }
-    return Promise.all(promises)
+    })
 }
 
 /* istanbul ignore next */

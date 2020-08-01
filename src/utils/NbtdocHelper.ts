@@ -152,7 +152,7 @@ export class NbtdocHelper {
     }
 
     private followFieldPath(paths: nbtdoc.FieldPath[], node: NbtCompoundNode | null): NbtStringNode | null {
-        paths = JSON.parse(JSON.stringify(paths))
+        paths = clone(paths)
         let ansNode: NbtNode | null = node
         while (paths.length > 0 && ansNode && ansNode instanceof NbtCompoundNode) {
             const path = paths.shift()!

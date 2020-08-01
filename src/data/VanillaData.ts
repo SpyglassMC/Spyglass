@@ -111,7 +111,7 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     console.info(`[VanillaData: ${type} for ${version}] Fetched from ${source}.`)
                     if (versionPath && filePath) {
                         await fsp.mkdir(versionPath, { recursive: true })
-                        fsp.writeFile(filePath, JSON.stringify(json), { encoding: 'utf8' })
+                        fsp.writeFile(filePath, str, { encoding: 'utf8' })
                         console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath}.`)
                     }
                     ans = json
