@@ -337,3 +337,8 @@ export async function readFile(path: string): Promise<string> {
             })
     })
 }
+
+export function round(number: number, decimalPlace: number) {
+    const scale = 10 ** decimalPlace
+    return Math.round(number * scale) / scale
+}

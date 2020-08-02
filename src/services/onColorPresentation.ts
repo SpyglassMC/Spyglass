@@ -1,5 +1,6 @@
 import { ColorPresentation, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { round } from '../utils'
 
 export function onColorPresentation({ textDoc, start, end, r, g, b }: { textDoc: TextDocument, start: number, end: number, r: number, g: number, b: number, a: number }) {
     try {
@@ -10,9 +11,9 @@ export function onColorPresentation({ textDoc, start, end, r, g, b }: { textDoc:
         )
         const string = textDoc.getText(range)
         if (string.startsWith('dust')) {
-            ans.push({ label: `dust ${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)}` })
+            ans.push({ label: `dust ${round(r, 3)} ${round(g, 3)} ${round(b, 3)}` })
         } else if (string.startsWith('minecraft:dust')) {
-            ans.push({ label: `minecraft:dust ${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)}` })
+            ans.push({ label: `minecraft:dust ${round(r, 3)} ${round(g, 3)} ${round(b, 3)}` })
         } else if (string.startsWith('#')) {
             const toHex = (v: number) => {
                 const hex = v.toString(16)
