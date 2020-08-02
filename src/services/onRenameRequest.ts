@@ -1,7 +1,7 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition } from '../types/ClientCache'
+import { canBeRenamed, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition, CacheUnitPositionTypes } from '../types/ClientCache'
 import { DocNode, Uri } from '../types/handlers'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
@@ -22,8 +22,8 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                 // Change function contents.
                 for (const key in unit) {
                     /* istanbul ignore else */
-                    if (key === 'def' || key === 'ref') {
-                        for (const pos of unit[key]) {
+                    if (key === 'dcl' || key === 'def' || key === 'ref') {
+                        for (const pos of unit[key] ?? []) {
                             const affectedUri = service.parseUri(pos.uri!)
                             const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
                             /* istanbul ignore else */
@@ -85,8 +85,10 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                 // Update cache.
                 const targetUnit = category[newID]
                 if (targetUnit) {
-                    targetUnit.def.push(...unit.def)
-                    targetUnit.ref.push(...unit.ref)
+                    for (const t of CacheUnitPositionTypes) {
+                        targetUnit[t] = targetUnit[t] ?? []
+                        targetUnit[t]!.push(...unit[t] ?? [])
+                    }
                 } else {
                     category[newID] = unit
                     service.cacheFile.cache[result.type] = category

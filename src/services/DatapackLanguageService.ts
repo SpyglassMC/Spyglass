@@ -5,12 +5,12 @@ import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageS
 import * as lsp from 'vscode-languageserver'
 import { promises as fsp } from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDefOrRef, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
+import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onNavigation, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation, CreateWorkDoneProgressFunction } from '../types'
+import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation, CreateWorkDoneProgressFunction, CacheUnitPositionType } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
@@ -459,7 +459,7 @@ export class DatapackLanguageService {
         return onDocumentFormatting({ config, textDoc, doc })
     }
 
-    async onDefinition(uri: Uri, position: lsp.Position) {
+    private async onNavigation(uri: Uri, position: lsp.Position,type: CacheUnitPositionType ) {
         const doc = await this.docs.get(uri)
         const textDoc = this.textDocs.get(uri)
         if (!(doc && textDoc)) {
@@ -470,21 +470,19 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onDefOrRef({ node, cacheFile: this.cacheFile, offset, type: 'def' })
+        return onNavigation({ node, cacheFile: this.cacheFile, offset, type })
+    }
+
+    async onDeclaration(uri: Uri, position: lsp.Position) {
+        return this.onNavigation(uri, position, 'dcl')
+    }
+
+    async onDefinition(uri: Uri, position: lsp.Position) {
+        return this.onNavigation(uri, position, 'def')
     }
 
     async onReferences(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
-        const textDoc = this.textDocs.get(uri)
-        if (!(doc && textDoc)) {
-            return null
-        }
-        const offset = textDoc.offsetAt(position)
-        const { node } = getSelectedNodeFromInfo(doc, offset)
-        if (!node) {
-            return null
-        }
-        return onDefOrRef({ node, cacheFile: this.cacheFile, offset, type: 'ref' })
+        return this.onNavigation(uri, position, 'ref')
     }
 
     async onDocumentHighlight(uri: Uri, position: lsp.Position) {
@@ -645,7 +643,7 @@ export class DatapackLanguageService {
 
     private addCacheUnit(id: string, type: FileType) {
         const category = getSafeCategory(this.cacheFile.cache, type)
-        category[id] = category[id] ?? { def: [], ref: [] }
+        category[id] = category[id] ?? {}
         this.cacheFile.cache[type] = category
     }
 
@@ -687,9 +685,9 @@ export class DatapackLanguageService {
         }
         this.addCacheUnit(id.toString(), category)
         this.removeCachePositionsWith(uri)
-        this.cacheFile.cache[category]![id.toString()]!.def.push({
-            uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0
-        })
+        const unit = this.cacheFile.cache[category]![id.toString()]!
+        unit.def = unit.def ?? []
+        unit.def.push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
         return this.combineCacheOfNodes(uri)
     }
 

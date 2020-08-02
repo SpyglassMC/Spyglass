@@ -13,7 +13,7 @@ export async function onCallHierarchyOutgoingCalls({ service, id }: { service: D
             /* istanbul ignore else */
             if (category.hasOwnProperty(calleeIdString)) {
                 const calleeUnit = category[calleeIdString]!
-                for (const ref of calleeUnit.ref) {
+                for (const ref of calleeUnit?.ref ?? []) {
                     const refId = service.getId(service.parseUri(ref.uri!))
                     /* istanbul ignore else */
                     if (id === refId?.toString()) {

@@ -31,7 +31,7 @@ import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { AlwaysValidates, ParsingError, Switchable } from '../types'
-import { CacheType } from '../types/ClientCache'
+import { CacheType, DefinableCacheTypes } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
@@ -2123,7 +2123,7 @@ export const CommandTree: ICommandTree = {
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'score_holder', 'storage', 'tag', 'team'),
+                    parser: new LiteralArgumentParser(...DefinableCacheTypes),
                     description: 'Type of the definition',
                     children: {
                         id: {

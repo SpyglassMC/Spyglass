@@ -1,9 +1,9 @@
+import clone from 'clone'
 import { MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
-import clone from 'clone'
 
 export const CacheVersion = 10
 
@@ -70,6 +70,36 @@ export type CacheType = keyof ClientCache
 /**/ export type MiscType = keyof MiscCache
 /*******/ export type AliasType = keyof AliasCache
 
+export const DefinableCacheTypes: Readonly<CacheType[]> = Object.freeze([
+    'advancement',
+    'bossbar',
+    'dimension',
+    'dimension_type',
+    'entity',
+    'function',
+    'loot_table',
+    'objective',
+    'predicate',
+    'recipe',
+    'score_holder',
+    'storage',
+    'tag',
+    'tag/block',
+    'tag/entity_type',
+    'tag/fluid',
+    'tag/function',
+    'tag/item',
+    'team',
+    'worldgen/biome',
+    'worldgen/configured_carver',
+    'worldgen/configured_decorator',
+    'worldgen/configured_feature',
+    'worldgen/configured_structure_feature',
+    'worldgen/configured_surface_builder',
+    'worldgen/processor_list',
+    'worldgen/template_pool'
+])
+
 /**
  * A category in `ClientCache`.
  */
@@ -80,6 +110,9 @@ export type CacheCategory = {
     [id: string]: CacheUnit | undefined
 }
 
+export type CacheUnitPositionType = 'dcl' | 'def' | 'ref'
+export const CacheUnitPositionTypes: CacheUnitPositionType[] = ['dcl', 'def', 'ref']
+
 /**
  * An unit in `CacheCategory`.
  */
@@ -87,26 +120,19 @@ export type CacheUnit = {
     /**
      * The user-defined documentation for the unit.
      */
-    doc?: string,
-    /**
-     * The definition element of this unit.
-     * 
-     * Duplicate definitions will override the first ones.
-     * 
-     * Empty for all categories except for `bossbar`, `entity`, `objective`, `storage` and `tag`.
-     */
-    def: CachePosition[],
-    /**
-     * All reference elements of this unit.
-     */
-    ref: CachePosition[]
-}
+    doc?: string
+} & { [key in CacheUnitPositionType]?: CachePosition[] }
 
 /**
  * An element in `CacheUnit`.
  */
 export interface CachePosition extends TextRange {
     uri?: string,
+    /**
+     * An array of objects describing the visibility of this element. It's up to the 
+     * plugins of this language server to interpret them.
+     */
+    visibility?: any[],
     startLine?: number,
     startChar?: number,
     endLine?: number,
@@ -118,14 +144,11 @@ export function getCacheFromOffset(cache: ClientCache, offset: number) {
         const category = cache[type as CacheType] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            for (const def of unit.def) {
-                if (def.start <= offset && offset <= def.end) {
-                    return { type: type as CacheType, id, start: def.start, end: def.end }
-                }
-            }
-            for (const ref of unit.ref) {
-                if (ref.start <= offset && offset <= ref.end) {
-                    return { type: type as CacheType, id, start: ref.start, end: ref.end }
+            for (const t of CacheUnitPositionTypes) {
+                for (const ele of unit[t] ?? []) {
+                    if (ele.start <= offset && offset <= ele.end) {
+                        return { type: type as CacheType, id, start: ele.start, end: ele.end }
+                    }
                 }
             }
         }
@@ -138,8 +161,9 @@ export function remapCachePosition(cache: ClientCache, mapping: IndexMapping) {
         const category = cache[type as CacheType] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            unit.def = unit.def.map(ele => remapTextRange(ele, mapping))
-            unit.ref = unit.ref.map(ele => remapTextRange(ele, mapping))
+            for (const t of CacheUnitPositionTypes) {
+                unit[t] = unit[t]?.map(ele => remapTextRange(ele, mapping))
+            }
         }
     }
 }
@@ -149,8 +173,9 @@ export function removeCachePosition(cache: ClientCache, uri: Uri) {
         const category = cache[type as CacheType] as CacheCategory
         for (const id in category) {
             const unit = category[id] as CacheUnit
-            unit.def = unit.def.filter(ele => ele.uri && ele.uri !== uri.toString())
-            unit.ref = unit.ref.filter(ele => ele.uri && ele.uri !== uri.toString())
+            for (const t of CacheUnitPositionTypes) {
+                unit[t] = unit[t]?.filter(ele => ele.uri !== uri.toString())
+            }
         }
     }
 }
@@ -170,7 +195,7 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
     function initUnit(type: CacheType, id: string) {
         ans[type] = getSafeCategory(ans, type)
         const ansCategory = ans[type] as CacheCategory
-        ansCategory[id] = ansCategory[id] || { def: [], ref: [] }
+        ansCategory[id] = ansCategory[id] || {}
         const ansUnit = ansCategory[id] as CacheUnit
         return ansUnit
     }
@@ -190,13 +215,13 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         const overrideCategory = override[type as CacheType]
         for (const id in overrideCategory) {
             const overrideUnit = overrideCategory[id] as CacheUnit
-            if (overrideUnit.def.length > 0 || overrideUnit.ref.length > 0 || overrideUnit.doc) {
+            if (overrideUnit.dcl?.length || overrideUnit.def?.length || overrideUnit.ref?.length || overrideUnit.doc) {
                 const ansUnit = initUnit(type as CacheType, id)
-                for (const overridePos of overrideUnit.def) {
-                    addPos(overridePos, ansUnit.def)
-                }
-                for (const overridePos of overrideUnit.ref) {
-                    addPos(overridePos, ansUnit.ref)
+                for (const type of CacheUnitPositionTypes) {
+                    for (const overridePos of overrideUnit[type] ?? []) {
+                        ansUnit[type] = ansUnit[type] ?? []
+                        addPos(overridePos, ansUnit[type]!)
+                    }
                 }
                 if (overrideUnit.doc) {
                     ansUnit.doc = overrideUnit.doc
@@ -217,7 +242,7 @@ export function canBeRenamed(type: CacheType) {
     return !isAliasType(type) && type !== 'color'
 }
 
-export function getFileTypeFromCategory(category: string) : FileType {
+export function getFileTypeFromCategory(category: string): FileType {
     if (category === 'dimension' || category === 'dimension_type') {
         return category
     } else {
@@ -236,15 +261,6 @@ export function isDefinitionType(value: string): value is DefinitionType {
         value === 'team' ||
         value === 'score_holder' ||
         value === 'storage'
-    )
-}
-
-/* istanbul ignore next */
-export function shouldHaveDef(type: CacheType) {
-    return (
-        isDefinitionType(type) ||
-        isAliasType(type) ||
-        type === 'color'
     )
 }
 
@@ -283,12 +299,10 @@ export function isNamespacedType(type: CacheType): type is NamespacedType {
 export function trimCache(cache: ClientCache) {
     for (const type in cache) {
         const category = cache[type as CacheType] as CacheCategory
-        if (shouldHaveDef(type as CacheType)) {
-            for (const id in category) {
-                const unit = category[id] as CacheUnit
-                if (unit.def.length === 0 && unit.ref.length === 0) {
-                    delete category[id]
-                }
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            if (!unit.dcl?.length && !unit.def?.length && !unit.ref?.length) {
+                delete category[id]
             }
         }
         if (Object.keys(category).length === 0) {
@@ -304,13 +318,11 @@ export function getCacheForUri(cache: ClientCache, _uri: Uri) {
     const ans = clone(cache)
     for (const type in ans) {
         const category = ans[type as CacheType] as CacheCategory
-        if (shouldHaveDef(type as CacheType)) {
-            for (const id in category) {
-                const unit = category[id] as CacheUnit
-                // TODO (#319): check the access modifier here
-                if (unit.def.length === 0) {
-                    delete category[id]
-                }
+        for (const id in category) {
+            const unit = category[id] as CacheUnit
+            // TODO (#319): check the access modifier here by calling plugins
+            if (!unit.dcl?.length && !unit.def?.length) {
+                delete category[id]
             }
         }
         if (Object.keys(category).length === 0) {

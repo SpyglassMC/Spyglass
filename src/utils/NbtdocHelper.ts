@@ -484,7 +484,7 @@ export class NbtdocHelper {
             combineCache(ans.cache, {
                 color: {
                     [`${r} ${g} ${b} 1`]: {
-                        def: [], ref: [tag[NodeRange]]
+                        ref: [tag[NodeRange]]
                     }
                 }
             })

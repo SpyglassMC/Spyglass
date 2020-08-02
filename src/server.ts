@@ -72,6 +72,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
                 triggerCharacters: DatapackLanguageService.AllTriggerCharacters,
                 allCommitCharacters: DatapackLanguageService.AllCommitCharacters
             } : undefined,
+            declarationProvider: true,
             definitionProvider: true,
             documentFormattingProvider: !capabilities.dynamicRegistration.documentFormatting,
             documentHighlightProvider: !capabilities.dynamicRegistration.documentHighlight,
@@ -293,6 +294,10 @@ connection.onDocumentFormatting(async ({ textDocument: { uri: uriString } }) => 
     return service.onDocumentFormatting(uri)
 })
 
+connection.onDeclaration(async ({ textDocument: { uri: uriString }, position }) => {
+    const uri = service.parseUri(uriString)
+    return service.onDeclaration(uri, position)
+})
 connection.onDefinition(async ({ textDocument: { uri: uriString }, position }) => {
     const uri = service.parseUri(uriString)
     return service.onDefinition(uri, position)
@@ -492,6 +497,12 @@ async function saveCacheFile() {
     }
 }
 
+function saveCacheFileSync() {
+    if (cachePath) {
+        fs.writeFileSync(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
+    }
+}
+
 async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
     try {
         // Check the files saved in the cache file.
@@ -568,9 +579,7 @@ function exit() {
         return
     }
     isUp = false
-    if (cachePath) {
-        fs.writeFileSync(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
-    }
+    saveCacheFileSync()
     process.exit()
 }
 

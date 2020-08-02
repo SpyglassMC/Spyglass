@@ -19,7 +19,7 @@ export function onDocumentColor({ doc, textDoc }: { doc: DatapackDocument, textD
                     blue: numbers[2],
                     alpha: numbers[3] !== undefined ? numbers[3] : 1
                 }
-                for (const { start, end } of unit.ref) {
+                for (const { start, end } of unit?.ref ?? []) {
                     ans.push({
                         range: {
                             start: textDoc.positionAt(start),

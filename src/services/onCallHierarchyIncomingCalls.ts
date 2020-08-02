@@ -19,7 +19,7 @@ export async function onCallHierarchyIncomingCalls({ service, kind, id }: { kind
             break
     }
     /* istanbul ignore else */
-    if (unit && unit.ref.length > 0) {
+    if (unit && unit.ref?.length) {
         for (const ref of unit.ref) {
             try {
                 ans.push(

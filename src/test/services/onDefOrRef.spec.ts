@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri } from '../../types/handlers'
-import { onDefOrRef } from '../../services/onDefOrRef'
+import { onNavigation } from '../../services/onDefOrRef'
 import { mockLineNode } from '../utils.spec'
 
 describe('onDefOrRef() Tests', () => {
@@ -36,7 +36,7 @@ describe('onDefOrRef() Tests', () => {
     })
 
     it('Should return definitions', () => {
-        const definitions = onDefOrRef({ node, cacheFile, offset, type: 'def' })
+        const definitions = onNavigation({ node, cacheFile, offset, type: 'def' })
 
         assert.deepStrictEqual(definitions, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/def.mcfunction').toString(),
@@ -47,7 +47,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return references', () => {
-        const references = onDefOrRef({ node, cacheFile, offset, type: 'ref' })
+        const references = onNavigation({ node, cacheFile, offset, type: 'ref' })
 
         assert.deepStrictEqual(references, [{
             uri: Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction').toString(),
@@ -58,7 +58,7 @@ describe('onDefOrRef() Tests', () => {
         }])
     })
     it('Should return null when selects nothing', () => {
-        const definitions = onDefOrRef({ node, cacheFile, offset: 0, type: 'def' })
+        const definitions = onNavigation({ node, cacheFile, offset: 0, type: 'def' })
 
         assert(definitions === null)
     })

@@ -1,7 +1,7 @@
 import { DocumentLink } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { CacheUnit, DatapackDocument, isFileType } from '../types'
+import { CachePosition, CacheUnit, CacheUnitPositionTypes, DatapackDocument, isFileType } from '../types'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
 export async function onDocumentLinks({ doc, textDoc, service }: { doc: DatapackDocument, textDoc: TextDocument, service: DatapackLanguageService }) {
@@ -16,7 +16,7 @@ export async function onDocumentLinks({ doc, textDoc, service }: { doc: Datapack
                         /* istanbul ignore next */
                         if (category.hasOwnProperty(id)) {
                             const unit = category[id] as CacheUnit
-                            const ref = [...unit.def, ...unit.ref]
+                            const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
                             for (const pos of ref) {
                                 const link = {
                                     range: {

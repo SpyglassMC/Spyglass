@@ -1,7 +1,7 @@
 import { DocumentHighlight, Position } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { DocNode } from '../types'
-import { getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
+import { CachePosition, CacheUnitPositionTypes, getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
 import { McfunctionDocument } from '../types/DatapackDocument'
 import { onSelectionRanges } from './onSelectionRanges'
 
@@ -16,7 +16,7 @@ export function onDocumentHighlight({ offset, doc, node, position, textDoc }: { 
             const unit = getSafeCategory(node.cache, result.type)[result.id]
             /* istanbul ignore else */
             if (unit) {
-                const ref = [...unit.def, ...unit.ref]
+                const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
                 /* istanbul ignore else */
                 if (ref.length > 0) {
                     ans.push(...ref.map(v => ({
