@@ -1,4 +1,5 @@
 import clone from 'clone'
+import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
@@ -52,6 +53,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
         cacheFile,
         capabilities,
+        createWorkDoneProgress: connection.window.createWorkDoneProgress.bind(connection.window),
         fetchConfig,
         globalStoragePath,
         publishDiagnostics: connection.sendDiagnostics.bind(connection),
@@ -178,7 +180,7 @@ connection.onInitialized(async () => {
 
     const progress = await service.createWorkDoneProgress?.()
     await updateCacheFile(service.cacheFile, service.roots, progress)
-    saveCacheFile()
+    return saveCacheFile()
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
@@ -373,7 +375,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
         switch (command) {
             case 'datapack.fixFile': {
                 const uri = service.parseUri(args![0])
-                service.onExecuteFixFileCommand(uri)
+                service.onAutoFixFile(uri)
                 break
             }
             case 'datapack.fixWorkspace': {
@@ -390,7 +392,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                                 try {
                                     progress?.report(locale('server.progress.fixing-workspace.report', locale('punc.quote', abs)))
                                     const uri = service.parseUri(Uri.file(abs).toString())
-                                    service.onExecuteFixFileCommand(uri)
+                                    service.onAutoFixFile(uri)
                                 } catch (e) {
                                     console.error(`datapack.fixWorkspace failed for “${abs}”`, e)
                                 }
@@ -486,7 +488,6 @@ async function fetchConfig(uri: Uri): Promise<Config> {
 
 async function saveCacheFile() {
     if (cachePath) {
-        setTimeout(saveCacheFile, 60_000)
         return fsp.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
     }
 }
@@ -560,3 +561,24 @@ async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: 
 }
 
 connection.listen()
+
+let isUp = true
+function exit() {
+    if (!isUp) {
+        return
+    }
+    isUp = false
+    if (cachePath) {
+        fs.writeFileSync(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
+    }
+    process.exit()
+}
+
+for (const sig of ['exit', 'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM']) {
+    process.on(sig as any, exit)
+}
+
+process.on('uncaughtException', e => {
+    console.error('[uncaughtException] the language server will be terminated: ', e.stack)
+    exit()
+})

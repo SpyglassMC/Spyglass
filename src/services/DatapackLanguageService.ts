@@ -27,7 +27,6 @@ export class DatapackLanguageService {
     readonly pathAccessible: PathAccessibleFunction
     readonly rawFetchConfig: FetchConfigFunction
     readonly rawPublishDiagnostics: PublishDiagnosticsFunction | undefined
-    readonly read: any // TODO
     readonly readFile: ReadFileFunction
     /**
      * Sorted by priority. If you want to read something in the same order as Minecraft does,
@@ -307,7 +306,7 @@ export class DatapackLanguageService {
                 const commandTree = await this.getCommandTree(config)
                 ans = {
                     type: 'mcfunction',
-                    nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
+                    nodes: await this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
                 }
             }
         }
@@ -318,9 +317,9 @@ export class DatapackLanguageService {
         return [parseJsonNode({ service: this, uri, document: textDoc, config, schema, jsonSchemas, schemaType, vanillaData, roots: this.roots, cache: this.cacheFile.cache })]
     }
 
-    private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
+    private async parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
         const ans: LineNode[] = []
-        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
+        await parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
         return ans
     }
 
@@ -336,7 +335,7 @@ export class DatapackLanguageService {
         const jsonSchemas = await getJsonSchemas(config.env.jsonVersion)
         if (isMcfunctionDocument(doc)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
-            onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas })
+            await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas })
         } else {
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             TextDocument.update(textDoc, contentChanges, version!)
@@ -633,11 +632,15 @@ export class DatapackLanguageService {
         return onSemanticTokensEdits({ doc, builder, previousResultId, textDoc })
     }
 
-    async onExecuteFixFileCommand(uri: Uri) {
+    async onAutoFixFile(uri: Uri) {
         if (!this.applyEdit) {
             return null
         }
         return fixFileCommandHandler({ uri, service: this })
+    }
+
+    async onEvaluateJS(uri: Uri, range: lsp.Range) {
+        
     }
 
     private addCacheUnit(id: string, type: FileType) {

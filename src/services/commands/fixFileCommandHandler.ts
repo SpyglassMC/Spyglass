@@ -6,7 +6,6 @@ import { getDiagnosticMap } from '../common'
 import { DatapackLanguageService } from '../DatapackLanguageService'
 
 export async function fixFileCommandHandler({ uri, service }: { uri: Uri, service: DatapackLanguageService }) {
-    const start = new Date().getTime()
     const { doc, textDoc } = await service.getDocuments(uri)
     /* istanbul ignore else */
     if (doc && textDoc) {
@@ -20,7 +19,6 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
         } else {
             // TODO: JSON
         }
-        console.info(`[Fix All] ${new Date().getTime() - start}ms in “${uri}”`)
     }
 }
 

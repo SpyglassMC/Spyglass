@@ -14,7 +14,7 @@ function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { rang
     return !!(val as any).range
 }
 
-export function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
+export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     const lineAmount = getStringLines(textDoc.getText()).length
     let lineDelta = 0
     let nodeChange: { nodeStart: number, nodeStop: number, lineStart: number, lineStop: number } | undefined
@@ -49,7 +49,7 @@ export function onDidChangeTextDocument({ textDoc, uri, doc, version, contentCha
 
     // Update `lines`.
     const changedNodes: LineNode[] = []
-    parseFunctionNodes(
+    await parseFunctionNodes(
         service,
         textDoc,
         textDoc.offsetAt(Position.create(nodeChange.lineStart, 0)),

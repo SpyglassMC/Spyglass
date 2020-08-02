@@ -92,12 +92,12 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
     return ans
 }
 
-export function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
+export async function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
     const startPos = document.positionAt(start)
     const lines = getStringLines(
         document.getText(Range.create(startPos, document.positionAt(end)))
     )
-    for (let i = 0; i < lines.length; i++) {
+    return partitionedIteration(lines.keys(), i => {
         parseFunctionNode({
             document: document,
             start: document.offsetAt(Position.create(startPos.line + i, 0)),
@@ -106,7 +106,7 @@ export function parseFunctionNodes(service: DatapackLanguageService, document: T
             rootIndex: getRootIndex(uri, roots),
             nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData, service, jsonSchemas
         })
-    }
+    })
 }
 
 export function parseFunctionNode({ service, document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, jsonSchemas, id, rootIndex }: { service: DatapackLanguageService, document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
@@ -172,66 +172,10 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
     return null
 }
 
-/* istanbul ignore next */
-// export async function getInfo(uri: Uri, infos: DocsOfUris): Promise<DatapackDocument | undefined> {
-//     const result = infos.get(uri)
-//     if (result instanceof Promise) {
-//         const ans = await result
-//         if (ans) {
-//             infos.set(uri, ans)
-//             return ans
-//         }
-//     } else {
-//         return result
-//     }
-//     return undefined
-// }
-
 export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId?: string, getText: () => Promise<string>, version: number | null }) {
     langId = langId ?? (uri.fsPath.endsWith('json') || uri.fsPath.endsWith('.mcmeta') ? 'json' : 'mcfunction')
     return TextDocument.create(uri.toString(), langId, version as number, await getText())
 }
-
-/* istanbul ignore next */
-// export async function createInfo({ roots, uri, version, cacheFile, langId, getText, getConfig, getCommandTree, getVanillaData, getJsonSchemas }: { uri: Uri, roots: Uri[], version: number | null, langId?: string, getText: () => Promise<string>, getConfig: () => Promise<Config>, cacheFile: CacheFile, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry> }): Promise<DatapackDocument | undefined> {
-//     try {
-//         const rel = getRel(uri, roots)
-//         const config = await getConfig()
-//         if (rel && isRelIncluded(rel, config)) {
-//             const text = await getText()
-//             const vanillaData = await getVanillaData(config)
-//             langId = langId ?? (rel.endsWith('json') || rel.endsWith('.mcmeta') ? 'json' : 'mcfunction')
-//             const document: TextDocument = TextDocument.create(uri.toString(), langId, version as number, text)
-//             if (langId === 'json') {
-//                 const schemaType = getJsonSchemaType(rel)
-//                 if (schemaType) {
-//                     const schemas = await getJsonSchemas(config)
-//                     const schema = schemas.get(schemaType)
-//                     const node = parseJsonNode({ uri, roots, document, config, cacheFile, schema, schemas, schemaType, vanillaData })
-//                     return { config, document, node }
-//                 }
-//             } else {
-//                 const commandTree = await getCommandTree(config)
-//                 const nodes: LineNode[] = []
-//                 parseFunctionNodes(document, undefined, undefined, nodes, config, cacheFile, uri, roots, undefined, commandTree, vanillaData)
-//                 return { config, document, nodes }
-//             }
-//         }
-//     } catch (e) {
-//         console.error('[createInfo]', e)
-//     }
-//     return undefined
-// }
-
-// export async function getOrCreateInfo(uri: Uri, roots: Uri[], infos: DocsOfUris, cacheFile: CacheFile, getConfig: () => Promise<Config>, getText: () => Promise<string>, getCommandTree: (config: Config) => Promise<CommandTree>, getVanillaData: (config: Config) => Promise<VanillaData>, getJsonSchemas: (config: Config) => Promise<SchemaRegistry>, version: number | null = null): Promise<DatapackDocument | undefined> {
-//     let info = infos.get(uri)
-
-//     if (!info) {
-//         info = await createInfo({ uri, roots, cacheFile, version, getConfig, getText, getCommandTree, getVanillaData, getJsonSchemas })
-//     }
-
-//     return info
-// }
 
 export function getDiagnosticMap(diagnostics: Diagnostic[]) {
     const diagnosticsMap: DiagnosticMap = {}
