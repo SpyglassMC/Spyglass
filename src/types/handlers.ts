@@ -8,6 +8,7 @@ import { CacheType } from './ClientCache'
 import { Config } from './Config'
 import { DatapackDocument } from './DatapackDocument'
 import { LineNode } from './LineNode'
+import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 
 export const Uri = URI
 
@@ -19,6 +20,7 @@ export type DocsOfUris = Map<Uri, Promise<DatapackDocument | undefined>>
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
  */
 export type UrisOfIds = Map<string, Uri | null>
+export type CreateWorkDoneProgressFunction = () => Promise<WorkDoneProgress>
 export type FetchConfigFunction = (uri: Uri) => Promise<Config>
 export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
 export type GetUriFromIdFunction = (pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>

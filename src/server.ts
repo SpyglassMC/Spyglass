@@ -6,7 +6,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getRel, getSemanticTokensLegend, getTextDocument, walkFile, walkRoot, partitionedIteration } from './services/common'
+import { getRel, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
@@ -49,13 +49,13 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     console.info(`[onInitialize] cachePath = ${cachePath}`)
 
     service = new DatapackLanguageService({
-        applyEdit: capabilities.applyEdit ? connection.workspace.applyEdit.bind(connection.workspace) : undefined,
+        applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
         cacheFile,
         capabilities,
-        fetchConfig: capabilities.configuration ? fetchConfig : undefined,
+        fetchConfig,
         globalStoragePath,
-        publishDiagnostics: connection.sendDiagnostics,
-        showInformationMessage: connection.window.showInformationMessage,
+        publishDiagnostics: connection.sendDiagnostics.bind(connection),
+        showInformationMessage: connection.window.showInformationMessage.bind(connection.window),
         versionInformation: await getLatestVersions()
     })
 
@@ -76,8 +76,11 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             documentLinkProvider: {},
             executeCommandProvider: {
                 commands: [
+                    'datapack.createFile',
+                    'datapack.evaludateJavaScript',
                     'datapack.fixFile',
                     'datapack.fixWorkspace',
+                    'datapack.redownloadData',
                     'datapack.regenerateCache'
                 ]
             },
@@ -102,7 +105,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             } : undefined,
             textDocumentSync: {
                 change: TextDocumentSyncKind.Incremental,
-                willSave: true,
                 openClose: true
             },
             workspace: {
@@ -174,7 +176,7 @@ connection.onInitialized(async () => {
         }
     })
 
-    const progress = await connection.window.createWorkDoneProgress()
+    const progress = await service.createWorkDoneProgress?.()
     await updateCacheFile(service.cacheFile, service.roots, progress)
     saveCacheFile()
 })
@@ -195,10 +197,6 @@ connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
 })
 
 connection.onDidChangeConfiguration(async () => service.refetchConfigs())
-
-connection.onWillSaveTextDocument(({ textDocument: { uri: uriString } }) => {
-    // console.log(`WillSave: “${uriString}”`)
-})
 
 connection.onDidChangeWatchedFiles(async ({ changes }) => {
     // console.info(`BW: ${JSON.stringify(cacheFile)}`)
@@ -379,7 +377,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 break
             }
             case 'datapack.fixWorkspace': {
-                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
+                progress = await service.createWorkDoneProgress?.()
                 progress?.begin(locale('server.progress.fixing-workspace.begin'))
                 for (const root of service.roots) {
                     const dataPath = path.join(root.fsPath, 'data')
@@ -403,7 +401,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                 break
             }
             case 'datapack.regenerateCache': {
-                progress = service.capabilities.workDoneProgress ? await connection.window.createWorkDoneProgress() : undefined
+                progress = await service.createWorkDoneProgress?.()
                 service.cacheFile = clone(DefaultCacheFile)
                 await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
@@ -414,7 +412,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
     } catch (e) {
         console.error('[onExecuteCommand]', e)
     } finally {
-            progress?.done()
+        progress?.done()
     }
 })
 
@@ -488,13 +486,12 @@ async function fetchConfig(uri: Uri): Promise<Config> {
 
 async function saveCacheFile() {
     if (cachePath) {
+        setTimeout(saveCacheFile, 60_000)
         return fsp.writeFile(cachePath, JSON.stringify(service.cacheFile), { encoding: 'utf8' })
     }
 }
 
-setInterval(saveCacheFile, 30_000)
-
-async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
     try {
         // Check the files saved in the cache file.
         progress?.begin(locale('server.progress.updating-cache.begin'))
@@ -513,7 +510,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     }
 }
 
-async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
     const uriStrings = Object.keys(cacheFile.files).values()
     return partitionedIteration(uriStrings, async uriString => {
         progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
@@ -538,7 +535,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
     })
 }
 
-async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress|undefined) {
+async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
     return Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(

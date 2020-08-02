@@ -10,7 +10,7 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation, CreateWorkDoneProgressFunction } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
@@ -21,6 +21,7 @@ export class DatapackLanguageService {
     readonly applyEdit: ((edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>) | undefined
     public cacheFile: CacheFile
     readonly capabilities: Readonly<ClientCapabilities>
+    readonly createWorkDoneProgress: CreateWorkDoneProgressFunction | undefined
     readonly globalStoragePath: string | undefined
     readonly jsonService: JsonLanguageService
     readonly pathAccessible: PathAccessibleFunction
@@ -52,6 +53,7 @@ export class DatapackLanguageService {
         applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
         cacheFile?: CacheFile,
         capabilities?: ClientCapabilities,
+        createWorkDoneProgress?: CreateWorkDoneProgressFunction,
         fetchConfig?: FetchConfigFunction,
         globalStoragePath?: string,
         jsonService?: JsonLanguageService,
@@ -62,14 +64,16 @@ export class DatapackLanguageService {
         showInformationMessage?: ShowMessage,
         versionInformation?: VersionInformation
     }) {
-        this.applyEdit = options?.applyEdit
-        this.cacheFile = options?.cacheFile ?? clone(DefaultCacheFile)
         this.capabilities = Object.freeze(options?.capabilities ?? getClientCapabilities())
+
+        this.applyEdit = this.capabilities.applyEdit ? options?.applyEdit : undefined
+        this.cacheFile = options?.cacheFile ?? clone(DefaultCacheFile)
+        this.createWorkDoneProgress = this.capabilities.workDoneProgress ? options?.createWorkDoneProgress : undefined
         this.globalStoragePath = options?.globalStoragePath
         this.jsonService = options?.jsonService ?? getJsonLanguageService({ promiseConstructor: SynchronousPromise })
         this.pathAccessible = options?.pathAccessible ?? pathAccessible
-        this.rawFetchConfig = options?.fetchConfig ?? (async () => VanillaConfig)
-        this.rawPublishDiagnostics = options?.publishDiagnostics
+        this.rawFetchConfig = (this.capabilities.configuration ? options?.fetchConfig : undefined) ?? (async () => VanillaConfig)
+        this.rawPublishDiagnostics = this.capabilities.diagnostics ? options?.publishDiagnostics : undefined
         this.readFile = options?.readFile ?? readFile
         this.roots = options?.roots ?? []
         this.showInformationMessage = options?.showInformationMessage

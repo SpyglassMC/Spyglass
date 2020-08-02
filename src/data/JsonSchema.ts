@@ -1,7 +1,7 @@
 import { SCHEMAS } from '@mcschema/core'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion } from '../types'
-import { PathPatterns } from '../types/PathPatterns'
+import { PathPatterns } from '../utils/PathPatterns'
 
 export const FallbackJsonSchemaRegistry = SCHEMAS
 

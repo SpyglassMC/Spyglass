@@ -5,7 +5,7 @@ import { CacheType, FileType, isTagFileType, isWorldgenRegistryFileType, TagRegu
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
-import { PathPatterns } from '../types/PathPatterns'
+import { PathPatterns } from '../utils/PathPatterns'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'

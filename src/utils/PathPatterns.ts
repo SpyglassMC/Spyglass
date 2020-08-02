@@ -1,4 +1,4 @@
-import { FileType } from './ClientCache'
+import { FileType } from '../types/ClientCache'
 
 export const PathPatterns: { [key in FileType]: string } = {
     advancement: 'data/*/advancements/**/*.json',
