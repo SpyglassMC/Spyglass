@@ -11,7 +11,6 @@ const Locales: {
 }
 
 let language = ''
-let vscodeLanguage = ''
 
 /* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
@@ -41,46 +40,18 @@ async function setupLanguage(code: string) {
 }
 
 /* istanbul ignore next */
-export async function loadLocale(setting: string) {
+export async function loadLocale(setting: string, defauldLocaleCode: string) {
     if (setting.toLowerCase() === 'default') {
         if (!language) {
-            await loadVscodeLanguage(console)
-            await setupLanguage(vscodeLanguage)
-            console.info(`[I18N] VS Code: “${language}”.`)
-        } else if (language !== vscodeLanguage) {
-            language = vscodeLanguage
-            await setupLanguage(vscodeLanguage)
-            console.info(`[I18N] VS Code: “${language}”.`)
+            await setupLanguage(defauldLocaleCode)
+            console.info(`[I18N] Default: “${language}”.`)
+        } else if (language !== defauldLocaleCode) {
+            language = defauldLocaleCode
+            await setupLanguage(defauldLocaleCode)
+            console.info(`[I18N] Default: “${language}”.`)
         }
     } else if (language !== setting) {
         await setupLanguage(setting)
         console.info(`[I18N] Specified: “${setting}”.`)
     }
-}
-
-/* istanbul ignore next */
-async function loadVscodeLanguage(console: Console) {
-    language = 'en'
-
-    if (process.env.VSCODE_NLS_CONFIG) {
-        try {
-            const config = JSON.parse(process.env.VSCODE_NLS_CONFIG)
-            if (typeof config.locale === 'string') {
-                const code: string = config.locale
-                try {
-                    await setupLanguage(code)
-                } catch (e) {
-                    console.warn(`[I18N] Faild: “${code}”.`)
-                }
-            } else {
-                console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: “${process.env.VSCODE_NLS_CONFIG}”`)
-            }
-        } catch (ignored) {
-            console.warn(`[I18N] Have issues parsing VSCODE_NLS_CONFIG: “${process.env.VSCODE_NLS_CONFIG}”`)
-        }
-    } else {
-        console.warn('[I18N] No VSCODE_NLS_CONFIG found.')
-    }
-
-    vscodeLanguage = language
 }

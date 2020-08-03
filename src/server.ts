@@ -7,7 +7,7 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getRel, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
+import { getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot, getRelAndRootIndex } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
@@ -19,12 +19,14 @@ const connection = createConnection(ProposedFeatures.all)
 
 let cachePath: string | undefined
 let capabilities: ClientCapabilities
+let defaultLocaleCode: string
 let workspaceRootUriStrings: string[] = []
 
 let service: DatapackLanguageService
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath }, capabilities: lspCapabilities }) => {
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath, localeCode }, capabilities: lspCapabilities }) => {
     capabilities = getClientCapabilities(lspCapabilities)
+    defaultLocaleCode = localeCode ?? 'en'
 
     if (globalStoragePath && !await pathAccessible(globalStoragePath)) {
         await fsp.mkdir(globalStoragePath, { recursive: true })
@@ -481,7 +483,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
             scopeUri: uri.toString(),
             section: 'datapack'
         })
-        loadLocale(config.env.language)
+        loadLocale(config.env.language, defaultLocaleCode)
         return config
     } catch (e) {
         // console.warn(`Error occurred while fetching config for “${uri.toString()}”: ${e}`)
@@ -525,9 +527,8 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
     return partitionedIteration(uriStrings, async uriString => {
         progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
         const uri = service.parseUri(uriString)
-        const rel = getRel(uri, roots)
-        const config = await service.getConfig(uri)
-        if (!rel || !isRelIncluded(rel, config)) {
+        const result = getRelAndRootIndex(uri, roots)
+        if (!result?.rel || !isRelIncluded(result.rel, await service.getConfig(roots[result.index]))) {
             delete cacheFile.files[uriString]
         } else {
             if (!(await pathAccessible(uri.fsPath))) {
@@ -537,8 +538,8 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
                 const lastModified = stat.mtimeMs
                 const lastUpdated = cacheFile.files[uriString]!
                 if (lastModified > lastUpdated) {
-                    await service.onModifiedFile(uri)
                     cacheFile.files[uriString] = lastModified
+                    await service.onModifiedFile(uri)
                 }
             }
         }
