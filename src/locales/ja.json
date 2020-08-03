@@ -114,7 +114,7 @@
     "nbtdoc.type.Short": "short型",
     "nbtdoc.type.String": "string型",
     "no-permission": "権限レベル%0%が必要ですがconfigでは%1%に定義されています",
-    "not-matching-any-child": "コマンド構文ツリーのどの子とも一致しませんでした",
+    "not-matching-any-child": "無効な引数の型です",
     "nothing": "未記入の状況",
     "number": "数値",
     "number-range": "数値の範囲",
