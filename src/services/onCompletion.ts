@@ -1,10 +1,10 @@
+import { SchemaRegistry } from '@mcschema/core'
 import { CompletionItem, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
 import { LineParser } from '../parsers/LineParser'
 import { Config } from '../types'
-import { getCacheForUri } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Uri } from '../types/handlers'
 import { LineNode } from '../types/LineNode'
@@ -13,7 +13,6 @@ import { escapeString, handleCompletionText } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { getId, getRootIndex } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
-import { SchemaRegistry } from '@mcschema/core'
 
 export async function onCompletion({ offset, service, node, textDoc, commandTree, vanillaData, jsonSchemas, uri, config }: { uri: Uri, offset: number, textDoc: TextDocument, node: LineNode, service: DatapackLanguageService, config: Config, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }): Promise<CompletionItem[] | null> {
     try {
@@ -25,7 +24,7 @@ export async function onCompletion({ offset, service, node, textDoc, commandTree
         )
         let { data: { completions } } = parser.parse(reader, constructContext({
             cursor: offset,
-            cache: getCacheForUri(service.cacheFile.cache, uri),
+            cache: service.getCache(uri, DatapackLanguageService.FullRange),
             config: config,
             textDoc: textDoc,
             id: getId(uri, service.roots),

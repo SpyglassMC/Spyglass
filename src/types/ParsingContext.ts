@@ -66,6 +66,5 @@ export function constructContext(
         textDoc: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
         ...custom
     }
-
     return ans
 }

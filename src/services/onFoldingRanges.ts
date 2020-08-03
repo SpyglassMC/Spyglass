@@ -24,8 +24,7 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
         const strings = getStringLines(textDoc.getText())
         const regionStartLines: number[] = []
         const commentStartLines: { [level: number]: number | undefined } = {}
-        let i = 0
-        for (const string of strings) {
+        for (const [i, string] of strings.entries()) {
             if (string.match(/^\s*#region\b/)) {
                 regionStartLines.push(i)
             } else if (string.match(/^\s*#endregion\b/)) {
@@ -70,7 +69,6 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
                     commentStartLines[amount] = i
                 }
             }
-            i += 1
         }
 
         return ans

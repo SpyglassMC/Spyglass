@@ -16,6 +16,7 @@ function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { rang
 
 export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     const lineAmount = getStringLines(textDoc.getText()).length
+    // eslint-disable-next-line prefer-const
     let lineDelta = 0
     let nodeChange: { nodeStart: number, nodeStop: number, lineStart: number, lineStop: number } | undefined
     for (const change of contentChanges) {
@@ -38,6 +39,7 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
         nodeChange = { nodeStart: 0, nodeStop: doc.nodes.length - 1, lineStart: 0, lineStop: lineAmount - 1 }
         break
     }
+    // eslint-disable-next-line prefer-const
     nodeChange = nodeChange ?? { nodeStart: 0, nodeStop: doc.nodes.length - 1, lineStart: 0, lineStop: lineAmount - 1 }
 
     // Update `document`.
@@ -49,7 +51,7 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
 
     // Update `lines`.
     const changedNodes: LineNode[] = []
-    await parseFunctionNodes(
+    parseFunctionNodes(
         service,
         textDoc,
         textDoc.offsetAt(Position.create(nodeChange.lineStart, 0)),

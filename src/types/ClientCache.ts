@@ -1,5 +1,5 @@
-import clone from 'clone'
-import { MarkupKind, Position } from 'vscode-languageserver'
+import rfdc from 'rfdc'
+import { MarkupKind, Position, Range } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
@@ -324,8 +324,8 @@ export function trimCache(cache: ClientCache) {
 /**
  * Pure function.
  */
-export function getCacheForUri(cache: ClientCache, _uri: Uri) {
-    const ans = clone(cache)
+export function getCacheForUri(cache: ClientCache, _uri: Uri, _range: Range) {
+    const ans = rfdc()(cache)
     for (const type in ans) {
         const category = ans[type as CacheType] as CacheCategory
         for (const id in category) {

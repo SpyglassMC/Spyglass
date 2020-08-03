@@ -1,4 +1,3 @@
-import clone from 'clone'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
@@ -7,13 +6,14 @@ import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getRel, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
+import { getRel, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot, getRelAndRootIndex } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { VersionInformation } from './types/VersionInformation'
 import { pathAccessible, readFile, requestText } from './utils'
+import rfdc from 'rfdc'
 
 const connection = createConnection(ProposedFeatures.all)
 
@@ -42,7 +42,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             console.error('[onInitialize] Reading cache', e)
         }
     }
-    cacheFile = cacheFile ?? clone(DefaultCacheFile)
+    cacheFile = cacheFile ?? rfdc()(DefaultCacheFile)
 
     console.info(`[onInitialize] CacheVersion = ${CacheVersion}`)
     console.info(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
@@ -407,7 +407,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
             }
             case 'datapack.regenerateCache': {
                 progress = await service.createWorkDoneProgress?.()
-                service.cacheFile = clone(DefaultCacheFile)
+                service.cacheFile = rfdc()(DefaultCacheFile)
                 await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
             }
@@ -525,9 +525,8 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
     return partitionedIteration(uriStrings, async uriString => {
         progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
         const uri = service.parseUri(uriString)
-        const rel = getRel(uri, roots)
-        const config = await service.getConfig(uri)
-        if (!rel || !isRelIncluded(rel, config)) {
+        const result = getRelAndRootIndex(uri, roots)
+        if (!result?.rel || !isRelIncluded(result.rel, await service.getConfig(roots[result.index]))) {
             delete cacheFile.files[uriString]
         } else {
             if (!(await pathAccessible(uri.fsPath))) {

@@ -1,13 +1,13 @@
+import { SchemaRegistry } from '@mcschema/core'
 import { SignatureInformation } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
 import { LineParser } from '../parsers/LineParser'
-import { CommandTree, Config, constructContext, getCacheForUri, LineNode, Uri } from '../types'
+import { CommandTree, Config, constructContext, LineNode, Uri } from '../types'
 import { StringReader } from '../utils/StringReader'
 import { getRootIndex } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
-import { SchemaRegistry } from '@mcschema/core'
 
 export async function onSignatureHelp({ offset, node, commandTree, vanillaData, jsonSchemas, uri, service, config, textDoc }: { uri: Uri, offset: number, node: LineNode, textDoc: TextDocument, config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     try {
@@ -20,7 +20,7 @@ export async function onSignatureHelp({ offset, node, commandTree, vanillaData, 
             node[NodeRange].end
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cache: getCacheForUri(service.cacheFile.cache, uri),
+            cache: service.getCache(uri, DatapackLanguageService.FullRange),
             config: config,
             cursor: offset,
             textDoc: textDoc,

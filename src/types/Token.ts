@@ -78,7 +78,7 @@ export class Token {
  * @param tokens Input tokens.
  */
 export function remapTokens(tokens: Token[], mapping: IndexMapping, addInStringModifier = true) {
-    const ans = clone(tokens)
+    const ans = clone(tokens, false)
     for (const token of ans) {
         token.range = remapTextRange(token.range, mapping)
         if (addInStringModifier) {

@@ -1,4 +1,3 @@
-import clone from 'clone'
 import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapParserSuggestion, removeDupliateCompletions, validateStringQuote } from '.'
@@ -37,6 +36,8 @@ import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { remapTokens } from '../types/Token'
 import { StringReader } from './StringReader'
+import rfdc from 'rfdc'
+import clone from 'clone'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -152,7 +153,7 @@ export class NbtdocHelper {
     }
 
     private followFieldPath(paths: nbtdoc.FieldPath[], node: NbtCompoundNode | null): NbtStringNode | null {
-        paths = clone(paths)
+        paths = rfdc()(paths)
         let ansNode: NbtNode | null = node
         while (paths.length > 0 && ansNode && ansNode instanceof NbtCompoundNode) {
             const path = paths.shift()!
@@ -814,8 +815,7 @@ export class NbtdocHelper {
         }
     }
     private validateOrField(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): void {
-        for (let i = 0; i < doc.Or.length; i++) {
-            const childDoc = doc.Or[i]
+        for (const [i, childDoc] of doc.Or.entries()) {
             const childAns: LegacyValidateResult = { cache: {}, completions: [], errors: [], tokens: [] }
             this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
             if (childAns.errors.length === 0 || i === doc.Or.length - 1) {
