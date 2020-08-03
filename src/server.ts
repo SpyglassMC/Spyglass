@@ -1,13 +1,13 @@
-import clone from 'clone'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
+import rfdc from 'rfdc'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
-import { getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot, getRelAndRootIndex } from './services/common'
+import { getRelAndRootIndex, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
 import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
@@ -44,7 +44,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             console.error('[onInitialize] Reading cache', e)
         }
     }
-    cacheFile = cacheFile ?? clone(DefaultCacheFile)
+    cacheFile = cacheFile ?? rfdc()(DefaultCacheFile)
 
     console.info(`[onInitialize] CacheVersion = ${CacheVersion}`)
     console.info(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
@@ -409,7 +409,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
             }
             case 'datapack.regenerateCache': {
                 progress = await service.createWorkDoneProgress?.()
-                service.cacheFile = clone(DefaultCacheFile)
+                service.cacheFile = rfdc()(DefaultCacheFile)
                 await updateCacheFile(service.cacheFile, service.roots, progress)
                 break
             }

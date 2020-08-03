@@ -11,7 +11,7 @@ import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } fro
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LineParser } from '../parsers/LineParser'
 import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
-import { CacheFile, ClientCache, FileType, getCacheForUri } from '../types/ClientCache'
+import { CacheFile, ClientCache, FileType } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
@@ -79,7 +79,7 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
         cache: {}, errors: [], tokens: [], schemaType
     }
     const ctx = constructContext({
-        cache: getCacheForUri(cache, uri),
+        cache: service.getCache(uri, DatapackLanguageService.FullRange),
         id: getId(uri, roots),
         rootIndex: getRootIndex(uri, roots),
         blockDefinition: vanillaData.BlockDefinition,
@@ -92,24 +92,25 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
     return ans
 }
 
-export async function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
+export function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
     const startPos = document.positionAt(start)
     const lines = getStringLines(
         document.getText(Range.create(startPos, document.positionAt(end)))
     )
-    return partitionedIteration(lines.keys(), i => {
+    const cache = service.getCache(uri, DatapackLanguageService.FullRange)
+    for (const i of lines.keys()) {
         parseFunctionNode({
             document: document,
             start: document.offsetAt(Position.create(startPos.line + i, 0)),
             end: document.offsetAt(Position.create(startPos.line + i, Infinity)),
             id: getId(uri, roots),
             rootIndex: getRootIndex(uri, roots),
-            nodes, config, cacheFile, uri, roots, cursor, commandTree, vanillaData, service, jsonSchemas
+            nodes, config, cache, roots, cursor, commandTree, vanillaData, service, jsonSchemas
         })
-    })
+    }
 }
 
-export function parseFunctionNode({ service, document, start, end, nodes, config, cacheFile, uri, roots, cursor = -1, commandTree, vanillaData, jsonSchemas, id, rootIndex }: { service: DatapackLanguageService, document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
+export function parseFunctionNode({ service, document, start, end, nodes, config, cache, roots, cursor = -1, commandTree, vanillaData, jsonSchemas, id, rootIndex }: { service: DatapackLanguageService, document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cache: ClientCache, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
     const parser = new LineParser(false, 'line')
     const string = document.getText()
     const reader = new StringReader(string, start, end)
@@ -136,7 +137,7 @@ export function parseFunctionNode({ service, document, start, end, nodes, config
         })
     } else {
         const { data } = parser.parse(reader, constructContext({
-            cache: getCacheForUri(cacheFile.cache, uri),
+            cache,
             config,
             cursor,
             textDoc: document,
@@ -149,14 +150,21 @@ export function parseFunctionNode({ service, document, start, end, nodes, config
     }
 }
 
-export function getRel(uri: Uri, roots: Uri[]) {
-    for (const root of roots) {
-        if (uri.fsPath.startsWith(root.fsPath)) {
-            return path.relative(root.fsPath, uri.fsPath)
+export function getRelAndRootIndex(uri: Uri, roots: Uri[]): { rel: string, index: number } | null {
+    for (const [i, root] of roots.entries()) {
+        if (uri.toString().startsWith(root.toString())) {
+            return {
+                rel: path.relative(root.fsPath, uri.fsPath),
+                index: i
+            }
         }
     }
-    // console.warn(`Path “${uri.fsPath}” does not belong to any datapack roots (${roots})`)
-    return undefined
+    return null
+}
+
+export function getRel(uri: Uri, roots: Uri[]): string | undefined {
+    return getRelAndRootIndex(uri, roots)?.rel
+
 }
 
 export function getId(uri: Uri, roots: Uri[]) {
@@ -164,12 +172,7 @@ export function getId(uri: Uri, roots: Uri[]) {
 }
 
 export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
-    for (const [i, root] of roots.entries()) {
-        if (uri.toString().startsWith(root.toString())) {
-            return i
-        }
-    }
-    return null
+    return getRelAndRootIndex(uri, roots)?.index ?? null
 }
 
 export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId?: string, getText: () => Promise<string>, version: number | null }) {

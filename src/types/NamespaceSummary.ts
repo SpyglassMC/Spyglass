@@ -1,4 +1,4 @@
-import clone from 'clone'
+import rfdc from 'rfdc'
 
 /**
  * A summary data for a certain namespace in the datapack.
@@ -36,7 +36,7 @@ export interface RawNamespaceSummary {
 }
 
 export function compileNamespaceSummary(raw: RawNamespaceSummary, partial: Partial<NamespaceSummary>) {
-    const ans = clone(partial)
+    const ans = rfdc()(partial)
     ans.advancement = (ans.advancement ?? []).concat(raw.advancements)
     ans.loot_table = (ans.loot_table ?? []).concat(raw.loot_tables)
     ans.recipe = (ans.loot_table ?? []).concat(raw.recipes)

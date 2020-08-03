@@ -1,5 +1,5 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
-import clone from 'clone'
+import rfdc from 'rfdc'
 import { SynchronousPromise } from 'synchronous-promise'
 import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
 import * as lsp from 'vscode-languageserver'
@@ -21,6 +21,7 @@ export class DatapackLanguageService {
     public cacheFile: CacheFile
     readonly capabilities: Readonly<ClientCapabilities>
     readonly createWorkDoneProgress: CreateWorkDoneProgressFunction | undefined
+    readonly defaultLocaleCode: string // TODO
     readonly globalStoragePath: string | undefined
     readonly jsonService: JsonLanguageService
     readonly pathAccessible: PathAccessibleFunction
@@ -36,6 +37,10 @@ export class DatapackLanguageService {
     readonly versionInformation: VersionInformation | undefined
 
     private readonly builders: Map<Uri, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
+    /**
+     * Key: `${uriString}|${range}`
+     */
+    private readonly caches: Map<string, ClientCache> = new Map()
     private readonly configs: Map<Uri, Config> = new Map()
     private readonly textDocs: Map<Uri, TextDocument> = new Map()
     private readonly docs: Map<Uri, Promise<DatapackDocument | undefined>> = new Map()
@@ -46,12 +51,14 @@ export class DatapackLanguageService {
     static readonly McfunctionTriggerCharacters = [',', '{', '[']
     static readonly AllTriggerCharacters = DatapackLanguageService.GeneralTriggerCharacters.concat(DatapackLanguageService.McfunctionTriggerCharacters)
     static readonly AllCommitCharacters = [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
+    static readonly FullRange: lsp.Range = { start: { line: 0, character: 0 }, end: { line: Infinity, character: Infinity } }
 
     constructor(options?: {
         applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
         cacheFile?: CacheFile,
         capabilities?: ClientCapabilities,
         createWorkDoneProgress?: CreateWorkDoneProgressFunction,
+        defaultLocaleCode?: string,
         fetchConfig?: FetchConfigFunction,
         globalStoragePath?: string,
         jsonService?: JsonLanguageService,
@@ -65,8 +72,9 @@ export class DatapackLanguageService {
         this.capabilities = Object.freeze(options?.capabilities ?? getClientCapabilities())
 
         this.applyEdit = this.capabilities.applyEdit ? options?.applyEdit : undefined
-        this.cacheFile = options?.cacheFile ?? clone(DefaultCacheFile)
+        this.cacheFile = options?.cacheFile ?? rfdc()(DefaultCacheFile)
         this.createWorkDoneProgress = this.capabilities.workDoneProgress ? options?.createWorkDoneProgress : undefined
+        this.defaultLocaleCode = options?.defaultLocaleCode ?? 'en'
         this.globalStoragePath = options?.globalStoragePath
         this.jsonService = options?.jsonService ?? getJsonLanguageService({ promiseConstructor: SynchronousPromise })
         this.pathAccessible = options?.pathAccessible ?? pathAccessible
@@ -87,6 +95,9 @@ export class DatapackLanguageService {
     async fetchConfig(uri: Uri) {
         const config = await this.rawFetchConfig(uri)
         this.configs.set(uri, config)
+        if (this.configs.size > 100) {
+            this.configs.clear()
+        }
         return config
     }
 
@@ -107,6 +118,21 @@ export class DatapackLanguageService {
             return this.fetchConfig(uri)
         }
         return this.configs.get(uri) ?? this.fetchConfig(uri)
+    }
+
+    /**
+     * Get the cache that can be accessed in the specific range of a file.
+     * @param uri A file URI.
+     * @param range A LSP range.
+     */
+    getCache(uri: Uri, range: lsp.Range) {
+        return this.caches.get(`${uri}|${JSON.stringify(range)}`) ?? this.rawGetCache(uri, range)
+    }
+
+    private rawGetCache(uri: Uri, range: lsp.Range) {
+        const cache = getCacheForUri(this.cacheFile.cache, uri, range)
+        this.caches.set(`${uri}|${JSON.stringify(range)}`, cache)
+        return cache
     }
 
     /**
@@ -305,7 +331,7 @@ export class DatapackLanguageService {
                 const commandTree = await this.getCommandTree(config)
                 ans = {
                     type: 'mcfunction',
-                    nodes: await this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
+                    nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
                 }
             }
         }
@@ -316,9 +342,9 @@ export class DatapackLanguageService {
         return [parseJsonNode({ service: this, uri, document: textDoc, config, schema, jsonSchemas, schemaType, vanillaData, roots: this.roots, cache: this.cacheFile.cache })]
     }
 
-    private async parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
+    private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
         const ans: LineNode[] = []
-        await parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
+        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
         return ans
     }
 
@@ -340,8 +366,7 @@ export class DatapackLanguageService {
             TextDocument.update(textDoc, contentChanges, version!)
             doc.nodes[0] = parseJsonNode({ service: this, uri, roots: this.roots, config, cache: this.cacheFile.cache, schema, jsonSchemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
         }
-
-        this.mergeFileCacheIntoGlobalCache(uri)
+        await this.mergeFileCacheIntoGlobalCache(uri)
         trimCache(this.cacheFile.cache)
     }
 
@@ -381,7 +406,7 @@ export class DatapackLanguageService {
             const schemas = await getJsonSchemas(config.env.jsonVersion)
             const schema = schemas.get(doc.nodes[0].schemaType)
             const ctx = constructContext({
-                cache: getCacheForUri(this.cacheFile.cache, uri),
+                cache: this.getCache(uri, DatapackLanguageService.FullRange),
                 cursor: offset,
                 textDoc,
                 id: getId(uri, this.roots),
@@ -392,7 +417,7 @@ export class DatapackLanguageService {
             }, commandTree, vanillaData, jsonSchemas)
             JsonSchemaHelper.suggest(ans, doc.nodes[0].json.root, schema, ctx)
             return ans.map(v => {
-                const ans = clone(v)
+                const ans = rfdc()(v)
                 ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: textDoc.positionAt(ans.start), end: textDoc.positionAt(ans.end) } }
                 delete ans.start; delete ans.end
                 return ans as CompletionItem
@@ -646,7 +671,12 @@ export class DatapackLanguageService {
         this.cacheFile.cache[type] = category
     }
 
+    private onCacheUpdated() {
+        this.caches.clear()
+    }
+
     private removeCachePositionsWith(uri: Uri) {
+        this.onCacheUpdated()
         removeCachePosition(this.cacheFile.cache, uri)
     }
 
@@ -654,10 +684,8 @@ export class DatapackLanguageService {
         const { doc, textDoc } = await this.getDocuments(uri)
         if (doc && textDoc) {
             const cacheOfNodes: ClientCache = {}
-            let i = 0
             for (const node of doc.nodes) {
                 combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
-                i++
             }
             combineCache(this.cacheFile.cache, cacheOfNodes)
         }
@@ -699,7 +727,7 @@ export class DatapackLanguageService {
      */
     async onModifiedFile(uri: Uri) {
         if (!this.isOpen(uri)) {
-            this.mergeFileCacheIntoGlobalCache(uri)
+            return this.mergeFileCacheIntoGlobalCache(uri)
         }
     }
 

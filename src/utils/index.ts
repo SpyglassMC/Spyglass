@@ -1,9 +1,9 @@
-import clone from 'clone'
 import deepEqual from 'deep-equal'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import https from 'https'
 import { EOL } from 'os'
+import rfdc from 'rfdc'
 import { CodeActionKind, CompletionItem, Diagnostic, Position, TextEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
@@ -249,7 +249,7 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 export function remapParserSuggestion(completion: ParserSuggestion, mapping: IndexMapping): ParserSuggestion
 export function remapParserSuggestion(completion: CompletionItem, getPosition: (offset: number) => Position): ParserSuggestion
 export function remapParserSuggestion(completion: ParserSuggestion, param1: IndexMapping | ((offset: number) => Position)) {
-    const ans = clone(completion)
+    const ans = rfdc()(completion)
     if (param1 instanceof Function) {
         if (ans.textEdit) {
             const range = ans.textEdit.range
