@@ -3,15 +3,15 @@ import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes'
 import { CacheType } from '../types/ClientCache'
-import { CommandTreeNode, CommandTreeNodes, Switchable } from '../types/CommandTree'
+import { AlwaysValidates, CommandTreeNode, CommandTreeNodes, Switchable } from '../types/CommandTree'
 import { combineSaturatedLine, LineNode, SaturatedLineNode, saturatedLineToLine } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ParsingError } from '../types/ParsingError'
 import { TokenModifier } from '../types/Token'
+import { arrayToCompletions, arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
-import { arrayToCompletions, arrayToMessage } from '../utils'
 
 export class LineParser implements Parser<LineNode> {
     /* istanbul ignore next */
@@ -248,11 +248,20 @@ export class LineParser implements Parser<LineNode> {
     }
 
     parseChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional = false, isFirstArgument = false) {
-        // TODO: AlwaysValidates
+        this.parseAlwaysValidates(reader, ctx, children[AlwaysValidates], parsedLine, optional, isFirstArgument)
         if (children[Switchable]) {
             this.parseSwitchableChildren(reader, ctx, children, parsedLine, optional, isFirstArgument)
         } else {
             this.parseNormalChildren(reader, ctx, children, parsedLine, optional, isFirstArgument)
+        }
+    }
+
+    private parseAlwaysValidates(reader: StringReader, ctx: ParsingContext, validates: CommandTreeNodes | undefined, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean) {
+        for (const key in validates) {
+            /* istanbul ignore else */
+            if (validates.hasOwnProperty(key)) {
+                this.tryParsingNodeInChildren(reader, ctx, key, validates[key], parsedLine, optional, isFirstArgument, false, true)
+            }
         }
     }
 
@@ -268,7 +277,7 @@ export class LineParser implements Parser<LineNode> {
         //#endregion
         const node = children[literal]
         if (node) {
-            this.tryParsingNodeInChildren(reader, ctx, literal, node, children, parsedLine, optional, isFirstArgument, true)
+            this.tryParsingNodeInChildren(reader, ctx, literal, node, parsedLine, optional, isFirstArgument, true)
         } else {
             parsedLine.errors.push(new ParsingError(
                 { start, end: start + literal.length },
@@ -287,12 +296,9 @@ export class LineParser implements Parser<LineNode> {
         for (const key in children) {
             /* istanbul ignore else */
             if (children.hasOwnProperty(key)) {
-                const node = children[key]
-                const result = this.tryParsingNodeInChildren(reader, ctx, key, node, children, parsedLine, optional, isFirstArgument, hasSoleChild)
+                const result = this.tryParsingNodeInChildren(reader, ctx, key, children[key], parsedLine, optional, isFirstArgument, hasSoleChild)
                 if (result) {
                     return
-                } else {
-                    continue
                 }
             }
         }
@@ -307,7 +313,7 @@ export class LineParser implements Parser<LineNode> {
     /**
      * @returns If parsed successfully.
      */
-    private tryParsingNodeInChildren(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean, isSoleChild: boolean) {
+    private tryParsingNodeInChildren(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean, isSoleChild: boolean, mustRollBack = false) {
         const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
         const newReader = reader.clone()
         const oldErrors = [...parsedLine.errors]
@@ -321,7 +327,7 @@ export class LineParser implements Parser<LineNode> {
             }
         }
         //#endregion
-        if (!isSoleChild && hasUntolerableErrors(parsedLine.errors)) {
+        if (mustRollBack || (!isSoleChild && hasUntolerableErrors(parsedLine.errors))) {
             parsedLine.args.pop()
             parsedLine.hint.fix.pop()
             parsedLine.errors = oldErrors
