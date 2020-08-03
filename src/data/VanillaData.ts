@@ -93,7 +93,7 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
             const filePath = versionPath ? path.join(versionPath, `${type}.json`) : undefined
             try {
                 if (filePath && await pathAccessible(filePath)) {
-                    console.info(`[VanillaData: ${type} for ${version}] Loading from local file ${filePath}...`)
+                    console.info(`[VanillaData: ${type} for ${version}] Loading from local file ${filePath.replace(globalStoragePath!, '${globalStoragePath}')}...`)
                     const json = JSON.parse(await readFile(filePath))
                     console.info(`[VanillaData: ${type} for ${version}] Loaded from local file.`)
                     ans = json
@@ -112,7 +112,7 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     if (versionPath && filePath) {
                         await fsp.mkdir(versionPath, { recursive: true })
                         fsp.writeFile(filePath, str, { encoding: 'utf8' })
-                        console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath}.`)
+                        console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath.replace(globalStoragePath!, '${globalStoragePath}')}.`)
                     }
                     ans = json
                 }
