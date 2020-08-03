@@ -25,6 +25,7 @@
       "profile": "https://github.com/ChenCMD",
       "contributions": [],
       "details": [
+        { "type": "localization", "link": "commits?author=ChenCMD", "text": "Japanese (ja)" },
         { "type": "ideas", "link": "issues/410", "text": "#410" },
         { "type": "ideas", "link": "issues/582", "text": "#582" },
         { "type": "bug", "link": "issues/603", "text": "#603" },
@@ -38,7 +39,7 @@
       "profile": "https://afdian.net/@k_bai",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Coffee" }
       ]
     },
     {
@@ -51,6 +52,15 @@
         { "type": "ideas", "link": "issues/445", "text": "#445" },
         { "type": "bug", "link": "issues/592", "text": "#592" },
         { "type": "bug", "link": "issues/593", "text": "#593" }
+      ]
+    },
+    {
+      "name": "NeunEinser",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12124394?s=460&v=4",
+      "profile": "https://github.com/NeunEinser",
+      "contributions": [],
+      "details": [
+        { "type": "localization", "link": "commits?author=NeunEinser", "text": "German (de)" }
       ]
     },
     {
@@ -68,7 +78,7 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Coffee" }
       ]
     },
     {
@@ -109,7 +119,7 @@
       "description": "Financial support"
     },
     "localization": {
-      "symbol": "🌍",
+      "symbol": "🌐",
       "description": "Localization"
     },
     "bug": {
