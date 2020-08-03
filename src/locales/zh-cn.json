@@ -114,7 +114,7 @@
     "nbtdoc.type.Short": "短整型（short）",
     "nbtdoc.type.String": "字符串",
     "no-permission": "该命令需要权限等级 %0% 级才能执行，高于配置文件中设置的 %1% 级",
-    "not-matching-any-child": "无法在命令语法树中找到匹配的子项",
+    "not-matching-any-child": "无效参数",
     "nothing": "无",
     "number": "一个数字",
     "number-range": "一个数字范围",
