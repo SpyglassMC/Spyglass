@@ -64,6 +64,7 @@
     "team": "une équipe",
     "time-unit": "une unité de temps",
     "too-long": "%0% excède la longueur maximale de %1%, étant %2%",
+    "too-many-block-affected": "Trop de blocs dans la zone spécifiée (%0% au maximum, %1% spécifiés)",
     "undefined-objective": "Objectif indéfini %0%",
     "undefined-tag": "Tag indéfini %0%",
     "undefined-team": "Équipe indéfinie %0%",

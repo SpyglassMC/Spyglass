@@ -133,6 +133,7 @@
     "team": "ein Team",
     "time-unit": "eine Zeiteinheit",
     "too-long": "%0% überschreitet die maximale Länge von %1%, erlaubt sind %2%",
+    "too-many-block-affected": "Zu viele Blöcke im angegebenen Bereich (maximal %0%, angegeben %1%)",
     "undefined-objective": "Unbekanntes Ziel %0%",
     "undefined-tag": "Unbekannte Eigenschaft %0%",
     "undefined-team": "Unbekanntes Team %0%",

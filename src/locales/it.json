@@ -137,6 +137,7 @@
     "team": "una squadra",
     "time-unit": "un unità di tempo",
     "too-long": "%0% supera la lungezza massima di %1%, che è %2%",
+    "too-many-block-affected": "Troppi blocchi nell'area (massimo: %0%, specificati: %1%)",
     "undefined-objective": "Oggettivo non definite %0%",
     "undefined-tag": "Tag non definite %0%",
     "undefined-team": "Squadra non definita %0%",
