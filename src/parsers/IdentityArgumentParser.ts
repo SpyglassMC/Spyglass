@@ -106,7 +106,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         let path0 = this.readValidString(reader, ans)
         let selectedRange = this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool)
         const path0Result = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths);
-        ({ path0, namespace, pool, selectedRange } = path0Result)
+        ({ path0, namespace, pool } = path0Result)
         selectedRange = path0Result.selectedRange ?? selectedRange
         selectedRange = this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles) ?? selectedRange
 
