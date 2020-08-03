@@ -17,6 +17,7 @@ import { ParsingError } from '../types/ParsingError'
 import { StringReader } from '../utils/StringReader'
 import { TestArgumentParser } from './parsers/LineParser.spec'
 import { $, assertCompletions } from './utils.spec'
+import { DeclarableCacheTypes } from '../types'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -227,7 +228,7 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.errors, undefined)
             assert(data.completions === undefined)
         })
-        it('advancemen t grant|revoke <targets> only <advancement>', () => {
+        it('advancement grant|revoke <targets> only <advancement>', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test')
             const { data } = parser.parse(reader, ctx)
@@ -244,7 +245,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, {
                 advancement: {
-                    'minecraft:test': { def: [], ref: [{ start: 26, end: 40 }] }
+                    'minecraft:test': { ref: [{ start: 26, end: 40 }] }
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
@@ -270,7 +271,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, {
                 advancement: {
-                    'minecraft:test': { def: [], ref: [{ start: 26, end: 40 }] }
+                    'minecraft:test': { ref: [{ start: 26, end: 40 }] }
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
@@ -295,7 +296,7 @@ describe('CommandTree Tests', () => {
             })
             assert.deepStrictEqual(data.cache, {
                 advancement: {
-                    'minecraft:test': { def: [], ref: [{ start: 30, end: 44 }] }
+                    'minecraft:test': { ref: [{ start: 30, end: 44 }] }
                 }
             })
             assert.deepStrictEqual(data.errors, undefined)
@@ -374,14 +375,13 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['#define', 'bossbar|entity|objective|score_holder|storage|tag|team', '<id: string>'],
+                fix: ['#declare|#define|#register', DeclarableCacheTypes.join('|'), '<id: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {
                 entity: {
                     SPGoding: {
-                        def: [{ start: 15, end: 23 }],
-                        ref: []
+                        dcl: [{ start: 15, end: 23 }]
                     }
                 }
             })

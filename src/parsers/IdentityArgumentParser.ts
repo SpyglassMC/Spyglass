@@ -127,17 +127,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     private addDefinitionCache(ans: ArgumentParserResult<IdentityNode>, stringID: string, start: number, end: number) {
-        if (this.isDefinition) {
-            switch (this.type) {
-                case '$bossbar':
-                    ans.cache = {
-                        bossbar: {
-                            [stringID]: { def: [{ start, end }], ref: [] }
-                        }
-                    }
-                    break
-                default:
-                    break
+        if (this.isDefinition && typeof this.type === 'string' && this.type.startsWith('$')) {
+            ans.cache = {
+                [this.type.slice(1)]: {
+                    [stringID]: { def: [{ start, end }], ref: [] }
+                }
             }
         }
     }

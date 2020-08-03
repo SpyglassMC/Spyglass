@@ -242,9 +242,7 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                 const stat = await fsp.stat(uri.fsPath)
                 if (stat.isFile()) {
                     service.cacheFile.files[uriString] = stat.mtimeMs
-                    if (!service.isOpen(uri)) {
-                        await service.onModifiedFile(uri)
-                    }
+                    await service.onModifiedFile(uri)
                 }
                 break
             }

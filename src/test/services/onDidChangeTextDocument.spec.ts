@@ -2,13 +2,12 @@ import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
 import { NodeRange } from '../../nodes'
+import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
 import { McfunctionDocument } from '../../types'
 import { VanillaConfig } from '../../types/Config'
-import { Uri } from '../../types/handlers'
 import { Token, TokenType } from '../../types/Token'
 import { mockLineNode, mockParsingContext } from '../utils.spec'
-import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const config = VanillaConfig
@@ -44,7 +43,7 @@ describe('onDidChangeTextDocument() Tests', () => {
         const service = new DatapackLanguageService()
         const uri = service.parseUri('file:///c:/foo')
 
-        onDidChangeTextDocument({ service, uri, doc, textDoc, version, config, contentChanges })
+        await onDidChangeTextDocument({ service, uri, doc, textDoc, version, config, contentChanges })
 
         assert(textDoc.getText() === '# Modified')
         assert(textDoc.version === version)

@@ -3,14 +3,13 @@ import clone from 'clone'
 import { SynchronousPromise } from 'synchronous-promise'
 import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
 import * as lsp from 'vscode-languageserver'
-import { promises as fsp } from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onNavigation, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
+import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onNavigation, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation, CreateWorkDoneProgressFunction, CacheUnitPositionType } from '../types'
+import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
@@ -342,7 +341,7 @@ export class DatapackLanguageService {
             doc.nodes[0] = parseJsonNode({ service: this, uri, roots: this.roots, config, cache: this.cacheFile.cache, schema, jsonSchemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
         }
 
-        this.onModifiedFile(uri)
+        this.mergeFileCacheIntoGlobalCache(uri)
         trimCache(this.cacheFile.cache)
     }
 
@@ -459,7 +458,7 @@ export class DatapackLanguageService {
         return onDocumentFormatting({ config, textDoc, doc })
     }
 
-    private async onNavigation(uri: Uri, position: lsp.Position,type: CacheUnitPositionType ) {
+    private async onNavigation(uri: Uri, position: lsp.Position, type: CacheUnitPositionType) {
         const doc = await this.docs.get(uri)
         const textDoc = this.textDocs.get(uri)
         if (!(doc && textDoc)) {
@@ -638,7 +637,7 @@ export class DatapackLanguageService {
     }
 
     async onEvaluateJS(uri: Uri, range: lsp.Range) {
-        
+
     }
 
     private addCacheUnit(id: string, type: FileType) {
@@ -665,7 +664,7 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Notifies a file addition from the file system. The ID of this file will be added to the
+     * Notifies a file addition in the file system. The ID of this file will be added to the
      * cache for completion usage, and the content of this file will also be analysed to
      * accelerate the process of renaming, etc.
      * 
@@ -692,15 +691,19 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Notifies a file modification from the file system. It is _not_ recommended to call this method
-     * for changes of already opened documents as this function is called internally in the 
-     * `onDidChangeTextDocument` function. The content of this file will be re-analysed to accelerate
-     * the process of renaming, etc.
+     * Notifies a file modification in the file system. The content of this file will be 
+     * re-analysed to accelerate the process of renaming, etc.
      * 
      * Nothing will happen if the URI can't be resolved to an identity.
      * @param uri A URI object.
      */
     async onModifiedFile(uri: Uri) {
+        if (!this.isOpen(uri)) {
+            this.mergeFileCacheIntoGlobalCache(uri)
+        }
+    }
+
+    private async mergeFileCacheIntoGlobalCache(uri: Uri) {
         const config = await this.getConfig(uri)
         if (!isRelIncluded(this.getRel(uri), config)) {
             return

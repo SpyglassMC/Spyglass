@@ -1,6 +1,6 @@
 import { BlockArgumentParser } from './BlockArgumentParser'
-import { DefinitionDescriptionArgumentParser } from './DefinitionDescriptionArgumentParser'
-import { DefinitionIDArgumentParser } from './DefinitionIDArgumentParser'
+import { DeclarationDescriptionArgumentParser } from './DeclarationDescriptionArgumentParser'
+import { DeclarationIDArgumentParser } from './DeclarationIDArgumentParser'
 import { EntityArgumentParser } from './EntityArgumentParser'
 import { IdentityArgumentParser } from './IdentityArgumentParser'
 import { ItemArgumentParser } from './ItemArgumentParser'
@@ -27,8 +27,8 @@ import { CodeSnippetArgumentParser } from './CodeSnippetArgumentParser'
 export class ParserCollection {
     readonly Block = BlockArgumentParser
     readonly CodeSnippet = CodeSnippetArgumentParser
-    readonly DefinitionDescription = DefinitionDescriptionArgumentParser
-    readonly DefinitionID = DefinitionIDArgumentParser
+    readonly DeclarationDescription = DeclarationDescriptionArgumentParser
+    readonly DeclarationID = DeclarationIDArgumentParser
     readonly Entity = EntityArgumentParser
     readonly Item = ItemArgumentParser
     readonly ItemSlot = ItemSlotArgumentParser

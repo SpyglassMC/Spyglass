@@ -7,8 +7,8 @@ import { IdentityNode } from '../nodes/IdentityNode'
 import { StringNode } from '../nodes/StringNode'
 import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
-import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
-import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
+import { DeclarationDescriptionArgumentParser } from '../parsers/DeclarationDescriptionArgumentParser'
+import { DeclarationIDArgumentParser } from '../parsers/DeclarationIDArgumentParser'
 import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
@@ -31,7 +31,7 @@ import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { AlwaysValidates, ParsingError, Switchable } from '../types'
-import { CacheType, DefinableCacheTypes } from '../types/ClientCache'
+import { CacheType, DeclarableCacheTypes } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
@@ -805,7 +805,43 @@ export const CommandTree: ICommandTree = {
             }
         },
         experience: {
-            redirect: 'templates.experience'
+            parser: new LiteralArgumentParser('experience', 'xp'),
+            children: {
+                add_set: {
+                    parser: new LiteralArgumentParser('add', 'set'),
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('multiple', 'players'),
+                            children: {
+                                amount: {
+                                    parser: new NumberArgumentParser('integer'),
+                                    executable: true,
+                                    children: {
+                                        points_levels: {
+                                            parser: new LiteralArgumentParser('points', 'levels'),
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                query: {
+                    parser: new LiteralArgumentParser('query'),
+                    children: {
+                        player: {
+                            parser: new EntityArgumentParser('single', 'players'),
+                            children: {
+                                points_levels: {
+                                    parser: new LiteralArgumentParser('points', 'levels'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
         fill: {
             parser: new LiteralArgumentParser('fill'),
@@ -1092,7 +1128,18 @@ export const CommandTree: ICommandTree = {
             }
         },
         msg: {
-            redirect: 'templates.msg'
+            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    children: {
+                        message: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
+                }
+            }
         },
         op: {
             parser: new LiteralArgumentParser('op'),
@@ -1735,7 +1782,14 @@ export const CommandTree: ICommandTree = {
             }
         },
         teammsg: {
-            redirect: 'templates.teammsg'
+            parser: new LiteralArgumentParser('teammsg', 'tm'),
+            permission: 0,
+            children: {
+                message: {
+                    parser: new MessageArgumentParser(),
+                    executable: true
+                }
+            }
         },
         team: {
             parser: new LiteralArgumentParser('team'),
@@ -1866,10 +1920,60 @@ export const CommandTree: ICommandTree = {
             }
         },
         teleport: {
-            redirect: 'templates.teleport'
+            parser: new LiteralArgumentParser('teleport', 'tp'),
+            children: {
+                destination: {
+                    parser: new VectorArgumentParser(3),
+                    executable: true
+                },
+                entity: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    executable: true,
+                    children: {
+                        destination: {
+                            parser: new VectorArgumentParser(3),
+                            executable: true,
+                            children: {
+                                facing: {
+                                    parser: new LiteralArgumentParser('facing'),
+                                    children: {
+                                        entity: {
+                                            parser: new LiteralArgumentParser('entity'),
+                                            children: {
+                                                facingEntity: {
+                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                    executable: true,
+                                                    children: {
+                                                        facingAnchor: {
+                                                            parser: new LiteralArgumentParser('feet', 'eyes'),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        pos: {
+                                            parser: new VectorArgumentParser(3),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                rotation: {
+                                    parser: new VectorArgumentParser(2, 'float', false),
+                                    executable: true
+                                }
+                            }
+                        },
+                        entity: {
+                            parser: new EntityArgumentParser('single', 'entities'),
+                            executable: true
+                        }
+                    }
+                }
+            }
         },
         tell: {
-            redirect: 'templates.msg'
+            redirect: 'commands.msg'
         },
         tellraw: {
             parser: new LiteralArgumentParser('tellraw'),
@@ -1965,10 +2069,10 @@ export const CommandTree: ICommandTree = {
             }
         },
         tm: {
-            redirect: 'templates.teammsg'
+            redirect: 'commands.teammsg'
         },
         tp: {
-            redirect: 'templates.teleport'
+            redirect: 'commands.teleport'
         },
         trigger: {
             parser: new LiteralArgumentParser('trigger'),
@@ -2103,37 +2207,38 @@ export const CommandTree: ICommandTree = {
             }
         },
         w: {
-            redirect: 'templates.msg'
+            redirect: 'commands.msg'
         },
         xp: {
-            redirect: 'templates.experience'
+            redirect: 'commands.experience'
         }
     },
     comments: {
         [Switchable]: true,
-        // #define bossbar|entity|objective|storage|tag|team <id: string>
-        '#define': {
-            parser: new LiteralArgumentParser('#define'),
+        // #declare <type: string> <id: string>
+        '#declare': {
+            parser: new LiteralArgumentParser('#declare', '#define', '#register'),
             run: ({ tokens, args }) => {
-                if (getArgOrDefault(args, 1, undefined) === '#define') {
+                const lastLiteral = getArgOrDefault(args, 1, undefined)
+                if (lastLiteral === '#declare' || lastLiteral === '#define' || lastLiteral === '#register') {
                     const lastToken = tokens[tokens.length - 1]
                     lastToken.range.start += 1
                 }
             },
-            description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
+            description: 'Declares a resource for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser(...DefinableCacheTypes),
-                    description: 'Type of the definition',
+                    parser: new LiteralArgumentParser(...DeclarableCacheTypes),
+                    description: 'Type of the declaration',
                     children: {
                         id: {
-                            parser: ({ args }) => new DefinitionIDArgumentParser(getArgOrDefault(args, 1, '')),
+                            parser: ({ args }) => new DeclarationIDArgumentParser(getArgOrDefault<string>(args, 1, '')),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
-                                    description: 'Description of the definition',
+                                    parser: ({ args }) => new DeclarationDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
+                                    description: 'Description for the declaration',
                                     executable: true
                                 }
                             }
@@ -2141,6 +2246,12 @@ export const CommandTree: ICommandTree = {
                     }
                 }
             }
+        },
+        '#define': {
+            redirect: 'comments.#declare'
+        },
+        '#register': {
+            redirect: 'comments.#declare'
         },
         // #alias <parser: string> <alias: string> <value: string>
         '#alias': {
@@ -2358,59 +2469,6 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-        experience: {
-            parser: new LiteralArgumentParser('experience', 'xp'),
-            children: {
-                add_set: {
-                    parser: new LiteralArgumentParser('add', 'set'),
-                    children: {
-                        player: {
-                            parser: new EntityArgumentParser('multiple', 'players'),
-                            children: {
-                                amount: {
-                                    parser: new NumberArgumentParser('integer'),
-                                    executable: true,
-                                    children: {
-                                        points_levels: {
-                                            parser: new LiteralArgumentParser('points', 'levels'),
-                                            executable: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                query: {
-                    parser: new LiteralArgumentParser('query'),
-                    children: {
-                        player: {
-                            parser: new EntityArgumentParser('single', 'players'),
-                            children: {
-                                points_levels: {
-                                    parser: new LiteralArgumentParser('points', 'levels'),
-                                    executable: true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        msg: {
-            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    children: {
-                        message: {
-                            parser: new MessageArgumentParser(),
-                            executable: true
-                        }
-                    }
-                }
-            }
-        },
         multiple_score: {
             parser: new EntityArgumentParser('multiple', 'entities', true),
             children: {
@@ -2424,69 +2482,6 @@ export const CommandTree: ICommandTree = {
             children: {
                 objective: {
                     parser: new ObjectiveArgumentParser()
-                }
-            }
-        },
-        teammsg: {
-            parser: new LiteralArgumentParser('teammsg', 'tm'),
-            permission: 0,
-            children: {
-                message: {
-                    parser: new MessageArgumentParser(),
-                    executable: true
-                }
-            }
-        },
-        teleport: {
-            parser: new LiteralArgumentParser('teleport', 'tp'),
-            children: {
-                destination: {
-                    parser: new VectorArgumentParser(3),
-                    executable: true
-                },
-                entity: {
-                    parser: new EntityArgumentParser('multiple', 'entities'),
-                    executable: true,
-                    children: {
-                        destination: {
-                            parser: new VectorArgumentParser(3),
-                            executable: true,
-                            children: {
-                                facing: {
-                                    parser: new LiteralArgumentParser('facing'),
-                                    children: {
-                                        entity: {
-                                            parser: new LiteralArgumentParser('entity'),
-                                            children: {
-                                                facingEntity: {
-                                                    parser: new EntityArgumentParser('single', 'entities'),
-                                                    executable: true,
-                                                    children: {
-                                                        facingAnchor: {
-                                                            parser: new LiteralArgumentParser('feet', 'eyes'),
-                                                            executable: true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        pos: {
-                                            parser: new VectorArgumentParser(3),
-                                            executable: true
-                                        }
-                                    }
-                                },
-                                rotation: {
-                                    parser: new VectorArgumentParser(2, 'float', false),
-                                    executable: true
-                                }
-                            }
-                        },
-                        entity: {
-                            parser: new EntityArgumentParser('single', 'entities'),
-                            executable: true
-                        }
-                    }
                 }
             }
         }

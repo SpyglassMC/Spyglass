@@ -1,13 +1,13 @@
 import { locale } from '../locales'
-import { CacheCategory, isDefinitionType } from '../types/ClientCache'
+import { CacheCategory, isCacheType, isInternalType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
-export class DefinitionDescriptionArgumentParser extends ArgumentParser<string> {
-    static identity = 'DefinitionDescription'
+export class DeclarationDescriptionArgumentParser extends ArgumentParser<string> {
+    static identity = 'DeclarationDescription'
     readonly identity = 'string'
 
     constructor(
@@ -28,17 +28,11 @@ export class DefinitionDescriptionArgumentParser extends ArgumentParser<string> 
             completions: []
         }
         if (description) {
-            if (isDefinitionType(this.type)) {
-                if (this.id) {
-                    const key = this.type
-                    ans.cache[key] = {}
-                    const category = ans.cache[key] as CacheCategory
-                    category[this.id] = {
-                        doc: description,
-                        def: [],
-                        ref: []
-                    }
-                }
+            if (isCacheType(this.type) && !isInternalType(this.type) && this.id) {
+                const key = this.type
+                ans.cache[key] = {}
+                const category = ans.cache[key] as CacheCategory
+                category[this.id] = { doc: description }
             }
         } else {
             ans.errors = [

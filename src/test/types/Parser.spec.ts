@@ -31,7 +31,7 @@ describe('Parser Tests', () => {
             assert.deepStrictEqual(base.cache, {
                 entity: {
                     foo: {
-                        doc: 'foo', def: [{ start: 0, end: 3 }], ref: []
+                        doc: 'foo', def: [{ start: 0, end: 3 }]
                     }
                 }
             })

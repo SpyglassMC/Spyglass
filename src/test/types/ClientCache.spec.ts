@@ -2,22 +2,10 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { MarkupKind } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
-import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isDefinitionType, isFileType, isNamespacedType, isTagFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
+import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isFileType, isNamespacedType, isTagFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
 import { assertCompletions } from '../utils.spec'
 
 describe('ClientCache Tests', () => {
-    describe('isDefinitionType() Tests', () => {
-        it('Should return true', () => {
-            const value = 'entity'
-            const actual = isDefinitionType(value)
-            assert(actual === true)
-        })
-        it('Should return false', () => {
-            const value = 'whatIsThis'
-            const actual = isDefinitionType(value)
-            assert(actual === false)
-        })
-    })
     describe('removeCacheUnit() Tests', () => {
         it('Should remove the unit', () => {
             const cache: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
@@ -38,7 +26,7 @@ describe('ClientCache Tests', () => {
     })
     describe('combineCache() Tests', () => {
         it('Should combine when base is undefiend', () => {
-            const override: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }
+            const override: ClientCache = { entity: { foo: { def: [{ start: 0, end: 3 }] } } }
             const actual = combineCache(undefined, override)
             assert.deepStrictEqual(actual, override)
         })
@@ -56,8 +44,7 @@ describe('ClientCache Tests', () => {
             const override: ClientCache = {
                 entity: {
                     foo: {
-                        def: [{ start: 0, end: 3 }],
-                        ref: []
+                        def: [{ start: 0, end: 3 }]
                     }
                 }
             }
@@ -69,7 +56,6 @@ describe('ClientCache Tests', () => {
             const override: ClientCache = {
                 entity: {
                     foo: {
-                        def: [],
                         ref: [{ start: 0, end: 3 }]
                     }
                 }
@@ -82,8 +68,7 @@ describe('ClientCache Tests', () => {
             const override: ClientCache = {
                 entity: {
                     foo: {
-                        def: [{ start: 0, end: 3 }],
-                        ref: []
+                        def: [{ start: 0, end: 3 }]
                     }
                 }
             }
@@ -91,8 +76,7 @@ describe('ClientCache Tests', () => {
             assert.deepStrictEqual(actual, {
                 entity: {
                     foo: {
-                        def: [{ start: 0, end: 3, uri: 'file:///blabla', startLine: 1, startChar: 0, endLine: 1, endChar: 3 }],
-                        ref: []
+                        def: [{ start: 0, end: 3, uri: 'file:///blabla', startLine: 1, startChar: 0, endLine: 1, endChar: 3 }]
                     }
                 }
             })
@@ -117,16 +101,12 @@ describe('ClientCache Tests', () => {
             }
             const base3: ClientCache = {
                 entity: {
-                    foo: {
-                        def: [],
-                        ref: []
-                    }
+                    foo: {}
                 }
             }
             const override: ClientCache = {
                 entity: {
                     foo: {
-                        def: [],
                         ref: [{ start: 0, end: 3 }]
                     }
                 }
@@ -249,33 +229,6 @@ describe('ClientCache Tests', () => {
                     test: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
-                    }
-                }
-            })
-        })
-        it("Should not trim units which doesn't need definitions", () => {
-            const actual: ClientCache = {
-                advancement: {
-                    test: {
-                        def: [],
-                        ref: [{ start: 0, end: 3 }]
-                    },
-                    test2: {
-                        def: [],
-                        ref: []
-                    }
-                }
-            }
-            trimCache(actual)
-            assert.deepStrictEqual(actual, {
-                advancement: {
-                    test: {
-                        def: [],
-                        ref: [{ start: 0, end: 3 }]
-                    },
-                    test2: {
-                        def: [],
-                        ref: []
                     }
                 }
             })

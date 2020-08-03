@@ -3,8 +3,8 @@ import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
-import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
-import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
+import { DeclarationDescriptionArgumentParser } from '../parsers/DeclarationDescriptionArgumentParser'
+import { DeclarationIDArgumentParser } from '../parsers/DeclarationIDArgumentParser'
 import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
@@ -2006,12 +2006,12 @@ export const CommandTree: ICommandTree = {
                     },
                     children: {
                         id: {
-                            parser: ({ args }) => new DefinitionIDArgumentParser(getArgOrDefault(args, 1, '')),
+                            parser: ({ args }) => new DeclarationIDArgumentParser(getArgOrDefault(args, 1, '')),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
+                                    parser: ({ args }) => new DeclarationDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
                                     description: 'Description of the definition',
                                     executable: true
                                 }

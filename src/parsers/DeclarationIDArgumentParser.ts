@@ -1,14 +1,14 @@
 import { locale } from '../locales'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { CacheCategory, isDefinitionType } from '../types/ClientCache'
+import { isCacheType, isInternalType, isNamespacedType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
-export class DefinitionIDArgumentParser extends ArgumentParser<string> {
-    static identity = 'DefinitionID'
+export class DeclarationIDArgumentParser extends ArgumentParser<string> {
+    static identity = 'DeclarationID'
     readonly identity = 'string'
 
     constructor(private readonly type: string) {
@@ -17,7 +17,8 @@ export class DefinitionIDArgumentParser extends ArgumentParser<string> {
 
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
-        let id = reader.readUntilOrEnd(' ')
+        const id = reader.readUntilOrEnd(' ')
+        let processsedID = id
         const ans: ArgumentParserResult<string> = {
             data: id,
             tokens: [],
@@ -27,28 +28,21 @@ export class DefinitionIDArgumentParser extends ArgumentParser<string> {
         }
         let token = TokenType.comment
         if (id) {
-            if (isDefinitionType(this.type)) {
+            if (isCacheType(this.type) && !isInternalType(this.type)) {
                 //#region Tokens
-                switch (this.type) {
-                    case 'bossbar':
-                    case 'storage':
-                        token = TokenType.identity
-                        id = IdentityNode.fromString(id).toString()
-                        break
-                    case 'entity':
-                    case 'score_holder':
-                        token = TokenType.entity
-                        break
-                    default:
-                        token = TokenType.variable
-                        break
+                if (isNamespacedType(this.type)) {
+                    processsedID = IdentityNode.fromString(id).toString()
+                    token = TokenType.identity
+                } else if (this.type === 'entity' || this.type === 'score_holder') {
+                    token = TokenType.entity
+                } else {
+                    token = TokenType.variable
                 }
                 //#endregion
-                ans.cache[this.type] = {}
-                const category = ans.cache[this.type] as CacheCategory
-                category[id] = {
-                    def: [{ start, end: start + id.length }],
-                    ref: []
+                ans.cache[this.type] = {
+                    [processsedID]: {
+                        dcl: [{ start, end: start + id.length }]
+                    }
                 }
             }
         } else {

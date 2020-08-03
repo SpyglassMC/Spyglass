@@ -70,7 +70,7 @@ export type CacheType = keyof ClientCache
 /**/ export type MiscType = keyof MiscCache
 /*******/ export type AliasType = keyof AliasCache
 
-export const DefinableCacheTypes: Readonly<CacheType[]> = Object.freeze([
+export const DeclarableCacheTypes: Readonly<CacheType[]> = Object.freeze([
     'advancement',
     'bossbar',
     'dimension',
@@ -162,7 +162,9 @@ export function remapCachePosition(cache: ClientCache, mapping: IndexMapping) {
         for (const id in category) {
             const unit = category[id] as CacheUnit
             for (const t of CacheUnitPositionTypes) {
-                unit[t] = unit[t]?.map(ele => remapTextRange(ele, mapping))
+                if (unit[t]) {
+                    unit[t] = unit[t]!.map(ele => remapTextRange(ele, mapping))
+                }
             }
         }
     }
@@ -174,7 +176,9 @@ export function removeCachePosition(cache: ClientCache, uri: Uri) {
         for (const id in category) {
             const unit = category[id] as CacheUnit
             for (const t of CacheUnitPositionTypes) {
-                unit[t] = unit[t]?.filter(ele => ele.uri !== uri.toString())
+                if (unit[t]) {
+                    unit[t] = unit[t]!.filter(ele => ele.uri !== uri.toString())
+                }
             }
         }
     }
@@ -232,16 +236,6 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
     return ans
 }
 
-/* istanbul ignore next */
-export function isAliasType(type: CacheType): type is AliasType {
-    return type.startsWith('alias/')
-}
-
-/* istanbul ignore next */
-export function canBeRenamed(type: CacheType) {
-    return !isAliasType(type) && type !== 'color'
-}
-
 export function getFileTypeFromCategory(category: string): FileType {
     if (category === 'dimension' || category === 'dimension_type') {
         return category
@@ -250,17 +244,15 @@ export function getFileTypeFromCategory(category: string): FileType {
     }
 }
 
-export type DefinitionType = 'bossbar' | 'entity' | 'objective' | 'tag' | 'team' | 'score_holder' | 'storage'
+export function isInternalType(type: CacheType) {
+    return isAliasType(type) || type === 'color'
+}
 
-export function isDefinitionType(value: string): value is DefinitionType {
+export function isCacheType(value: string): value is CacheType {
+    const type = value as CacheType
     return (
-        value === 'bossbar' ||
-        value === 'entity' ||
-        value === 'objective' ||
-        value === 'tag' ||
-        value === 'team' ||
-        value === 'score_holder' ||
-        value === 'storage'
+        isFileType(type) ||
+        isMiscType(type)
     )
 }
 
@@ -283,6 +275,24 @@ export function isFileType(type: string): type is FileType {
         type === 'recipe' ||
         isTagFileType(type as CacheType) ||
         isWorldgenRegistryFileType(type as CacheType)
+    )
+}
+
+export function isAliasType(type: CacheType): type is AliasType {
+    return type.startsWith('alias/')
+}
+
+export function isMiscType(type: CacheType): type is MiscType {
+    return (
+        type === 'bossbar' ||
+        type === 'entity' ||
+        type === 'objective' ||
+        type === 'score_holder' ||
+        type === 'storage' ||
+        type === 'tag' ||
+        type === 'team' ||
+        type === 'color' ||
+        isAliasType(type)
     )
 }
 

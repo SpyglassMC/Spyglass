@@ -37,7 +37,7 @@ describe('Line Tests', () => {
         })
         it('Should combine cache', () => {
             const base = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: {}, hint: { fix: [], options: [] } }
-            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: { entity: { foo: { def: [{ start: 0, end: 3 }], ref: [] } } }, hint: { fix: [], options: [] } }
+            const override = { [NodeRange]: { start: NaN, end: NaN }, args: [], tokens: [], cache: { entity: { foo: { def: [{ start: 0, end: 3 }] } } }, hint: { fix: [], options: [] } }
             combineLine(base, override)
             assert.deepStrictEqual(base, override)
         })
@@ -138,7 +138,7 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base.hint.options, [['c', ['c']], ['d', ['d']]])
             assert.deepStrictEqual(
                 base.cache,
-                { entity: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } }
+                { entity: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }] } } }
             )
             assert.deepStrictEqual(base.errors, [
                 new ParsingError({ start: 0, end: 3 }, 'Old'),
