@@ -561,9 +561,8 @@ async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: 
                     cacheFile.files[uriString] = stat.mtimeMs
                 }
             },
-            async (abs, rel) => {
-                const uri = service.parseUri(Uri.file(abs).toString())
-                const config = await service.getConfig(uri)
+            async (_abs, rel) => {
+                const config = await service.getConfig(root)
                 return isRelIncluded(rel, config)
             }
         )
