@@ -1,5 +1,5 @@
 import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
-import deepEqual from 'deep-equal'
+import deepEqual from 'fast-deep-equal'
 import { ArrayASTNode, ASTNode, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'

@@ -1,11 +1,10 @@
-import deepEqual from 'deep-equal'
+import deepEqual from 'fast-deep-equal'
 import assert, { fail } from 'power-assert'
 import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
 import { ClientCache, Config, constructContext, LineArgumentNode, LineNode, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
 import { StringReader } from '../utils/StringReader'
-import { DatapackLanguageService } from '../services/DatapackLanguageService'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }

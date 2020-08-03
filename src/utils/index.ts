@@ -1,4 +1,4 @@
-import deepEqual from 'deep-equal'
+import deepEqual from 'fast-deep-equal'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import https from 'https'
