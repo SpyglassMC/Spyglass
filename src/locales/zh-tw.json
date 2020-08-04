@@ -1,3 +1,6 @@
 {
+    "argument-type.block": "方塊",
+    "argument-type.codeSnippet": "程式碼片段",
+    "argument-type.entity": "實體",
     "too-many-block-affected": "指定區域內的方塊太多（最大值為 %0%，指定為 %1%）"
 }
