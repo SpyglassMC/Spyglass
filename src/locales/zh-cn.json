@@ -19,7 +19,7 @@
     "argument-type.numberRange.integer": "整型数字范围",
     "argument-type.objective": "记分项",
     "argument-type.objectiveCriterion": "记分项判据",
-    "argument-type.particle": "粒子",
+    "argument-type.particle": "颗粒",
     "argument-type.scoreboardSlot": "记分板栏位",
     "argument-type.string": "字符串",
     "argument-type.tag": "标签",
