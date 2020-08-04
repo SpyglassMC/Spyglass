@@ -169,6 +169,7 @@ export class StringReader {
     readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
         let ans = ''
         if (!this.canRead()) {
+            out.mapping.start = this.cursor
             return ''
         }
         const quote = this.peek()
@@ -258,6 +259,7 @@ export class StringReader {
      */
     readString(out: { mapping: IndexMapping } = { mapping: {} }) {
         if (!this.canRead()) {
+            out.mapping.start = this.cursor
             return ''
         }
         const c = this.peek()

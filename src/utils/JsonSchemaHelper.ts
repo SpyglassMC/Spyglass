@@ -38,7 +38,7 @@ export class JsonSchemaHelper {
                 const selectedSchema = schema.navigate(path, -1, restoredValue)
                 const validationOption = selectedSchema?.validationOption(restoredValue)
                 if (validationOption) {
-                    this.doDetailedValidate(ans, node, validationOption, ctx)
+                    this.validateFromValidator(ans, node, validationOption, ctx)
                 }
             }
         )
@@ -57,8 +57,6 @@ export class JsonSchemaHelper {
             if (!selectedNode) {
                 return
             }
-            let result: Partial<LegacyValidateResult> | undefined = undefined
-            const out: { mapping: IndexMapping } = { mapping: {} }
             const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
             const restoredValue = this.restoreValueFromNode(node)
             const selectedSchema = schema.navigate(selectedPath, -1, restoredValue)
@@ -66,36 +64,21 @@ export class JsonSchemaHelper {
             if (selectedType === 'value') {
                 if (validationOption && selectedNode.type === 'string') {
                     // Detailed suggestions for the selected string value.
-                    const rawReader = new StringReader(ctx.textDoc.getText(), selectedRange.start, selectedRange.end)
-                    const value = rawReader.readString(out)
-                    const valueReader = new StringReader(value)
-                    const subCtx = {
-                        ...ctx,
-                        textDoc: TextDocument.create('dhp:///nbtdoc_helper.txt', 'plaintext', 0, value),
-                        cursor: getInnerIndex(out.mapping, ctx.cursor)
-                    }
-                    result = this.doDetailedStringLegacyValidate(valueReader, subCtx, selectedNode, validationOption)
-                    if (result.completions) {
-                        result.completions = result.completions.map(this.escapeCompletion)
-                    }
+                    ans.push(...this.suggestFromStringValidator(selectedRange, selectedNode, ctx, validationOption))
                 } else {
                     // Regular suggestions for selected value.
                     if (selectedNode.type === 'object') {
                         // Regular key suggestions for selected object.
-                        if (
+                        if (selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end) {
                             // The cursor isn't out of the curly braces.
-                            selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end &&
-                            // The cursor is not in any properties.
-                            selectedNode.properties.reduce<boolean>((p, c) => p && !isInRange(ctx.cursor, this.getNodeRange(c)), true)
-                        ) {
-                            result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, ctx) }
+                            ans.push(...this.suggestFromSchema(selectedPath, selectedNode, undefined, schema, ctx))
                         }
                     } else if (selectedNode.type === 'property') {
                         // Regular value suggestions for selected property
-                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, undefined, schema, ctx, true) }
+                        ans.push(...this.suggestFromSchema(selectedPath, selectedNode, undefined, schema, ctx, true))
                     } else {
                         // Regular value suggestions for selected value
-                        result = { completions: this.doRegularSuggest(selectedPath, selectedNode, selectedNode, schema, ctx) }
+                        ans.push(...this.suggestFromSchema(selectedPath, selectedNode, selectedNode, schema, ctx))
                     }
                 }
             } else {
@@ -103,32 +86,40 @@ export class JsonSchemaHelper {
                 const objectPath = selectedPath.pop()
                 const keyNode = selectedNode as StringASTNode
                 const objectNode = selectedNode.parent!.parent as ObjectASTNode
-                result = { completions: this.doRegularSuggest(objectPath, objectNode, keyNode, schema, ctx) }
-            }
-            if (result?.completions) {
-                ans.push(...result.completions.map(v => remapParserSuggestion(v, out.mapping)))
+                ans.push(...this.suggestFromSchema(objectPath, objectNode, keyNode, schema, ctx))
             }
         } catch (e) {
             console.error('[JsonSchemaHelper#suggest]', e)
         }
     }
 
-    private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
+    private static suggestFromSchema(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
-        const value: any = {}
+        const value = this.restoreValueFromNode(valueNode)
         const valueSchema = schema.navigate(valuePath, -1, value)
-        if (valueNode.type === 'object') {
-            for (const { keyNode: { value: key } } of valueNode.properties) {
-                if (key !== replacingNode?.value) {
-                    value[key] = 'exist'
-                }
-            }
+        if (valueNode.type === 'object' && typeof replacingNode?.value === 'string') {
+            // Delete the current selected key from `value`, so that the selected key can show in the suggestions.
+            delete value[replacingNode.value]
         }
         if (atEmptyValue && valueSchema) {
+            // Currently at an empty value position; suggest the default value of this schema node.
             const defaultValue = valueSchema.default()
             return [{ ...replacingRange, label: JSON.stringify(defaultValue), insertText: this.getDefaultValueSnippet(defaultValue), insertTextFormat: InsertTextFormat.Snippet }]
         }
+        const validationOption = valueSchema?.validationOption(value)
+        if (validationOption) {
+            // Do suggestions for keys with custom `validationOption`.
+            if (replacingNode) {
+                // Currently has a selected key.
+                return this.suggestFromStringValidator(replacingRange, replacingNode, ctx, validationOption)
+            } else {
+                // No key is selected; suggest the empty string instead.
+                return [{ ...replacingRange, label: '""', insertText: '"$1"', insertTextFormat: InsertTextFormat.Snippet }]
+            }
+        }
+        // Do suggestions provided by the schema node's `suggest` method.
         const suggestions = valueSchema?.suggest(valuePath, value) ?? []
+
         return arrayToCompletions(
             suggestions, replacingRange.start, replacingRange.end,
             valueNode.type === 'object' ? c => {
@@ -144,12 +135,19 @@ export class JsonSchemaHelper {
                 return { ...c, preselect, detail, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
                 // Operations to other value suggestions.
-                if (c.label.startsWith('"')) {
+                if (c.label.startsWith('"') && c.label.endsWith('"')) {
                     return { ...c, label: c.label.slice(1, -1), filterText: c.label, insertText: c.label }
                 }
                 return c
             }
         )
+    }
+
+    private static suggestFromStringValidator(rangeOfString: TextRange, stringNode: ASTNode, ctx: ParsingContext, validationOption: ValidationOption) {
+        const { result, out } = this.legacyValidateFromStringValidator(rangeOfString, stringNode, ctx, validationOption)
+        return result?.completions
+            ?.map(this.escapeCompletion)
+            ?.map(v => remapParserSuggestion(v, out.mapping)) ?? []
     }
 
     private static getDefaultValueSnippet(defaultValue: any) {
@@ -179,11 +177,18 @@ export class JsonSchemaHelper {
      */
     private static resolveJsonSnippetMagicStrings(value: string) {
         let insertIndex = 1
-        const replaceOneTurn = (value: string) => value
-            .replace(`"${this.Replacers.EmptyObject}"`, `{$${insertIndex++}}`)
-            .replace(`"${this.Replacers.EmptyList}"`, `[$${insertIndex++}]`)
-            .replace(new RegExp(`"${this.Replacers.StringStart} (.*?) ${this.Replacers.StringEnd}"`), `"$\${${insertIndex++}:$1}"`)
-            .replace(new RegExp(`"${this.Replacers.LiteralStart} (.*?) ${this.Replacers.LiteralEnd}"`), `$\${${insertIndex++}:$1}`)
+        const replace = (value: string, searchValue: string | RegExp, replaceValue: (i: number) => string) => {
+            if (value.match(searchValue)) {
+                return value.replace(searchValue, replaceValue(insertIndex++))
+            }
+            return value
+        }
+        const replaceOneTurn = (value: string) => replace(replace(replace(replace(value,
+            `"${this.Replacers.EmptyObject}"`, i => `{$${i}}`),
+            `"${this.Replacers.EmptyList}"`, i => `[$${i}]`),
+            new RegExp(`"${this.Replacers.StringStart} (.*?) ${this.Replacers.StringEnd}"`), i => `"$\${${i}:$1}"`),
+            new RegExp(`"${this.Replacers.LiteralStart} (.*?) ${this.Replacers.LiteralEnd}"`), i => `$\${${i}:$1}`
+        )
         while (true) {
             const newValue = replaceOneTurn(value)
             if (newValue === value) {
@@ -214,25 +219,44 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static doDetailedValidate(ans: ValidateResult, node: ASTNode, option: ValidationOption, ctx: ParsingContext) {
+    private static validateFromValidator(ans: ValidateResult, node: ASTNode, option: ValidationOption, ctx: ParsingContext) {
         const valueRange = this.getNodeRange(node)
         if (option.validator === 'block_state_map') {
             // TODO: JSON block_state_map validation
-        } else {
-            const out: { mapping: IndexMapping } = { mapping: {} }
-            const rawReader = new StringReader(ctx.textDoc.getText(), valueRange.start, valueRange.end)
-            const value = rawReader.readString(out)
-            const valueReader = new StringReader(value)
-            const result = this.doDetailedStringLegacyValidate(valueReader, ctx, node, option)
+        } else if (node.type === 'string') {
+            // Validate the selected string node.
+            const { result, out } = this.legacyValidateFromStringValidator(valueRange, node, ctx, option)
             this.combineResult(ans, result, out.mapping)
+        } else if (node.type === 'object') {
+            // Validate all the keys of the selected object node.
+            for (const { keyNode } of node.properties) {
+                const { result, out } = this.legacyValidateFromStringValidator(this.getNodeRange(keyNode), keyNode, ctx, option)
+                this.combineResult(ans, result, out.mapping)
+            }
         }
     }
 
-    private static doDetailedStringLegacyValidate(reader: StringReader, ctx: ParsingContext, node: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
+    private static legacyValidateFromStringValidator(rangeOfString: TextRange, stringNode: ASTNode, ctx: ParsingContext, validationOption: ValidationOption) {
+        const out: { mapping: IndexMapping } = { mapping: {} }
+        const rawReader = new StringReader(ctx.textDoc.getText(), rangeOfString.start, rangeOfString.end)
+        const value = rawReader.readString(out)
+        const valueReader = new StringReader(value)
+        const subCtx = {
+            ...ctx,
+            textDoc: TextDocument.create('dhp:///json_schema_helper.txt', 'plaintext', 0, value),
+            cursor: getInnerIndex(out.mapping, ctx.cursor)
+        }
+        return {
+            result: this.executeStringValidator(valueReader, subCtx, stringNode, validationOption),
+            out
+        }
+    }
+
+    private static executeStringValidator(reader: StringReader, ctx: ParsingContext, stringNode: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
         let ans: Partial<LegacyValidateResult> = {}
         switch (option.validator) {
             case 'block_state_key': {
-                const id = this.navigateRelativePath(node, option.params.id)?.value?.toString() ?? ''
+                const id = this.navigateRelativePath(stringNode, option.params.id)?.value?.toString() ?? ''
                 const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
                 ans = new ctx.parsers.Literal(...keys).parse(reader, ctx)
                 break
@@ -249,7 +273,7 @@ export class JsonSchemaHelper {
                 break
             case 'nbt':
                 if (option.params.registry) {
-                    const id = this.navigateRelativePath(node, option.params.registry.id)?.value?.toString() ?? null
+                    const id = this.navigateRelativePath(stringNode, option.params.registry.id)?.value?.toString() ?? null
                     ans = new ctx.parsers.Nbt(
                         'Compound', option.params.registry.category, id, option.params.isPredicate
                     ).parse(reader, ctx)
@@ -264,7 +288,7 @@ export class JsonSchemaHelper {
                 if (category && typeof category !== 'string') {
                     switch (category.getter) {
                         case 'copy_source':
-                            const copySource = this.navigateRelativePath(node, category.path)?.value?.toString() 
+                            const copySource = this.navigateRelativePath(stringNode, category.path)?.value?.toString()
                             if (copySource === 'block_entity') {
                                 category = 'minecraft:block'
                             } else {
@@ -369,7 +393,7 @@ export class JsonSchemaHelper {
      * @param path Won't be changed.
      */
     private static navigateRelativePath(node: ASTNode | undefined, path: RelativePath | undefined): ASTNode | undefined {
-        if (!path) {
+        if (!path || !node) {
             return undefined
         }
         if (path.length === 0) {

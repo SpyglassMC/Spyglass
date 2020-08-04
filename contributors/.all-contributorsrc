@@ -28,6 +28,9 @@
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "Japanese (ja)" },
         { "type": "ideas", "link": "issues/410", "text": "#410" },
         { "type": "ideas", "link": "issues/582", "text": "#582" },
+        { "type": "bug", "link": "issues/589", "text": "#589" },
+        { "type": "bug", "link": "issues/590", "text": "#590" },
+        { "type": "bug", "link": "issues/591", "text": "#591" },
         { "type": "bug", "link": "issues/603", "text": "#603" },
         { "type": "bug", "link": "issues/604", "text": "#604" },
         { "type": "bug", "link": "issues/606", "text": "#606" }
