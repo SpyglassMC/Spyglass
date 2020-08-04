@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import rfdc from 'rfdc'
+import getAppDataPath from 'appdata-path'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
@@ -24,9 +25,11 @@ let workspaceRootUriStrings: string[] = []
 
 let service: DatapackLanguageService
 
-connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath, localeCode }, capabilities: lspCapabilities }) => {
-    capabilities = getClientCapabilities(lspCapabilities)
+connection.onInitialize(async ({ workspaceFolders, initializationOptions: { storagePath, globalStoragePath, localeCode, customCapabilities }, capabilities: lspCapabilities }) => {
+    capabilities = getClientCapabilities(lspCapabilities, customCapabilities)
     defaultLocaleCode = localeCode ?? 'en'
+
+    globalStoragePath = globalStoragePath ?? getAppDataPath('spgoding.datapack-language-server')
 
     if (globalStoragePath && !await pathAccessible(globalStoragePath)) {
         await fsp.mkdir(globalStoragePath, { recursive: true })
@@ -159,7 +162,7 @@ connection.onInitialized(async () => {
         })
     }
 
-    connection.sendNotification('datapackLanguageServer/checkVersion', {
+    connection.sendNotification('spgoding/datapack/checkServerVersion', {
         currentVersion: ReleaseNotesVersion,
         title: locale('server.new-version', ReleaseNotesVersion),
         action: locale('server.show-release-notes'),

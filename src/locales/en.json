@@ -130,7 +130,7 @@
     "quote_prefer_double": "Double quote (“\"”) is preferable here",
     "quote_prefer_single": "Single quote (“'”) is preferable here",
     "score-holder": "a score holder",
-    "server.new-version": "The Datapack Language Server has been updated to a newer version: %0%",
+    "server.new-version": "The Data-pack Language Server has been updated to a newer version: %0%",
     "server.progress.fixing-workspace.begin": "Fixing all auto-fixable problems in the workspace",
     "server.progress.fixing-workspace.report": "fixing %0%",
     "server.progress.updating-cache.begin": "Updating the cache",

@@ -11,6 +11,7 @@ export interface ClientCapabilities {
         signatureHelp: boolean
     },
     applyEdit: boolean,
+    checkServerVersion: boolean,
     completionContext: boolean,
     configuration: boolean,
     diagnostics: boolean,
@@ -18,7 +19,11 @@ export interface ClientCapabilities {
     workspaceFolders: boolean
 }
 
-export function getClientCapabilities(lspCapabilities: LspClientCapabilities = {}) {
+interface CustomClientCapabilities {
+    checkServerVersion?: boolean
+}
+
+export function getClientCapabilities(lspCapabilities: LspClientCapabilities = {}, custom: CustomClientCapabilities = {}) {
     const ans: ClientCapabilities = {
         dynamicRegistration: {
             competion: !!lspCapabilities.textDocument?.completion?.dynamicRegistration,
@@ -30,6 +35,7 @@ export function getClientCapabilities(lspCapabilities: LspClientCapabilities = {
             signatureHelp: !!lspCapabilities.textDocument?.signatureHelp?.dynamicRegistration
         },
         applyEdit: !!lspCapabilities.workspace?.applyEdit,
+        checkServerVersion: !!custom.checkServerVersion,
         completionContext: !!lspCapabilities.textDocument?.completion?.contextSupport,
         configuration: !!lspCapabilities.workspace?.configuration,
         diagnostics: !!lspCapabilities.textDocument?.publishDiagnostics,
