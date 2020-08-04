@@ -369,9 +369,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             if (config.env.dependsOnVanilla) {
                 idPool.push(...this.getVanillaPool(type, namespaceSummary))
             }
-            if (type === 'loot_table') {
-                idPool.push('minecraft:empty')
-            }
         } else {
             const registry = registries[this.type]
             if (registry) {
@@ -486,7 +483,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 
     /* istanbul ignore next: tired of writing tests */
     private getVanillaPool(type: CacheType, vanilla: NamespaceSummary): string[] {
-        return vanilla[type as keyof NamespaceSummary] ?? []
+        const ans = vanilla[type as keyof NamespaceSummary] ?? []
+        if (type === 'loot_table') {
+            ans.push('minecraft:empty')
+        }
+        return ans
     }
 
     /**
@@ -545,13 +546,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#endregion
 
         //#region Cache
-        if (canResolve) {
-            ans.cache = {
-                [type]: {
-                    [stringID]: {
-                        def: [],
-                        ref: [{ start, end: reader.cursor }]
-                    }
+        ans.cache = {
+            [type]: {
+                [stringID]: {
+                    ref: [{ start, end: reader.cursor }]
                 }
             }
         }

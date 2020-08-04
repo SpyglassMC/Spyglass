@@ -617,6 +617,14 @@ describe('IdentityArgumentParser Tests', () => {
                 )
             ])
         })
+        it('Should allow minecraft:empty as loot tables', async () => {
+            const config = constructConfig({ lint: { strictBlockCheck: ['error', 'only-default-namespace'], idOmitDefaultNamespace: ['warning', true] } })
+            const ctx = constructContext({ registry: registries, cache, config })
+            const parser = new IdentityArgumentParser('$loot_table')
+            const actual = parser.parse(new StringReader('empty'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['empty']), [0, 5]))
+            assert.deepStrictEqual(actual.errors, [])
+        })
         it('Should return warnings when the id cannot be resolved in the array registry', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
             const ctx = constructContext({ registry: registries, cache, config })
@@ -639,18 +647,23 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.cache, {
                 bossbar: {
                     'spgoding:bossbar/a': {
-                        def: [],
                         ref: [{ start: 0, end: 18 }]
                     }
                 }
             })
         })
-        it('Should return empty cache when the id is undefined', async () => {
+        it('Should return cache even if the id is undefined', async () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:bossbar/c'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c']), [0, 18]))
-            assert.deepStrictEqual(actual.cache, {})
+            assert.deepStrictEqual(actual.cache, {
+                bossbar: {
+                    'spgoding:bossbar/c': {
+                        ref: [{ start: 0, end: 18 }]
+                    }
+                }
+            })
         })
         it('Should throw error when tags are not allowed here', async () => {
             const ctx = constructContext({ registry: registries, cache, config })
