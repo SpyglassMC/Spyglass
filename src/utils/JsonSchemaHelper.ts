@@ -34,8 +34,9 @@ export class JsonSchemaHelper {
         this.walkAstNode(
             node, path, schema,
             (node, path, schema) => {
-                const selectedSchema = schema.navigate(path, -1)
-                const validationOption = selectedSchema?.validationOption(this.restoreValueFromNode(node))
+                const restoredValue = this.restoreValueFromNode(node)
+                const selectedSchema = schema.navigate(path, -1, restoredValue)
+                const validationOption = selectedSchema?.validationOption(restoredValue)
                 if (validationOption) {
                     this.doDetailedValidate(ans, node, validationOption, ctx)
                 }
@@ -59,8 +60,9 @@ export class JsonSchemaHelper {
             let result: Partial<LegacyValidateResult> | undefined = undefined
             const out: { mapping: IndexMapping } = { mapping: {} }
             const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
-            const selectedSchema = schema.navigate(selectedPath, -1)
-            const validationOption = selectedSchema?.validationOption(this.restoreValueFromNode(selectedNode))
+            const restoredValue = this.restoreValueFromNode(node)
+            const selectedSchema = schema.navigate(selectedPath, -1, restoredValue)
+            const validationOption = selectedSchema?.validationOption(restoredValue)
             if (selectedType === 'value') {
                 if (validationOption && selectedNode.type === 'string') {
                     // Detailed suggestions for the selected string value.
@@ -113,8 +115,8 @@ export class JsonSchemaHelper {
 
     private static doRegularSuggest(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
-        const valueSchema = schema.navigate(valuePath, -1)
         const value: any = {}
+        const valueSchema = schema.navigate(valuePath, -1, value)
         if (valueNode.type === 'object') {
             for (const { keyNode: { value: key } } of valueNode.properties) {
                 if (key !== replacingNode?.value) {
@@ -134,7 +136,7 @@ export class JsonSchemaHelper {
                 const key = c.label.slice(1, -1)
                 const filterText = c.label
                 const childValuePath = valuePath.push(key)
-                const childValueSchema = schema.navigate(childValuePath, -1)
+                const childValueSchema = schema.navigate(childValuePath, -1, {} as any)
                 const preselect = childValueSchema?.force()
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
                 const detail = childValuePath.locale()
@@ -257,11 +259,28 @@ export class JsonSchemaHelper {
                     ).parse(reader, ctx)
                 }
                 break
-            case 'nbt_path':
+            case 'nbt_path': {
+                let category = option.params?.category
+                if (category && typeof category !== 'string') {
+                    switch (category.getter) {
+                        case 'copy_source':
+                            const copySource = this.navigateRelativePath(node, category.path)?.value?.toString() 
+                            if (copySource === 'block_entity') {
+                                category = 'minecraft:block'
+                            } else {
+                                category = 'minecraft:entity'
+                            }
+                            break
+                        default:
+                            category = undefined
+                            break
+                    }
+                }
                 ans = new ctx.parsers.NbtPath(
-                    option.params?.category ?? 'minecraft:block', option.params?.category ? (option.params.id ?? null) : undefined
+                    category ?? 'minecraft:block', category ? (option.params!.id ?? null) : undefined
                 ).parse(reader, ctx)
                 break
+            }
             case 'objective':
                 ans = new ctx.parsers.Objective().parse(reader, ctx)
                 break
@@ -283,7 +302,7 @@ export class JsonSchemaHelper {
                 break
             default:
                 /* istanbul ignore next */
-                console.error('[doDetailedValidate]', new Error(`Unknown validator ${(option as any).validator}`))
+                console.error('[doDetailedStringLegacyValidate]', new Error(`Unknown validator ${(option as any).validator}`))
                 break
         }
         ans.completions = ans?.completions?.map(this.escapeCompletion)
