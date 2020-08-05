@@ -35,7 +35,7 @@ export class JsonSchemaHelper {
             (node, path, schema) => {
                 const restoredValue = this.restoreValueFromNode(node)
                 const selectedSchema = schema.navigate(path, -1, restoredValue)
-                const validationOption = selectedSchema?.validationOption(restoredValue)
+                const validationOption = selectedSchema?.validationOption(path)
                 if (validationOption) {
                     this.validateFromValidator(ans, node, validationOption, ctx)
                 }
@@ -54,7 +54,7 @@ export class JsonSchemaHelper {
                 return
             }
             const selectedRange = this.getNodeRange(selectedNode)
-            const validationOption = selectedSchema?.validationOption(restoredValue)
+            const validationOption = selectedSchema?.validationOption(path)
             if (selectedType === 'value') {
                 if (validationOption && selectedNode.type === 'string') {
                     // Detailed suggestions for the selected string value.
@@ -134,7 +134,7 @@ export class JsonSchemaHelper {
             const defaultValue = valueSchema.default()
             return [{ ...replacingRange, label: JSON.stringify(defaultValue), insertText: this.getDefaultValueSnippet(defaultValue), insertTextFormat: InsertTextFormat.Snippet }]
         }
-        const validationOption = valueSchema?.validationOption(value)
+        const validationOption = valueSchema?.validationOption(valuePath)
         if (validationOption) {
             // Do suggestions for keys with custom `validationOption`.
             if (replacingNode) {
