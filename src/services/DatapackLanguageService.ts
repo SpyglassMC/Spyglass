@@ -399,12 +399,11 @@ export class DatapackLanguageService {
             }
             return onCompletion({ uri, offset, textDoc, service: this, config, node, commandTree, vanillaData, jsonSchemas })
         } else {
-            if (!this.capabilities.dynamicRegistration.competion && !this.capabilities.completionContext && context?.triggerCharacter && !DatapackLanguageService.GeneralTriggerCharacters.includes(context.triggerCharacter)) {
+            if (!this.capabilities.dynamicRegistration.competion && this.capabilities.completionContext && context?.triggerCharacter && !DatapackLanguageService.GeneralTriggerCharacters.includes(context.triggerCharacter)) {
                 return null
             }
             const ans: ParserSuggestion[] = []
-            const schemas = await getJsonSchemas(config.env.jsonVersion)
-            const schema = schemas.get(doc.nodes[0].schemaType)
+            const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             const ctx = constructContext({
                 cache: this.getCache(uri, DatapackLanguageService.FullRange),
                 cursor: offset,
@@ -468,8 +467,18 @@ export class DatapackLanguageService {
             }
             return onHover({ textDoc, offset, node, cacheFile: this.cacheFile })
         } else {
-            // TODO: JSON
-            return null
+            const jsonSchemas = await this.getJsonSchemas(config)
+            const schema = jsonSchemas.get(doc.nodes[0].schemaType)
+            const ctx = constructContext({
+                cache: this.getCache(uri, DatapackLanguageService.FullRange),
+                textDoc,
+                id: getId(uri, this.roots),
+                rootIndex: getRootIndex(uri, this.roots),
+                roots: this.roots,
+                config,
+                service: this
+            }, undefined, undefined, jsonSchemas)
+            return JsonSchemaHelper.onHover(doc.nodes[0].json.root, schema, ctx, offset)
         }
     }
 

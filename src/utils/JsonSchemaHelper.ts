@@ -1,12 +1,13 @@
-import { DataModel, INode, LOCALES as JsonLocales, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
+import { DataModel, INode, LOCALES as JsonLocales, ModelPath, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
 import deepEqual from 'fast-deep-equal'
-import { ArrayASTNode, ASTNode, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
+import { ArrayASTNode, ASTNode, Hover, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
 import { LineParser } from '../parsers/LineParser'
 import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
+import { IdentityNode } from '../nodes'
 
 export class JsonSchemaHelper {
     private static readonly Replacers = {
@@ -19,8 +20,7 @@ export class JsonSchemaHelper {
     }
 
     static validate(ans: ValidateResult, node: ASTNode | undefined, schema: INode, ctx: ParsingContext) {
-        const model = new DataModel(schema, { historyMax: 1 })
-        model.reset(this.restoreValueFromNode(node))
+        const { model, path } = this.setUp(node, schema)
 
         for (const err of model.errors) {
             ans.errors.push(this.convertSchemaError(err, node))
@@ -30,7 +30,6 @@ export class JsonSchemaHelper {
             return
         }
 
-        const path = new Path([], [], model)
         this.walkAstNode(
             node, path, schema,
             (node, path, schema) => {
@@ -49,17 +48,12 @@ export class JsonSchemaHelper {
             return
         }
         try {
-            const model = new DataModel(schema, { historyMax: 1 })
-            model.reset(this.restoreValueFromNode(node))
-            const path = new Path([], [], model)
-
-            const { node: selectedNode, path: selectedPath, type: selectedType } = this.selectNode(node, ctx.cursor, path)
+            const { path, restoredValue } = this.setUp(node, schema)
+            const { node: selectedNode, schema: selectedSchema, path: selectedPath, type: selectedType } = this.getSelectedNode(node, schema, restoredValue, ctx.cursor, path)
             if (!selectedNode) {
                 return
             }
-            const selectedRange = { start: selectedNode.offset, end: selectedNode.offset + selectedNode.length }
-            const restoredValue = this.restoreValueFromNode(node)
-            const selectedSchema = schema.navigate(selectedPath, -1, restoredValue)
+            const selectedRange = this.getNodeRange(selectedNode)
             const validationOption = selectedSchema?.validationOption(restoredValue)
             if (selectedType === 'value') {
                 if (validationOption && selectedNode.type === 'string') {
@@ -83,7 +77,7 @@ export class JsonSchemaHelper {
                 }
             } else {
                 // Regular key suggestions for selected key.
-                const objectPath = selectedPath.pop()
+                const objectPath = this.pathPopAll(selectedPath)
                 const keyNode = selectedNode as StringASTNode
                 const objectNode = selectedNode.parent!.parent as ObjectASTNode
                 ans.push(...this.suggestFromSchema(objectPath, objectNode, keyNode, schema, ctx))
@@ -93,7 +87,41 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static suggestFromSchema(valuePath: Path, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
+    static onHover(node: ASTNode | undefined, schema: INode, ctx: ParsingContext, offset: number): Hover | null {
+        if (!node) {
+            return null
+        }
+        try {
+            const { path, restoredValue } = this.setUp(node, schema)
+            const { node: selectedNode, path: selectedPath, type: selectedType } = this.getSelectedNode(node, schema, restoredValue, offset, path)
+            if (selectedNode && selectedType === 'key') {
+                const selectedRange = this.getNodeRange(selectedNode)
+                // Regular key suggestions for selected key.
+                const title = selectedPath.locale()
+                const help = selectedPath.localePush('help').strictLocale([], 6)
+                return {
+                    range: { start: ctx.textDoc.positionAt(selectedRange.start), end: ctx.textDoc.positionAt(selectedRange.end) },
+                    contents: {
+                        kind: 'markdown',
+                        value: help ? `${title}\n* * * * * *\n${help}` : title
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('[JsonSchemaHelper#onHover]', e)
+        }
+        return null
+    }
+
+    private static setUp(node: ASTNode | undefined, schema: INode) {
+        const model = new DataModel(schema, { historyMax: 1 })
+        const restoredValue = this.restoreValueFromNode(node)
+        model.reset(restoredValue)
+        const path = new ModelPath(model)
+        return { model, path, restoredValue }
+    }
+
+    private static suggestFromSchema(valuePath: ModelPath, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
         const value = this.restoreValueFromNode(valueNode)
         const valueSchema = schema.navigate(valuePath, -1, value)
@@ -126,13 +154,15 @@ export class JsonSchemaHelper {
                 // Operations to object keys.
                 const key = c.label.slice(1, -1)
                 const filterText = c.label
+
                 const childValuePath = valuePath.push(key)
                 const childValueSchema = schema.navigate(childValuePath, -1, {} as any)
                 const preselect = childValueSchema?.force()
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
                 const detail = childValuePath.locale()
+                const documentation = childValuePath.localePush('help').strictLocale([], 6)
                 const insertText = `${c.label}: ${defaultValueSnippet}`
-                return { ...c, preselect, detail, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
+                return { ...c, preselect, detail, documentation, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
                 // Operations to other value suggestions.
                 if (c.label.startsWith('"') && c.label.endsWith('"')) {
@@ -202,7 +232,7 @@ export class JsonSchemaHelper {
     /**
      * @param cb A callback that is called on every node.
      */
-    private static walkAstNode(node: ASTNode, path: Path, schema: INode, cb: (node: ASTNode, path: Path, schema: INode) => any) {
+    private static walkAstNode(node: ASTNode, path: ModelPath, schema: INode, cb: (node: ASTNode, path: ModelPath, schema: INode) => any) {
         cb(node, path, schema)
         if (node.type === 'object') {
             for (const { keyNode, valueNode } of node.properties) {
@@ -256,11 +286,14 @@ export class JsonSchemaHelper {
         let ans: Partial<LegacyValidateResult> = {}
         switch (option.validator) {
             case 'block_state_key': {
-                const id = this.navigateRelativePath(stringNode, option.params.id)?.value?.toString() ?? ''
+                const id = IdentityNode.fromString(this.navigateRelativePath(stringNode, option.params.id)?.value?.toString() ?? '').toString()
                 const keys = Object.keys(ctx.blockDefinition[id]?.properties ?? {})
                 ans = new ctx.parsers.Literal(...keys).parse(reader, ctx)
                 break
             }
+            case 'block_state_map':
+                // TODO
+                break
             case 'command':
                 ans = new LineParser(
                     option.params.leadingSlash, 'commands', option.params.allowPartial
@@ -412,8 +445,8 @@ export class JsonSchemaHelper {
         return this.navigateRelativePath(nextNode, path.slice(1))
     }
 
-    private static selectNode(node: ASTNode, cursor: number, path: Path, type: 'key' | 'value' = 'value'): SelectNodeResult {
-        let ans: SelectNodeResult = { node: undefined, path, type }
+    private static getSelectedNode(node: ASTNode, schema: INode, value: any, cursor: number, path: ModelPath, type: 'key' | 'value' = 'value'): SelectNodeResult {
+        let ans: SelectNodeResult = { node: undefined, schema: undefined, path, type }
         if (!isInRange(cursor, this.getNodeRange(node))) {
             return ans
         }
@@ -424,8 +457,11 @@ export class JsonSchemaHelper {
         }
         switch (node.type) {
             case 'array':
-                for (const [i, item] of node.items.entries()) {
-                    set(this.selectNode(item, cursor, path.push(i), 'value'))
+                for (const [i, childNode] of node.items.entries()) {
+                    const childValue = value?.[i]
+                    const childPath = schema.pathPush(path, i)
+                    const childSchema = schema.navigate(childPath, path.getArray().length - 1, value)!
+                    set(this.getSelectedNode(childNode, childSchema, childValue, cursor, childPath, 'value'))
                     if (ans.node) {
                         break
                     }
@@ -433,20 +469,25 @@ export class JsonSchemaHelper {
                 break
             case 'object':
                 for (const property of node.properties) {
-                    set(this.selectNode(property, cursor, path, 'value'))
+                    set(this.getSelectedNode(property, schema, value, cursor, path, 'value'))
                     if (ans.node) {
                         break
                     }
                 }
                 break
             case 'property':
-                set(this.selectNode(node.keyNode, cursor, path.push(node.keyNode.value), 'key'))
+                const key = node.keyNode.value
+                const childValue = value?.[key]
+                const childPath = schema.pathPush(path, key)
+
+                const childSchema = schema.navigate(childPath, path.getArray().length - 1, value)!
+                set(this.getSelectedNode(node.keyNode, childSchema, childValue, cursor, childPath, 'key'))
                 if (!ans.node) {
                     // Key isn't selected.
                     if (node.valueNode) {
-                        set(this.selectNode(node.valueNode, cursor, path.push(node.keyNode.value), 'value'))
+                        set(this.getSelectedNode(node.valueNode, childSchema, childValue, cursor, childPath, 'value'))
                     } else {
-                        set({ node, path: path.push(node.keyNode.value), type: 'value' })
+                        set({ node, path: childPath, schema: childSchema, type: 'value' })
                     }
                 }
                 break
@@ -454,7 +495,7 @@ export class JsonSchemaHelper {
                 break
         }
         if (!ans.node) {
-            ans = { node, path, type }
+            ans = { node, schema, path, type }
         }
         return ans
     }
@@ -484,10 +525,21 @@ export class JsonSchemaHelper {
     private static getNodeRange(node: ASTNode): TextRange {
         return { start: node.offset, end: node.offset + node.length }
     }
+
+    private static pathPopAll(model: ModelPath) {
+        return new ModelPath(
+            model.model,
+            new Path(
+                model.modelArr.slice(0, -1),
+                model.localeArr.slice(0, -1)
+            )
+        )
+    }
 }
 
 type SelectNodeResult = {
     node: ASTNode | undefined,
-    path: Path,
+    schema: INode | undefined,
+    path: ModelPath,
     type: 'key' | 'value'
 }

@@ -298,7 +298,12 @@ export class NbtdocHelper {
                         kind: CompletionItemKind.Property,
                         detail: NbtdocHelper.localeType(NbtdocHelper.getValueType(field.nbttype)),
                         /* istanbul ignore next */
-                        ...description ? { documentation: description } : {}
+                        ...description ? {
+                            documentation: {
+                                kind: 'markdown',
+                                value: description
+                            }
+                        } : {}
                     },
                     ctx.config.lint.nbtCompoundKeyQuote,
                     ctx.config.lint.nbtCompoundKeyQuoteType,
@@ -319,7 +324,10 @@ export class NbtdocHelper {
                     start, end,
                     label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
                     detail: NbtdocHelper.localeType(type),
-                    documentation: handledDescription ? `${key}  \n${handledDescription}` : key,
+                    documentation: {
+                        kind: 'markdown',
+                        value: handledDescription ? `${key}  \n${handledDescription}` : key
+                    },
                     kind: CompletionItemKind.EnumMember
                 })
             }
