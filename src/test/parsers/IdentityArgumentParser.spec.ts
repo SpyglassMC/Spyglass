@@ -229,6 +229,11 @@ describe('IdentityArgumentParser Tests', () => {
                     label: 'advancement',
                     kind: CompletionItemKind.Event,
                     t: 'spgoding:advancement'
+                },
+                {
+                    label: 'doc_test',
+                    kind: CompletionItemKind.Event,
+                    t: 'spgoding:doc_test'
                 }
             ])
         })
