@@ -4,6 +4,7 @@ import { URI as Uri } from 'vscode-uri'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
+import { IdentityNode } from '../nodes'
 
 export const CacheVersion = 10
 
@@ -65,8 +66,8 @@ interface MiscCache extends AliasCache {
 export interface ClientCache extends FileCache, MiscCache { }
 export type CacheType = keyof ClientCache
 /**/ export type FileType = keyof FileCache
-/*******/ export type TagRegularFileType = keyof TagFileCache
-/*******/ export type WorldgenRegistryFileType = keyof WorldgenFileCache
+/*******/ export type TagFileType = keyof TagFileCache
+/*******/ export type WorldgenFileType = keyof WorldgenFileCache
 /**/ export type MiscType = keyof MiscCache
 /*******/ export type AliasType = keyof AliasCache
 
@@ -256,11 +257,11 @@ export function isCacheType(value: string): value is CacheType {
     )
 }
 
-export function isTagFileType(type: CacheType): type is TagRegularFileType {
+export function isTagFileType(type: CacheType): type is TagFileType {
     return type.startsWith('tag/')
 }
 
-export function isWorldgenRegistryFileType(type: CacheType): type is WorldgenRegistryFileType {
+export function isWorldgenRegistryFileType(type: CacheType): type is WorldgenFileType {
     return type.startsWith('worldgen/')
 }
 
@@ -347,6 +348,11 @@ export function getSafeCategory(cache: ClientCache | undefined, type: CacheType)
     return cache[type] || {}
 }
 
+export function setUpUnit(cache: ClientCache | undefined, type: CacheType, id: IdentityNode, defaultValue: CacheUnit = {}) {
+    const stringID = id.toString()
+    return ((cache = cache ?? {})[type] = cache[type] ?? {})[stringID] = cache[type]![stringID] = defaultValue
+}
+
 export function getCompletions(cache: ClientCache, type: CacheType, start: number, end: number) {
     const category = getSafeCategory(cache, type)
     const ans: ParserSuggestion[] = []
@@ -355,7 +361,7 @@ export function getCompletions(cache: ClientCache, type: CacheType, start: numbe
         const documentation = unit.doc || undefined
         ans.push({
             ...{ label: id, start, end },
-            ...(documentation ? { documentation: { kind: MarkupKind.Markdown, value: documentation } } : {})
+            ...documentation && { documentation: { kind: MarkupKind.Markdown, value: documentation } }
         })
     }
     return ans

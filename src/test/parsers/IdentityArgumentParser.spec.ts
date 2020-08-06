@@ -111,22 +111,22 @@ describe('IdentityArgumentParser Tests', () => {
         it('Should return data with single path', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('spgoding:a'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a']), [0, 10]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a'], undefined, 'spgoding:test'), [0, 10]))
         })
         it('Should return data with multiple paths', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('spgoding:a/b/c'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a', 'b', 'c']), [0, 14]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['a', 'b', 'c'], undefined, 'spgoding:test'), [0, 14]))
         })
         it('Should return data without namespace', () => {
             const parser = new IdentityArgumentParser('spgoding:test')
             const actual = parser.parse(new StringReader('a/b'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['a', 'b']), [0, 3]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['a', 'b'], undefined, 'spgoding:test'), [0, 3]))
         })
         it('Should return data with tag ID', () => {
             const parser = new IdentityArgumentParser('minecraft:fluid', true)
             const actual = parser.parse(new StringReader('#minecraft:fluid_tag'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['fluid_tag'], true), [0, 20]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['fluid_tag'], true, 'minecraft:fluid'), [0, 20]))
         })
         it('Should return data under array registry', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
@@ -475,7 +475,7 @@ describe('IdentityArgumentParser Tests', () => {
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const reader = new StringReader('spgoding:')
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['']), [0, 9]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', [''], undefined, 'spgoding:seg_completion_test'), [0, 9]))
             assertCompletions(reader, actual.completions,
                 [
                     {
@@ -496,7 +496,7 @@ describe('IdentityArgumentParser Tests', () => {
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const reader = new StringReader('spgoding:foo/')
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', '']), [0, 13]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', ''], undefined, 'spgoding:seg_completion_test'), [0, 13]))
             assertCompletions(reader, actual.completions, [
                 {
                     label: 'bar',
@@ -515,7 +515,7 @@ describe('IdentityArgumentParser Tests', () => {
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const reader = new StringReader('spgoding:foo/bar/')
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', 'bar', '']), [0, 17]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['foo', 'bar', ''], undefined, 'spgoding:seg_completion_test'), [0, 17]))
             assertCompletions(reader, actual.completions, [
                 {
                     label: 'baz',
@@ -529,7 +529,7 @@ describe('IdentityArgumentParser Tests', () => {
             const parser = new IdentityArgumentParser('spgoding:seg_completion_test')
             const reader = new StringReader('foo/')
             const actual = parser.parse(reader, ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo', '']), [0, 4]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo', ''], undefined, 'spgoding:seg_completion_test'), [0, 4]))
             assertCompletions(reader, actual.completions, [
                 {
                     label: 'bar',
@@ -556,7 +556,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:QwQ'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['QwQ']), [0, 12]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['QwQ'], undefined, '$bossbar'), [0, 12]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 9, end: 12 }, 'Found non [a-z0-9/._-] character(s)')
             ])
@@ -566,7 +566,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('foo'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo'], undefined, '$bossbar'), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
@@ -580,7 +580,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$loot_table')
             const actual = parser.parse(new StringReader('foo'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo']), [0, 3]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['foo'], undefined, '$loot_table'), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
@@ -594,7 +594,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$function', true)
             const actual = parser.parse(new StringReader('#spgoding:function/42'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['function', '42'], true), [0, 21]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['function', '42'], true, '$function'), [0, 21]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 21 },
@@ -608,7 +608,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block')
             const actual = parser.parse(new StringReader('qux'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux']), [0, 3]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux'], undefined, 'minecraft:block'), [0, 3]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
@@ -622,7 +622,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$loot_table')
             const actual = parser.parse(new StringReader('empty'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['empty']), [0, 5]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['empty'], undefined, '$loot_table'), [0, 5]))
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warnings when the id cannot be resolved in the array registry', async () => {
@@ -643,7 +643,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:bossbar/a'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'a']), [0, 18]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'a'], undefined, '$bossbar'), [0, 18]))
             assert.deepStrictEqual(actual.cache, {
                 bossbar: {
                     'spgoding:bossbar/a': {
@@ -656,7 +656,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('$bossbar')
             const actual = parser.parse(new StringReader('spgoding:bossbar/c'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c']), [0, 18]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['bossbar', 'c'], undefined, '$bossbar'), [0, 18]))
             assert.deepStrictEqual(actual.cache, {
                 bossbar: {
                     'spgoding:bossbar/c': {
@@ -669,7 +669,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('minecraft:entity_type')
             const actual = parser.parse(new StringReader('#spgoding:entity_type/1'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['entity_type', '1'], true), [0, 23]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['entity_type', '1'], true, 'minecraft:entity_type'), [0, 23]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError({ start: 0, end: 1 }, 'Tags are not allowed here')
             ])
@@ -679,7 +679,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block')
             const actual = parser.parse(new StringReader('minecraft:stone'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['stone']), [0, 15]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [0, 15]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 9 }, "Default namespace should be omitted here",
@@ -693,7 +693,7 @@ describe('IdentityArgumentParser Tests', () => {
             const ctx = constructContext({ registry: registries, cache, config })
             const parser = new IdentityArgumentParser('minecraft:block', undefined, true)
             const actual = parser.parse(new StringReader('stone'), ctx)
-            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['stone']), [0, 5]))
+            assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['stone'], undefined, 'minecraft:block'), [0, 5]))
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 5 }, "Default namespace shouldn't be omitted here",

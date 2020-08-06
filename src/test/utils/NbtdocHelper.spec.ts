@@ -492,9 +492,9 @@ describe('NbtdocHelper Tests', () => {
                 helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
-                    { label: '"red"', t: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
-                    { label: '"green"', t: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Green' },
-                    { label: '"blue"', t: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Blue' }
+                    { label: '"red"', t: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Red' } },
+                    { label: '"green"', t: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Green' } },
+                    { label: '"blue"', t: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Blue' } }
                 ])
             })
             it('Should complete correctly for byte enum', async () => {
@@ -507,9 +507,9 @@ describe('NbtdocHelper Tests', () => {
                 helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
                 assertCompletions('', ans.completions, [
-                    { label: '1b', t: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
-                    { label: '2b', t: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Two  \nThe second positive integer' },
-                    { label: '3b', t: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Three  \nThe third positive integer' }
+                    { label: '1b', t: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'One  \nThe first positive integer' } },
+                    { label: '2b', t: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'Two  \nThe second positive integer' } },
+                    { label: '3b', t: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'Three  \nThe third positive integer' } }
                 ])
             })
         })
@@ -604,9 +604,9 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a normal key' } },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a crazy key with a double quotation mark' } },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'The only field of this compound' } }
             ])
         })
         it('Should not include existing keys', async () => {
@@ -621,8 +621,8 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key'} },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark'} }
             ])
         })
         it('Should return correctly for in-double-quote cases', async () => {
@@ -636,9 +636,9 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
+                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound' }}
             ])
         })
         it('Should return correctly for in-single-quote cases', async () => {
@@ -652,9 +652,9 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
+                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound'} }
             ])
         })
     })

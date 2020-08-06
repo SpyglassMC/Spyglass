@@ -9,7 +9,7 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
-import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, getSafeCategory, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
@@ -158,8 +158,8 @@ export class DatapackLanguageService {
      * Returns the JSON schemas for the specific config.
      * @param config A config object.
      */
-    async getJsonSchemas(config = VanillaConfig) {
-        return getJsonSchemas(config.env.jsonVersion)
+    async getJsonSchemas(config = VanillaConfig, data: VanillaData) {
+        return getJsonSchemas(config.env.jsonVersion, data.Registry)
     }
 
     /**
@@ -216,10 +216,10 @@ export class DatapackLanguageService {
      * if all data pack root folders have been tried and none of them contain, `null` is returned. Otherwise the
      * ID will be resolved as a file path in the `preferredRoot` no matter if that file actually exists.
      */
-    getUriFromId(id: IdentityNode, type: FileType, preferredRoot: Uri): Promise<Uri>
-    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Promise<Uri | null>
-    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Promise<Uri | null> {
-        return getUriFromId(this.pathAccessible, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot)
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot: Uri): Uri
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: undefined): Promise<Uri | null>
+    getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
+        return getUriFromId(this.pathAccessible, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot as any)
     }
 
     /**
@@ -279,6 +279,29 @@ export class DatapackLanguageService {
     }
 
     /**
+     * Re-parse an open document. Have no effects if the specified document isn't open.
+     */
+    async reparseOpenDocument(uri: Uri) {
+        const textDoc = this.textDocs.get(uri)
+        if (!textDoc) {
+            return
+        }
+        this.onDidCloseTextDocument(uri)
+        this.parseDocument(textDoc, true)
+    }
+
+    /**
+     * Re-parse all open documents.
+     */
+    async reparseAllOpenDocuments() {
+        return Promise.all(
+            Array
+                .from(this.docs.keys())
+                .map(this.reparseOpenDocument.bind(this))
+        )
+    }
+
+    /**
      * Get the documents for the specific URI. Will read the text document from the file system when
      * no parsed document has been cached. The one read from the file system will never be cached as
      * it is possible for it to be changed without any notifications from the client and therefore
@@ -317,7 +340,7 @@ export class DatapackLanguageService {
         const rel = getRel(uri, this.roots)
         if (rel && isRelIncluded(rel, config)) {
             const vanillaData = await this.getVanillaData(config)
-            const jsonSchemas = await this.getJsonSchemas(config)
+            const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             if (textDoc.languageId === 'json') {
                 const schemaType = getJsonSchemaType(rel)
                 if (schemaType) {
@@ -357,7 +380,7 @@ export class DatapackLanguageService {
         }
 
         const vanillaData = await this.getVanillaData(config)
-        const jsonSchemas = await getJsonSchemas(config.env.jsonVersion)
+        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
         if (isMcfunctionDocument(doc)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
             await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas })
@@ -391,7 +414,7 @@ export class DatapackLanguageService {
         const offset = textDoc.offsetAt(position)
         const commandTree = await this.getCommandTree(config)
         const vanillaData = await this.getVanillaData(config)
-        const jsonSchemas = await this.getJsonSchemas(config)
+        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
         if (isMcfunctionDocument(doc)) {
             const { node } = getSelectedNode(doc.nodes, offset)
             if (!node) {
@@ -438,7 +461,7 @@ export class DatapackLanguageService {
         }
         const commandTree = await this.getCommandTree(config)
         const vanillaData = await this.getVanillaData(config)
-        const jsonSchemas = await this.getJsonSchemas(config)
+        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
         return onSignatureHelp({ uri, service: this, offset, textDoc, config, node, commandTree, vanillaData, jsonSchemas })
     }
 
@@ -467,7 +490,8 @@ export class DatapackLanguageService {
             }
             return onHover({ textDoc, offset, node, cacheFile: this.cacheFile })
         } else {
-            const jsonSchemas = await this.getJsonSchemas(config)
+            const vanillaData = await this.getVanillaData(config)
+            const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             const ctx = constructContext({
                 cache: this.getCache(uri, DatapackLanguageService.FullRange),
@@ -663,33 +687,68 @@ export class DatapackLanguageService {
         return onSemanticTokensEdits({ doc, builder, previousResultId, textDoc })
     }
 
-    async onAutoFixFile(uri: Uri) {
+    async onAutoFixingFile(uri: Uri) {
         if (!this.applyEdit) {
             return null
         }
         return fixFileCommandHandler({ uri, service: this })
     }
 
-    async onEvaluateJS(uri: Uri, range: lsp.Range) {
+    async onJSEvaluation(uri: Uri, range: lsp.Range) {
 
     }
 
-    private addCacheUnit(id: string, type: FileType) {
-        const category = getSafeCategory(this.cacheFile.cache, type)
-        category[id] = category[id] ?? {}
-        this.cacheFile.cache[type] = category
+    async createFile(root: Uri, type: FileType, id: IdentityNode) {
+        const fileUri = this.getUriFromId(id, type, root)
+        const newText = type === 'function' ? '' : await (async ()=>{
+            const config =await this.getConfig(fileUri)
+            const vanillaData = await this.getVanillaData(config)
+            const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
+            const rel = this.getRel(fileUri)
+            if (!rel) {
+                return ''
+            }
+            const schemaType = getJsonSchemaType(rel)
+            if (!schemaType) {
+                return ''
+            }
+            const schema = jsonSchemas.get(schemaType)
+            return JSON.stringify(schema.default(), undefined, 4)
+        })()
+        return this.applyEdit?.({
+            edit: {
+                documentChanges: [
+                    {
+                        kind: 'create',
+                        uri: fileUri.toString(),
+                        options: { ignoreIfExists: true }
+                    },
+                    {
+                        textDocument: { uri: fileUri.toString(), version: null },
+                        edits: [{
+                            range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+                            newText
+                        }]
+                    }
+                ]
+            }
+        })
     }
 
-    private onCacheUpdated() {
+    private onDidUpdateCache() {
         this.caches.clear()
     }
 
+    private onDidIDUpdate(type: FileType, id: IdentityNode) {
+        this.urisOfIds.delete(`${type}|${id}`)
+    }
+
     private removeCachePositionsWith(uri: Uri) {
-        this.onCacheUpdated()
+        this.onDidUpdateCache()
         removeCachePosition(this.cacheFile.cache, uri)
     }
 
-    private async combineCacheOfNodes(uri: Uri) {
+    private async combineCacheOfNodes(uri: Uri, type: FileType, id: IdentityNode) {
         const { doc, textDoc } = await this.getDocuments(uri)
         if (doc && textDoc) {
             const cacheOfNodes: ClientCache = {}
@@ -697,6 +756,8 @@ export class DatapackLanguageService {
                 combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
             }
             combineCache(this.cacheFile.cache, cacheOfNodes)
+            const unit = setUpUnit(this.cacheFile.cache, type, id);
+            (unit.def = unit.def ?? []).push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
         }
     }
 
@@ -709,22 +770,7 @@ export class DatapackLanguageService {
      * @param uri A URI object.
      */
     async onAddedFile(uri: Uri) {
-        const rel = this.getRel(uri)
-        const result = IdentityNode.fromRel(rel)
-        if (!result) {
-            return
-        }
-        const { category, id } = result
-        const config = await this.getConfig(uri)
-        if (!isRelIncluded(this.getRel(uri), config)) {
-            return
-        }
-        this.addCacheUnit(id.toString(), category)
-        this.removeCachePositionsWith(uri)
-        const unit = this.cacheFile.cache[category]![id.toString()]!
-        unit.def = unit.def ?? []
-        unit.def.push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
-        return this.combineCacheOfNodes(uri)
+        return this.mergeFileCacheIntoGlobalCache(uri)
     }
 
     /**
@@ -741,12 +787,19 @@ export class DatapackLanguageService {
     }
 
     private async mergeFileCacheIntoGlobalCache(uri: Uri) {
+        const rel = this.getRel(uri)
+        const result = IdentityNode.fromRel(rel)
+        if (!result) {
+            return
+        }
+        const { category, id } = result
+        this.onDidIDUpdate(category, id)
         const config = await this.getConfig(uri)
-        if (!isRelIncluded(this.getRel(uri), config)) {
+        if (!isRelIncluded(rel, config)) {
             return
         }
         this.removeCachePositionsWith(uri)
-        return this.combineCacheOfNodes(uri)
+        return this.combineCacheOfNodes(uri, category, id)
     }
 
     /**
@@ -763,6 +816,7 @@ export class DatapackLanguageService {
             return
         }
         const { category, id } = result
+        this.onDidIDUpdate(category, id)
         removeCacheUnit(this.cacheFile.cache, category, id.toString())
         this.removeCachePositionsWith(uri)
         delete this.cacheFile.files[uri.toString()]

@@ -43,7 +43,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ItemNode(
-                $(new IdentityNode('minecraft', ['stick']), [0, 15])
+                $(new IdentityNode('minecraft', ['stick'], undefined, 'minecraft:item'), [0, 15])
             ), [0, 15]))
         })
         it('Should return data with tag', () => {
@@ -51,7 +51,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick{ foo : 1b }'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ItemNode(
-                $(new IdentityNode('minecraft', ['stick']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stick'], undefined, 'minecraft:item'), [0, 15]),
                 $(new NbtCompoundNode(null), [15, 27], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 17 }), [17, 20]) },
                     foo: $(new NbtByteNode(v, 1, '1'), [23, 25]),

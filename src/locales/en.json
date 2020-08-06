@@ -38,6 +38,7 @@
     "code-action.fix-workspace": "Fix all auto-fixable problems in the workspace",
     "code-action.id-attribute-datafix": "Update this attribute name to 1.16",
     "code-action.id-complete-default-namespace": "Complete default namespace",
+    "code-action.id-create-file": "Create this file in the same data pack",
     "code-action.id-omit-default-namespace": "Omit default namespace",
     "code-action.id-zombified-piglin-datafix": "Change this ID to Zombified Piglin's",
     "code-action.nbt-compound-sort-keys": "Sort NBT compound tag",

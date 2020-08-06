@@ -33,7 +33,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
 
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixUnknownKey]
-        if (uuidDiagnostics && uuidDiagnostics.length > 0) {
+        if (uuidDiagnostics?.length) {
             const oldSuper = this[SuperNode]
             if (oldSuper) {
                 const newSuper = new NbtCompoundNode(oldSuper[SuperNode])

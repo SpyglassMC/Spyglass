@@ -332,14 +332,14 @@ describe('NbtPathArgumentParser Tests', () => {
                     {
                         label: 'addition',
                         detail: 'Type: boolean',
-                        documentation: 'The additional boolean',
+                        documentation: { kind: 'markdown', value: 'The additional boolean' },
                         t: 'addition',
                         kind: CompletionItemKind.Property
                     },
                     {
                         label: 'CustomModelData',
                         detail: 'Type: int',
-                        documentation: 'The custom model data for this item',
+                        documentation: { kind: 'markdown', value: 'The custom model data for this item' },
                         t: 'CustomModelData',
                         kind: CompletionItemKind.Property
                     }
@@ -356,7 +356,7 @@ describe('NbtPathArgumentParser Tests', () => {
             //         {
             //             label: 'foo',
             //             detail: 'Type: boolean',
-            //             documentation: 'The only field of this compound',
+            //             documentation: { kind: 'markdown', value: 'The only field of this compound' },
             //             t: "'foo'",
             //             kind: CompletionItemKind.Property
             //         }
@@ -372,7 +372,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     {
                         label: 'foo',
                         detail: 'Type: boolean',
-                        documentation: 'The only field of this compound',
+                        documentation: { kind: 'markdown', value: 'The only field of this compound' },
                         t: '"foo"',
                         kind: CompletionItemKind.Property
                     }
@@ -417,7 +417,7 @@ describe('NbtPathArgumentParser Tests', () => {
                     {
                         label: 'foo',
                         detail: 'Type: boolean',
-                        documentation: 'The only field of this compound',
+                        documentation: { kind: 'markdown', value: 'The only field of this compound' },
                         t: '{ }.addition[ 1 ].foo',
                         kind: CompletionItemKind.Property
                     }

@@ -65,7 +65,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                         return null
                     }
 
-                    const newUri = await service.getUriFromId(IdentityNode.fromString(newName), result.type, preferredRoot)
+                    const newUri = service.getUriFromId(IdentityNode.fromString(newName), result.type, preferredRoot)
                     documentChanges.push(RenameFile.create(oldUri.toString(), newUri.toString(), { ignoreIfExists: true }))
 
                     // Update cache.

@@ -21,7 +21,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     readonly identity = 'identity'
 
     /**
-     * @param type A type in registries, or a type in cache if beginning with hash (`$`). 
+     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`). 
      * Alternatively, an array with all possible values.
      * @param registries The registries.
      */
@@ -110,7 +110,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         selectedRange = path0Result.selectedRange ?? selectedRange
         selectedRange = this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles) ?? selectedRange
 
-        ans.data = new IdentityNode(namespace, paths, isTag)
+        ans.data = new IdentityNode(namespace, paths, isTag, typeof this.type === 'string' ? this.type : undefined)
         stringID = ans.data.toString()
         return { namespace, isTag, stringID, selectedRange }
     }
@@ -188,7 +188,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry, namespaceSummary: NamespaceSummary) {
         if (isTag && this.allowTag) {
             // For tags.
-            const tagType = this.getCacheTagType()
+            const tagType = IdentityNode.getTagType(this.type as string)!
             this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache, namespaceSummary)
         } else {
             if (this.type instanceof Array) {
@@ -215,11 +215,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 const registry = registries[this.type]
                 const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
                 //#region Errors
-                if (shouldCheck && registry && !Object.keys(registry.entries).concat(this.getVanillaPool(this.type as FileType, namespaceSummary)).includes(stringID)) {
+                if (registry && !Object.keys(registry.entries).concat(this.getVanillaPool(this.type as FileType, namespaceSummary)).includes(stringID)) {
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
                         locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
-                        undefined, severity,
+                        undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
                         ErrorCode.IdentityUnknown
                     ))
                 }
@@ -353,7 +353,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const idPool: string[] = []
         // Set `tagPool`.
         if (this.allowTag) {
-            const type = this.getCacheTagType()
+            const type = IdentityNode.getTagType(this.type as string)!
             const category = getSafeCategory(cache, type)
             tagPool.push(...Object.keys(category))
             if (config.env.dependsOnVanilla) {
@@ -381,24 +381,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const complFolders = new Set<string>()
         const complFiles = new Set<string>()
         return { tagPool, idPool, complNamespaces, complFolders, complFiles }
-    }
-
-    private getCacheTagType() {
-        /* istanbul ignore next */
-        switch (this.type) {
-            case 'minecraft:block':
-                return 'tag/block'
-            case 'minecraft:entity_type':
-                return 'tag/entity_type'
-            case 'minecraft:fluid':
-                return 'tag/fluid'
-            case 'minecraft:item':
-                return 'tag/item'
-            case '$function':
-                return 'tag/function'
-            default:
-                throw new Error(`faild to find a tag type for “${this.type}”`)
-        }
     }
 
     /* istanbul ignore next: tired of writing tests */
@@ -535,11 +517,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 
         //#region Errors
         const [shouldCheck, severity] = this.shouldStrictCheck(`$${type}`, config, namespace)
-        if (!canResolve && shouldCheck) {
+        if (!canResolve) {
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
-                undefined, severity,
+                undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
                 ErrorCode.IdentityUnknown
             ))
         }

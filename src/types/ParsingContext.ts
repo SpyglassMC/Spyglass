@@ -1,8 +1,11 @@
+import { SchemaRegistry } from '@mcschema/core'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
+import { FallbackJsonSchemaRegistry } from '../data/JsonSchema'
 import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers/ParserCollection'
+import { DatapackLanguageService } from '../services/DatapackLanguageService'
 import { BlockDefinition } from './BlockDefinition'
 import { ClientCache } from './ClientCache'
 import { CommandTree } from './CommandTree'
@@ -11,9 +14,6 @@ import { Uri } from './handlers'
 import { NamespaceSummary } from './NamespaceSummary'
 import { nbtdoc } from './nbtdoc'
 import { Registry } from './Registry'
-import { DatapackLanguageService } from '../services/DatapackLanguageService'
-import { SchemaRegistry } from '@mcschema/core'
-import { FallbackJsonSchemaRegistry } from '../data/JsonSchema'
 
 export interface ParsingContext {
     blockDefinition: BlockDefinition,

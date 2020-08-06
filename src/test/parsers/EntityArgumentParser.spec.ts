@@ -227,10 +227,10 @@ describe('EntityArgumentParser Tests', () => {
                 const expected = $(new SelectorArgumentsNode(), [2, 116], {
                     gamemode: ['adventure'],
                     nameNeg: [$(new StringNode('SPGoding', 'SPGoding', { start: 28 }), [28, 36])],
-                    predicate: [$(new IdentityNode('spgoding', ['test', 'predicate']), [47, 70])],
+                    predicate: [$(new IdentityNode('spgoding', ['test', 'predicate'], undefined, '$predicate'), [47, 70])],
                     tag: ['foo'],
                     teamNeg: ['red'],
-                    type: [$(new IdentityNode('spgoding', ['mobs'], true), [94, 108])],
+                    type: [$(new IdentityNode('spgoding', ['mobs'], true, 'minecraft:entity_type'), [94, 108])],
                     nbt: [expectedCompound],
                     [Keys]: {
                         gamemode: $(new StringNode('gamemode', 'gamemode', { start: 3 }), [3, 11]),
@@ -296,9 +296,9 @@ describe('EntityArgumentParser Tests', () => {
                         }),
                         'spgoding:advancement/c': $(new SelectorCriteriaNode(), [138, 141]),
                         [Keys]: {
-                            'spgoding:advancement/a': $(new IdentityNode('spgoding', ['advancement', 'a']), [21, 43]),
-                            'spgoding:advancement/b': $(new IdentityNode('spgoding', ['advancement', 'b']), [53, 75]),
-                            'spgoding:advancement/c': $(new IdentityNode('spgoding', ['advancement', 'c']), [113, 135])
+                            'spgoding:advancement/a': $(new IdentityNode('spgoding', ['advancement', 'a'], undefined, '$advancement'), [21, 43]),
+                            'spgoding:advancement/b': $(new IdentityNode('spgoding', ['advancement', 'b'], undefined, '$advancement'), [53, 75]),
+                            'spgoding:advancement/c': $(new IdentityNode('spgoding', ['advancement', 'c'], undefined, '$advancement'), [113, 135])
                         },
                         [UnsortedKeys]: ['spgoding:advancement/a', 'spgoding:advancement/b', 'spgoding:advancement/c']
                     }),
@@ -594,7 +594,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'players')
                 const actual = parser.parse(new StringReader('@e[type=zombie]'), ctx)
 
-                const expectedIdentity = new IdentityNode(undefined, ['zombie'])
+                const expectedIdentity = new IdentityNode(undefined, ['zombie'], undefined, 'minecraft:entity_type')
                 expectedIdentity[NodeRange] = { start: 8, end: 14 }
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 15 }
@@ -611,7 +611,7 @@ describe('EntityArgumentParser Tests', () => {
                 const parser = new EntityArgumentParser('multiple', 'players')
                 const actual = parser.parse(new StringReader('@e[type=minecraft:player]'), ctx)
 
-                const expectedIdentity = new IdentityNode('minecraft', ['player'])
+                const expectedIdentity = new IdentityNode('minecraft', ['player'], undefined, 'minecraft:entity_type')
                 expectedIdentity[NodeRange] = { start: 8, end: 24 }
                 const expectedArguments = new SelectorArgumentsNode()
                 expectedArguments[NodeRange] = { start: 2, end: 25 }

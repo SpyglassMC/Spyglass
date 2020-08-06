@@ -77,7 +77,7 @@ export function combineLine(base: LineNode, override: LineNode): LineNode {
     // Completions.
     if ((base.completions && base.completions.length !== 0) || (override.completions && override.completions.length !== 0)) {
         /* istanbul ignore next */
-        base.completions = [...base.completions ? base.completions : [], ...override.completions ? override.completions : []]
+        base.completions = [...base.completions ?? [], ...override.completions ?? []]
     } else {
         delete base.completions
     }

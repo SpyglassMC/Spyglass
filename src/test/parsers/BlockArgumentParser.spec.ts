@@ -63,7 +63,7 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 })
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), { start: 0, end: 15 })
             ), { start: 0, end: 15 }))
         })
         it('Should return data with empty states', () => {
@@ -71,7 +71,7 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone[]'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 }),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), { start: 0, end: 15 }),
                 $(new BlockStateNode(), [15, 17])
             ), { start: 0, end: 17 }))
         })
@@ -80,7 +80,7 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true ]'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 }),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), { start: 0, end: 15 }),
                 $(new BlockStateNode(), { start: 15, end: 31 }, {
                     snowy: 'true',
                     [UnsortedKeys]: ['snowy']
@@ -92,7 +92,7 @@ describe('BlockArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 3 ]'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), { start: 0, end: 15 }),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), { start: 0, end: 15 }),
                 $(new BlockStateNode(), { start: 15, end: 41 }, {
                     snowy: 'true',
                     age: '3',
@@ -104,7 +104,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone{ foo : "bar" }'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [0, 15]),
                 undefined,
                 $(new NbtCompoundNode(null), [15, 30], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 17 }), [17, 20]) },
@@ -117,7 +117,7 @@ describe('BlockArgumentParser Tests', () => {
             const parser = new BlockArgumentParser(false)
             const actual = parser.parse(new StringReader('minecraft:stone[ snowy = true , age = 2 ]{ foo : 1b }'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [0, 15]),
                 $(new BlockStateNode(), [15, 41], {
                     snowy: 'true',
                     age: '2',
@@ -164,7 +164,7 @@ describe('BlockArgumentParser Tests', () => {
             const reader = new StringReader('minecraft:stone[]')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [0, 15]),
                 $(new BlockStateNode(), [15, 17])
             ), [0, 17]))
             assertCompletions(reader, actual.completions, [
@@ -178,7 +178,7 @@ describe('BlockArgumentParser Tests', () => {
             const reader = new StringReader('minecraft:stone[snowy=true,]')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['stone']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [0, 15]),
                 $(new BlockStateNode(), [15, 28], {
                     snowy: 'true',
                     [UnsortedKeys]: ['snowy']
@@ -206,7 +206,7 @@ describe('BlockArgumentParser Tests', () => {
             const reader = new StringReader('grass_block[]')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode(undefined, ['grass_block']), [0, 11]),
+                $(new IdentityNode(undefined, ['grass_block'], undefined, 'minecraft:block'), [0, 11]),
                 $(new BlockStateNode(), [11, 13])
             ), [0, 13]))
             assertCompletions(reader, actual.completions, [])
@@ -217,7 +217,7 @@ describe('BlockArgumentParser Tests', () => {
             const reader = new StringReader('spgoding:wtf[]')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('spgoding', ['wtf']), [0, 12]),
+                $(new IdentityNode('spgoding', ['wtf'], undefined, 'minecraft:block'), [0, 12]),
                 $(new BlockStateNode(), [12, 14])
             ), [0, 14]))
             assertCompletions(reader, actual.completions, [])
@@ -258,7 +258,7 @@ describe('BlockArgumentParser Tests', () => {
             const ctx = constructContext({ blockDefinition: blocks, registry: registries, cache })
             const actual = parser.parse(new StringReader('#minecraft:qwert[snowy=true]'), ctx)
             assert.deepStrictEqual(actual.data, $(new BlockNode(
-                $(new IdentityNode('minecraft', ['qwert'], true), [0, 16]),
+                $(new IdentityNode('minecraft', ['qwert'], true, 'minecraft:block'), [0, 16]),
                 $(new BlockStateNode(), [16, 28], {
                     snowy: 'true',
                     [UnsortedKeys]: ['snowy']

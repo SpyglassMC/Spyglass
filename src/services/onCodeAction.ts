@@ -1,12 +1,12 @@
 import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { DatapackLanguageService } from '..'
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
 import { CacheFile, Config, constructContext, McfunctionDocument, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
-import { getDiagnosticMap } from './common'
-import { DatapackLanguageService } from '..'
+import { getDiagnosticMap, getRootIndex } from './common'
 
 export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range, service }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], config: Config, range: Range, cacheFile: CacheFile, service: DatapackLanguageService }): CodeAction[] | null {
     try {
@@ -31,8 +31,11 @@ export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range, se
                         const nodeRange = data[NodeRange]
                         if (areOverlapped(selectedRange, nodeRange)) {
                             const ctx = constructContext({
-                                textDoc: textDoc,
                                 config,
+                                textDoc,
+                                id: service.getId(uri),
+                                rootIndex: getRootIndex(uri, service.roots),
+                                roots: service.roots,
                                 service
                             })
                             ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))

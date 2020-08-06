@@ -237,7 +237,7 @@ describe('CommandTree Tests', () => {
                 { data: 'grant', parser: 'literal' },
                 { data: $(new EntityNode(undefined, 's'), [18, 20]), parser: 'entity' },
                 { data: 'only', parser: 'literal' },
-                { data: $(new IdentityNode('minecraft', ['test']), [26, 40]), parser: 'identity' }
+                { data: $(new IdentityNode('minecraft', ['test'], undefined, '$advancement'), [26, 40]), parser: 'identity' }
             ])
             assert.deepStrictEqual(data.hint, {
                 fix: ['advancement', 'grant|revoke', '<targets: entity>', 'only', '<advancement: namespaced ID>'],
@@ -255,7 +255,7 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement grant @s only minecraft:test aaa')
             const { data } = parser.parse(reader, ctx)
-            const expectedId = new IdentityNode('minecraft', ['test'])
+            const expectedId = new IdentityNode('minecraft', ['test'], undefined, '$advancement')
             expectedId[NodeRange] = { start: 26, end: 40 }
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
@@ -281,7 +281,7 @@ describe('CommandTree Tests', () => {
             const parser = new LineParser(false)
             const reader = new StringReader('advancement revoke @s through minecraft:test')
             const { data } = parser.parse(reader, ctx)
-            const expectedId = new IdentityNode('minecraft', ['test'])
+            const expectedId = new IdentityNode('minecraft', ['test'], undefined, '$advancement')
             expectedId[NodeRange] = { start: 30, end: 44 }
             assert.deepStrictEqual(data.args, [
                 { data: 'advancement', parser: 'literal' },
@@ -349,7 +349,7 @@ describe('CommandTree Tests', () => {
                 },
                 {
                     data: $(new BlockNode(
-                        $(new IdentityNode('minecraft', ['grass_block']), [15, 36]),
+                        $(new IdentityNode('minecraft', ['grass_block'], undefined, 'minecraft:block'), [15, 36]),
                         $(new BlockStateNode(), [36, 38])
                     ), [15, 38]),
                     parser: 'block'

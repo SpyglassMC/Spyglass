@@ -1,13 +1,15 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
+import { CodeActionKind } from 'vscode-languageserver'
+import { locale } from '../locales'
 import { ParsingContext } from '../types'
-import { CacheType, FileType, isTagFileType, isWorldgenRegistryFileType, TagRegularFileType, WorldgenRegistryFileType, getFileTypeFromCategory } from '../types/ClientCache'
+import { CacheType, FileType, getFileTypeFromCategory, isTagFileType, isWorldgenRegistryFileType, TagFileType, WorldgenFileType, isFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
-import { PathPatterns } from '../utils/PathPatterns'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
+import { PathPatterns } from '../utils/PathPatterns'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
 export class IdentityNode extends ArgumentNode {
@@ -21,7 +23,11 @@ export class IdentityNode extends ArgumentNode {
     constructor(
         public namespace: string | undefined = undefined,
         public path: string[] = [],
-        public isTag = false
+        public isTag = false,
+        /**
+         * A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
+         */
+        public type: string | undefined = undefined
     ) {
         super()
     }
@@ -92,21 +98,40 @@ export class IdentityNode extends ArgumentNode {
         const omitDiagnostics = diagnostics[ErrorCode.IdentityOmitDefaultNamespace]
         const unknownDiagnostics = diagnostics[ErrorCode.IdentityUnknown]
 
-        if (completeDiagnostics && completeDiagnostics.length > 0) {
+        if (completeDiagnostics?.length) {
             ans.push(getCodeAction(
                 'id-complete-default-namespace', completeDiagnostics,
                 ctx.textDoc, this[NodeRange],
                 this.toTagString()
             ))
         }
-        if (omitDiagnostics && omitDiagnostics.length > 0) {
+        if (omitDiagnostics?.length) {
             ans.push(getCodeAction(
                 'id-omit-default-namespace', omitDiagnostics,
                 ctx.textDoc, this[NodeRange],
                 this.toShortestTagString()
             ))
         }
-        if (unknownDiagnostics && unknownDiagnostics.length > 0) {
+        if (unknownDiagnostics?.length) {
+            let cacheType: string | undefined
+            if (this.isTag) {
+                cacheType = this.type ? IdentityNode.getTagType(this.type) : undefined
+            }
+            if (!cacheType && this.type?.startsWith('$')) {
+                cacheType = this.type.slice(1)
+            }
+            if (cacheType && isFileType(cacheType) && ctx.rootIndex !== null) {
+                ans.push({
+                    title: locale('code-action.id-create-file'),
+                    kind: CodeActionKind.QuickFix,
+                    diagnostics: unknownDiagnostics,
+                    command: {
+                        command: 'datapack.createFile',
+                        title: locale('code-action.id-create-file'),
+                        arguments: [cacheType, this.toString(), ctx.roots[ctx.rootIndex].toString()]
+                    }
+                })
+            }
             //#region Zombified Piglin datafix: #508
             if (this.toTagString() === 'minecraft:zombie_pigman') {
                 ans.push(getCodeAction(
@@ -173,11 +198,11 @@ export class IdentityNode extends ArgumentNode {
                         if (isTagFileType(fileType)) {
                             // data/<namespace>/tags/<tag type>/**/*.json
                             minimumSegsLength = 5
-                            category = `tag/${segs[3].slice(0, -1)}` as TagRegularFileType
+                            category = `tag/${segs[3].slice(0, -1)}` as TagFileType
                         } else if (isWorldgenRegistryFileType(fileType)) {
                             // data/<namespace>/worldgen/<worldgen type>/**/*.json
                             minimumSegsLength = 5
-                            category = `worldgen/${segs[3]}` as WorldgenRegistryFileType
+                            category = `worldgen/${segs[3]}` as WorldgenFileType
                         } else {
                             // data/<namespace>/<regular file type>/**/*.json
                             minimumSegsLength = 4
@@ -189,7 +214,7 @@ export class IdentityNode extends ArgumentNode {
                         const paths = segs.slice(minimumSegsLength - 1)
                         const lastPath = paths[paths.length - 1]
                         paths[paths.length - 1] = lastPath.slice(0, lastPath.lastIndexOf('.'))
-                        const id = new IdentityNode(namespace, paths)
+                        const id = new IdentityNode(namespace, paths, undefined, `$${category}`)
                         return { category, ext, id, side }
                     }
                 }
@@ -208,6 +233,28 @@ export class IdentityNode extends ArgumentNode {
             return new IdentityNode(undefined, parts[0].split(IdentityNode.PathSep), isTag)
         } else {
             return new IdentityNode(parts[0], parts[1].split(IdentityNode.PathSep), isTag)
+        }
+    }
+
+    /**
+     * Get the tag cache type.
+     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
+     */
+    static getTagType(type: string): TagFileType | undefined {
+        /* istanbul ignore next */
+        switch (type) {
+            case 'minecraft:block':
+                return 'tag/block'
+            case 'minecraft:entity_type':
+                return 'tag/entity_type'
+            case 'minecraft:fluid':
+                return 'tag/fluid'
+            case 'minecraft:item':
+                return 'tag/item'
+            case '$function':
+                return 'tag/function'
+            default:
+                return undefined
         }
     }
 }

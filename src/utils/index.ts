@@ -293,8 +293,8 @@ export function handleCompletionText<T extends CompletionItem>(origin: T, cb: (s
     return {
         ...origin,
         label,
-        ...insertText ? { insertText } : {},
-        ...textEdit ? { textEdit } : {}
+        ...insertText && { insertText },
+        ...textEdit && { textEdit }
     }
 }
 

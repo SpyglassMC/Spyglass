@@ -65,7 +65,7 @@ describe('ParticleArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:cloud'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ParticleNode(
-                $(new IdentityNode('minecraft', ['cloud']), [0, 15])
+                $(new IdentityNode('minecraft', ['cloud'], undefined, 'minecraft:particle_type'), [0, 15])
             ), [0, 15]))
         })
         it('Should return data for “dust” particle', () => {
@@ -73,7 +73,7 @@ describe('ParticleArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:dust 0.93 0.40 0.80 1'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ParticleNode(
-                $(new IdentityNode('minecraft', ['dust']), [0, 14]),
+                $(new IdentityNode('minecraft', ['dust'], undefined, 'minecraft:particle_type'), [0, 14]),
                 $(new VectorNode(), [15, 31], {
                     length: 4,
                     0: $(new VectorElementNode(VectorElementType.Absolute, 0.93, '0.93'), [15, 19]),
@@ -96,9 +96,9 @@ describe('ParticleArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:block minecraft:stone'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ParticleNode(
-                $(new IdentityNode('minecraft', ['block']), [0, 15]),
+                $(new IdentityNode('minecraft', ['block'], undefined, 'minecraft:particle_type'), [0, 15]),
                 $(new BlockNode(
-                    $(new IdentityNode('minecraft', ['stone']), [16, 31])
+                    $(new IdentityNode('minecraft', ['stone'], undefined, 'minecraft:block'), [16, 31])
                 ), [16, 31])
             ), [0, 31]))
         })
@@ -107,9 +107,9 @@ describe('ParticleArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:item minecraft:diamond'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ParticleNode(
-                $(new IdentityNode('minecraft', ['item']), [0, 14]),
+                $(new IdentityNode('minecraft', ['item'], undefined, 'minecraft:particle_type'), [0, 14]),
                 $(new ItemNode(
-                    $(new IdentityNode('minecraft', ['diamond']), [15, 32])
+                    $(new IdentityNode('minecraft', ['diamond'], undefined, 'minecraft:item'), [15, 32])
                 ), [15, 32])
             ), [0, 32]))
         })

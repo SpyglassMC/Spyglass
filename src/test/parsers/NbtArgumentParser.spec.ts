@@ -301,7 +301,7 @@ describe('NbtArgumentParser Tests', () => {
                     label: 'foo', t: '{foo}',
                     kind: CompletionItemKind.Property,
                     detail: 'Type: boolean',
-                    documentation: 'The only field of this compound'
+                    documentation: { kind: 'markdown', value: 'The only field of this compound' }
                 }])
             })
             it('Should provide completions for double quoted compound keys', () => {
@@ -315,7 +315,7 @@ describe('NbtArgumentParser Tests', () => {
                     label: 'foo', t: '{"foo"}',
                     kind: CompletionItemKind.Property,
                     detail: 'Type: boolean',
-                    documentation: 'The only field of this compound'
+                    documentation: { kind: 'markdown', value: 'The only field of this compound' }
                 }])
             })
             it('Should provide completions for single quoted compound keys', () => {
@@ -329,7 +329,7 @@ describe('NbtArgumentParser Tests', () => {
                     label: 'foo', t: "{'foo'}",
                     kind: CompletionItemKind.Property,
                     detail: 'Type: boolean',
-                    documentation: 'The only field of this compound'
+                    documentation: { kind: 'markdown', value: 'The only field of this compound' }
                 }])
             })
             it('Should report errors for empty keys and values', () => {
@@ -448,7 +448,7 @@ describe('NbtArgumentParser Tests', () => {
                     label: 'foo', t: '{addition: [{foo}]}',
                     kind: CompletionItemKind.Property,
                     detail: 'Type: boolean',
-                    documentation: 'The only field of this compound'
+                    documentation: { kind: 'markdown', value: 'The only field of this compound' }
                 }])
             })
         })

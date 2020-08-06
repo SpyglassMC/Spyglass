@@ -34,21 +34,21 @@ export class StringNode extends ArgumentNode {
         const doubleQuoteDiagnostics = diagnostics[ErrorCode.StringDoubleQuote]
         const singleQuoteDiagnostics = diagnostics[ErrorCode.StringSingleQuote]
 
-        if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
+        if (unquoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-unquote', unquoteDiagnostics,
                 ctx.textDoc, this[NodeRange],
                 this.value
             ))
         }
-        if (doubleQuoteDiagnostics && doubleQuoteDiagnostics.length > 0) {
+        if (doubleQuoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-double-quote', doubleQuoteDiagnostics,
                 ctx.textDoc, this[NodeRange],
                 quoteString(this.value, 'always double', true)
             ))
         }
-        if (singleQuoteDiagnostics && singleQuoteDiagnostics.length > 0) {
+        if (singleQuoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-single-quote', singleQuoteDiagnostics,
                 ctx.textDoc, this[NodeRange],

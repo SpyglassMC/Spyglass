@@ -40,10 +40,9 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
     return getUri(str, uris)
 }
 
-/**
- * @returns Never be `null` if `preferredRoot` exists.
- */
-export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Promise<Uri | null> {
+export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: Uri): Uri
+export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: undefined): Promise<Uri | null>
+export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
 
@@ -55,22 +54,24 @@ export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Ur
 
     const value = urisOfIds.get(key)
     if (value !== undefined) {
-        return value
+        return Promise.resolve(value)
     }
 
-    const rel = id.toRel(category, 'data')
-    for (const root of roots) {
-        const abs = path.join(root.fsPath, rel)
-        if (await pathExists(abs)) {
-            const uri = getUri(Uri.file(abs).toString(), uris)
-            urisOfIds.set(key, uri)
-            return uri
+    return new Promise(async resolve => {
+        const rel = id.toRel(category, 'data')
+        for (const root of roots) {
+            const abs = path.join(root.fsPath, rel)
+            if (await pathExists(abs)) {
+                const uri = getUri(Uri.file(abs).toString(), uris)
+                urisOfIds.set(key, uri)
+                resolve(uri)
+            }
         }
-    }
-    // console.warn(`Namespaced ID “${key}” cannot be resolved in any root`)
+        // console.warn(`Namespaced ID “${key}” cannot be resolved in any root`)
 
-    urisOfIds.set(key, null)
-    return null
+        urisOfIds.set(key, null)
+        resolve(null)
+    })
 }
 
 export function parseJsonNode({ service, document, config, cache, uri, roots, schema, vanillaData, jsonSchemas, schemaType }: { service: DatapackLanguageService, document: TextDocument, config: Config, cache: ClientCache, uri: Uri, roots: Uri[], schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {

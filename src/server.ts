@@ -1,17 +1,18 @@
+import getAppDataPath from 'appdata-path'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import rfdc from 'rfdc'
-import getAppDataPath from 'appdata-path'
 import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
+import { IdentityNode } from './nodes'
 import { getRelAndRootIndex, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
-import { CacheFile, CacheVersion, DefaultCacheFile, trimCache } from './types/ClientCache'
+import { CacheFile, CacheVersion, DefaultCacheFile, FileType, trimCache } from './types/ClientCache'
 import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { VersionInformation } from './types/VersionInformation'
 import { pathAccessible, readFile, requestText } from './utils'
@@ -85,10 +86,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             executeCommandProvider: {
                 commands: [
                     'datapack.createFile',
-                    'datapack.evaludateJavaScript',
+                    'datapack.evaludateJavaScript', // TODO
                     'datapack.fixFile',
                     'datapack.fixWorkspace',
-                    'datapack.redownloadData',
+                    'datapack.redownloadData', // TODO
                     'datapack.regenerateCache'
                 ]
             },
@@ -372,18 +373,21 @@ connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriStr
     return service.onSemanticTokensEdits(uri, previousResultId)
 })
 
-/*
- * datapack.fixFile <Uri>    -  Fix all auto-fixable problems in <Uri>.
- * datapack.fixWorkspace     -  Fix all auto-fixable problems in the workspace.
- * datapack.regenerateCache  -  Regenerate cache.
- */
 connection.onExecuteCommand(async ({ command, arguments: args }) => {
     let progress: WorkDoneProgress | undefined = undefined
     try {
         switch (command) {
+            case 'datapack.createFile': {
+                const [rawType, rawID, rawRoot] = args as [FileType, string, string]
+                const id = IdentityNode.fromString(rawID)
+                const type = id.isTag ? (IdentityNode.getTagType(`$${rawType}`) ?? rawType) : rawType
+                const root = service.parseUri(rawRoot)
+                await service.createFile(root, type, id)
+                break
+            }
             case 'datapack.fixFile': {
                 const uri = service.parseUri(args![0])
-                service.onAutoFixFile(uri)
+                await service.onAutoFixingFile(uri)
                 break
             }
             case 'datapack.fixWorkspace': {
@@ -400,7 +404,7 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                                 try {
                                     progress?.report(locale('server.progress.fixing-workspace.report', locale('punc.quote', abs)))
                                     const uri = service.parseUri(Uri.file(abs).toString())
-                                    service.onAutoFixFile(uri)
+                                    service.onAutoFixingFile(uri)
                                 } catch (e) {
                                     console.error(`datapack.fixWorkspace failed for “${abs}”`, e)
                                 }
