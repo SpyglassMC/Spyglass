@@ -41,7 +41,7 @@ export function getRootUri(str: string, uris: UrisOfStrings) {
 }
 
 export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: Uri): Uri
-export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: undefined): Promise<Uri | null>
+export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: undefined): Promise<Uri | null>
 export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`

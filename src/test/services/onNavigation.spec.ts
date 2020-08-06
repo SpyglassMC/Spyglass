@@ -1,10 +1,10 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri } from '../../types/handlers'
-import { onNavigation } from '../../services/onDefOrRef'
+import { onNavigation } from '../../services/onNavigation'
 import { mockLineNode } from '../utils.spec'
 
-describe('onDefOrRef() Tests', () => {
+describe('onNavigation() Tests', () => {
     const uri = Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction')
     const cacheFile = {
         cache: {
