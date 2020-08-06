@@ -55,7 +55,7 @@ describe('BlockArgumentParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ blockDefinition: blocks, registry: registries })
+        ctx = constructContext({ blockDefinition: blocks, registry: registries, cache: { 'tag/block': { 'minecraft:test': {} } } })
     })
     describe('parse() Tests', () => {
         it('Should return data without states or tag', () => {

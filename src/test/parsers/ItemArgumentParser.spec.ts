@@ -35,7 +35,7 @@ describe('ItemArgumentParser Tests', () => {
     }
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ registry: registries })
+        ctx = constructContext({ registry: registries, cache: { 'tag/item': { 'minecraft:test': {} } } })
     })
     describe('parse() Tests', () => {
         it('Should return data without tag', () => {

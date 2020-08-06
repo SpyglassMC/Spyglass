@@ -190,7 +190,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             // For tags.
             const tagType = IdentityNode.getTagType(this.type as string)!
             this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache, namespaceSummary)
-        } else {
+        } else if (!isTag) {
             if (this.type instanceof Array) {
                 // For array IDs.
                 //#region Errors

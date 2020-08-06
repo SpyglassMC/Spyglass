@@ -72,7 +72,8 @@ describe('IdentityArgumentParser Tests', () => {
         },
         bossbar: {
             'spgoding:bossbar/a': { def: [], ref: [] },
-            'spgoding:bossbar/b': { def: [], ref: [] }
+            'spgoding:bossbar/b': { def: [], ref: [] },
+            'spgoding:QwQ': {}
         },
         'tag/function': {
             'spgoding:function/1': { def: [], ref: [] },
