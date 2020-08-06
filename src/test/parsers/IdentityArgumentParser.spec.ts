@@ -10,6 +10,7 @@ import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
 import { StringReader } from '../../utils/StringReader'
 import { $, assertCompletions } from '../utils.spec'
+import { NodeDescription } from '../../nodes'
 
 describe('IdentityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -68,7 +69,8 @@ describe('IdentityArgumentParser Tests', () => {
     }
     const cache = {
         advancement: {
-            'spgoding:advancement': { def: [], ref: [] }
+            'spgoding:advancement': { def: [], ref: [] },
+            'spgoding:doc_test': { doc: 'This is the doc.' }
         },
         bossbar: {
             'spgoding:bossbar/a': { def: [], ref: [] },
@@ -136,6 +138,11 @@ describe('IdentityArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, $(new IdentityNode(undefined, ['qux']), [0, 3]))
             assert.deepStrictEqual(actual.errors, [])
+        })
+        it('Should return data with the cache doc', () => {
+            const parser = new IdentityArgumentParser('$advancement')
+            const actual = parser.parse(new StringReader('spgoding:doc_test'), ctx)
+            assert.deepStrictEqual(actual.data, $(new IdentityNode('spgoding', ['doc_test'], undefined, '$advancement'), [0, 17], { [NodeDescription]: 'This is the doc.' }))
         })
         it('Should return completions for registry entries', async () => {
             const ctx = constructContext({ registry: registries, cache, cursor: 0 })

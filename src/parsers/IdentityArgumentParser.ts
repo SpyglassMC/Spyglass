@@ -1,6 +1,6 @@
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { NodeRange } from '../nodes/ArgumentNode'
+import { NodeRange, NodeDescription } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { Registry, TextRange } from '../types'
 import { CacheType, ClientCache, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
@@ -536,6 +536,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         //#endregion
+
+        ans.data[NodeDescription] = category[stringID]?.doc ?? ''
     }
 
     getExamples(): string[] {
