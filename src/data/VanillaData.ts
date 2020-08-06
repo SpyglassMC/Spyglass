@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 
-import { COLLECTIONS as JsonCollections } from '@mcschema/core'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
@@ -155,13 +154,6 @@ export async function getVanillaData(versionOrLiteral: string | null, source: Da
         ans[type] = await getSingleVanillaData(
             type, source, version, globalStoragePath, versionInformation.processedVersions, versionInformation.latestSnapshot
         ) as any
-    }
-    for (const key in ans.Registry) {
-        /* istanbul ignore else */
-        if (Object.prototype.hasOwnProperty.call(ans.Registry, key)) {
-            const reg = ans.Registry[key]
-            JsonCollections.register(key.replace(/^minecraft:/, ''), Object.keys(reg.entries))
-        }
     }
     return ans
 }

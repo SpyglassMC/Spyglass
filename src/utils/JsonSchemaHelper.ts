@@ -33,8 +33,7 @@ export class JsonSchemaHelper {
         this.walkAstNode(
             node, path, schema,
             (node, path, schema) => {
-                const restoredValue = this.restoreValueFromNode(node)
-                const selectedSchema = schema.navigate(path, -1, restoredValue)
+                const selectedSchema = schema.navigate(path, -1)
                 const validationOption = selectedSchema?.validationOption(path)
                 if (validationOption) {
                     this.validateFromValidator(ans, node, validationOption, ctx)
@@ -123,8 +122,9 @@ export class JsonSchemaHelper {
 
     private static suggestFromSchema(valuePath: ModelPath, valueNode: ASTNode, replacingNode: ASTNode | undefined, schema: INode, ctx: ParsingContext, atEmptyValue = false): ParserSuggestion[] {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
+        const valueSchema = schema.navigate(valuePath, -1)
         const value = this.restoreValueFromNode(valueNode)
-        const valueSchema = schema.navigate(valuePath, -1, value)
+        
         if (valueNode.type === 'object' && typeof replacingNode?.value === 'string') {
             // Delete the current selected key from `value`, so that the selected key can show in the suggestions.
             delete value[replacingNode.value]
@@ -156,7 +156,7 @@ export class JsonSchemaHelper {
                 const filterText = c.label
 
                 const childValuePath = valuePath.push(key)
-                const childValueSchema = schema.navigate(childValuePath, -1, {} as any)
+                const childValueSchema = schema.navigate(childValuePath, -1)
                 const preselect = childValueSchema?.force()
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
                 const detail = childValuePath.locale()
@@ -460,7 +460,7 @@ export class JsonSchemaHelper {
                 for (const [i, childNode] of node.items.entries()) {
                     const childValue = value?.[i]
                     const childPath = schema.pathPush(path, i)
-                    const childSchema = schema.navigate(childPath, path.getArray().length - 1, value)!
+                    const childSchema = schema.navigate(childPath, path.getArray().length - 1)!
                     set(this.getSelectedNode(childNode, childSchema, childValue, cursor, childPath, 'value'))
                     if (ans.node) {
                         break
@@ -480,7 +480,7 @@ export class JsonSchemaHelper {
                 const childValue = value?.[key]
                 const childPath = schema.pathPush(path, key)
 
-                const childSchema = schema.navigate(childPath, path.getArray().length - 1, value)!
+                const childSchema = schema.navigate(childPath, path.getArray().length - 1)!
                 set(this.getSelectedNode(node.keyNode, childSchema, childValue, cursor, childPath, 'key'))
                 if (!ans.node) {
                     // Key isn't selected.

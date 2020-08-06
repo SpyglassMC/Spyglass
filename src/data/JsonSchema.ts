@@ -1,9 +1,12 @@
-import { SCHEMAS } from '@mcschema/core'
+import { CollectionRegistry } from '@mcschema/core'
+import { getCollections as getFallbackCollections, getSchemas as getFallbackSchemas } from '@mcschema/java-1.16'
 import minimatch from 'minimatch'
-import { JsonSchemaVersion } from '../types'
+import { JsonSchemaVersion, Registry } from '../types'
 import { PathPatterns } from '../utils/PathPatterns'
+import { FallbackRegistry } from './VanillaData'
+import { SchemaRegistry } from '@mcschema/core'
 
-export const FallbackJsonSchemaRegistry = SCHEMAS
+export const FallbackJsonSchemaRegistry = getFallbackSchemas(setUpJsonCollections(getFallbackCollections(), FallbackRegistry))
 
 export type JsonSchemaType =
     | 'advancement'
@@ -68,10 +71,21 @@ export function getJsonSchemaType(rel: string): JsonSchemaType | null {
     return null
 }
 
+function setUpJsonCollections(collections: CollectionRegistry, registry: Registry) {
+    for (const key in registry) {
+        if (Object.prototype.hasOwnProperty.call(registry, key)) {
+            collections.register(key.replace(/^minecraft:/, ''), Object.keys(registry[key].entries))
+        }
+    }
+    return collections
+}
+
 /* istanbul ignore next */
-export async function getJsonSchemas(version: JsonSchemaVersion) {
-    // FIXME: JSON when the registry is moved under different versions.
+export async function getJsonSchemas(version: JsonSchemaVersion, registry: Registry): Promise<SchemaRegistry> {
+    const id = `java-${version}`
     // Note: The stupid Webpack can't load the entry point of a scoped package correctly.
-    await import(`@mcschema/java-${version}/lib/index.js`)
-    return SCHEMAS
+    const { getSchemas, getCollections } = await import(`@mcschema/${id}/lib/index.js`)
+    const collections = getCollections()
+    const schemas = getSchemas(setUpJsonCollections(collections, registry))
+    return schemas
 }

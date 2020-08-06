@@ -33,6 +33,7 @@
         { "type": "bug", "link": "issues/591", "text": "#591" },
         { "type": "bug", "link": "issues/603", "text": "#603" },
         { "type": "bug", "link": "issues/604", "text": "#604" },
+        { "type": "bug", "link": "issues/630", "text": "#630" },
         { "type": "bug", "link": "issues/631", "text": "#631" },
         { "type": "bug", "link": "issues/606", "text": "#606" }
       ]
