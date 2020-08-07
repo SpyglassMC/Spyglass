@@ -62,9 +62,6 @@ Data-pack Language Server can provide many heavy language features for documents
           ]
         }
       ]
-    },
-    "lsp-datapack": {
-      "enabled": false
     }
   },
   "only_show_lsp_completions": true
@@ -74,7 +71,7 @@ Data-pack Language Server can provide many heavy language features for documents
 9. Enjoy. Do note that you need to execute the command in step 2 manually if you want to update the language server.
 
 - TODO (for SPGoding): add a new `mcjson` syntax type instead of using the universal `json` type.
-- TODO (for SPGoding): make a fine-tuned Sublime package, so that the language server can update automatically.
+- TODO (for SPGoding): make a fine-tuned Sublime package, so that the language server can be updated automatically and the user doesn't need to set all these crazy stuff.
 
 ### Visual Studio Code
 
