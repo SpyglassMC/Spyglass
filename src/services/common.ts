@@ -22,33 +22,26 @@ import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { StringReader } from '../utils/StringReader'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
-export function getUri(str: string, uris: UrisOfStrings) {
-    const value = uris.get(str)
-    if (value) {
-        return value
-    } else {
-        const ans = Uri.parse(str)
-        uris.set(str, ans)
-        return ans
-    }
+export function getUri(str: string) {
+    return Uri.parse(str)
 }
 
-export function getRootUri(str: string, uris: UrisOfStrings) {
+export function getRootUri(str: string) {
     if (str[str.length - 1] !== '/') {
         str = `${str}/`
     }
-    return getUri(str, uris)
+    return getUri(str)
 }
 
-export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: Uri): Uri
-export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: undefined): Promise<Uri | null>
-export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
+export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot: Uri): Uri
+export async function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: undefined): Promise<Uri | null>
+export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], urisOfIds: UrisOfIds, id: IdentityNode, category: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
     const idString = id.toString()
     const key = `${category}|${idString}`
 
     if (preferredRoot) {
         const rel = id.toRel(category, 'data')
-        const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString(), uris)
+        const uri = getUri(Uri.file(path.join(preferredRoot.fsPath, rel)).toString())
         return uri
     }
 
@@ -62,7 +55,7 @@ export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], u
         for (const root of roots) {
             const abs = path.join(root.fsPath, rel)
             if (await pathExists(abs)) {
-                const uri = getUri(Uri.file(abs).toString(), uris)
+                const uri = getUri(Uri.file(abs).toString())
                 urisOfIds.set(key, uri)
                 resolve(uri)
             }
