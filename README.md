@@ -10,13 +10,13 @@
 
 Data-pack Language Server can provide many heavy language features for documents in your datapack, including advancements, dimensions, dimension types, functions, loot tables, predicates, recipes, all kinds of tags, and all kinds of worldgen files.
 
-For use please install our VSCode extension: [Data-pack Helper Plus ![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server).
-
 - [Installation](#installation)
   - [For Use](#for-use)
+    - [Sublime Text 3](#sublime-text-3)
+    - [Visual Studio Code](#visual-studio-code)
   - [For Developers](#for-developers)
 - [Contributors](#contributors)
-  - [Contributors for 2.1.0](#contributors-for-210)
+  - [Contributors for 3.0.0](#contributors-for-300)
   - [Contributors for older versions](#contributors-for-older-versions)
   - [Contributing](#contributing)
 
@@ -24,7 +24,60 @@ For use please install our VSCode extension: [Data-pack Helper Plus ![VSCode Mar
 
 ## For Use
 
-We have a [VSCode](https://code.visualstudio.com/) extension for you to install: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
+### Sublime Text 3
+
+1. Install [Node.js](https://nodejs.org/) if you haven't.
+2. Execute `npm i -g @spgoding/datapack-language-server` in your command line to install the language server.
+3. Install [Package Control](https://packagecontrol.io/installation) if you haven't.
+4. Install [Arcensoth](https://github.com/Arcensoth)'s language-mcfunction package by following the [instructions](https://github.com/Arcensoth/language-mcfunction#installing-the-sublimetext-package) if you haven't.
+5. Install [LSP](https://packagecontrol.io/packages/LSP) package.
+6. Open the Command Palette and select `Preferences: LSP Settings`.
+7. Configure LSP to add the Data-pack Language Server. Here's one example:
+```json
+{
+  "clients": {
+    "datapack-language-server": {
+      "command": [
+        "datapack-language-server",
+        "--stdio"
+      ],
+      "enabled": true,
+      "languages": [
+        {
+          "languageId": "mcfunction",
+          "scopes": [
+            "source.mcfunction"
+          ],
+          "syntaxes": [
+            "Packages/language-mcfunction/mcfunction.tmLanguage"
+          ]
+        },
+        {
+          "languageId": "json",
+          "scopes": [
+            "source.json"
+          ],
+          "syntaxes": [
+            "Packages/JavaScript/JSON.sublime-syntax"
+          ]
+        }
+      ]
+    },
+    "lsp-datapack": {
+      "enabled": false
+    }
+  },
+	"only_show_lsp_completions": true
+}
+```
+8. Open the Command Palette, select `LSP: Enable Language Server Globally`, and choose `datapack-language-server`.
+
+- TODO: add a new `mcjson` syntax type instead of using the universal `json` type.
+- TODO: make a fine-tuned Sublime package.
+
+### Visual Studio Code
+
+We have a ready-for-use [VS Code](https://code.visualstudio.com/) extension: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
 
 ## For Developers
 
@@ -39,7 +92,7 @@ them.
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
-## Contributors for 2.1.0
+## Contributors for 3.0.0
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -75,7 +128,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 - [1.0.0](./contributors/1.0.0.md)
 - [2.0.0](./contributors/2.0.0.md)
-- [2.0.1](./contributors/2.0.1.md)
+- [2.1.0](./contributors/2.1.0.md)
 
 ## Contributing
 
