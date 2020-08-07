@@ -36,15 +36,14 @@ export class DatapackLanguageService {
     readonly showInformationMessage: ShowMessage | undefined
     readonly versionInformation: VersionInformation | undefined
 
-    private readonly builders: Map<Uri, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
+    private readonly builders: Map<string, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
     /**
      * Key: `${uriString}|${range}`
      */
     private readonly caches: Map<string, ClientCache> = new Map()
-    private readonly configs: Map<Uri, Config> = new Map()
-    private readonly textDocs: Map<Uri, TextDocument> = new Map()
-    private readonly docs: Map<Uri, Promise<DatapackDocument | undefined>> = new Map()
-    private readonly uris: Map<string, Uri> = new Map()
+    private readonly configs: Map<string, Config> = new Map()
+    private readonly textDocs: Map<string, TextDocument> = new Map()
+    private readonly docs: Map<string, Promise<DatapackDocument | undefined>> = new Map()
     private readonly urisOfIds: Map<string, Uri | null> = new Map()
 
     static readonly GeneralTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
@@ -94,7 +93,7 @@ export class DatapackLanguageService {
      */
     async fetchConfig(uri: Uri) {
         const config = await this.rawFetchConfig(uri)
-        this.configs.set(uri, config)
+        this.configs.set(uri.toString(), config)
         if (this.configs.size > 100) {
             this.configs.clear()
         }
@@ -117,7 +116,7 @@ export class DatapackLanguageService {
             // Cached configs won't be refetched, so fetch everytime.
             return this.fetchConfig(uri)
         }
-        return this.configs.get(uri) ?? this.fetchConfig(uri)
+        return this.configs.get(uri.toString()) ?? this.fetchConfig(uri)
     }
 
     /**
@@ -142,7 +141,7 @@ export class DatapackLanguageService {
         return Promise.all(
             Array
                 .from(this.configs.entries())
-                .map(async ([uri]) => this.fetchConfig(uri))
+                .map(async ([uri]) => this.fetchConfig(this.parseUri(uri)))
         )
     }
 
@@ -177,7 +176,7 @@ export class DatapackLanguageService {
      * @param uri 
      */
     parseUri(uri: string) {
-        return getUri(uri, this.uris)
+        return getUri(uri)
     }
 
     /**
@@ -188,7 +187,7 @@ export class DatapackLanguageService {
      * @param uri 
      */
     parseRootUri(uri: string) {
-        return getRootUri(uri, this.uris)
+        return getRootUri(uri)
     }
 
     /**
@@ -219,7 +218,7 @@ export class DatapackLanguageService {
     getUriFromId(id: IdentityNode, type: FileType, preferredRoot: Uri): Uri
     getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: undefined): Promise<Uri | null>
     getUriFromId(id: IdentityNode, type: FileType, preferredRoot?: Uri): Uri | Promise<Uri | null> {
-        return getUriFromId(this.pathAccessible, this.roots, this.uris, this.urisOfIds, id, type, preferredRoot as any)
+        return getUriFromId(this.pathAccessible, this.roots, this.urisOfIds, id, type, preferredRoot as any)
     }
 
     /**
@@ -228,8 +227,8 @@ export class DatapackLanguageService {
      */
     async getDiagnostics(uri: Uri): Promise<lsp.Diagnostic[]> {
         const ans: lsp.Diagnostic[] = []
-        const textDoc = this.textDocs.get(uri)
-        const doc = await this.docs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
+        const doc = await this.docs.get(uri.toString())
         if (doc && textDoc) {
             const pusher = (err: ParsingError) => {
                 try {
@@ -251,7 +250,7 @@ export class DatapackLanguageService {
      * @param uri A URI object.
      */
     isOpen(uri: Uri) {
-        return this.docs.has(uri) && this.textDocs.has(uri)
+        return this.docs.has(uri.toString()) && this.textDocs.has(uri.toString())
     }
 
     /**
@@ -269,11 +268,11 @@ export class DatapackLanguageService {
      * be cached for use in the `getDocuments` function.
      */
     async parseDocument(textDoc: TextDocument, isReal = false): Promise<DatapackDocument | undefined> {
-        const uri = getUri(textDoc.uri, this.uris)
+        const uri = getUri(textDoc.uri)
         const ans = this.rawParseDocument(textDoc, uri)
         if (isReal) {
-            this.textDocs.set(uri, textDoc)
-            this.docs.set(uri, ans)
+            this.textDocs.set(uri.toString(), textDoc)
+            this.docs.set(uri.toString(), ans)
         }
         return ans
     }
@@ -282,7 +281,7 @@ export class DatapackLanguageService {
      * Re-parse an open document. Have no effects if the specified document isn't open.
      */
     async reparseOpenDocument(uri: Uri) {
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!textDoc) {
             return
         }
@@ -310,8 +309,8 @@ export class DatapackLanguageService {
      */
     async getDocuments(uri: Uri): Promise<{ doc: DatapackDocument | undefined, textDoc: TextDocument | undefined }> {
         try {
-            if (this.docs.has(uri) && this.textDocs.has(uri)) {
-                return { doc: await this.docs.get(uri)!, textDoc: this.textDocs.get(uri)! }
+            if (this.docs.has(uri.toString()) && this.textDocs.has(uri.toString())) {
+                return { doc: await this.docs.get(uri.toString())!, textDoc: this.textDocs.get(uri.toString())! }
             } else {
                 const getText = async () => this.readFile(uri.fsPath)
                 const textDoc = await getTextDocument({ uri, version: null, getText })
@@ -330,8 +329,8 @@ export class DatapackLanguageService {
      * @param textDoc A text document.
      */
     setDocuments(uri: Uri, doc: DatapackDocument | Promise<DatapackDocument>, textDoc: TextDocument): void {
-        this.docs.set(uri, Promise.resolve(doc))
-        this.textDocs.set(uri, textDoc)
+        this.docs.set(uri.toString(), Promise.resolve(doc))
+        this.textDocs.set(uri.toString(), textDoc)
     }
 
     private async rawParseDocument(textDoc: TextDocument, uri: Uri) {
@@ -372,9 +371,9 @@ export class DatapackLanguageService {
     }
 
     async onDidChangeTextDocument(uri: Uri, contentChanges: lsp.TextDocumentContentChangeEvent[], version: number | null) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc)) {
             return
         }
@@ -394,10 +393,10 @@ export class DatapackLanguageService {
     }
 
     onDidCloseTextDocument(uri: Uri) {
-        this.builders.delete(uri)
-        this.configs.delete(uri)
-        this.textDocs.delete(uri)
-        this.docs.delete(uri)
+        this.builders.delete(uri.toString())
+        this.configs.delete(uri.toString())
+        this.textDocs.delete(uri.toString())
+        this.docs.delete(uri.toString())
     }
 
     onDidChangeWorkspaceFolders() {
@@ -405,9 +404,9 @@ export class DatapackLanguageService {
     }
 
     async onCompletion(uri: Uri, position: lsp.Position, context?: lsp.CompletionContext) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.completions)) {
             return null
         }
@@ -448,9 +447,9 @@ export class DatapackLanguageService {
     }
 
     async onSignatureHelp(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.signatures && isMcfunctionDocument(doc))) {
             return null
         }
@@ -466,9 +465,9 @@ export class DatapackLanguageService {
     }
 
     async onFoldingRanges(uri: Uri) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.foldingRanges && isMcfunctionDocument(doc))) {
             return null
         }
@@ -476,9 +475,9 @@ export class DatapackLanguageService {
     }
 
     async onHover(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.hover)) {
             return null
         }
@@ -507,9 +506,9 @@ export class DatapackLanguageService {
     }
 
     async onDocumentFormatting(uri: Uri) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.formatting && isMcfunctionDocument(doc))) {
             return null
         }
@@ -517,8 +516,8 @@ export class DatapackLanguageService {
     }
 
     private async onNavigation(uri: Uri, position: lsp.Position, type: CacheUnitPositionType) {
-        const doc = await this.docs.get(uri)
-        const textDoc = this.textDocs.get(uri)
+        const doc = await this.docs.get(uri.toString())
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc)) {
             return null
         }
@@ -543,9 +542,9 @@ export class DatapackLanguageService {
     }
 
     async onDocumentHighlight(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
 
         if (!(doc && textDoc && config.features.documentHighlighting && isMcfunctionDocument(doc))) {
             return null
@@ -559,8 +558,8 @@ export class DatapackLanguageService {
     }
 
     async onSelectionRanges(uri: Uri, positions: lsp.Position[]) {
-        const doc = await this.docs.get(uri)
-        const textDoc = await this.textDocs.get(uri)
+        const doc = await this.docs.get(uri.toString())
+        const textDoc = this.textDocs.get(uri.toString())
         const config = await this.getConfig(uri)
         if (!(doc && textDoc && config.features.selectionRanges && isMcfunctionDocument(doc))) {
             return null
@@ -569,9 +568,9 @@ export class DatapackLanguageService {
     }
 
     async onCodeAction(uri: Uri, range: lsp.Range, diagnostics: lsp.Diagnostic[]) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.codeActions)) {
             return null
         }
@@ -584,8 +583,8 @@ export class DatapackLanguageService {
     }
 
     async onCallHierarchyPrepare(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
-        const textDoc = this.textDocs.get(uri)
+        const doc = await this.docs.get(uri.toString())
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && isMcfunctionDocument(doc))) {
             return null
         }
@@ -606,8 +605,8 @@ export class DatapackLanguageService {
     }
 
     async onPrepareRename(uri: Uri, position: lsp.Position) {
-        const doc = await this.docs.get(uri)
-        const textDoc = this.textDocs.get(uri)
+        const doc = await this.docs.get(uri.toString())
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && isMcfunctionDocument(doc))) {
             return null
         }
@@ -620,8 +619,8 @@ export class DatapackLanguageService {
     }
 
     async onRename(uri: Uri, position: lsp.Position, newName: string) {
-        const doc = await this.docs.get(uri)
-        const textDoc = this.textDocs.get(uri)
+        const doc = await this.docs.get(uri.toString())
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && isMcfunctionDocument(doc))) {
             return null
         }
@@ -634,9 +633,9 @@ export class DatapackLanguageService {
     }
 
     async onDocumentLinks(uri: Uri) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.documentLinks)) {
             return null
         }
@@ -644,9 +643,9 @@ export class DatapackLanguageService {
     }
 
     async onDocumentColor(uri: Uri) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.colors)) {
             return null
         }
@@ -654,9 +653,9 @@ export class DatapackLanguageService {
     }
 
     async onColorPresentation(uri: Uri, range: lsp.Range, { red: r, green: g, blue: b, alpha: a }: lsp.Color) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.colors)) {
             return null
         }
@@ -666,9 +665,9 @@ export class DatapackLanguageService {
     }
 
     async onSemanticTokens(uri: Uri) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.semanticColoring)) {
             return { data: [] }
         }
@@ -677,9 +676,9 @@ export class DatapackLanguageService {
     }
 
     async onSemanticTokensEdits(uri: Uri, previousResultId: string) {
-        const doc = await this.docs.get(uri)
+        const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
-        const textDoc = this.textDocs.get(uri)
+        const textDoc = this.textDocs.get(uri.toString())
         if (!(doc && textDoc && config.features.semanticColoring)) {
             return { data: [] }
         }
@@ -824,11 +823,11 @@ export class DatapackLanguageService {
 
     private createBuilder(uri: Uri) {
         const builder = new lsp.ProposedFeatures.SemanticTokensBuilder()
-        this.builders.set(uri, builder)
+        this.builders.set(uri.toString(), builder)
         return builder
     }
 
     private getBuilder(uri: Uri) {
-        return this.builders.get(uri) ?? this.createBuilder(uri)
+        return this.builders.get(uri.toString()) ?? this.createBuilder(uri)
     }
 }

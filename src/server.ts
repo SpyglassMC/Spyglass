@@ -17,6 +17,14 @@ import { Config, isRelIncluded, VanillaConfig } from './types/Config'
 import { VersionInformation } from './types/VersionInformation'
 import { pathAccessible, readFile, requestText } from './utils'
 
+if (process.argv.length === 2) {
+    // When the server is launched from the cmd script, the process arguments
+    // are wiped. I don't know why it happens, but this is what it is.
+    // Therefore, we push a '--stdio' if the argument list is too short.
+    // See also my bug report at https://github.com/npm/cli/issues/1633.
+    process.argv.push('--stdio')
+}
+
 const connection = createConnection(ProposedFeatures.all)
 
 let cachePath: string | undefined
@@ -163,12 +171,14 @@ connection.onInitialized(async () => {
         })
     }
 
-    connection.sendNotification('spgoding/datapack/checkServerVersion', {
-        currentVersion: ReleaseNotesVersion,
-        title: locale('server.new-version', ReleaseNotesVersion),
-        action: locale('server.show-release-notes'),
-        url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${ReleaseNotesVersion}`
-    })
+    if (service.capabilities.checkServerVersion) {
+        connection.sendNotification('spgoding/datapack/checkServerVersion', {
+            currentVersion: ReleaseNotesVersion,
+            title: locale('server.new-version', ReleaseNotesVersion),
+            action: locale('server.show-release-notes'),
+            url: `https://github.com/SPGoding/datapack-language-server/wiki/Release-Notes-${ReleaseNotesVersion}`
+        })
+    }
 
     connection.workspace.onDidChangeWorkspaceFolders(async () => {
         if (capabilities.workspaceFolders) {
@@ -275,7 +285,8 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
 
 connection.onCompletion(async ({ textDocument: { uri: uriString }, position, context }) => {
     const uri = service.parseUri(uriString)
-    return service.onCompletion(uri, position, context)
+    const ans = service.onCompletion(uri, position, context)
+    return ans
 })
 
 connection.onSignatureHelp(async ({ textDocument: { uri: uriString }, position }) => {
