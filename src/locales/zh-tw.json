@@ -38,6 +38,7 @@
     "code-action.fix-workspace": "修復當前工作區中所有可自動修復的問題",
     "code-action.id-attribute-datafix": "將該屬性名更新至 1.16",
     "code-action.id-complete-default-namespace": "補完預設命名空間",
+    "code-action.id-create-file": "在同一個資料包中創建%0%",
     "code-action.id-omit-default-namespace": "省略預設命名空間",
     "code-action.id-zombified-piglin-datafix": "將該 ID 升級為殭屍化豬布林",
     "code-action.nbt-compound-sort-keys": "將 NBT 複合標籤按鍵排序",
