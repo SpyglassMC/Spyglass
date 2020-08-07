@@ -11,28 +11,18 @@ import { LineNode } from '../../types/LineNode'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 
 describe('common.ts Tests', () => {
-    describe('getUri() Tests', () => {
-        it('Should return the same object for the same string', () => {
-            const uris = new Map()
-
-            const uri1 = getUri('file:///c:/foo/', uris)
-            const uri2 = getUri('file:///c:/foo/', uris)
-
-            assert(uri1 === uri2)
-        })
-    })
     describe('getRootUri() Tests', () => {
         it('Should append slash', () => {
             const uris = new Map()
 
-            const uri = getRootUri('file:///c:/foo', uris)
+            const uri = getRootUri('file:///c:/foo')
 
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
         it('Should not append slash when already exists', () => {
             const uris = new Map()
 
-            const uri = getRootUri('file:///c:/foo/', uris)
+            const uri = getRootUri('file:///c:/foo/')
 
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
@@ -105,66 +95,58 @@ describe('common.ts Tests', () => {
         const roots = [Uri.parse('file:///c:/foo/'), Uri.parse('file:///c:/bar/')]
         it('Should return cached value', async () => {
             const uri = Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction')
-            const uris: UrisOfStrings = new Map([
-                ['file:///c:/foo/data/spgoding/functions/foo.mcfunction', uri]
-            ])
             const urisOfIds: UrisOfIds = new Map([
                 ['function|spgoding:foo', uri]
             ])
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
+            const actual = await getUriFromId(pathExists, roots, urisOfIds, id, 'function')
 
             assert(uri === actual)
         })
         it('Should return null when cannot resolve', async () => {
-            const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
+            const actual = await getUriFromId(pathExists, roots, urisOfIds, id, 'function')
 
             assert(actual === null)
         })
         it('Should return the uri if the file can be found in root[0]', async () => {
-            const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
             const pathExists = async (abs: string) => {
                 return !!abs.match(/^c:[\\\/]foo[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
+            const actual = await getUriFromId(pathExists, roots, urisOfIds, id, 'function')
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri if the file can be found in root[1]', async () => {
-            const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
             const pathExists = async (abs: string) => {
                 return !!abs.match(/^c:[\\\/]bar[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i)
             }
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function')
+            const actual = await getUriFromId(pathExists, roots, urisOfIds, id, 'function')
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri under the preferred root[0]', async () => {
-            const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function', roots[0])
+            const actual = getUriFromId(pathExists, roots, urisOfIds, id, 'function', roots[0])
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/foo/data/spgoding/functions/foo.mcfunction'))
         })
         it('Should return the uri under the preferred root[1]', async () => {
-            const uris: UrisOfStrings = new Map()
             const urisOfIds: UrisOfIds = new Map()
             const id = new IdentityNode('spgoding', ['foo'])
 
-            const actual = await getUriFromId(pathExists, roots, uris, urisOfIds, id, 'function', roots[1])
+            const actual = getUriFromId(pathExists, roots, urisOfIds, id, 'function', roots[1])
 
             assert.deepStrictEqual(actual, Uri.parse('file:///c:/bar/data/spgoding/functions/foo.mcfunction'))
         })
