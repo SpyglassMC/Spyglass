@@ -38,6 +38,7 @@
     "code-action.fix-workspace": "Alle automatisch behebbaren Probleme im Arbeitsbereich beheben",
     "code-action.id-attribute-datafix": "Den Namen dieses Attributs auf Version 1.16 aktualisieren",
     "code-action.id-complete-default-namespace": "Standardnamensraum vervollständigen",
+    "code-action.id-create-file": "%0% im selben Datenpaket erstellen",
     "code-action.id-omit-default-namespace": "Standardnamensraum auslassen",
     "code-action.id-zombified-piglin-datafix": "ID zu zombified_piglin ändern",
     "code-action.nbt-compound-sort-keys": "NBT-Compound-Eigenschaften sortieren",
