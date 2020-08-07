@@ -38,6 +38,7 @@
     "code-action.fix-workspace": "このワークスペース内のすべての修正可能な問題を一括修正する",
     "code-action.id-attribute-datafix": "このattributeのnameを1.16に更新する",
     "code-action.id-complete-default-namespace": "デフォルトの名前空間を補完する",
+    "code-action.id-create-file": "同じデータパック内に%0%を作成",
     "code-action.id-omit-default-namespace": "デフォルトの名前空間を省略する",
     "code-action.id-zombified-piglin-datafix": "このIDをzombified_piglinに変更します",
     "code-action.nbt-compound-sort-keys": "NBT Compoundタグをソートする",
