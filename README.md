@@ -27,7 +27,7 @@ Data-pack Language Server can provide many heavy language features for documents
 ### Sublime Text 3
 
 1. Install [Node.js](https://nodejs.org/) if you haven't.
-2. Execute `npm i -g @spgoding/datapack-language-server` in your command line to install the language server.
+2. Execute `npm i -g @spgoding/datapack-language-server@beta` in your command line to install the language server.
 3. Install [Package Control](https://packagecontrol.io/installation) if you haven't.
 4. Install [Arcensoth](https://github.com/Arcensoth)'s language-mcfunction package by following the [instructions](https://github.com/Arcensoth/language-mcfunction#installing-the-sublimetext-package) if you haven't.
 5. Install [LSP](https://packagecontrol.io/packages/LSP) package.
