@@ -67,13 +67,14 @@ Data-pack Language Server can provide many heavy language features for documents
       "enabled": false
     }
   },
-	"only_show_lsp_completions": true
+  "only_show_lsp_completions": true
 }
 ```
 8. Open the Command Palette, select `LSP: Enable Language Server Globally`, and choose `datapack-language-server`.
+9. Enjoy. Do note that you need to execute the command in step 2 manually if you want to update the language server.
 
-- TODO: add a new `mcjson` syntax type instead of using the universal `json` type.
-- TODO: make a fine-tuned Sublime package.
+- TODO (for SPGoding): add a new `mcjson` syntax type instead of using the universal `json` type.
+- TODO (for SPGoding): make a fine-tuned Sublime package, so that the language server can update automatically.
 
 ### Visual Studio Code
 
