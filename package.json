@@ -49,7 +49,7 @@
         "@istanbuljs/nyc-config-typescript": "^1.0.1",
         "@semantic-release/changelog": "^5.0.1",
         "@semantic-release/git": "^9.0.0",
-        "@types/clone": "^0.1.30",
+        "@types/clone": "^2.0.0",
         "@types/fs-extra": "^9.0.0",
         "@types/minimatch": "^3.0.3",
         "@types/mocha": "^8.0.0",
