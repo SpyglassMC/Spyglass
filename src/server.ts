@@ -81,6 +81,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         showInformationMessage: connection.window.showInformationMessage.bind(connection.window),
         versionInformation: await getLatestVersions()
     })
+    await service.init()
 
     workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
     await updateRoots(service.roots)

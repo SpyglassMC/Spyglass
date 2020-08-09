@@ -29,11 +29,13 @@ class DocCommentSyntaxComponent implements plugins.SyntaxComponent {
             cache: {}, completions: [], errors: [], tokens: []
         }
         reader.skipWhiteSpace()
-        const isAtBeginning = /^\s*$/.test(reader.passedString)
+        const isAtFileBeginning = /^\s*$/.test(reader.passedString)
         try {
             reader
                 .expect('#')
+                .skip()
                 .expect('>')
+                .skip()
                 .skipWhiteSpace()
             const idResult = new ctx.parsers
                 .Identity('$function', undefined, undefined, undefined, true)

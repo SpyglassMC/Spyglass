@@ -17,7 +17,7 @@ import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
 import { DocNode, PathAccessibleFunction, UrisOfIds } from '../types/handlers'
-import { constructContext } from '../types/ParsingContext'
+import { constructContext, ParsingContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { StringReader } from '../utils/StringReader'
@@ -89,36 +89,60 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
 
 export function parseFunctionNodes(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
     const startPos = textDoc.positionAt(start)
-    const lines = getStringLines(
-        textDoc.getText(Range.create(startPos, textDoc.positionAt(end)))
-    )
     const cache = service.getCache(uri, DatapackLanguageService.FullRange)
+    const string = textDoc.getText()
+    const reader = new StringReader(string, start, end)
+    const ctx = constructContext({
+        cache, config, cursor, textDoc, roots, service,
+        id: getId(uri, roots), rootIndex: getRootIndex(uri, roots)
+    }, commandTree, vanillaData, jsonSchemas)
     const syntaxComponents = languageConfigs?.get(textDoc.languageId)?.syntaxComponents ?? []
-    /* DEBUG */ console.log('syntaxComponents', require('util').inspect(syntaxComponents, true, null))
-    
-    for (const i of lines.keys()) {
-        parseFunctionNode({
-            document: textDoc,
-            start: textDoc.offsetAt(Position.create(startPos.line + i, 0)),
-            end: textDoc.offsetAt(Position.create(startPos.line + i, Infinity)),
-            id: getId(uri, roots),
-            rootIndex: getRootIndex(uri, roots),
-            nodes, config, cache, roots, cursor, commandTree, vanillaData, service, jsonSchemas
-        })
+    let lastCursor = reader.cursor
+    while (reader.cursor < reader.end) {
+        const matchedComponents = syntaxComponents.filter(v => v.test(reader.clone(), ctx))
+        if (matchedComponents.length > 0) {
+            // TODO: Handle correctly when there are multiple matched components.
+            const start = reader.cursor
+            const result = matchedComponents[0].parse(reader, ctx)
+            nodes.push({
+                [NodeRange]: { start, end: reader.cursor },
+                args: [{
+                    data: result.data,
+                    parser: 'syntax_component'
+                }],
+                cache: result.cache,
+                completions: result.completions,
+                errors: result.errors,
+                tokens: result.tokens,
+                hint: { fix: [], options: [] }
+            })
+        } else {
+            parseFunctionNode({
+                textDoc: textDoc,
+                start: reader.cursor,
+                end: textDoc.offsetAt(Position.create(textDoc.positionAt(reader.cursor).line, Infinity)),
+                nodes, reader, ctx
+            })
+        }
+        if (reader.cursor === lastCursor) {
+            console.error(`The language server encounters a dead loop when parsing at [${reader.cursor}] with “${reader.remainingString}”`)
+            break
+        }
+        lastCursor = reader.cursor
     }
 }
 
-export function parseFunctionNode({ service, document, start, end, nodes, config, cache, roots, cursor = -1, commandTree, vanillaData, jsonSchemas, id, rootIndex }: { service: DatapackLanguageService, document: TextDocument, start: number, end: number, nodes: DocNode[], config: Config, cache: ClientCache, roots: Uri[], id: IdentityNode | undefined, rootIndex: number | null, cursor?: number, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
+export function parseFunctionNode({ textDoc, reader, start, end, nodes, ctx }: { textDoc: TextDocument, reader: StringReader, start: number, end: number, nodes: DocNode[], ctx: ParsingContext }) {
     const parser = new LineParser(false, 'line')
-    const string = document.getText()
-    const reader = new StringReader(string, start, end)
+    const string = textDoc.getText()
+    const lineReader = new StringReader(string, start, end)
     let lineEnd = end
-    reader.skipWhiteSpace()
+    lineReader.skipWhiteSpace()
     while (true) {
-        const char = string.charAt(reader.end - 1)
-        if (StringReader.isWhiteSpace(char) && reader.end > start) {
+        const char = string.charAt(lineReader.end - 1)
+        if (StringReader.isWhiteSpace(char) && lineReader.end > start) {
             // Remove the whitespaces at the end of this line
-            reader.end--
+            lineReader.end--
             if (char === '\r' || char === '\n') {
                 // Remove the line breaks after the end of this line
                 lineEnd--
@@ -127,25 +151,17 @@ export function parseFunctionNode({ service, document, start, end, nodes, config
             break
         }
     }
-    if (reader.remainingString.length === 0) {
+    if (lineReader.remainingString.length === 0) {
         // This empty node will be selected in methods like `onCompletion`.
         nodes.push({
             [NodeRange]: { start, end: lineEnd },
             args: [], hint: { fix: [], options: [] }, tokens: []
         })
     } else {
-        const { data } = parser.parse(reader, constructContext({
-            cache,
-            config,
-            cursor,
-            textDoc: document,
-            id,
-            rootIndex,
-            roots,
-            service
-        }, commandTree, vanillaData, jsonSchemas))
+        const { data } = parser.parse(lineReader, ctx)
         nodes.push(data)
     }
+    reader.cursor = lineReader.cursor
 }
 
 export function getRelAndRootIndex(uri: Uri, roots: Uri[]): { rel: string, index: number } | null {
