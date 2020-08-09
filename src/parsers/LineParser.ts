@@ -139,18 +139,15 @@ export class LineParser implements Parser<LineNode> {
             //#region Aliases.
             if (start === reader.cursor) {
                 const category = ctx.cache[`alias/${parser.identity.split('.')[0]}` as CacheType]
-                for (const alias in category) {
-                    /* istanbul ignore else */
-                    if (category.hasOwnProperty(alias)) {
-                        const unit = category[alias]!
-                        completions.push({
-                            label: alias,
-                            insertText: unit.doc,
-                            start: reader.cursor, end: reader.cursor,
-                            detail: unit.doc,
-                            kind: CompletionItemKind.Snippet
-                        })
-                    }
+                for (const alias of Object.keys(category??{})) {
+                    const unit = category![alias]!
+                    completions.push({
+                        label: alias,
+                        insertText: unit.doc,
+                        start: reader.cursor, end: reader.cursor,
+                        detail: unit.doc,
+                        kind: CompletionItemKind.Snippet
+                    })
                 }
             }
             //#endregion
@@ -257,11 +254,8 @@ export class LineParser implements Parser<LineNode> {
     }
 
     private parseAlwaysValidates(reader: StringReader, ctx: ParsingContext, validates: CommandTreeNodes | undefined, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean) {
-        for (const key in validates) {
-            /* istanbul ignore else */
-            if (validates.hasOwnProperty(key)) {
-                this.tryParsingNodeInChildren(reader, ctx, key, validates[key], parsedLine, optional, isFirstArgument, false, true)
-            }
+        for (const key of Object.keys(validates??{})) {
+            this.tryParsingNodeInChildren(reader, ctx, key, validates![key], parsedLine, optional, isFirstArgument, false, true)
         }
     }
 
@@ -293,13 +287,10 @@ export class LineParser implements Parser<LineNode> {
     private parseNormalChildren(reader: StringReader, ctx: ParsingContext, children: CommandTreeNodes, parsedLine: SaturatedLineNode, optional: boolean, isFirstArgument: boolean) {
         const start = reader.cursor
         const hasSoleChild = Object.keys(children).length === 1
-        for (const key in children) {
-            /* istanbul ignore else */
-            if (children.hasOwnProperty(key)) {
-                const result = this.tryParsingNodeInChildren(reader, ctx, key, children[key], parsedLine, optional, isFirstArgument, hasSoleChild)
-                if (result) {
-                    return
-                }
+        for (const key of Object.keys(children)) {
+            const result = this.tryParsingNodeInChildren(reader, ctx, key, children[key], parsedLine, optional, isFirstArgument, hasSoleChild)
+            if (result) {
+                return
             }
         }
         reader.readRemaining()
@@ -341,23 +332,20 @@ export class LineParser implements Parser<LineNode> {
     getHintsInChildren(ctx: ParsingContext, node: CommandTreeNode<any>) {
         const ans: string[] = []
         const children = node.children || {}
-        for (const key in children) {
-            /* istanbul ignore else */
-            if (children.hasOwnProperty(key)) {
-                const line: SaturatedLineNode = {
-                    [NodeRange]: { start: NaN, end: NaN },
-                    args: [],
-                    tokens: [],
-                    hint: { fix: [], options: [] },
-                    cache: {},
-                    completions: [],
-                    errors: []
-                }
-                const subNode = children[key]
-                this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, false, !!node.executable)
-                const option = line.hint.fix[0] ?? ''
-                ans.push(option)
+        for (const key of Object.keys(children)) {
+            const line: SaturatedLineNode = {
+                [NodeRange]: { start: NaN, end: NaN },
+                args: [],
+                tokens: [],
+                hint: { fix: [], options: [] },
+                cache: {},
+                completions: [],
+                errors: []
             }
+            const subNode = children[key]
+            this.parseSingle(new StringReader(''), { ...ctx, cursor: -1 }, key, subNode, line, false, !!node.executable)
+            const option = line.hint.fix[0] ?? ''
+            ans.push(option)
         }
         return ans
     }

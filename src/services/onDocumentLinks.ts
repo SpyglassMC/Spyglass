@@ -9,26 +9,23 @@ export async function onDocumentLinks({ doc, textDoc, service }: { doc: Datapack
         const ans: DocumentLink[] = []
 
         for (const { cache } of doc.nodes) {
-            for (const type in cache) {
+            for (const type of Object.keys(cache ?? {})) {
                 if (isFileType(type)) {
-                    const category = cache[type]
-                    for (const id in category) {
-                        /* istanbul ignore next */
-                        if (category.hasOwnProperty(id)) {
-                            const unit = category[id] as CacheUnit
-                            const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
-                            for (const pos of ref) {
-                                const link = {
-                                    range: {
-                                        start: textDoc.positionAt(pos.start),
-                                        end: textDoc.positionAt(pos.end)
-                                    },
-                                    target: await service.getUriFromId(IdentityNode.fromString(id), type)
-                                }
-                                /* istanbul ignore next */
-                                if (link.target) {
-                                    ans.push({ range: link.range, target: link.target.toString() })
-                                }
+                    const category = cache![type]
+                    for (const id of Object.keys(category ?? {})) {
+                        const unit = category![id] as CacheUnit
+                        const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
+                        for (const pos of ref) {
+                            const link = {
+                                range: {
+                                    start: textDoc.positionAt(pos.start),
+                                    end: textDoc.positionAt(pos.end)
+                                },
+                                target: await service.getUriFromId(IdentityNode.fromString(id), type)
+                            }
+                            /* istanbul ignore next */
+                            if (link.target) {
+                                ans.push({ range: link.range, target: link.target.toString() })
                             }
                         }
                     }

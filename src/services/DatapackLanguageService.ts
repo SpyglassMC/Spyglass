@@ -5,16 +5,37 @@ import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageS
 import * as lsp from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onNavigation, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
+import { plugins } from '..'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
+import { LanguageConfig } from '../plugins/LanguageConfigImpl'
+import { PluginLoader } from '../plugins/PluginLoader'
 import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
 
 type ShowMessage = (message: string) => void
+
+type DatapackLanguageServiceOptions = {
+    applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
+    cacheFile?: CacheFile,
+    capabilities?: ClientCapabilities,
+    createWorkDoneProgress?: CreateWorkDoneProgressFunction,
+    defaultLocaleCode?: string,
+    fetchConfig?: FetchConfigFunction,
+    globalStoragePath?: string,
+    jsonService?: JsonLanguageService,
+    pathAccessible?: PathAccessibleFunction,
+    plugins?: Map<string, plugins.Plugin>,
+    publishDiagnostics?: PublishDiagnosticsFunction,
+    readFile?: ReadFileFunction,
+    roots?: Uri[],
+    showInformationMessage?: ShowMessage,
+    versionInformation?: VersionInformation
+}
 
 export class DatapackLanguageService {
     readonly applyEdit: ((edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>) | undefined
@@ -46,43 +67,36 @@ export class DatapackLanguageService {
     private readonly docs: Map<string, Promise<DatapackDocument | undefined>> = new Map()
     private readonly urisOfIds: Map<string, Uri | null> = new Map()
 
+    private readonly plugins: Map<string, plugins.Plugin>
+    private languageConfigs: Map<string, LanguageConfig>
+
     static readonly GeneralTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
     static readonly McfunctionTriggerCharacters = [',', '{', '[']
     static readonly AllTriggerCharacters = DatapackLanguageService.GeneralTriggerCharacters.concat(DatapackLanguageService.McfunctionTriggerCharacters)
     static readonly AllCommitCharacters = [' ', ',', '{', '[', '=', ':', '/', "'", '"', '.', '}', ']']
     static readonly FullRange: lsp.Range = { start: { line: 0, character: 0 }, end: { line: Infinity, character: Infinity } }
 
-    constructor(options?: {
-        applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
-        cacheFile?: CacheFile,
-        capabilities?: ClientCapabilities,
-        createWorkDoneProgress?: CreateWorkDoneProgressFunction,
-        defaultLocaleCode?: string,
-        fetchConfig?: FetchConfigFunction,
-        globalStoragePath?: string,
-        jsonService?: JsonLanguageService,
-        pathAccessible?: PathAccessibleFunction,
-        publishDiagnostics?: PublishDiagnosticsFunction,
-        readFile?: ReadFileFunction,
-        roots?: Uri[],
-        showInformationMessage?: ShowMessage,
-        versionInformation?: VersionInformation
-    }) {
+    constructor(options: DatapackLanguageServiceOptions = {}) {
         this.capabilities = Object.freeze(options?.capabilities ?? getClientCapabilities())
 
-        this.applyEdit = this.capabilities.applyEdit ? options?.applyEdit : undefined
-        this.cacheFile = options?.cacheFile ?? rfdc()(DefaultCacheFile)
-        this.createWorkDoneProgress = this.capabilities.workDoneProgress ? options?.createWorkDoneProgress : undefined
-        this.defaultLocaleCode = options?.defaultLocaleCode ?? 'en'
-        this.globalStoragePath = options?.globalStoragePath
-        this.jsonService = options?.jsonService ?? getJsonLanguageService({ promiseConstructor: SynchronousPromise })
-        this.pathAccessible = options?.pathAccessible ?? pathAccessible
-        this.rawFetchConfig = (this.capabilities.configuration ? options?.fetchConfig : undefined) ?? (async () => VanillaConfig)
-        this.rawPublishDiagnostics = this.capabilities.diagnostics ? options?.publishDiagnostics : undefined
-        this.readFile = options?.readFile ?? readFile
-        this.roots = options?.roots ?? []
-        this.showInformationMessage = options?.showInformationMessage
-        this.versionInformation = options?.versionInformation
+        this.applyEdit = this.capabilities.applyEdit ? options.applyEdit : undefined
+        this.cacheFile = options.cacheFile ?? rfdc()(DefaultCacheFile)
+        this.createWorkDoneProgress = this.capabilities.workDoneProgress ? options.createWorkDoneProgress : undefined
+        this.defaultLocaleCode = options.defaultLocaleCode ?? 'en'
+        this.globalStoragePath = options.globalStoragePath
+        this.jsonService = options.jsonService ?? getJsonLanguageService({ promiseConstructor: SynchronousPromise })
+        this.pathAccessible = options.pathAccessible ?? pathAccessible
+        this.plugins = options.plugins ?? new Map()
+        this.rawFetchConfig = (this.capabilities.configuration ? options.fetchConfig : undefined) ?? (async () => VanillaConfig)
+        this.rawPublishDiagnostics = this.capabilities.diagnostics ? options.publishDiagnostics : undefined
+        this.readFile = options.readFile ?? readFile
+        this.roots = options.roots ?? []
+        this.showInformationMessage = options.showInformationMessage
+        this.versionInformation = options.versionInformation
+    }
+
+    async init() {
+        this.languageConfigs = await PluginLoader.getContributions(this.plugins)
     }
 
     /**
@@ -366,7 +380,7 @@ export class DatapackLanguageService {
 
     private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
         const ans: LineNode[] = []
-        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas)
+        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas, this.languageConfigs)
         return ans
     }
 
@@ -699,8 +713,8 @@ export class DatapackLanguageService {
 
     async createFile(root: Uri, type: FileType, id: IdentityNode) {
         const fileUri = this.getUriFromId(id, type, root)
-        const newText = type === 'function' ? '' : await (async ()=>{
-            const config =await this.getConfig(fileUri)
+        const newText = type === 'function' ? '' : await (async () => {
+            const config = await this.getConfig(fileUri)
             const vanillaData = await this.getVanillaData(config)
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             const rel = this.getRel(fileUri)

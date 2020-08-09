@@ -92,7 +92,7 @@
       "profile": "https://github.com/lakejason0",
       "contributions": [],
       "details": [
-        { "type": "localization", "link": "commits?author=lakejason0", "text": "Japanese (zh-tw)" }
+        { "type": "localization", "link": "commits?author=lakejason0", "text": "Chinese (Traditional) (zh-tw)" }
       ]
     },
     {
@@ -110,7 +110,7 @@
       "profile": "https://github.com/pca006132",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/605", "text": "#605" }
+        { "type": "ideas", "link": "issues/605", "text": "#605" }
       ]
     }
   ],

@@ -65,12 +65,9 @@ export function fillSingleTemplate(currentNode: CommandTreeNode<any>, singleTemp
  */
 export function fillChildrenTemplate(currentNode: CommandTreeNode<any>, childrenTemplate: CommandTreeNodes): CommandTreeNodes {
     const ans: CommandTreeNodes = {}
-    for (const key in childrenTemplate) {
-        /* istanbul ignore else */
-        if (childrenTemplate.hasOwnProperty(key)) {
-            const node = childrenTemplate[key]
-            ans[key] = fillSingleTemplate(currentNode, node)
-        }
+    for (const key of Object.keys(childrenTemplate)) {
+        const node = childrenTemplate[key]
+        ans[key] = fillSingleTemplate(currentNode, node)
     }
     return ans
 }

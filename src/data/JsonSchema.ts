@@ -1,10 +1,9 @@
-import { CollectionRegistry } from '@mcschema/core'
+import { CollectionRegistry, SchemaRegistry } from '@mcschema/core'
 import { getCollections as getFallbackCollections, getSchemas as getFallbackSchemas } from '@mcschema/java-1.16'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion, Registry } from '../types'
 import { PathPatterns } from '../utils/PathPatterns'
 import { FallbackRegistry } from './VanillaData'
-import { SchemaRegistry } from '@mcschema/core'
 
 export const FallbackJsonSchemaRegistry = getFallbackSchemas(setUpJsonCollections(getFallbackCollections(), FallbackRegistry))
 
@@ -72,10 +71,8 @@ export function getJsonSchemaType(rel: string): JsonSchemaType | null {
 }
 
 function setUpJsonCollections(collections: CollectionRegistry, registry: Registry) {
-    for (const key in registry) {
-        if (Object.prototype.hasOwnProperty.call(registry, key)) {
-            collections.register(key.replace(/^minecraft:/, ''), Object.keys(registry[key].entries))
-        }
+    for (const key of Object.keys(registry)) {
+        collections.register(key.replace(/^minecraft:/, ''), Object.keys(registry[key].entries))
     }
     return collections
 }

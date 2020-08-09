@@ -36,7 +36,7 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
                         undefined, undefined, FoldingRangeKind.Region
                     ))
                 }
-                for (const levelString in commentStartLines) {
+                for (const levelString of Object.keys(commentStartLines)) {
                     // End normal comments.
                     const level = parseFloat(levelString)
                     ans.push(FoldingRange.create(
@@ -47,7 +47,7 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
                 }
             } else {
                 const amount = getCommentSymbolAmount(string)
-                for (const levelString in commentStartLines) {
+                for (const levelString of Object.keys(commentStartLines)) {
                     const level = parseFloat(levelString)
                     if (amount > 0 && level >= amount && commentStartLines[level] !== undefined) {
                         // End equal-or-lower-level comments.

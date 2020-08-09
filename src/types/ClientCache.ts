@@ -1,10 +1,10 @@
 import rfdc from 'rfdc'
 import { MarkupKind, Position, Range } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
+import { IdentityNode } from '../nodes'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
-import { IdentityNode } from '../nodes'
 
 export const CacheVersion = 10
 
@@ -114,6 +114,10 @@ export type CacheCategory = {
 export type CacheUnitPositionType = 'dcl' | 'def' | 'ref'
 export const CacheUnitPositionTypes: CacheUnitPositionType[] = ['dcl', 'def', 'ref']
 
+export function isCacheUnitPositionType(value: string): value is CacheUnitPositionType {
+    return CacheUnitPositionTypes.includes(value as any)
+}
+
 /**
  * An unit in `CacheCategory`.
  */
@@ -130,10 +134,13 @@ export type CacheUnit = {
 export interface CachePosition extends TextRange {
     uri?: string,
     /**
-     * An array of objects describing the visibility of this element. It's up to the 
-     * plugins of this language server to interpret them.
+     * An array of identities describing the visibility of this element.
      */
-    visibility?: any[],
+    visibility?: string[],
+    /**
+     * The scope of this position.
+     */
+    scope?: TextRange,
     startLine?: number,
     startChar?: number,
     endLine?: number,
@@ -141,9 +148,9 @@ export interface CachePosition extends TextRange {
 }
 
 export function getCacheFromOffset(cache: ClientCache, offset: number) {
-    for (const type in cache) {
+    for (const type of Object.keys(cache)) {
         const category = cache[type as CacheType] as CacheCategory
-        for (const id in category) {
+        for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
             for (const t of CacheUnitPositionTypes) {
                 for (const ele of unit[t] ?? []) {
@@ -158,9 +165,9 @@ export function getCacheFromOffset(cache: ClientCache, offset: number) {
 }
 
 export function remapCachePosition(cache: ClientCache, mapping: IndexMapping) {
-    for (const type in cache) {
+    for (const type of Object.keys(cache)) {
         const category = cache[type as CacheType] as CacheCategory
-        for (const id in category) {
+        for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
             for (const t of CacheUnitPositionTypes) {
                 if (unit[t]) {
@@ -172,9 +179,9 @@ export function remapCachePosition(cache: ClientCache, mapping: IndexMapping) {
 }
 
 export function removeCachePosition(cache: ClientCache, uri: Uri) {
-    for (const type in cache) {
+    for (const type of Object.keys(cache)) {
         const category = cache[type as CacheType] as CacheCategory
-        for (const id in category) {
+        for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
             for (const t of CacheUnitPositionTypes) {
                 if (unit[t]) {
@@ -216,10 +223,10 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
         }
         arr.push(pos)
     }
-    for (const type in override) {
+    for (const type of Object.keys(override)) {
         const overrideCategory = override[type as CacheType]
-        for (const id in overrideCategory) {
-            const overrideUnit = overrideCategory[id] as CacheUnit
+        for (const id of Object.keys(overrideCategory ?? {})) {
+            const overrideUnit = overrideCategory![id] as CacheUnit
             if (overrideUnit.dcl?.length || overrideUnit.def?.length || overrideUnit.ref?.length || overrideUnit.doc) {
                 const ansUnit = initUnit(type as CacheType, id)
                 for (const type of CacheUnitPositionTypes) {
@@ -308,9 +315,9 @@ export function isNamespacedType(type: CacheType): type is NamespacedType {
 }
 
 export function trimCache(cache: ClientCache) {
-    for (const type in cache) {
+    for (const type of Object.keys(cache)) {
         const category = cache[type as CacheType] as CacheCategory
-        for (const id in category) {
+        for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
             if (!unit.dcl?.length && !unit.def?.length && !unit.ref?.length) {
                 delete category[id]
@@ -327,9 +334,12 @@ export function trimCache(cache: ClientCache) {
  */
 export function getCacheForUri(cache: ClientCache, _uri: Uri, _range: Range) {
     const ans = rfdc()(cache)
-    for (const type in ans) {
-        const category = ans[type as CacheType] as CacheCategory
-        for (const id in category) {
+    for (const type of Object.keys(ans)) {
+        const category = ans[type as CacheType]
+        if (!category) {
+            continue
+        }
+        for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
             // TODO (#319): check the access modifier here by calling plugins
             if (!unit.dcl?.length && !unit.def?.length) {
@@ -356,7 +366,7 @@ export function setUpUnit(cache: ClientCache | undefined, type: CacheType, id: I
 export function getCompletions(cache: ClientCache, type: CacheType, start: number, end: number) {
     const category = getSafeCategory(cache, type)
     const ans: ParserSuggestion[] = []
-    for (const id in category) {
+    for (const id of Object.keys(category)) {
         const unit = category[id] as CacheUnit
         const documentation = unit.doc || undefined
         ans.push({

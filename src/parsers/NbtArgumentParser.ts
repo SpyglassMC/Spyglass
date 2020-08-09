@@ -603,19 +603,16 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 const failedToMatchAllPatterns = Symbol('failed to match all patterns')
                 try {
                     // Try parsing as a number.
-                    for (const type in NbtArgumentParser.Patterns) {
-                        /* istanbul ignore else */
-                        if (NbtArgumentParser.Patterns.hasOwnProperty(type)) {
-                            const [pattern, func] = NbtArgumentParser.Patterns[type]
-                            if (pattern.test(value)) {
-                                const rawValue = pattern.exec(value)![1]
-                                ans.data = func(superNode, rawValue)
-                                //#region Tokens
-                                ans.tokens.push(Token.from(start, reader, TokenType.number))
-                                //#endregion
-                                ans.data[NodeRange] = { start, end: reader.cursor }
-                                return ans
-                            }
+                    for (const type of Object.keys(NbtArgumentParser.Patterns)) {
+                        const [pattern, func] = NbtArgumentParser.Patterns[type]
+                        if (pattern.test(value)) {
+                            const rawValue = pattern.exec(value)![1]
+                            ans.data = func(superNode, rawValue)
+                            //#region Tokens
+                            ans.tokens.push(Token.from(start, reader, TokenType.number))
+                            //#endregion
+                            ans.data[NodeRange] = { start, end: reader.cursor }
+                            return ans
                         }
                     }
                     throw failedToMatchAllPatterns

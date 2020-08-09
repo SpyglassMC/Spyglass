@@ -1,7 +1,7 @@
 import path from 'path'
 import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { isInternalType, getCacheFromOffset, getSafeCategory, isFileType, isNamespacedType, removeCachePosition, CacheUnitPositionTypes } from '../types/ClientCache'
+import { CacheUnitPositionTypes, getCacheFromOffset, getSafeCategory, isCacheUnitPositionType, isFileType, isInternalType, isNamespacedType, removeCachePosition } from '../types/ClientCache'
 import { DocNode, Uri } from '../types/handlers'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
@@ -20,9 +20,8 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                 const newID = isNamespacedType(result.type) ? IdentityNode.fromString(newName).toString() : newName
 
                 // Change function contents.
-                for (const key in unit) {
-                    /* istanbul ignore else */
-                    if (key === 'dcl' || key === 'def' || key === 'ref') {
+                for (const key of Object.keys(unit)) {
+                    if (isCacheUnitPositionType(key)) {
                         for (const pos of unit[key] ?? []) {
                             const affectedUri = service.parseUri(pos.uri!)
                             const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
@@ -40,7 +39,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                                 })
                             }
                         }
-                    }
+                    } 
                 }
 
                 // Rename file if necessary.

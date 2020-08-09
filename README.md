@@ -110,11 +110,11 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   </tr>
   <tr>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Coffee</a></td>
-    <td align="center"><a href="https://github.com/lakejason0"><img src="https://avatars1.githubusercontent.com/u/36039861?s=460&v=4" width="64px;" alt=""/><br /><sub><b>lakejason0</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=lakejason0" target="_blank" title="Localization">🌐 Japanese (zh-tw)</a></td>
+    <td align="center"><a href="https://github.com/lakejason0"><img src="https://avatars1.githubusercontent.com/u/36039861?s=460&v=4" width="64px;" alt=""/><br /><sub><b>lakejason0</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=lakejason0" target="_blank" title="Localization">🌐 Chinese (Traditional) (zh-tw)</a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/434" target="_blank" title="Bug reports">🐛 #434</a></td>
-    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Bug reports">🐛 #605</a></td>
+    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Ideas, Planning, and Feedback">✨ #605</a></td>
   </tr>
 </table>
 

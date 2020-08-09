@@ -10,12 +10,13 @@ import { VanillaData } from '../data/VanillaData'
 import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LineParser } from '../parsers/LineParser'
+import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
 import { CacheFile, ClientCache, FileType } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
-import { DocNode, PathAccessibleFunction, UrisOfIds, UrisOfStrings } from '../types/handlers'
+import { DocNode, PathAccessibleFunction, UrisOfIds } from '../types/handlers'
 import { constructContext } from '../types/ParsingContext'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
@@ -86,17 +87,20 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
     return ans
 }
 
-export function parseFunctionNodes(service: DatapackLanguageService, document: TextDocument, start: number = 0, end: number = document.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry) {
-    const startPos = document.positionAt(start)
+export function parseFunctionNodes(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
+    const startPos = textDoc.positionAt(start)
     const lines = getStringLines(
-        document.getText(Range.create(startPos, document.positionAt(end)))
+        textDoc.getText(Range.create(startPos, textDoc.positionAt(end)))
     )
     const cache = service.getCache(uri, DatapackLanguageService.FullRange)
+    const syntaxComponents = languageConfigs?.get(textDoc.languageId)?.syntaxComponents ?? []
+    /* DEBUG */ console.log('syntaxComponents', require('util').inspect(syntaxComponents, true, null))
+    
     for (const i of lines.keys()) {
         parseFunctionNode({
-            document: document,
-            start: document.offsetAt(Position.create(startPos.line + i, 0)),
-            end: document.offsetAt(Position.create(startPos.line + i, Infinity)),
+            document: textDoc,
+            start: textDoc.offsetAt(Position.create(startPos.line + i, 0)),
+            end: textDoc.offsetAt(Position.create(startPos.line + i, Infinity)),
             id: getId(uri, roots),
             rootIndex: getRootIndex(uri, roots),
             nodes, config, cache, roots, cursor, commandTree, vanillaData, service, jsonSchemas

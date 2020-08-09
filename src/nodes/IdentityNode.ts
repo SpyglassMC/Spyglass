@@ -3,7 +3,7 @@ import path, { sep } from 'path'
 import { CodeActionKind } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { ParsingContext } from '../types'
-import { CacheType, FileType, getFileTypeFromCategory, isTagFileType, isWorldgenRegistryFileType, TagFileType, WorldgenFileType, isFileType } from '../types/ClientCache'
+import { CacheType, FileType, getFileTypeFromCategory, isFileType, isTagFileType, isWorldgenRegistryFileType, TagFileType, WorldgenFileType } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString } from '../types/Formattable'
 import { ErrorCode } from '../types/ParsingError'
@@ -122,12 +122,12 @@ export class IdentityNode extends ArgumentNode {
             }
             if (cacheType && isFileType(cacheType) && ctx.rootIndex !== null) {
                 ans.push({
-                    title: locale('code-action.id-create-file'),
+                    title: locale('code-action.id-create-file', this.toTagString()),
                     kind: CodeActionKind.QuickFix,
                     diagnostics: unknownDiagnostics,
                     command: {
                         command: 'datapack.createFile',
-                        title: locale('code-action.id-create-file'),
+                        title: locale('code-action.id-create-file', this.toTagString()),
                         arguments: [cacheType, this.toString(), ctx.roots[ctx.rootIndex].toString()]
                     }
                 })
@@ -186,9 +186,7 @@ export class IdentityNode extends ArgumentNode {
         const ext = path.extname(rel)
         const side = segs[0]
         if (side === 'data') {
-            for (const type in PathPatterns) {
-                /* istanbul ignore else */
-                if (Object.prototype.hasOwnProperty.call(PathPatterns, type)) {
+            for (const type of Object.keys(PathPatterns)) {
                     const fileType = type as FileType
                     const pattern = PathPatterns[fileType]
                     if (minimatch(rel, pattern, { dot: true })) {
@@ -217,7 +215,6 @@ export class IdentityNode extends ArgumentNode {
                         const id = new IdentityNode(namespace, paths, undefined, `$${category}`)
                         return { category, ext, id, side }
                     }
-                }
             }
         }
         return undefined

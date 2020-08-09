@@ -1,3 +1,5 @@
+import clone from 'clone'
+import rfdc from 'rfdc'
 import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapParserSuggestion, removeDupliateCompletions, validateStringQuote } from '.'
@@ -36,8 +38,6 @@ import { QuoteTypeConfig } from '../types/QuoteTypeConfig'
 import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfig'
 import { remapTokens } from '../types/Token'
 import { StringReader } from './StringReader'
-import rfdc from 'rfdc'
-import clone from 'clone'
 
 type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
@@ -316,21 +316,19 @@ export class NbtdocHelper {
         const { et } = this.readEnum(doc.Enum)
         const type: 'Byte' | 'Short' | 'Int' | 'Long' | 'Float' | 'Double' | 'String' = NbtdocHelper.getValueType(et) as any
         const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
-        for (const key in options) {
-            if (options.hasOwnProperty(key)) {
-                const { description, value } = options[key]
-                const handledDescription = NbtdocHelper.handleDescription(description)
-                ans.completions.push({
-                    start, end,
-                    label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
-                    detail: NbtdocHelper.localeType(type),
-                    documentation: {
-                        kind: 'markdown',
-                        value: handledDescription ? `${key}  \n${handledDescription}` : key
-                    },
-                    kind: CompletionItemKind.EnumMember
-                })
-            }
+        for (const key of Object.keys(options)) {
+            const { description, value } = options[key]
+            const handledDescription = NbtdocHelper.handleDescription(description)
+            ans.completions.push({
+                start, end,
+                label: NbtdocHelper.getFormattedString(ctx.config.lint, type, value),
+                detail: NbtdocHelper.localeType(type),
+                documentation: {
+                    kind: 'markdown',
+                    value: handledDescription ? `${key}  \n${handledDescription}` : key
+                },
+                kind: CompletionItemKind.EnumMember
+            })
         }
     }
     private completeIdField(ans: LegacyValidateResult, ctx: ParsingContext, doc: IdDoc, isPredicate: boolean) {
@@ -530,30 +528,27 @@ export class NbtdocHelper {
 
     private validateCompoundDoc(ans: LegacyValidateResult, ctx: ParsingContext, node: NbtCompoundNode, doc: nbtdoc.CompoundTag | null, isPredicate: boolean) {
         if (doc) {
-            for (const key in node) {
-                /* istanbul ignore else */
-                if (node.hasOwnProperty(key)) {
-                    const childNode = node[key]
-                    const field = this.readField(doc, key, node)
-                    if (field) {
-                        // Hover information.
-                        node[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
-                        this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
-                    } else {
-                        // Errors.
-                        if (!this.isInheritFromItemBase(doc, node/* [SuperNode] */)) {
-                            let code: ErrorCode | undefined
-                            //#region UUID datafix: #377
-                            if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
-                                code = ErrorCode.NbtUuidDatafixUnknownKey
-                            }
-                            //#endregion
-                            ans.errors.push(new ParsingError(
-                                node[Keys][key][NodeRange],
-                                locale('unknown-key', locale('punc.quote', key)),
-                                true, DiagnosticSeverity.Warning, code
-                            ))
+            for (const key of Object.keys(node)) {
+                const childNode = node[key]
+                const field = this.readField(doc, key, node)
+                if (field) {
+                    // Hover information.
+                    node[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
+                    this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
+                } else {
+                    // Errors.
+                    if (!this.isInheritFromItemBase(doc, node/* [SuperNode] */)) {
+                        let code: ErrorCode | undefined
+                        //#region UUID datafix: #377
+                        if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {
+                            code = ErrorCode.NbtUuidDatafixUnknownKey
                         }
+                        //#endregion
+                        ans.errors.push(new ParsingError(
+                            node[Keys][key][NodeRange],
+                            locale('unknown-key', locale('punc.quote', key)),
+                            true, DiagnosticSeverity.Warning, code
+                        ))
                     }
                 }
             }
@@ -681,17 +676,14 @@ export class NbtdocHelper {
         if (shouldValidate) {
             const options: { [key: string]: nbtdoc.EnumOption<number | string> } = (et as any)[type]
             const optionValues: string[] = []
-            for (const key in options) {
-                /* istanbul ignore else */
-                if (options.hasOwnProperty(key)) {
-                    const { description, value } = options[key]
-                    optionValues.push(value.toString())
-                    // Hover information.
-                    const handledDescription = NbtdocHelper.handleDescription(description)
-                    if (tag.valueOf() == value) {
-                        const hoverText = handledDescription ? `${key} - ${handledDescription}` : key
-                        tag[NodeDescription] += `\n\n${hoverText}`
-                    }
+            for (const key of Object.keys(options)) {
+                const { description, value } = options[key]
+                optionValues.push(value.toString())
+                // Hover information.
+                const handledDescription = NbtdocHelper.handleDescription(description)
+                if (tag.valueOf() == value) {
+                    const hoverText = handledDescription ? `${key} - ${handledDescription}` : key
+                    tag[NodeDescription] += `\n\n${hoverText}`
                 }
             }
             // Errors.
@@ -975,27 +967,25 @@ export class NbtdocHelper {
         if (!properties) {
             return null
         }
-        for (const key in properties) {
-            if (properties.hasOwnProperty(key)) {
-                const mockEnumIndex = this.mockEnumIndexNext--
-                const mockEnum: any = this.mockEnumArena[mockEnumIndex] = {
-                    description: '',
-                    et: { String: {} }
-                }
+        for (const key of Object.keys(properties)) {
+            const mockEnumIndex = this.mockEnumIndexNext--
+            const mockEnum: any = this.mockEnumArena[mockEnumIndex] = {
+                description: '',
+                et: { String: {} }
+            }
 
-                const values = properties[key]
-                for (const value of values) {
-                    mockEnum.et.String[value] = {
-                        description: '',
-                        value
-                    }
-                }
-
-                ans.fields[key] = {
+            const values = properties[key]
+            for (const value of values) {
+                mockEnum.et.String[value] = {
                     description: '',
-                    nbttype: {
-                        Enum: mockEnumIndex
-                    }
+                    value
+                }
+            }
+
+            ans.fields[key] = {
+                description: '',
+                nbttype: {
+                    Enum: mockEnumIndex
                 }
             }
         }
@@ -1032,26 +1022,23 @@ export class NbtdocHelper {
                 if (index !== null && !mergedDocs.has(index)) {
                     mergedDocs.add(index)
                     const doc = root.compound_arena[index]
-                    for (const key in doc.fields) {
-                        /* istanbul ignore else */
-                        if (Object.prototype.hasOwnProperty.call(doc.fields, key)) {
-                            const ansField = ans!.fields[key]
-                            const field = doc.fields[key]
-                            if (this.isOrDoc(field.nbttype) && field.nbttype.Or.length === 0) {
-                                continue
-                            }
-                            if (ansField) {
-                                if (this.isOrDoc(ansField.nbttype)) {
-                                    ansField.nbttype.Or.push(field.nbttype)
-                                } else {
-                                    ans!.fields[key] = {
-                                        description: ansField.description,
-                                        nbttype: { Or: [ansField.nbttype, field.nbttype] }
-                                    }
-                                }
+                    for (const key of Object.keys(doc.fields)) {
+                        const ansField = ans!.fields[key]
+                        const field = doc.fields[key]
+                        if (this.isOrDoc(field.nbttype) && field.nbttype.Or.length === 0) {
+                            continue
+                        }
+                        if (ansField) {
+                            if (this.isOrDoc(ansField.nbttype)) {
+                                ansField.nbttype.Or.push(field.nbttype)
                             } else {
-                                ans!.fields[key] = field
+                                ans!.fields[key] = {
+                                    description: ansField.description,
+                                    nbttype: { Or: [ansField.nbttype, field.nbttype] }
+                                }
                             }
+                        } else {
+                            ans!.fields[key] = field
                         }
                     }
                     merge(doc.supers && !NbtdocHelper.isRegistrySupers(doc.supers) ? doc.supers.Compound : null)
@@ -1059,11 +1046,9 @@ export class NbtdocHelper {
             }
 
             const registry = root.registries[type][0]
-            for (const key in registry) {
-                if (Object.prototype.hasOwnProperty.call(registry, key)) {
-                    const index = registry[key]
-                    merge(index)
-                }
+            for (const key of Object.keys(registry)) {
+                const index = registry[key]
+                merge(index)
             }
 
             this.CompiledFallbacks[type] = ans

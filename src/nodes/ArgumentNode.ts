@@ -40,20 +40,17 @@ export abstract class ArgumentNode implements Formattable {
 
     protected [FilterDiagnostics](ctx: ParsingContext, diagnosticMap: DiagnosticMap, nodeRange = this[NodeRange]) {
         const ans: DiagnosticMap = {}
-        for (const codeString in diagnosticMap) {
-            /* istanbul ignore else */
-            if (Object.prototype.hasOwnProperty.call(diagnosticMap, codeString)) {
-                const code = codeString as unknown as ErrorCode
-                const diagnostics = diagnosticMap[code]!
-                for (const diag of diagnostics) {
-                    const diagRange = {
-                        start: ctx.textDoc.offsetAt(diag.range.start),
-                        end: ctx.textDoc.offsetAt(diag.range.end)
-                    }
-                    if (areOverlapped(diagRange, nodeRange)) {
-                        ans[code] = ans[code] ?? []
-                        ans[code]!.push(diag)
-                    }
+        for (const codeString of Object.keys(diagnosticMap)) {
+            const code = codeString as unknown as ErrorCode
+            const diagnostics = diagnosticMap[code]!
+            for (const diag of diagnostics) {
+                const diagRange = {
+                    start: ctx.textDoc.offsetAt(diag.range.start),
+                    end: ctx.textDoc.offsetAt(diag.range.end)
+                }
+                if (areOverlapped(diagRange, nodeRange)) {
+                    ans[code] = ans[code] ?? []
+                    ans[code]!.push(diag)
                 }
             }
         }

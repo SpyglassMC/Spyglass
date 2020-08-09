@@ -9,6 +9,7 @@ import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
 import { IdentityNode } from './nodes'
+import { PluginLoader } from './plugins/PluginLoader'
 import { getRelAndRootIndex, getSemanticTokensLegend, getTextDocument, partitionedIteration, walkFile, walkRoot } from './services/common'
 import { DatapackLanguageService } from './services/DatapackLanguageService'
 import { ClientCapabilities, getClientCapabilities } from './types'
@@ -46,6 +47,10 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     if (storagePath && !await pathAccessible(storagePath)) {
         await fsp.mkdir(storagePath, { recursive: true })
     }
+    const pluginsPath = path.join(globalStoragePath, 'plugins')
+    if (pluginsPath && !await pathAccessible(pluginsPath)) {
+        await fsp.mkdir(pluginsPath, { recursive: true })
+    }
 
     let cacheFile: CacheFile | undefined
     cachePath = storagePath ? path.join(storagePath, './cache.json') : undefined
@@ -62,6 +67,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     console.info(`[onInitialize] ReleaseNotesVersion = ${ReleaseNotesVersion}`)
     console.info(`[onInitialize] globalStoragePath = ${globalStoragePath}`)
     console.info(`[onInitialize] cachePath = ${cachePath}`)
+    console.info(`[onInitialize] pluginsPath = ${pluginsPath}`)
 
     service = new DatapackLanguageService({
         applyEdit: connection.workspace.applyEdit.bind(connection.workspace),
@@ -70,6 +76,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
         createWorkDoneProgress: connection.window.createWorkDoneProgress.bind(connection.window),
         fetchConfig,
         globalStoragePath,
+        plugins: await PluginLoader.load(pluginsPath),
         publishDiagnostics: connection.sendDiagnostics.bind(connection),
         showInformationMessage: connection.window.showInformationMessage.bind(connection.window),
         versionInformation: await getLatestVersions()
@@ -265,13 +272,11 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
             case FileChangeType.Deleted:
             default: {
                 // console.info(`FileChangeType.Deleted ${rel}`)
-                for (const fileUriString in service.cacheFile.files) {
-                    if (service.cacheFile.files.hasOwnProperty(fileUriString)) {
-                        if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
-                            const fileUri = service.parseUri(fileUriString)
-                            // console.info(`result = ${JSON.stringify(result)}`)
-                            service.onDeletedFile(fileUri)
-                        }
+                for (const fileUriString of Object.keys(service.cacheFile.files)) {
+                    if (fileUriString === uriString || fileUriString.startsWith(`${uriString}/`)) {
+                        const fileUri = service.parseUri(fileUriString)
+                        // console.info(`result = ${JSON.stringify(result)}`)
+                        service.onDeletedFile(fileUri)
                     }
                 }
                 break
