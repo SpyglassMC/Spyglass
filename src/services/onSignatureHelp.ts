@@ -20,7 +20,7 @@ export async function onSignatureHelp({ offset, node, commandTree, vanillaData, 
             node[NodeRange].end
         )
         const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cache: service.getCache(uri, DatapackLanguageService.FullRange),
+            cache: service.getCache(uri),
             config: config,
             cursor: offset,
             textDoc: textDoc,

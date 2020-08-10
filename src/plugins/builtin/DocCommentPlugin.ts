@@ -1,5 +1,5 @@
 import { plugins } from '../..'
-import { ArgumentNode, NodeType } from '../../nodes'
+import { ArgumentNode, IdentityNode, NodeRange, NodeType } from '../../nodes'
 import { ArgumentParserResult, combineArgumentParserResult, ParsingContext } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 
@@ -29,6 +29,7 @@ class DocCommentSyntaxComponent implements plugins.SyntaxComponent {
             cache: {}, completions: [], errors: [], tokens: []
         }
         reader.skipWhiteSpace()
+        const start = reader.cursor
         const isAtFileBeginning = /^\s*$/.test(reader.passedString)
         try {
             reader
@@ -37,17 +38,27 @@ class DocCommentSyntaxComponent implements plugins.SyntaxComponent {
                 .expect('>')
                 .skip()
                 .skipWhiteSpace()
-            const idResult = new ctx.parsers
-                .Identity('$function', undefined, undefined, undefined, true)
-                .parse(reader, ctx)
-            combineArgumentParserResult(ans, idResult)
+            if (isAtFileBeginning) {
+                const idResult = new ctx.parsers
+                    .Identity('$function', undefined, undefined, undefined, true)
+                    .parse(reader, ctx)
+                ans.data.definedID = idResult.data
+                combineArgumentParserResult(ans, idResult)
+            }
+            // reader
+            //     .jumpToNextLine(ctx.textDoc)
+            //     .expect('#')
+            //     .skip()
+            //     .skipWhiteSpace()
         } catch (p) {
             ans.errors.push(p)
         }
+        ans.data[NodeRange] = { start, end: reader.cursor }
         return ans
     }
 }
 
 class DocCommentNode extends ArgumentNode {
     [NodeType]: 'builtin:doc_comment'
+    definedID: IdentityNode
 }

@@ -86,7 +86,6 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
 }
 
 export function parseFunctionNodes(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
-    const startPos = textDoc.positionAt(start)
     const cache = service.getCache(uri)
     const string = textDoc.getText()
     const reader = new StringReader(string, start, end)
@@ -151,10 +150,14 @@ export function parseFunctionNode({ textDoc, reader, start, end, nodes, ctx }: {
     }
     if (lineReader.remainingString.length === 0) {
         // This empty node will be selected in methods like `onCompletion`.
-        nodes.push({
-            [NodeRange]: { start, end: lineEnd },
-            args: [], hint: { fix: [], options: [] }, tokens: []
-        })
+        if (start !== lineEnd) {
+            nodes.push({
+                [NodeRange]: { start, end: lineEnd },
+                args: [], hint: { fix: [], options: [] }, tokens: []
+            })
+        } else {
+            reader.cursor++
+        }
     } else {
         const { data } = parser.parse(lineReader, ctx)
         nodes.push(data)

@@ -24,7 +24,7 @@ export async function onCompletion({ offset, service, node, textDoc, commandTree
         )
         let { data: { completions } } = parser.parse(reader, constructContext({
             cursor: offset,
-            cache: service.getCache(uri, DatapackLanguageService.FullRange),
+            cache: service.getCache(uri),
             config: config,
             textDoc: textDoc,
             id: getId(uri, service.roots),

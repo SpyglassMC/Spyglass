@@ -332,7 +332,7 @@ export function trimCache(cache: ClientCache) {
 /**
  * Pure function.
  */
-export function getCacheForUri(cache: ClientCache, _uri: Uri, _range: Range) {
+export function getCacheForUri(cache: ClientCache, _targetType: FileType, _targetID: IdentityNode) {
     const ans = rfdc()(cache)
     for (const type of Object.keys(ans)) {
         const category = ans[type as CacheType]

@@ -7,7 +7,6 @@ import { DatapackLanguageService } from './DatapackLanguageService'
 export async function onDocumentLinks({ doc, textDoc, service }: { doc: DatapackDocument, textDoc: TextDocument, service: DatapackLanguageService }) {
     try {
         const ans: DocumentLink[] = []
-
         for (const { cache } of doc.nodes) {
             for (const type of Object.keys(cache ?? {})) {
                 if (isFileType(type)) {

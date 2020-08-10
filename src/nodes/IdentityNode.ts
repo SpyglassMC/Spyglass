@@ -121,13 +121,14 @@ export class IdentityNode extends ArgumentNode {
                 cacheType = this.type.slice(1)
             }
             if (cacheType && isFileType(cacheType) && ctx.rootIndex !== null) {
+                const title = locale('code-action.id-create-file', locale('punc.quote', this.toTagString()))
                 ans.push({
-                    title: locale('code-action.id-create-file', this.toTagString()),
+                    title: title,
                     kind: CodeActionKind.QuickFix,
                     diagnostics: unknownDiagnostics,
                     command: {
                         command: 'datapack.createFile',
-                        title: locale('code-action.id-create-file', this.toTagString()),
+                        title: title,
                         arguments: [cacheType, this.toString(), ctx.roots[ctx.rootIndex].toString()]
                     }
                 })

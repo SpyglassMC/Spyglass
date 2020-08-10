@@ -1,3 +1,4 @@
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
 import { IndexMapping } from '../types/IndexMapping'
 import { ParsingError } from '../types/ParsingError'
@@ -325,6 +326,12 @@ export class StringReader {
         const ans = this.remainingString
         this.cursor = this.end
         return ans
+    }
+
+    jumpToNextLine(textDoc: TextDocument) {
+        const pos = textDoc.positionAt(this.cursor)
+        this.cursor = textDoc.offsetAt({ line: pos.line + 1, character: 0 })
+        return this
     }
 
     static canInNumber(c: string) {

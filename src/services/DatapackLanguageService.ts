@@ -138,13 +138,24 @@ export class DatapackLanguageService {
      * @param uri A file URI.
      * @param range A LSP range.
      */
-    getCache(uri: Uri, range: lsp.Range) {
-        return this.caches.get(`${uri}|${JSON.stringify(range)}`) ?? this.rawGetCache(uri, range)
+    getCache(uri: Uri): ClientCache
+    getCache(type: FileType, id: IdentityNode): ClientCache
+    getCache(type: FileType | Uri, id?: IdentityNode) {
+        if (type instanceof Uri) {
+            const rel = this.getRel(type)
+            const result = IdentityNode.fromRel(rel)
+            if (!result) {
+                return {}
+            }
+            type = result.category
+            id = result.id
+        }
+        return this.caches.get(`${type}|${id}`) ?? this.rawGetCache(type, id!)
     }
 
-    private rawGetCache(uri: Uri, range: lsp.Range) {
-        const cache = getCacheForUri(this.cacheFile.cache, uri, range)
-        this.caches.set(`${uri}|${JSON.stringify(range)}`, cache)
+    private rawGetCache(type: FileType, id: IdentityNode) {
+        const cache = getCacheForUri(this.cacheFile.cache, type, id)
+        this.caches.set(`${type}|${id}`, cache)
         return cache
     }
 
@@ -396,7 +407,7 @@ export class DatapackLanguageService {
         const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
         if (isMcfunctionDocument(doc)) {
             const commandTree = await getCommandTree(config.env.cmdVersion)
-            await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas })
+            await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas, languageConfigs: this.languageConfigs })
         } else {
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             TextDocument.update(textDoc, contentChanges, version!)
@@ -441,7 +452,7 @@ export class DatapackLanguageService {
             const ans: ParserSuggestion[] = []
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             const ctx = constructContext({
-                cache: this.getCache(uri, DatapackLanguageService.FullRange),
+                cache: this.getCache(uri),
                 cursor: offset,
                 textDoc,
                 id: getId(uri, this.roots),
@@ -507,7 +518,7 @@ export class DatapackLanguageService {
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             const ctx = constructContext({
-                cache: this.getCache(uri, DatapackLanguageService.FullRange),
+                cache: this.getCache(uri),
                 textDoc,
                 id: getId(uri, this.roots),
                 rootIndex: getRootIndex(uri, this.roots),
