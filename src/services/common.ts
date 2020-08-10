@@ -61,9 +61,7 @@ export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], u
                 resolve(uri)
             }
         }
-        // console.warn(`Namespaced ID “${key}” cannot be resolved in any root`)
 
-        urisOfIds.set(key, null)
         resolve(null)
     })
 }
@@ -74,7 +72,7 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
         cache: {}, errors: [], tokens: [], schemaType
     }
     const ctx = constructContext({
-        cache: service.getCache(uri, DatapackLanguageService.FullRange),
+        cache: service.getCache(uri),
         id: getId(uri, roots),
         rootIndex: getRootIndex(uri, roots),
         blockDefinition: vanillaData.BlockDefinition,
@@ -89,7 +87,7 @@ export function parseJsonNode({ service, document, config, cache, uri, roots, sc
 
 export function parseFunctionNodes(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
     const startPos = textDoc.positionAt(start)
-    const cache = service.getCache(uri, DatapackLanguageService.FullRange)
+    const cache = service.getCache(uri)
     const string = textDoc.getText()
     const reader = new StringReader(string, start, end)
     const ctx = constructContext({
