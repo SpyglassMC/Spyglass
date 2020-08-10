@@ -156,7 +156,7 @@
     "unexpected-local-coordinate": "不能使用局部座標%0%",
     "unexpected-multiple-selector": "該選擇器可以選擇多個實體",
     "unexpected-nbt": "此處不應使用 NBT 標籤",
-    "unexpected-nbt-array-type": "無效的陣列類型%0%。應為「B」「I」「L」中的一個",
+    "unexpected-nbt-array-type": "無效的陣列類型%0%。應為「B」、「I」、「L」中的一個",
     "unexpected-nbt-path-filter": "複合標籤篩選器只能對複合標籤使用",
     "unexpected-nbt-path-index": "索引只能對串列或陣列標籤使用",
     "unexpected-nbt-path-key": "鍵只能對複合標籤使用",
