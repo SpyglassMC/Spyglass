@@ -16,13 +16,7 @@ export class UuidArgumentParser extends ArgumentParser<string> {
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
         const start = reader.cursor
-        const ans: ArgumentParserResult<string> = {
-            data: reader.readUntilOrEnd(' '),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(reader.readUntilOrEnd(' '))
 
         //#region Errors.
         if (!UuidArgumentParser.Pattern.test(ans.data)) {

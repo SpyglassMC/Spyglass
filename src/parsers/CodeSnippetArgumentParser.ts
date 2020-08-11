@@ -9,13 +9,7 @@ export class CodeSnippetArgumentParser extends ArgumentParser<string> {
 
     /* istanbul ignore next */
     parse(reader: StringReader, { cursor: cursor, config: { snippets } }: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
         //#region Completions.
         const start = reader.cursor
         ans.data = reader.readUntilOrEnd(' ')

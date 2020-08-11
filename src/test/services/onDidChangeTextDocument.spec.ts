@@ -7,7 +7,7 @@ import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
 import { McfunctionDocument } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { Token, TokenType } from '../../types/Token'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const config = VanillaConfig
@@ -16,19 +16,19 @@ describe('onDidChangeTextDocument() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     range: { start: 0, end: 8 },
-                    args: [{ data: '# Test 0', parser: 'string' }],
+                    data: [{ data: '# Test 0', parser: 'string' }],
                     tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
                 }),
-                mockLineNode({
+                mockCommand({
                     range: { start: 9, end: 16 },
-                    args: [{ data: '# Test 1', parser: 'string' }],
+                    data: [{ data: '# Test 1', parser: 'string' }],
                     tokens: [new Token({ start: 9, end: 16 }, TokenType.comment)]
                 }),
-                mockLineNode({
+                mockCommand({
                     range: { start: 17, end: 25 },
-                    args: [{ data: '# Test 2', parser: 'string' }],
+                    data: [{ data: '# Test 2', parser: 'string' }],
                     tokens: [new Token({ start: 17, end: 25 }, TokenType.comment)]
                 })
             ]

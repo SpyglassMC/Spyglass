@@ -1,5 +1,5 @@
 import { LanguageConfigBuilder, LanguageConfigBuilderFactory } from '.'
-import { SyntaxComponent } from '../types'
+import { SyntaxComponentParser } from '../types'
 import { LanguageDefinition } from './LanguageDefinition'
 
 /**
@@ -9,12 +9,12 @@ export type LanguageConfig = {
     /**
      * An array of `SyntaxComponent`s that the language supports.
      */
-    syntaxComponents?: SyntaxComponent[]
+    syntaxComponentParsers?: SyntaxComponentParser[]
 }
 
 export type Contributions = {
     languageDefinitions: Map<string, LanguageDefinition>,
-    syntaxComponents: Map<string, SyntaxComponent>
+    syntaxComponentParsers: Map<string, SyntaxComponentParser>
 }
 
 export class LanguageConfigBuilderImpl implements LanguageConfigBuilder {
@@ -25,14 +25,14 @@ export class LanguageConfigBuilderImpl implements LanguageConfigBuilder {
     build = () => this.result
 
     syntaxComponent = (id: string) => {
-        if (!this.contributions.syntaxComponents) {
+        if (!this.contributions.syntaxComponentParsers) {
             throw new Error('No syntax component has been contributed.')
         }
-        const value = this.contributions.syntaxComponents.get(id)
+        const value = this.contributions.syntaxComponentParsers.get(id)
         if (!value) {
             throw new Error(`No syntax component has the ID “${id}”.`)
         }
-        (this.result.syntaxComponents = this.result.syntaxComponents ?? []).push(value)
+        (this.result.syntaxComponentParsers = this.result.syntaxComponentParsers ?? []).push(value)
         return this
     }
 }

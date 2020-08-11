@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onSignatureHelp } from '../../services/onSignatureHelp'
 import { Uri } from '../../types'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onSignatureHelp() Tests', () => {
     const roots: Uri[] = []
@@ -14,12 +14,12 @@ describe('onSignatureHelp() Tests', () => {
         const ctx = mockParsingContext({
             content: 'advancement '
         })
-        const node = mockLineNode({
+        const node = mockCommand({
             range: { start: 0, end: 12 }
         })
         const service = new DatapackLanguageService({ roots, cacheFile })
 
-        const signatures = await onSignatureHelp({ uri, config: ctx.config, textDoc: ctx.textDoc, service, offset, node })
+        const signatures = await onSignatureHelp({ uri, textDoc: ctx.textDoc, service, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
@@ -40,12 +40,12 @@ describe('onSignatureHelp() Tests', () => {
         const ctx = mockParsingContext({
             content: 'say '
         })
-        const node = mockLineNode({
+        const node = mockCommand({
             range: { start: 0, end: 4 }
         })
         const service = new DatapackLanguageService({ roots, cacheFile })
 
-        const signatures = await onSignatureHelp({ service, uri, textDoc: ctx.textDoc, config: ctx.config, offset, node })
+        const signatures = await onSignatureHelp({ service, uri, textDoc: ctx.textDoc, offset, node })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{

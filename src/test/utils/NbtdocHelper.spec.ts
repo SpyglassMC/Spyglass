@@ -16,6 +16,7 @@ import { NbtLongArrayNode } from '../../nodes/NbtLongArrayNode'
 import { NbtLongNode } from '../../nodes/NbtLongNode'
 import { NbtShortNode } from '../../nodes/NbtShortNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
+import { LegacyValidateResult } from '../../types'
 import { ClientCache } from '../../types/ClientCache'
 import { constructConfig } from '../../types/Config'
 import { nbtdoc } from '../../types/nbtdoc'
@@ -398,7 +399,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Boolean Tests', () => {
             const doc: nbtdoc.NbtValue = 'Boolean'
             it('Should complete true/false and 1b/0b when the config is null', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -417,7 +418,7 @@ describe('NbtdocHelper Tests', () => {
                 ])
             })
             it('Should complete true/false when the config is true', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', true]
@@ -434,7 +435,7 @@ describe('NbtdocHelper Tests', () => {
                 ])
             })
             it('Should complete 1b/0b when the config is false', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', false]
@@ -454,7 +455,7 @@ describe('NbtdocHelper Tests', () => {
         describe('ByteArray Tests', () => {
             const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -469,7 +470,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Compound Tests', () => {
             const doc: nbtdoc.NbtValue = { Compound: 0 }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -484,7 +485,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Enum Tests', () => {
             it('Should complete correctly for string enum', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -499,7 +500,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should complete correctly for byte enum', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -516,7 +517,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Id Tests', () => {
             it('Should complete correctly', async () => {
                 const doc: nbtdoc.NbtValue = { Id: 'minecraft:block' }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
 
@@ -532,7 +533,7 @@ describe('NbtdocHelper Tests', () => {
         describe('IntArray Tests', () => {
             const doc: nbtdoc.NbtValue = { IntArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -547,7 +548,7 @@ describe('NbtdocHelper Tests', () => {
         describe('List Tests', () => {
             const doc: nbtdoc.NbtValue = { List: { length_range: null, value_type: { Or: [] } } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -562,7 +563,7 @@ describe('NbtdocHelper Tests', () => {
         describe('LongArray Tests', () => {
             const doc: nbtdoc.NbtValue = { LongArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
@@ -577,7 +578,7 @@ describe('NbtdocHelper Tests', () => {
         describe('String Tests', () => {
             const doc: nbtdoc.NbtValue = 'String'
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, cache: TestCache })
                 const description = ' The tags on the entity'
@@ -594,7 +595,7 @@ describe('NbtdocHelper Tests', () => {
     describe('completeCompoundFieldKeys() Tests', () => {
         const doc: nbtdoc.NbtValue = { Compound: 5 }
         it('Should return all keys', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = null
@@ -610,7 +611,7 @@ describe('NbtdocHelper Tests', () => {
             ])
         })
         it('Should not include existing keys', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = null
@@ -626,7 +627,7 @@ describe('NbtdocHelper Tests', () => {
             ])
         })
         it('Should return correctly for in-double-quote cases', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = 'always double'
@@ -642,7 +643,7 @@ describe('NbtdocHelper Tests', () => {
             ])
         })
         it('Should return correctly for in-single-quote cases', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = 'always single'
@@ -664,7 +665,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Boolean Tests', () => {
             const doc: nbtdoc.NbtValue = 'Boolean'
             it('Should report errors for non-byte tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -684,7 +685,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -700,7 +701,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors when expecting byte numbers', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', false]
@@ -720,7 +721,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors when expecting boolean literals', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', true]
@@ -743,7 +744,7 @@ describe('NbtdocHelper Tests', () => {
         describe('ByteArray Tests', () => {
             const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: null } }
             it('Should report errors for non-byte-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -759,7 +760,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -775,7 +776,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -788,7 +789,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the collection length is too large', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 2], value_range: null } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -805,7 +806,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the collection length is too small', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 1], value_range: null } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -825,7 +826,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the value range is incorrect', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: [0, 1] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -847,7 +848,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Byte Tests', () => {
             const doc: nbtdoc.NbtValue = { Byte: { range: null } }
             it('Should report errors for non-byte tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -863,7 +864,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -879,7 +880,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
@@ -892,7 +893,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the value range is too small', async () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
@@ -909,7 +910,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the value range is too large', async () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 3, '3')
@@ -928,7 +929,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Compound Tests', () => {
             const doc: nbtdoc.NbtValue = { Compound: 0 }
             it('Should report errors for non-compound tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -944,7 +945,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct empty tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -957,7 +958,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for correct filled tags', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -977,7 +978,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for unknown tags in ItemBase', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -997,7 +998,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for unknown tags in non-ItemBase compounds', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1023,7 +1024,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Double Tests', () => {
             const doc: nbtdoc.NbtValue = { Double: { range: null } }
             it('Should report errors for non-double tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1039,7 +1040,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1055,7 +1056,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtDoubleNode(null, 0, '0')
@@ -1070,7 +1071,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Enum Tests', () => {
             it('Should report errors for non-string tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1088,7 +1089,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for out-of-range values', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'asdfghjkl', '"asdfghjkl"', { start: 1 })
@@ -1106,7 +1107,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for correct string tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'red', '"red"', { start: 1 })
@@ -1120,7 +1121,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for non-byte tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1138,7 +1139,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for out-of-range values', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 5, '5b')
@@ -1156,7 +1157,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for correct byte tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 2, '2b')
@@ -1172,7 +1173,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Float Tests', () => {
             const doc: nbtdoc.NbtValue = { Float: { range: null } }
             it('Should report errors for non-float tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1188,7 +1189,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1204,7 +1205,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtFloatNode(null, 0, '0')
@@ -1219,7 +1220,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Id Tests', () => {
             const doc: nbtdoc.NbtValue = { Id: 'minecraft:block' }
             it('Should report errors for non-string tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1235,7 +1236,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should remap range indices', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:asdfghjklqwertyui', '"minecraft:asdfghjklqwertyui"', { start: 1 })
@@ -1251,7 +1252,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', { start: 1 })
@@ -1268,7 +1269,7 @@ describe('NbtdocHelper Tests', () => {
             const superTag = new NbtCompoundNode(null)
             superTag.Id = new NbtStringNode(superTag, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', {})
             it('Should report errors for non-compound tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -1284,7 +1285,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct empty tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1296,7 +1297,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for correctly filled tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1312,7 +1313,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for unexpected child types', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1335,7 +1336,7 @@ describe('NbtdocHelper Tests', () => {
         describe('IntArray Tests', () => {
             const doc: nbtdoc.NbtValue = { IntArray: { length_range: null, value_range: null } }
             it('Should report errors for non-int-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0b')
@@ -1351,7 +1352,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -1367,7 +1368,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1382,7 +1383,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Int Tests', () => {
             const doc: nbtdoc.NbtValue = { Int: { range: null } }
             it('Should report errors for non-int tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1398,7 +1399,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1413,7 +1414,7 @@ describe('NbtdocHelper Tests', () => {
         describe('List Tests', () => {
             const doc: nbtdoc.NbtValue = { List: { length_range: null, value_type: 'Boolean' } }
             it('Should report errors for non-list tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1429,7 +1430,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1445,7 +1446,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -1463,7 +1464,7 @@ describe('NbtdocHelper Tests', () => {
         describe('LongArray Tests', () => {
             const doc: nbtdoc.NbtValue = { LongArray: { length_range: null, value_range: null } }
             it('Should report errors for non-long-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1479,7 +1480,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1495,7 +1496,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtLongArrayNode(null)
@@ -1510,7 +1511,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Long Tests', () => {
             const doc: nbtdoc.NbtValue = { Long: { range: null } }
             it('Should report errors for non-long tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1526,7 +1527,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1542,7 +1543,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtLongNode(null, BigInt(0), '0')
@@ -1558,7 +1559,7 @@ describe('NbtdocHelper Tests', () => {
             const doc: nbtdoc.NbtValue = { Or: ['Boolean', 'String'] }
             it('Should report errors when the length of OR is zero', async () => {
                 const doc: nbtdoc.NbtValue = { Or: [] }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1574,7 +1575,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for tags that match the first doc', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, 'false')
@@ -1586,7 +1587,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for tags that match the second doc', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
@@ -1598,7 +1599,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for the second doc if the tag matches none of them', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1617,7 +1618,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Short Tests', () => {
             const doc: nbtdoc.NbtValue = { Short: { range: null } }
             it('Should report errors for non-short tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1633,7 +1634,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1649,7 +1650,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtShortNode(null, 0, '0')
@@ -1664,7 +1665,7 @@ describe('NbtdocHelper Tests', () => {
         describe('String Tests', () => {
             const doc: nbtdoc.NbtValue = 'String'
             it('Should report errors for non-string tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1680,7 +1681,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })

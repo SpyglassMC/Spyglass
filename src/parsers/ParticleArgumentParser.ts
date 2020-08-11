@@ -13,13 +13,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
     readonly identity = 'particle'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<ParticleNode<any>> {
-        const ans: ArgumentParserResult<ParticleNode<any>> = {
-            data: new ParticleNode(new IdentityNode()),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new ParticleNode(new IdentityNode()))
         const start = reader.cursor
 
         const typeResult = new ctx.parsers.Identity('minecraft:particle_type').parse(reader, ctx)

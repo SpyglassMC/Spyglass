@@ -37,13 +37,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<IdentityNode> {
-        const ans: ArgumentParserResult<IdentityNode> = {
-            data: new IdentityNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new IdentityNode())
         const start = reader.cursor
         let stringID = ''
         let isTag = false

@@ -24,7 +24,7 @@ import { NbtNumberNode } from '../nodes/NbtNumberNode'
 import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
-import { LineParser } from '../parsers/LineParser'
+import { CommandParser } from '../parsers/CommandParser'
 import { ParserSuggestion } from '../types'
 import { combineCache, remapCachePosition } from '../types/ClientCache'
 import { LintConfig } from '../types/Config'
@@ -816,7 +816,7 @@ export class NbtdocHelper {
     }
     private validateOrField(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtNode, doc: OrDoc, isPredicate: boolean, description: string): void {
         for (const [i, childDoc] of doc.Or.entries()) {
-            const childAns: LegacyValidateResult = { cache: {}, completions: [], errors: [], tokens: [] }
+            const childAns = LegacyValidateResult.create()
             this.validateField(childAns, ctx, tag, childDoc, isPredicate, description)
             if (childAns.errors.length === 0 || i === doc.Or.length - 1) {
                 combineCache(ans.cache, childAns.cache)
@@ -873,9 +873,9 @@ export class NbtdocHelper {
 
     /* istanbul ignore next */
     private validateInnerString(reader: StringReader, ctx: ParsingContext, description: string) {
-        let result: Partial<LegacyValidateResult> | undefined = undefined
+        let result: LegacyValidateResult | undefined = undefined
         if (description.match(/command stored/i)) {
-            result = new LineParser(null, 'commands').parse(reader, ctx).data
+            result = new CommandParser(null, 'commands').parse(reader, ctx).data
         } else if (description.match(/particle the area effect cloud/i)) {
             result = new ctx.parsers.Particle().parse(reader, ctx)
         } else if (description.match(/tags on the entity/i)) {

@@ -3,7 +3,7 @@ import assert, { fail } from 'power-assert'
 import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
-import { ClientCache, Config, constructContext, LineArgumentNode, LineNode, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { ClientCache, CommandComponent, CommandComponentData, Config, constructContext, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
 import { StringReader } from '../utils/StringReader'
 
 type Range = TextRange | [number, number]
@@ -71,9 +71,9 @@ export function mockParsingContext(options: ParsingContextMockOptions = {}): Par
     })
 }
 
-interface LineNodeMockOptions {
+interface CommandMockOptions {
     range?: TextRange,
-    args?: LineArgumentNode<any>[],
+    data?: CommandComponentData,
     hint?: {
         fix: string[],
         options: [string, string[]][]
@@ -83,16 +83,8 @@ interface LineNodeMockOptions {
     errors?: ParsingError[],
     completions?: ParserSuggestion[]
 }
-export function mockLineNode(node: LineNodeMockOptions = {}): LineNode {
-    return {
-        [NodeRange]: node.range ?? { start: NaN, end: NaN },
-        args: node.args ?? [],
-        hint: node.hint ?? { fix: [], options: [] },
-        tokens: node.tokens ?? [],
-        cache: node.cache,
-        errors: node.errors,
-        completions: node.completions
-    }
+export function mockCommand(node: CommandMockOptions = {}): CommandComponent {
+    return CommandComponent.create(node.data, { ...node, [NodeRange]: node.range })
 }
 
 interface CompletionPredicate extends CompletionItem {

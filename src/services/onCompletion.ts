@@ -1,38 +1,25 @@
-import { SchemaRegistry } from '@mcschema/core'
 import { CompletionItem, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
-import { LineParser } from '../parsers/LineParser'
-import { Config } from '../types'
-import { CommandTree } from '../types/CommandTree'
+import { LanguageConfig } from '../plugins/LanguageConfigImpl'
+import { ParserSuggestion } from '../types'
 import { Uri } from '../types/handlers'
-import { LineNode } from '../types/LineNode'
-import { constructContext } from '../types/ParsingContext'
+import { CommandComponent } from '../types/LineNode'
 import { escapeString, handleCompletionText } from '../utils'
-import { StringReader } from '../utils/StringReader'
-import { getId, getRootIndex } from './common'
+import { parseSyntaxComponents } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onCompletion({ offset, service, node, textDoc, commandTree, vanillaData, jsonSchemas, uri, config }: { uri: Uri, offset: number, textDoc: TextDocument, node: LineNode, service: DatapackLanguageService, config: Config, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }): Promise<CompletionItem[] | null> {
+export async function onCompletion({ offset, service, node, textDoc, uri, languageConfigs }: { uri: Uri, offset: number, textDoc: TextDocument, node: CommandComponent, service: DatapackLanguageService, languageConfigs: Map<string, LanguageConfig> }): Promise<CompletionItem[] | null> {
     try {
-        const parser = new LineParser(false, 'line')
-        const reader = new StringReader(
-            textDoc.getText(),
-            node[NodeRange].start,
-            node[NodeRange].end
-        )
-        let { data: { completions } } = parser.parse(reader, constructContext({
-            cursor: offset,
-            cache: service.getCache(uri),
-            config: config,
-            textDoc: textDoc,
-            id: getId(uri, service.roots),
-            rootIndex: getRootIndex(uri, service.roots),
-            roots: service.roots,
-            service
-        }, commandTree, vanillaData, jsonSchemas))
-
+        const config = await service.getConfig(uri)
+        const commandTree = await service.getCommandTree(config)
+        const vanillaData = await service.getVanillaData(config)
+        const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
+        const nodes = parseSyntaxComponents(service, textDoc, node[NodeRange].start, node[NodeRange].end, config, uri, offset, commandTree, vanillaData, jsonSchemas, languageConfigs)
+        let completions: ParserSuggestion[] = []
+        for (const node of nodes) {
+            completions.push(...node.completions)
+        }
         // Escape for TextMate: #431
         /* istanbul ignore else */
         if (completions) {

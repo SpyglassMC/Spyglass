@@ -2,22 +2,20 @@ import { INode, SchemaRegistry } from '@mcschema/core'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
-import { Diagnostic, Position, Proposed, Range } from 'vscode-languageserver'
+import { Diagnostic, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { JsonSchemaType } from '../data/JsonSchema'
 import { VanillaData } from '../data/VanillaData'
-import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode, NodeRange } from '../nodes'
+import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { LineParser } from '../parsers/LineParser'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
-import { ErrorCode, isMcfunctionDocument, LineNode, TextRange } from '../types'
-import { CacheFile, ClientCache, FileType } from '../types/ClientCache'
+import { CommandComponent, ErrorCode, isMcfunctionDocument, SyntaxComponent, TextRange, ValidateResult } from '../types'
+import { FileType } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { DatapackDocument } from '../types/DatapackDocument'
-import { DocNode, PathAccessibleFunction, UrisOfIds } from '../types/handlers'
-import { constructContext, ParsingContext } from '../types/ParsingContext'
+import { PathAccessibleFunction, UrisOfIds } from '../types/handlers'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { StringReader } from '../utils/StringReader'
@@ -66,103 +64,43 @@ export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], u
     })
 }
 
-export function parseJsonNode({ service, document, config, cache, uri, roots, schema, vanillaData, jsonSchemas, schemaType }: { service: DatapackLanguageService, document: TextDocument, config: Config, cache: ClientCache, uri: Uri, roots: Uri[], schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
+export function parseJsonNode({ service, textDoc, config, uri, schema, commandTree, vanillaData, jsonSchemas, schemaType }: { service: DatapackLanguageService, textDoc: TextDocument, config: Config, uri: Uri, schema: INode, commandTree: CommandTree, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
     const ans: JsonNode = {
-        json: service.jsonService.parseJSONDocument(document) as JsonDocument,
-        cache: {}, errors: [], tokens: [], schemaType
+        json: service.jsonService.parseJSONDocument(textDoc) as JsonDocument,
+        schemaType,
+        ...ValidateResult.create()
     }
-    const ctx = constructContext({
-        cache: service.getCache(uri),
-        id: getId(uri, roots),
-        rootIndex: getRootIndex(uri, roots),
-        blockDefinition: vanillaData.BlockDefinition,
-        namespaceSummary: vanillaData.NamespaceSummary,
-        nbtdoc: vanillaData.Nbtdoc,
-        registry: vanillaData.Registry,
-        config, textDoc: document, roots, service
-    }, undefined, vanillaData, jsonSchemas)
+    const ctx = service.getParsingContextSync({ textDoc, uri, commandTree, config, jsonSchemas, vanillaData })
     JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
     return ans
 }
 
-export function parseFunctionNodes(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, nodes: DocNode[], config: Config, cacheFile: CacheFile, uri: Uri, roots: Uri[], cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
-    const cache = service.getCache(uri)
+export function parseSyntaxComponents(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, config: Config, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
+    const ans: SyntaxComponent[] = []
     const string = textDoc.getText()
     const reader = new StringReader(string, start, end)
-    const ctx = constructContext({
-        cache, config, cursor, textDoc, roots, service,
-        id: getId(uri, roots), rootIndex: getRootIndex(uri, roots)
-    }, commandTree, vanillaData, jsonSchemas)
-    const syntaxComponents = languageConfigs?.get(textDoc.languageId)?.syntaxComponents ?? []
+    const ctx = service.getParsingContextSync({ textDoc, uri, cursor, commandTree, config, jsonSchemas, vanillaData })
+    const componentParsers = languageConfigs?.get(textDoc.languageId)?.syntaxComponentParsers ?? []
+    reader.skipWhiteSpace()
     let lastCursor = reader.cursor
     while (reader.cursor < reader.end) {
-        const matchedComponents = syntaxComponents.filter(v => v.test(reader.clone(), ctx))
-        if (matchedComponents.length > 0) {
+        const matchedParsers = componentParsers
+            .map(v => ({ parser: v, testResult: v.test(reader.clone(), ctx) }))
+            .filter(v => v.testResult[0])
+            .sort((a, b) => b.testResult[1] - a.testResult[1])
+        if (matchedParsers.length > 0) {
             // TODO: Handle correctly when there are multiple matched components.
-            const start = reader.cursor
-            const result = matchedComponents[0].parse(reader, ctx)
-            nodes.push({
-                [NodeRange]: { start, end: reader.cursor },
-                args: [{
-                    data: result.data,
-                    parser: 'syntax_component'
-                }],
-                cache: result.cache,
-                completions: result.completions,
-                errors: result.errors,
-                tokens: result.tokens,
-                hint: { fix: [], options: [] }
-            })
-        } else {
-            parseFunctionNode({
-                textDoc: textDoc,
-                start: reader.cursor,
-                end: textDoc.offsetAt(Position.create(textDoc.positionAt(reader.cursor).line, Infinity)),
-                nodes, reader, ctx
-            })
+            const result = matchedParsers[0].parser.parse(reader, ctx)
+            ans.push(result)
         }
         if (reader.cursor === lastCursor) {
-            console.error(`The language server encounters a dead loop when parsing at [${reader.cursor}] with “${reader.remainingString}”`)
+            console.error(`[parseSyntaxComponents] The language server encounters a dead loop when parsing at [${reader.cursor}] with “${reader.remainingString}”`)
             break
         }
+        reader.skipWhiteSpace()
         lastCursor = reader.cursor
     }
-}
-
-export function parseFunctionNode({ textDoc, reader, start, end, nodes, ctx }: { textDoc: TextDocument, reader: StringReader, start: number, end: number, nodes: DocNode[], ctx: ParsingContext }) {
-    const parser = new LineParser(false, 'line')
-    const string = textDoc.getText()
-    const lineReader = new StringReader(string, start, end)
-    let lineEnd = end
-    lineReader.skipWhiteSpace()
-    while (true) {
-        const char = string.charAt(lineReader.end - 1)
-        if (StringReader.isWhiteSpace(char) && lineReader.end > start) {
-            // Remove the whitespaces at the end of this line
-            lineReader.end--
-            if (char === '\r' || char === '\n') {
-                // Remove the line breaks after the end of this line
-                lineEnd--
-            }
-        } else {
-            break
-        }
-    }
-    if (lineReader.remainingString.length === 0) {
-        // This empty node will be selected in methods like `onCompletion`.
-        if (start !== lineEnd) {
-            nodes.push({
-                [NodeRange]: { start, end: lineEnd },
-                args: [], hint: { fix: [], options: [] }, tokens: []
-            })
-        } else {
-            reader.cursor++
-        }
-    } else {
-        const { data } = parser.parse(lineReader, ctx)
-        nodes.push(data)
-    }
-    reader.cursor = lineReader.cursor
+    return ans
 }
 
 export function getRelAndRootIndex(uri: Uri, roots: Uri[]): { rel: string, index: number } | null {
@@ -183,7 +121,7 @@ export function getRel(uri: Uri, roots: Uri[]): string | undefined {
 }
 
 export function getId(uri: Uri, roots: Uri[]) {
-    return IdentityNode.fromRel(getRel(uri, roots))?.id
+    return IdentityNode.fromRel(getRel(uri, roots))
 }
 
 export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
@@ -232,7 +170,7 @@ export function getStringLines(string: string) {
     return string.split(/\r\n|\r|\n/)
 }
 
-export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | LineNode | null } {
+export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | CommandComponent | null } {
     return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.nodes[0] }
 }
 

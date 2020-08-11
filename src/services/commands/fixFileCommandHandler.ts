@@ -1,7 +1,7 @@
 import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
-import { areOverlapped, Config, constructContext, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
+import { areOverlapped, Config, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
 import { getDiagnosticMap } from '../common'
 import { DatapackLanguageService } from '../DatapackLanguageService'
 
@@ -11,7 +11,7 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
     if (doc && textDoc) {
         if (isMcfunctionDocument(doc)) {
             const config = await service.getConfig(uri)
-            const edit = getMergedPreferredEdit(service, doc, textDoc, config, uri)
+            const edit = await getMergedPreferredEdit(service, doc, textDoc, config, uri)
             if (edit) {
                 service.applyEdit?.(edit)
             }
@@ -22,14 +22,14 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
     }
 }
 
-function getMergedPreferredEdit(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
-    const preferredActions = getActions(service, doc, textDoc, config, uri)
+async function getMergedPreferredEdit(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+    const preferredActions = (await getActions(service, doc, textDoc, config, uri))
         .filter(v => v.isPreferred)
 
     return mergeActionEdit(doc, textDoc, preferredActions)
 }
 
-function getActions(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+async function getActions(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
     const ans: CodeAction[] = []
 
     for (const node of doc.nodes) {
@@ -39,14 +39,10 @@ function getActions(service: DatapackLanguageService, doc: McfunctionDocument, t
 
         const selectedRange = { start: 0, end: Infinity }
 
-        for (const { data } of node.args) {
+        for (const { data } of node.data) {
             /* istanbul ignore else */
             if (data instanceof ArgumentNode) {
-                const ctx = constructContext({
-                    textDoc: textDoc,
-                    config,
-                    service
-                })
+                const ctx = await service.getParsingContext({ textDoc, uri })
                 ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
             }
         }

@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Uri } from '../../types/handlers'
 import { onNavigation } from '../../services/onNavigation'
-import { mockLineNode } from '../utils.spec'
+import { mockCommand } from '../utils.spec'
 
 describe('onNavigation() Tests', () => {
     const uri = Uri.parse('file:///c:/data/spgoding/functions/ref.mcfunction')
@@ -24,7 +24,7 @@ describe('onNavigation() Tests', () => {
         advancements: {}, tags: { functions: {} }, files: {}, version: 0
     }
     const offset = 12
-    const node = mockLineNode({
+    const node = mockCommand({
         cache: {
             entity: {
                 SPGoding: {

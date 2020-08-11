@@ -24,13 +24,7 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
     ) { super() }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<StringNode> {
-        const ans: ArgumentParserResult<StringNode> = {
-            data: new StringNode('', '', {}),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new StringNode('', '', {}))
         const start = reader.cursor
 
         //#region Data.

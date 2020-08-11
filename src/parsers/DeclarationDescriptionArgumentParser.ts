@@ -20,13 +20,9 @@ export class DeclarationDescriptionArgumentParser extends ArgumentParser<string>
     parse(reader: StringReader): ArgumentParserResult<string> {
         const start = reader.cursor
         const description = reader.readRemaining()
-        const ans: ArgumentParserResult<string> = {
-            data: description,
-            tokens: [Token.from(start, reader, TokenType.string, new Set([TokenModifier.documentation]))],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(description, {
+            tokens: [Token.from(start, reader, TokenType.string, new Set([TokenModifier.documentation]))]
+        })
         if (description) {
             if (isCacheType(this.type) && !isInternalType(this.type) && this.id) {
                 const key = this.type

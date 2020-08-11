@@ -1,33 +1,31 @@
 import { plugins } from '../..'
 import { ArgumentNode, IdentityNode, NodeRange, NodeType } from '../../nodes'
-import { ArgumentParserResult, combineArgumentParserResult, ParsingContext } from '../../types'
+import { combineArgumentParserResult, ParsingContext } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 
 export class DocCommentPlugin implements plugins.Plugin {
-    [plugins.PluginID] = 'builtin:doc_comment'
+    [plugins.PluginID] = 'spgoding:doc_comment'
 
-    contributeSyntaxComponents(contributor: plugins.Contributor<plugins.SyntaxComponent>) {
-        contributor.add('builtin:doc_comment/doc_comment', new DocCommentSyntaxComponent())
+    contributeSyntaxComponentParsers(contributor: plugins.Contributor<plugins.SyntaxComponentParser>) {
+        contributor.add('spgoding:doc_comment/doc_comment', new DocCommentSyntaxComponentParser())
     }
 
     configureLanguages(factory: plugins.LanguageConfigBuilderFactory) {
         factory
             .configure('mcfunction')
-            .syntaxComponent('builtin:doc_comment/doc_comment')
+            .syntaxComponent('spgoding:doc_comment/doc_comment')
     }
 }
 
-class DocCommentSyntaxComponent implements plugins.SyntaxComponent {
-    test(reader: StringReader): boolean {
-        return reader
+class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
+    test(reader: StringReader): [boolean, number] {
+        const result = reader
             .skipWhiteSpace()
             .remainingString.slice(0, 2) === '#>'
+        return [result, 1]
     }
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<DocCommentNode> {
-        const ans: ArgumentParserResult<DocCommentNode> = {
-            data: new DocCommentNode(),
-            cache: {}, completions: [], errors: [], tokens: []
-        }
+    parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<DocCommentNode> {
+        const ans = plugins.SyntaxComponent.create(new DocCommentNode())
         reader.skipWhiteSpace()
         const start = reader.cursor
         const isAtFileBeginning = /^\s*$/.test(reader.passedString)
@@ -54,6 +52,7 @@ class DocCommentSyntaxComponent implements plugins.SyntaxComponent {
             ans.errors.push(p)
         }
         ans.data[NodeRange] = { start, end: reader.cursor }
+        ans[NodeRange] = { start, end: reader.cursor }
         return ans
     }
 }

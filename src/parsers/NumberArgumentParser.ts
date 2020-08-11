@@ -22,13 +22,7 @@ export class NumberArgumentParser extends ArgumentParser<NumberNode> {
     }
 
     parse(reader: StringReader, _ctx?: ParsingContext): ArgumentParserResult<NumberNode> {
-        const ans: ArgumentParserResult<NumberNode> = {
-            data: new NumberNode(NaN, ''),
-            tokens: [],
-            completions: [],
-            errors: [],
-            cache: {}
-        }
+        const ans = ArgumentParserResult.create(new NumberNode(NaN, ''))
         const start = reader.cursor
         try {
             const value = this.type === 'integer' ? reader.readInt() : reader.readFloat()

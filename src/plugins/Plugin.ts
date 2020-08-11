@@ -1,7 +1,7 @@
 import { Contributor } from './Contributor'
 import { LanguageConfigBuilderFactory } from './LanguageConfig'
 import { LanguageDefinition } from './LanguageDefinition'
-import { SyntaxComponent } from './SyntaxComponent'
+import { SyntaxComponentParser } from './SyntaxComponent'
 
 /**
  * The symbol for storing the ID of this plugin. There's no technical regulations to 
@@ -30,7 +30,7 @@ export interface Plugin {
      * Contributes syntax components.
      * @param contributor A contributor to add `SyntaxComponent`s with their assigned IDs.
      */
-    contributeSyntaxComponents?: (contributor: Contributor<SyntaxComponent>) => void | Promise<void>,
+    contributeSyntaxComponentParsers?: (contributor: Contributor<SyntaxComponentParser<any>>) => void | Promise<void>,
 
     /**
      * Configures languages. All configurations provided by different plugins to the 

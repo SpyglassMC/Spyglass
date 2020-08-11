@@ -16,13 +16,7 @@ export class ObjectiveCriterionArgumentParser extends ArgumentParser<string> {
     readonly identity = 'objectiveCriterion'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
 
         const start = reader.cursor
         let category = reader.readUntilOrEnd(' ', scoreboard.CriteriaRegularSep, scoreboard.CriteriaStatsSep)

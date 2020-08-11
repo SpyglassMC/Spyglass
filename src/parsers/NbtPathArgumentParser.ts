@@ -28,13 +28,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtPathNode> {
-        const ans: ArgumentParserResult<NbtPathNode> = {
-            data: new NbtPathNode(),
-            tokens: [],
-            cache: {},
-            completions: [],
-            errors: []
-        }
+        const ans = ArgumentParserResult.create(new NbtPathNode())
         const start = reader.cursor
 
         let helper: NbtdocHelper | undefined

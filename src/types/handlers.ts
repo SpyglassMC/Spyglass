@@ -1,18 +1,18 @@
 import { PublishDiagnosticsParams } from 'vscode-languageserver'
+import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
 import { DataSource, VanillaData } from '../data/VanillaData'
 import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
+import { SyntaxComponent } from '../plugins'
 import { CacheType } from './ClientCache'
 import { Config } from './Config'
 import { DatapackDocument } from './DatapackDocument'
-import { LineNode } from './LineNode'
-import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 
 export const Uri = URI
 
-export type DocNode = LineNode | JsonNode
+export type DocNode = SyntaxComponent | JsonNode
 
 export type Uri = URI
 export type DocsOfUris = Map<Uri, Promise<DatapackDocument | undefined>>

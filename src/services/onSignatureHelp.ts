@@ -1,34 +1,24 @@
-import { SchemaRegistry } from '@mcschema/core'
 import { SignatureInformation } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { VanillaData } from '../data/VanillaData'
 import { NodeRange } from '../nodes'
-import { LineParser } from '../parsers/LineParser'
-import { CommandTree, Config, constructContext, LineNode, Uri } from '../types'
-import { StringReader } from '../utils/StringReader'
-import { getRootIndex } from './common'
+import { LanguageConfig } from '../plugins/LanguageConfigImpl'
+import { CommandComponent, Uri } from '../types'
+import { parseSyntaxComponents } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onSignatureHelp({ offset, node, commandTree, vanillaData, jsonSchemas, uri, service, config, textDoc }: { uri: Uri, offset: number, node: LineNode, textDoc: TextDocument, config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry }) {
+export async function onSignatureHelp({ offset, node, uri, service, textDoc, languageConfigs }: { uri: Uri, offset: number, node: CommandComponent, textDoc: TextDocument, service: DatapackLanguageService, languageConfigs: Map<string, LanguageConfig> }) {
     try {
         const signatures: SignatureInformation[] = []
-
-        const parser = new LineParser(false, 'line')
-        const reader = new StringReader(
-            textDoc.getText(),
-            node[NodeRange].start,
-            node[NodeRange].end
-        )
-        const { data: { hint: { fix, options } } } = parser.parse(reader, constructContext({
-            cache: service.getCache(uri),
-            config: config,
-            cursor: offset,
-            textDoc: textDoc,
-            id: service.getId(uri),
-            rootIndex: getRootIndex(uri, service.roots),
-            roots: service.roots,
-            service
-        }, commandTree, vanillaData, jsonSchemas))
+        const config = await service.getConfig(uri)
+        const commandTree = await service.getCommandTree(config)
+        const vanillaData = await service.getVanillaData(config)
+        const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
+        const nodes = parseSyntaxComponents(service, textDoc, node[NodeRange].start, node[NodeRange].end, config, uri, offset, commandTree, vanillaData, jsonSchemas, languageConfigs)
+        let fix: string[] = [], options: [string, string[]][] = []
+        if (nodes.length) {
+            fix = nodes[0].hint.fix
+            options = nodes[0].hint.options
+        }
 
         const fixLabel = fix.join(' ')
 

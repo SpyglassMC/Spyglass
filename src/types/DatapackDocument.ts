@@ -1,12 +1,12 @@
+import { plugins } from '..'
 import { JsonNode } from '../nodes/JsonNode'
-import { LineNode } from './LineNode'
 
 interface BaseDocument<T, U> {
     type: T,
     nodes: U[]
 }
 
-export interface McfunctionDocument extends BaseDocument<'mcfunction', LineNode> { }
+export interface McfunctionDocument extends BaseDocument<'mcfunction', plugins.SyntaxComponent<any>> { }
 
 export interface JsonDocument extends BaseDocument<'json', JsonNode> { }
 

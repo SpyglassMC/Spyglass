@@ -209,22 +209,13 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc: CompoundDoc | IndexDoc | null = null): ArgumentParserResult<NbtCompoundNode> {
-        const ans: ArgumentParserResult<NbtCompoundNode> = {
-            data: new NbtCompoundNode(superNode),
-            cache: {}, completions: [], errors: [], tokens: []
-        }
+        const ans = ArgumentParserResult.create(new NbtCompoundNode(superNode))
         const start = reader.cursor
 
         new MapParser<NbtCompoundNode>(
             NbtCompoundNodeChars,
             (ans, reader, ctx) => {
-                const result: ArgumentParserResult<string> = {
-                    data: '',
-                    tokens: [],
-                    cache: {},
-                    completions: [],
-                    errors: []
-                }
+                const result = ArgumentParserResult.create('')
                 const start = reader.cursor
                 try {
                     const out: { mapping: IndexMapping } = { mapping: {} }
@@ -354,13 +345,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseListOrArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtCollectionNode<NbtNode>> {
-        const ans: ArgumentParserResult<NbtCollectionNode<NbtNode>> = {
-            data: new NbtListNode(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtCollectionNode<NbtNode>>(new NbtListNode(superNode))
         const start = reader.cursor
         try {
             reader.expect('[')
@@ -383,15 +368,11 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper):
+    private parsePrimitiveArray(reader: StringReader, _ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper):
         ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> {
-        const ans: ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> = {
-            data: new NbtByteArrayNode(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtArrayNode<NbtPrimitiveNode<number | bigint>>>(
+            new NbtByteArrayNode(superNode)
+        )
         const start = reader.cursor
         try {
             reader
@@ -488,13 +469,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtListNode<NbtNode>> {
-        const ans: ArgumentParserResult<NbtListNode<NbtNode>> = {
-            data: new NbtListNode<NbtNode>(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new NbtListNode<NbtNode>(superNode))
         const start = reader.cursor
         try {
             /**
@@ -569,13 +544,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parsePrimitiveTag(reader: StringReader, superNode: NbtCompoundNode | null, _helper?: NbtdocHelper): ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> {
-        const ans: ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> = {
-            data: new NbtStringNode(superNode, '', '', {}),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtPrimitiveNode<string | number | bigint>>(
+            new NbtStringNode(superNode, '', '', {})
+        )
         const start = reader.cursor
         const out: { mapping: IndexMapping } = { mapping: {} }
         if (StringReader.isQuote(reader.peek())) {

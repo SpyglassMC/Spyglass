@@ -4,7 +4,7 @@ import { ProposedFeatures } from 'vscode-languageserver'
 import { onSemanticTokens } from '../../services/onSemanticTokens'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onSemanticTokens() Tests', () => {
     it('Should return correctly', () => {
@@ -14,10 +14,10 @@ describe('onSemanticTokens() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
                 }),
-                mockLineNode({
+                mockCommand({
                     tokens: [new Token({ start: 9, end: 17 }, TokenType.comment)]
                 })
             ]

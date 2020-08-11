@@ -4,10 +4,10 @@ import { ArrayASTNode, ASTNode, Hover, InsertTextFormat, ObjectASTNode, StringAS
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
 import { resolveLocalePlaceholders } from '../locales'
-import { LineParser } from '../parsers/LineParser'
+import { IdentityNode } from '../nodes'
+import { CommandParser } from '../parsers/CommandParser'
 import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
-import { IdentityNode } from '../nodes'
 
 export class JsonSchemaHelper {
     private static readonly Replacers = {
@@ -124,7 +124,7 @@ export class JsonSchemaHelper {
         const replacingRange = replacingNode ? this.getNodeRange(replacingNode) : { start: ctx.cursor, end: ctx.cursor }
         const valueSchema = schema.navigate(valuePath, -1)
         const value = this.restoreValueFromNode(valueNode)
-        
+
         if (valueNode.type === 'object' && typeof replacingNode?.value === 'string') {
             // Delete the current selected key from `value`, so that the selected key can show in the suggestions.
             delete value[replacingNode.value]
@@ -282,8 +282,8 @@ export class JsonSchemaHelper {
         }
     }
 
-    private static executeStringValidator(reader: StringReader, ctx: ParsingContext, stringNode: ASTNode, option: ValidationOption): Partial<LegacyValidateResult> {
-        let ans: Partial<LegacyValidateResult> = {}
+    private static executeStringValidator(reader: StringReader, ctx: ParsingContext, stringNode: ASTNode, option: ValidationOption): LegacyValidateResult {
+        let ans = LegacyValidateResult.create()
         switch (option.validator) {
             case 'block_state_key': {
                 const id = IdentityNode.fromString(this.navigateRelativePath(stringNode, option.params.id)?.value?.toString() ?? '').toString()
@@ -295,7 +295,7 @@ export class JsonSchemaHelper {
                 // TODO
                 break
             case 'command':
-                ans = new LineParser(
+                ans = new CommandParser(
                     option.params.leadingSlash, 'commands', option.params.allowPartial
                 ).parse(reader, ctx).data
                 break
@@ -362,7 +362,7 @@ export class JsonSchemaHelper {
                 console.error('[doDetailedStringLegacyValidate]', new Error(`Unknown validator ${(option as any).validator}`))
                 break
         }
-        ans.completions = ans?.completions?.map(this.escapeCompletion)
+        ans.completions = ans.completions.map(this.escapeCompletion)
         return ans
     }
 
@@ -370,7 +370,7 @@ export class JsonSchemaHelper {
         return handleCompletionText(origin, str => quoteString(str, 'always double', true).slice(1, -1))
     }
 
-    private static combineResult(ans: ValidateResult, result: Partial<LegacyValidateResult> | undefined, mapping: IndexMapping) {
+    private static combineResult(ans: ValidateResult, result: LegacyValidateResult | undefined, mapping: IndexMapping) {
         if (result) {
             if (result.cache) {
                 remapCachePosition(result.cache, mapping)

@@ -4,7 +4,7 @@ import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onDocumentLinks } from '../../services/onDocumentLinks'
 import { McfunctionDocument } from '../../types'
 import { Uri } from '../../types/handlers'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentLinks() Tests', () => {
     const pathAccessible = async () => true
@@ -14,7 +14,7 @@ describe('onDocumentLinks() Tests', () => {
     const doc: McfunctionDocument = {
         type: 'mcfunction',
         nodes: [
-            mockLineNode({
+            mockCommand({
                 cache: {
                     color: {
                         ignored: { ref: [{ start: 0, end: 15 }], def: [] }

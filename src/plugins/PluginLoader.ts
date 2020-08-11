@@ -49,14 +49,14 @@ export class PluginLoader {
 
     static async getContributions(plugins: Map<string, Plugin>): Promise<Map<string, LanguageConfig>> {
         const languageDefinitionContributor = new ContributorImpl<plugins.LanguageDefinition>()
-        const syntaxComponentContributor = new ContributorImpl<plugins.SyntaxComponent>()
+        const syntaxComponentContributor = new ContributorImpl<plugins.SyntaxComponentParser>()
         for (const plugin of plugins.values()) {
             await plugin.contributeLanguages?.(languageDefinitionContributor)
-            await plugin.contributeSyntaxComponents?.(syntaxComponentContributor)
+            await plugin.contributeSyntaxComponentParsers?.(syntaxComponentContributor)
         }
         const factory = new LanguageConfigBuilderFactoryImpl({
             languageDefinitions: languageDefinitionContributor.values,
-            syntaxComponents: syntaxComponentContributor.values
+            syntaxComponentParsers: syntaxComponentContributor.values
         })
         for (const plugin of plugins.values()) {
             await plugin.configureLanguages?.(factory)

@@ -10,12 +10,13 @@ import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
+import { ParserCollection } from '../parsers'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { PluginLoader } from '../plugins/PluginLoader'
-import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, LineNode, ParserSuggestion, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
-import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseFunctionNodes, parseJsonNode } from './common'
+import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseJsonNode, parseSyntaxComponents } from './common'
 
 type ShowMessage = (message: string) => void
 
@@ -365,17 +366,17 @@ export class DatapackLanguageService {
         if (rel && isRelIncluded(rel, config)) {
             const vanillaData = await this.getVanillaData(config)
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
+            const commandTree = await this.getCommandTree(config)
             if (textDoc.languageId === 'json') {
                 const schemaType = getJsonSchemaType(rel)
                 if (schemaType) {
                     const schema = jsonSchemas.get(schemaType)
                     ans = {
                         type: 'json',
-                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType })
+                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType, commandTree })
                     }
                 }
             } else {
-                const commandTree = await this.getCommandTree(config)
                 ans = {
                     type: 'mcfunction',
                     nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
@@ -385,14 +386,41 @@ export class DatapackLanguageService {
         return ans
     }
 
-    private parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType }: { textDoc: TextDocument, config: Config, schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData }) {
-        return [parseJsonNode({ service: this, uri, document: textDoc, config, schema, jsonSchemas, schemaType, vanillaData, roots: this.roots, cache: this.cacheFile.cache })]
+    private parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType, commandTree }: { textDoc: TextDocument, config: Config, schema: INode, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, uri: Uri, vanillaData: VanillaData, commandTree: CommandTree }) {
+        return [parseJsonNode({ service: this, uri, textDoc, config, schema, jsonSchemas, schemaType, vanillaData, commandTree })]
     }
 
     private parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas }: { textDoc: TextDocument, commandTree: CommandTree, config: Config, uri: Uri, vanillaData: VanillaData, jsonSchemas: SchemaRegistry }) {
-        const ans: LineNode[] = []
-        parseFunctionNodes(this, textDoc, undefined, undefined, ans, config, this.cacheFile, uri, this.roots, undefined, commandTree, vanillaData, jsonSchemas, this.languageConfigs)
-        return ans
+        return parseSyntaxComponents(this, textDoc, undefined, undefined, config, uri, undefined, commandTree, vanillaData, jsonSchemas, this.languageConfigs)
+    }
+
+    getParsingContextSync({ cursor, uri, textDoc, config, commandTree, jsonSchemas, vanillaData }: { cursor?: number, uri: Uri, textDoc: TextDocument, config: Config, vanillaData: VanillaData | undefined, commandTree: CommandTree | undefined, jsonSchemas: SchemaRegistry | undefined }): ParsingContext {
+        const idResult = this.getId(uri)
+        return constructContext({
+            blockDefinition: vanillaData?.BlockDefinition,
+            cache: idResult ? this.getCache(idResult.category, idResult.id) : this.cacheFile.cache,
+            commandTree,
+            config,
+            cursor,
+            id: idResult?.id,
+            jsonSchemas,
+            namespaceSummary: vanillaData?.NamespaceSummary,
+            nbtdoc: vanillaData?.Nbtdoc,
+            parsers: new ParserCollection(),
+            registry: vanillaData?.Registry,
+            rootIndex: getRootIndex(uri, this.roots),
+            roots: this.roots,
+            service: this,
+            textDoc
+        }, commandTree, vanillaData, jsonSchemas)
+    }
+
+    async getParsingContext({ cursor, uri, textDoc }: { cursor?: number, uri: Uri, textDoc: TextDocument }): Promise<ParsingContext> {
+        const config = await this.getConfig(uri)
+        const vanillaData = await this.getVanillaData(config)
+        const commandTree = await this.getCommandTree(config)
+        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
+        return this.getParsingContextSync({ commandTree, config, jsonSchemas, textDoc, uri, vanillaData, cursor })
     }
 
     async onDidChangeTextDocument(uri: Uri, contentChanges: lsp.TextDocumentContentChangeEvent[], version: number | null) {
@@ -405,13 +433,13 @@ export class DatapackLanguageService {
 
         const vanillaData = await this.getVanillaData(config)
         const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
+        const commandTree = await getCommandTree(config.env.cmdVersion)
         if (isMcfunctionDocument(doc)) {
-            const commandTree = await getCommandTree(config.env.cmdVersion)
             await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas, languageConfigs: this.languageConfigs })
         } else {
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             TextDocument.update(textDoc, contentChanges, version!)
-            doc.nodes[0] = parseJsonNode({ service: this, uri, roots: this.roots, config, cache: this.cacheFile.cache, schema, jsonSchemas, vanillaData, document: textDoc, schemaType: doc.nodes[0].schemaType })
+            doc.nodes[0] = parseJsonNode({ service: this, uri, config, schema, jsonSchemas, vanillaData, textDoc, commandTree, schemaType: doc.nodes[0].schemaType })
         }
         await this.mergeFileCacheIntoGlobalCache(uri)
         trimCache(this.cacheFile.cache)
@@ -444,23 +472,14 @@ export class DatapackLanguageService {
             if (!node) {
                 return null
             }
-            return onCompletion({ uri, offset, textDoc, service: this, config, node, commandTree, vanillaData, jsonSchemas })
+            return onCompletion({ uri, offset, textDoc, node, service: this, languageConfigs: this.languageConfigs })
         } else {
             if (!this.capabilities.dynamicRegistration.competion && this.capabilities.completionContext && context?.triggerCharacter && !DatapackLanguageService.GeneralTriggerCharacters.includes(context.triggerCharacter)) {
                 return null
             }
             const ans: ParserSuggestion[] = []
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
-            const ctx = constructContext({
-                cache: this.getCache(uri),
-                cursor: offset,
-                textDoc,
-                id: getId(uri, this.roots),
-                rootIndex: getRootIndex(uri, this.roots),
-                roots: this.roots,
-                config,
-                service: this
-            }, commandTree, vanillaData, jsonSchemas)
+            const ctx = await this.getParsingContext({ cursor: offset, textDoc, uri })
             JsonSchemaHelper.suggest(ans, doc.nodes[0].json.root, schema, ctx)
             return ans.map(v => {
                 const ans = rfdc()(v)
@@ -483,10 +502,7 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        const commandTree = await this.getCommandTree(config)
-        const vanillaData = await this.getVanillaData(config)
-        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
-        return onSignatureHelp({ uri, service: this, offset, textDoc, config, node, commandTree, vanillaData, jsonSchemas })
+        return onSignatureHelp({ uri, offset, textDoc, node, service: this, languageConfigs: this.languageConfigs })
     }
 
     async onFoldingRanges(uri: Uri) {
@@ -517,15 +533,7 @@ export class DatapackLanguageService {
             const vanillaData = await this.getVanillaData(config)
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
-            const ctx = constructContext({
-                cache: this.getCache(uri),
-                textDoc,
-                id: getId(uri, this.roots),
-                rootIndex: getRootIndex(uri, this.roots),
-                roots: this.roots,
-                config,
-                service: this
-            }, undefined, undefined, jsonSchemas)
+            const ctx = await this.getParsingContext({ textDoc, uri })
             return JsonSchemaHelper.onHover(doc.nodes[0].json.root, schema, ctx, offset)
         }
     }
@@ -600,7 +608,7 @@ export class DatapackLanguageService {
             return null
         }
         if (isMcfunctionDocument(doc)) {
-            return onCodeAction({ service: this, uri, doc, textDoc, diagnostics, config, range, cacheFile: this.cacheFile })
+            return onCodeAction({ service: this, uri, doc, textDoc, diagnostics, range, cacheFile: this.cacheFile })
         } else {
             // TODO: JSON
             return null

@@ -47,10 +47,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
     }
 
     parse(reader: StringReader, { cursor: cursor }: ParsingContext): ArgumentParserResult<VectorNode> {
-        const ans: ArgumentParserResult<VectorNode> = {
-            data: new VectorNode(),
-            tokens: [], completions: [], errors: [], cache: {}
-        }
+        const ans = ArgumentParserResult.create(new VectorNode())
         const start = reader.cursor
 
         //#region Completions.

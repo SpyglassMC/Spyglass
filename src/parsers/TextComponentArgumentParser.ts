@@ -18,20 +18,16 @@ export class TextComponentArgumentParser extends ArgumentParser<TextComponentNod
         const start = reader.cursor
         const raw = reader.readRemaining()
         const end = reader.cursor
-        const ans: ArgumentParserResult<TextComponentNode> = {
-            data: new TextComponentNode(raw),
-            tokens: [], errors: [], cache: {}, completions: []
-        }
+        const ans = ArgumentParserResult.create(new TextComponentNode(raw))
 
         const text = ' '.repeat(start) + raw
         const textDoc = TextDocument.create('dhp:///text_component.json', 'json', 0, text)
         const schema = ctx.jsonSchemas.get('text_component')
         const jsonDocument = parseJsonNode({
-            cache: ctx.cache,
             config: ctx.config,
-            document: textDoc,
+            textDoc,
+            commandTree: ctx.commandTree,
             jsonSchemas: ctx.jsonSchemas,
-            roots: ctx.roots,
             schema,
             schemaType: 'text_component',
             service: ctx.service,

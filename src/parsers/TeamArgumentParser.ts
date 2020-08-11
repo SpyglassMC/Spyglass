@@ -19,13 +19,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
         const category = getSafeCategory(ctx.cache, 'team')
         //#region Data
         const start = reader.cursor

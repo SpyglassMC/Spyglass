@@ -38,13 +38,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
     }
 
     private parsePlainOrUuid(reader: StringReader, ctx: ParsingContext) {
-        const ans: ArgumentParserResult<EntityNode> = {
-            data: new EntityNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new EntityNode())
         const start = reader.cursor
 
         //#region Data.
@@ -117,13 +111,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
     }
 
     private parseSelector(reader: StringReader, ctx: ParsingContext) {
-        const ans: ArgumentParserResult<EntityNode> = {
-            data: new EntityNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new EntityNode())
         const start = reader.cursor
         let isMultiple = false
         let containsNonPlayer = false
@@ -213,10 +201,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 combineArgumentParserResult(ans, result)
             }
 
-            const argumentAns: ArgumentParserResult<SelectorArgumentsNode> = {
-                data: new SelectorArgumentsNode(),
-                tokens: [], errors: [], cache: {}, completions: []
-            }
+            const argumentAns = ArgumentParserResult.create(new SelectorArgumentsNode())
             // We assign `argumentAns.data` to `ans.data.argument` first so that we can use
             // `ans.data.argument` to access it while parsing.
             ans.data.argument = argumentAns.data
@@ -288,10 +273,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         argumentAns.data[key] = result.data
                         combineArgumentParserResult(argumentAns, result)
                     } else if (key === 'advancements') {
-                        const advancementsAns: ArgumentParserResult<SelectorAdvancementsNode> = {
-                            data: new SelectorAdvancementsNode(),
-                            tokens: [], errors: [], cache: {}, completions: []
-                        }
+                        const advancementsAns = ArgumentParserResult.create(new SelectorAdvancementsNode())
                         new MapParser<SelectorAdvancementsNode>(
                             SelectorArgumentNodeChars,
                             (ans, reader, ctx) => {
@@ -305,10 +287,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                             },
                             (ans, reader, ctx, adv) => {
                                 if (reader.peek() === '{') {
-                                    const criteriaAns: ArgumentParserResult<SelectorCriteriaNode> = {
-                                        data: new SelectorCriteriaNode(),
-                                        tokens: [], errors: [], cache: {}, completions: []
-                                    }
+                                    const criteriaAns = ArgumentParserResult.create(new SelectorCriteriaNode())
                                     ans.data[adv] = criteriaAns.data
                                     new MapParser<SelectorCriteriaNode>(
                                         SelectorArgumentNodeChars,
@@ -348,10 +327,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         argumentAns.data.advancements = advancementsAns.data
                         combineArgumentParserResult(argumentAns, advancementsAns)
                     } else if (key === 'scores') {
-                        const scoresAns: ArgumentParserResult<SelectorScoresNode> = {
-                            data: new SelectorScoresNode(),
-                            tokens: [], errors: [], cache: {}, completions: []
-                        }
+                        const scoresAns = ArgumentParserResult.create(new SelectorScoresNode())
                         argumentAns.data.scores = scoresAns.data
                         new MapParser<SelectorScoresNode>(
                             SelectorArgumentNodeChars,

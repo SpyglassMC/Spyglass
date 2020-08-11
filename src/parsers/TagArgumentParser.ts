@@ -13,13 +13,7 @@ export class TagArgumentParser extends ArgumentParser<string> {
     readonly identity = 'tag'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
         const category = getSafeCategory(ctx.cache, 'tag')
         //#region Data
         const start = reader.cursor

@@ -1,21 +1,21 @@
+import { SchemaRegistry } from '@mcschema/core'
 import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../data/VanillaData'
 import { getSelectedNode, NodeRange } from '../nodes'
-import { LineNode, Uri } from '../types'
+import { LanguageConfig } from '../plugins/LanguageConfigImpl'
+import { Uri } from '../types'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { McfunctionDocument } from '../types/DatapackDocument'
-import { getStringLines, parseFunctionNodes } from './common'
+import { getStringLines, parseSyntaxComponents } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
-import { SchemaRegistry } from '@mcschema/core'
-import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 
 function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { range: Range, text: string } {
     return !!(val as any).range
 }
 
-export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas, languageConfigs }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry,languageConfigs?:Map<string,LanguageConfig> }) {
+export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas, languageConfigs }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig> }) {
     const lineAmount = getStringLines(textDoc.getText()).length
     // eslint-disable-next-line prefer-const
     let lineDelta = 0
@@ -51,13 +51,12 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
     nodeChange.lineStop = lineAmount - 1
 
     // Update `lines`.
-    const changedNodes: LineNode[] = []
-    parseFunctionNodes(
+    const changedNodes = parseSyntaxComponents(
         service,
         textDoc,
         textDoc.offsetAt(Position.create(nodeChange.lineStart, 0)),
         textDoc.offsetAt(Position.create(nodeChange.lineStop + lineDelta, Infinity)),
-        changedNodes, config, service.cacheFile, uri, service.roots, undefined, commandTree, vanillaData, jsonSchemas, languageConfigs
+        config, uri, undefined, commandTree, vanillaData, jsonSchemas, languageConfigs
     )
     doc.nodes.splice(nodeChange.nodeStart, nodeChange.nodeStop - nodeChange.nodeStart + 1, ...changedNodes)
 }

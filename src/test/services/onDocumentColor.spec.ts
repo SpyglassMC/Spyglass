@@ -2,13 +2,13 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onDocumentColor } from '../../services/onDocumentColor'
 import { McfunctionDocument } from '../../types'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentColor() Tests', () => {
     const doc: McfunctionDocument = {
         type: 'mcfunction',
         nodes: [
-            mockLineNode({
+            mockCommand({
                 cache: {
                     color: {
                         '1 1 1 1': {

@@ -27,13 +27,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<BlockNode> {
-        const ans: ArgumentParserResult<BlockNode> = {
-            data: new BlockNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new BlockNode())
 
         const start = reader.cursor
 
@@ -56,10 +50,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
             const definition = id.isTag ? undefined : ctx.blockDefinition[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
-            const statesResult: ArgumentParserResult<BlockStateNode> = {
-                data: new BlockStateNode(),
-                cache: {}, completions: [], errors: [], tokens: []
-            }
+            const statesResult = ArgumentParserResult.create(new BlockStateNode())
 
             new MapParser<BlockStateNode>(
                 BlockStateNodeChars,

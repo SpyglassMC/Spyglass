@@ -392,10 +392,10 @@ export const CommandTree: ICommandTree = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -423,10 +423,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 nbt: {
-                                    parser: ({ args }, { nbtdoc: nbt }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }, { nbtdoc: nbt }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtArgumentParser('Compound', 'minecraft:entity', id)
                                         } else {
@@ -446,10 +446,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 targetPath: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -470,10 +470,10 @@ export const CommandTree: ICommandTree = {
                                                             executable: true,
                                                             children: {
                                                                 sourcePath: {
-                                                                    parser: ({ args }) => {
-                                                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                                    parser: ({ data }) => {
+                                                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                         if (type === 'entity') {
-                                                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                                                             const id = getNbtdocRegistryId(entity)
                                                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                                                         } else if (type === 'block') {
@@ -492,10 +492,10 @@ export const CommandTree: ICommandTree = {
                                                     parser: new LiteralArgumentParser('value'),
                                                     children: {
                                                         nbt: {
-                                                            parser: ({ args }) => {
-                                                                const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                            parser: ({ data }) => {
+                                                                const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
-                                                                    const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                                                    const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                                                     const id = getNbtdocRegistryId(entity)
                                                                     return new NbtArgumentParser(undefined, 'minecraft:entity', id)
                                                                 } else {
@@ -521,10 +521,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -1528,7 +1528,7 @@ export const CommandTree: ICommandTree = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(args, 2, new IdentityNode()).toString()),
+                                    parser: ({ data }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(data, 2, new IdentityNode()).toString()),
                                     executable: true
                                 }
                             }
@@ -1988,8 +1988,8 @@ export const CommandTree: ICommandTree = {
         // #define bossbar|entity|objective|storage|tag|team <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
-            run: ({ tokens, args }) => {
-                if (getArgOrDefault(args, 1, undefined) === '#define') {
+            run: ({ tokens, data }) => {
+                if (getArgOrDefault(data, 1, undefined) === '#define') {
                     const lastToken = tokens[tokens.length - 1]
                     lastToken.range.start += 1
                 }
@@ -2000,18 +2000,18 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'score_holder', 'storage', 'tag', 'team'),
                     description: 'Type of the definition',
                     run: parsedLine => {
-                        if (!getArgOrDefault<string>(parsedLine.args, 2, '').startsWith('#define')) {
+                        if (!getArgOrDefault<string>(parsedLine.data, 2, '').startsWith('#define')) {
                             parsedLine.completions = []
                         }
                     },
                     children: {
                         id: {
-                            parser: ({ args }) => new DeclarationIDArgumentParser(getArgOrDefault(args, 1, '')),
+                            parser: ({ data }) => new DeclarationIDArgumentParser(getArgOrDefault(data, 1, '')),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: ({ args }) => new DeclarationDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
+                                    parser: ({ data }) => new DeclarationDescriptionArgumentParser(getArgOrDefault(data, 2, ''), getArgOrDefault(data, 1, '')),
                                     description: 'Description of the definition',
                                     executable: true
                                 }
@@ -2025,8 +2025,8 @@ export const CommandTree: ICommandTree = {
     templates: {
         boolean: {
             parser: new LiteralArgumentParser('false', 'true'),
-            run: ({ tokens, args }) => {
-                const lastArg = getArgOrDefault(args, 1, undefined)
+            run: ({ tokens, data }) => {
+                const lastArg = getArgOrDefault(data, 1, undefined)
                 const lastToken = tokens[tokens.length - 1]
                 lastToken.type = TokenType.boolean
             }
@@ -2382,10 +2382,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault(args, 1, new EntityNode()) as EntityNode
+                                            const entity = getArgOrDefault(data, 1, new EntityNode()) as EntityNode
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -2474,10 +2474,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault(args, 1, new EntityNode()) as EntityNode
+                                            const entity = getArgOrDefault(data, 1, new EntityNode()) as EntityNode
                                             const anchor = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', anchor)
                                         } else if (type === 'block') {

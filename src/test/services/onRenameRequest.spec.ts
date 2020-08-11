@@ -4,7 +4,7 @@ import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onRenameRequest } from '../../services/onRenameRequest'
 import { McfunctionDocument } from '../../types'
 import { PathAccessibleFunction, Uri } from '../../types/handlers'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onRenameRequest() Tests', () => {
     const pathAccessible: PathAccessibleFunction = async abs => !!(
@@ -15,7 +15,7 @@ describe('onRenameRequest() Tests', () => {
     const roots = [Uri.parse('file:///c:/'), Uri.parse('file:///d:/')]
 
     const oldUriString1 = Uri.parse('file:///c:/data/spgoding/functions/foo.mcfunction').toString()
-    const oldNode1 = mockLineNode({
+    const oldNode1 = mockCommand({
         cache: {
             color: {
                 ignored: { ref: [{ start: 0, end: 2 }], def: [] }
@@ -37,7 +37,7 @@ describe('onRenameRequest() Tests', () => {
         content: '#> spgoding:foo oldObjective'
     })
     const oldUriString2 = Uri.parse('file:///d:/data/spgoding/functions/bar.mcfunction').toString()
-    const oldNode2 = mockLineNode({
+    const oldNode2 = mockCommand({
         cache: {
             function: {
                 'spgoding:bar': { ref: [{ start: 3, end: 15 }], def: [] }

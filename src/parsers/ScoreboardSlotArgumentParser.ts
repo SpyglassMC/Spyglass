@@ -17,13 +17,7 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
 
         const start = reader.cursor
         const categoryResult = new ctx.parsers.Literal(...scoreboard.SlotCategory).parse(reader, ctx)

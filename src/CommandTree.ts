@@ -1,10 +1,10 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodes } from './types/CommandTree'
-import { LineArgumentNode } from './types/LineNode'
+import { CommandComponentNode } from './types/LineNode'
 
 /**
  * @param lastIndex The index counted from the last, starting from `1`.
  */
-export function getArgOrDefault<T>(args: LineArgumentNode<T>[], lastIndex: number, fallback: T): T {
+export function getArgOrDefault<T>(args: CommandComponentNode<T>[], lastIndex: number, fallback: T): T {
     return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
 }
 

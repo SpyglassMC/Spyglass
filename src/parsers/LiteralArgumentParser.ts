@@ -29,13 +29,7 @@ export class LiteralArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader, { cursor: cursor }: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
         const start = reader.cursor
         //#region Data
         let remaningLiterals = this.literals

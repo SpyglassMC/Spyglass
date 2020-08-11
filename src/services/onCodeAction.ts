@@ -4,11 +4,11 @@ import { DatapackLanguageService } from '..'
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'
 import { ArgumentNode, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
-import { CacheFile, Config, constructContext, McfunctionDocument, Uri } from '../types'
+import { CacheFile, McfunctionDocument, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
-import { getDiagnosticMap, getRootIndex } from './common'
+import { getDiagnosticMap } from './common'
 
-export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range, service }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], config: Config, range: Range, cacheFile: CacheFile, service: DatapackLanguageService }): CodeAction[] | null {
+export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, service }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile, service: DatapackLanguageService }): Promise<CodeAction[] | null> {
     try {
         const ans: CodeAction[] = []
 
@@ -25,19 +25,12 @@ export function onCodeAction({ uri, doc, diagnostics, config, textDoc, range, se
             const node = doc.nodes[i]
             /* istanbul ignore else */
             if (node) {
-                for (const { data } of node.args) {
+                for (const { data } of node.data) {
                     /* istanbul ignore else */
                     if (data instanceof ArgumentNode) {
                         const nodeRange = data[NodeRange]
                         if (areOverlapped(selectedRange, nodeRange)) {
-                            const ctx = constructContext({
-                                config,
-                                textDoc,
-                                id: service.getId(uri),
-                                rootIndex: getRootIndex(uri, service.roots),
-                                roots: service.roots,
-                                service
-                            })
+                            const ctx = await service.getParsingContext({ textDoc, uri })
                             ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))
                         }
                     }

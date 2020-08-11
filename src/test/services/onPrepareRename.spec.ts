@@ -1,11 +1,11 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { onPrepareRename } from '../../services/onPrepareRename'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onPrepareRename() Tests', () => {
     it('Should return the range of the cache stuff', () => {
-        const node = mockLineNode({
+        const node = mockCommand({
             cache: {
                 entity: {
                     SPGoding: {
@@ -26,7 +26,7 @@ describe('onPrepareRename() Tests', () => {
         })
     })
     it('Should return null for renaming colors', () => {
-        const node = mockLineNode({
+        const node = mockCommand({
             cache: {
                 color: {
                     '1 1 1 1': {

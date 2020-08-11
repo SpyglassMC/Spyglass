@@ -25,13 +25,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
     readonly identity = 'itemSlot'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
 
         if (StringReader.canInNumber(reader.peek())) {
             const start = reader.cursor

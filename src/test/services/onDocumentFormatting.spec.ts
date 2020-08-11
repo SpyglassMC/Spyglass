@@ -6,7 +6,7 @@ import { onDocumentFormatting } from '../../services/onDocumentFormatting'
 import { McfunctionDocument } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { ParsingError } from '../../types/ParsingError'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentFormatting() Tests', () => {
     const config = VanillaConfig
@@ -14,9 +14,9 @@ describe('onDocumentFormatting() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     range: { start: 0, end: 20 },
-                    args: [
+                    data: [
                         { parser: 'literal', data: 'fake' },
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
@@ -38,9 +38,9 @@ describe('onDocumentFormatting() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     range: { start: 5, end: 25 },
-                    args: [
+                    data: [
                         { parser: 'literal', data: 'fake' },
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]
@@ -62,9 +62,9 @@ describe('onDocumentFormatting() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     range: { start: 0, end: 21 },
-                    args: [
+                    data: [
                         { parser: 'literal', data: 'wrong' },
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ],
@@ -72,9 +72,9 @@ describe('onDocumentFormatting() Tests', () => {
                         new ParsingError({ start: 0, end: 5 }, '')
                     ]
                 }),
-                mockLineNode({
+                mockCommand({
                     range: { start: 22, end: 42 },
-                    args: [
+                    data: [
                         { parser: 'literal', data: 'fake' },
                         { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
                     ]

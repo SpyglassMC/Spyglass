@@ -19,13 +19,7 @@ export class DeclarationIDArgumentParser extends ArgumentParser<string> {
         const start = reader.cursor
         const id = reader.readUntilOrEnd(' ')
         let processsedID = id
-        const ans: ArgumentParserResult<string> = {
-            data: id,
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(id)
         let token = TokenType.comment
         if (id) {
             if (isCacheType(this.type) && !isInternalType(this.type)) {

@@ -21,13 +21,7 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TimeNode> {
-        const ans: ArgumentParserResult<TimeNode> = {
-            data: new TimeNode(NaN, '', 't'),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new TimeNode(NaN, '', 't'))
 
         const start = reader.cursor
 

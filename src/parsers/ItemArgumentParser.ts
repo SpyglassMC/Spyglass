@@ -21,13 +21,7 @@ export class ItemArgumentParser extends ArgumentParser<ItemNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<ItemNode> {
-        const ans: ArgumentParserResult<ItemNode> = {
-            data: new ItemNode(new IdentityNode()),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new ItemNode(new IdentityNode()))
 
         const start = reader.cursor
 

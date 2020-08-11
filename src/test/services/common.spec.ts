@@ -4,41 +4,35 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
-import { getId, getRel, getRootUri, getUri, getUriFromId, parseFunctionNodes } from '../../services/common'
-import { VanillaConfig } from '../../types/Config'
-import { UrisOfIds, UrisOfStrings } from '../../types/handlers'
-import { LineNode } from '../../types/LineNode'
+import { getId, getRel, getRootUri, getUriFromId, parseSyntaxComponents } from '../../services/common'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
+import { SyntaxComponent } from '../../types'
+import { VanillaConfig } from '../../types/Config'
+import { UrisOfIds } from '../../types/handlers'
 
 describe('common.ts Tests', () => {
     describe('getRootUri() Tests', () => {
         it('Should append slash', () => {
-            const uris = new Map()
-
             const uri = getRootUri('file:///c:/foo')
 
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
         it('Should not append slash when already exists', () => {
-            const uris = new Map()
-
             const uri = getRootUri('file:///c:/foo/')
 
             assert.deepStrictEqual(uri, Uri.parse('file:///c:/foo/'))
         })
     })
-    describe('parseFunctionNodes() Tests', () => {
+    describe('parseSyntaxComponents() Tests', () => {
         const service = new DatapackLanguageService()
-        const roots: Uri[] = []
         const uri = Uri.parse('file:///c:/foo')
         it('Should push an empty node at the end of whitespaces', async () => {
             const content = '  \t  '
             const document = TextDocument.create('', '', 0, content)
-            const nodes: LineNode[] = []
+            const nodes: SyntaxComponent[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            parseFunctionNodes(service, document, 0, 5, nodes, config, cacheFile, uri, roots)
+            parseSyntaxComponents(service, document, 0, 5, nodes, config, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -48,11 +42,10 @@ describe('common.ts Tests', () => {
         it('Should push a parsed node for other input', async () => {
             const content = '# test'
             const document = TextDocument.create('', '', 0, content)
-            const nodes: LineNode[] = []
+            const nodes: SyntaxComponent[] = []
             const config = VanillaConfig
-            const cacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: NaN }
 
-            parseFunctionNodes(service, document, 0, 6, nodes, config, cacheFile, uri, roots)
+            parseSyntaxComponents(service, document, 0, 6, nodes, config, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },

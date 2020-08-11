@@ -1,5 +1,5 @@
 import { ArgumentParser } from '../parsers/ArgumentParser'
-import { SaturatedLineNode } from './LineNode'
+import { CommandComponent } from './LineNode'
 import { ParsingContext } from './ParsingContext'
 
 /**
@@ -16,7 +16,7 @@ export interface CommandTreeNode<T> {
     /**
      * An argument parser to parse this argument, or a function which constructs an argument parser.
      */
-    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLineNode, ctx: ParsingContext) => ArgumentParser<T>),
+    parser?: ArgumentParser<T> | ((parsedLine: CommandComponent, ctx: ParsingContext) => ArgumentParser<T>),
     /**
      * The permission level required to perform this node.
      * @default 2
@@ -54,7 +54,7 @@ export interface CommandTreeNode<T> {
      * Can be used to validate the parsed arguments.
      * @param parsedLine Parsed line.
      */
-    run?(parsedLine: SaturatedLineNode): void
+    run?(parsedLine: CommandComponent): void
 }
 
 /**

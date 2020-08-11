@@ -22,13 +22,7 @@ export class NumberRangeArgumentParser extends ArgumentParser<NumberRangeNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NumberRangeNode> {
-        const ans: ArgumentParserResult<NumberRangeNode> = {
-            data: new NumberRangeNode(this.type),
-            tokens: [],
-            completions: [],
-            errors: [],
-            cache: {}
-        }
+        const ans = ArgumentParserResult.create(new NumberRangeNode(this.type))
         const isDoublePeriods = () => reader.peek() === '.' && reader.peek(1) === '.'
         const start = reader.cursor
 

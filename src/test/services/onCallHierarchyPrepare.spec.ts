@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { IdentityKind, onCallHierarchyPrepare } from '../../services/onCallHierarchyPrepare'
 import { Uri } from '../../types/handlers'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onCallHierarchyPrepare() Tests', () => {
     const pathAccessible = async () => true
@@ -13,7 +13,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
         ['tag/function|spgoding:foo', Uri.parse('file:///c:/foo/data/spgoding/tags/functions/foo.mcfunction')]
     ])
 
-    const node = mockLineNode({
+    const node = mockCommand({
         cache: {
             function: {
                 'spgoding:foo': { ref: [{ start: 3, end: 15 }], def: [] }
@@ -47,7 +47,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
     })
     it('Should return correctly for function tags', async () => {
         const offset = 15
-        const node = mockLineNode({
+        const node = mockCommand({
             cache: {
                 'tag/function': {
                     'spgoding:foo': { ref: [{ start: 9, end: 21 }], def: [] }
@@ -76,7 +76,7 @@ describe('onCallHierarchyPrepare() Tests', () => {
     })
     it('Should return correctly for advancements', async () => {
         const offset = 33
-        const node = mockLineNode({
+        const node = mockCommand({
             cache: {
                 advancement: {
                     'spgoding:foo': { ref: [{ start: 26, end: 38 }], def: [] }

@@ -5,7 +5,7 @@ import { Position } from 'vscode-languageserver'
 import { onDocumentHighlight } from '../../services/onDocumentHighlight'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onDocumentHighlight() Tests', () => {
     const { textDoc } = mockParsingContext({
@@ -16,7 +16,7 @@ describe('onDocumentHighlight() Tests', () => {
     const doc: McfunctionDocument = {
         type: 'mcfunction',
         nodes: [
-            mockLineNode({
+            mockCommand({
                 range: { start: 0, end: 13 },
                 tokens: [
                     new Token({ start: 0, end: 4 }, TokenType.literal),
@@ -31,7 +31,7 @@ describe('onDocumentHighlight() Tests', () => {
                     }
                 }
             }),
-            mockLineNode({
+            mockCommand({
                 range: { start: 14, end: 27 },
                 tokens: [
                     new Token({ start: 14, end: 18 }, TokenType.literal),

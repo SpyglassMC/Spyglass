@@ -4,7 +4,7 @@ import { Position } from 'vscode-languageserver'
 import { onSelectionRanges } from '../../services/onSelectionRanges'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'
-import { mockLineNode, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockParsingContext } from '../utils.spec'
 
 describe('onSelectionRanges() Tests', () => {
     it('Should return selection ranges', () => {
@@ -18,7 +18,7 @@ describe('onSelectionRanges() Tests', () => {
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
-                mockLineNode({
+                mockCommand({
                     range: { start: 0, end: 8 },
                     tokens: [
                         new Token({ start: 0, end: 2 }, TokenType.literal),

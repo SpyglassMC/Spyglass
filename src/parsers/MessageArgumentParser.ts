@@ -11,13 +11,7 @@ export class MessageArgumentParser extends ArgumentParser<MessageNode> {
     readonly identity = 'message'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<MessageNode> {
-        const ans: ArgumentParserResult<MessageNode> = {
-            data: new MessageNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new MessageNode())
         const start = reader.cursor
 
         while (reader.canRead()) {
