@@ -1,5 +1,5 @@
 import { ArgumentParser } from '../parsers/ArgumentParser'
-import { CommandComponent } from './LineNode'
+import { CommandComponent } from './CommandComponent'
 import { ParsingContext } from './ParsingContext'
 
 /**

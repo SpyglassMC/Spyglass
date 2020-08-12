@@ -1,5 +1,5 @@
 import { CommandTree, CommandTreeNode, CommandTreeNodes } from './types/CommandTree'
-import { CommandComponentNode } from './types/LineNode'
+import { CommandComponentNode } from './types/CommandComponent'
 
 /**
  * @param lastIndex The index counted from the last, starting from `1`.

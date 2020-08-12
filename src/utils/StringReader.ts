@@ -48,6 +48,13 @@ export class StringReader {
         return this.string.charAt(this.cursor++)
     }
 
+    skipSpace() {
+        while (this.canRead() && StringReader.isSpace(this.peek())) {
+            this.skip()
+        }
+        return this
+    }
+
     skipWhiteSpace() {
         while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
             this.skip()
@@ -345,8 +352,16 @@ export class StringReader {
         )
     }
 
+    static isSpace(c: string) {
+        return c === ' ' || c === '\t'
+    }
+
     static isWhiteSpace(c: string) {
         return c === ' ' || c === '\t' || c === '\r' || c === '\n' || c === '\r\n'
+    }
+
+    static isLineSeparator(c: string) {
+        return c === '\r\n' || c === '\r' || c === '\n'
     }
 
     /**

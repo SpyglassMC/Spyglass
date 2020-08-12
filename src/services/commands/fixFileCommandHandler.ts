@@ -39,11 +39,13 @@ async function getActions(service: DatapackLanguageService, doc: McfunctionDocum
 
         const selectedRange = { start: 0, end: Infinity }
 
-        for (const { data } of node.data) {
-            /* istanbul ignore else */
-            if (data instanceof ArgumentNode) {
-                const ctx = await service.getParsingContext({ textDoc, uri })
-                ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
+        if (node.data instanceof Array) {
+            for (const { data } of node.data) {
+                /* istanbul ignore else */
+                if (data instanceof ArgumentNode) {
+                    const ctx = await service.getParsingContext({ textDoc, uri })
+                    ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
+                }
             }
         }
     }

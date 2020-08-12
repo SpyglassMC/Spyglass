@@ -1,10 +1,9 @@
 import { CompletionItemKind } from 'vscode-languageserver'
 import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
-import { NodeRange } from '../nodes'
 import { CacheType } from '../types/ClientCache'
+import { combineCommand, CommandComponent } from '../types/CommandComponent'
 import { AlwaysValidates, CommandTreeNode, CommandTreeNodes, Switchable } from '../types/CommandTree'
-import { combineCommand, CommandComponent } from '../types/LineNode'
 import { Parser } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { downgradeParsingError, ParsingError } from '../types/ParsingError'
@@ -89,16 +88,16 @@ export class CommandParser implements Parser<CommandComponent> {
             this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
         }
 
-        node[NodeRange] = { start, end: reader.cursor }
+        node.range = { start, end: reader.cursor }
 
-        // Handle comments.
+        // Handle blanks/comments.
         /* istanbul ignore next */
-        if (backupReader.peek() === '#' && node.errors && node.errors.length > 0) {
+        if ((backupReader.peek() === '#' || reader.cursor === start) || node.errors.length) {
             return {
                 data: CommandComponent.create(
                     [{ data: backupReader.readRemaining(), parser: 'string' }],
                     {
-                        [NodeRange]: node[NodeRange],
+                        range: node.range,
                         hint: node.hint,
                         completions: node.completions
                     }
@@ -151,7 +150,7 @@ export class CommandParser implements Parser<CommandComponent> {
                 }
             }
             //#endregion
-            combineCommand(parsedLine, CommandComponent.create([{ data, parser: parser.identity }]))
+            combineCommand(parsedLine, CommandComponent.create([{ data, parser: parser.identity }], { cache, completions, errors, tokens }))
             if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                 parsedLine.hint.options.push([
                     parser.toHint(key, optional),

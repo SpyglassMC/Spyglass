@@ -1,19 +1,18 @@
 import { SignatureInformation } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { NodeRange } from '../nodes'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
-import { CommandComponent, Uri } from '../types'
+import { SyntaxComponent, Uri } from '../types'
 import { parseSyntaxComponents } from './common'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
-export async function onSignatureHelp({ offset, node, uri, service, textDoc, languageConfigs }: { uri: Uri, offset: number, node: CommandComponent, textDoc: TextDocument, service: DatapackLanguageService, languageConfigs: Map<string, LanguageConfig> }) {
+export async function onSignatureHelp({ offset, node, uri, service, textDoc, languageConfigs }: { uri: Uri, offset: number, node: SyntaxComponent, textDoc: TextDocument, service: DatapackLanguageService, languageConfigs: Map<string, LanguageConfig> }) {
     try {
         const signatures: SignatureInformation[] = []
         const config = await service.getConfig(uri)
         const commandTree = await service.getCommandTree(config)
         const vanillaData = await service.getVanillaData(config)
         const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
-        const nodes = parseSyntaxComponents(service, textDoc, node[NodeRange].start, node[NodeRange].end, config, uri, offset, commandTree, vanillaData, jsonSchemas, languageConfigs)
+        const nodes = parseSyntaxComponents(service, textDoc, node.range.start, node.range.end, config, uri, offset, commandTree, vanillaData, jsonSchemas, languageConfigs)
         let fix: string[] = [], options: [string, string[]][] = []
         if (nodes.length) {
             fix = nodes[0].hint.fix

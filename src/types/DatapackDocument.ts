@@ -6,7 +6,7 @@ interface BaseDocument<T, U> {
     nodes: U[]
 }
 
-export interface McfunctionDocument extends BaseDocument<'mcfunction', plugins.SyntaxComponent<any>> { }
+export interface McfunctionDocument extends BaseDocument<'mcfunction', plugins.SyntaxComponent<unknown>> { }
 
 export interface JsonDocument extends BaseDocument<'json', JsonNode> { }
 

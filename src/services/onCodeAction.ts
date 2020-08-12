@@ -24,7 +24,7 @@ export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, serv
         for (let i = startNodeIndex; i <= endNodeIndex; i++) {
             const node = doc.nodes[i]
             /* istanbul ignore else */
-            if (node) {
+            if (node && node.data instanceof Array) {
                 for (const { data } of node.data) {
                     /* istanbul ignore else */
                     if (data instanceof ArgumentNode) {

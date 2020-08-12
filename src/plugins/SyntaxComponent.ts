@@ -1,8 +1,8 @@
-import { NodeRange } from '../nodes'
-import { ArgumentParserResult, LegacyValidateResult, ParserResult, ParsingContext, TextRange } from '../types'
+import { ArgumentParserResult, LegacyValidateResult, LintConfig, ParserResult, ParsingContext, TextRange } from '../types'
 import { StringReader } from '../utils/StringReader'
 
-export interface SyntaxComponentParser<T = any> {
+export interface SyntaxComponentParser<T = unknown> {
+    identity: string,
     /**
      * @returns An array where the first element indicates if the following character(s) can 
      * be pased as the syntax component and the second one indicates the priority of this parser
@@ -18,14 +18,16 @@ export interface SyntaxComponentParser<T = any> {
     parse(reader: StringReader, ctx: ParsingContext): SyntaxComponent<T>
 }
 
-export interface SyntaxComponent<T = any> extends ParserResult<T>, LegacyValidateResult {
-    [NodeRange]: TextRange
+export interface SyntaxComponent<T = unknown> extends ParserResult<T>, LegacyValidateResult {
+    type: string,
+    range: TextRange
 }
 
 export namespace SyntaxComponent {
-    export function create<T>(data: T, partial: Partial<SyntaxComponent<T>> = {}): SyntaxComponent<T> {
+    export function create<T>(type: string, data: T, partial: Partial<SyntaxComponent<T>> = {}): SyntaxComponent<T> {
         return {
-            [NodeRange]: partial[NodeRange] ?? { start: NaN, end: NaN },
+            type,
+            range: partial.range ?? { start: NaN, end: NaN },
             ...ArgumentParserResult.create(data, partial)
         }
     }

@@ -21,6 +21,7 @@ export class PluginLoader {
                 .map(async v => import(/* webpackIgnore: true */ join(directory, v)))
             )
             imports.push(await import('./builtin/DocCommentPlugin'))
+            imports.push(await import('./builtin/McfunctionPlugin'))
             for (const file of imports) {
                 for (const key of Object.keys(file)) {
                     const variable = file[key]

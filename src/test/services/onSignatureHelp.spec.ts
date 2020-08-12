@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onSignatureHelp } from '../../services/onSignatureHelp'
 import { Uri } from '../../types'
-import { mockCommand, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockLanguageConfigs, mockParsingContext } from '../utils.spec'
 
 describe('onSignatureHelp() Tests', () => {
     const roots: Uri[] = []
@@ -18,8 +18,9 @@ describe('onSignatureHelp() Tests', () => {
             range: { start: 0, end: 12 }
         })
         const service = new DatapackLanguageService({ roots, cacheFile })
+        const languageConfigs = await mockLanguageConfigs()
 
-        const signatures = await onSignatureHelp({ uri, textDoc: ctx.textDoc, service, offset, node })
+        const signatures = await onSignatureHelp({ uri, textDoc: ctx.textDoc, service, offset, node, languageConfigs })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{
@@ -44,8 +45,9 @@ describe('onSignatureHelp() Tests', () => {
             range: { start: 0, end: 4 }
         })
         const service = new DatapackLanguageService({ roots, cacheFile })
+        const languageConfigs = await mockLanguageConfigs()
 
-        const signatures = await onSignatureHelp({ service, uri, textDoc: ctx.textDoc, offset, node })
+        const signatures = await onSignatureHelp({ service, uri, textDoc: ctx.textDoc, offset, node, languageConfigs })
 
         assert.deepStrictEqual(signatures, {
             signatures: [{

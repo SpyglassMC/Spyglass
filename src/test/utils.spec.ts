@@ -3,6 +3,7 @@ import assert, { fail } from 'power-assert'
 import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
+import { PluginLoader } from '../plugins/PluginLoader'
 import { ClientCache, CommandComponent, CommandComponentData, Config, constructContext, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
 import { StringReader } from '../utils/StringReader'
 
@@ -84,8 +85,10 @@ interface CommandMockOptions {
     completions?: ParserSuggestion[]
 }
 export function mockCommand(node: CommandMockOptions = {}): CommandComponent {
-    return CommandComponent.create(node.data, { ...node, [NodeRange]: node.range })
+    return CommandComponent.create(node.data, node)
 }
+
+export const mockLanguageConfigs = async () => PluginLoader.getContributions(await PluginLoader.load(undefined))
 
 interface CompletionPredicate extends CompletionItem {
     t: string

@@ -2,7 +2,7 @@ import { SchemaRegistry } from '@mcschema/core'
 import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { VanillaData } from '../data/VanillaData'
-import { getSelectedNode, NodeRange } from '../nodes'
+import { getSelectedNode } from '../nodes'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { Uri } from '../types'
 import { CommandTree } from '../types/CommandTree'
@@ -25,8 +25,8 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
             const { index: nodeStart, node: startNode } = getSelectedNode(doc.nodes, textDoc.offsetAt(change.range.start))
             const { index: nodeStop, node: stopNode } = getSelectedNode(doc.nodes, textDoc.offsetAt(change.range.end))
             if (nodeStart !== -1 && nodeStop !== -1 && startNode && stopNode) {
-                const lineStart = textDoc.positionAt(startNode[NodeRange].start).line
-                const lineStop = textDoc.positionAt(stopNode[NodeRange].end).line
+                const lineStart = textDoc.positionAt(startNode.range.start).line
+                const lineStop = textDoc.positionAt(stopNode.range.end).line
                 nodeChange = nodeChange ?? { nodeStart, nodeStop, lineStart, lineStop }
                 nodeChange.nodeStart = Math.min(nodeChange.nodeStart, nodeStart)
                 nodeChange.nodeStop = Math.max(nodeChange.nodeStop, nodeStop)

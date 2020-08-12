@@ -10,7 +10,7 @@ import { VanillaData } from '../data/VanillaData'
 import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
-import { CommandComponent, ErrorCode, isMcfunctionDocument, SyntaxComponent, TextRange, ValidateResult } from '../types'
+import { ErrorCode, isMcfunctionDocument, SyntaxComponent, TextRange, ValidateResult } from '../types'
 import { FileType } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
@@ -81,9 +81,10 @@ export function parseSyntaxComponents(service: DatapackLanguageService, textDoc:
     const reader = new StringReader(string, start, end)
     const ctx = service.getParsingContextSync({ textDoc, uri, cursor, commandTree, config, jsonSchemas, vanillaData })
     const componentParsers = languageConfigs?.get(textDoc.languageId)?.syntaxComponentParsers ?? []
-    reader.skipWhiteSpace()
-    let lastCursor = reader.cursor
-    while (reader.cursor < reader.end) {
+    const currentLine = () => textDoc.positionAt(reader.cursor).line
+    const finalLine = textDoc.positionAt(end).line
+    let lastLine = -1
+    while (lastLine < currentLine() && currentLine() <= finalLine) {
         const matchedParsers = componentParsers
             .map(v => ({ parser: v, testResult: v.test(reader.clone(), ctx) }))
             .filter(v => v.testResult[0])
@@ -92,13 +93,12 @@ export function parseSyntaxComponents(service: DatapackLanguageService, textDoc:
             // TODO: Handle correctly when there are multiple matched components.
             const result = matchedParsers[0].parser.parse(reader, ctx)
             ans.push(result)
-        }
-        if (reader.cursor === lastCursor) {
-            console.error(`[parseSyntaxComponents] The language server encounters a dead loop when parsing at [${reader.cursor}] with “${reader.remainingString}”`)
+        } else {
+            console.error(`[parseSyntaxComponents] No matched parser at [${reader.cursor}] with “${reader.remainingString}”.`)
             break
         }
-        reader.skipWhiteSpace()
-        lastCursor = reader.cursor
+        lastLine = currentLine()
+        reader.jumpToNextLine(textDoc)
     }
     return ans
 }
@@ -162,15 +162,15 @@ export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
     return { tokenTypes, tokenModifiers }
 }
 
-export function getLspRange(content: TextDocument, { start, end }: TextRange) {
-    return Range.create(content.positionAt(start), content.positionAt(end))
+export function getLspRange(textDoc: TextDocument, { start, end }: TextRange) {
+    return Range.create(textDoc.positionAt(start), textDoc.positionAt(end))
 }
 
 export function getStringLines(string: string) {
     return string.split(/\r\n|\r|\n/)
 }
 
-export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | CommandComponent | null } {
+export function getSelectedNodeFromInfo(info: DatapackDocument, offset: number): { index: number, node: JsonNode | SyntaxComponent | null } {
     return isMcfunctionDocument(info) ? getSelectedNode(info.nodes, offset) : { index: 0, node: info.nodes[0] }
 }
 

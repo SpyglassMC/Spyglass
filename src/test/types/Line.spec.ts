@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { NodeRange } from '../../nodes'
 import { VanillaConfig } from '../../types/Config'
-import { combineCommand, CommandComponent, commandToLintedString } from '../../types/LineNode'
+import { combineCommand, CommandComponent, commandToLintedString } from '../../types/CommandComponent'
 import { ParsingError } from '../../types/ParsingError'
 import { Token, TokenType } from '../../types/Token'
 
@@ -12,7 +12,7 @@ describe('Line Tests', () => {
             const base = CommandComponent.create(
                 [{ data: 'execute', parser: 'test' }],
                 {
-                    [NodeRange]: { start: NaN, end: NaN },
+                    range: { start: NaN, end: NaN },
                     tokens: [new Token({ start: 0, end: 1 }, TokenType.comment)],
                     cache: { entity: {} },
                     errors: [new ParsingError({ start: 0, end: 3 }, 'Old')],
@@ -23,7 +23,7 @@ describe('Line Tests', () => {
             const override = CommandComponent.create(
                 [{ data: 'if', parser: 'test' }],
                 {
-                    [NodeRange]: { start: NaN, end: NaN },
+                    range: { start: NaN, end: NaN },
                     tokens: [new Token({ start: 1, end: 2 }, TokenType.string)],
                     cache: { entity: { foo: { doc: 'foo', def: [{ start: 0, end: 3 }], ref: [] } } },
                     errors: [new ParsingError({ start: 0, end: 3 }, 'New')],

@@ -18,14 +18,17 @@ export class DocCommentPlugin implements plugins.Plugin {
 }
 
 class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
+    identity = 'spgoding:doc_comment/doc_comment'
+
     test(reader: StringReader): [boolean, number] {
-        const result = reader
+        const boolean = reader
             .skipWhiteSpace()
             .remainingString.slice(0, 2) === '#>'
-        return [result, 1]
+        return [boolean, 1]
     }
+
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<DocCommentNode> {
-        const ans = plugins.SyntaxComponent.create(new DocCommentNode())
+        const ans = plugins.SyntaxComponent.create(this.identity, new DocCommentNode())
         reader.skipWhiteSpace()
         const start = reader.cursor
         const isAtFileBeginning = /^\s*$/.test(reader.passedString)
@@ -52,7 +55,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
             ans.errors.push(p)
         }
         ans.data[NodeRange] = { start, end: reader.cursor }
-        ans[NodeRange] = { start, end: reader.cursor }
+        ans.range = { start, end: reader.cursor }
         return ans
     }
 }

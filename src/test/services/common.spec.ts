@@ -6,7 +6,6 @@ import { NodeRange } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { getId, getRel, getRootUri, getUriFromId, parseSyntaxComponents } from '../../services/common'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
-import { SyntaxComponent } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { UrisOfIds } from '../../types/handlers'
 
@@ -29,10 +28,9 @@ describe('common.ts Tests', () => {
         it('Should push an empty node at the end of whitespaces', async () => {
             const content = '  \t  '
             const document = TextDocument.create('', '', 0, content)
-            const nodes: SyntaxComponent[] = []
             const config = VanillaConfig
 
-            parseSyntaxComponents(service, document, 0, 5, nodes, config, uri)
+            const nodes = parseSyntaxComponents(service, document, 0, 5, config, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 5 },
@@ -42,10 +40,9 @@ describe('common.ts Tests', () => {
         it('Should push a parsed node for other input', async () => {
             const content = '# test'
             const document = TextDocument.create('', '', 0, content)
-            const nodes: SyntaxComponent[] = []
             const config = VanillaConfig
 
-            parseSyntaxComponents(service, document, 0, 6, nodes, config, uri)
+            const nodes = parseSyntaxComponents(service, document, 0, 6, config, uri)
 
             assert.deepStrictEqual(nodes, [{
                 [NodeRange]: { start: 0, end: 6 },

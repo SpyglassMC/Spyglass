@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onCompletion } from '../../services/onCompletion'
 import { Uri } from '../../types'
-import { mockCommand, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockLanguageConfigs, mockParsingContext } from '../utils.spec'
 
 describe('onCompletion() Tests', () => {
     const uri = Uri.parse('file:///c:/foo')
@@ -16,8 +16,9 @@ describe('onCompletion() Tests', () => {
             content: 'advancement '
         })
         const service = new DatapackLanguageService()
+        const languageConfigs = await mockLanguageConfigs()
 
-        const completions = await onCompletion({ service, uri, textDoc, node, offset })
+        const completions = await onCompletion({ service, uri, textDoc, node, offset, languageConfigs })
 
         assert.deepStrictEqual(completions, [
             { label: 'grant', textEdit: { range: { start: { line: 0, character: 12 }, end: { line: 0, character: 12 } }, newText: 'grant' } },

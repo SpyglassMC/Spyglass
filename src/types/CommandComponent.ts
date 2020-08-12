@@ -10,19 +10,17 @@ export type CommandComponentNode<T> = {
 
 export type CommandComponentData = CommandComponentNode<any>[]
 
-export type CommandComponent = plugins.SyntaxComponent<CommandComponentData>
+export interface CommandComponent extends plugins.SyntaxComponent<CommandComponentData> {
+
+}
 
 export namespace CommandComponent {
     export function create(data: CommandComponentData = [], partial: Partial<CommandComponent> = {}): CommandComponent {
-        return plugins.SyntaxComponent.create<CommandComponentData>(data, partial)
+        return plugins.SyntaxComponent.create<CommandComponentData>('spgoding:mcfunction/command', data, partial)
     }
 }
 
 export function combineCommand(base: CommandComponent, override: CommandComponent): CommandComponent {
-    /* istanbul ignore next */
-    override.completions = override.completions || []
-    /* istanbul ignore next */
-    override.errors = override.errors || []
     // Args.
     base.data = [...base.data, ...override.data]
     // Hint.
@@ -39,6 +37,6 @@ export function combineCommand(base: CommandComponent, override: CommandComponen
     return base
 }
 
-export function commandToLintedString(cmd: CommandComponent, lint: LintConfig) {
+export function commandToLintedString(cmd: { data: { data: unknown }[] }, lint: LintConfig) {
     return cmd.data.map(v => toFormattedString(v.data, lint)).join(' ')
 }
