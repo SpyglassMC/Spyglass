@@ -2,7 +2,7 @@ import { SchemaRegistry } from '@mcschema/core'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackJsonSchemaRegistry } from '../data/JsonSchema'
-import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, VanillaData } from '../data/VanillaData'
+import { FallbackVanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers/ParserCollection'
 import { DatapackLanguageService } from '../services/DatapackLanguageService'
@@ -39,14 +39,9 @@ export interface ParsingContext {
 /* istanbul ignore next */
 export function constructContext(
     custom: Partial<ParsingContext>,
-    commandTree: CommandTree = FallbackCommandTree,
-    vanillaData: VanillaData = {
-        BlockDefinition: FallbackBlockDefinition,
-        NamespaceSummary: FallbackNamespaceSummary,
-        Nbtdoc: FallbackNbtdoc,
-        Registry: FallbackRegistry
-    },
-    jsonSchemas: SchemaRegistry = FallbackJsonSchemaRegistry
+    commandTree = FallbackCommandTree,
+    vanillaData = FallbackVanillaData,
+    jsonSchemas = FallbackJsonSchemaRegistry
 ): ParsingContext {
     const ans: ParsingContext = {
         blockDefinition: vanillaData.BlockDefinition,

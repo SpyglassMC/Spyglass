@@ -8,20 +8,20 @@ import { LanguageConfig, LanguageConfigBuilderFactoryImpl } from './LanguageConf
 import { PluginID } from './Plugin'
 
 export class PluginLoader {
-    static async load(directory: string | undefined): Promise<Map<Readonly<string>, Plugin>> {
+    static async load(directory?: string): Promise<Map<Readonly<string>, Plugin>> {
         const startTime = new Date().getTime()
         const map = new Map<Readonly<string>, Plugin>()
-        if (!directory || !(await pathAccessible(directory))) {
-            return map
-        }
+        const imports: { [key: string]: any }[] = []
         try {
-            const names = await fsp.readdir(directory)
-            const imports: { [key: string]: any }[] = await Promise.all(names
-                .filter(v => v.endsWith('.js'))
-                .map(async v => import(/* webpackIgnore: true */ join(directory, v)))
-            )
             imports.push(await import('./builtin/DocCommentPlugin'))
             imports.push(await import('./builtin/McfunctionPlugin'))
+            if (directory && await pathAccessible(directory)) {
+                const names = await fsp.readdir(directory)
+                imports.push(...await Promise.all(names
+                    .filter(v => v.endsWith('.js'))
+                    .map(async v => import(/* webpackIgnore: true */ join(directory, v)))
+                ))
+            }
             for (const file of imports) {
                 for (const key of Object.keys(file)) {
                     const variable = file[key]

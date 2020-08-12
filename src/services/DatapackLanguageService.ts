@@ -431,12 +431,12 @@ export class DatapackLanguageService {
             return
         }
 
-        const vanillaData = await this.getVanillaData(config)
-        const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
-        const commandTree = await getCommandTree(config.env.cmdVersion)
         if (isMcfunctionDocument(doc)) {
-            await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, commandTree, vanillaData, jsonSchemas, languageConfigs: this.languageConfigs })
+            await onDidChangeTextDocument({ uri, service: this, doc, version: version!, contentChanges, config, textDoc, languageConfigs: this.languageConfigs })
         } else {
+            const vanillaData = await this.getVanillaData(config)
+            const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
+            const commandTree = await getCommandTree(config.env.cmdVersion)
             const schema = jsonSchemas.get(doc.nodes[0].schemaType)
             TextDocument.update(textDoc, contentChanges, version!)
             doc.nodes[0] = parseJsonNode({ service: this, uri, config, schema, jsonSchemas, vanillaData, textDoc, commandTree, schemaType: doc.nodes[0].schemaType })

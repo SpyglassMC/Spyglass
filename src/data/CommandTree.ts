@@ -1,5 +1,6 @@
 import { CommandTree } from '../types/CommandTree'
 import { CommandTreeVersion } from '../types/CommandTreeVersion'
+export { CommandTree as FallbackCommandTree } from './CommandTree1.16'
 
 const CommandTrees: {
     [version: string]: CommandTree | undefined

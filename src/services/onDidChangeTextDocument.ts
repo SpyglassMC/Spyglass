@@ -1,11 +1,8 @@
-import { SchemaRegistry } from '@mcschema/core'
 import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { VanillaData } from '../data/VanillaData'
 import { getSelectedNode } from '../nodes'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { Uri } from '../types'
-import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
 import { McfunctionDocument } from '../types/DatapackDocument'
 import { getStringLines, parseSyntaxComponents } from './common'
@@ -15,7 +12,7 @@ function isIncrementalChange(val: TextDocumentContentChangeEvent): val is { rang
     return !!(val as any).range
 }
 
-export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, commandTree, vanillaData, jsonSchemas, languageConfigs }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig> }) {
+export async function onDidChangeTextDocument({ textDoc, uri, doc, version, contentChanges, config, service, languageConfigs }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, version: number, contentChanges: TextDocumentContentChangeEvent[], config: Config, service: DatapackLanguageService, languageConfigs: Map<string, LanguageConfig> }) {
     const lineAmount = getStringLines(textDoc.getText()).length
     // eslint-disable-next-line prefer-const
     let lineDelta = 0
@@ -40,7 +37,6 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
         nodeChange = { nodeStart: 0, nodeStop: doc.nodes.length - 1, lineStart: 0, lineStop: lineAmount - 1 }
         break
     }
-    // eslint-disable-next-line prefer-const
     nodeChange = nodeChange ?? { nodeStart: 0, nodeStop: doc.nodes.length - 1, lineStart: 0, lineStop: lineAmount - 1 }
 
     // Update `document`.
@@ -51,6 +47,9 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
     nodeChange.lineStop = lineAmount - 1
 
     // Update `lines`.
+    const commandTree = await service.getCommandTree(config)
+    const vanillaData = await service.getVanillaData(config)
+    const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
     const changedNodes = parseSyntaxComponents(
         service,
         textDoc,

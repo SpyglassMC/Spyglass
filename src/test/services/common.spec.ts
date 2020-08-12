@@ -2,12 +2,16 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
-import { NodeRange } from '../../nodes'
+import { FallbackCommandTree } from '../../data/CommandTree'
+import { FallbackJsonSchemas } from '../../data/JsonSchema'
+import { FallbackVanillaData } from '../../data/VanillaData'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { getId, getRel, getRootUri, getUriFromId, parseSyntaxComponents } from '../../services/common'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
+import { CommandComponent } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { UrisOfIds } from '../../types/handlers'
+import { mockLanguageConfigs } from '../utils.spec'
 
 describe('common.ts Tests', () => {
     describe('getRootUri() Tests', () => {
@@ -26,30 +30,33 @@ describe('common.ts Tests', () => {
         const service = new DatapackLanguageService()
         const uri = Uri.parse('file:///c:/foo')
         it('Should push an empty node at the end of whitespaces', async () => {
-            const content = '  \t  '
-            const document = TextDocument.create('', '', 0, content)
+            const content = '     '
+            const textDoc = TextDocument.create('', 'mcfunction', 0, content)
             const config = VanillaConfig
+            const languageConfigs = await mockLanguageConfigs()
 
-            const nodes = parseSyntaxComponents(service, document, 0, 5, config, uri)
+            const nodes = parseSyntaxComponents(service, textDoc, 0, 5, config, uri, undefined, FallbackCommandTree, FallbackVanillaData, await FallbackJsonSchemas, languageConfigs)
 
-            assert.deepStrictEqual(nodes, [{
-                [NodeRange]: { start: 0, end: 5 },
-                args: [], tokens: [], hint: { fix: [], options: [] }
-            }])
+            assert.deepStrictEqual(nodes, [
+                CommandComponent.create([{ data: '', parser: 'string' }], { range: { start: 5, end: 5 } })
+            ])
         })
         it('Should push a parsed node for other input', async () => {
             const content = '# test'
-            const document = TextDocument.create('', '', 0, content)
+            const textDoc = TextDocument.create('', 'mcfunction', 0, content)
             const config = VanillaConfig
+            const languageConfigs = await mockLanguageConfigs()
 
-            const nodes = parseSyntaxComponents(service, document, 0, 6, config, uri)
+            const nodes = parseSyntaxComponents(service, textDoc, 0, 6, config, uri, undefined, FallbackCommandTree, FallbackVanillaData, await FallbackJsonSchemas, languageConfigs)
 
-            assert.deepStrictEqual(nodes, [{
-                [NodeRange]: { start: 0, end: 6 },
-                args: [{ data: '# test', parser: 'string' }],
-                tokens: [],
-                hint: { fix: [], options: [] }, completions: undefined
-            }])
+            assert.deepStrictEqual(nodes, [
+                CommandComponent.create(
+                    [{ data: '# test', parser: 'string' }],
+                    {
+                        range: { start: 0, end: 6 }
+                    }
+                )
+            ])
         })
     })
     describe('getRel() Tests', () => {
@@ -75,7 +82,7 @@ describe('common.ts Tests', () => {
             const uri = Uri.parse('file:///c:/bar/data/minecraft/functions/test.mcfunction')
             const roots = [Uri.parse('file:///c:/foo/'), Uri.parse('file:///c:/bar/')]
 
-            const actual = getId(uri, roots)?.toString()
+            const actual = getId(uri, roots)?.id?.toString()
 
             assert(actual === 'minecraft:test')
         })

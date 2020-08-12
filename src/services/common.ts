@@ -75,7 +75,7 @@ export function parseJsonNode({ service, textDoc, config, uri, schema, commandTr
     return ans
 }
 
-export function parseSyntaxComponents(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, config: Config, uri: Uri, cursor = -1, commandTree?: CommandTree, vanillaData?: VanillaData, jsonSchemas?: SchemaRegistry, languageConfigs?: Map<string, LanguageConfig>) {
+export function parseSyntaxComponents(service: DatapackLanguageService, textDoc: TextDocument, start: number = 0, end: number = textDoc.getText().length, config: Config, uri: Uri, cursor = -1, commandTree: CommandTree, vanillaData: VanillaData, jsonSchemas: SchemaRegistry, languageConfigs: Map<string, LanguageConfig>) {
     const ans: SyntaxComponent[] = []
     const string = textDoc.getText()
     const reader = new StringReader(string, start, end)

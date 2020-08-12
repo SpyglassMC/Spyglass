@@ -2,7 +2,6 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
 import { CompletionItemKind } from 'vscode-languageserver'
-import { NodeRange } from '../../nodes/ArgumentNode'
 import { ArgumentParser } from '../../parsers/ArgumentParser'
 import { CommandParser } from '../../parsers/CommandParser'
 import { CommandComponent } from '../../types'
@@ -84,7 +83,7 @@ let ctx: ParsingContext
 before(async () => {
     ctx = constructContext({})
 })
-describe('LineParser Tests', () => {
+describe('CommandParser Tests', () => {
     describe('parseSinge() Tests', () => {
         it('Should throw error when Got none of “parser”, “redirect”, and “template” were specified in node', () => {
             const input = 'foo'
@@ -552,24 +551,25 @@ describe('LineParser Tests', () => {
         ctx = constructContext({ commandTree: tree })
     })
     describe('parse() Test', () => {
-        it('Should parse a line', () => {
+        it('Should parse a command', () => {
             const reader = new StringReader('a b c')
             const parser = new CommandParser()
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 5 },
-                    args: [{ data: 'a', parser: 'test' }, { data: 'b', parser: 'test' }, { data: 'c', parser: 'test' }],
-                    tokens: [],
-                    hint: {
-                        fix: ['<second: test>', '<first: test>', '<only: test>'],
-                        options: []
-                    },
-                    errors: [
-                        new ParsingError({ start: 2, end: 3 }, 'Expected “error” and did get “error”'),
-                        new ParsingError({ start: 4, end: 5 }, 'Expected “ERROR” and did get “ERROR”')
-                    ]
-                }
+                data: CommandComponent.create(
+                    [{ data: 'a', parser: 'test' }, { data: 'b', parser: 'test' }, { data: 'c', parser: 'test' }],
+                    {
+                        range: { start: 0, end: 5 },
+                        hint: {
+                            fix: ['<second: test>', '<first: test>', '<only: test>'],
+                            options: []
+                        },
+                        errors: [
+                            new ParsingError({ start: 2, end: 3 }, 'Expected “error” and did get “error”'),
+                            new ParsingError({ start: 4, end: 5 }, 'Expected “ERROR” and did get “ERROR”')
+                        ]
+                    }
+                )
             })
         })
         it('Should return hint.options correctly', async () => {
@@ -606,15 +606,16 @@ describe('LineParser Tests', () => {
             const parser = new CommandParser()
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 12 },
-                    args: [{ data: 'first', parser: 'test' }, { data: 'second', parser: 'test' }],
-                    tokens: [],
-                    hint: {
-                        fix: ['<first: test>'],
-                        options: [['<second: test>', ['[<foo: test>]', '[<bar: test>]']]]
+                data: CommandComponent.create(
+                    [{ data: 'first', parser: 'test' }, { data: 'second', parser: 'test' }],
+                    {
+                        range: { start: 0, end: 12 },
+                        hint: {
+                            fix: ['<first: test>'],
+                            options: [['<second: test>', ['[<foo: test>]', '[<bar: test>]']]]
+                        }
                     }
-                }
+                )
             })
         })
         it('Should parse commands with leading slash', () => {
@@ -622,15 +623,16 @@ describe('LineParser Tests', () => {
             const reader = new StringReader('/foo')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 4 },
-                    args: [{ data: 'foo', parser: 'test' }],
-                    tokens: [],
-                    hint: {
-                        fix: ['<second: test>'],
-                        options: []
+                data: CommandComponent.create(
+                    [{ data: 'foo', parser: 'test' }],
+                    {
+                        range: { start: 0, end: 4 },
+                        hint: {
+                            fix: ['<second: test>'],
+                            options: []
+                        }
                     }
-                }
+                )
             })
         })
         it('Should return untolerable error when encounters unexpected leeding slash', () => {
@@ -638,17 +640,17 @@ describe('LineParser Tests', () => {
             const reader = new StringReader('/foo')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 1 },
-                    args: [],
-                    tokens: [],
-                    hint: { fix: [], options: [] },
-                    errors: [new ParsingError(
-                        { start: 0, end: 1 },
-                        'Unexpected leading slash “/”',
-                        false
-                    )]
-                }
+                data: CommandComponent.create(
+                    [],
+                    {
+                        range: { start: 0, end: 1 },
+                        errors: [new ParsingError(
+                            { start: 0, end: 1 },
+                            'Unexpected leading slash “/”',
+                            false
+                        )]
+                    }
+                )
             })
         })
         it("Should return untolerable error when it doesn't get a leeding slash", () => {
@@ -656,17 +658,17 @@ describe('LineParser Tests', () => {
             const reader = new StringReader('foo')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 0 },
-                    args: [],
-                    tokens: [],
-                    hint: { fix: [], options: [] },
-                    errors: [new ParsingError(
-                        { start: 0, end: 1 },
-                        'Expected a leading slash “/” but got “f”',
-                        false
-                    )]
-                }
+                data: CommandComponent.create(
+                    [],
+                    {
+                        range: { start: 0, end: 0 },
+                        errors: [new ParsingError(
+                            { start: 0, end: 1 },
+                            'Expected a leading slash “/” but got “f”',
+                            false
+                        )]
+                    }
+                )
             })
         })
         it('Should return completions for the leading slash', async () => {
@@ -675,20 +677,20 @@ describe('LineParser Tests', () => {
             const reader = new StringReader('')
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
-                data: {
-                    [NodeRange]: { start: 0, end: 0 },
-                    args: [],
-                    tokens: [],
-                    hint: { fix: [], options: [] },
-                    errors: [new ParsingError(
-                        { start: 0, end: 1 },
-                        'Expected a leading slash “/” but got “”',
-                        false
-                    )],
-                    completions: [
-                        { label: '/', start: 0, end: 0 }
-                    ]
-                }
+                data: CommandComponent.create(
+                    [],
+                    {
+                        range: { start: 0, end: 0 },
+                        errors: [new ParsingError(
+                            { start: 0, end: 1 },
+                            'Expected a leading slash “/” but got “”',
+                            false
+                        )],
+                        completions: [
+                            { label: '/', start: 0, end: 0 }
+                        ]
+                    }
+                )
             })
         })
     })

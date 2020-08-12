@@ -10,13 +10,13 @@ import { NbtPathNode } from '../nodes/NbtPathNode'
 import { StringNode } from '../nodes/StringNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
 import { CommandParser } from '../parsers/CommandParser'
+import { DeclarableCacheTypes } from '../types'
 import { CommandTree, CommandTreeNode } from '../types/CommandTree'
 import { constructContext, ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { StringReader } from '../utils/StringReader'
 import { TestArgumentParser } from './parsers/CommandParser.spec'
 import { $, assertCompletions } from './utils.spec'
-import { DeclarableCacheTypes } from '../types'
 
 describe('CommandTree Tests', () => {
     describe('getArgOrDefault() Tests', () => {
@@ -199,7 +199,7 @@ describe('CommandTree Tests', () => {
                 fix: ['advancement'],
                 options: [['grant|revoke', ['<targets: entity>']]]
             })
-            assert.deepStrictEqual(data.cache, undefined)
+            assert.deepStrictEqual(data.cache, {})
             assert.deepStrictEqual(data.errors, [
                 new ParsingError({ start: 12, end: 14 }, 'Expected “grant” or “revoke” but got “gr”'),
                 new ParsingError({ start: 14, end: 16 }, 'Expected more arguments but got nothing')
@@ -223,9 +223,9 @@ describe('CommandTree Tests', () => {
                 fix: ['advancement', 'grant|revoke', '<targets: entity>', 'everything'],
                 options: []
             })
-            assert.deepStrictEqual(data.cache, undefined)
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.cache, {})
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('advancement grant|revoke <targets> only <advancement>', () => {
             const parser = new CommandParser(false)
@@ -247,8 +247,8 @@ describe('CommandTree Tests', () => {
                     'minecraft:test': { ref: [{ start: 26, end: 40 }] }
                 }
             })
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('advancement grant|revoke <targets> only <advancement> <criterion>', () => {
             const parser = new CommandParser(false)
@@ -273,8 +273,8 @@ describe('CommandTree Tests', () => {
                     'minecraft:test': { ref: [{ start: 26, end: 40 }] }
                 }
             })
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('advancement grant|revoke <targets> from|through|until <advancement>', () => {
             const parser = new CommandParser(false)
@@ -298,8 +298,8 @@ describe('CommandTree Tests', () => {
                     'minecraft:test': { ref: [{ start: 30, end: 44 }] }
                 }
             })
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('data get block <targetPos> <path>', () => {
             const parser = new CommandParser(false)
@@ -324,9 +324,9 @@ describe('CommandTree Tests', () => {
                 fix: ['data', 'get', 'block', '<pos: 3D vector>', '<path: NBT path>'],
                 options: []
             })
-            assert.deepStrictEqual(data.cache, undefined)
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.cache, {})
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('setblock ~ ~ ~ minecraft:grass_block[]', async () => {
             const ctx = constructContext({ cursor: 37 })
@@ -358,8 +358,8 @@ describe('CommandTree Tests', () => {
                 fix: ['setblock', '<pos: 3D vector>'],
                 options: [['<block: block>', ['[destroy|keep|replace]']]]
             })
-            assert.deepStrictEqual(data.cache, undefined)
-            assert.deepStrictEqual(data.errors, undefined)
+            assert.deepStrictEqual(data.cache, {})
+            assert.deepStrictEqual(data.errors, [])
             assertCompletions(reader, data.completions, [
                 { label: 'snowy', t: 'setblock ~ ~ ~ minecraft:grass_block[snowy]' }
             ])
@@ -384,8 +384,8 @@ describe('CommandTree Tests', () => {
                     }
                 }
             })
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
         it('# This is a comment.', () => {
             const parser = new CommandParser(false)
@@ -398,9 +398,9 @@ describe('CommandTree Tests', () => {
                 fix: [],
                 options: []
             })
-            assert.deepStrictEqual(data.cache, undefined)
-            assert.deepStrictEqual(data.errors, undefined)
-            assert(data.completions === undefined)
+            assert.deepStrictEqual(data.cache, {})
+            assert.deepStrictEqual(data.errors, [])
+            assert.deepStrictEqual(data.completions, [])
         })
     })
 })

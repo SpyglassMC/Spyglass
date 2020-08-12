@@ -1,7 +1,7 @@
 import { Position } from 'vscode-languageserver'
 import { plugins } from '../..'
 import { CommandParser } from '../../parsers/CommandParser'
-import { CommandComponent, CommandComponentData, ParsingContext } from '../../types'
+import { CommandComponentData, ParsingContext } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 
 export class McfunctionPlugin implements plugins.Plugin {
@@ -42,7 +42,7 @@ class CommandSyntaxComponentParser implements plugins.SyntaxComponentParser<Comm
                 break
             }
         }
-        
+
         const parser = new CommandParser()
         const { data } = parser.parse(commandReader, ctx)
         reader.cursor = commandReader.cursor

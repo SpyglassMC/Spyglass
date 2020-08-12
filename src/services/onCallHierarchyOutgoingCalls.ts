@@ -12,7 +12,7 @@ export async function onCallHierarchyOutgoingCalls({ service, id }: { service: D
         for (const calleeIdString of Object.keys(category)) {
             const calleeUnit = category[calleeIdString]!
             for (const ref of calleeUnit?.ref ?? []) {
-                const refId = service.getId(service.parseUri(ref.uri!))
+                const refId = service.getId(service.parseUri(ref.uri!))?.id
                 /* istanbul ignore else */
                 if (id === refId?.toString()) {
                     const calleeId = IdentityNode.fromString(calleeIdString)

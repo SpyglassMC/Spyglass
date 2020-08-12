@@ -25,7 +25,7 @@ export async function onCallHierarchyIncomingCalls({ service, kind, id }: { kind
                 ans.push(
                     {
                         from: getCallHierarchyItem(
-                            service.getId(service.parseUri(ref.uri!))?.toString(),
+                            service.getId(service.parseUri(ref.uri!))?.id?.toString(),
                             ref.uri!, ref.startLine!, ref.endLine!, ref.startChar!, ref.endChar!,
                             IdentityKind.Function
                         ),

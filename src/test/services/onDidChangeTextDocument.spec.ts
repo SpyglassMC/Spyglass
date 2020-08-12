@@ -1,18 +1,18 @@
 import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
-import { NodeRange } from '../../nodes'
 import { DatapackLanguageService } from '../../services/DatapackLanguageService'
 import { onDidChangeTextDocument } from '../../services/onDidChangeTextDocument'
-import { McfunctionDocument } from '../../types'
+import { CommandComponent, McfunctionDocument } from '../../types'
 import { VanillaConfig } from '../../types/Config'
 import { Token, TokenType } from '../../types/Token'
-import { mockCommand, mockParsingContext } from '../utils.spec'
+import { mockCommand, mockLanguageConfigs, mockParsingContext } from '../utils.spec'
 
 describe('onDidChangeTextDocument() Tests', () => {
     const config = VanillaConfig
     const version = 1
     it('Should handle with full update', async () => {
+        const languageConfigs = await mockLanguageConfigs()
         const doc: McfunctionDocument = {
             type: 'mcfunction',
             nodes: [
@@ -43,16 +43,16 @@ describe('onDidChangeTextDocument() Tests', () => {
         const service = new DatapackLanguageService()
         const uri = service.parseUri('file:///c:/foo')
 
-        await onDidChangeTextDocument({ service, uri, doc, textDoc, version, config, contentChanges })
-
+        await onDidChangeTextDocument({ service, uri, doc, textDoc, version, config, contentChanges, languageConfigs })
         assert(textDoc.getText() === '# Modified')
         assert(textDoc.version === version)
-        assert.deepStrictEqual(doc.nodes, [{
-            [NodeRange]: { start: 0, end: 10 },
-            args: [{ data: '# Modified', parser: 'string' }],
-            tokens: [],
-            hint: { fix: [], options: [] },
-            completions: undefined
-        }])
+        assert.deepStrictEqual(doc.nodes, [
+            CommandComponent.create(
+                [{ data: '# Modified', parser: 'string' }],
+                {
+                    range: { start: 0, end: 10 },
+                }
+            )
+        ])
     })
 })

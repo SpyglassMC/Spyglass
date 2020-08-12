@@ -64,10 +64,10 @@ export function mockParsingContext(options: ParsingContextMockOptions = {}): Par
     return constructContext({
         config: options.config ?? VanillaConfig,
         textDoc: TextDocument.create(
-            options.uri ?? 'dhp://document.mcfunction',
+            options.uri ?? 'dhp:///document.mcfunction',
             'mcfunction',
             options.version ?? 0,
-            options.content ?? '                                                                                                    '
+            options.content ?? ' '.repeat(100)
         )
     })
 }
@@ -88,7 +88,10 @@ export function mockCommand(node: CommandMockOptions = {}): CommandComponent {
     return CommandComponent.create(node.data, node)
 }
 
-export const mockLanguageConfigs = async () => PluginLoader.getContributions(await PluginLoader.load(undefined))
+export const mockLanguageConfigs = async () => {
+    const plugins = await PluginLoader.load()
+    return PluginLoader.getContributions(plugins)
+}
 
 interface CompletionPredicate extends CompletionItem {
     t: string

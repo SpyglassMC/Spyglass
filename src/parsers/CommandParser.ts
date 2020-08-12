@@ -92,7 +92,7 @@ export class CommandParser implements Parser<CommandComponent> {
 
         // Handle blanks/comments.
         /* istanbul ignore next */
-        if ((backupReader.peek() === '#' || reader.cursor === start) || node.errors.length) {
+        if ((backupReader.peek() === '#' || (shouldContinue && reader.cursor === start)) && node.errors.length) {
             return {
                 data: CommandComponent.create(
                     [{ data: backupReader.readRemaining(), parser: 'string' }],
