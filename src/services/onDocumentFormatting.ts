@@ -1,6 +1,5 @@
 import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { ArgumentNode } from '../nodes'
 import { Config, SyntaxComponent } from '../types'
 import { commandToLintedString } from '../types/CommandComponent'
 import { McfunctionDocument } from '../types/DatapackDocument'
@@ -22,5 +21,5 @@ export function onDocumentFormatting({ doc, textDoc, config }: { doc: Mcfunction
 }
 
 function isLintable(value: SyntaxComponent): value is SyntaxComponent<{ data: unknown }[]> {
-    return value.data instanceof Array
+    return value.data instanceof Array && value.data.every(v => v.data != null)
 }

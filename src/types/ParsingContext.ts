@@ -2,9 +2,10 @@ import { SchemaRegistry } from '@mcschema/core'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CommandTree as FallbackCommandTree } from '../data/CommandTree1.16'
 import { FallbackJsonSchemaRegistry } from '../data/JsonSchema'
-import { FallbackVanillaData } from '../data/VanillaData'
+import { FallbackBlockDefinition, FallbackNamespaceSummary, FallbackNbtdoc, FallbackRegistry, FallbackVanillaData } from '../data/VanillaData'
 import { IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers/ParserCollection'
+import { Contributions } from '../plugins/LanguageConfigImpl'
 import { DatapackLanguageService } from '../services/DatapackLanguageService'
 import { BlockDefinition } from './BlockDefinition'
 import { ClientCache } from './ClientCache'
@@ -38,28 +39,24 @@ export interface ParsingContext {
  */
 /* istanbul ignore next */
 export function constructContext(
-    custom: Partial<ParsingContext>,
-    commandTree = FallbackCommandTree,
-    vanillaData = FallbackVanillaData,
-    jsonSchemas = FallbackJsonSchemaRegistry
+    custom: Partial<ParsingContext>
 ): ParsingContext {
     const ans: ParsingContext = {
-        blockDefinition: vanillaData.BlockDefinition,
-        cache: {},
-        commandTree,
-        config: VanillaConfig,
-        cursor: -1,
-        id: undefined,
-        namespaceSummary: vanillaData.NamespaceSummary,
-        nbtdoc: vanillaData.Nbtdoc,
-        parsers: new ParserCollection(),
-        registry: vanillaData.Registry,
-        rootIndex: null,
-        roots: [],
-        jsonSchemas,
-        service: new DatapackLanguageService(),
-        textDoc: TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, ''),
-        ...custom
+        blockDefinition: custom.blockDefinition ?? FallbackBlockDefinition,
+        cache: custom.cache ?? {},
+        commandTree: custom.commandTree ?? FallbackCommandTree,
+        config: custom.config ?? VanillaConfig,
+        cursor: custom.cursor ?? -1,
+        id: custom.id ?? undefined,
+        namespaceSummary: custom.namespaceSummary ?? FallbackNamespaceSummary,
+        nbtdoc: custom.nbtdoc ?? FallbackNbtdoc,
+        parsers: custom.parsers ?? new ParserCollection(),
+        registry: custom.registry ?? FallbackRegistry,
+        rootIndex: custom.rootIndex ?? null,
+        roots: custom.roots ?? [],
+        jsonSchemas: custom.jsonSchemas ?? FallbackJsonSchemaRegistry,
+        service: custom.service ?? new DatapackLanguageService(),
+        textDoc: custom.textDoc ?? TextDocument.create('dhp://document.mcfunction', 'mcfunction', 0, '')
     }
     return ans
 }

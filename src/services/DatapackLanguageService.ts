@@ -11,9 +11,9 @@ import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonS
 import { getVanillaData, VanillaData } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers'
-import { LanguageConfig } from '../plugins/LanguageConfigImpl'
+import { Contributions, LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { PluginLoader } from '../plugins/PluginLoader'
-import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForUri, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForID, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseJsonNode, parseSyntaxComponents } from './common'
@@ -70,6 +70,7 @@ export class DatapackLanguageService {
 
     private readonly plugins: Map<string, plugins.Plugin>
     private languageConfigs: Map<string, LanguageConfig>
+    private contributions: Contributions
 
     static readonly GeneralTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
     static readonly McfunctionTriggerCharacters = [',', '{', '[']
@@ -97,7 +98,8 @@ export class DatapackLanguageService {
     }
 
     async init() {
-        this.languageConfigs = await PluginLoader.getContributions(this.plugins)
+        this.contributions = await PluginLoader.getContributions(this.plugins)
+        this.languageConfigs = await PluginLoader.getLanguageConfigs(this.plugins, this.contributions)
     }
 
     /**
@@ -155,7 +157,7 @@ export class DatapackLanguageService {
     }
 
     private rawGetCache(type: FileType, id: IdentityNode) {
-        const cache = getCacheForUri(this.cacheFile.cache, type, id)
+        const cache = getCacheForID(this.cacheFile.cache, type, id)
         this.caches.set(`${type}|${id}`, cache)
         return cache
     }
@@ -412,7 +414,7 @@ export class DatapackLanguageService {
             roots: this.roots,
             service: this,
             textDoc
-        }, commandTree, vanillaData, jsonSchemas)
+        })
     }
 
     async getParsingContext({ cursor, uri, textDoc }: { cursor?: number, uri: Uri, textDoc: TextDocument }): Promise<ParsingContext> {
@@ -788,8 +790,10 @@ export class DatapackLanguageService {
                 combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
             }
             combineCache(this.cacheFile.cache, cacheOfNodes)
-            const unit = setUpUnit(this.cacheFile.cache, type, id);
-            (unit.def = unit.def ?? []).push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
+            const unit = setUpUnit(this.cacheFile.cache, type, id)
+            if (!(unit.def = unit.def ?? []).find(p => p.uri === uri.toString())) {
+                (unit.def = unit.def ?? []).push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
+            }
         }
     }
 

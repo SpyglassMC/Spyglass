@@ -22,7 +22,7 @@ export class McfunctionPlugin implements plugins.Plugin {
     }
 }
 
-class CommandSyntaxComponentParser implements plugins.SyntaxComponentParser<CommandComponentData> {
+export class CommandSyntaxComponentParser implements plugins.SyntaxComponentParser<CommandComponentData> {
     identity = 'spgoding:mcfunction/command'
 
     test(): [boolean, number] {

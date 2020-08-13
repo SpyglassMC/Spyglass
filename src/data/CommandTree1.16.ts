@@ -2217,10 +2217,10 @@ export const CommandTree: ICommandTree = {
         [Switchable]: true,
         // #declare <type: string> <id: string>
         '#declare': {
-            parser: new LiteralArgumentParser('#declare', '#define', '#register'),
+            parser: new LiteralArgumentParser('#declare', '#define'),
             run: ({ tokens, data }) => {
                 const lastLiteral = getArgOrDefault(data, 1, undefined)
-                if (lastLiteral === '#declare' || lastLiteral === '#define' || lastLiteral === '#register') {
+                if (lastLiteral === '#declare' || lastLiteral === '#define') {
                     const lastToken = tokens[tokens.length - 1]
                     lastToken.range.start += 1
                 }
@@ -2248,9 +2248,6 @@ export const CommandTree: ICommandTree = {
             }
         },
         '#define': {
-            redirect: 'comments.#declare'
-        },
-        '#register': {
             redirect: 'comments.#declare'
         },
         // #alias <parser: string> <alias: string> <value: string>

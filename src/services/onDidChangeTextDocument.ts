@@ -19,9 +19,13 @@ export async function onDidChangeTextDocument({ textDoc, uri, doc, version, cont
     let nodeChange: { nodeStart: number, nodeStop: number, lineStart: number, lineStop: number } | undefined
     for (const change of contentChanges) {
         if (isIncrementalChange(change)) {
-            const { index: nodeStart, node: startNode } = getSelectedNode(doc.nodes, textDoc.offsetAt(change.range.start))
+            let { index: nodeStart, node: startNode } = getSelectedNode(doc.nodes, textDoc.offsetAt(change.range.start))
             const { index: nodeStop, node: stopNode } = getSelectedNode(doc.nodes, textDoc.offsetAt(change.range.end))
             if (nodeStart !== -1 && nodeStop !== -1 && startNode && stopNode) {
+                //#region Move to the former node.
+                nodeStart = Math.max(0, nodeStart - 1)
+                startNode = doc.nodes[nodeStart]
+                //#endregion
                 const lineStart = textDoc.positionAt(startNode.range.start).line
                 const lineStop = textDoc.positionAt(stopNode.range.end).line
                 nodeChange = nodeChange ?? { nodeStart, nodeStop, lineStart, lineStop }

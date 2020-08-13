@@ -374,7 +374,7 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['#declare|#define|#register', DeclarableCacheTypes.join('|'), '<id: string>'],
+                fix: ['#declare|#define', DeclarableCacheTypes.join('|'), '<id: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {

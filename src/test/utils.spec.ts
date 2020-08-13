@@ -90,7 +90,7 @@ export function mockCommand(node: CommandMockOptions = {}): CommandComponent {
 
 export const mockLanguageConfigs = async () => {
     const plugins = await PluginLoader.load()
-    return PluginLoader.getContributions(plugins)
+    return PluginLoader.getLanguageConfigs(plugins, await PluginLoader.getContributions(plugins))
 }
 
 interface CompletionPredicate extends CompletionItem {

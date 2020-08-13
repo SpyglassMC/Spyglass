@@ -1,5 +1,5 @@
 import rfdc from 'rfdc'
-import { MarkupKind, Position, Range } from 'vscode-languageserver'
+import { MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
 import { IdentityNode } from '../nodes'
 import { IndexMapping } from './IndexMapping'
@@ -128,6 +128,8 @@ export type CacheUnit = {
     doc?: string
 } & { [key in CacheUnitPositionType]?: CachePosition[] }
 
+export type CacheVisibility = { pattern: string, type: 'advancement' | 'function' | 'tag/function' | '*' }
+
 /**
  * An element in `CacheUnit`.
  */
@@ -136,7 +138,7 @@ export interface CachePosition extends TextRange {
     /**
      * An array of identities describing the visibility of this element.
      */
-    visibility?: string[],
+    visibility?: CacheVisibility[],
     /**
      * The scope of this position.
      */
@@ -329,10 +331,42 @@ export function trimCache(cache: ClientCache) {
     }
 }
 
+export function testID(visibility: CacheVisibility | CacheVisibility[] = [], type: FileType, id: string): boolean {
+    if (visibility instanceof Array) {
+        if (visibility.length) {
+            return visibility.some(v => testID(v, type, id))
+        } else {
+            // TODO (ACCESS): Allow changing default visibility.
+            return testID({ type: '*', pattern: '**' }, type, id)
+        }
+    }
+    if (visibility.type !== '*' && visibility.type !== type) {
+        return false
+    }
+    const regex = new RegExp(`^${visibility.pattern
+        .replace(/\*\*\//g, '.{0,}')
+        .replace(/\*\*/g, '.{0,}')
+        .replace(/\*/g, '[^/]{0,}')}$`)
+    return regex.test(id)
+}
+
 /**
  * Pure function.
  */
-export function getCacheForUri(cache: ClientCache, _targetType: FileType, _targetID: IdentityNode) {
+export function getCacheForID(cache: ClientCache, targetType: FileType, targetID: IdentityNode) {
+    const trimPositions = (unit: CacheUnit, t: 'dcl' | 'def') => {
+        unit[t] = unit[t]
+            // Filter by visibilities.
+            ?.filter(p => testID(p.visibility, targetType, targetID.toString()))
+            // // Remove positions with less details.
+            // ?.filter(pos => {
+            //     const identicalPositions = unit[t]!.filter(p => p.uri && p.uri === pos.uri)
+            //     if (identicalPositions.length >= 2) {
+            //         identicalPositions.filter()
+            //     }
+            //     return true
+            // })
+    }
     const ans = rfdc()(cache)
     for (const type of Object.keys(ans)) {
         const category = ans[type as CacheType]
@@ -341,7 +375,8 @@ export function getCacheForUri(cache: ClientCache, _targetType: FileType, _targe
         }
         for (const id of Object.keys(category)) {
             const unit = category[id] as CacheUnit
-            // TODO (#319): check the access modifier here by calling plugins
+            trimPositions(unit, 'dcl')
+            trimPositions(unit, 'def')
             if (!unit.dcl?.length && !unit.def?.length) {
                 delete category[id]
             }
@@ -360,7 +395,7 @@ export function getSafeCategory(cache: ClientCache | undefined, type: CacheType)
 
 export function setUpUnit(cache: ClientCache | undefined, type: CacheType, id: IdentityNode, defaultValue: CacheUnit = {}) {
     const stringID = id.toString()
-    return ((cache = cache ?? {})[type] = cache[type] ?? {})[stringID] = cache[type]![stringID] = defaultValue
+    return ((cache = cache ?? {})[type] = cache[type] ?? {})[stringID] = cache[type]![stringID] ?? defaultValue
 }
 
 export function getCompletions(cache: ClientCache, type: CacheType, start: number, end: number) {

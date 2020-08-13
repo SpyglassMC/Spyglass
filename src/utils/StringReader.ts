@@ -335,7 +335,13 @@ export class StringReader {
         return ans
     }
 
-    jumpToNextLine(textDoc: TextDocument) {
+    jumpLineBack(textDoc: TextDocument) {
+        const pos = textDoc.positionAt(this.cursor)
+        this.cursor = textDoc.offsetAt({ line: pos.line - 1, character: 0 })
+        return this
+    }
+
+    jumpLine(textDoc: TextDocument) {
         const pos = textDoc.positionAt(this.cursor)
         this.cursor = textDoc.offsetAt({ line: pos.line + 1, character: 0 })
         return this

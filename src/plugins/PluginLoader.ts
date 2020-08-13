@@ -4,7 +4,7 @@ import { Plugin } from '.'
 import { plugins } from '..'
 import { pathAccessible } from '../utils'
 import { ContributorImpl } from './ContributorImpl'
-import { LanguageConfig, LanguageConfigBuilderFactoryImpl } from './LanguageConfigImpl'
+import { Contributions, LanguageConfig, LanguageConfigBuilderFactoryImpl } from './LanguageConfigImpl'
 import { PluginID } from './Plugin'
 
 export class PluginLoader {
@@ -48,17 +48,21 @@ export class PluginLoader {
         return map
     }
 
-    static async getContributions(plugins: Map<string, Plugin>): Promise<Map<string, LanguageConfig>> {
+    static async getContributions(plugins: Map<string, Plugin>): Promise<Contributions> {
         const languageDefinitionContributor = new ContributorImpl<plugins.LanguageDefinition>()
         const syntaxComponentContributor = new ContributorImpl<plugins.SyntaxComponentParser>()
         for (const plugin of plugins.values()) {
             await plugin.contributeLanguages?.(languageDefinitionContributor)
             await plugin.contributeSyntaxComponentParsers?.(syntaxComponentContributor)
         }
-        const factory = new LanguageConfigBuilderFactoryImpl({
+        return {
             languageDefinitions: languageDefinitionContributor.values,
             syntaxComponentParsers: syntaxComponentContributor.values
-        })
+        }
+    }
+
+    static async getLanguageConfigs(plugins: Map<string, Plugin>, contributions: Contributions): Promise<Map<string, LanguageConfig>> {
+        const factory = new LanguageConfigBuilderFactoryImpl(contributions)
         for (const plugin of plugins.values()) {
             await plugin.configureLanguages?.(factory)
         }
