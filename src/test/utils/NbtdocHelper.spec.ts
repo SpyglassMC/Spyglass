@@ -1247,7 +1247,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 28 },
-                    'Failed to resolve namespaced ID “minecraft:asdfghjklqwertyui” in registry “minecraft:block”',
+                    'Failed to resolve namespaced ID “minecraft:asdfghjklqwertyui” in registry “minecraft:block” (rule: “strictBlockCheck”)',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )])
             })

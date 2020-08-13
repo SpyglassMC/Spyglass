@@ -583,7 +583,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “bossbar”',
+                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “bossbar” (rule: “strictBossbarCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -597,7 +597,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “loot_table”',
+                    'Failed to resolve namespaced ID “minecraft:foo” in cache category “loot_table” (rule: “strictLootTableCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -611,7 +611,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 21 },
-                    'Failed to resolve namespaced ID “spgoding:function/42” in cache category “tag/function”',
+                    'Failed to resolve namespaced ID “spgoding:function/42” in cache category “tag/function” (rule: “strictFunctionTagCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.IdentityUnknown
                 )
             ])
@@ -625,7 +625,7 @@ describe('IdentityArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Failed to resolve namespaced ID “minecraft:qux” in registry “minecraft:block”',
+                    'Failed to resolve namespaced ID “minecraft:qux” in registry “minecraft:block” (rule: “strictBlockCheck”)',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )
             ])

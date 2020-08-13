@@ -1,10 +1,10 @@
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { NodeRange, NodeDescription } from '../nodes/ArgumentNode'
+import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { Registry, TextRange } from '../types'
 import { CacheType, ClientCache, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
-import { Config } from '../types/Config'
+import { Config, LintConfig } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -207,12 +207,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             } else {
                 // For registry IDs.
                 const registry = registries[this.type]
-                const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
+                const [shouldCheck, severity, ruleName] = this.shouldStrictCheck(this.type, config, namespace)
                 //#region Errors
                 if (registry && !Object.keys(registry.entries).concat(this.getVanillaPool(this.type as FileType, namespaceSummary)).includes(stringID)) {
+                    const innerMessage = locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID))
+                    const message = ruleName ? locale('diagnostic-rule', innerMessage, locale('punc.quote', ruleName)) : innerMessage
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
+                        message,
                         undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
                         ErrorCode.IdentityUnknown
                     ))
@@ -378,82 +380,84 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity] {
+    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity, string | undefined] {
         if (this.allowUnknown) {
-            return [false, DiagnosticSeverity.Warning]
+            return [false, DiagnosticSeverity.Warning, undefined]
         }
-        const evalTrueConfig = (config: DiagnosticConfig<true>): [boolean, DiagnosticSeverity] => {
+        const evalTrueConfig = (key: keyof LintConfig): [boolean, DiagnosticSeverity, string] => {
+            const config = lint[key] as DiagnosticConfig<true>
             if (config === null) {
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, key]
             }
             const [severity, value] = config
-            return [value, getDiagnosticSeverity(severity)]
+            return [value, getDiagnosticSeverity(severity), key]
         }
-        const evalStrictCheckConfig = (config: DiagnosticConfig<StrictCheckConfig>): [boolean, DiagnosticSeverity] => {
+        const evalStrictCheckConfig = (key: keyof LintConfig): [boolean, DiagnosticSeverity, string] => {
+            const config = lint[key] as DiagnosticConfig<StrictCheckConfig>
             if (config === null) {
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, key]
             }
             const [severity, value] = config
             switch (value) {
                 case 'always':
-                    return [true, getDiagnosticSeverity(severity)]
+                    return [true, getDiagnosticSeverity(severity), key]
                 case 'only-default-namespace':
-                    return [namespace === IdentityNode.DefaultNamespace, getDiagnosticSeverity(severity)]
+                    return [namespace === IdentityNode.DefaultNamespace, getDiagnosticSeverity(severity), key]
                 default:
-                    return [false, getDiagnosticSeverity(severity)]
+                    return [false, getDiagnosticSeverity(severity), key]
             }
         }
         switch (key) {
             case '$advancement':
-                return evalTrueConfig(lint.strictAdvancementCheck)
+                return evalTrueConfig('strictAdvancementCheck')
             case '$dimension_type':
-                return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
+                return evalStrictCheckConfig('strictDimensionTypeCheck')
             case '$function':
-                return evalTrueConfig(lint.strictFunctionCheck)
+                return evalTrueConfig('strictFunctionCheck')
             case '$loot_table':
-                return evalTrueConfig(lint.strictLootTableCheck)
+                return evalTrueConfig('strictLootTableCheck')
             case '$predicate':
-                return evalTrueConfig(lint.strictPredicateCheck)
+                return evalTrueConfig('strictPredicateCheck')
             case '$recipe':
-                return evalTrueConfig(lint.strictRecipeCheck)
+                return evalTrueConfig('strictRecipeCheck')
             case '$tag/block':
-                return evalTrueConfig(lint.strictBlockTagCheck)
+                return evalTrueConfig('strictBlockTagCheck')
             case '$tag/entity_type':
-                return evalTrueConfig(lint.strictEntityTypeTagCheck)
+                return evalTrueConfig('strictEntityTypeTagCheck')
             case '$tag/fluid':
-                return evalTrueConfig(lint.strictFluidTagCheck)
+                return evalTrueConfig('strictFluidTagCheck')
             case '$tag/function':
-                return evalTrueConfig(lint.strictFunctionTagCheck)
+                return evalTrueConfig('strictFunctionTagCheck')
             case '$tag/item':
-                return evalTrueConfig(lint.strictItemTagCheck)
+                return evalTrueConfig('strictItemTagCheck')
             case '$bossbar':
-                return evalTrueConfig(lint.strictBossbarCheck)
+                return evalTrueConfig('strictBossbarCheck')
             case '$storage':
-                return evalTrueConfig(lint.strictStorageCheck)
+                return evalTrueConfig('strictStorageCheck')
             case 'minecraft:mob_effect':
-                return evalStrictCheckConfig(lint.strictMobEffectCheck)
+                return evalStrictCheckConfig('strictMobEffectCheck')
             case 'minecraft:enchantment':
-                return evalStrictCheckConfig(lint.strictEnchantmentCheck)
+                return evalStrictCheckConfig('strictEnchantmentCheck')
             case 'minecraft:sound_event':
-                return evalStrictCheckConfig(lint.strictSoundEventCheck)
+                return evalStrictCheckConfig('strictSoundEventCheck')
             case 'minecraft:entity_type':
-                return evalStrictCheckConfig(lint.strictEntityTypeCheck)
+                return evalStrictCheckConfig('strictEntityTypeCheck')
             case 'minecraft:attribute':
-                return evalStrictCheckConfig(lint.strictAttributeCheck)
+                return evalStrictCheckConfig('strictAttributeCheck')
             case 'minecraft:block':
-                return evalStrictCheckConfig(lint.strictBlockCheck)
+                return evalStrictCheckConfig('strictBlockCheck')
             case 'minecraft:item':
-                return evalStrictCheckConfig(lint.strictItemCheck)
+                return evalStrictCheckConfig('strictItemCheck')
             case 'minecraft:potion':
-                return evalStrictCheckConfig(lint.strictPotionCheck)
+                return evalStrictCheckConfig('strictPotionCheck')
             case 'minecraft:motive':
-                return evalStrictCheckConfig(lint.strictMotiveCheck)
+                return evalStrictCheckConfig('strictMotiveCheck')
             case 'minecraft:fluid':
-                return evalStrictCheckConfig(lint.strictFluidCheck)
+                return evalStrictCheckConfig('strictFluidCheck')
             case 'minecraft:particle_type':
-                return evalStrictCheckConfig(lint.strictParticleTypeCheck)
+                return evalStrictCheckConfig('strictParticleTypeCheck')
             default:
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, undefined]
         }
     }
 
@@ -510,11 +514,13 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             .includes(stringID)
 
         //#region Errors
-        const [shouldCheck, severity] = this.shouldStrictCheck(`$${type}`, config, namespace)
+        const [shouldCheck, severity, ruleName] = this.shouldStrictCheck(`$${type}`, config, namespace)
         if (!canResolve) {
+            const innerMessage = locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID))
+            const message = ruleName ? locale('diagnostic-rule', innerMessage, locale('punc.quote', ruleName)) : innerMessage
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
+                message,
                 undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
                 ErrorCode.IdentityUnknown
             ))
