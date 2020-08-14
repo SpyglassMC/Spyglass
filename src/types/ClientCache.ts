@@ -1,7 +1,9 @@
 import rfdc from 'rfdc'
 import { MarkupKind, Position } from 'vscode-languageserver'
 import { URI as Uri } from 'vscode-uri'
+import { Config } from '.'
 import { IdentityNode } from '../nodes'
+import { DatapackLanguageService } from '../services/DatapackLanguageService'
 import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
@@ -71,26 +73,19 @@ export type CacheType = keyof ClientCache
 /**/ export type MiscType = keyof MiscCache
 /*******/ export type AliasType = keyof AliasCache
 
-export const DeclarableCacheTypes: Readonly<CacheType[]> = Object.freeze([
+export const FileTypes: Readonly<FileType[]> = Object.freeze([
     'advancement',
-    'bossbar',
     'dimension',
     'dimension_type',
-    'entity',
     'function',
     'loot_table',
-    'objective',
     'predicate',
     'recipe',
-    'score_holder',
-    'storage',
-    'tag',
     'tag/block',
     'tag/entity_type',
     'tag/fluid',
     'tag/function',
     'tag/item',
-    'team',
     'worldgen/biome',
     'worldgen/configured_carver',
     'worldgen/configured_decorator',
@@ -99,6 +94,17 @@ export const DeclarableCacheTypes: Readonly<CacheType[]> = Object.freeze([
     'worldgen/configured_surface_builder',
     'worldgen/processor_list',
     'worldgen/template_pool'
+])
+
+export const DeclarableCacheTypes: Readonly<CacheType[]> = Object.freeze([
+    ...FileTypes,
+    'bossbar',
+    'entity',
+    'objective',
+    'score_holder',
+    'storage',
+    'tag',
+    'team'
 ])
 
 /**
@@ -128,7 +134,7 @@ export type CacheUnit = {
     doc?: string
 } & { [key in CacheUnitPositionType]?: CachePosition[] }
 
-export type CacheVisibility = { pattern: string, type: 'advancement' | 'function' | 'tag/function' | '*' }
+export type CacheVisibility = { pattern: string, type: FileType | '*' }
 
 /**
  * An element in `CacheUnit`.
@@ -267,11 +273,26 @@ export function isCacheType(value: string): value is CacheType {
 }
 
 export function isTagFileType(type: CacheType): type is TagFileType {
-    return type.startsWith('tag/')
+    return (
+        type === 'tag/block' ||
+        type === 'tag/entity_type' ||
+        type === 'tag/fluid' ||
+        type === 'tag/function' ||
+        type === 'tag/item'
+    )
 }
 
 export function isWorldgenRegistryFileType(type: CacheType): type is WorldgenFileType {
-    return type.startsWith('worldgen/')
+    return (
+        type === 'worldgen/biome' ||
+        type === 'worldgen/configured_carver' ||
+        type === 'worldgen/configured_decorator' ||
+        type === 'worldgen/configured_feature' ||
+        type === 'worldgen/configured_structure_feature' ||
+        type === 'worldgen/configured_surface_builder' ||
+        type === 'worldgen/processor_list' ||
+        type === 'worldgen/template_pool'
+    )
 }
 
 export function isFileType(type: string): type is FileType {
@@ -289,7 +310,11 @@ export function isFileType(type: string): type is FileType {
 }
 
 export function isAliasType(type: CacheType): type is AliasType {
-    return type.startsWith('alias/')
+    return (
+        type === 'alias/entity' ||
+        type === 'alias/uuid' ||
+        type === 'alias/vector'
+    )
 }
 
 export function isMiscType(type: CacheType): type is MiscType {
@@ -331,43 +356,63 @@ export function trimCache(cache: ClientCache) {
     }
 }
 
-export function testID(visibility: CacheVisibility | CacheVisibility[] = [], type: FileType, id: string): boolean {
+export function getCacheVisibilities(visibility: 'private' | 'internal' | 'public', definitionType: FileType, definitionID: IdentityNode): CacheVisibility[] {
+    const ans: CacheVisibility[] = []
+    if (visibility === 'private') {
+        ans.push({ type: definitionType, pattern: definitionID.toString() })
+    } else if (visibility === 'internal') {
+        const namespace = definitionID.getNamespace()
+        ans.push({ type: '*', pattern: `${namespace}:**` })
+        if (namespace !== IdentityNode.DefaultNamespace) {
+            ans.push({ type: '*', pattern: `${IdentityNode.DefaultNamespace}:**` })
+        }
+    } else if (visibility === 'public') {
+        ans.push({ type: '*', pattern: '**' })
+    }
+    return ans
+}
+
+export function testID(service: DatapackLanguageService, visibility: CacheVisibility | CacheVisibility[] = [], forType: FileType, forID: IdentityNode, definitionUri: string | undefined, config: Config): boolean {
     if (visibility instanceof Array) {
         if (visibility.length) {
-            return visibility.some(v => testID(v, type, id))
+            return visibility.some(v => testID(service, v, forType, forID, definitionUri, config))
         } else {
-            // TODO (ACCESS): Allow changing default visibility.
-            return testID({ type: '*', pattern: '**' }, type, id)
+            const defaultConfig = config.env.defaultVisibility
+            if (typeof defaultConfig === 'object') {
+                return testID(service, defaultConfig, forType, forID, definitionUri, config)
+            } else {
+                const defIDResult = service.getId(service.parseUri(definitionUri!))
+                if (!defIDResult) {
+                    console.error(`[testID] No ID result for “${definitionUri}” for “${forType} ${forID}”.`)
+                    return true
+                }
+                return testID(
+                    service,
+                    getCacheVisibilities(defaultConfig, defIDResult.category, defIDResult.id),
+                    forType, forID, definitionUri, config
+                )
+            }
         }
     }
-    if (visibility.type !== '*' && visibility.type !== type) {
+    if (visibility.type !== '*' && visibility.type !== forType) {
         return false
     }
     const regex = new RegExp(`^${visibility.pattern
+        .replace(/\?/g, '[^:/]')
         .replace(/\*\*\//g, '.{0,}')
         .replace(/\*\*/g, '.{0,}')
-        .replace(/\*/g, '[^/]{0,}')}$`)
-    return regex.test(id)
+        .replace(/\*/g, '[^:/]{0,}')}$`)
+    return regex.test(forID.toString())
 }
 
 /**
  * Pure function.
  */
-export function getCacheForID(cache: ClientCache, targetType: FileType, targetID: IdentityNode) {
+export function getCacheForID(service: DatapackLanguageService, forType: FileType, forID: IdentityNode, config: Config) {
     const trimPositions = (unit: CacheUnit, t: 'dcl' | 'def') => {
-        unit[t] = unit[t]
-            // Filter by visibilities.
-            ?.filter(p => testID(p.visibility, targetType, targetID.toString()))
-            // // Remove positions with less details.
-            // ?.filter(pos => {
-            //     const identicalPositions = unit[t]!.filter(p => p.uri && p.uri === pos.uri)
-            //     if (identicalPositions.length >= 2) {
-            //         identicalPositions.filter()
-            //     }
-            //     return true
-            // })
+        unit[t] = unit[t]?.filter(p => testID(service, p.visibility, forType, forID, p.uri, config))
     }
-    const ans = rfdc()(cache)
+    const ans = rfdc()(service.cacheFile.cache)
     for (const type of Object.keys(ans)) {
         const category = ans[type as CacheType]
         if (!category) {

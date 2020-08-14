@@ -1,4 +1,5 @@
 import minimatch from 'minimatch'
+import { CacheVisibility } from '.'
 import { DataSource } from '../data/VanillaData'
 import { CommandTreeVersion } from './CommandTreeVersion'
 import { JsonSchemaVersion } from './JsonSchemaVersion'
@@ -31,6 +32,7 @@ export interface EnvConfig {
     cmdVersion: CommandTreeVersion,
     dataSource: DataSource,
     dataVersion: string,
+    defaultVisibility: 'private' | 'internal' | 'public' | CacheVisibility | CacheVisibility[],
     dependsOnVanilla: boolean,
     detectionDepth: number,
     exclude: string[],
@@ -180,6 +182,7 @@ export const VanillaConfig: Config = {
         dataSource: 'GitHub',
         dataVersion: 'Latest snapshot',
         cmdVersion: '1.16',
+        defaultVisibility: 'public',
         dependsOnVanilla: true,
         detectionDepth: 1,
         exclude: [],

@@ -151,8 +151,6 @@ export class IdentityNode extends ArgumentNode {
         if (this.type?.startsWith('$')) {
             const type = this.type.slice(1) as CacheType
             const value = ctx.cache[type]?.[this.toString()]?.doc
-            /* DEBUG */ console.log('ctx.cache', require('util').inspect(ctx.cache, true, null))
-            
             if (value) {
                 const ans: Hover = {
                     contents: { kind: 'markdown', value },

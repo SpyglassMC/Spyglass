@@ -137,27 +137,14 @@ export class DatapackLanguageService {
     }
 
     /**
-     * Get the cache that can be accessed in the specific range of a file.
-     * @param uri A file URI.
-     * @param range A LSP range.
+     * Get the cache that can be accessed for the specified ID.
      */
-    getCache(uri: Uri): ClientCache
-    getCache(type: FileType, id: IdentityNode): ClientCache
-    getCache(type: FileType | Uri, id?: IdentityNode) {
-        if (type instanceof Uri) {
-            const rel = this.getRel(type)
-            const result = IdentityNode.fromRel(rel)
-            if (!result) {
-                return {}
-            }
-            type = result.category
-            id = result.id
-        }
-        return this.caches.get(`${type}|${id}`) ?? this.rawGetCache(type, id!)
+    getCache(type: FileType, id: IdentityNode, config: Config) {
+        return this.caches.get(`${type}|${id}`) ?? this.rawGetCache(type, id, config)
     }
 
-    private rawGetCache(type: FileType, id: IdentityNode) {
-        const cache = getCacheForID(this.cacheFile.cache, type, id)
+    private rawGetCache(type: FileType, id: IdentityNode, config: Config) {
+        const cache = getCacheForID(this, type, id, config)
         this.caches.set(`${type}|${id}`, cache)
         return cache
     }
@@ -400,7 +387,7 @@ export class DatapackLanguageService {
         const idResult = this.getId(uri)
         return constructContext({
             blockDefinition: vanillaData?.BlockDefinition,
-            cache: idResult ? this.getCache(idResult.category, idResult.id) : this.cacheFile.cache,
+            cache: idResult ? this.getCache(idResult.category, idResult.id, config) : this.cacheFile.cache,
             commandTree,
             config,
             cursor,

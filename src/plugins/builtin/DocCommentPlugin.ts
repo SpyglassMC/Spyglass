@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToCompletions, arrayToMessage, plugins } from '../..'
 import { locale } from '../../locales'
 import { ArgumentNode, IdentityNode, NodeDescription, NodeRange, NodeType } from '../../nodes'
-import { CacheType, CacheVisibility, combineArgumentParserResult, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
+import { CacheType, CacheVisibility, combineArgumentParserResult, FileTypes, getCacheVisibilities, isFileType, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 import { CommandSyntaxComponentParser } from './McfunctionPlugin'
 
@@ -178,20 +178,20 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 switch (anno[0].raw) {
                     case '@private':
                         if (currentID) {
-                            visibilities.push({ type: 'function', pattern: currentID })
+                            visibilities.push(...getCacheVisibilities('private', 'function', ctx.id!))
                         }
                         break
                     case '@within':
                         if (anno.length === 2) {
                             visibilities.push({ type: '*', pattern: anno[1].raw })
                         } else if (anno.length >= 3) {
-                            if (anno[1].raw === 'advancement' || anno[1].raw === 'function' || anno[1].raw === 'tag/function' || anno[1].raw === '*') {
+                            if (isFileType(anno[1].raw) || anno[1].raw === '*') {
                                 visibilities.push({ type: anno[1].raw, pattern: anno[2].raw })
                             } else {
                                 ans.errors.push(new ParsingError(
                                     anno[1].range,
                                     locale('expected-got',
-                                        arrayToMessage(['advancement', 'function', 'tag/function'], true, 'or'),
+                                        arrayToMessage([...FileTypes, '*'], true, 'or'),
                                         locale('punc.quote', anno[1].raw)
                                     )
                                 ))
@@ -208,12 +208,12 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         break
                     case '@internal':
                         if (currentID) {
-                            visibilities.push({ type: '*', pattern: `${ctx.id!.getNamespace()}:**` })
+                            visibilities.push(...getCacheVisibilities('internal', 'function', ctx.id!))
                         }
                         break
                     case '@public':
                     case '@api':
-                        visibilities.push({ type: '*', pattern: '**' })
+                        visibilities.push(...getCacheVisibilities('public', 'function', ctx.id!))
                         break
                     default:
                         break
