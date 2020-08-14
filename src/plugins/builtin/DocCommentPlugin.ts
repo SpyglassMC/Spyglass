@@ -183,10 +183,10 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         break
                     case '@within':
                         if (anno.length === 2) {
-                            visibilities.push({ type: '*', pattern: anno[1].raw })
+                            visibilities.push({ type: '*', pattern: IdentityNode.fromString(anno[1].raw).toString() })
                         } else if (anno.length >= 3) {
                             if (isFileType(anno[1].raw) || anno[1].raw === '*') {
-                                visibilities.push({ type: anno[1].raw, pattern: anno[2].raw })
+                                visibilities.push({ type: anno[1].raw, pattern: IdentityNode.fromString(anno[2].raw).toString() })
                             } else {
                                 ans.errors.push(new ParsingError(
                                     anno[1].range,
