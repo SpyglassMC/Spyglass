@@ -10,7 +10,7 @@ export const NodeRange = Symbol('NodeRange')
 export const NodeDescription = Symbol('NbtNodeDescription')
 export const GetCodeActions = Symbol('GetCodeActions')
 export const FilterDiagnostics = Symbol('FilterDiagnostics')
-export const GetHover = Symbol('GetHoverInformation')
+export const GetHover = Symbol('GetHover')
 export const GetPlainKeys = Symbol('GetPlainKeys')
 
 export type DiagnosticMap = { [code in ErrorCode]?: Diagnostic[] }
