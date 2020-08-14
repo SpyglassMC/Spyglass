@@ -1,5 +1,4 @@
 import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
-import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'
@@ -11,7 +10,7 @@ export const NodeRange = Symbol('NodeRange')
 export const NodeDescription = Symbol('NbtNodeDescription')
 export const GetCodeActions = Symbol('GetCodeActions')
 export const FilterDiagnostics = Symbol('FilterDiagnostics')
-export const GetHoverInformation = Symbol('GetHoverInformation')
+export const GetHover = Symbol('GetHoverInformation')
 export const GetPlainKeys = Symbol('GetPlainKeys')
 
 export type DiagnosticMap = { [code in ErrorCode]?: Diagnostic[] }
@@ -77,24 +76,27 @@ export abstract class ArgumentNode implements Formattable {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetHoverInformation](textDoc: TextDocument, offset: number) {
+    [GetHover](ctx: ParsingContext) {
         let ans: Hover | null = null
         if (this[NodeDescription]) {
             ans = {
                 contents: { kind: 'markdown', value: this[NodeDescription] },
-                range: {
-                    start: textDoc.positionAt(this[NodeRange].start),
-                    end: textDoc.positionAt(this[NodeRange].end)
-                }
+                range: TextRange.toLspRange(this[NodeRange], ctx.textDoc)
             }
         } else {
             this[Triage](
                 key => {
+                    if (ans) {
+                        return
+                    }
                     const value = this[key as keyof this]
                     const arr = value instanceof Array ? value : [value]
                     for (const item of arr) {
-                        if (item instanceof ArgumentNode && isInRange(offset, item[NodeRange])) {
-                            ans = item[GetHoverInformation](textDoc, offset)
+                        if (item instanceof ArgumentNode && isInRange(ctx.cursor, item[NodeRange])) {
+                            ans = item[GetHover](ctx)
+                            if (ans) {
+                                break
+                            }
                         }
                     }
                 }

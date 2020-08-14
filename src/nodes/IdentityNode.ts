@@ -1,6 +1,6 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
-import { CodeActionKind } from 'vscode-languageserver'
+import { CodeActionKind, Hover } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { ParsingContext } from '../types'
 import { CacheType, FileType, getFileTypeFromCategory, isFileType, isTagFileType, isWorldgenRegistryFileType, TagFileType, WorldgenFileType } from '../types/ClientCache'
@@ -10,7 +10,7 @@ import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
 import { getCodeAction } from '../utils'
 import { PathPatterns } from '../utils/PathPatterns'
-import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
+import { ArgumentNode, DiagnosticMap, GetCodeActions, GetHover, NodeRange, NodeType } from './ArgumentNode'
 
 export class IdentityNode extends ArgumentNode {
     static readonly DefaultNamespace = 'minecraft'
@@ -147,6 +147,23 @@ export class IdentityNode extends ArgumentNode {
         return ans
     }
 
+    [GetHover](ctx: ParsingContext) {
+        if (this.type?.startsWith('$')) {
+            const type = this.type.slice(1) as CacheType
+            const value = ctx.cache[type]?.[this.toString()]?.doc
+            /* DEBUG */ console.log('ctx.cache', require('util').inspect(ctx.cache, true, null))
+            
+            if (value) {
+                const ans: Hover = {
+                    contents: { kind: 'markdown', value },
+                    range: TextRange.toLspRange(this[NodeRange], ctx.textDoc)
+                }
+                return ans
+            }
+        }
+        return super[GetHover](ctx)
+    }
+
     /**
      * Convert the ID to a file path.
      * @param category The category of this namespaced ID. e.g. `function`, `advancement`, etc.
@@ -188,34 +205,34 @@ export class IdentityNode extends ArgumentNode {
         const side = segs[0]
         if (side === 'data') {
             for (const type of Object.keys(PathPatterns)) {
-                    const fileType = type as FileType
-                    const pattern = PathPatterns[fileType]
-                    if (minimatch(rel, pattern, { dot: true })) {
-                        const namespace = segs[1]
-                        let minimumSegsLength: number
-                        let category: CacheType
-                        if (isTagFileType(fileType)) {
-                            // data/<namespace>/tags/<tag type>/**/*.json
-                            minimumSegsLength = 5
-                            category = `tag/${segs[3].slice(0, -1)}` as TagFileType
-                        } else if (isWorldgenRegistryFileType(fileType)) {
-                            // data/<namespace>/worldgen/<worldgen type>/**/*.json
-                            minimumSegsLength = 5
-                            category = `worldgen/${segs[3]}` as WorldgenFileType
-                        } else {
-                            // data/<namespace>/<regular file type>/**/*.json
-                            minimumSegsLength = 4
-                            category = getFileTypeFromCategory(segs[2])
-                        }
-                        if (segs.length < minimumSegsLength) {
-                            return undefined
-                        }
-                        const paths = segs.slice(minimumSegsLength - 1)
-                        const lastPath = paths[paths.length - 1]
-                        paths[paths.length - 1] = lastPath.slice(0, lastPath.lastIndexOf('.'))
-                        const id = new IdentityNode(namespace, paths, undefined, `$${category}`)
-                        return { category, ext, id, side }
+                const fileType = type as FileType
+                const pattern = PathPatterns[fileType]
+                if (minimatch(rel, pattern, { dot: true })) {
+                    const namespace = segs[1]
+                    let minimumSegsLength: number
+                    let category: CacheType
+                    if (isTagFileType(fileType)) {
+                        // data/<namespace>/tags/<tag type>/**/*.json
+                        minimumSegsLength = 5
+                        category = `tag/${segs[3].slice(0, -1)}` as TagFileType
+                    } else if (isWorldgenRegistryFileType(fileType)) {
+                        // data/<namespace>/worldgen/<worldgen type>/**/*.json
+                        minimumSegsLength = 5
+                        category = `worldgen/${segs[3]}` as WorldgenFileType
+                    } else {
+                        // data/<namespace>/<regular file type>/**/*.json
+                        minimumSegsLength = 4
+                        category = getFileTypeFromCategory(segs[2])
                     }
+                    if (segs.length < minimumSegsLength) {
+                        return undefined
+                    }
+                    const paths = segs.slice(minimumSegsLength - 1)
+                    const lastPath = paths[paths.length - 1]
+                    paths[paths.length - 1] = lastPath.slice(0, lastPath.lastIndexOf('.'))
+                    const id = new IdentityNode(namespace, paths, undefined, `$${category}`)
+                    return { category, ext, id, side }
+                }
             }
         }
         return undefined

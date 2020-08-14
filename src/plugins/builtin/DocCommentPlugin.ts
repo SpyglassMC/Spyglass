@@ -220,7 +220,6 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 }
             }
         }
-        /* DEBUG */ console.log('getVisibility', require('util').inspect(visibilities, true, null))
         return visibilities
     }
 

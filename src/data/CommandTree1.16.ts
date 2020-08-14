@@ -2218,13 +2218,6 @@ export const CommandTree: ICommandTree = {
         // #declare <type: string> <id: string>
         '#declare': {
             parser: new LiteralArgumentParser('#declare', '#define'),
-            run: ({ tokens, data }) => {
-                const lastLiteral = getArgOrDefault(data, 1, undefined)
-                if (lastLiteral === '#declare' || lastLiteral === '#define') {
-                    const lastToken = tokens[tokens.length - 1]
-                    lastToken.range.start += 1
-                }
-            },
             description: 'Declares a resource for completions.',
             children: {
                 type: {
@@ -2253,12 +2246,6 @@ export const CommandTree: ICommandTree = {
         // #alias <parser: string> <alias: string> <value: string>
         '#alias': {
             parser: new LiteralArgumentParser('#alias'),
-            run: ({ tokens, data }) => {
-                if (getArgOrDefault(data, 1, undefined) === '#alias') {
-                    const lastToken = tokens[tokens.length - 1]
-                    lastToken.range.start += 1
-                }
-            },
             children: {
                 parser: {
                     parser: new LiteralArgumentParser('entity', 'uuid', 'vector'),

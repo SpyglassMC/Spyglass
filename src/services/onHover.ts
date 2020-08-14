@@ -1,16 +1,14 @@
 import { Hover } from 'vscode-languageserver'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import { ArgumentNode, GetHoverInformation, NodeRange } from '../nodes/ArgumentNode'
-import { SyntaxComponent } from '../types'
-import { CacheFile } from '../types/ClientCache'
+import { ArgumentNode, GetHover, NodeRange } from '../nodes/ArgumentNode'
+import { isInRange, ParsingContext, SyntaxComponent } from '../types'
 
-export function onHover({ textDoc, node, offset }: { textDoc: TextDocument, offset: number, node: SyntaxComponent, cacheFile: CacheFile }): Hover | null {
+export function onHover({ node, ctx }: { node: SyntaxComponent, ctx: ParsingContext }): Hover | null {
     if (node.data instanceof Array) {
         for (const { data } of node.data) {
             if (data instanceof ArgumentNode) {
                 const range = data[NodeRange]
-                if (range.start <= offset && offset <= range.end) {
-                    return data[GetHoverInformation](textDoc, offset)
+                if (isInRange(ctx.cursor, range)) {
+                    return data[GetHover](ctx)
                 }
             }
         }

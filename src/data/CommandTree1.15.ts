@@ -1988,12 +1988,6 @@ export const CommandTree: ICommandTree = {
         // #define bossbar|entity|objective|storage|tag|team <id: string>
         '#define': {
             parser: new LiteralArgumentParser('#define'),
-            run: ({ tokens, data }) => {
-                if (getArgOrDefault(data, 1, undefined) === '#define') {
-                    const lastToken = tokens[tokens.length - 1]
-                    lastToken.range.start += 1
-                }
-            },
             description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
             children: {
                 type: {

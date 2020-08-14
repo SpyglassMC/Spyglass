@@ -5,7 +5,7 @@ import { GetFormattedString } from '../types/Formattable'
 import { BracketSpacingConfig, SepSpacingConfig } from '../types/StylisticConfig'
 import { areOverlapped, isInRange, TextRange } from '../types/TextRange'
 import { toFormattedString } from '../utils'
-import { ArgumentNode, DiagnosticMap, FilterDiagnostics, GetCodeActions, GetHoverInformation, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
+import { ArgumentNode, DiagnosticMap, FilterDiagnostics, GetCodeActions, GetHover, GetPlainKeys, NodeRange, NodeType } from './ArgumentNode'
 
 export const enum BracketType { open, close }
 
@@ -140,16 +140,16 @@ export abstract class MapNode<KI, V> extends ArgumentNode {
     }
 
     /* istanbul ignore next: simple triage */
-    [GetHoverInformation](content: TextDocument, offset: number) {
-        const ans = super[GetHoverInformation](content, offset)
+    [GetHover](ctx: ParsingContext) {
+        const ans = super[GetHover](ctx)
         if (!ans) {
             for (const key of this[GetPlainKeys]()) {
                 /* istanbul ignore else */
                 if (this[Keys] && this[Keys]!.hasOwnProperty(key)) {
                     const keyInfo = this[Keys]![key]
                     if (keyInfo instanceof ArgumentNode) {
-                        if (isInRange(offset, keyInfo[NodeRange])) {
-                            return keyInfo[GetHoverInformation](content, offset)
+                        if (isInRange(ctx.cursor, keyInfo[NodeRange])) {
+                            return keyInfo[GetHover](ctx)
                         }
                     }
                 }

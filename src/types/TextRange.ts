@@ -1,3 +1,4 @@
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { getOuterIndex, IndexMapping } from './IndexMapping'
 
 export interface TextRange {
@@ -6,6 +7,15 @@ export interface TextRange {
 }
 
 export const EmptyRange = { start: NaN, end: NaN }
+
+export namespace TextRange {
+    export function toLspRange(range: TextRange, textDoc: TextDocument) {
+        return {
+            start: textDoc.positionAt(range.start),
+            end: textDoc.positionAt(range.end)
+        }
+    }
+}
 
 /**
  * Remap all the indices in the specific TextRange object by the specific mapping.
