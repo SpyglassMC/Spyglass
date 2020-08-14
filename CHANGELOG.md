@@ -1,3 +1,48 @@
+# [v3.0.0](https://github.com/SPGoding/datapack-language-server/compare/v2.1.14...v3.0.0) (2020-08-14)
+
+## ✨ New Features
+- [`18dba51`](https://github.com/SPGoding/datapack-language-server/commit/18dba51)  Provide support for JSONs in datapacks (#528) (Issues: [`#528`](https://github.com/SPGoding/datapack-language-server/issues/528) [`#435`](https://github.com/SPGoding/datapack-language-server/issues/435) [`#594`](https://github.com/SPGoding/datapack-language-server/issues/594) [`#592`](https://github.com/SPGoding/datapack-language-server/issues/592) [`#595`](https://github.com/SPGoding/datapack-language-server/issues/595) [`#593`](https://github.com/SPGoding/datapack-language-server/issues/593) [`#445`](https://github.com/SPGoding/datapack-language-server/issues/445))
+- [`36106ea`](https://github.com/SPGoding/datapack-language-server/commit/36106ea)  Treat files as definitions of namespaced IDs (#608) (Issues: [`#608`](https://github.com/SPGoding/datapack-language-server/issues/608) [`#605`](https://github.com/SPGoding/datapack-language-server/issues/605))
+- [`b3ad765`](https://github.com/SPGoding/datapack-language-server/commit/b3ad765)  Add nbtArrayLengthCheck and nbtListLengthCheck (Issues: [`#410`](https://github.com/SPGoding/datapack-language-server/issues/410))
+- [`568827f`](https://github.com/SPGoding/datapack-language-server/commit/568827f)  Add too-many-block warning for /clone and /fill (Issues: [`#582`](https://github.com/SPGoding/datapack-language-server/issues/582))
+- [`33312b5`](https://github.com/SPGoding/datapack-language-server/commit/33312b5)  Fully support text components in commands (Issues: [`#434`](https://github.com/SPGoding/datapack-language-server/issues/434))
+- [`e00b9c2`](https://github.com/SPGoding/datapack-language-server/commit/e00b9c2)  Add declaration support 
+- [`1aad44c`](https://github.com/SPGoding/datapack-language-server/commit/1aad44c)  Support #declare and #register commands (Issues: [`#597`](https://github.com/SPGoding/datapack-language-server/issues/597) [`#623`](https://github.com/SPGoding/datapack-language-server/issues/623))
+- [`0dfe373`](https://github.com/SPGoding/datapack-language-server/commit/0dfe373)  Support hover requests for JSONs 
+- [`fc4103e`](https://github.com/SPGoding/datapack-language-server/commit/fc4103e)  Support SwitchNode in minecraft-schemas (Issues: [`#631`](https://github.com/SPGoding/datapack-language-server/issues/631))
+- [`75d44e6`](https://github.com/SPGoding/datapack-language-server/commit/75d44e6)  Add quick fix to create non-existent files (Issues: [`#366`](https://github.com/SPGoding/datapack-language-server/issues/366))
+- [`2047abd`](https://github.com/SPGoding/datapack-language-server/commit/2047abd)  Support showing hover information for identities (Issues: [`#237`](https://github.com/SPGoding/datapack-language-server/issues/237))
+- [`1b3c145`](https://github.com/SPGoding/datapack-language-server/commit/1b3c145)  Support IMP-Doc and access modifiers (Issues: [`#1`](https://github.com/SPGoding/datapack-language-server/issues/1) [`#319`](https://github.com/SPGoding/datapack-language-server/issues/319))
+- [`17cd6dc`](https://github.com/SPGoding/datapack-language-server/commit/17cd6dc)  Add datapack.env.defaultVisibility config (Issues: [`#646`](https://github.com/SPGoding/datapack-language-server/issues/646))
+- [`d72b791`](https://github.com/SPGoding/datapack-language-server/commit/d72b791)  Allow IMP-Doc to be applied to multiple commands (Issues: [`#647`](https://github.com/SPGoding/datapack-language-server/issues/647))
+
+## 🐛 Bug Fixes
+- [`4646b3d`](https://github.com/SPGoding/datapack-language-server/commit/4646b3d)  Fix not completing minecraft:empty loot table (#607) (Issues: [`#607`](https://github.com/SPGoding/datapack-language-server/issues/607) [`#606`](https://github.com/SPGoding/datapack-language-server/issues/606))
+- [`d74038f`](https://github.com/SPGoding/datapack-language-server/commit/d74038f)  Fix delay of publishing diagnostics (#609) (Issues: [`#609`](https://github.com/SPGoding/datapack-language-server/issues/609) [`#604`](https://github.com/SPGoding/datapack-language-server/issues/604))
+- [`d1705e8`](https://github.com/SPGoding/datapack-language-server/commit/d1705e8)  Improve the error message for quote types (#612) (Issues: [`#612`](https://github.com/SPGoding/datapack-language-server/issues/612) [`#580`](https://github.com/SPGoding/datapack-language-server/issues/580))
+- [`8d0754f`](https://github.com/SPGoding/datapack-language-server/commit/8d0754f)  Fix wrong calculation of vector volumes 
+- [`8815501`](https://github.com/SPGoding/datapack-language-server/commit/8815501)  Fix ignoring the severity of strictTagCheck (Issues: [`#603`](https://github.com/SPGoding/datapack-language-server/issues/603))
+- [`40e7151`](https://github.com/SPGoding/datapack-language-server/commit/40e7151)  Fix decimal places for dust color presentation 
+- [`d847395`](https://github.com/SPGoding/datapack-language-server/commit/d847395)  Fix WorkDoneProgress and cache saving (Issues: [`#621`](https://github.com/SPGoding/datapack-language-server/issues/621))
+- [`5e9e089`](https://github.com/SPGoding/datapack-language-server/commit/5e9e089)  Fix replacing range of IdentityArgumentParser 
+- [`c30e42b`](https://github.com/SPGoding/datapack-language-server/commit/c30e42b)  Fix not providing code snippet completions (Issues: [`#619`](https://github.com/SPGoding/datapack-language-server/issues/619))
+- [`5e61660`](https://github.com/SPGoding/datapack-language-server/commit/5e61660)  Fix validation for the block_entity copy source (Issues: [`#590`](https://github.com/SPGoding/datapack-language-server/issues/590))
+- [`8d42470`](https://github.com/SPGoding/datapack-language-server/commit/8d42470)  Fix the support for JSON schema&#x27;s MapNode (Issues: [`#589`](https://github.com/SPGoding/datapack-language-server/issues/589))
+- [`d10365a`](https://github.com/SPGoding/datapack-language-server/commit/d10365a)  Fix not recognizing minecraft:empty loot table (Issues: [`#606`](https://github.com/SPGoding/datapack-language-server/issues/606))
+- [`cb8a3c7`](https://github.com/SPGoding/datapack-language-server/commit/cb8a3c7)  Fix not supporting Sublime Text 
+- [`a1675ed`](https://github.com/SPGoding/datapack-language-server/commit/a1675ed)  Fix not showing document links (Issues: [`#638`](https://github.com/SPGoding/datapack-language-server/issues/638))
+- [`2dfeeba`](https://github.com/SPGoding/datapack-language-server/commit/2dfeeba)  Fix not showing diagnostic rule for unknown IDs (Issues: [`#534`](https://github.com/SPGoding/datapack-language-server/issues/534))
+- [`9fbcbc3`](https://github.com/SPGoding/datapack-language-server/commit/9fbcbc3)  Fix the delay of updating identity hovers (Issues: [`#642`](https://github.com/SPGoding/datapack-language-server/issues/642))
+- [`0f12e69`](https://github.com/SPGoding/datapack-language-server/commit/0f12e69)  Fix showing undefined errors for definitions (Issues: [`#643`](https://github.com/SPGoding/datapack-language-server/issues/643))
+- [`e1d7567`](https://github.com/SPGoding/datapack-language-server/commit/e1d7567)  Fix folding ranges for IMP-Doc (Issues: [`#648`](https://github.com/SPGoding/datapack-language-server/issues/648))
+- [`88a75e7`](https://github.com/SPGoding/datapack-language-server/commit/88a75e7)  Standardize IDs in IMP-Doc @within annotations (Issues: [`#644`](https://github.com/SPGoding/datapack-language-server/issues/644))
+
+## 🚑 Critical Hotfixes
+- [`fadac51`](https://github.com/SPGoding/datapack-language-server/commit/fadac51)  Make renaming no longer affect zero-width pos (Issues: [`#650`](https://github.com/SPGoding/datapack-language-server/issues/650))
+
+## 💥 Breaking Changes
+- [`af5431a`](https://github.com/SPGoding/datapack-language-server/commit/af5431a)  Re-design API structure
+
 # [v2.1.14](https://github.com/SPGoding/datapack-language-server/compare/v2.1.13...v2.1.14) (2020-07-14)
 
 ## 🐛 Bug Fixes
