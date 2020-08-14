@@ -44,12 +44,21 @@
       ]
     },
     {
+      "name": "Ghoulboy",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/53367549?s=460&v=4",
+      "profile": "https://github.com/Ghoulboy78",
+      "contributions": [],
+      "details": [
+        { "type": "localization", "link": "commits?author=Ghoulboy78", "text": "Italian (it)" }
+      ]
+    },
+    {
       "name": "K_bai",
       "avatar_url": "https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240",
       "profile": "https://afdian.net/@k_bai",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Coffee" }
+        { "type": "coffee", "link": "https://github.com/sponsors/SPGoding", "text": "Coffee" }
       ]
     },
     {
@@ -88,7 +97,7 @@
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Coffee" }
+        { "type": "coffee", "link": "https://github.com/sponsors/SPGoding", "text": "Coffee" }
       ]
     },
     {
