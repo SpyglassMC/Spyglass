@@ -94,8 +94,12 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
             } else {
                 docComment.plainText += reader.readLine() + '\n'
             }
+            let indentBeforeLastHash = 0
             while (reader.nextLine(ctx.textDoc), reader.canRead()) {
-                if (reader.skipSpace().peek() === '#' && StringReader.isWhiteSpace(reader.peek(1))) {
+                const lineStart = reader.cursor
+                reader.skipSpace()
+                if (reader.peek() === '#' && StringReader.isWhiteSpace(reader.peek(1))) {
+                    indentBeforeLastHash = reader.cursor - lineStart
                     reader.skip()
                     // Still in the range of doc comment.
                     const indentStart = reader.cursor
@@ -108,10 +112,8 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 } else {
                     if (!isFunctionDoc) {
                         // Attach the next command to this doc comment component.
-                        const parser = new CommandSyntaxComponentParser()
-                        const cmdResult = parser.parse(reader, ctx)
-                        ans.data.push(...cmdResult.data)
-                        combineArgumentParserResult(ans, cmdResult)
+                        const commandIndent = reader.cursor - lineStart
+                        this.parseCommand(ans, reader, ctx, indentBeforeLastHash, commandIndent)
                     } else {
                         reader
                             .lastLine(ctx.textDoc)
@@ -221,6 +223,25 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
             }
         }
         return visibilities
+    }
+
+    private parseCommand(ans: plugins.SyntaxComponent<DocCommentData>, reader: StringReader, ctx: ParsingContext, indentBeforeLastHash: number, commandIndent: number) {
+        const parser = new CommandSyntaxComponentParser()
+        const cmdResult = parser.parse(reader, ctx)
+        ans.data.push(...cmdResult.data)
+        combineArgumentParserResult(ans, cmdResult)
+        if (commandIndent - indentBeforeLastHash >= 2) {
+            const clonedReader = reader
+                .clone()
+                .nextLine(ctx.textDoc)
+            const nextLineStart = clonedReader.cursor
+            clonedReader.skipSpace()
+            const nextCommandIndent = clonedReader.cursor - nextLineStart
+            if (nextCommandIndent - indentBeforeLastHash >= 2) {
+                reader.cursor = clonedReader.cursor
+                this.parseCommand(ans, reader, ctx, indentBeforeLastHash, nextCommandIndent)
+            }
+        }
     }
 
     private setCache(ans: plugins.SyntaxComponent<DocCommentData>, visibility: CacheVisibility[], docComment: DocCommentNode) {
