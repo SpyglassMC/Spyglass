@@ -23,6 +23,9 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                 for (const key of Object.keys(unit)) {
                     if (isCacheUnitPositionType(key)) {
                         for (const pos of unit[key] ?? []) {
+                            if (pos.startLine !== pos.endLine || pos.endChar! - pos.startChar! === 0) {
+                                continue
+                            }
                             const affectedUri = service.parseUri(pos.uri!)
                             const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
                             /* istanbul ignore else */
@@ -39,7 +42,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                                 })
                             }
                         }
-                    } 
+                    }
                 }
 
                 // Rename file if necessary.
