@@ -1,9 +1,8 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { MessageArgumentParser } from '../../parsers/MessageArgumentParser'
 import { EntityNode } from '../../nodes/EntityNode'
 import { MessageNode } from '../../nodes/MessageNode'
+import { MessageArgumentParser } from '../../parsers/MessageArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { Token, TokenType } from '../../types/Token'
 import { StringReader } from '../../utils/StringReader'
@@ -18,10 +17,9 @@ describe('MessageArgumentParser Tests', () => {
         })
     })
 
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ parsers })
+        ctx = constructContext({})
     })
     describe('parse() Tests', () => {
         it('Should return data without selectors', () => {

@@ -18,7 +18,7 @@ Please note that only put one bug/suggestion in each issue to make it easier to 
 
 [![Localization status](https://l10n.spgoding.com/widgets/datapack-helper-plus/-/multi-auto.svg)](https://l10n.spgoding.com/engage/datapack-helper-plus/?utm_source=widget)
 
-Datapack Helper Plus supports multiple languages. If you'd like to help us translate this project to your language, it would be really appreciated!
+Data-pack Helper Plus supports multiple languages. If you'd like to help us translate this project to your language, it would be really appreciated!
 
 ### Steps
 
@@ -37,4 +37,4 @@ Datapack Helper Plus supports multiple languages. If you'd like to help us trans
 
 [SPGoding](https://github.com/SPGoding) personally accept financial supports. The funds will be used for purchasing the server which holds the [localization website](https://l10n.spgoding.com), the rest money will be used for SPGoding's personal usage. _Intransparent, huh?_
 
-If you're interested in donating, I have a [Patreon](https://patreon.com/SPGoding) profile.
+If you're interested in sponsoring, you can go ahead to my [GitHub Sponsors page](https://github.com/sponsors/SPGoding).

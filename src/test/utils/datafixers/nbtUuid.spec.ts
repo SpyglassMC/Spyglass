@@ -14,7 +14,7 @@ describe('nbtUuid.ts Tests', () => {
                 bufferFromNbtString(node, 'OwnerUUID')
                 fail()
             } catch (e) {
-                assert(e.message === 'Expected a string node for ‘OwnerUUID’')
+                assert(e.message === 'Expected a string node for “OwnerUUID”')
             }
         })
         it('Should convert full UUID strings', () => {
@@ -43,7 +43,7 @@ describe('nbtUuid.ts Tests', () => {
                 bufferFromNbtLongs(node, 'UUID')
                 fail()
             } catch (e) {
-                assert(e.message === 'Expected two number nodes for ‘UUIDMost’ and ‘UUIDLeast’')
+                assert(e.message === 'Expected two number nodes for “UUIDMost” and “UUIDLeast”')
             }
         })
         it('Should convert when only one key is specified', () => {
@@ -74,7 +74,7 @@ describe('nbtUuid.ts Tests', () => {
                 bufferFromNbtCompound(node, 'owner')
                 fail()
             } catch (e) {
-                assert(e.message === 'Expected a compound node for ‘owner’')
+                assert(e.message === 'Expected a compound node for “owner”')
             }
         })
         it('Should convert correctly', () => {

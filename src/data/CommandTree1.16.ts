@@ -1,13 +1,15 @@
+import { DiagnosticSeverity } from 'vscode-languageserver'
 import { getArgOrDefault } from '../CommandTree'
-import { NodeRange } from '../nodes'
+import { locale } from '../locales'
+import { NodeRange, VectorNode } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { StringNode } from '../nodes/StringNode'
 import { BlockArgumentParser } from '../parsers/BlockArgumentParser'
 import { CodeSnippetArgumentParser } from '../parsers/CodeSnippetArgumentParser'
-import { DefinitionDescriptionArgumentParser } from '../parsers/DefinitionDescriptionArgumentParser'
-import { DefinitionIDArgumentParser } from '../parsers/DefinitionIDArgumentParser'
-import { EntityArgumentParser, getNbtdocRegistryId } from '../parsers/EntityArgumentParser'
+import { DeclarationDescriptionArgumentParser } from '../parsers/DeclarationDescriptionArgumentParser'
+import { DeclarationIDArgumentParser } from '../parsers/DeclarationIDArgumentParser'
+import { EntityArgumentParser } from '../parsers/EntityArgumentParser'
 import { IdentityArgumentParser } from '../parsers/IdentityArgumentParser'
 import { ItemArgumentParser } from '../parsers/ItemArgumentParser'
 import { ItemSlotArgumentParser } from '../parsers/ItemSlotArgumentParser'
@@ -28,9 +30,11 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
-import { CacheKey } from '../types/ClientCache'
+import { AlwaysValidates, ParsingError, Switchable } from '../types'
+import { CacheType, DeclarableCacheTypes } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
+import { getNbtdocRegistryId } from '../utils'
 
 /**
  * Command tree of Minecraft Java Edition 19w41a commands.
@@ -46,6 +50,14 @@ export const CommandTree: ICommandTree = {
         }
     },
     commands: {
+        [Switchable]: true,
+        [AlwaysValidates]: {
+            snippet: {
+                parser: new CodeSnippetArgumentParser(),
+                permission: 0,
+                executable: true
+            }
+        },
         advancement: {
             parser: new LiteralArgumentParser('advancement'),
             description: 'Grant or revoke advancements from players.',
@@ -64,7 +76,7 @@ export const CommandTree: ICommandTree = {
                                     parser: new LiteralArgumentParser('only'),
                                     children: {
                                         advancement: {
-                                            parser: new IdentityArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancement'),
                                             executable: true,
                                             children: {
                                                 criterion: {
@@ -79,7 +91,7 @@ export const CommandTree: ICommandTree = {
                                     parser: new LiteralArgumentParser('from', 'through', 'until'),
                                     children: {
                                         advancement: {
-                                            parser: new IdentityArgumentParser('$advancements'),
+                                            parser: new IdentityArgumentParser('$advancement'),
                                             executable: true
                                         }
                                     }
@@ -100,9 +112,11 @@ export const CommandTree: ICommandTree = {
                         attribute: {
                             parser: new IdentityArgumentParser('minecraft:attribute'),
                             children: {
+                                [Switchable]: true,
                                 base: {
                                     parser: new LiteralArgumentParser('base'),
                                     children: {
+                                        [Switchable]: true,
                                         get: {
                                             parser: new LiteralArgumentParser('get'),
                                             executable: true,
@@ -137,6 +151,7 @@ export const CommandTree: ICommandTree = {
                                 modifier: {
                                     parser: new LiteralArgumentParser('modifier'),
                                     children: {
+                                        [Switchable]: true,
                                         add: {
                                             parser: new LiteralArgumentParser('add'),
                                             children: {
@@ -257,11 +272,12 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('bossbar'),
             description: 'Adds, removes or modifies boss bars.',
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars', undefined, undefined, undefined, true),
+                            parser: new IdentityArgumentParser('$bossbar', undefined, undefined, undefined, true),
                             children: {
                                 name: {
                                     parser: new TextComponentArgumentParser(),
@@ -275,7 +291,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('get'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             children: {
                                 max_players_value_visible: {
                                     parser: new LiteralArgumentParser('max', 'players', 'value', 'visible'),
@@ -293,7 +309,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             executable: true
                         }
                     }
@@ -302,8 +318,9 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('set'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$bossbars'),
+                            parser: new IdentityArgumentParser('$bossbar'),
                             children: {
+                                [Switchable]: true,
                                 color: {
                                     parser: new LiteralArgumentParser('color'),
                                     children: {
@@ -406,6 +423,17 @@ export const CommandTree: ICommandTree = {
                     children: {
                         end: {
                             parser: new VectorArgumentParser(3, 'integer'),
+                            run: ({ data, errors }) => {
+                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
+                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
+                                const volume = v1.volumeTo(v2)
+                                if (volume && volume > 32768) {
+                                    errors.push(new ParsingError(
+                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                        locale('too-many-block-affected', 32768, volume)
+                                    ))
+                                }
+                            },
                             children: {
                                 destination: {
                                     parser: new VectorArgumentParser(3, 'integer'),
@@ -447,6 +475,7 @@ export const CommandTree: ICommandTree = {
         datapack: {
             parser: new LiteralArgumentParser('datapack'),
             children: {
+                [Switchable]: true,
                 disable: {
                     parser: new LiteralArgumentParser('disable'),
                     children: {
@@ -495,6 +524,7 @@ export const CommandTree: ICommandTree = {
         data: {
             parser: new LiteralArgumentParser('data'),
             children: {
+                [Switchable]: true,
                 get: {
                     parser: new LiteralArgumentParser('get'),
                     children: {
@@ -503,10 +533,10 @@ export const CommandTree: ICommandTree = {
                             executable: true,
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -534,10 +564,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtArgumentParser('Compound', 'minecraft:entity', id)
                                         } else {
@@ -557,10 +587,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 targetPath: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -573,6 +603,7 @@ export const CommandTree: ICommandTree = {
                                         modification: {
                                             template: 'data_modification',
                                             children: {
+                                                [Switchable]: true,
                                                 from: {
                                                     parser: new LiteralArgumentParser('from'),
                                                     children: {
@@ -581,10 +612,10 @@ export const CommandTree: ICommandTree = {
                                                             executable: true,
                                                             children: {
                                                                 sourcePath: {
-                                                                    parser: ({ args }) => {
-                                                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                                    parser: ({ data }) => {
+                                                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                         if (type === 'entity') {
-                                                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                                                             const id = getNbtdocRegistryId(entity)
                                                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                                                         } else if (type === 'block') {
@@ -603,10 +634,10 @@ export const CommandTree: ICommandTree = {
                                                     parser: new LiteralArgumentParser('value'),
                                                     children: {
                                                         nbt: {
-                                                            parser: ({ args }) => {
-                                                                const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                            parser: ({ data }) => {
+                                                                const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                                                 if (type === 'entity') {
-                                                                    const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                                                    const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                                                     const id = getNbtdocRegistryId(entity)
                                                                     return new NbtArgumentParser(undefined, 'minecraft:entity', id)
                                                                 } else {
@@ -632,10 +663,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -694,6 +725,7 @@ export const CommandTree: ICommandTree = {
         effect: {
             parser: new LiteralArgumentParser('effect'),
             children: {
+                [Switchable]: true,
                 clear: {
                     parser: new LiteralArgumentParser('clear'),
                     executable: true,
@@ -768,7 +800,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('execute'),
             children: {
                 subcommand: {
-                    template: 'execute_subcommand'
+                    redirect: 'execute_subcommand'
                 }
             }
         },
@@ -819,6 +851,18 @@ export const CommandTree: ICommandTree = {
                     children: {
                         to: {
                             parser: new VectorArgumentParser(3, 'integer'),
+                            run: ({ data, errors }) => {
+                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
+                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
+                                const volume = v1.volumeTo(v2)
+                                if (volume && volume > 32768) {
+                                    errors.push(new ParsingError(
+                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                        locale('too-many-block-affected', 32768, volume),
+                                        undefined, DiagnosticSeverity.Warning
+                                    ))
+                                }
+                            },
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(false),
@@ -849,6 +893,7 @@ export const CommandTree: ICommandTree = {
         forceload: {
             parser: new LiteralArgumentParser('forceload'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -899,7 +944,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('function'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$functions', true),
+                    parser: new IdentityArgumentParser('$function', true),
                     executable: true
                 }
             }
@@ -923,7 +968,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning', 'universalAnger', 'forgiveDeadPlayers'),
                     executable: true,
                     children: {
                         value: {
@@ -1016,7 +1061,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('locatebiome'),
             children: {
                 type: {
-                    parser: new IdentityArgumentParser('minecraft:biome'),
+                    parser: new IdentityArgumentParser('$worldgen/biome'),
                     executable: true
                 }
             }
@@ -1079,6 +1124,20 @@ export const CommandTree: ICommandTree = {
                 message: {
                     parser: new MessageArgumentParser(),
                     executable: true
+                }
+            }
+        },
+        msg: {
+            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
+            children: {
+                player: {
+                    parser: new EntityArgumentParser('multiple', 'players'),
+                    children: {
+                        message: {
+                            parser: new MessageArgumentParser(),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
@@ -1224,7 +1283,7 @@ export const CommandTree: ICommandTree = {
                                     executable: true
                                 },
                                 name: {
-                                    parser: new IdentityArgumentParser('$recipes'),
+                                    parser: new IdentityArgumentParser('$recipe'),
                                     executable: true
                                 }
                             }
@@ -1274,7 +1333,12 @@ export const CommandTree: ICommandTree = {
             }
         },
         'save-off': {
-            parser: new LiteralArgumentParser('save-off', 'save-on'),
+            parser: new LiteralArgumentParser('save-off'),
+            permission: 4,
+            executable: true
+        },
+        'save-on': {
+            parser: new LiteralArgumentParser('save-on'),
             permission: 4,
             executable: true
         },
@@ -1290,11 +1354,12 @@ export const CommandTree: ICommandTree = {
         schedule: {
             parser: new LiteralArgumentParser('schedule'),
             children: {
+                [Switchable]: true,
                 function: {
                     parser: new LiteralArgumentParser('function'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$function', true),
                             children: {
                                 time: {
                                     parser: new TimeArgumentParser(),
@@ -1314,7 +1379,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('clear'),
                     children: {
                         id: {
-                            parser: new IdentityArgumentParser('$functions', true),
+                            parser: new IdentityArgumentParser('$function', true),
                             executable: true
                         }
                     }
@@ -1324,9 +1389,11 @@ export const CommandTree: ICommandTree = {
         scoreboard: {
             parser: new LiteralArgumentParser('scoreboard'),
             children: {
+                [Switchable]: true,
                 objectives: {
                     parser: new LiteralArgumentParser('objectives'),
                     children: {
+                        [Switchable]: true,
                         add: {
                             parser: new LiteralArgumentParser('add'),
                             children: {
@@ -1408,8 +1475,9 @@ export const CommandTree: ICommandTree = {
                 players: {
                     parser: new LiteralArgumentParser('players'),
                     children: {
-                        add_remove: {
-                            parser: new LiteralArgumentParser('add', 'remove'),
+                        [Switchable]: true,
+                        add: {
+                            parser: new LiteralArgumentParser('add'),
                             children: {
                                 targets: {
                                     template: 'templates.multiple_score',
@@ -1481,6 +1549,20 @@ export const CommandTree: ICommandTree = {
                                                     executable: true
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        remove: {
+                            parser: new LiteralArgumentParser('remove'),
+                            children: {
+                                targets: {
+                                    template: 'templates.multiple_score',
+                                    children: {
+                                        score: {
+                                            parser: new NumberArgumentParser('integer', 0),
+                                            executable: true
                                         }
                                     }
                                 }
@@ -1667,7 +1749,7 @@ export const CommandTree: ICommandTree = {
                             executable: true,
                             children: {
                                 nbt: {
-                                    parser: ({ args }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(args, 2, new IdentityNode()).toString()),
+                                    parser: ({ data }) => new NbtArgumentParser('Compound', 'minecraft:entity', getArgOrDefault(data, 2, new IdentityNode()).toString()),
                                     executable: true
                                 }
                             }
@@ -1712,6 +1794,7 @@ export const CommandTree: ICommandTree = {
         team: {
             parser: new LiteralArgumentParser('team'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -1727,8 +1810,8 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
-                empty_remove: {
-                    parser: new LiteralArgumentParser('empty', 'remove'),
+                empty: {
+                    parser: new LiteralArgumentParser('empty'),
                     children: {
                         team: {
                             parser: new TeamArgumentParser(),
@@ -1824,6 +1907,15 @@ export const CommandTree: ICommandTree = {
                             }
                         }
                     }
+                },
+                remove: {
+                    parser: new LiteralArgumentParser('remove'),
+                    children: {
+                        team: {
+                            parser: new TeamArgumentParser(),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
@@ -1880,6 +1972,9 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        tell: {
+            redirect: 'commands.msg'
+        },
         tellraw: {
             parser: new LiteralArgumentParser('tellraw'),
             children: {
@@ -1897,6 +1992,7 @@ export const CommandTree: ICommandTree = {
         time: {
             parser: new LiteralArgumentParser('time'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -1972,6 +2068,12 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        tm: {
+            redirect: 'commands.teammsg'
+        },
+        tp: {
+            redirect: 'commands.teleport'
+        },
         trigger: {
             parser: new LiteralArgumentParser('trigger'),
             permission: 0,
@@ -2015,7 +2117,7 @@ export const CommandTree: ICommandTree = {
                 add_remove: {
                     parser: new LiteralArgumentParser('add', 'remove'),
                     children: {
-                        plauer: {
+                        player: {
                             parser: new EntityArgumentParser('multiple', 'players'),
                             executable: true
                         }
@@ -2030,6 +2132,7 @@ export const CommandTree: ICommandTree = {
         worldborder: {
             parser: new LiteralArgumentParser('worldborder'),
             children: {
+                [Switchable]: true,
                 add: {
                     parser: new LiteralArgumentParser('add'),
                     children: {
@@ -2104,49 +2207,31 @@ export const CommandTree: ICommandTree = {
             }
         },
         w: {
-            parser: new LiteralArgumentParser('msg', 'tell', 'w'),
-            children: {
-                player: {
-                    parser: new EntityArgumentParser('multiple', 'players'),
-                    children: {
-                        message: {
-                            parser: new MessageArgumentParser(),
-                            executable: true
-                        }
-                    }
-                }
-            }
+            redirect: 'commands.msg'
         },
-        snippet: {
-            parser: new CodeSnippetArgumentParser(),
-            permission: 0,
-            executable: true
+        xp: {
+            redirect: 'commands.experience'
         }
     },
     comments: {
-        // #define bossbar|entity|objective|storage|tag|team <id: string>
-        '#define': {
-            parser: new LiteralArgumentParser('#define'),
-            run: ({ tokens, args }) => {
-                if (getArgOrDefault(args, 1, undefined) === '#define') {
-                    const lastToken = tokens[tokens.length - 1]
-                    lastToken.range.start += 1
-                }
-            },
-            description: 'Defines a bossbar, an entity name (like a fake player), an objective, a data storage, an entity tag, or a team. Will be used for completions.',
+        [Switchable]: true,
+        // #declare <type: string> <id: string>
+        '#declare': {
+            parser: new LiteralArgumentParser('#declare', '#define'),
+            description: 'Declares a resource for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser('bossbar', 'entity', 'objective', 'score_holder', 'storage', 'tag', 'team'),
-                    description: 'Type of the definition',
+                    parser: new LiteralArgumentParser(...DeclarableCacheTypes),
+                    description: 'Type of the declaration',
                     children: {
                         id: {
-                            parser: ({ args }) => new DefinitionIDArgumentParser(getArgOrDefault(args, 1, '')),
+                            parser: ({ data }) => new DeclarationIDArgumentParser(getArgOrDefault<string>(data, 1, '')),
                             description: 'ID',
                             executable: true,
                             children: {
                                 description: {
-                                    parser: ({ args }) => new DefinitionDescriptionArgumentParser(getArgOrDefault(args, 2, ''), getArgOrDefault(args, 1, '')),
-                                    description: 'Description of the definition',
+                                    parser: ({ data }) => new DeclarationDescriptionArgumentParser(getArgOrDefault(data, 2, ''), getArgOrDefault(data, 1, '')),
+                                    description: 'Description for the declaration',
                                     executable: true
                                 }
                             }
@@ -2155,15 +2240,12 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        '#define': {
+            redirect: 'comments.#declare'
+        },
         // #alias <parser: string> <alias: string> <value: string>
         '#alias': {
             parser: new LiteralArgumentParser('#alias'),
-            run: ({ tokens, args }) => {
-                if (getArgOrDefault(args, 1, undefined) === '#alias') {
-                    const lastToken = tokens[tokens.length - 1]
-                    lastToken.range.start += 1
-                }
-            },
             children: {
                 parser: {
                     parser: new LiteralArgumentParser('entity', 'uuid', 'vector'),
@@ -2182,11 +2264,11 @@ export const CommandTree: ICommandTree = {
                                     executable: true,
                                     run: parsedLine => {
                                         if (parsedLine.errors.length === 0) {
-                                            const parser = getArgOrDefault<string>(parsedLine.args, 3, '')
-                                            const alias = getArgOrDefault<StringNode | null>(parsedLine.args, 2, null)
-                                            const value = getArgOrDefault<StringNode | null>(parsedLine.args, 1, null)
+                                            const parser = getArgOrDefault<string>(parsedLine.data, 3, '')
+                                            const alias = getArgOrDefault<StringNode | null>(parsedLine.data, 2, null)
+                                            const value = getArgOrDefault<StringNode | null>(parsedLine.data, 1, null)
                                             if (parser && alias && value) {
-                                                const key = `aliases/${parser}` as CacheKey
+                                                const key = `alias/${parser}` as CacheType
                                                 parsedLine.cache = {
                                                     [key]: {
                                                         [alias.valueOf()]: { doc: value.valueOf(), def: [alias[NodeRange]], ref: [] }
@@ -2206,17 +2288,167 @@ export const CommandTree: ICommandTree = {
     templates: {
         boolean: {
             parser: new LiteralArgumentParser('false', 'true'),
-            run: ({ tokens, args }) => {
-                const lastArg = getArgOrDefault(args, 1, undefined)
+            run: ({ tokens, data }) => {
                 const lastToken = tokens[tokens.length - 1]
                 lastToken.type = TokenType.boolean
             }
         },
-        single_score: {
-            parser: new EntityArgumentParser('single', 'entities', true),
+        color: {
+            parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
+        },
+        execute_if_unless: {
+            parser: new LiteralArgumentParser('if', 'unless'),
             children: {
-                objective: {
-                    parser: new ObjectiveArgumentParser()
+                [Switchable]: true,
+                blocks: {
+                    parser: new LiteralArgumentParser('blocks'),
+                    children: {
+                        start: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            children: {
+                                end: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    children: {
+                                        destination: {
+                                            parser: new VectorArgumentParser(3, 'integer'),
+                                            children: {
+                                                all_masked: {
+                                                    parser: new LiteralArgumentParser('all', 'masked'),
+                                                    executable: true,
+                                                    children: {
+                                                        subcommand: {
+                                                            redirect: 'execute_subcommand'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                block: {
+                    parser: new LiteralArgumentParser('block'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            children: {
+                                block: {
+                                    parser: new BlockArgumentParser(true, true),
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                data: {
+                    parser: new LiteralArgumentParser('data'),
+                    children: {
+                        nbt_holder: {
+                            template: 'nbt_holder',
+                            children: {
+                                path: {
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
+                                        if (type === 'entity') {
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
+                                            const id = getNbtdocRegistryId(entity)
+                                            return new NbtPathArgumentParser('minecraft:entity', id)
+                                        } else if (type === 'block') {
+                                            return new NbtPathArgumentParser('minecraft:block', null)
+                                        } else {
+                                            return new NbtPathArgumentParser('minecraft:block')
+                                        }
+                                    },
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                entity: {
+                    parser: new LiteralArgumentParser('entity'),
+                    children: {
+                        entities: {
+                            parser: new EntityArgumentParser('multiple', 'entities'),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                predicate: {
+                    parser: new LiteralArgumentParser('predicate'),
+                    children: {
+                        id: {
+                            parser: new IdentityArgumentParser('$predicate'),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                score: {
+                    parser: new LiteralArgumentParser('score'),
+                    children: {
+                        target: {
+                            template: 'templates.single_score',
+                            children: {
+                                operation: {
+                                    parser: new LiteralArgumentParser('<', '<=', '=', '>', '>='),
+                                    run: parsedLine => {
+                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
+                                    },
+                                    children: {
+                                        source: {
+                                            template: 'templates.single_score',
+                                            executable: true,
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'execute_subcommand'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                matches: {
+                                    parser: new LiteralArgumentParser('matches'),
+                                    run: parsedLine => {
+                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
+                                    },
+                                    children: {
+                                        range: {
+                                            parser: new NumberRangeArgumentParser('integer'),
+                                            executable: true,
+                                            children: {
+                                                subcommand: {
+                                                    redirect: 'execute_subcommand'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -2228,8 +2460,13 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-        color: {
-            parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
+        single_score: {
+            parser: new EntityArgumentParser('single', 'entities', true),
+            children: {
+                objective: {
+                    parser: new ObjectiveArgumentParser()
+                }
+            }
         }
     },
     data_modification: {
@@ -2246,6 +2483,7 @@ export const CommandTree: ICommandTree = {
         }
     },
     item_holder: {
+        [Switchable]: true,
         block: {
             parser: new LiteralArgumentParser('block'),
             children: {
@@ -2264,6 +2502,7 @@ export const CommandTree: ICommandTree = {
         }
     },
     nbt_holder: {
+        [Switchable]: true,
         block: {
             parser: new LiteralArgumentParser('block'),
             children: {
@@ -2284,12 +2523,13 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('storage'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$storages')
+                    parser: new IdentityArgumentParser('$storage')
                 }
             }
         }
     },
     loot_target_without_replace: {
+        [Switchable]: true,
         spawn: {
             parser: new LiteralArgumentParser('spawn'),
             children: {
@@ -2316,11 +2556,12 @@ export const CommandTree: ICommandTree = {
         }
     },
     loot_source: {
+        [Switchable]: true,
         fish: {
             parser: new LiteralArgumentParser('fish'),
             children: {
                 id: {
-                    parser: new IdentityArgumentParser('$loot_tables'),
+                    parser: new IdentityArgumentParser('$loot_table'),
                     children: {
                         location: {
                             parser: new VectorArgumentParser(3, 'integer'),
@@ -2342,7 +2583,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('loot'),
             children: {
                 lootTable: {
-                    parser: new IdentityArgumentParser('$loot_tables')
+                    parser: new IdentityArgumentParser('$loot_table')
                 }
             }
         },
@@ -2373,6 +2614,7 @@ export const CommandTree: ICommandTree = {
         }
     },
     execute_subcommand: {
+        [Switchable]: true,
         align: {
             parser: new LiteralArgumentParser('align'),
             children: {
@@ -2456,6 +2698,9 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        if: {
+            redirect: 'templates.execute_if_unless'
+        },
         in: {
             parser: new LiteralArgumentParser('in'),
             children: {
@@ -2522,6 +2767,14 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        run: {
+            parser: new LiteralArgumentParser('run'),
+            children: {
+                command: {
+                    redirect: 'commands'
+                }
+            }
+        },
         store: {
             parser: new LiteralArgumentParser('store'),
             children: {
@@ -2532,7 +2785,7 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('bossbar'),
                             children: {
                                 id: {
-                                    parser: new IdentityArgumentParser('$bossbars'),
+                                    parser: new IdentityArgumentParser('$bossbar'),
                                     children: {
                                         max_value: {
                                             parser: new LiteralArgumentParser('max', 'value'),
@@ -2563,10 +2816,10 @@ export const CommandTree: ICommandTree = {
                             template: 'nbt_holder',
                             children: {
                                 path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
+                                    parser: ({ data }) => {
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
+                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)
                                             return new NbtPathArgumentParser('minecraft:entity', id)
                                         } else if (type === 'block') {
@@ -2597,168 +2850,8 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-        if_unless: {
-            parser: new LiteralArgumentParser('if', 'unless'),
-            children: {
-                blocks: {
-                    parser: new LiteralArgumentParser('blocks'),
-                    children: {
-                        start: {
-                            parser: new VectorArgumentParser(3, 'integer'),
-                            children: {
-                                end: {
-                                    parser: new VectorArgumentParser(3, 'integer'),
-                                    children: {
-                                        destination: {
-                                            parser: new VectorArgumentParser(3, 'integer'),
-                                            children: {
-                                                all_masked: {
-                                                    parser: new LiteralArgumentParser('all', 'masked'),
-                                                    executable: true,
-                                                    children: {
-                                                        subcommand: {
-                                                            redirect: 'execute_subcommand'
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                block: {
-                    parser: new LiteralArgumentParser('block'),
-                    children: {
-                        pos: {
-                            parser: new VectorArgumentParser(3, 'integer'),
-                            children: {
-                                block: {
-                                    parser: new BlockArgumentParser(true, true),
-                                    executable: true,
-                                    children: {
-                                        subcommand: {
-                                            redirect: 'execute_subcommand'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                data: {
-                    parser: new LiteralArgumentParser('data'),
-                    children: {
-                        nbt_holder: {
-                            template: 'nbt_holder',
-                            children: {
-                                path: {
-                                    parser: ({ args }) => {
-                                        const type = getArgOrDefault(args, 2, 'block') as 'block' | 'entity' | 'storage'
-                                        if (type === 'entity') {
-                                            const entity = getArgOrDefault<EntityNode>(args, 1, new EntityNode())
-                                            const id = getNbtdocRegistryId(entity)
-                                            return new NbtPathArgumentParser('minecraft:entity', id)
-                                        } else if (type === 'block') {
-                                            return new NbtPathArgumentParser('minecraft:block', null)
-                                        } else {
-                                            return new NbtPathArgumentParser('minecraft:block')
-                                        }
-                                    },
-                                    executable: true,
-                                    children: {
-                                        subcommand: {
-                                            redirect: 'execute_subcommand'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                entity: {
-                    parser: new LiteralArgumentParser('entity'),
-                    children: {
-                        entities: {
-                            parser: new EntityArgumentParser('multiple', 'entities'),
-                            executable: true,
-                            children: {
-                                subcommand: {
-                                    redirect: 'execute_subcommand'
-                                }
-                            }
-                        }
-                    }
-                },
-                predicate: {
-                    parser: new LiteralArgumentParser('predicate'),
-                    children: {
-                        id: {
-                            parser: new IdentityArgumentParser('$predicates'),
-                            executable: true,
-                            children: {
-                                subcommand: {
-                                    redirect: 'execute_subcommand'
-                                }
-                            }
-                        }
-                    }
-                },
-                score: {
-                    parser: new LiteralArgumentParser('score'),
-                    children: {
-                        target: {
-                            template: 'templates.single_score',
-                            children: {
-                                operation: {
-                                    parser: new LiteralArgumentParser('<', '<=', '=', '>', '>='),
-                                    run: parsedLine => {
-                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
-                                    },
-                                    children: {
-                                        source: {
-                                            template: 'templates.single_score',
-                                            executable: true,
-                                            children: {
-                                                subcommand: {
-                                                    redirect: 'execute_subcommand'
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                matches: {
-                                    parser: new LiteralArgumentParser('matches'),
-                                    run: parsedLine => {
-                                        parsedLine.tokens[parsedLine.tokens.length - 1].type = TokenType.operator
-                                    },
-                                    children: {
-                                        range: {
-                                            parser: new NumberRangeArgumentParser('integer'),
-                                            executable: true,
-                                            children: {
-                                                subcommand: {
-                                                    redirect: 'execute_subcommand'
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        run: {
-            parser: new LiteralArgumentParser('run'),
-            children: {
-                command: {
-                    redirect: 'commands'
-                }
-            }
+        unless: {
+            redirect: 'templates.execute_if_unless'
         }
     }
 }

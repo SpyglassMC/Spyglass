@@ -21,23 +21,17 @@ export class TimeArgumentParser extends ArgumentParser<TimeNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TimeNode> {
-        const ans: ArgumentParserResult<TimeNode> = {
-            data: new TimeNode(NaN, '', 't'),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new TimeNode(NaN, '', 't'))
 
         const start = reader.cursor
 
-        const numberResult: ArgumentParserResult<NumberNode> = ctx.parsers.get('Number', ['float', 0]).parse(reader, ctx)
+        const numberResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float', 0).parse(reader, ctx)
         combineArgumentParserResult(ans, numberResult)
         ans.data.value = numberResult.data.valueOf()
         ans.data.raw = numberResult.data.toString()
 
         if (ctx.cursor === reader.cursor) {
-            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units))
+            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units, ctx.cursor, ctx.cursor))
         }
 
         if (StringReader.canInUnquotedString(reader.peek())) {

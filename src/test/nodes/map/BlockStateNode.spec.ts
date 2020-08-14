@@ -4,10 +4,9 @@ import { BlockStateNode } from '../../../nodes/BlockStateNode'
 import { UnsortedKeys } from '../../../nodes/MapNode'
 import { constructConfig } from '../../../types/Config'
 import { GetFormattedString } from '../../../types/Formattable'
-import { FunctionInfo } from '../../../types/FunctionInfo'
 import { ErrorCode } from '../../../types/ParsingError'
 import { getCodeAction } from '../../../utils'
-import { $, mockFunctionInfo } from '../../utils.spec'
+import { $, mockParsingContext } from '../../utils.spec'
 
 describe('BlockStateNode Tests', () => {
     describe('[GetFormattedString]() Tests', () => {
@@ -68,7 +67,7 @@ describe('BlockStateNode Tests', () => {
             }
         })
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info: FunctionInfo = mockFunctionInfo({ config })
+        const ctx = mockParsingContext({ config })
         const diags: any = [{ message: 'A diagnostic message' }]
         it('Should return empty actions', () => {
             const range = { start: 3, end: 3 }
@@ -78,7 +77,7 @@ describe('BlockStateNode Tests', () => {
                 baz: 'qux',
                 [UnsortedKeys]: ['foo', 'baz']
             })
-            const actual = node[GetCodeActions](uri, info, range, diagnostics)
+            const actual = node[GetCodeActions](uri, ctx, range, diagnostics)
             assert.deepStrictEqual(actual, [])
         })
         it('Should return sort actions', () => {
@@ -91,9 +90,9 @@ describe('BlockStateNode Tests', () => {
                 baz: 'qux',
                 [UnsortedKeys]: ['foo', 'baz']
             })
-            const actual = node[GetCodeActions](uri, info, range, diagnostics)
+            const actual = node[GetCodeActions](uri, ctx, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'block-state-sort-keys', diags, info.document, { start: 0, end: 7 },
+                'block-state-sort-keys', diags, ctx.textDoc, { start: 0, end: 7 },
                 '[baz=qux, foo=bar]'
             )])
         })

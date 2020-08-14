@@ -1,10 +1,12 @@
-import { CommandTreeVersion } from './CommandTreeVersion'
-import { NamingConventionConfig } from './NamingConventionConfig'
-import { StrictCheckConfig } from './StrictCheckConfig'
-import { DiagnosticConfig, SepSpacingConfig, BracketSpacingConfig } from './StylisticConfig'
-import { QuoteTypeConfig } from './QuoteTypeConfig'
 import minimatch from 'minimatch'
+import { CacheVisibility } from '.'
 import { DataSource } from '../data/VanillaData'
+import { CommandTreeVersion } from './CommandTreeVersion'
+import { JsonSchemaVersion } from './JsonSchemaVersion'
+import { NamingConventionConfig } from './NamingConventionConfig'
+import { QuoteTypeConfig } from './QuoteTypeConfig'
+import { StrictCheckConfig } from './StrictCheckConfig'
+import { BracketSpacingConfig, DiagnosticConfig, SepSpacingConfig } from './StylisticConfig'
 
 export interface Config {
     /**
@@ -30,9 +32,12 @@ export interface EnvConfig {
     cmdVersion: CommandTreeVersion,
     dataSource: DataSource,
     dataVersion: string,
+    defaultVisibility: 'private' | 'internal' | 'public' | CacheVisibility | CacheVisibility[],
     dependsOnVanilla: boolean,
+    detectionDepth: number,
     exclude: string[],
     include: string[],
+    jsonVersion: JsonSchemaVersion,
     language: string
 }
 
@@ -72,10 +77,12 @@ export interface LintConfig {
     nameOfNbtCompoundTagKeys: DiagnosticConfig<NamingConventionConfig>,
     nameOfTags: DiagnosticConfig<NamingConventionConfig>,
     nameOfTeams: DiagnosticConfig<NamingConventionConfig>,
+    nbtArrayLengthCheck: DiagnosticConfig<true>,
     nbtBoolean: DiagnosticConfig<boolean>,
     nbtCompoundKeyQuote: DiagnosticConfig<boolean>,
     nbtCompoundKeyQuoteType: DiagnosticConfig<QuoteTypeConfig>,
     nbtCompoundSortKeys: DiagnosticConfig<'alphabetically' | 'nbtdoc'>,
+    nbtListLengthCheck: DiagnosticConfig<true>,
     nbtPathQuote: DiagnosticConfig<boolean>,
     nbtPathQuoteType: DiagnosticConfig<'always double'>,
     nbtStringQuote: DiagnosticConfig<boolean>,
@@ -175,9 +182,12 @@ export const VanillaConfig: Config = {
         dataSource: 'GitHub',
         dataVersion: 'Latest snapshot',
         cmdVersion: '1.16',
+        defaultVisibility: 'public',
         dependsOnVanilla: true,
+        detectionDepth: 1,
         exclude: [],
         include: [],
+        jsonVersion: '1.16',
         language: 'Default'
     },
     lint: {
@@ -216,10 +226,12 @@ export const VanillaConfig: Config = {
         nameOfObjectives: null,
         nameOfTags: null,
         nameOfTeams: null,
+        nbtArrayLengthCheck: ['warning', true],
         nbtBoolean: null,
         nbtCompoundKeyQuote: null,
         nbtCompoundKeyQuoteType: ['warning', 'prefer double'],
         nbtCompoundSortKeys: null,
+        nbtListLengthCheck: null,
         nbtPathQuote: null,
         nbtPathQuoteType: ['warning', 'always double'],
         nbtStringQuote: ['warning', true],

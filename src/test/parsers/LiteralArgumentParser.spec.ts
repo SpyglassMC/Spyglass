@@ -4,6 +4,7 @@ import { LiteralArgumentParser } from '../../parsers/LiteralArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 let ctx: ParsingContext
 before(async () => {
@@ -67,25 +68,40 @@ describe('LiteralArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('fooB'), ctx)
             assert(actual.data === 'fooB')
         })
-        it('Should return completions', async () => {
+        it('Should return completions when there is no input', async () => {
             const ctx = constructContext({ cursor: 0 })
             const parser = new LiteralArgumentParser('foo', 'bar')
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: 'foo' },
-                    { label: 'bar' }
+                    { label: 'foo', t: 'foo' },
+                    { label: 'bar', t: 'bar' }
                 ]
             )
         })
-        it('Should return partial completions', async () => {
+        it('Should return completions when there are characters before', async () => {
             const ctx = constructContext({ cursor: 1 })
             const parser = new LiteralArgumentParser('foo', 'bar', 'baz')
-            const actual = parser.parse(new StringReader('b'), ctx)
-            assert.deepStrictEqual(actual.completions,
+            const reader = new StringReader('b')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions,
                 [
-                    { label: 'bar' },
-                    { label: 'baz' }
+                    { label: 'foo', t: 'foo' },
+                    { label: 'bar', t: 'bar' },
+                    { label: 'baz', t: 'baz' }
+                ]
+            )
+        })
+        it('Should return completions when there are characters both before and after', async () => {
+            const ctx = constructContext({ cursor: 1 })
+            const parser = new LiteralArgumentParser('foo', 'bar', 'baz')
+            const reader = new StringReader('ba')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions,
+                [
+                    { label: 'foo', t: 'foo' },
+                    { label: 'bar', t: 'bar' },
+                    { label: 'baz', t: 'baz' }
                 ]
             )
         })
@@ -95,7 +111,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got nothing/))
+            assert(pe.message.match(/Expected “foo” or “bar” but got nothing/))
             assert(pe.tolerable === false)
         })
         it('Should return untolerable errors when partial matching', () => {
@@ -104,7 +120,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 1)
-            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got ‘F’/))
+            assert(pe.message.match(/Expected “foo” or “bar” but got “F”/))
             assert(pe.tolerable === false)
         })
         it('Should return untolerable error when nothing matches', () => {
@@ -113,7 +129,7 @@ describe('LiteralArgumentParser Tests', () => {
             const pe = (<ParsingError[]>errors)[0]
             assert(pe.range.start === 0)
             assert(pe.range.end === 3)
-            assert(pe.message.match(/Expected ‘foo’ or ‘bar’ but got ‘spg’/))
+            assert(pe.message.match(/Expected “foo” or “bar” but got “spg”/))
             assert(pe.tolerable === false)
         })
     })

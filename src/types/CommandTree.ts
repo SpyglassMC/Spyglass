@@ -1,12 +1,12 @@
 import { ArgumentParser } from '../parsers/ArgumentParser'
-import { SaturatedLineNode } from './LineNode'
+import { CommandComponent } from './CommandComponent'
 import { ParsingContext } from './ParsingContext'
 
 /**
  * Represent a command tree.
  */
 export interface CommandTree {
-    [path: string]: CommandTreeNodeChildren
+    [path: string]: CommandTreeNodes
 }
 
 /**
@@ -16,7 +16,7 @@ export interface CommandTreeNode<T> {
     /**
      * An argument parser to parse this argument, or a function which constructs an argument parser.
      */
-    parser?: ArgumentParser<T> | ((parsedLine: SaturatedLineNode, ctx: ParsingContext) => ArgumentParser<T>),
+    parser?: ArgumentParser<T> | ((parsedLine: CommandComponent, ctx: ParsingContext) => ArgumentParser<T>),
     /**
      * The permission level required to perform this node.
      * @default 2
@@ -33,7 +33,7 @@ export interface CommandTreeNode<T> {
     /**
      * The children of this tree node.
      */
-    children?: CommandTreeNodeChildren,
+    children?: CommandTreeNodes,
     /**
      * Redirect the parsing process to specific node.  
      * @example
@@ -54,12 +54,23 @@ export interface CommandTreeNode<T> {
      * Can be used to validate the parsed arguments.
      * @param parsedLine Parsed line.
      */
-    run?(parsedLine: SaturatedLineNode): void
+    run?(parsedLine: CommandComponent): void
 }
+
+/**
+ * If the keys of this object can be treated as literals to switch to the correct node quickly.
+ */
+export const Switchable = Symbol('Switchable')
+/**
+ * Nodes that should always be validated.
+ */
+export const AlwaysValidates = Symbol('AlwaysValidates')
 
 /**
  * Represent `children` in a node.
  */
-export interface CommandTreeNodeChildren {
+export interface CommandTreeNodes {
+    [Switchable]?: boolean,
+    [AlwaysValidates]?: CommandTreeNodes,
     [name: string]: CommandTreeNode<any>
 }

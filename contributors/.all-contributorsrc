@@ -4,31 +4,12 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "2.1.0.md",
+    "3.0.0.md",
     "../README.md"
   ],
   "imageSize": 64,
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
   "contributors": [
-    {
-      "name": "(=°ω°)丿",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2337994&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2337994",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/512", "text": "#512" }
-      ]
-    },
-    {
-      "name": "00ll00",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1316165",
-      "contributions": [],
-      "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" },
-        { "type": "bug", "link": "issues/500", "text": "#500" }
-      ]
-    },
     {
       "name": "Arcensoth",
       "avatar_url": "https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4",
@@ -39,70 +20,37 @@
       ]
     },
     {
-      "name": "ChapterII",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1834567&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1834567",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/467", "text": "#467" }
-      ]
-    },
-    {
       "name": "ChenCMD",
       "avatar_url": "https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4",
       "profile": "https://github.com/ChenCMD",
       "contributions": [],
       "details": [
-        { "type": "ideas", "link": "issues/402", "text": "#402" },
-        { "type": "bug", "link": "issues/458", "text": "#458" },
-        { "type": "bug", "link": "issues/487", "text": "#487" },
-        { "type": "bug", "link": "issues/515", "text": "#515" },
-        { "type": "bug", "link": "issues/516", "text": "#516" },
-        { "type": "bug", "link": "issues/517", "text": "#517" },
-        { "type": "bug", "link": "issues/519", "text": "#519" },
-        { "type": "bug", "link": "issues/520", "text": "#520" },
-        { "type": "bug", "link": "issues/529", "text": "#529" },
-        { "type": "bug", "link": "issues/530", "text": "#530" },
-        { "type": "bug", "link": "issues/536", "text": "#536" },
-        { "type": "bug", "link": "issues/538", "text": "#538" },
-        { "type": "bug", "link": "issues/539", "text": "#539" },
-        { "type": "bug", "link": "issues/561", "text": "#561" },
-        { "type": "bug", "link": "issues/568", "text": "#568" }
+        { "type": "localization", "link": "commits?author=ChenCMD", "text": "Japanese (ja)" },
+        { "type": "ideas", "link": "issues/410", "text": "#410" },
+        { "type": "ideas", "link": "issues/582", "text": "#582" },
+        { "type": "bug", "link": "issues/534", "text": "#534" },
+        { "type": "bug", "link": "issues/589", "text": "#589" },
+        { "type": "bug", "link": "issues/590", "text": "#590" },
+        { "type": "bug", "link": "issues/591", "text": "#591" },
+        { "type": "bug", "link": "issues/603", "text": "#603" },
+        { "type": "bug", "link": "issues/604", "text": "#604" },
+        { "type": "bug", "link": "issues/630", "text": "#630" },
+        { "type": "bug", "link": "issues/631", "text": "#631" },
+        { "type": "bug", "link": "issues/606", "text": "#606" },
+        { "type": "bug", "link": "issues/638", "text": "#638" },
+        { "type": "bug", "link": "issues/642", "text": "#642" },
+        { "type": "bug", "link": "issues/643", "text": "#643" },
+        { "type": "bug", "link": "issues/644", "text": "#644" },
+        { "type": "bug", "link": "issues/650", "text": "#650" }
       ]
     },
     {
-      "name": "ColorRain_Tree",
-      "avatar_url": "https://pic1.afdiancdn.com/default/avatar/avatar-purple.png?imageView2/1/w/240/h/240",
-      "profile": "https://afdian.net/u/da477488928011ea8ea552540025c377",
+      "name": "Ghoulboy",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/53367549?s=460&v=4",
+      "profile": "https://github.com/Ghoulboy78",
       "contributions": [],
       "details": [
-        { "type": "crazy", "link": "blob/master/CONTRIBUTING.md", "text": "<span style=\"color:gold;\">(＃°Д°)</span>" }
-      ]
-    },
-    {
-      "name": "Grant",
-      "avatar_url": "https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/548", "text": "#548" },
-        { "type": "bug", "link": "issues/558", "text": "#558" },
-        { "type": "bug", "link": "issues/572", "text": "#572" }
-      ]
-    },
-    {
-      "name": "Green",
-      "avatar_url": "https://cdn.discordapp.com/avatars/244517712032825344/870e7a9845aae2d82f18325436ed260f.webp?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/562", "text": "#562" }
-      ]
-    },
-    {
-      "name": "GrifterMage",
-      "avatar_url": "https://cdn.discordapp.com/avatars/188514417862901761/acb07eb2ee48a590d0a77312578e8dc5.webp?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/563", "text": "#563" }
+        { "type": "localization", "link": "commits?author=Ghoulboy78", "text": "Italian (it)" }
       ]
     },
     {
@@ -111,7 +59,19 @@
       "profile": "https://afdian.net/@k_bai",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "coffee", "link": "https://github.com/sponsors/SPGoding", "text": "Coffee" }
+      ]
+    },
+    {
+      "name": "Misode",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4",
+      "profile": "https://github.com/misode",
+      "contributions": [],
+      "details": [
+        { "type": "dependency", "link": "https://github.com/misode/minecraft-schemas", "text": "Maintains minecraft-schemas repository" },
+        { "type": "ideas", "link": "issues/445", "text": "#445" },
+        { "type": "bug", "link": "issues/592", "text": "#592" },
+        { "type": "bug", "link": "issues/593", "text": "#593" }
       ]
     },
     {
@@ -120,44 +80,7 @@
       "profile": "https://github.com/NeunEinser",
       "contributions": [],
       "details": [
-        { "type": "ideas", "link": "issues/481", "text": "#481" },
-        { "type": "bug", "link": "issues/483", "text": "#483" },
-        { "type": "code", "link": "commits?author=NeunEinser", "text": "#484" }
-      ]
-    },
-    {
-      "name": "PsiGreenEx",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/67715237?s=460&u=c04719037649568dc60b896c2308e82049635949&v=4",
-      "profile": "https://github.com/PsiGreenEx",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/554", "text": "#554" }
-      ]
-    },
-    {
-      "name": "RevonZev",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/39231292?s=460&u=3a59bba9c2102ae754391dcec39337bc01265980&v=4",
-      "profile": "https://github.com/RevonZev",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/556", "text": "#556" }
-      ]
-    },
-    {
-      "name": "Seidko",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2905154",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/482", "text": "#482" }
-      ]
-    },
-    {
-      "name": "UltraBlack_",
-      "avatar_url": "https://cdn.discordapp.com/avatars/579619944602271744/3cefa458a174a0e15020dd6773c8da3b.webp?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/480", "text": "#480" }
+        { "type": "localization", "link": "commits?author=NeunEinser", "text": "German (de)" }
       ]
     },
     {
@@ -170,57 +93,39 @@
       ]
     },
     {
-      "name": "brooke_zb",
-      "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=1253833&size=middle",
-      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=1253833",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/448", "text": "#448" }
-      ]
-    },
-    {
-      "name": "eggohito",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/66972816?s=460&u=94aa6312ad86d074b17ba7475f9617200b9667de&v=4",
-      "profile": "https://github.com/eggohito",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/513", "text": "#513" }
-      ]
-    },
-    {
       "name": "kakagRou",
       "avatar_url": "https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle",
       "profile": "https://www.mcbbs.net/home.php?mod=space&uid=10240",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "coffee", "link": "https://github.com/sponsors/SPGoding", "text": "Coffee" }
       ]
     },
     {
-      "name": "yulongjiuqiu",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/49058621?s=460&u=724cf689519843fdcb9fd78bf6d7f54ecf095f1c&v=4",
-      "profile": "https://github.com/yulongjiuqiu",
+      "name": "lakejason0",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/36039861?s=460&v=4",
+      "profile": "https://github.com/lakejason0",
       "contributions": [],
       "details": [
-        { "type": "bug", "link": "issues/494", "text": "#494" }
+        { "type": "localization", "link": "commits?author=lakejason0", "text": "Chinese (Traditional) (zh-tw)" }
       ]
     },
     {
-      "name": "酱香卤鹅",
-      "avatar_url": "https://pic1.afdiancdn.com/user/43f152b898b511e8b5f552540025c377/avatar/b35473b4f5d00311d3a3cabef38c60fd_w640_h640_s24.jpg?imageView2/1/w/240/h/240",
-      "profile": "https://afdian.net/u/43f152b898b511e8b5f552540025c377",
+      "name": "mathaym25",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4",
+      "profile": "https://github.com/mathaym25",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "bug", "link": "issues/434", "text": "#434" }
       ]
     },
     {
-      "name": "龙腾猫跃",
-      "avatar_url": "https://pic1.afdiancdn.com/user/df2dfad2960911e89c5252540025c377/avatar/31c78ee63d5dce8ac4848c837fb04204_w160_h160_s35.jpg?imageView2/1/w/240/h/240",
-      "profile": "https://afdian.net/@LTCat",
+      "name": "pca006132",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12198657?s=460&v=4",
+      "profile": "https://github.com/pca006132",
       "contributions": [],
       "details": [
-        { "type": "coffee", "link": "blob/master/CONTRIBUTING.md", "text": "Donate coffee" }
+        { "type": "ideas", "link": "issues/605", "text": "#605" }
       ]
     }
   ],
@@ -243,7 +148,7 @@
       "description": "Financial support"
     },
     "localization": {
-      "symbol": "🌍",
+      "symbol": "🌐",
       "description": "Localization"
     },
     "bug": {

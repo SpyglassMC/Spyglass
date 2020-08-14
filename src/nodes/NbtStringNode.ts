@@ -1,11 +1,11 @@
-import { getCodeAction } from '../utils'
-import { attributeNameToIdentity } from '../utils/datafixers/attributeName'
-import { bufferFromString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
+import { ParsingContext } from '../types'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
+import { attributeNameToIdentity } from '../utils/datafixers/attributeName'
+import { bufferFromString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
 import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 import { NbtCompoundNode } from './NbtCompoundNode'
 import { NbtNodeType } from './NbtNode'
@@ -25,10 +25,10 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
         const node = new StringNode(this.value, this.raw, this.mapping)
         node[NodeRange] = this[NodeRange]
-        const ans = node[GetCodeActions](uri, info, range, diagnostics)
+        const ans = node[GetCodeActions](uri, ctx, range, diagnostics)
 
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
@@ -37,8 +37,8 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
                 const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    info.document, this[NodeRange],
-                    newNode[GetFormattedString](info.config.lint)
+                    ctx.textDoc, this[NodeRange],
+                    newNode[GetFormattedString](ctx.config.lint)
                 ))
             } catch (ignored) {
                 // Ignored.
@@ -49,9 +49,9 @@ export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNod
         //#region Attribute name datafix: #381
         const attributeDiagnostics = diagnostics[ErrorCode.NbtStringAttributeDatafix]
         if (attributeDiagnostics) {
-                ans.push(getCodeAction(
+            ans.push(getCodeAction(
                 'id-attribute-datafix', attributeDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 `"${attributeNameToIdentity(this.valueOf())}"`
             ))
         }

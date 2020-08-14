@@ -25,13 +25,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
     readonly identity = 'itemSlot'
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create('')
 
         if (StringReader.canInNumber(reader.peek())) {
             const start = reader.cursor
@@ -39,7 +33,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
             ans.tokens.push(Token.from(start, reader, TokenType.type))
         } else {
             const start = reader.cursor
-            const categoryResult = ctx.parsers.get('Literal', Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
+            const categoryResult = new ctx.parsers.Literal(...Object.keys(ItemSlotArgumentParser.Category)).parse(reader, ctx)
             const category = categoryResult.data as 'armor' | 'container' | 'enderchest' | 'horse' | 'hotbar' | 'inventory' | 'villager' | 'weapon'
             categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
             combineArgumentParserResult(ans, categoryResult)
@@ -48,7 +42,7 @@ export class ItemSlotArgumentParser extends ArgumentParser<string> {
                 reader.skip()
 
                 const start = reader.cursor
-                const subResult = ctx.parsers.get('Literal', ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
+                const subResult = new ctx.parsers.Literal(...ItemSlotArgumentParser.Category[category]).parse(reader, ctx)
                 const sub: string = subResult.data
                 subResult.tokens = [Token.from(start, reader, TokenType.type)]
                 combineArgumentParserResult(ans, subResult)

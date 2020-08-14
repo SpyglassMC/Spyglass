@@ -52,9 +52,15 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
         private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
+        /**
+         * `null`: Use compiled fallback for the registry.
+         * `undefined`: No validations from registry.
+         */
         private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
         private readonly isPredicate = false,
-        private readonly superNode: NbtCompoundNode | null = null
+        private readonly superNode: NbtCompoundNode | null = null,
+        // TODO: JSON
+        private readonly module: string | null = null
     ) {
         super()
         if (type instanceof Array) {
@@ -168,7 +174,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         )
         //#region Completions.
         if (helper && ctx.cursor === start) {
-            helper.completeField(ans, ctx, doc, this.isPredicate, '')
+            helper.completeField(ans, ctx, doc, this.isPredicate, '', ctx.cursor, ctx.cursor)
         }
         //#endregion
         if (!this.expectedTypes.includes(ans.data[NbtNodeType])) {
@@ -203,22 +209,13 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseCompoundTag(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc: CompoundDoc | IndexDoc | null = null): ArgumentParserResult<NbtCompoundNode> {
-        const ans: ArgumentParserResult<NbtCompoundNode> = {
-            data: new NbtCompoundNode(superNode),
-            cache: {}, completions: [], errors: [], tokens: []
-        }
+        const ans = ArgumentParserResult.create(new NbtCompoundNode(superNode))
         const start = reader.cursor
 
         new MapParser<NbtCompoundNode>(
             NbtCompoundNodeChars,
             (ans, reader, ctx) => {
-                const result: ArgumentParserResult<string> = {
-                    data: '',
-                    tokens: [],
-                    cache: {},
-                    completions: [],
-                    errors: []
-                }
+                const result = ArgumentParserResult.create('')
                 const start = reader.cursor
                 try {
                     const out: { mapping: IndexMapping } = { mapping: {} }
@@ -239,9 +236,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
                             if (StringReader.isQuote(firstChar)) {
                                 const quoteType = firstChar === "'" ? 'always single' : 'always double'
-                                helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, quoteType, start + 1, reader.cursor - 1)
                             } else {
-                                helper.completeCompoundKeys(result, ctx, ans.data, doc, null)
+                                helper.completeCompoundKeys(result, ctx, ans.data, doc, null, start, reader.cursor)
                             }
                         }
                     }
@@ -314,7 +311,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 }
                 //#region Completions.
                 if (helper && ctx.cursor === reader.cursor) {
-                    helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '')
+                    helper.completeField(ans, ctx, fieldDoc ? fieldDoc.nbttype : null, this.isPredicate, '', ctx.cursor, ctx.cursor)
                 }
                 //#endregion
                 const result = this.parseTag(
@@ -337,7 +334,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 { start, end: reader.cursor },
                 locale('diagnostic-rule',
                     locale('unsorted-keys'),
-                    locale('punc.quote', 'datapack.lint.nbtCompoundSortKeys')
+                    locale('punc.quote', 'nbtCompoundSortKeys')
                 ),
                 undefined, getDiagnosticSeverity(ctx.config.lint.nbtCompoundSortKeys[0]),
                 ErrorCode.NbtCompoundSortKeys
@@ -348,13 +345,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseListOrArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtCollectionNode<NbtNode>> {
-        const ans: ArgumentParserResult<NbtCollectionNode<NbtNode>> = {
-            data: new NbtListNode(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtCollectionNode<NbtNode>>(new NbtListNode(superNode))
         const start = reader.cursor
         try {
             reader.expect('[')
@@ -377,15 +368,11 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         }
     }
 
-    private parsePrimitiveArray(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper):
+    private parsePrimitiveArray(reader: StringReader, _ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper):
         ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> {
-        const ans: ArgumentParserResult<NbtArrayNode<NbtPrimitiveNode<number | bigint>>> = {
-            data: new NbtByteArrayNode(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtArrayNode<NbtPrimitiveNode<number | bigint>>>(
+            new NbtByteArrayNode(superNode)
+        )
         const start = reader.cursor
         try {
             reader
@@ -482,13 +469,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parseList(reader: StringReader, ctx: ParsingContext, superNode: NbtCompoundNode | null, helper?: NbtdocHelper, doc?: ListDoc, description?: string): ArgumentParserResult<NbtListNode<NbtNode>> {
-        const ans: ArgumentParserResult<NbtListNode<NbtNode>> = {
-            data: new NbtListNode<NbtNode>(superNode),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new NbtListNode<NbtNode>(superNode))
         const start = reader.cursor
         try {
             /**
@@ -512,7 +493,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 //#region Completions.
                 if (helper && ctx.cursor === start) {
                     /* istanbul ignore next */
-                    helper.completeField(ans, ctx, doc ? doc.List.value_type : null, this.isPredicate, description || '')
+                    helper.completeField(ans, ctx, doc ? doc.List.value_type : null, this.isPredicate, description || '', ctx.cursor, ctx.cursor)
                 }
                 //#endregion
                 if (!(reader.canRead() && reader.peek() !== ']')) {
@@ -563,13 +544,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     }
 
     private parsePrimitiveTag(reader: StringReader, superNode: NbtCompoundNode | null, _helper?: NbtdocHelper): ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> {
-        const ans: ArgumentParserResult<NbtPrimitiveNode<string | number | bigint>> = {
-            data: new NbtStringNode(superNode, '', '', {}),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create<NbtPrimitiveNode<string | number | bigint>>(
+            new NbtStringNode(superNode, '', '', {})
+        )
         const start = reader.cursor
         const out: { mapping: IndexMapping } = { mapping: {} }
         if (StringReader.isQuote(reader.peek())) {
@@ -597,19 +574,16 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                 const failedToMatchAllPatterns = Symbol('failed to match all patterns')
                 try {
                     // Try parsing as a number.
-                    for (const type in NbtArgumentParser.Patterns) {
-                        /* istanbul ignore else */
-                        if (NbtArgumentParser.Patterns.hasOwnProperty(type)) {
-                            const [pattern, func] = NbtArgumentParser.Patterns[type]
-                            if (pattern.test(value)) {
-                                const rawValue = pattern.exec(value)![1]
-                                ans.data = func(superNode, rawValue)
-                                //#region Tokens
-                                ans.tokens.push(Token.from(start, reader, TokenType.number))
-                                //#endregion
-                                ans.data[NodeRange] = { start, end: reader.cursor }
-                                return ans
-                            }
+                    for (const type of Object.keys(NbtArgumentParser.Patterns)) {
+                        const [pattern, func] = NbtArgumentParser.Patterns[type]
+                        if (pattern.test(value)) {
+                            const rawValue = pattern.exec(value)![1]
+                            ans.data = func(superNode, rawValue)
+                            //#region Tokens
+                            ans.tokens.push(Token.from(start, reader, TokenType.number))
+                            //#endregion
+                            ans.data[NodeRange] = { start, end: reader.cursor }
+                            return ans
                         }
                     }
                     throw failedToMatchAllPatterns

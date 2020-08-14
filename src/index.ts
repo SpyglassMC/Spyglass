@@ -1,8 +1,8 @@
-export const ReleaseNotesVersion = '2.1.0'
+export const ReleaseNotesVersion = '3.0.0'
 
-export * as data from './data'
-export * as locales from './locales'
-export * as nodes from './nodes'
-export * as parsers from './parsers'
-export * as types from './types'
-export * as utils from './utils'
+/**
+ * The plugin API for the Data-pack Language Server.
+ */
+export * as plugins from './plugins'
+export { DatapackLanguageService } from './services/DatapackLanguageService'
+export * from './utils'

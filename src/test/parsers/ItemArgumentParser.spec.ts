@@ -1,9 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { CompletionItemKind } from 'vscode-languageserver'
-import { ArgumentParserManager } from '../../parsers/ArgumentParserManager'
-import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
-import { constructConfig } from '../../types/Config'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { ItemNode } from '../../nodes/ItemNode'
 import { Keys, UnsortedKeys } from '../../nodes/MapNode'
@@ -12,9 +9,11 @@ import { NbtCompoundKeyNode } from '../../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../../nodes/NbtCompoundNode'
 import { SuperNode } from '../../nodes/NbtNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
+import { ItemArgumentParser } from '../../parsers/ItemArgumentParser'
+import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('ItemArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -34,10 +33,9 @@ describe('ItemArgumentParser Tests', () => {
             }
         }
     }
-    const parsers = new ArgumentParserManager()
     let ctx: ParsingContext
     before(async () => {
-        ctx = constructContext({ registry: registries, parsers })
+        ctx = constructContext({ registry: registries, cache: { 'tag/item': { 'minecraft:test': {} } } })
     })
     describe('parse() Tests', () => {
         it('Should return data without tag', () => {
@@ -45,7 +43,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ItemNode(
-                $(new IdentityNode('minecraft', ['stick']), [0, 15])
+                $(new IdentityNode('minecraft', ['stick'], undefined, 'minecraft:item'), [0, 15])
             ), [0, 15]))
         })
         it('Should return data with tag', () => {
@@ -53,7 +51,7 @@ describe('ItemArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('minecraft:stick{ foo : 1b }'), ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, $(new ItemNode(
-                $(new IdentityNode('minecraft', ['stick']), [0, 15]),
+                $(new IdentityNode('minecraft', ['stick'], undefined, 'minecraft:item'), [0, 15]),
                 $(new NbtCompoundNode(null), [15, 27], v => $(v, {
                     [Keys]: { foo: $(new NbtCompoundKeyNode(v, 'foo', 'foo', { start: 17 }), [17, 20]) },
                     foo: $(new NbtByteNode(v, 1, '1'), [23, 25]),
@@ -71,26 +69,27 @@ describe('ItemArgumentParser Tests', () => {
         })
         it('Should return completions at the beginning of input', async () => {
             const config = constructConfig({ lint: { idOmitDefaultNamespace: null } })
-            const context = constructContext({ registry: registries, parsers, config, cursor: 0 })
+            const context = constructContext({ registry: registries, config, cursor: 0 })
             const parser = new ItemArgumentParser(false)
             const actual = parser.parse(new StringReader(''), context)
 
-            assert.deepStrictEqual(actual.completions,
-                [
-                    {
-                        label: 'minecraft',
-                        kind: CompletionItemKind.Module
-                    },
-                    {
-                        label: 'stick',
-                        kind: CompletionItemKind.Field
-                    },
-                    {
-                        label: 'diamond_sword',
-                        kind: CompletionItemKind.Field
-                    }
-                ]
-            )
+            assertCompletions('', actual.completions, [
+                {
+                    label: 'minecraft',
+                    t: 'minecraft',
+                    kind: CompletionItemKind.Module
+                },
+                {
+                    label: 'stick',
+                    t: 'stick',
+                    kind: CompletionItemKind.Field
+                },
+                {
+                    label: 'diamond_sword',
+                    t: 'diamond_sword',
+                    kind: CompletionItemKind.Field
+                }
+            ])
         })
     })
 })

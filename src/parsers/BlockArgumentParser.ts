@@ -27,17 +27,11 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<BlockNode> {
-        const ans: ArgumentParserResult<BlockNode> = {
-            data: new BlockNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new BlockNode())
 
         const start = reader.cursor
 
-        const idResult = ctx.parsers.get('Identity', ['minecraft:block', this.allowTag]).parse(reader, ctx)
+        const idResult = new ctx.parsers.Identity('minecraft:block', this.allowTag).parse(reader, ctx)
         const id = idResult.data as IdentityNode
         combineArgumentParserResult(ans, idResult)
         ans.data.id = id
@@ -56,10 +50,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
             const definition = id.isTag ? undefined : ctx.blockDefinition[id.toString()]
             const properties = definition ? (definition.properties || {}) : {}
 
-            const statesResult: ArgumentParserResult<BlockStateNode> = {
-                data: new BlockStateNode(),
-                cache: {}, completions: [], errors: [], tokens: []
-            }
+            const statesResult = ArgumentParserResult.create(new BlockStateNode())
 
             new MapParser<BlockStateNode>(
                 BlockStateNodeChars,
@@ -68,7 +59,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                     const keys = Object.keys(properties).filter(v => !existingKeys.includes(v))
 
                     const start = reader.cursor
-                    const result = ctx.parsers.get('Literal', keys).parse(reader, ctx)
+                    const result = new ctx.parsers.Literal(...keys).parse(reader, ctx)
                     result.tokens = [Token.from(start, reader, TokenType.property)]
 
                     if (id.isTag) {
@@ -83,9 +74,8 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                             locale('duplicate-key', locale('punc.quote', key))
                         ))
                     }
-
                     const start = reader.cursor
-                    const result = ctx.parsers.get('Literal', properties[key]).parse(reader, ctx)
+                    const result = new ctx.parsers.Literal(...properties[key] ?? []).parse(reader, ctx)
                     result.tokens = [Token.from(start, reader, TokenType.string)]
 
                     ans.data[key] = result.data
@@ -104,7 +94,7 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
                     { start, end: reader.cursor },
                     locale('diagnostic-rule',
                         locale('unsorted-keys'),
-                        locale('punc.quote', 'datapack.lint.blockStateSortKeys')
+                        locale('punc.quote', 'blockStateSortKeys')
                     ),
                     undefined, getDiagnosticSeverity(ctx.config.lint.blockStateSortKeys[0]),
                     ErrorCode.BlockStateSortKeys
@@ -115,9 +105,9 @@ export class BlockArgumentParser extends ArgumentParser<BlockNode> {
 
     private parseTag(reader: StringReader, ctx: ParsingContext, ans: ArgumentParserResult<BlockNode>, id: IdentityNode): void {
         if (reader.peek() === '{') {
-            const tagResult = ctx.parsers.get('Nbt', [
+            const tagResult = new ctx.parsers.Nbt(
                 'Compound', 'minecraft:block', !id.isTag ? id.toString() : null, this.isPredicate
-            ]).parse(reader, ctx)
+            ).parse(reader, ctx)
             const tag = tagResult.data as NbtCompoundNode
             combineArgumentParserResult(ans, tagResult)
             ans.data.tag = tag

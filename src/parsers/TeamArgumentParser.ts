@@ -19,14 +19,8 @@ export class TeamArgumentParser extends ArgumentParser<string> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const ans: ArgumentParserResult<string> = {
-            data: '',
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
-        const category = getSafeCategory(ctx.cache, 'teams')
+        const ans = ArgumentParserResult.create('')
+        const category = getSafeCategory(ctx.cache, 'team')
         //#region Data
         const start = reader.cursor
         const value = reader.readUnquotedString()
@@ -34,7 +28,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
         //#endregion
         //#region Completions
         if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            ans.completions.push(...getCompletions(ctx.cache, 'teams'))
+            ans.completions.push(...getCompletions(ctx.cache, 'team', start, reader.cursor))
         }
         //#endregion
         //#region Tokens
@@ -57,7 +51,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
         } else {
             if (this.isDefinition) {
                 ans.cache = {
-                    teams: {
+                    team: {
                         [value]: {
                             def: [{ start, end: start + value.length }],
                             ref: []
@@ -67,7 +61,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
             } else {
                 if (Object.keys(category).includes(value)) {
                     ans.cache = {
-                        teams: {
+                        team: {
                             [value]: {
                                 def: [],
                                 ref: [{ start, end: start + value.length }]

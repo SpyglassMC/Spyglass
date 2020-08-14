@@ -8,15 +8,15 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
-Datapack language server can provide many heavy language features for documents in your datapack, including advancements, functions, loot tables, predicates, recipes, and all kinds of tags.
-
-For use please install our VSCode extension: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server).
+Data-pack Language Server can provide many heavy language features for documents in your datapack, including advancements, dimensions, dimension types, functions, loot tables, predicates, recipes, all kinds of tags, and all kinds of worldgen files.
 
 - [Installation](#installation)
   - [For Use](#for-use)
+    - [Sublime Text 3](#sublime-text-3)
+    - [Visual Studio Code](#visual-studio-code)
   - [For Developers](#for-developers)
 - [Contributors](#contributors)
-  - [Contributors for 2.1.0](#contributors-for-210)
+  - [Contributors for 3.0.0](#contributors-for-300)
   - [Contributors for older versions](#contributors-for-older-versions)
   - [Contributing](#contributing)
 
@@ -24,65 +24,100 @@ For use please install our VSCode extension: [![VSCode Marketplace](https://img.
 
 ## For Use
 
-We have a [VSCode](https://code.visualstudio.com/) extension for you to install: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
+### Sublime Text 3
+
+1. Install [Node.js](https://nodejs.org/) if you haven't.
+2. Execute `npm i -g @spgoding/datapack-language-server@beta` in your command line to install the language server.
+3. Install [Package Control](https://packagecontrol.io/installation) if you haven't.
+4. Install [Arcensoth](https://github.com/Arcensoth)'s language-mcfunction package by following the [instructions](https://github.com/Arcensoth/language-mcfunction#installing-the-sublimetext-package) if you haven't.
+5. Install [LSP](https://packagecontrol.io/packages/LSP) package.
+6. Open the Command Palette and select `Preferences: LSP Settings`.
+7. Configure LSP to add the Data-pack Language Server. Here's one example:
+```json
+{
+  "clients": {
+    "datapack-language-server": {
+      "command": [
+        "datapack-language-server",
+        "--stdio"
+      ],
+      "enabled": true,
+      "languages": [
+        {
+          "languageId": "mcfunction",
+          "scopes": [
+            "source.mcfunction"
+          ],
+          "syntaxes": [
+            "Packages/language-mcfunction/mcfunction.tmLanguage"
+          ]
+        },
+        {
+          "languageId": "json",
+          "scopes": [
+            "source.json"
+          ],
+          "syntaxes": [
+            "Packages/JavaScript/JSON.sublime-syntax"
+          ]
+        }
+      ]
+    }
+  },
+  "only_show_lsp_completions": true
+}
+```
+8. Open the Command Palette, select `LSP: Enable Language Server Globally`, and choose `datapack-language-server`.
+9. Enjoy. Do note that you need to execute the command in step 2 manually if you want to update the language server.
+
+- TODO (for SPGoding): add a new `mcjson` syntax type instead of using the universal `json` type.
+- TODO (for SPGoding): make a fine-tuned Sublime package, so that the language server can be updated automatically and the user doesn't need to set all these crazy stuff.
+
+### Visual Studio Code
+
+We have a ready-for-use [VS Code](https://code.visualstudio.com/) extension: [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
 
 ## For Developers
 
 See our [wiki](https://github.com/SPGoding/datapack-language-server/wiki/Language%20Server%20Details) for more information.
 
+Also please note that _only_ the `DatapackLanguageService` class and its methods are considered as public API. _All_ other
+exported classes/functions/variables, including but not limited to _everything_ under the `nodes` directory, are not part 
+of the public API and are subject to change breakingly in even patch/minor versions. _Do not_ make your systems depend on 
+them.
+
 # Contributors
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
-## Contributors for 2.1.0
+## Contributors for 3.0.0
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2337994"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2337994&size=middle" width="64px;" alt=""/><br /><sub><b>(=°ω°)丿</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/512" target="_blank" title="Bug reports">🐛 #512</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1316165"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1316165&size=middle" width="64px;" alt=""/><br /><sub><b>00ll00</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/500" target="_blank" title="Bug reports">🐛 #500</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mcdata repository</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1834567"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1834567&size=middle" width="64px;" alt=""/><br /><sub><b>ChapterII</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/467" target="_blank" title="Bug reports">🐛 #467</a></td>
+    <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4" width="64px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=ChenCMD" target="_blank" title="Localization">🌐 Japanese (ja)</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/410" target="_blank" title="Ideas, Planning, and Feedback">✨ #410</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/582" target="_blank" title="Ideas, Planning, and Feedback">✨ #582</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/534" target="_blank" title="Bug reports">🐛 #534</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/589" target="_blank" title="Bug reports">🐛 #589</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/590" target="_blank" title="Bug reports">🐛 #590</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/591" target="_blank" title="Bug reports">🐛 #591</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/603" target="_blank" title="Bug reports">🐛 #603</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/604" target="_blank" title="Bug reports">🐛 #604</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/630" target="_blank" title="Bug reports">🐛 #630</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/631" target="_blank" title="Bug reports">🐛 #631</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/606" target="_blank" title="Bug reports">🐛 #606</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/638" target="_blank" title="Bug reports">🐛 #638</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/642" target="_blank" title="Bug reports">🐛 #642</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/643" target="_blank" title="Bug reports">🐛 #643</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/644" target="_blank" title="Bug reports">🐛 #644</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/650" target="_blank" title="Bug reports">🐛 #650</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4" width="64px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/402" target="_blank" title="Ideas, Planning, and Feedback">✨ #402</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/458" target="_blank" title="Bug reports">🐛 #458</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/487" target="_blank" title="Bug reports">🐛 #487</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/515" target="_blank" title="Bug reports">🐛 #515</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/516" target="_blank" title="Bug reports">🐛 #516</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/517" target="_blank" title="Bug reports">🐛 #517</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/519" target="_blank" title="Bug reports">🐛 #519</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/520" target="_blank" title="Bug reports">🐛 #520</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/529" target="_blank" title="Bug reports">🐛 #529</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/530" target="_blank" title="Bug reports">🐛 #530</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/536" target="_blank" title="Bug reports">🐛 #536</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/538" target="_blank" title="Bug reports">🐛 #538</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/539" target="_blank" title="Bug reports">🐛 #539</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/561" target="_blank" title="Bug reports">🐛 #561</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/568" target="_blank" title="Bug reports">🐛 #568</a></td>
-    <td align="center"><a href="https://afdian.net/u/da477488928011ea8ea552540025c377"><img src="https://pic1.afdiancdn.com/default/avatar/avatar-purple.png?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>ColorRain_Tree</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">💛 <span style="color:gold;">(＃°Д°)</span></a></td>
+    <td align="center"><a href="https://github.com/Ghoulboy78"><img src="https://avatars1.githubusercontent.com/u/53367549?s=460&v=4" width="64px;" alt=""/><br /><sub><b>Ghoulboy</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Ghoulboy78" target="_blank" title="Localization">🌐 Italian (it)</a></td>
+    <td align="center"><a href="https://afdian.net/@k_bai"><img src="https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>K_bai</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
   </tr>
   <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/152282430915608578/a_0b5cc345f3f2e034f20b8479361acbf5.webp?size=256" width="64px;" alt=""/><br /><sub><b>Grant</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/548" target="_blank" title="Bug reports">🐛 #548</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/558" target="_blank" title="Bug reports">🐛 #558</a></td>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/244517712032825344/870e7a9845aae2d82f18325436ed260f.webp?size=256" width="64px;" alt=""/><br /><sub><b>Green</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/562" target="_blank" title="Bug reports">🐛 #562</a></td>
+    <td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/445" target="_blank" title="Ideas, Planning, and Feedback">✨ #445</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/592" target="_blank" title="Bug reports">🐛 #592</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/593" target="_blank" title="Bug reports">🐛 #593</a></td>
+    <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=NeunEinser" target="_blank" title="Localization">🌐 German (de)</a></td>
   </tr>
   <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/188514417862901761/acb07eb2ee48a590d0a77312578e8dc5.webp?size=256" width="64px;" alt=""/><br /><sub><b>GrifterMage</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/563" target="_blank" title="Bug reports">🐛 #563</a></td>
-    <td align="center"><a href="https://afdian.net/@k_bai"><img src="https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>K_bai</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/481" target="_blank" title="Ideas, Planning, and Feedback">✨ #481</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/483" target="_blank" title="Bug reports">🐛 #483</a><br><a href="https://github.com/SPGoding/datapack-language-server/commits?author=NeunEinser" target="_blank" title="Code">💻 #484</a></td>
-    <td align="center"><a href="https://github.com/PsiGreenEx"><img src="https://avatars2.githubusercontent.com/u/67715237?s=460&u=c04719037649568dc60b896c2308e82049635949&v=4" width="64px;" alt=""/><br /><sub><b>PsiGreenEx</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/554" target="_blank" title="Bug reports">🐛 #554</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/RevonZev"><img src="https://avatars2.githubusercontent.com/u/39231292?s=460&u=3a59bba9c2102ae754391dcec39337bc01265980&v=4" width="64px;" alt=""/><br /><sub><b>RevonZev</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/556" target="_blank" title="Bug reports">🐛 #556</a></td>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2905154"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=2905154&size=middle" width="64px;" alt=""/><br /><sub><b>Seidko</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/482" target="_blank" title="Bug reports">🐛 #482</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/579619944602271744/3cefa458a174a0e15020dd6773c8da3b.webp?size=256" width="64px;" alt=""/><br /><sub><b>UltraBlack_</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/480" target="_blank" title="Bug reports">🐛 #480</a></td>
     <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=1253833"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=1253833&size=middle" width="64px;" alt=""/><br /><sub><b>brooke_zb</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/448" target="_blank" title="Bug reports">🐛 #448</a></td>
-    <td align="center"><a href="https://github.com/eggohito"><img src="https://avatars2.githubusercontent.com/u/66972816?s=460&u=94aa6312ad86d074b17ba7475f9617200b9667de&v=4" width="64px;" alt=""/><br /><sub><b>eggohito</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/513" target="_blank" title="Bug reports">🐛 #513</a></td>
+    <td align="center"><a href="https://github.com/lakejason0"><img src="https://avatars1.githubusercontent.com/u/36039861?s=460&v=4" width="64px;" alt=""/><br /><sub><b>lakejason0</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=lakejason0" target="_blank" title="Localization">🌐 Chinese (Traditional) (zh-tw)</a></td>
+    <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/434" target="_blank" title="Bug reports">🐛 #434</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
-    <td align="center"><a href="https://github.com/yulongjiuqiu"><img src="https://avatars3.githubusercontent.com/u/49058621?s=460&u=724cf689519843fdcb9fd78bf6d7f54ecf095f1c&v=4" width="64px;" alt=""/><br /><sub><b>yulongjiuqiu</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/494" target="_blank" title="Bug reports">🐛 #494</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://afdian.net/u/43f152b898b511e8b5f552540025c377"><img src="https://pic1.afdiancdn.com/user/43f152b898b511e8b5f552540025c377/avatar/b35473b4f5d00311d3a3cabef38c60fd_w640_h640_s24.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>酱香卤鹅</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
-    <td align="center"><a href="https://afdian.net/@LTCat"><img src="https://pic1.afdiancdn.com/user/df2dfad2960911e89c5252540025c377/avatar/31c78ee63d5dce8ac4848c837fb04204_w160_h160_s35.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>龙腾猫跃</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/blob/master/CONTRIBUTING.md" target="_blank" title="Financial support">☕ Donate coffee</a></td>
+    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Ideas, Planning, and Feedback">✨ #605</a></td>
   </tr>
 </table>
 
@@ -94,7 +129,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 - [1.0.0](./contributors/1.0.0.md)
 - [2.0.0](./contributors/2.0.0.md)
-- [2.0.1](./contributors/2.0.1.md)
+- [2.1.0](./contributors/2.1.0.md)
 
 ## Contributing
 

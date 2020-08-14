@@ -16,6 +16,7 @@ import { NbtLongArrayNode } from '../../nodes/NbtLongArrayNode'
 import { NbtLongNode } from '../../nodes/NbtLongNode'
 import { NbtShortNode } from '../../nodes/NbtShortNode'
 import { NbtStringNode } from '../../nodes/NbtStringNode'
+import { LegacyValidateResult } from '../../types'
 import { ClientCache } from '../../types/ClientCache'
 import { constructConfig } from '../../types/Config'
 import { nbtdoc } from '../../types/nbtdoc'
@@ -23,6 +24,7 @@ import { constructContext } from '../../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
 import { NbtdocHelper } from '../../utils/NbtdocHelper'
+import { assertCompletions } from '../utils.spec'
 
 export const TestNbtdoc: nbtdoc.Root = {
     registries: {
@@ -225,7 +227,7 @@ export const TestRegistry: Registry = {
 }
 
 const TestCache: ClientCache = {
-    tags: {
+    tag: {
         fooTag: { def: [], ref: [] }
     }
 }
@@ -397,7 +399,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Boolean Tests', () => {
             const doc: nbtdoc.NbtValue = 'Boolean'
             it('Should complete true/false and 1b/0b when the config is null', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -406,17 +408,17 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'false' },
-                    { label: 'true' },
-                    { label: '0b' },
-                    { label: '1b' }
+                assertCompletions('', ans.completions, [
+                    { label: 'false', t: 'false' },
+                    { label: 'true', t: 'true' },
+                    { label: '0b', t: '0b' },
+                    { label: '1b', t: '1b' }
                 ])
             })
             it('Should complete true/false when the config is true', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', true]
@@ -425,15 +427,15 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'false' },
-                    { label: 'true' }
+                assertCompletions('', ans.completions, [
+                    { label: 'false', t: 'false' },
+                    { label: 'true', t: 'true' }
                 ])
             })
             it('Should complete 1b/0b when the config is false', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', false]
@@ -442,150 +444,150 @@ describe('NbtdocHelper Tests', () => {
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '0b' },
-                    { label: '1b' }
+                assertCompletions('', ans.completions, [
+                    { label: '0b', t: '0b' },
+                    { label: '1b', t: '1b' }
                 ])
             })
         })
         describe('ByteArray Tests', () => {
             const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[B;]', insertText: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[B;]', t: '[B;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
         describe('Compound Tests', () => {
             const doc: nbtdoc.NbtValue = { Compound: 0 }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '{}', insertText: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '{}', t: '{$1}', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
         describe('Enum Tests', () => {
             it('Should complete correctly for string enum', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Red' },
-                    { label: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Green' },
-                    { label: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: 'Blue' }
+                assertCompletions('', ans.completions, [
+                    { label: '"red"', t: '"red"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Red' } },
+                    { label: '"green"', t: '"green"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Green' } },
+                    { label: '"blue"', t: '"blue"', kind: CompletionItemKind.EnumMember, detail: 'Type: string', documentation: { kind: 'markdown', value: 'Blue' } }
                 ])
             })
             it('Should complete correctly for byte enum', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'One  \nThe first positive integer' },
-                    { label: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Two  \nThe second positive integer' },
-                    { label: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: 'Three  \nThe third positive integer' }
+                assertCompletions('', ans.completions, [
+                    { label: '1b', t: '1b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'One  \nThe first positive integer' } },
+                    { label: '2b', t: '2b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'Two  \nThe second positive integer' } },
+                    { label: '3b', t: '3b', kind: CompletionItemKind.EnumMember, detail: 'Type: byte', documentation: { kind: 'markdown', value: 'Three  \nThe third positive integer' } }
                 ])
             })
         })
         describe('Id Tests', () => {
             it('Should complete correctly', async () => {
                 const doc: nbtdoc.NbtValue = { Id: 'minecraft:block' }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'minecraft', insertText: '"minecraft"', kind: CompletionItemKind.Module },
-                    { label: 'one_boolean_field', insertText: '"one_boolean_field"', kind: CompletionItemKind.Field }
+                assertCompletions('', ans.completions, [
+                    { label: 'minecraft', t: '"minecraft"', kind: CompletionItemKind.Module },
+                    { label: 'one_boolean_field', t: '"one_boolean_field"', kind: CompletionItemKind.Field }
                 ])
             })
         })
         describe('IntArray Tests', () => {
             const doc: nbtdoc.NbtValue = { IntArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[I;]', insertText: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[I;]', t: '[I;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
         describe('List Tests', () => {
             const doc: nbtdoc.NbtValue = { List: { length_range: null, value_type: { Or: [] } } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[]', insertText: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[]', t: '[$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
         describe('LongArray Tests', () => {
             const doc: nbtdoc.NbtValue = { LongArray: { length_range: null, value_range: null } }
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: '[L;]', insertText: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
+                assertCompletions('', ans.completions, [
+                    { label: '[L;]', t: '[L;$1]', insertTextFormat: InsertTextFormat.Snippet }
                 ])
             })
         })
         describe('String Tests', () => {
             const doc: nbtdoc.NbtValue = 'String'
             it('Should complete correctly', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, cache: TestCache })
                 const description = ' The tags on the entity'
 
                 const helper = new NbtdocHelper(TestNbtdoc)
-                helper.completeField(ans, ctx, doc, isPredicate, description)
+                helper.completeField(ans, ctx, doc, isPredicate, description, 0, Infinity)
 
-                assert.deepStrictEqual(ans.completions, [
-                    { label: 'fooTag', insertText: '"fooTag"' }
+                assertCompletions('', ans.completions, [
+                    { label: 'fooTag', t: '"fooTag"' }
                 ])
             })
         })
@@ -593,23 +595,23 @@ describe('NbtdocHelper Tests', () => {
     describe('completeCompoundFieldKeys() Tests', () => {
         const doc: nbtdoc.NbtValue = { Compound: 5 }
         it('Should return all keys', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = null
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a normal key' } },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a crazy key with a double quotation mark' } },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'The only field of this compound' } }
             ])
         })
         it('Should not include existing keys', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = null
@@ -617,43 +619,43 @@ describe('NbtdocHelper Tests', () => {
             tag.foo = new NbtByteNode(null, 1, 'true')
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key'} },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark'} }
             ])
         })
         it('Should return correctly for in-double-quote cases', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = 'always double'
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
+                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound' }}
             ])
         })
         it('Should return correctly for in-single-quote cases', async () => {
-            const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+            const ans = LegacyValidateResult.create()
             const config = constructConfig({})
             const ctx = constructContext({ config })
             const inQuote = 'always single'
             const tag = new NbtCompoundNode(null)
 
             const helper = new NbtdocHelper(TestNbtdoc)
-            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote)
+            helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
-            assert.deepStrictEqual(ans.completions, [
-                { label: 'normal', insertText: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a normal key' },
-                { label: 'double"quote', insertText: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'This is a crazy key with a double quotation mark' },
-                { label: 'foo', insertText: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: 'The only field of this compound' }
+            assertCompletions('', ans.completions, [
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
+                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound'} }
             ])
         })
     })
@@ -663,7 +665,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Boolean Tests', () => {
             const doc: nbtdoc.NbtValue = 'Boolean'
             it('Should report errors for non-byte tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -678,12 +680,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: null
@@ -699,7 +701,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors when expecting byte numbers', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', false]
@@ -714,12 +716,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 5 },
-                    'Expected a byte tag but got ‘false’',
+                    'Expected a byte tag but got “false”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToNumber
                 )])
             })
             it('Should report errors when expecting boolean literals', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({
                     lint: {
                         nbtBoolean: ['warning', true]
@@ -734,7 +736,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected ‘false’ or ‘true’',
+                    'Expected “false” or “true”',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtByteToLiteral
                 )])
             })
@@ -742,7 +744,7 @@ describe('NbtdocHelper Tests', () => {
         describe('ByteArray Tests', () => {
             const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: null } }
             it('Should report errors for non-byte-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -753,12 +755,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte array tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte array tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -769,12 +771,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a byte array tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte array tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByteArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -787,7 +789,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the collection length is too large', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 2], value_range: null } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -798,13 +800,13 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a collection with length between 1 and 2',
+                    'Expected a collection with length between 1 and 2 (rule: “nbtArrayLengthCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors when the collection length is too small', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: [1, 1], value_range: null } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -818,13 +820,13 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a collection with length 1',
+                    'Expected a collection with length 1 (rule: “nbtArrayLengthCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors when the value range is incorrect', async () => {
                 const doc: nbtdoc.NbtValue = { ByteArray: { length_range: null, value_range: [0, 1] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -846,7 +848,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Byte Tests', () => {
             const doc: nbtdoc.NbtValue = { Byte: { range: null } }
             it('Should report errors for non-byte tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -857,12 +859,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -873,12 +875,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a byte tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToByte
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
@@ -891,7 +893,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the value range is too small', async () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0')
@@ -908,7 +910,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors when the value range is too large', async () => {
                 const doc: nbtdoc.NbtValue = { Byte: { range: [1, 2] } }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 3, '3')
@@ -927,7 +929,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Compound Tests', () => {
             const doc: nbtdoc.NbtValue = { Compound: 0 }
             it('Should report errors for non-compound tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -938,12 +940,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a compound tag but got a list tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a compound tag but got a list tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct empty tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -956,7 +958,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for correct filled tags', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -976,7 +978,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report nothing for unknown tags in ItemBase', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 7 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -996,7 +998,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for unknown tags in non-ItemBase compounds', async () => {
                 const doc: nbtdoc.NbtValue = { Compound: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1014,7 +1016,7 @@ describe('NbtdocHelper Tests', () => {
                 assert(asdfghjklKey[NodeDescription] === '')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 10 },
-                    'Unknown key ‘asdfghjkl’',
+                    'Unknown key “asdfghjkl”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1022,7 +1024,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Double Tests', () => {
             const doc: nbtdoc.NbtValue = { Double: { range: null } }
             it('Should report errors for non-double tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1033,12 +1035,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a double tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a double tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1049,12 +1051,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a double tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a double tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToDouble
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtDoubleNode(null, 0, '0')
@@ -1069,7 +1071,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Enum Tests', () => {
             it('Should report errors for non-string tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1081,13 +1083,13 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: string\n* * * * * *\nA simple string enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for out-of-range values', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'asdfghjkl', '"asdfghjkl"', { start: 1 })
@@ -1099,13 +1101,13 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: string\n* * * * * *\nA simple string enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 11 },
-                    'Expected ‘red’, ‘green’, or ‘blue’ but got ‘asdfghjkl’',
+                    'Expected “red”, “green”, or “blue” but got “asdfghjkl”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct string tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 0 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'red', '"red"', { start: 1 })
@@ -1119,7 +1121,7 @@ describe('NbtdocHelper Tests', () => {
             })
             it('Should report errors for non-byte tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1131,13 +1133,13 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: byte\n* * * * * *\nA simple byte enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for out-of-range values', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 5, '5b')
@@ -1149,13 +1151,13 @@ describe('NbtdocHelper Tests', () => {
                 assert(tag[NodeDescription] === 'Type: byte\n* * * * * *\nA simple byte enum')
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected ‘1’, ‘2’, or ‘3’ but got ‘5’',
+                    'Expected “1”, “2”, or “3” but got “5”',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct byte tags', async () => {
                 const doc: nbtdoc.NbtValue = { Enum: 1 }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 2, '2b')
@@ -1171,7 +1173,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Float Tests', () => {
             const doc: nbtdoc.NbtValue = { Float: { range: null } }
             it('Should report errors for non-float tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1182,12 +1184,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a float tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a float tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1198,12 +1200,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a float tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a float tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToFloat
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtFloatNode(null, 0, '0')
@@ -1218,7 +1220,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Id Tests', () => {
             const doc: nbtdoc.NbtValue = { Id: 'minecraft:block' }
             it('Should report errors for non-string tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1229,12 +1231,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should remap range indices', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:asdfghjklqwertyui', '"minecraft:asdfghjklqwertyui"', { start: 1 })
@@ -1245,12 +1247,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 1, end: 28 },
-                    'Failed to resolve namespaced ID ‘minecraft:asdfghjklqwertyui’ in registry ‘minecraft:block’',
+                    'Failed to resolve namespaced ID “minecraft:asdfghjklqwertyui” in registry “minecraft:block” (rule: “strictBlockCheck”)',
                     undefined, DiagnosticSeverity.Error, ErrorCode.IdentityUnknown
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', { start: 1 })
@@ -1267,7 +1269,7 @@ describe('NbtdocHelper Tests', () => {
             const superTag = new NbtCompoundNode(null)
             superTag.Id = new NbtStringNode(superTag, 'minecraft:one_boolean_field', '"minecraft:one_boolean_field"', {})
             it('Should report errors for non-compound tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -1278,12 +1280,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a compound tag but got a list tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a compound tag but got a list tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct empty tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1295,7 +1297,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for correctly filled tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1311,7 +1313,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for unexpected child types', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(superTag)
@@ -1326,7 +1328,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 7, end: 9 },
-                    'Expected a byte tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a byte tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1334,7 +1336,7 @@ describe('NbtdocHelper Tests', () => {
         describe('IntArray Tests', () => {
             const doc: nbtdoc.NbtValue = { IntArray: { length_range: null, value_range: null } }
             it('Should report errors for non-int-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, '0b')
@@ -1345,12 +1347,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected an int array tag but got a byte tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int array tag but got a byte tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteArrayNode(null)
@@ -1361,12 +1363,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected an int array tag but got a byte array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int array tag but got a byte array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToIntArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1381,7 +1383,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Int Tests', () => {
             const doc: nbtdoc.NbtValue = { Int: { range: null } }
             it('Should report errors for non-int tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1392,12 +1394,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected an int tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected an int tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1412,7 +1414,7 @@ describe('NbtdocHelper Tests', () => {
         describe('List Tests', () => {
             const doc: nbtdoc.NbtValue = { List: { length_range: null, value_type: 'Boolean' } }
             it('Should report errors for non-list tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1423,12 +1425,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a list tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a list tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1439,12 +1441,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a list tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a list tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToList
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtListNode(null)
@@ -1462,7 +1464,7 @@ describe('NbtdocHelper Tests', () => {
         describe('LongArray Tests', () => {
             const doc: nbtdoc.NbtValue = { LongArray: { length_range: null, value_range: null } }
             it('Should report errors for non-long-array tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1473,12 +1475,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a long array tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long array tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should include action codes for similar tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtIntArrayNode(null)
@@ -1489,12 +1491,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 4 },
-                    'Expected a long array tag but got an int array tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long array tag but got an int array tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLongArray
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtLongArrayNode(null)
@@ -1509,7 +1511,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Long Tests', () => {
             const doc: nbtdoc.NbtValue = { Long: { range: null } }
             it('Should report errors for non-long tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1520,12 +1522,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a long tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1536,12 +1538,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a long tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a long tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToLong
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtLongNode(null, BigInt(0), '0')
@@ -1557,7 +1559,7 @@ describe('NbtdocHelper Tests', () => {
             const doc: nbtdoc.NbtValue = { Or: ['Boolean', 'String'] }
             it('Should report errors when the length of OR is zero', async () => {
                 const doc: nbtdoc.NbtValue = { Or: [] }
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1573,7 +1575,7 @@ describe('NbtdocHelper Tests', () => {
                 )])
             })
             it('Should report nothing for tags that match the first doc', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtByteNode(null, 0, 'false')
@@ -1585,7 +1587,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report nothing for tags that match the second doc', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })
@@ -1597,7 +1599,7 @@ describe('NbtdocHelper Tests', () => {
                 assert.deepStrictEqual(ans.errors, [])
             })
             it('Should report errors for the second doc if the tag matches none of them', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1608,7 +1610,7 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
@@ -1616,7 +1618,7 @@ describe('NbtdocHelper Tests', () => {
         describe('Short Tests', () => {
             const doc: nbtdoc.NbtValue = { Short: { range: null } }
             it('Should report errors for non-short tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1627,12 +1629,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a short tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a short tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report errors for loosely-matched tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({ lint: { nbtTypeCheck: ['warning', 'strictly'] } })
                 const ctx = constructContext({ config })
                 const tag = new NbtIntNode(null, 0, '0')
@@ -1643,12 +1645,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 1 },
-                    'Expected a short tag but got an int tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a short tag but got an int tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning, ErrorCode.NbtTypeToShort
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtShortNode(null, 0, '0')
@@ -1663,7 +1665,7 @@ describe('NbtdocHelper Tests', () => {
         describe('String Tests', () => {
             const doc: nbtdoc.NbtValue = 'String'
             it('Should report errors for non-string tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config })
                 const tag = new NbtCompoundNode(null)
@@ -1674,12 +1676,12 @@ describe('NbtdocHelper Tests', () => {
 
                 assert.deepStrictEqual(ans.errors, [new ParsingError(
                     { start: 0, end: 2 },
-                    'Expected a string tag but got a compound tag (rule: ‘nbtTypeCheck’)',
+                    'Expected a string tag but got a compound tag (rule: “nbtTypeCheck”)',
                     undefined, DiagnosticSeverity.Warning
                 )])
             })
             it('Should report nothing for correct tags', async () => {
-                const ans = { cache: {}, completions: [], errors: [], tokens: [] }
+                const ans = LegacyValidateResult.create()
                 const config = constructConfig({})
                 const ctx = constructContext({ config, registry: TestRegistry })
                 const tag = new NbtStringNode(null, 'foo', '"foo"', { start: 1 })

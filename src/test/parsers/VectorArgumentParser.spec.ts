@@ -6,7 +6,7 @@ import { VectorArgumentParser } from '../../parsers/VectorArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
-import { $ } from '../utils.spec'
+import { $, assertCompletions } from '../utils.spec'
 
 describe('VectorArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -45,10 +45,10 @@ describe('VectorArgumentParser Tests', () => {
             const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, 'float', true, false)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: '^ ^', sortText: '2', insertText: '^$1 ^$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
-                    { label: '^', sortText: '2' }
+                    { label: '^ ^', sortText: '2', t: '^$1 ^$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '^', sortText: '2', t: '^' }
                 ]
             )
         })
@@ -56,32 +56,30 @@ describe('VectorArgumentParser Tests', () => {
             const ctx = constructContext({ cursor: 0 })
             const parser = new VectorArgumentParser(2, 'float', false, true)
             const actual = parser.parse(new StringReader(''), ctx)
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: '~ ~', sortText: '1', insertText: '~$1 ~$2 $0', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
-                    { label: '~', sortText: '1' }
+                    { label: '~ ~', sortText: '1', t: '~$1 ~$2', insertTextFormat: InsertTextFormat.Snippet, kind: CompletionItemKind.Snippet, preselect: true },
+                    { label: '~', sortText: '1', t: '~' }
                 ]
             )
         })
         it('Should return completions at the beginning of an element', async () => {
             const ctx = constructContext({ cursor: 2 })
             const parser = new VectorArgumentParser(2, 'float', false, true)
-            const actual = parser.parse(new StringReader('~ '), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: '~', sortText: '1' }
-                ]
-            )
+            const reader = new StringReader('~ ')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions, [
+                { label: '~', t: '~ ~', sortText: '1' }
+            ])
         })
         it('Should not return completions for local elements when hasNonLocal', async () => {
             const ctx = constructContext({ cursor: 2 })
             const parser = new VectorArgumentParser(2, 'float', true, true)
-            const actual = parser.parse(new StringReader('~ '), ctx)
-            assert.deepStrictEqual(actual.completions,
-                [
-                    { label: '~', sortText: '1' }
-                ]
-            )
+            const reader = new StringReader('~ ')
+            const actual = parser.parse(reader, ctx)
+            assertCompletions(reader, actual.completions, [
+                { label: '~', t: '~ ~', sortText: '1' }
+            ])
         })
         it('Should return untolerable error when the input is empty', () => {
             const parser = new VectorArgumentParser(3)
@@ -94,7 +92,7 @@ describe('VectorArgumentParser Tests', () => {
             const parser = new VectorArgumentParser(3)
             const actual = parser.parse(new StringReader('f'), ctx)
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 1 }, 'Expected a vector but got ‘f’', false)
+                new ParsingError({ start: 0, end: 1 }, 'Expected a vector but got “f”', false)
             ])
         })
         it('Should return no errors even if there are floats in relative vector elements in an integer vector', () => {
@@ -130,8 +128,8 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data[0], $(new VectorElementNode(VectorElementType.Local, -1, '-1'), [0, 3]))
             assert.deepStrictEqual(actual.data[1], $(new VectorElementNode(VectorElementType.Local, 0.5, '.5'), [4, 7]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Local coordinate ‘^-1’ is not allowed'),
-                new ParsingError({ start: 4, end: 7 }, 'Local coordinate ‘^.5’ is not allowed')
+                new ParsingError({ start: 0, end: 3 }, 'Local coordinate “^-1” is not allowed'),
+                new ParsingError({ start: 4, end: 7 }, 'Local coordinate “^.5” is not allowed')
             ])
         })
         it('Should return error when relative coordinates are not allowed', () => {
@@ -140,7 +138,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data[0], $(new VectorElementNode(VectorElementType.Absolute, 1, '1'), [0, 1]))
             assert.deepStrictEqual(actual.data[1], $(new VectorElementNode(VectorElementType.Relative, 0, ''), [2, 3]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 2, end: 3 }, 'Relative coordinate ‘~’ is not allowed')
+                new ParsingError({ start: 2, end: 3 }, 'Relative coordinate “~” is not allowed')
             ])
         })
         it('Should return untolerable error when failed to find sep', () => {
@@ -149,7 +147,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data[0], $(new VectorElementNode(VectorElementType.Absolute, 1, '1'), [0, 1]))
             assert.deepStrictEqual(actual.data[1], $(new VectorElementNode(VectorElementType.Relative, 0, ''), [2, 3]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 4 }, 'Expected ‘ ’ but got nothing', false)
+                new ParsingError({ start: 3, end: 4 }, 'Expected “ ” but got nothing', false)
             ])
         })
         it('Should return error for illegal number', () => {
@@ -158,7 +156,7 @@ describe('VectorArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data[0], $(new VectorElementNode(VectorElementType.Absolute, 1, '1'), [0, 1]))
             assert.deepStrictEqual(actual.data[1], $(new VectorElementNode(VectorElementType.Relative, 0, ''), [2, 12]))
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 3, end: 12 }, 'Expected a number but got ‘1.4.5.1.4’', false)
+                new ParsingError({ start: 3, end: 12 }, 'Expected a number but got “1.4.5.1.4”', false)
             ])
         })
         it('Should return error when the number is smaller than min', () => {

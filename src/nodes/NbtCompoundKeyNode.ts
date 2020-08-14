@@ -1,16 +1,16 @@
-import { getCodeAction } from '../utils'
-import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
+import { ParsingContext } from '../types'
 import { GetFormattedString } from '../types/Formattable'
-import { FunctionInfo } from '../types/FunctionInfo'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction } from '../utils'
+import { bufferFromNbtCompound, bufferFromNbtLongs, bufferFromNbtString, nbtIntArrayFromBuffer } from '../utils/datafixers/nbtUuid'
 import { DiagnosticMap, GetCodeActions, NodeDescription, NodeRange, NodeType } from './ArgumentNode'
+import { UnsortedKeys } from './MapNode'
+import { NbtCompoundNode } from './NbtCompoundNode'
 import { NbtListNode } from './NbtListNode'
 import { NbtNodeType, SuperNode } from './NbtNode'
 import { NbtStringNode } from './NbtStringNode'
-import { UnsortedKeys } from './MapNode'
-import { NbtCompoundNode } from './NbtCompoundNode'
 
 export class NbtCompoundKeyNode extends NbtStringNode {
     readonly [NodeType] = 'NbtCompoundKey'
@@ -28,12 +28,12 @@ export class NbtCompoundKeyNode extends NbtStringNode {
     }
 
     /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
 
         //#region UUID datafix: #377
         const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixUnknownKey]
-        if (uuidDiagnostics && uuidDiagnostics.length > 0) {
+        if (uuidDiagnostics?.length) {
             const oldSuper = this[SuperNode]
             if (oldSuper) {
                 const newSuper = new NbtCompoundNode(oldSuper[SuperNode])
@@ -61,7 +61,7 @@ export class NbtCompoundKeyNode extends NbtStringNode {
                                     newList.push(nbtIntArrayFromBuffer(bufferFromNbtLongs(oldElement, 'M', 'L')))
                                 }
                             } else {
-                                throw new Error('Expected a list node for ‘TrustedUUIDs’')
+                                throw new Error('Expected a list node for “TrustedUUIDs”')
                             }
                             newSuper['Owner'] = nbtIntArrayFromBuffer(bufferFromNbtLongs(oldSuper, 'OwnerUUID'))
                         } else {
@@ -73,8 +73,8 @@ export class NbtCompoundKeyNode extends NbtStringNode {
                 }
                 ans.push(getCodeAction(
                     'nbt-uuid-datafix', uuidDiagnostics,
-                    info.document, oldSuper[NodeRange],
-                    newSuper[GetFormattedString](info.config.lint)
+                    ctx.textDoc, oldSuper[NodeRange],
+                    newSuper[GetFormattedString](ctx.config.lint)
                 ))
             }
         }

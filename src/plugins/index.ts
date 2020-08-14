@@ -1,0 +1,5 @@
+export * from './Contributor'
+export * from './LanguageConfig'
+export * from './LanguageDefinition'
+export * from './Plugin'
+export * from './SyntaxComponent'

@@ -114,7 +114,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected a number but got ‘2.3.3’/))
+                assert(message.match(/Expected a number but got “2.3.3”/))
                 assert(range.start === 0)
                 assert(range.end === 5)
                 assert(tolerable === false)
@@ -127,7 +127,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected a number but got ‘f’/))
+                assert(message.match(/Expected a number but got “f”/))
                 assert(range.start === 0)
                 assert(range.end === 1)
                 assert(tolerable === false)
@@ -238,7 +238,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected a quote.*but got ‘f’/))
+                assert(message.match(/Expected a quote.*but got “f”/))
                 assert(range.start === 0)
                 assert(range.end === 1)
                 assert(!tolerable === true)
@@ -251,7 +251,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected an ending quote ‘"’ but got nothing/))
+                assert(message.match(/Expected an ending quote “"” but got nothing/))
                 assert(range.start === 5)
                 assert(range.end === 6)
                 assert(tolerable === true)
@@ -264,7 +264,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Unexpected escape character ‘'’/))
+                assert(message.match(/Unexpected escape character “'”/))
                 assert(range.start === 6)
                 assert(range.end === 7)
                 assert(tolerable === true)
@@ -336,7 +336,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected a boolean but got ‘Tru’/))
+                assert(message.match(/Expected a boolean but got “Tru”/))
                 assert(range.start === 0)
                 assert(range.end === 3)
                 assert(tolerable === true)
@@ -349,7 +349,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected a boolean but got ‘Tuesday’/))
+                assert(message.match(/Expected a boolean but got “Tuesday”/))
                 assert(range.start === 0)
                 assert(range.end === 7)
                 assert(tolerable === false)
@@ -369,7 +369,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected ‘f’ but got nothing/))
+                assert(message.match(/Expected “f” but got nothing/))
                 assert(range.start === 1)
                 assert(range.end === 2)
                 assert(tolerable === true)
@@ -382,7 +382,7 @@ describe('StringReader Tests', () => {
                 fail()
             } catch (p) {
                 const { range, message, tolerable } = <ParsingError>p
-                assert(message.match(/Expected ‘b’ but got ‘f’/))
+                assert(message.match(/Expected “b” but got “f”/))
                 assert(range.start === 0)
                 assert(range.end === 1)
                 assert(tolerable === true)

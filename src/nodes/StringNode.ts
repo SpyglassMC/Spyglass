@@ -1,8 +1,8 @@
-import { getCodeAction, quoteString } from '../utils'
-import { FunctionInfo } from '../types/FunctionInfo'
+import { ParsingContext } from '../types'
 import { IndexMapping } from '../types/IndexMapping'
 import { ErrorCode } from '../types/ParsingError'
 import { TextRange } from '../types/TextRange'
+import { getCodeAction, quoteString } from '../utils'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNode'
 
 export class StringNode extends ArgumentNode {
@@ -27,31 +27,31 @@ export class StringNode extends ArgumentNode {
     /**
      * Return code actions for changing quotation marks when relevant diagnostics exist.
      */
-    [GetCodeActions](uri: string, info: FunctionInfo, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, info, range, diagnostics)
+    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
 
         const unquoteDiagnostics = diagnostics[ErrorCode.StringUnquote]
         const doubleQuoteDiagnostics = diagnostics[ErrorCode.StringDoubleQuote]
         const singleQuoteDiagnostics = diagnostics[ErrorCode.StringSingleQuote]
 
-        if (unquoteDiagnostics && unquoteDiagnostics.length > 0) {
+        if (unquoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-unquote', unquoteDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 this.value
             ))
         }
-        if (doubleQuoteDiagnostics && doubleQuoteDiagnostics.length > 0) {
+        if (doubleQuoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-double-quote', doubleQuoteDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 quoteString(this.value, 'always double', true)
             ))
         }
-        if (singleQuoteDiagnostics && singleQuoteDiagnostics.length > 0) {
+        if (singleQuoteDiagnostics?.length) {
             ans.push(getCodeAction(
                 'string-single-quote', singleQuoteDiagnostics,
-                info.document, this[NodeRange],
+                ctx.textDoc, this[NodeRange],
                 quoteString(this.value, 'always single', true)
             ))
         }

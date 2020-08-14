@@ -1,10 +1,10 @@
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { NodeRange } from '../nodes/ArgumentNode'
+import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { Registry } from '../types'
-import { CacheKey, ClientCache, getSafeCategory, isFileType } from '../types/ClientCache'
-import { Config } from '../types/Config'
+import { Registry, TextRange } from '../types'
+import { CacheType, ClientCache, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
+import { Config, LintConfig } from '../types/Config'
 import { NamespaceSummary } from '../types/NamespaceSummary'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -21,7 +21,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     readonly identity = 'identity'
 
     /**
-     * @param type A type in registries, or a type in cache if beginning with hash (`$`). 
+     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`). 
      * Alternatively, an array with all possible values.
      * @param registries The registries.
      */
@@ -37,13 +37,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<IdentityNode> {
-        const ans: ArgumentParserResult<IdentityNode> = {
-            data: new IdentityNode(),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new IdentityNode())
         const start = reader.cursor
         let stringID = ''
         let isTag = false
@@ -53,17 +47,18 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         //#endregion
 
         //#region Data.
+        let selectedRange: TextRange | undefined = undefined
         let namespace: string | undefined = undefined;
-        ({ namespace, isTag, stringID } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
+        ({ namespace, isTag, stringID, selectedRange } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
         //#endregion
 
         //#region Completions: apply.
-        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles)
+        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles, selectedRange?.start ?? ctx.cursor, selectedRange?.end ?? ctx.cursor)
         //#endregion
 
         //#region Errors.
         if (reader.cursor - start && stringID) {
-            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry)
+            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry, ctx.namespaceSummary)
         } else {
             this.addEmptyError(start, ans)
         }
@@ -103,13 +98,15 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const namespaceSeverity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
 
         let path0 = this.readValidString(reader, ans)
-        this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool);
-        ({ path0, namespace, pool } = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths))
-        this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles)
+        let selectedRange = this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool)
+        const path0Result = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths);
+        ({ path0, namespace, pool } = path0Result)
+        selectedRange = path0Result.selectedRange ?? selectedRange
+        selectedRange = this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles) ?? selectedRange
 
-        ans.data = new IdentityNode(namespace, paths, isTag)
+        ans.data = new IdentityNode(namespace, paths, isTag, typeof this.type === 'string' ? this.type : undefined)
         stringID = ans.data.toString()
-        return { namespace, isTag, stringID }
+        return { namespace, isTag, stringID, selectedRange }
     }
 
     private addEmptyError(start: number, ans: ArgumentParserResult<IdentityNode>) {
@@ -124,22 +121,16 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     private addDefinitionCache(ans: ArgumentParserResult<IdentityNode>, stringID: string, start: number, end: number) {
-        if (this.isDefinition) {
-            switch (this.type) {
-                case '$bossbars':
-                    ans.cache = {
-                        bossbars: {
-                            [stringID]: { def: [{ start, end }], ref: [] }
-                        }
-                    }
-                    break
-                default:
-                    break
+        if (this.isDefinition && typeof this.type === 'string' && this.type.startsWith('$')) {
+            ans.cache = {
+                [this.type.slice(1)]: {
+                    [stringID]: { def: [{ start, end }], ref: [] }
+                }
             }
         }
     }
 
-    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, start: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
+    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, idStart: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, suggestionStart: number, suggestionEnd: number) {
         // namespace -> CompletionItemKind.Module
         // folder -> CompletionItemKind.Folder
         // file -> CompletionItemKind.Field
@@ -147,11 +138,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         /// function (tag) file -> CompletionItemKind.Function
         let fileKind: CompletionItemKind
         switch (this.type) {
-            case '$advancements':
+            case '$advancement':
                 fileKind = CompletionItemKind.Event
                 break
-            case '$functions':
-            case '$tags/functions':
+            case '$function':
+            case '$tag/function':
                 fileKind = CompletionItemKind.Function
                 break
             default:
@@ -160,36 +151,40 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
         complNamespaces.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: CompletionItemKind.Module
         }))
         complFolders.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: CompletionItemKind.Folder
         }))
         complFiles.forEach(k => void ans.completions.push({
             label: k,
+            start: suggestionStart, end: suggestionEnd,
             kind: fileKind
         }))
 
         // Add 'THIS' to completions
-        if (start === ctx.cursor && ctx.id &&
+        if (idStart === ctx.cursor && ctx.id &&
             typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
         ) {
             ans.completions.push({
-                label: locale('completion.identity.this'),
+                label: 'THIS',
                 insertText: ctx.id.toTagString(),
+                start: suggestionStart, end: suggestionEnd,
                 detail: ctx.id.toTagString(),
                 kind: CompletionItemKind.Snippet
             })
         }
     }
 
-    private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry) {
+    private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry, namespaceSummary: NamespaceSummary) {
         if (isTag && this.allowTag) {
             // For tags.
-            const tagType = this.getCacheTagType()
-            this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache)
-        } else {
+            const tagType = IdentityNode.getTagType(this.type as string)!
+            this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache, namespaceSummary)
+        } else if (!isTag) {
             if (this.type instanceof Array) {
                 // For array IDs.
                 //#region Errors
@@ -207,18 +202,20 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                 //#endregion
             } else if (this.type.startsWith('$')) {
                 // For cache IDs.
-                const type = this.type.slice(1) as CacheKey
-                this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache)
+                const type = this.type.slice(1) as CacheType
+                this.checkIDInCache(ans, reader, type, namespace, stringID, start, config, cache, namespaceSummary)
             } else {
                 // For registry IDs.
                 const registry = registries[this.type]
-                const [shouldCheck, severity] = this.shouldStrictCheck(this.type, config, namespace)
+                const [shouldCheck, severity, ruleName] = this.shouldStrictCheck(this.type, config, namespace)
                 //#region Errors
-                if (shouldCheck && registry && !Object.keys(registry.entries).includes(stringID)) {
+                if (registry && !Object.keys(registry.entries).concat(this.getVanillaPool(this.type as FileType, namespaceSummary)).includes(stringID)) {
+                    const innerMessage = locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID))
+                    const message = ruleName ? locale('diagnostic-rule', innerMessage, locale('punc.quote', ruleName)) : innerMessage
                     ans.errors.push(new ParsingError(
                         { start, end: reader.cursor },
-                        locale('failed-to-resolve-registry-id', locale('punc.quote', this.type), locale('punc.quote', stringID)),
-                        undefined, severity,
+                        message,
+                        undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
                         ErrorCode.IdentityUnknown
                     ))
                 }
@@ -227,14 +224,24 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private completeBeginning(shouldOmit: boolean | null, start: number, cursor: number, reader: StringReader, isTag: boolean, tagPool: string[], complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, pool: string[]) {
+        let selectedRange: TextRange | undefined = undefined
         if (start <= cursor && cursor <= reader.cursor) {
             this.completeBeginningFromTagPoolIfApplicable(isTag, tagPool, shouldOmit, complNamespaces, complFolders, complFiles)
             this.completeBeginningFromCurrentPool(pool, shouldOmit, complNamespaces, complFolders, complFiles)
+            selectedRange = { start, end: reader.cursor }
         }
+        return selectedRange
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private parseNamespaceAndFirstPath(reader: StringReader, shouldOmit: boolean | null, path0: string, ans: ArgumentParserResult<IdentityNode>, start: number, severity: DiagnosticSeverity, namespace: string | undefined, pool: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>, paths: string[]) {
+        let selectedRange: TextRange | undefined = undefined
         if (reader.peek() === IdentityNode.NamespaceDelimiter) {
             // `path0` is the namespace.
             if (shouldOmit === true && path0 === IdentityNode.DefaultNamespace) {
@@ -257,6 +264,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles)
                 }
+                selectedRange = { start: pathStart, end: reader.cursor }
             }
             //#endregion
         } else {
@@ -273,10 +281,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         paths.push(path0)
-        return { path0, namespace, pool }
+        return { path0, namespace, pool, selectedRange }
     }
 
+    /**
+     * @returns The range of the selected path.
+     */
     private parseRemaningPaths(reader: StringReader, ans: ArgumentParserResult<IdentityNode>, pool: string[], paths: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>) {
+        let selectedRange: TextRange | undefined = undefined
         while (reader.peek() === IdentityNode.PathSep) {
             reader.skip()
             const start = reader.cursor
@@ -288,10 +300,12 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
                     const complPaths = id.split(IdentityNode.PathSep)
                     this.completeFolderOrFile(complPaths, complFolders, complFiles, paths.length)
                 }
+                selectedRange = { start, end: reader.cursor }
             }
             //#endregion
             paths.push(path)
         }
+        return selectedRange
     }
 
     private completeBeginningFromCurrentPool(pool: string[], shouldOmit: boolean | null, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
@@ -335,7 +349,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const idPool: string[] = []
         // Set `tagPool`.
         if (this.allowTag) {
-            const type = this.getCacheTagType()
+            const type = IdentityNode.getTagType(this.type as string)!
             const category = getSafeCategory(cache, type)
             tagPool.push(...Object.keys(category))
             if (config.env.dependsOnVanilla) {
@@ -346,7 +360,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         if (this.type instanceof Array) {
             idPool.push(...this.type)
         } else if (this.type.startsWith('$')) {
-            const type = this.type.slice(1) as CacheKey
+            const type = this.type.slice(1) as CacheType
             idPool.push(...Object.keys(getSafeCategory(cache, type)))
             if (config.env.dependsOnVanilla) {
                 idPool.push(...this.getVanillaPool(type, namespaceSummary))
@@ -356,7 +370,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             if (registry) {
                 idPool.push(...Object.keys(registry.entries))
             } else {
-                console.error(`Identity registry ‘${this.type}’ doesn't exist!`)
+                console.error(`Identity registry “${this.type}” doesn't exist!`)
             }
         }
         const complNamespaces = new Set<string>()
@@ -365,130 +379,105 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         return { tagPool, idPool, complNamespaces, complFolders, complFiles }
     }
 
-    private getCacheTagType() {
-        /* istanbul ignore next */
-        switch (this.type) {
-            case 'minecraft:block':
-                return 'tags/blocks'
-            case 'minecraft:entity_type':
-                return 'tags/entity_types'
-            case 'minecraft:fluid':
-                return 'tags/fluids'
-            case 'minecraft:item':
-                return 'tags/items'
-            case '$functions':
-                return 'tags/functions'
-            default:
-                throw new Error(`faild to find a tag type for ‘${this.type}’`)
-        }
+    private shouldCheck() {
+        return !this.allowUnknown && !this.isDefinition
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity] {
-        if (this.allowUnknown) {
-            return [false, DiagnosticSeverity.Warning]
+    private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity, string | undefined] {
+        if (!this.shouldCheck()) {
+            return [false, DiagnosticSeverity.Warning, undefined]
         }
-        const evalTrueConfig = (config: DiagnosticConfig<true>): [boolean, DiagnosticSeverity] => {
+        const evalTrueConfig = (key: keyof LintConfig): [boolean, DiagnosticSeverity, string] => {
+            const config = lint[key] as DiagnosticConfig<true>
             if (config === null) {
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, key]
             }
             const [severity, value] = config
-            return [value, getDiagnosticSeverity(severity)]
+            return [value, getDiagnosticSeverity(severity), key]
         }
-        const evalStrictCheckConfig = (config: DiagnosticConfig<StrictCheckConfig>): [boolean, DiagnosticSeverity] => {
+        const evalStrictCheckConfig = (key: keyof LintConfig): [boolean, DiagnosticSeverity, string] => {
+            const config = lint[key] as DiagnosticConfig<StrictCheckConfig>
             if (config === null) {
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, key]
             }
             const [severity, value] = config
             switch (value) {
                 case 'always':
-                    return [true, getDiagnosticSeverity(severity)]
+                    return [true, getDiagnosticSeverity(severity), key]
                 case 'only-default-namespace':
-                    return [namespace === IdentityNode.DefaultNamespace, getDiagnosticSeverity(severity)]
+                    return [namespace === IdentityNode.DefaultNamespace, getDiagnosticSeverity(severity), key]
                 default:
-                    return [false, getDiagnosticSeverity(severity)]
+                    return [false, getDiagnosticSeverity(severity), key]
             }
         }
         switch (key) {
-            case '$advancements':
-                return evalTrueConfig(lint.strictAdvancementCheck)
-            case '$functions':
-                return evalTrueConfig(lint.strictFunctionCheck)
-            case '$loot_tables':
-                return evalTrueConfig(lint.strictLootTableCheck)
-            case '$predicates':
-                return evalTrueConfig(lint.strictPredicateCheck)
-            case '$recipes':
-                return evalTrueConfig(lint.strictRecipeCheck)
-            case '$tags/blocks':
-                return evalTrueConfig(lint.strictBlockTagCheck)
-            case '$tags/entity_types':
-                return evalTrueConfig(lint.strictEntityTypeTagCheck)
-            case '$tags/fluids':
-                return evalTrueConfig(lint.strictFluidTagCheck)
-            case '$tags/functions':
-                return evalTrueConfig(lint.strictFunctionTagCheck)
-            case '$tags/items':
-                return evalTrueConfig(lint.strictItemTagCheck)
-            case '$bossbars':
-                return evalTrueConfig(lint.strictBossbarCheck)
-            case '$storages':
-                return evalTrueConfig(lint.strictStorageCheck)
+            case '$advancement':
+                return evalTrueConfig('strictAdvancementCheck')
+            case '$dimension_type':
+                return evalStrictCheckConfig('strictDimensionTypeCheck')
+            case '$function':
+                return evalTrueConfig('strictFunctionCheck')
+            case '$loot_table':
+                return evalTrueConfig('strictLootTableCheck')
+            case '$predicate':
+                return evalTrueConfig('strictPredicateCheck')
+            case '$recipe':
+                return evalTrueConfig('strictRecipeCheck')
+            case '$tag/block':
+                return evalTrueConfig('strictBlockTagCheck')
+            case '$tag/entity_type':
+                return evalTrueConfig('strictEntityTypeTagCheck')
+            case '$tag/fluid':
+                return evalTrueConfig('strictFluidTagCheck')
+            case '$tag/function':
+                return evalTrueConfig('strictFunctionTagCheck')
+            case '$tag/item':
+                return evalTrueConfig('strictItemTagCheck')
+            case '$bossbar':
+                return evalTrueConfig('strictBossbarCheck')
+            case '$storage':
+                return evalTrueConfig('strictStorageCheck')
             case 'minecraft:mob_effect':
-                return evalStrictCheckConfig(lint.strictMobEffectCheck)
+                return evalStrictCheckConfig('strictMobEffectCheck')
             case 'minecraft:enchantment':
-                return evalStrictCheckConfig(lint.strictEnchantmentCheck)
+                return evalStrictCheckConfig('strictEnchantmentCheck')
             case 'minecraft:sound_event':
-                return evalStrictCheckConfig(lint.strictSoundEventCheck)
+                return evalStrictCheckConfig('strictSoundEventCheck')
             case 'minecraft:entity_type':
-                return evalStrictCheckConfig(lint.strictEntityTypeCheck)
-            case 'minecraft:dimension_type':
-                return evalStrictCheckConfig(lint.strictDimensionTypeCheck)
+                return evalStrictCheckConfig('strictEntityTypeCheck')
             case 'minecraft:attribute':
-                return evalStrictCheckConfig(lint.strictAttributeCheck)
+                return evalStrictCheckConfig('strictAttributeCheck')
             case 'minecraft:block':
-                return evalStrictCheckConfig(lint.strictBlockCheck)
+                return evalStrictCheckConfig('strictBlockCheck')
             case 'minecraft:item':
-                return evalStrictCheckConfig(lint.strictItemCheck)
+                return evalStrictCheckConfig('strictItemCheck')
             case 'minecraft:potion':
-                return evalStrictCheckConfig(lint.strictPotionCheck)
+                return evalStrictCheckConfig('strictPotionCheck')
             case 'minecraft:motive':
-                return evalStrictCheckConfig(lint.strictMotiveCheck)
+                return evalStrictCheckConfig('strictMotiveCheck')
             case 'minecraft:fluid':
-                return evalStrictCheckConfig(lint.strictFluidCheck)
+                return evalStrictCheckConfig('strictFluidCheck')
             case 'minecraft:particle_type':
-                return evalStrictCheckConfig(lint.strictParticleTypeCheck)
+                return evalStrictCheckConfig('strictParticleTypeCheck')
             default:
-                return [false, DiagnosticSeverity.Warning]
+                return [false, DiagnosticSeverity.Warning, undefined]
         }
     }
 
     /* istanbul ignore next: tired of writing tests */
-    private getVanillaPool(type: CacheKey, vanilla: NamespaceSummary): string[] {
-        switch (type) {
-            case 'advancements':
-                return vanilla.advancements
-            case 'loot_tables':
-                return vanilla.loot_tables
-            case 'recipes':
-                return vanilla.recipes
-            case 'tags/blocks':
-                return vanilla.tags.blocks
-            case 'tags/entity_types':
-                return vanilla.tags.entity_types
-            case 'tags/fluids':
-                return vanilla.tags.fluids
-            case 'tags/items':
-                return vanilla.tags.items
-            default:
-                return []
+    private getVanillaPool(type: CacheType, vanilla: NamespaceSummary): string[] {
+        const ans = vanilla[type as keyof NamespaceSummary] ?? []
+        if (type === 'loot_table') {
+            ans.push('minecraft:empty')
         }
+        return ans
     }
 
     /**
      * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
      */
-    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>) {
+    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>): string {
         const start = reader.cursor
         const value = reader.readUnquotedString()
         const end = reader.cursor
@@ -522,34 +511,37 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
      * @param stringID The stringified ID.
      * @param start The start of the whole parsing process of this ID.
      */
-    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheKey, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache) {
+    private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheType, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache, namespaceSummary: NamespaceSummary) {
         const category = getSafeCategory(cache, type)
-        const canResolve = Object.keys(category).includes(stringID)
+        const canResolve = Object.keys(category)
+            .concat(this.getVanillaPool(type, namespaceSummary))
+            .includes(stringID)
 
         //#region Errors
-        const [shouldCheck, severity] = this.shouldStrictCheck(`$${type}`, config, namespace)
-        if (!canResolve && shouldCheck) {
+        const [shouldStrictCheck, severity, ruleName] = this.shouldStrictCheck(`$${type}`, config, namespace)
+        if (this.shouldCheck() && !canResolve) {
+            const innerMessage = locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID))
+            const message = ruleName ? locale('diagnostic-rule', innerMessage, locale('punc.quote', ruleName)) : innerMessage
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
-                locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID)),
-                undefined, severity,
+                message,
+                undefined, shouldStrictCheck ? severity : DiagnosticSeverity.Hint,
                 ErrorCode.IdentityUnknown
             ))
         }
         //#endregion
 
         //#region Cache
-        if (canResolve) {
-            ans.cache = {
-                [type]: {
-                    [stringID]: {
-                        def: [],
-                        ref: [{ start, end: reader.cursor }]
-                    }
+        ans.cache = {
+            [type]: {
+                [stringID]: {
+                    ref: [{ start, end: reader.cursor }]
                 }
             }
         }
         //#endregion
+
+        ans.data[NodeDescription] = category[stringID]?.doc ?? ''
     }
 
     getExamples(): string[] {

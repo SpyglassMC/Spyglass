@@ -1,3 +1,4 @@
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
 import { IndexMapping } from '../types/IndexMapping'
 import { ParsingError } from '../types/ParsingError'
@@ -45,6 +46,13 @@ export class StringReader {
 
     read() {
         return this.string.charAt(this.cursor++)
+    }
+
+    skipSpace() {
+        while (this.canRead() && StringReader.isSpace(this.peek())) {
+            this.skip()
+        }
+        return this
     }
 
     skipWhiteSpace() {
@@ -169,6 +177,7 @@ export class StringReader {
     readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
         let ans = ''
         if (!this.canRead()) {
+            out.mapping.start = this.cursor
             return ''
         }
         const quote = this.peek()
@@ -190,7 +199,6 @@ export class StringReader {
      * @throws {ParsingError}
      * @param terminator Endding quote. Will not be included in the result.
      * @param out Stores a mapping from in-string indices to real indices. 
-     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
     private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
         const start = this.cursor
@@ -252,6 +260,10 @@ export class StringReader {
         return ans
     }
 
+    readLine() {
+        return this.readUntilOrEnd('\r', '\n')
+    }
+
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
      * @param out Stores a mapping from in-string indices to real indices. 
@@ -259,6 +271,7 @@ export class StringReader {
      */
     readString(out: { mapping: IndexMapping } = { mapping: {} }) {
         if (!this.canRead()) {
+            out.mapping.start = this.cursor
             return ''
         }
         const c = this.peek()
@@ -326,6 +339,18 @@ export class StringReader {
         return ans
     }
 
+    lastLine(textDoc: TextDocument) {
+        const pos = textDoc.positionAt(this.cursor)
+        this.cursor = textDoc.offsetAt({ line: pos.line - 1, character: 0 })
+        return this
+    }
+
+    nextLine(textDoc: TextDocument) {
+        const pos = textDoc.positionAt(this.cursor)
+        this.cursor = textDoc.offsetAt({ line: pos.line + 1, character: 0 })
+        return this
+    }
+
     static canInNumber(c: string) {
         // '+' is illegal in number because Mojang wrote so...
         // https://github.com/Mojang/brigadier/blob/master/src/main/java/com/mojang/brigadier/StringReader.java#L88
@@ -337,8 +362,16 @@ export class StringReader {
         )
     }
 
+    static isSpace(c: string) {
+        return c === ' ' || c === '\t'
+    }
+
     static isWhiteSpace(c: string) {
         return c === ' ' || c === '\t' || c === '\r' || c === '\n' || c === '\r\n'
+    }
+
+    static isLineSeparator(c: string) {
+        return c === '\r\n' || c === '\r' || c === '\n'
     }
 
     /**

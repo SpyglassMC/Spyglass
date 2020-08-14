@@ -6,6 +6,7 @@ import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('TeamArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
@@ -17,7 +18,7 @@ describe('TeamArgumentParser Tests', () => {
     })
 
     const cache = {
-        teams: {
+        team: {
             foo: { def: [], ref: [] },
             bar: { doc: 'The doc of **bar**', def: [{ start: 0, end: 0 }], ref: [] }
         }
@@ -37,11 +38,12 @@ describe('TeamArgumentParser Tests', () => {
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader(''), ctx)
             assert.deepStrictEqual(actual.data, '')
-            assert.deepStrictEqual(actual.completions,
+            assertCompletions('', actual.completions,
                 [
-                    { label: 'foo' },
+                    { label: 'foo', t: 'foo' },
                     {
                         label: 'bar',
+                        t: 'bar',
                         documentation: {
                             kind: 'markdown',
                             value: 'The doc of **bar**'
@@ -73,7 +75,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
             assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 3 }, 'Undefined team ‘qux’', undefined, DiagnosticSeverity.Warning)
+                new ParsingError({ start: 0, end: 3 }, 'Undefined team “qux”', undefined, DiagnosticSeverity.Warning)
             ])
         })
         it('Should return cache if the team is an reference', () => {
@@ -81,7 +83,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                teams: {
+                team: {
                     foo: {
                         def: [],
                         ref: [{ start: 0, end: 3 }]
@@ -94,7 +96,7 @@ describe('TeamArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.data, 'foo')
             assert.deepStrictEqual(actual.cache, {
-                teams: {
+                team: {
                     foo: {
                         def: [{ start: 0, end: 3 }],
                         ref: []

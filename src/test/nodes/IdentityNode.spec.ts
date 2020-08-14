@@ -6,7 +6,7 @@ import { IdentityNode } from '../../nodes/IdentityNode'
 import { GetFormattedString } from '../../types/Formattable'
 import { ErrorCode } from '../../types/ParsingError'
 import { getCodeAction } from '../../utils'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 describe('IdentityNode Tests', () => {
     describe('toString() Tests', () => {
@@ -100,7 +100,7 @@ describe('IdentityNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const info = mockFunctionInfo()
+        const info = mockParsingContext()
         const diags: any[] = [{ message: 'A diagnostic message' }]
         it('Should complete the namespace', () => {
             const range = { start: 0, end: 7 }
@@ -111,7 +111,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-complete-default-namespace', diags, info.document, range,
+                'id-complete-default-namespace', diags, info.textDoc, range,
                 'minecraft:foo/bar'
             )])
         })
@@ -124,7 +124,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-omit-default-namespace', diags, info.document, range,
+                'id-omit-default-namespace', diags, info.textDoc, range,
                 'foo/bar'
             )])
         })
@@ -137,7 +137,7 @@ describe('IdentityNode Tests', () => {
 
             const actual = node[GetCodeActions](uri, info, range, diagnostics)
             assert.deepStrictEqual(actual, [getCodeAction(
-                'id-zombified-piglin-datafix', diags, info.document, range,
+                'id-zombified-piglin-datafix', diags, info.textDoc, range,
                 'minecraft:zombified_piglin'
             )])
         })
@@ -155,22 +155,22 @@ describe('IdentityNode Tests', () => {
     describe('toRel() Tests', () => {
         it('Should return correctly for entity_types tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('tags/entity_types')
+            const actual = id.toRel('tag/entity_type')
             assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for other tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('tags/blocks')
+            const actual = id.toRel('tag/block')
             assert(actual === ['data', 'spgoding', 'tags', 'blocks', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for loot tables', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('loot_tables')
+            const actual = id.toRel('loot_table')
             assert(actual === ['data', 'spgoding', 'loot_tables', 'foo', 'bar.json'].join(path.sep))
         })
         it('Should return correctly for functions', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
-            const actual = id.toRel('functions', 'data')
+            const actual = id.toRel('function', 'data')
             assert(actual === ['data', 'spgoding', 'functions', 'foo', 'bar.mcfunction'].join(path.sep))
         })
     })
@@ -180,7 +180,7 @@ describe('IdentityNode Tests', () => {
             assert(id.toString() === 'spgoding:foo/bar')
             assert(ext === '.mcfunction')
             assert(side === 'data')
-            assert(category === 'functions')
+            assert(category === 'function')
         })
     })
     describe('static fromString() Tests', () => {
@@ -195,24 +195,6 @@ describe('IdentityNode Tests', () => {
         it('Should convert from id which begins with a tag symbol', () => {
             const id = IdentityNode.fromString('#spgoding:foo/bar')
             assert(`${id}` === 'spgoding:foo/bar')
-        })
-    })
-    describe('static isExtValid() Tests', () => {
-        it('Should return true for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'functions')
-            assert(actual === true)
-        })
-        it('Should return false for mcfunction', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'functions')
-            assert(actual === false)
-        })
-        it('Should return true for other files', async () => {
-            const actual = IdentityNode.isExtValid('.json', 'advancements')
-            assert(actual === true)
-        })
-        it('Should return false for other files', async () => {
-            const actual = IdentityNode.isExtValid('.mcfunction', 'advancements')
-            assert(actual === false)
         })
     })
 })

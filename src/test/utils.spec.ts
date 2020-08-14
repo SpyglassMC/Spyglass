@@ -1,7 +1,11 @@
-import { CompletionItem, ProposedFeatures } from 'vscode-languageserver'
+import deepEqual from 'fast-deep-equal'
+import assert, { fail } from 'power-assert'
+import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, NodeRange } from '../nodes'
-import { ClientCache, Config, FunctionInfo, LineArgumentNode, LineNode, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { PluginLoader } from '../plugins/PluginLoader'
+import { ClientCache, CommandComponent, CommandComponentData, Config, constructContext, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'
+import { StringReader } from '../utils/StringReader'
 
 type Range = TextRange | [number, number]
 type Object = { [key: string]: any }
@@ -50,31 +54,27 @@ export function $<T extends ArgumentNode>(node: T, param1: Range | Object, param
     return node
 }
 
-interface FunctionInfoLike {
-    builder?: ProposedFeatures.SemanticTokensBuilder,
+interface ParsingContextMockOptions {
     config?: Config,
-    nodes?: LineNode[],
     uri?: string,
     version?: number,
     content?: string
 }
-export function mockFunctionInfo(info: FunctionInfoLike = {}): FunctionInfo {
-    return {
-        builder: info.builder,
-        config: info.config ?? VanillaConfig,
-        nodes: info.nodes ?? [],
-        document: TextDocument.create(
-            info.uri ?? 'dhp://document.mcfunction',
+export function mockParsingContext(options: ParsingContextMockOptions = {}): ParsingContext {
+    return constructContext({
+        config: options.config ?? VanillaConfig,
+        textDoc: TextDocument.create(
+            options.uri ?? 'dhp:///document.mcfunction',
             'mcfunction',
-            info.version ?? 0,
-            info.content ?? '                                                                                                    '
+            options.version ?? 0,
+            options.content ?? ' '.repeat(100)
         )
-    }
+    })
 }
 
-interface LineNodeLike {
+interface CommandMockOptions {
     range?: TextRange,
-    args?: LineArgumentNode<any>[],
+    data?: CommandComponentData,
     hint?: {
         fix: string[],
         options: [string, string[]][]
@@ -82,16 +82,49 @@ interface LineNodeLike {
     tokens?: Token[],
     cache?: ClientCache,
     errors?: ParsingError[],
-    completions?: CompletionItem[]
+    completions?: ParserSuggestion[]
 }
-export function mockLineNode(node: LineNodeLike = {}): LineNode {
-    return {
-        [NodeRange]: node.range ?? { start: NaN, end: NaN },
-        args: node.args ?? [],
-        hint: node.hint ?? { fix: [], options: [] },
-        tokens: node.tokens ?? [],
-        cache: node.cache,
-        errors: node.errors,
-        completions: node.completions
+export function mockCommand(node: CommandMockOptions = {}): CommandComponent {
+    return CommandComponent.create(node.data, node)
+}
+
+export const mockLanguageConfigs = async () => {
+    const plugins = await PluginLoader.load()
+    return PluginLoader.getLanguageConfigs(plugins, await PluginLoader.getContributions(plugins))
+}
+
+interface CompletionPredicate extends CompletionItem {
+    t: string
+}
+
+export function assertCompletions(string: string | StringReader, completions: ParserSuggestion[] | undefined, predicates: CompletionPredicate[] = []) {
+    assert(completions?.length === predicates.length)
+    if (completions.length === 0) {
+        return
+    }
+    if (string instanceof StringReader) {
+        string = string.string
+    }
+    const getInsertText = (completion: CompletionItem) => completion.insertText ?? completion.label
+    const getCompletionItemForAssert = (completion: CompletionItem) => {
+        const ans = { ...completion } as any
+        delete ans.insertText; delete ans.start; delete ans.end; delete ans.t
+        return ans
+    }
+    for (const [i, completion] of completions?.entries()) {
+        const resolvedTexts: string[] = []
+        let matched = false
+        for (const predicate of predicates.filter(p => p.label === completion.label)) {
+            const resolvedText = string.slice(0, completion.start) + getInsertText(completion) + string.slice(completion.end)
+            if (resolvedText === predicate.t && deepEqual(getCompletionItemForAssert(completion), getCompletionItemForAssert(predicate))) {
+                matched = true
+                break
+            }
+            resolvedTexts.push(resolvedText)
+        }
+        if (matched) {
+            continue
+        }
+        fail(undefined, undefined, `No matching predicate for [${i}] ( inserting "${getInsertText(completion)}" at [${completion.start}, ${completion.end}) ) ( resolvedTexts = ${JSON.stringify(resolvedTexts)} ). `)
     }
 }

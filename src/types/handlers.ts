@@ -1,26 +1,31 @@
+import { PublishDiagnosticsParams } from 'vscode-languageserver'
+import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI } from 'vscode-uri'
 import { CommandTree } from '.'
-import { DataSource, VanillaData } from '../data'
+import { DataSource, VanillaData } from '../data/VanillaData'
+import { JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { CacheKey } from './ClientCache'
+import { SyntaxComponent } from '../plugins'
+import { CacheType } from './ClientCache'
 import { Config } from './Config'
-import { FunctionInfo } from './FunctionInfo'
-import { LineNode } from './LineNode'
+import { DatapackDocument } from './DatapackDocument'
 
 export const Uri = URI
 
-export type DocNode = LineNode
+export type DocNode = SyntaxComponent | JsonNode
 
 export type Uri = URI
-export type InfosOfUris = Map<Uri, FunctionInfo | Promise<FunctionInfo | undefined>>
-export type UrisOfIds = Map<string, Uri | null>
+export type DocsOfUris = Map<Uri, Promise<DatapackDocument | undefined>>
 /**
  * A map of namespaced IDs (in form of `type|ID`) and URIs.
  */
+export type UrisOfIds = Map<string, Uri | null>
+export type CreateWorkDoneProgressFunction = () => Promise<WorkDoneProgress>
 export type FetchConfigFunction = (uri: Uri) => Promise<Config>
 export type GetCommandTreeFunction = (version: string) => Promise<CommandTree>
-export type GetUriFromIdFunction = (pathExists: PathExistsFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheKey, preferredRoot?: Uri) => Promise<Uri | null>
+export type GetUriFromIdFunction = (pathExists: PathAccessibleFunction, roots: Uri[], uris: UrisOfStrings, urisOfIds: UrisOfIds, id: IdentityNode, category: CacheType, preferredRoot?: Uri) => Promise<Uri | null>
 export type GetVanillaDataFunction = (versionOrLiteral: string | null, source: DataSource) => Promise<VanillaData>
-export type PathExistsFunction = (path: string) => Promise<boolean>
-export type ReadFileFunction = (path: string, encoding: string) => Promise<string>
+export type PathAccessibleFunction = (path: string) => Promise<boolean>
+export type PublishDiagnosticsFunction = (params: PublishDiagnosticsParams) => void
+export type ReadFileFunction = (path: string) => Promise<string>
 export type UrisOfStrings = Map<string, Uri>

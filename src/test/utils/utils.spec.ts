@@ -2,12 +2,16 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import os from 'os'
 import { DiagnosticSeverity } from 'vscode-languageserver'
+import { EntityNode } from '../../nodes/EntityNode'
+import { IdentityNode } from '../../nodes/IdentityNode'
+import { SelectorArgumentsNode } from '../../nodes/SelectorArgumentsNode'
 import { constructConfig, LintConfig } from '../../types/Config'
 import { Formattable, GetFormattedString } from '../../types/Formattable'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { QuoteTypeConfig } from '../../types/QuoteTypeConfig'
 import { DiagnosticConfig } from '../../types/StylisticConfig'
-import { arrayToCompletions, arrayToMessage, escapeString, getEol, quoteString, remapCompletionItem, toFormattedString, validateStringQuote } from '../../utils'
+import { arrayToCompletions, arrayToMessage, escapeString, getEol, getNbtdocRegistryId, quoteString, remapParserSuggestion, toFormattedString, validateStringQuote, round } from '../../utils'
+import { assertCompletions } from '../utils.spec'
 
 describe('utils.ts Tests', () => {
     describe('arrayToMessage() Tests', () => {
@@ -19,27 +23,27 @@ describe('utils.ts Tests', () => {
         it('Should return message for a string', () => {
             const str = 'foo'
             const actual = arrayToMessage(str)
-            assert(actual === '‘foo’')
+            assert(actual === '“foo”')
         })
         it('Should return message for an one-element array', () => {
             const arr = ['foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘foo’')
+            assert(actual === '“foo”')
         })
         it('Should return message for a two-element array', () => {
             const arr = ['bar', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘bar’ and ‘foo’')
+            assert(actual === '“bar” and “foo”')
         })
         it('Should return message for a multi-element array', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr)
-            assert(actual === '‘bar’, ‘baz’, and ‘foo’')
+            assert(actual === '“bar”, “baz”, and “foo”')
         })
         it('Should use another conjuction when specified', () => {
             const arr = ['bar', 'baz', 'foo']
             const actual = arrayToMessage(arr, undefined, 'or')
-            assert(actual === '‘bar’, ‘baz’, or ‘foo’')
+            assert(actual === '“bar”, “baz”, or “foo”')
         })
         it('Should not quote when specified', () => {
             const arr = ['bar', 'baz', 'foo']
@@ -122,12 +126,48 @@ describe('utils.ts Tests', () => {
     describe('arrayToCompletions() Tests', () => {
         it('Should escape string.', () => {
             const arr = ['a', 2, 'c']
-            const actual = arrayToCompletions(arr)
-            assert.deepStrictEqual(actual, [
-                { label: 'a' },
-                { label: '2' },
-                { label: 'c' }
+            const actual = arrayToCompletions(arr, 0, Infinity)
+            assertCompletions('', actual, [
+                { label: 'a', t: 'a' },
+                { label: '2', t: '2' },
+                { label: 'c', t: 'c' }
             ])
+        })
+    })
+    describe('getNbtdocRegistryId() Tests', () => {
+        it('Should return the respective id', () => {
+            const id = new IdentityNode('minecraft', ['spgoding'])
+            const argument = new SelectorArgumentsNode()
+            argument.type = [id]
+            const entity = new EntityNode(undefined, 'e', argument)
+            const actual = getNbtdocRegistryId(entity)
+            assert(actual === 'minecraft:spgoding')
+        })
+        it('Should return minecraft:player for @a', () => {
+            const entity = new EntityNode(undefined, 'a', new SelectorArgumentsNode())
+            const actual = getNbtdocRegistryId(entity)
+            assert(actual === 'minecraft:player')
+        })
+        it('Should return null when there is no type', () => {
+            const argument = new SelectorArgumentsNode()
+            const entity = new EntityNode(undefined, 'e', argument)
+            const actual = getNbtdocRegistryId(entity)
+            assert(actual === null)
+        })
+        it('Should return null when the type is empty', () => {
+            const argument = new SelectorArgumentsNode()
+            argument.type = []
+            const entity = new EntityNode(undefined, 'e', argument)
+            const actual = getNbtdocRegistryId(entity)
+            assert(actual === null)
+        })
+        it('Should return null when the first type is a tag', () => {
+            const id = new IdentityNode('minecraft', ['spgoding'], true)
+            const argument = new SelectorArgumentsNode()
+            argument.type = [id]
+            const entity = new EntityNode(undefined, 'e', argument)
+            const actual = getNbtdocRegistryId(entity)
+            assert(actual === null)
         })
     })
     describe('toLintedString() Tests', () => {
@@ -170,12 +210,12 @@ describe('utils.ts Tests', () => {
         })
     })
     describe('remapCompletionItem() Tests', () => {
-        it('Should return as-is if the completion item does not contain any TextEdits', () => {
-            const actual = remapCompletionItem({ label: 'foo' }, { start: 1 })
-            assert.deepStrictEqual(actual, { label: 'foo' })
+        it('Should remap the start and end as needed', () => {
+            const actual = remapParserSuggestion({ label: 'foo', start: 0, end: 3 }, { start: 1 })
+            assert.deepStrictEqual(actual, { label: 'foo', start: 1, end: 4 })
         })
-        it('Should return remap the lineNumber as needed', () => {
-            const actual = remapCompletionItem({
+        it('Should remap the lineNumber as needed', () => {
+            const actual = remapParserSuggestion({
                 label: 'foo',
                 textEdit: {
                     range: { start: { line: 0, character: 12 }, end: { line: 0, character: 16 } },
@@ -184,15 +224,17 @@ describe('utils.ts Tests', () => {
             }, offset => ({ line: 42, character: offset }))
             assert.deepStrictEqual(actual, {
                 label: 'foo',
+                start: 12, end: 16,
                 textEdit: {
                     range: { start: { line: 42, character: 12 }, end: { line: 42, character: 16 } },
                     newText: 'foo'
                 }
             })
         })
-        it('Should return remap the characters as needed', () => {
-            const actual = remapCompletionItem({
+        it('Should remap the characters as needed', () => {
+            const actual = remapParserSuggestion({
                 label: 'foo',
+                start: 1, end: 3,
                 textEdit: {
                     range: { start: { line: 0, character: 1 }, end: { line: 0, character: 3 } },
                     newText: 'foo'
@@ -200,6 +242,7 @@ describe('utils.ts Tests', () => {
             }, { start: 1 })
             assert.deepStrictEqual(actual, {
                 label: 'foo',
+                start: 2, end: 4,
                 textEdit: {
                     range: { start: { line: 0, character: 2 }, end: { line: 0, character: 4 } },
                     newText: 'foo'
@@ -235,7 +278,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected an unquoted string but got ‘"’ (rule: ‘stringQuote’)`,
+                `Expected an unquoted string but got “"” (rule: “stringQuote”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringUnquote
             )])
@@ -249,7 +292,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected an unquoted string but got ‘"’`,
+                `Expected an unquoted string but got “"”`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringUnquote
             )])
@@ -272,7 +315,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected a quote (‘'’ or ‘"’) but got ‘f’ (rule: ‘stringQuote’)`,
+                `Expected a quote (“'” or “"”) but got “f” (rule: “stringQuote”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])
@@ -295,7 +338,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected ‘'’ but got ‘"’ (rule: ‘stringQuoteType’)`,
+                `Single quote (“'”) is preferable here (rule: “stringQuoteType”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringSingleQuote
             )])
@@ -309,7 +352,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig)
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected ‘'’ but got ‘"’`,
+                `Single quote (“'”) is preferable here`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringSingleQuote
             )])
@@ -332,7 +375,7 @@ describe('utils.ts Tests', () => {
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [new ParsingError(
                 range,
-                `Expected ‘"’ but got ‘'’ (rule: ‘stringQuoteType’)`,
+                `Double quote (“"”) is preferable here (rule: “stringQuoteType”)`,
                 undefined, DiagnosticSeverity.Information,
                 ErrorCode.StringDoubleQuote
             )])
@@ -345,6 +388,20 @@ describe('utils.ts Tests', () => {
             const quoteTypeConfig: DiagnosticConfig<QuoteTypeConfig> = ['information', 'always double']
             const actual = validateStringQuote(raw, value, range, quoteConfig, quoteTypeConfig, 'stringQuote', 'stringQuoteType')
             assert.deepStrictEqual(actual, [])
+        })
+    })
+    describe('round() Tests',()=>{
+        it('Should return exactly when the number has less decimal places than required', ()=>{
+            const actual = round(10, 3)
+            assert(actual === 10)
+        })
+        it('Should round down', ()=>{
+            const actual = round(10.1234, 3)
+            assert(actual === 10.123)
+        })
+        it('Should round up', ()=>{
+            const actual = round(10.6789, 3)
+            assert(actual === 10.679)
         })
     })
 })

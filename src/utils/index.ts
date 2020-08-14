@@ -1,8 +1,14 @@
-import clone from 'clone'
+import deepEqual from 'fast-deep-equal'
+import * as fs from 'fs'
+import { promises as fsp } from 'fs'
 import https from 'https'
 import { EOL } from 'os'
-import { CodeActionKind, CompletionItem, Diagnostic, Position, TextDocument, TextEdit } from 'vscode-languageserver'
+import rfdc from 'rfdc'
+import { CodeActionKind, CompletionItem, Diagnostic, Position, TextEdit } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { locale } from '../locales'
+import { EntityNode } from '../nodes/EntityNode'
+import { ParserSuggestion } from '../types'
 import { LintConfig } from '../types/Config'
 import { GetFormattedString, isFormattable } from '../types/Formattable'
 import { getOuterIndex, IndexMapping } from '../types/IndexMapping'
@@ -20,10 +26,10 @@ import { StringReader } from './StringReader'
  * @returns Human-readable message.
  * @example // Using English
  * arrayToMessage([]) // "nothing"
- * arrayToMessage('foo') // "‘foo’"
- * arrayToMessage(['foo']) // "‘foo’"
- * arrayToMessage(['bar', 'foo']) // "‘bar’ and ‘foo’"
- * arrayToMessage(['bar', 'baz', 'foo']) // "‘bar’, ‘baz’, and ‘foo’"
+ * arrayToMessage('foo') // "“foo”"
+ * arrayToMessage(['foo']) // "“foo”"
+ * arrayToMessage(['bar', 'foo']) // "“bar” and “foo”"
+ * arrayToMessage(['bar', 'baz', 'foo']) // "“bar”, “baz”, and “foo”"
  * @example // Using Locale
  * arrayToMessage([], false) // "nothing"
  * arrayToMessage(['A'], false) // "A"
@@ -140,10 +146,7 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
     if (isQuoted && quoteTypeConfig) {
         const severity = quoteTypeConfig[0]
         if (firstChar !== expectedChar) {
-            const message = locale('expected-got',
-                locale('punc.quote', expectedChar),
-                locale('punc.quote', firstChar)
-            )
+            const message = expectedChar === '"' ? locale('quote_prefer_double') : locale('quote_prefer_single')
             ans.push(new ParsingError(
                 range,
                 quoteConfigRule ? locale('diagnostic-rule', message, locale('punc.quote', quoteTypeConfigRule)) : message,
@@ -157,11 +160,11 @@ export function validateStringQuote(raw: string, value: string, range: TextRange
 }
 
 /**
- * Convert an array of any to an array of `CompletionItem`.
+ * Convert an array of any to an array of `ParserSuggestion`.
  * @param array An array
  */
-export function arrayToCompletions(array: any[], cb = (c: CompletionItem) => c): CompletionItem[] {
-    return array.map(v => cb({ label: v.toString() }))
+export function arrayToCompletions(array: any[], start: number, end: number, cb = (c: ParserSuggestion) => c): ParserSuggestion[] {
+    return array.map(v => cb({ label: v.toString(), start, end }))
 }
 
 /**
@@ -238,29 +241,40 @@ export function getCodeAction(titleLocaleKey: string, diagnostics: Diagnostic[],
 }
 
 /**
- * Remap all the indices in the specific TextRange object by the specific mapping.
- * @param completion The specific TextRange object.
+ * Remap all the indices in the specific ParserSuggestion object by the specific mapping.
+ * @param completion The specific ParserSuggestion object. Won't be changed.
  * @param param1 The mapping used to offset.
+ * @returns A new cloned CompletionItem.
  */
-export function remapCompletionItem(completion: CompletionItem, mapping: IndexMapping): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, getPosition: (offset: number) => Position): CompletionItem
-export function remapCompletionItem(completion: CompletionItem, param1: IndexMapping | ((offset: number) => Position)) {
-    const ans = clone(completion)
-    if (ans.textEdit) {
-        const range = ans.textEdit.range
-        if (param1 instanceof Function) {
-            range.start = param1(range.start.character)
-            range.end = param1(range.end.character)
-        } else {
+export function remapParserSuggestion(completion: ParserSuggestion, mapping: IndexMapping): ParserSuggestion
+export function remapParserSuggestion(completion: CompletionItem, getPosition: (offset: number) => Position): ParserSuggestion
+export function remapParserSuggestion(completion: ParserSuggestion, param1: IndexMapping | ((offset: number) => Position)) {
+    const ans = rfdc()(completion)
+    if (param1 instanceof Function) {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
+            ans.start = range.start.character
+            ans.end = range.end.character
+            range.start = param1(ans.start)
+            range.end = param1(ans.end)
+        }
+    } else {
+        if (ans.textEdit) {
+            const range = ans.textEdit.range
             range.start.character = getOuterIndex(param1, range.start.character)
             range.end.character = getOuterIndex(param1, range.end.character)
         }
+        ans.start = getOuterIndex(param1, ans.start)
+        ans.end = getOuterIndex(param1, ans.end)
     }
     return ans
 }
 
-/* istanbul ignore next */
-export function handleCompletionText(origin: CompletionItem, cb: (str: string) => string) {
+/**
+ * @param origin Won't be changed.
+ * @returns A new CompletionItem.
+ */
+export function handleCompletionText<T extends CompletionItem>(origin: T, cb: (str: string) => string) {
     let label = origin.label
     let insertText: string | undefined
     let textEdit: TextEdit | undefined
@@ -279,18 +293,52 @@ export function handleCompletionText(origin: CompletionItem, cb: (str: string) =
     return {
         ...origin,
         label,
-        ...insertText ? { insertText } : {},
-        ...textEdit ? { textEdit } : {}
+        ...insertText && { insertText },
+        ...textEdit && { textEdit }
     }
 }
 
-export function removeDupliateCompletions(completions: CompletionItem[]): CompletionItem[] {
+export function removeDupliateCompletions(completions: ParserSuggestion[]): ParserSuggestion[] {
     return completions.filter((completion, i) =>
-        completions.findIndex(v => (v.insertText ?? v.label) === (completion.insertText ?? completion.label)) === i
+        completions.findIndex(v => deepEqual(completion, v)) === i
     )
 }
 
-export * as datafixers from './datafixers'
-export * as handlers from './handlers'
-export * from './NbtdocHelper'
-export * from './StringReader'
+export function getNbtdocRegistryId(entity: EntityNode): null | string {
+    if (entity.variable === 'a' || entity.variable === 'p' || entity.variable === 'r') {
+        return 'minecraft:player'
+    }
+    const firstID = entity.argument.type?.[0]
+    if (firstID && !firstID.isTag) {
+        return firstID.toString()
+    }
+    return null
+}
+
+export async function pathAccessible(path: string) {
+    return fsp.access(path)
+        .then(() => true)
+        .catch(() => false)
+}
+
+export async function readFile(path: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        let data = ''
+        fs
+            .createReadStream(path, { encoding: 'utf-8', highWaterMark: 128 * 1024 })
+            .on('data', chunk => {
+                data += chunk
+            })
+            .on('end', () => {
+                resolve(data)
+            })
+            .on('error', e => {
+                reject(e)
+            })
+    })
+}
+
+export function round(number: number, decimalPlace: number) {
+    const scale = 10 ** decimalPlace
+    return Math.round(number * scale) / scale
+}

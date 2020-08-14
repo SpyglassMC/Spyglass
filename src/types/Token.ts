@@ -1,5 +1,5 @@
 import clone from 'clone'
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { StringReader } from '../utils/StringReader'
 import { IndexMapping } from './IndexMapping'
 import { remapTextRange, TextRange } from './TextRange'
@@ -77,11 +77,13 @@ export class Token {
  * Remap specific tokens according to the mapping, and add the inString modifier.
  * @param tokens Input tokens.
  */
-export function remapTokens(tokens: Token[], mapping: IndexMapping) {
-    const ans = clone(tokens)
+export function remapTokens(tokens: Token[], mapping: IndexMapping, addInStringModifier = true) {
+    const ans = clone(tokens, false)
     for (const token of ans) {
         token.range = remapTextRange(token.range, mapping)
-        token.modifiers.add(TokenModifier.inString)
+        if (addInStringModifier) {
+            token.modifiers.add(TokenModifier.inString)
+        }
     }
     return ans
 }

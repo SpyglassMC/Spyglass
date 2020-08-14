@@ -4,6 +4,7 @@ import { UuidArgumentParser } from '../../parsers/UuidArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'
 import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
+import { assertCompletions } from '../utils.spec'
 
 describe('UuidArgumentParser Tests', () => {
     let ctx: ParsingContext
@@ -17,7 +18,7 @@ describe('UuidArgumentParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, 'd9b38d97-d9e8-49a3-b225-3ffb4da40e2d')
-            assert.deepStrictEqual(actual.completions, [])
+            assertCompletions(reader, actual.completions, [])
         })
         it('Should parse short UUID', () => {
             const reader = new StringReader('40-0-27f-13-ee45000032e1')
@@ -25,12 +26,12 @@ describe('UuidArgumentParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.errors, [])
             assert.deepStrictEqual(actual.data, '40-0-27f-13-ee45000032e1')
-            assert.deepStrictEqual(actual.completions, [])
+            assertCompletions(reader, actual.completions, [])
         })
-        it('Should return completions when the cursor is at the beginning', () => {
+        it('Should return completions for RANDOM when the cursor is at the beginning', () => {
             const reader = new StringReader('')
             const parser = new UuidArgumentParser()
-            const actual = parser.parse(reader, constructContext({cursor: 0}))
+            const actual = parser.parse(reader, constructContext({ cursor: 0 }))
             assert(actual.completions.length === 1)
             assert(actual.completions[0].label === 'RANDOM')
         })
@@ -40,10 +41,10 @@ describe('UuidArgumentParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual.errors, [new ParsingError(
                 { start: 0, end: 9 },
-                'Expected a UUID but got ‘ASDASDASD’'
+                'Expected a UUID but got “ASDASDASD”'
             )])
             assert.deepStrictEqual(actual.data, 'ASDASDASD')
-            assert.deepStrictEqual(actual.completions, [])
+            assertCompletions(reader, actual.completions, [])
         })
     })
 })

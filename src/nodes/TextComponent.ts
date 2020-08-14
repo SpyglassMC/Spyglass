@@ -1,7 +1,7 @@
-import { JSONDocument } from 'vscode-json-languageservice'
-import { TextDocument } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { GetFormattedString } from '../types/Formattable'
 import { ArgumentNode, NodeType } from './ArgumentNode'
+import { JsonDocument } from './JsonDocument'
 import { NbtCompoundNode } from './NbtCompoundNode'
 
 export type TextComponentType = NbtCompoundNode | string | TextComponentType[]
@@ -12,7 +12,7 @@ export class TextComponentNode extends ArgumentNode {
     constructor(
         public raw: string,
         public document?: TextDocument,
-        public jsonDocument?: JSONDocument
+        public jsonDocument?: JsonDocument
     ) {
         super()
     }

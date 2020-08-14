@@ -1,7 +1,7 @@
 import { locale } from '../locales'
-import { LintConfig } from '../types/Config'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { StringNode } from '../nodes/StringNode'
+import { LintConfig } from '../types/Config'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
@@ -24,13 +24,7 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
     ) { super() }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<StringNode> {
-        const ans: ArgumentParserResult<StringNode> = {
-            data: new StringNode('', '', {}),
-            tokens: [],
-            errors: [],
-            cache: {},
-            completions: []
-        }
+        const ans = ArgumentParserResult.create(new StringNode('', '', {}))
         const start = reader.cursor
 
         //#region Data.
@@ -88,10 +82,11 @@ export class StringArgumentParser extends ArgumentParser<StringNode> {
                 let insertText: string
                 if (currentType) {
                     insertText = quoteString(option, currentType, true).slice(1, -1)
+                    ans.completions.push({ label: option, insertText, start: start + 1, end: reader.cursor - 1 })
                 } else {
                     insertText = quoteString(option, quoteType ? quoteType[1] : 'prefer double', quote ? quote[1] : false)
+                    ans.completions.push({ label: option, insertText, start, end: reader.cursor })
                 }
-                ans.completions.push({ insertText, label: option })
             }
         }
         //#endregion

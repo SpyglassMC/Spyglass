@@ -1,15 +1,15 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ArgumentNode, GetCodeActions, GetHoverInformation, NodeDescription, NodeType } from '../../nodes/ArgumentNode'
+import { ArgumentNode, GetCodeActions, GetHover, NodeDescription, NodeType } from '../../nodes/ArgumentNode'
 import { GetFormattedString } from '../../types/Formattable'
-import { $, mockFunctionInfo } from '../utils.spec'
+import { $, mockParsingContext } from '../utils.spec'
 
 class TestArgumentNode extends ArgumentNode {
     readonly [NodeType] = 'Test'
 }
 
 describe('ArgumentNode Tests', () => {
-    const info = mockFunctionInfo()
+    const ctx = mockParsingContext()
     describe('[GetFormattedString]() Tests', () => {
         it('Should return the same value as toString()', () => {
             const node = new TestArgumentNode()
@@ -26,25 +26,27 @@ describe('ArgumentNode Tests', () => {
             const diagnostics = {}
             const node = new TestArgumentNode()
 
-            const actual = node[GetCodeActions](uri, info, range, diagnostics)
+            const actual = node[GetCodeActions](uri, ctx, range, diagnostics)
 
             assert.deepStrictEqual(actual, [])
         })
     })
-    describe('[GetHoverInformation]() Tests', () => {
+    describe('[GetHover]() Tests', () => {
         const offset = 42
         it('Should return null when there is no description', () => {
             const node = new TestArgumentNode()
+            const ctx = {...mockParsingContext(), cursor: offset}
 
-            const actual = node[GetHoverInformation](info.document, offset)
+            const actual = node[GetHover](ctx)
 
             assert(actual === null)
         })
         it('Should return hover when there is description', () => {
             const node = $(new TestArgumentNode(), [38, 45])
             node[NodeDescription] = 'This is the description for the TestArgumentNode'
+            const ctx = {...mockParsingContext(), cursor: offset}
 
-            const actual = node[GetHoverInformation](info.document, offset)
+            const actual = node[GetHover](ctx)
 
             assert.deepStrictEqual(actual, {
                 contents: { kind: 'markdown', value: 'This is the description for the TestArgumentNode' },

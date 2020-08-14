@@ -2,16 +2,16 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { Token, TokenType } from '../../types/Token'
 import { StringReader } from '../../utils/StringReader'
-import { mockFunctionInfo } from '../utils.spec'
+import { mockParsingContext } from '../utils.spec'
 
 describe('Token Tests', () => {
     describe('toArray() Tests', () => {
         it('Should calculate the deltas', () => {
-            const info = mockFunctionInfo({
+            const info = mockParsingContext({
                 content: '\n\n23456789'
             })
             const token = new Token({ start: 5, end: 9 }, 0, new Set([0]))
-            const actual = token.toArray(info.document)
+            const actual = token.toArray(info.textDoc)
             assert.deepStrictEqual(actual, [2, 3, 4, 0, 1])
         })
     })

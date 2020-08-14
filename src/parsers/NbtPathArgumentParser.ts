@@ -4,7 +4,6 @@ import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { NbtCompoundKeyNode } from '../nodes/NbtCompoundKeyNode'
 import { NbtCompoundNode } from '../nodes/NbtCompoundNode'
 import { NbtPathNode } from '../nodes/NbtPathNode'
-import { NumberNode } from '../nodes/NumberNode'
 import { IndexMapping } from '../types/IndexMapping'
 import { nbtdoc } from '../types/nbtdoc'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
@@ -29,13 +28,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<NbtPathNode> {
-        const ans: ArgumentParserResult<NbtPathNode> = {
-            data: new NbtPathNode(),
-            tokens: [],
-            cache: {},
-            completions: [],
-            errors: []
-        }
+        const ans = ArgumentParserResult.create(new NbtPathNode())
         const start = reader.cursor
 
         let helper: NbtdocHelper | undefined
@@ -83,9 +76,9 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         // FIXME: after MC-175504 is fixed.
                         /* istanbul ignore next */
                         const quoteType = firstChar === '"' ? 'always double' : 'always single'
-                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType)
+                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, quoteType, range.start + 1, range.end - 1)
                     } else {
-                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, null)
+                        helper.completeCompoundKeys(ans, ctx, new NbtCompoundNode(null), doc, null, range.start, range.end)
                     }
                 }
             }
@@ -201,9 +194,9 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 (ans, reader, doc) => this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null)
             )
         } else {
-            const result = ctx.parsers
-                .get('Nbt', ['Compound', this.category, helper?.resolveCompoundOrIndexDoc(doc, null, ctx), true])
-                .parse(reader, ctx)
+            const result = new ctx.parsers.Nbt(
+                'Compound', this.category, helper?.resolveCompoundOrIndexDoc(doc, null, ctx), true
+            ).parse(reader, ctx)
             ans.data.push(result.data as NbtCompoundNode)
             combineArgumentParserResult(ans, result)
         }
@@ -302,9 +295,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
     }
 
     private parseIndexNumber(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext) {
-        const result: ArgumentParserResult<NumberNode> = ctx.parsers
-            .get('Number', ['integer'])
-            .parse(reader, ctx)
+        const result = new ctx.parsers.Number('integer').parse(reader, ctx)
         ans.data.push(result.data)
         combineArgumentParserResult(ans, result)
     }
