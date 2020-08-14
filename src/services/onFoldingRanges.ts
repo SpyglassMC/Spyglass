@@ -5,7 +5,7 @@ import { getStringLines } from './common'
 
 function getCommentSymbolAmount(string: string) {
     const reader = new StringReader(string)
-    reader.skipWhiteSpace()
+    reader.skipSpace()
     let ans = 0
     while (reader.canRead() && reader.peek() === '#') {
         reader.skip()
@@ -24,6 +24,7 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
         const strings = getStringLines(textDoc.getText())
         const regionStartLines: number[] = []
         const commentStartLines: { [level: number]: number | undefined } = {}
+        let docCommentStart: number | undefined = undefined
         for (const [i, string] of strings.entries()) {
             if (string.match(/^\s*#region\b/)) {
                 regionStartLines.push(i)
@@ -45,6 +46,15 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
                     ))
                     delete commentStartLines[level]
                 }
+            } else if (docCommentStart === undefined && string.match(/^\s*#>(\s|$)/)) {
+                docCommentStart = i
+            } else if (docCommentStart !== undefined && !string.match(/^\s*#(\s|$)/)) {
+                // End doc comments.
+                ans.push(FoldingRange.create(
+                    docCommentStart, i - 1,
+                    undefined, undefined, FoldingRangeKind.Comment
+                ))
+                docCommentStart = undefined
             } else {
                 const amount = getCommentSymbolAmount(string)
                 for (const levelString of Object.keys(commentStartLines)) {
@@ -65,7 +75,7 @@ export function onFoldingRanges({ textDoc }: { textDoc: TextDocument }) {
                         delete commentStartLines[level]
                     }
                 }
-                if (amount > 0) {
+                if (docCommentStart === undefined && amount > 0) {
                     commentStartLines[amount] = i
                 }
             }

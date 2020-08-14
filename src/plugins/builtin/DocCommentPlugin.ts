@@ -92,9 +92,9 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     ))
                 }
             } else {
-                docComment.plainText += reader.readUntilOrEnd('\r', '\n') + '\n'
+                docComment.plainText += reader.readLine() + '\n'
             }
-            while (reader.jumpLine(ctx.textDoc), reader.cursor < reader.end) {
+            while (reader.nextLine(ctx.textDoc), reader.canRead()) {
                 if (reader.skipSpace().peek() === '#' && StringReader.isWhiteSpace(reader.peek(1))) {
                     reader.skip()
                     // Still in the range of doc comment.
@@ -103,7 +103,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     if (reader.peek() === '@') {
                         this.parseAnnotations(docComment.annotations, reader, ctx, reader.cursor - indentStart)
                     } else {
-                        docComment.plainText += reader.readUntilOrEnd('\r', '\n') + '\n'
+                        docComment.plainText += reader.readLine() + '\n'
                     }
                 } else {
                     if (!isFunctionDoc) {
@@ -114,8 +114,8 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         combineArgumentParserResult(ans, cmdResult)
                     } else {
                         reader
-                            .jumpLineBack(ctx.textDoc)
-                            .readUntilOrEnd('\r', '\n')
+                            .lastLine(ctx.textDoc)
+                            .readLine()
                     }
                     break
                 }
@@ -152,7 +152,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
             while (true) {
                 const clonedReader = reader
                     .clone()
-                    .jumpLine(ctx.textDoc)
+                    .nextLine(ctx.textDoc)
                     .skipSpace()
                 if (clonedReader.peek() === '#') {
                     clonedReader.skip()

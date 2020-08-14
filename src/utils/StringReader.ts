@@ -260,6 +260,10 @@ export class StringReader {
         return ans
     }
 
+    readLine() {
+        return this.readUntilOrEnd('\r', '\n')
+    }
+
     /**
      * @throws {ParsingError} If it's not an legal quoted string.
      * @param out Stores a mapping from in-string indices to real indices. 
@@ -335,13 +339,13 @@ export class StringReader {
         return ans
     }
 
-    jumpLineBack(textDoc: TextDocument) {
+    lastLine(textDoc: TextDocument) {
         const pos = textDoc.positionAt(this.cursor)
         this.cursor = textDoc.offsetAt({ line: pos.line - 1, character: 0 })
         return this
     }
 
-    jumpLine(textDoc: TextDocument) {
+    nextLine(textDoc: TextDocument) {
         const pos = textDoc.positionAt(this.cursor)
         this.cursor = textDoc.offsetAt({ line: pos.line + 1, character: 0 })
         return this

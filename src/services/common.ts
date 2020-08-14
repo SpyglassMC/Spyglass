@@ -98,7 +98,7 @@ export function parseSyntaxComponents(service: DatapackLanguageService, textDoc:
             break
         }
         lastLine = currentLine()
-        reader.jumpLine(textDoc)
+        reader.nextLine(textDoc)
     }
     return ans
 }
