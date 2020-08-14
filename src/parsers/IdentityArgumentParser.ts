@@ -379,9 +379,13 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         return { tagPool, idPool, complNamespaces, complFolders, complFiles }
     }
 
+    private shouldCheck() {
+        return !this.allowUnknown && !this.isDefinition
+    }
+
     /* istanbul ignore next: tired of writing tests */
     private shouldStrictCheck(key: string, { lint: lint }: Config, namespace = IdentityNode.DefaultNamespace): [boolean, DiagnosticSeverity, string | undefined] {
-        if (this.allowUnknown) {
+        if (!this.shouldCheck()) {
             return [false, DiagnosticSeverity.Warning, undefined]
         }
         const evalTrueConfig = (key: keyof LintConfig): [boolean, DiagnosticSeverity, string] => {
@@ -514,14 +518,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             .includes(stringID)
 
         //#region Errors
-        const [shouldCheck, severity, ruleName] = this.shouldStrictCheck(`$${type}`, config, namespace)
-        if (!canResolve) {
+        const [shouldStrictCheck, severity, ruleName] = this.shouldStrictCheck(`$${type}`, config, namespace)
+        if (this.shouldCheck() && !canResolve) {
             const innerMessage = locale('failed-to-resolve-cache-id', locale('punc.quote', type), locale('punc.quote', stringID))
             const message = ruleName ? locale('diagnostic-rule', innerMessage, locale('punc.quote', ruleName)) : innerMessage
             ans.errors.push(new ParsingError(
                 { start, end: reader.cursor },
                 message,
-                undefined, shouldCheck ? severity : DiagnosticSeverity.Hint,
+                undefined, shouldStrictCheck ? severity : DiagnosticSeverity.Hint,
                 ErrorCode.IdentityUnknown
             ))
         }
