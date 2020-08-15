@@ -105,7 +105,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/445" target="_blank" title="Ideas, Planning, and Feedback">✨ #445</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/592" target="_blank" title="Bug reports">🐛 #592</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/593" target="_blank" title="Bug reports">🐛 #593</a></td>
-    <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=NeunEinser" target="_blank" title="Localization">🌐 German (de)</a></td>
+    <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=NeunEinser" target="_blank" title="Localization">🌐 German (de)</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/652" target="_blank" title="Bug reports">🐛 #652</a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
@@ -120,7 +120,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 

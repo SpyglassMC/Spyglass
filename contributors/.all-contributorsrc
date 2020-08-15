@@ -80,7 +80,8 @@
       "profile": "https://github.com/NeunEinser",
       "contributions": [],
       "details": [
-        { "type": "localization", "link": "commits?author=NeunEinser", "text": "German (de)" }
+        { "type": "localization", "link": "commits?author=NeunEinser", "text": "German (de)" },
+        { "type": "bug", "link": "issues/652", "text": "#652" }
       ]
     },
     {
