@@ -264,7 +264,6 @@ connection.onDidChangeWatchedFiles(async ({ changes }) => {
                 break
             }
             case FileChangeType.Changed: {
-                // console.log(`Changed : “${uriString}”`)
                 const stat = await fsp.stat(uri.fsPath)
                 if (stat.isFile()) {
                     service.cacheFile.files[uriString] = stat.mtimeMs

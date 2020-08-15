@@ -31,7 +31,7 @@ import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
 import { AlwaysValidates, ParsingError, Switchable } from '../types'
-import { CacheType, DeclarableCacheTypes } from '../types/ClientCache'
+import { CacheType, DeclarableTypes } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
@@ -2221,7 +2221,7 @@ export const CommandTree: ICommandTree = {
             description: 'Declares a resource for completions.',
             children: {
                 type: {
-                    parser: new LiteralArgumentParser(...DeclarableCacheTypes),
+                    parser: new LiteralArgumentParser(...DeclarableTypes),
                     description: 'Type of the declaration',
                     children: {
                         id: {

@@ -1,6 +1,6 @@
 import { locale } from '../locales'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { isCacheType, isInternalType, isNamespacedType } from '../types/ClientCache'
+import { isCacheType, isDeclarableType, isNamespacedType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
@@ -22,7 +22,7 @@ export class DeclarationIDArgumentParser extends ArgumentParser<string> {
         const ans = ArgumentParserResult.create(id)
         let token = TokenType.comment
         if (id) {
-            if (isCacheType(this.type) && !isInternalType(this.type)) {
+            if (isCacheType(this.type) && isDeclarableType(this.type)) {
                 //#region Tokens
                 if (isNamespacedType(this.type)) {
                     processsedID = IdentityNode.fromString(id).toString()

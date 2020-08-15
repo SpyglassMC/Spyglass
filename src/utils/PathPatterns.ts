@@ -20,6 +20,7 @@ export const PathPatterns: Record<FileType, string> = {
     'worldgen/configured_feature': 'data/*/worldgen/configured_feature/**/*.json',
     'worldgen/configured_structure_feature': 'data/*/worldgen/configured_structure_feature/**/*.json',
     'worldgen/configured_surface_builder': 'data/*/worldgen/configured_surface_builder/**/*.json',
+    'worldgen/noise_settings': 'data/*/worldgen/noise_settings/**/*.json',
     'worldgen/processor_list': 'data/*/worldgen/processor_list/**/*.json',
     'worldgen/template_pool': 'data/*/worldgen/template_pool/**/*.json'
 }

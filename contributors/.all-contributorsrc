@@ -111,7 +111,8 @@
       "profile": "https://github.com/lakejason0",
       "contributions": [],
       "details": [
-        { "type": "localization", "link": "commits?author=lakejason0", "text": "Chinese (Traditional) (zh-tw)" }
+        { "type": "localization", "link": "commits?author=lakejason0", "text": "Chinese (Traditional) (zh-tw)" },
+        { "type": "bug", "link": "issues/655", "text": "#655" }
       ]
     },
     {

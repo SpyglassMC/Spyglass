@@ -1,5 +1,5 @@
 import { locale } from '../locales'
-import { CacheCategory, isCacheType, isInternalType } from '../types/ClientCache'
+import { CacheCategory, isCacheType, isDeclarableType } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
@@ -24,7 +24,7 @@ export class DeclarationDescriptionArgumentParser extends ArgumentParser<string>
             tokens: [Token.from(start, reader, TokenType.string, new Set([TokenModifier.documentation]))]
         })
         if (description) {
-            if (isCacheType(this.type) && !isInternalType(this.type) && this.id) {
+            if (isCacheType(this.type) && isDeclarableType(this.type) && this.id) {
                 const key = this.type
                 ans.cache[key] = {}
                 const category = ans.cache[key] as CacheCategory

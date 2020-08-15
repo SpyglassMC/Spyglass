@@ -797,7 +797,6 @@ export class DatapackLanguageService {
     }
 
     private async combineCacheOfNodes(uri: Uri, type: FileType, id: IdentityNode) {
-        console.log(`combineCacheOfNodes ${uri}`)
         const { doc, textDoc } = await this.getDocuments(uri)
         if (doc && textDoc) {
             const cacheOfNodes: ClientCache = {}

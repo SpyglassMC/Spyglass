@@ -27,42 +27,44 @@ export type JsonSchemaType =
     | 'configured_feature'
     | 'configured_structure_feature'
     | 'configured_surface_builder'
+    | 'noise_settings'
     | 'processor_list'
     | 'template_pool'
     /* misc */
     | 'pack_mcmeta'
     | 'text_component'
 
-const globPatterns = new Map<JsonSchemaType, string>([
-    ['advancement', PathPatterns.advancement],
-    ['loot_table', PathPatterns.loot_table],
-    ['predicate', PathPatterns.predicate],
-    ['recipe', PathPatterns.recipe],
+const globPatterns: Record<JsonSchemaType, string> = {
+    advancement: PathPatterns.advancement,
+    dimension: PathPatterns.dimension,
+    dimension_type: PathPatterns.dimension_type,
+    loot_table: PathPatterns.loot_table,
+    predicate: PathPatterns.predicate,
+    recipe: PathPatterns.recipe,
     /* tag */
-    ['block_tag', PathPatterns['tag/block']],
-    ['entity_type_tag', PathPatterns['tag/entity_type']],
-    ['fluid_tag', PathPatterns['tag/fluid']],
-    ['function_tag', PathPatterns['tag/function']],
-    ['item_tag', PathPatterns['tag/item']],
-    /* dimension */
-    ['dimension', PathPatterns.dimension],
-    ['dimension_type', PathPatterns.dimension_type],
+    block_tag: PathPatterns['tag/block'],
+    entity_type_tag: PathPatterns['tag/entity_type'],
+    fluid_tag: PathPatterns['tag/fluid'],
+    function_tag: PathPatterns['tag/function'],
+    item_tag: PathPatterns['tag/item'],
     /* worldgen */
-    ['biome', PathPatterns['worldgen/biome']],
-    ['configured_carver', PathPatterns['worldgen/configured_carver']],
-    ['configured_decorator', PathPatterns['worldgen/configured_decorator']],
-    ['configured_feature', PathPatterns['worldgen/configured_feature']],
-    ['configured_structure_feature', PathPatterns['worldgen/configured_structure_feature']],
-    ['configured_surface_builder', PathPatterns['worldgen/configured_surface_builder']],
-    ['processor_list', PathPatterns['worldgen/processor_list']],
-    ['template_pool', PathPatterns['worldgen/template_pool']],
+    biome: PathPatterns['worldgen/biome'],
+    configured_carver: PathPatterns['worldgen/configured_carver'],
+    configured_decorator: PathPatterns['worldgen/configured_decorator'],
+    configured_feature: PathPatterns['worldgen/configured_feature'],
+    configured_structure_feature: PathPatterns['worldgen/configured_structure_feature'],
+    configured_surface_builder: PathPatterns['worldgen/configured_surface_builder'],
+    noise_settings: PathPatterns['worldgen/noise_settings'],
+    processor_list: PathPatterns['worldgen/processor_list'],
+    template_pool: PathPatterns['worldgen/template_pool'],
     /* misc */
-    ['pack_mcmeta', 'pack.mcmeta'],
-    ['text_component', 'text_component.json']
-])
+    pack_mcmeta: 'pack.mcmeta',
+    text_component: 'text_component.json'
+}
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {
-    for (const [type, glob] of globPatterns) {
+    for (const type of Object.keys(globPatterns) as JsonSchemaType[]) {
+        const glob = globPatterns[type]
         if (minimatch(rel, glob)) {
             return type
         }
