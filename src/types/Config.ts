@@ -314,7 +314,11 @@ export function constructConfig(custom: { [key: string]: any }, base = VanillaCo
 }
 
 /* istanbul ignore next */
-export function isRelIncluded(rel = '', { env: { include, exclude } }: Config) {
+export function isRelIncluded(rel: string | undefined, { env: { include, exclude } }: Config) {
+    if (rel === undefined) {
+        // This file is an untitled one, or an alone one.
+        return true
+    }
     for (const str of include) {
         if (minimatch(rel, str)) {
             return true

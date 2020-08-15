@@ -28,8 +28,8 @@ export async function onCompletion({ offset, service, node, textDoc, uri, langua
                     return handleCompletionText(comp, str => escapeString(str, null))
                 }
                 comp.textEdit = comp.textEdit ?? { newText: comp.insertText ?? comp.label, range: { start: textDoc.positionAt(comp.start), end: textDoc.positionAt(comp.end) } }
-                delete comp.start
-                delete comp.end
+                delete (comp as any).start
+                delete (comp as any).end
                 return comp
             })
         }

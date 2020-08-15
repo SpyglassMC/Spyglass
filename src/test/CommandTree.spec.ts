@@ -10,7 +10,7 @@ import { NbtPathNode } from '../nodes/NbtPathNode'
 import { StringNode } from '../nodes/StringNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'
 import { CommandParser } from '../parsers/CommandParser'
-import { DeclarableCacheTypes } from '../types'
+import { DeclarableTypes } from '../types'
 import { CommandTree, CommandTreeNode } from '../types/CommandTree'
 import { constructContext, ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
@@ -374,7 +374,7 @@ describe('CommandTree Tests', () => {
                 { data: 'SPGoding', parser: 'string' }
             ])
             assert.deepStrictEqual(data.hint, {
-                fix: ['#declare|#define', DeclarableCacheTypes.join('|'), '<id: string>'],
+                fix: ['#declare|#define', DeclarableTypes.join('|'), '<id: string>'],
                 options: []
             })
             assert.deepStrictEqual(data.cache, {

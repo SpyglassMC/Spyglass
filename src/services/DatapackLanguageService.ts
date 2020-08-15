@@ -287,7 +287,7 @@ export class DatapackLanguageService {
      * be cached for use in the `getDocuments` function.
      */
     async parseDocument(textDoc: TextDocument, isReal = false): Promise<DatapackDocument | undefined> {
-        const uri = getUri(textDoc.uri)
+        const uri = this.parseUri(textDoc.uri)
         const ans = this.rawParseDocument(textDoc, uri)
         if (isReal) {
             this.textDocs.set(uri.toString(), textDoc)
@@ -371,17 +371,19 @@ export class DatapackLanguageService {
         let ans: DatapackDocument | undefined
         const config = await this.getConfig(uri)
         const rel = getRel(uri, this.roots)
-        if (rel && isRelIncluded(rel, config)) {
+        if (isRelIncluded(rel, config)) {
             const vanillaData = await this.getVanillaData(config)
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
             const commandTree = await this.getCommandTree(config)
             if (textDoc.languageId === 'json') {
-                const schemaType = getJsonSchemaType(rel)
-                if (schemaType) {
-                    const schema = jsonSchemas.get(schemaType)
-                    ans = {
-                        type: 'json',
-                        nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType, commandTree })
+                if (rel) {
+                    const schemaType = getJsonSchemaType(rel)
+                    if (schemaType) {
+                        const schema = jsonSchemas.get(schemaType)
+                        ans = {
+                            type: 'json',
+                            nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType, commandTree })
+                        }
                     }
                 }
             } else if (textDoc.languageId === 'mcfunction') {
