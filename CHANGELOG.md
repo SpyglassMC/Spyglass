@@ -1,3 +1,12 @@
+# [v3.0.1](https://github.com/SPGoding/datapack-language-server/compare/v3.0.0...v3.0.1) (2020-08-15)
+
+## 🐛 Bug Fixes
+- [`a08e116`](https://github.com/SPGoding/datapack-language-server/commit/a08e116)  Fix not completing customized dimensions (Issues: [`#652`](https://github.com/SPGoding/datapack-language-server/issues/652))
+- [`38b4267`](https://github.com/SPGoding/datapack-language-server/commit/38b4267)  Fix structure validations for nbtdoc registry (Issues: [`#654`](https://github.com/SPGoding/datapack-language-server/issues/654))
+- [`983ee2e`](https://github.com/SPGoding/datapack-language-server/commit/983ee2e)  Fix obsolete data when cache is updated (Issues: [`#421`](https://github.com/SPGoding/datapack-language-server/issues/421) [`#653`](https://github.com/SPGoding/datapack-language-server/issues/653))
+- [`692d8bd`](https://github.com/SPGoding/datapack-language-server/commit/692d8bd)  Fix not supporting noise settings (Issues: [`#655`](https://github.com/SPGoding/datapack-language-server/issues/655))
+- [`786bb06`](https://github.com/SPGoding/datapack-language-server/commit/786bb06)  Fix not supporting standalone functions (Issues: [`#656`](https://github.com/SPGoding/datapack-language-server/issues/656))
+
 # [v3.0.0](https://github.com/SPGoding/datapack-language-server/compare/v2.1.14...v3.0.0) (2020-08-14)
 
 ## ✨ New Features
