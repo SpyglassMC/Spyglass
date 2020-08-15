@@ -60,7 +60,7 @@ export class DatapackLanguageService {
 
     private readonly builders: Map<string, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
     /**
-     * Key: `${uriString}|${range}`
+     * Key: `${type}|${ID}`
      */
     private readonly caches: Map<string, ClientCache> = new Map()
     private readonly configs: Map<string, Config> = new Map()
@@ -71,6 +71,10 @@ export class DatapackLanguageService {
     private readonly plugins: Map<string, plugins.Plugin>
     private languageConfigs: Map<string, LanguageConfig>
     private contributions: Contributions
+
+    private static readonly ConfigCacheSize = 100
+    private static readonly OnDidUpdateCacheEventDelay = 1500
+    private onDidUpdateCacheTimeout: NodeJS.Timeout | undefined
 
     static readonly GeneralTriggerCharacters = [' ', '=', ':', '/', '!', "'", '"', '.', '@']
     static readonly McfunctionTriggerCharacters = [',', '{', '[']
@@ -111,7 +115,7 @@ export class DatapackLanguageService {
     async fetchConfig(uri: Uri) {
         const config = await this.rawFetchConfig(uri)
         this.configs.set(uri.toString(), config)
-        if (this.configs.size > 100) {
+        if (this.configs.size > DatapackLanguageService.ConfigCacheSize) {
             this.configs.clear()
         }
         return config
@@ -301,7 +305,8 @@ export class DatapackLanguageService {
             return
         }
         this.onDidCloseTextDocument(uri)
-        this.parseDocument(textDoc, true)
+        await this.parseDocument(textDoc, true)
+        return this.publishDiagnostics(uri)
     }
 
     /**
@@ -336,9 +341,9 @@ export class DatapackLanguageService {
                 return { doc: await this.parseDocument(textDoc, false), textDoc }
             }
         } catch (e) {
-            console.error('[getDocuments]', e)
-            return { doc: undefined, textDoc: undefined }
+            console.error(`[getDocuments] for ${uri} `, e)
         }
+        return { doc: undefined, textDoc: undefined }
     }
 
     private getLangID(uri: Uri): 'json' | 'mcfunction' | 'nbt' {
@@ -665,7 +670,9 @@ export class DatapackLanguageService {
         if (!node) {
             return null
         }
-        return onRenameRequest({ node, offset, newName, service: this })
+        const ans = await onRenameRequest({ node, offset, newName, service: this })
+        this.onDidUpdateCache()
+        return ans
     }
 
     async onDocumentLinks(uri: Uri) {
@@ -772,6 +779,13 @@ export class DatapackLanguageService {
 
     private onDidUpdateCache() {
         this.caches.clear()
+        if (this.onDidUpdateCacheTimeout) {
+            clearTimeout(this.onDidUpdateCacheTimeout)
+        }
+        this.onDidUpdateCacheTimeout = setTimeout(
+            this.reparseAllOpenDocuments.bind(this),
+            DatapackLanguageService.OnDidUpdateCacheEventDelay
+        )
     }
 
     private onDidIDUpdate(type: FileType, id: IdentityNode) {
@@ -779,11 +793,11 @@ export class DatapackLanguageService {
     }
 
     private removeCachePositionsWith(uri: Uri) {
-        this.onDidUpdateCache()
         removeCachePosition(this.cacheFile.cache, uri)
     }
 
     private async combineCacheOfNodes(uri: Uri, type: FileType, id: IdentityNode) {
+        console.log(`combineCacheOfNodes ${uri}`)
         const { doc, textDoc } = await this.getDocuments(uri)
         if (doc && textDoc) {
             const cacheOfNodes: ClientCache = {}
@@ -821,6 +835,7 @@ export class DatapackLanguageService {
         if (!this.isOpen(uri)) {
             return this.mergeFileCacheIntoGlobalCache(uri)
         }
+        return
     }
 
     private async mergeFileCacheIntoGlobalCache(uri: Uri) {
@@ -836,7 +851,8 @@ export class DatapackLanguageService {
             return
         }
         this.removeCachePositionsWith(uri)
-        return this.combineCacheOfNodes(uri, category, id)
+        this.onDidUpdateCache()
+        await this.combineCacheOfNodes(uri, category, id)
     }
 
     /**
@@ -847,6 +863,10 @@ export class DatapackLanguageService {
      * @param uri A URI object.
      */
     onDeletedFile(uri: Uri) {
+        this.onDidCloseTextDocument(uri)
+        this.removeCachePositionsWith(uri)
+        this.onDidUpdateCache()
+        delete this.cacheFile.files[uri.toString()]
         const rel = this.getRel(uri)
         const result = IdentityNode.fromRel(rel)
         if (!result) {
@@ -855,8 +875,6 @@ export class DatapackLanguageService {
         const { category, id } = result
         this.onDidIDUpdate(category, id)
         removeCacheUnit(this.cacheFile.cache, category, id.toString())
-        this.removeCachePositionsWith(uri)
-        delete this.cacheFile.files[uri.toString()]
     }
 
     private createBuilder(uri: Uri) {

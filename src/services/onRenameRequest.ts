@@ -6,8 +6,6 @@ import { DocNode, Uri } from '../types/handlers'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
 export async function onRenameRequest({ node, offset, newName, service }: { node: DocNode, offset: number, newName: string, service: DatapackLanguageService }): Promise<WorkspaceEdit | null> {
-    // console.log(`BR: ${JSON.stringify(service.cacheFile)}`)
-
     /* istanbul ignore next */
     const result = getCacheFromOffset(node.cache || {}, offset)
     if (result && !isInternalType(result.type)) {
@@ -19,7 +17,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
             try {
                 const newID = isNamespacedType(result.type) ? IdentityNode.fromString(newName).toString() : newName
 
-                // Change function contents.
+                // Change file contents.
                 for (const key of Object.keys(unit)) {
                     if (isCacheUnitPositionType(key)) {
                         for (const pos of unit[key] ?? []) {
@@ -27,19 +25,23 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                                 continue
                             }
                             const affectedUri = service.parseUri(pos.uri!)
-                            const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
-                            /* istanbul ignore else */
-                            if (affectedTextDoc) {
-                                documentChanges.push({
-                                    textDocument: { uri: pos.uri!, version: affectedTextDoc.version },
-                                    edits: [{
-                                        newText: newName,
-                                        range: {
-                                            start: { line: pos.startLine!, character: pos.startChar! },
-                                            end: { line: pos.startLine!, character: pos.endChar! }
-                                        }
-                                    }]
-                                })
+                            try {
+                                const { textDoc: affectedTextDoc } = await service.getDocuments(affectedUri)
+                                /* istanbul ignore else */
+                                if (affectedTextDoc) {
+                                    documentChanges.push({
+                                        textDocument: { uri: pos.uri!, version: affectedTextDoc.version },
+                                        edits: [{
+                                            newText: newName,
+                                            range: {
+                                                start: { line: pos.startLine!, character: pos.startChar! },
+                                                end: { line: pos.startLine!, character: pos.endChar! }
+                                            }
+                                        }]
+                                    })
+                                }
+                            } catch (e) {
+                                console.error('[onRenameRequest] ', e)
                             }
                         }
                     }
@@ -51,6 +53,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                     const oldUri = await service.getUriFromId(oldID, result.type)
                     /* istanbul ignore next */
                     if (!oldUri) {
+                        console.error(`[onRenameRequest] Failed to get the URI of “${result.type} ${oldID}”.`)
                         return null
                     }
 
@@ -64,6 +67,7 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                     }
                     /* istanbul ignore next */
                     if (!preferredRoot) {
+                        console.error(`[onRenameRequest] Failed to get the preferred root for “${oldRel}” in ${service.roots.map(v => `“${v}”`).join(', ')}.`)
                         return null
                     }
 
@@ -78,10 +82,8 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                         delete service.cacheFile.files[oldUri.toString()]
                     }
 
-                    /* istanbul ignore else */
-                    if (result.type === 'function') {
-                        removeCachePosition(service.cacheFile.cache, oldUri)
-                    }
+                    removeCachePosition(service.cacheFile.cache, oldUri)
+                    service.onDidCloseTextDocument(oldUri)
                 }
 
                 // Update cache.
@@ -89,23 +91,21 @@ export async function onRenameRequest({ node, offset, newName, service }: { node
                 if (targetUnit) {
                     for (const t of CacheUnitPositionTypes) {
                         if (unit[t]?.length) {
-                            targetUnit[t] = targetUnit[t] ?? []
-                            targetUnit[t]!.push(...unit[t]!)
+                            (targetUnit[t] = targetUnit[t] ?? []).push(...unit[t]!)
                         }
                     }
                 } else {
                     category[newID] = unit
-                    service.cacheFile.cache[result.type] = category
                 }
                 delete category[result.id]
-            } catch (ignored) {
+                service.cacheFile.cache[result.type] = category
+            } catch (e) {
                 /* istanbul ignore next */
+                console.error('[onRenameRequest] ', e)
                 return null
             }
         }
 
-        // console.log(`DC: ${JSON.stringify(documentChanges)}`)
-        // console.log(`AR: ${JSON.stringify(service.cacheFile)}`)
         return { documentChanges }
     }
 

@@ -173,6 +173,8 @@ export class IdentityNode extends ArgumentNode {
         let ext: string
         if (category === 'function') {
             ext = '.mcfunction'
+        } else if (category === 'structure') {
+            ext = '.nbt'
         } else {
             ext = '.json'
         }
