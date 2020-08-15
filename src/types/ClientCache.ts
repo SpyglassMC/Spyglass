@@ -8,7 +8,7 @@ import { IndexMapping } from './IndexMapping'
 import { ParserSuggestion } from './ParserSuggestion'
 import { remapTextRange, TextRange } from './TextRange'
 
-export const CacheVersion = 10
+export const CacheVersion = 11
 
 export const DefaultCacheFile = { cache: {}, advancements: {}, tags: { functions: {} }, files: {}, version: CacheVersion }
 
