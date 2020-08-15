@@ -44,7 +44,8 @@ interface FileCache extends TagFileCache, WorldgenFileCache {
     function?: CacheCategory,
     loot_table?: CacheCategory,
     predicate?: CacheCategory,
-    recipe?: CacheCategory
+    recipe?: CacheCategory,
+    structure?: CacheCategory
 }
 interface AliasCache {
     'alias/entity'?: CacheCategory,
@@ -81,6 +82,7 @@ export const FileTypes: Readonly<FileType[]> = Object.freeze([
     'loot_table',
     'predicate',
     'recipe',
+    'structure',
     'tag/block',
     'tag/entity_type',
     'tag/fluid',
@@ -304,6 +306,7 @@ export function isFileType(type: string): type is FileType {
         type === 'loot_table' ||
         type === 'predicate' ||
         type === 'recipe' ||
+        type === 'structure' ||
         isTagFileType(type as CacheType) ||
         isWorldgenRegistryFileType(type as CacheType)
     )

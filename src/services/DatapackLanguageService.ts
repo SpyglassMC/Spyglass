@@ -327,13 +327,27 @@ export class DatapackLanguageService {
             if (this.docs.has(uri.toString()) && this.textDocs.has(uri.toString())) {
                 return { doc: await this.docs.get(uri.toString())!, textDoc: this.textDocs.get(uri.toString())! }
             } else {
+                const langID = this.getLangID(uri)
+                if (langID === 'nbt') {
+                    return { doc: undefined, textDoc: undefined }
+                }
                 const getText = async () => this.readFile(uri.fsPath)
-                const textDoc = await getTextDocument({ uri, version: null, getText })
+                const textDoc = await getTextDocument({ uri, langID, version: null, getText })
                 return { doc: await this.parseDocument(textDoc, false), textDoc }
             }
         } catch (e) {
             console.error('[getDocuments]', e)
             return { doc: undefined, textDoc: undefined }
+        }
+    }
+
+    private getLangID(uri: Uri): 'json' | 'mcfunction' | 'nbt' {
+        if (uri.fsPath.endsWith('.json') || uri.fsPath.endsWith('.mcmeta')) {
+            return 'json'
+        } else if (uri.fsPath.endsWith('.nbt')) {
+            return 'nbt'
+        } else {
+            return 'mcfunction'
         }
     }
 
@@ -365,7 +379,7 @@ export class DatapackLanguageService {
                         nodes: this.parseJsonDocument({ textDoc, config, uri, vanillaData, schema, jsonSchemas, schemaType, commandTree })
                     }
                 }
-            } else {
+            } else if (textDoc.languageId === 'mcfunction') {
                 ans = {
                     type: 'mcfunction',
                     nodes: this.parseMcfunctionDocument({ textDoc, commandTree, config, uri, vanillaData, jsonSchemas })
@@ -453,7 +467,6 @@ export class DatapackLanguageService {
             return null
         }
         const offset = textDoc.offsetAt(position)
-        const commandTree = await this.getCommandTree(config)
         const vanillaData = await this.getVanillaData(config)
         const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
         if (isMcfunctionDocument(doc)) {
@@ -473,7 +486,7 @@ export class DatapackLanguageService {
             return ans.map(v => {
                 const ans = rfdc()(v)
                 ans.textEdit = ans.textEdit ?? { newText: ans.insertText ?? ans.label, range: { start: textDoc.positionAt(ans.start), end: textDoc.positionAt(ans.end) } }
-                delete ans.start; delete ans.end
+                delete (ans as any).start; delete (ans as any).end
                 return ans as CompletionItem
             })
         }
@@ -778,10 +791,10 @@ export class DatapackLanguageService {
                 combineCache(cacheOfNodes, node.cache, { uri, getPosition: offset => textDoc.positionAt(offset) })
             }
             combineCache(this.cacheFile.cache, cacheOfNodes)
-            const unit = setUpUnit(this.cacheFile.cache, type, id)
-            if (!(unit.def = unit.def ?? []).find(p => p.uri === uri.toString())) {
-                (unit.def = unit.def ?? []).push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
-            }
+        }
+        const unit = setUpUnit(this.cacheFile.cache, type, id)
+        if (!(unit.def = unit.def ?? []).find(p => p.uri === uri.toString())) {
+            (unit.def = unit.def ?? []).push({ uri: uri.toString(), start: 0, end: 0, startLine: 0, startChar: 0, endLine: 0, endChar: 0 })
         }
     }
 

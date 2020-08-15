@@ -208,10 +208,12 @@ connection.onInitialized(async () => {
     return saveCacheFile()
 })
 
-connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langId } }) => {
+connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: langID } }) => {
     const uri = service.parseUri(uriString)
-    await service.parseDocument(await getTextDocument({ uri, langId, version, getText: async () => text }), true)
-    return service.publishDiagnostics(uri)
+    if (langID === 'mcfunction' || langID === 'json') {
+        await service.parseDocument(await getTextDocument({ uri, langID, version, getText: async () => text }), true)
+        return service.publishDiagnostics(uri)
+    }
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
     const uri = service.parseUri(uriString)

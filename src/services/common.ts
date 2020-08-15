@@ -128,9 +128,8 @@ export function getRootIndex(uri: Uri, roots: Uri[]): number | null {
     return getRelAndRootIndex(uri, roots)?.index ?? null
 }
 
-export async function getTextDocument({ uri, langId, getText, version }: { uri: Uri, langId?: string, getText: () => Promise<string>, version: number | null }) {
-    langId = langId ?? (uri.fsPath.endsWith('json') || uri.fsPath.endsWith('.mcmeta') ? 'json' : 'mcfunction')
-    return TextDocument.create(uri.toString(), langId, version as number, await getText())
+export async function getTextDocument({ uri, langID, getText, version }: { uri: Uri, langID: 'mcfunction' | 'json', getText: () => Promise<string>, version: number | null }) {
+    return TextDocument.create(uri.toString(), langID, version as number, await getText())
 }
 
 export function getDiagnosticMap(diagnostics: Diagnostic[]) {

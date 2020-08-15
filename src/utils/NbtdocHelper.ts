@@ -728,7 +728,7 @@ export class NbtdocHelper {
             case 'minecraft:recipe':
                 return '$recipe'
             case 'minecraft:structure':
-                return 'minecraft:worldgen/structure_feature'
+                return '$structure'
             default:
                 throw new Error(`Unknown nbtdoc ID registry: ${registry}`)
         }

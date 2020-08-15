@@ -607,7 +607,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 
     getExamples(): string[] {
         const ans: string[] = []
-        const examplesOfNames: { [name in NbtNodeTypeName]: string[] } = {
+        const examplesOfNames: Record<NbtNodeTypeName, string[]> = {
             Byte: ['0b'],
             ByteArray: ['[B; 0b],'],
             Compound: ['{}', '{foo: bar}'],

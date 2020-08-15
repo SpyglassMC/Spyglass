@@ -1,6 +1,6 @@
 import { FileType } from '../types/ClientCache'
 
-export const PathPatterns: { [key in FileType]: string } = {
+export const PathPatterns: Record<FileType, string> = {
     advancement: 'data/*/advancements/**/*.json',
     dimension: 'data/*/dimension/**/*.json',
     dimension_type: 'data/*/dimension_type/**/*.json',
@@ -8,6 +8,7 @@ export const PathPatterns: { [key in FileType]: string } = {
     loot_table: 'data/*/loot_tables/**/*.json',
     predicate: 'data/*/predicates/**/*.json',
     recipe: 'data/*/recipes/**/*.json',
+    structure: 'data/*/structures/**/*.nbt',
     'tag/block': 'data/*/tags/blocks/**/*.json',
     'tag/entity_type': 'data/*/tags/entity_types/**/*.json',
     'tag/fluid': 'data/*/tags/fluids/**/*.json',
