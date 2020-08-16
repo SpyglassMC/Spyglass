@@ -84,7 +84,6 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
     await service.init()
 
     workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
-    await updateRoots(service.roots)
 
     const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
         capabilities: {
@@ -203,6 +202,7 @@ connection.onInitialized(async () => {
         }
     })
 
+    await updateRoots(service.roots)
     const progress = await service.createWorkDoneProgress?.()
     await updateCacheFile(service.cacheFile, service.roots, progress)
     return saveCacheFile()
@@ -511,7 +511,7 @@ async function fetchConfig(uri: Uri): Promise<Config> {
         loadLocale(config.env.language, defaultLocaleCode)
         return config
     } catch (e) {
-        // console.warn(`Error occurred while fetching config for “${uri.toString()}”: ${e}`)
+        console.warn(`[fetchConfig for “${uri.toString()}”] `, e)
         return VanillaConfig
     }
 }
