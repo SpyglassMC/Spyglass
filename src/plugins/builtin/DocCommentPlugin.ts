@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver'
-import { arrayToCompletions, arrayToMessage, plugins } from '../..'
+import { arrayToCompletions, arrayToMessage, escapeRegex, plugins } from '../..'
 import { locale } from '../../locales'
 import { ArgumentNode, IdentityNode, NodeDescription, NodeRange, NodeType } from '../../nodes'
 import { CacheType, CacheVisibility, combineArgumentParserResult, FileTypes, getCacheVisibilities, isFileType, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
@@ -184,11 +184,12 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         }
                         break
                     case '@within':
+                        const sandboxPattern = (index: number) => escapeRegex(IdentityNode.fromString(anno[index].raw).toString())
                         if (anno.length === 2) {
-                            visibilities.push({ type: '*', pattern: IdentityNode.fromString(anno[1].raw).toString() })
+                            visibilities.push({ type: '*', pattern: sandboxPattern(1) })
                         } else if (anno.length >= 3) {
                             if (isFileType(anno[1].raw) || anno[1].raw === '*') {
-                                visibilities.push({ type: anno[1].raw, pattern: IdentityNode.fromString(anno[2].raw).toString() })
+                                visibilities.push({ type: anno[1].raw, pattern: sandboxPattern(2) })
                             } else {
                                 ans.errors.push(new ParsingError(
                                     anno[1].range,

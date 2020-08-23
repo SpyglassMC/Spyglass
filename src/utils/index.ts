@@ -181,6 +181,10 @@ export function toFormattedString(value: unknown, lint: LintConfig): string {
     }
 }
 
+export function escapeRegex(value: string) {
+    return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+}
+
 /* istanbul ignore next */
 export function requestText(uri: string) {
     return new Promise<string>((resolve, reject) => {
