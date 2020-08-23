@@ -1,1 +1,1 @@
-export type JsonSchemaVersion = '1.15' | '1.16'
+export type JsonSchemaVersion = '1.16'
