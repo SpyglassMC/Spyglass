@@ -2,13 +2,23 @@ import { DiagnosticSeverity } from 'vscode-languageserver'
 
 export type SeverityConfig = 'hint' | 'information' | 'warning' | 'error'
 
-export type SepSpacingConfig = { before: number, after: number }
-export type BracketSpacingConfig = { inside: number, zeroValue?: number, oneValue?: number }
-export type NbtListBracketSpacingConfig = { list?: number, compound?: number } & BracketSpacingConfig
+export interface SepSpacingConfig {
+    before: number,
+    after: number
+}
+export interface BracketSpacingConfig {
+    inside: number,
+    zeroValue?: number,
+    oneValue?: number
+}
+export interface NbtListBracketSpacingConfig extends BracketSpacingConfig {
+    list?: number,
+    compound?: number
+}
 
 export type DiagnosticConfig<T> = null | [SeverityConfig, T]
 
-export function getDiagnosticSeverity(s: SeverityConfig | undefined) {
+export function getDiagnosticSeverity(s: SeverityConfig | undefined, fallback: DiagnosticSeverity = DiagnosticSeverity.Hint) {
     switch (s) {
         case 'error':
             return DiagnosticSeverity.Error
@@ -17,7 +27,8 @@ export function getDiagnosticSeverity(s: SeverityConfig | undefined) {
         case 'information':
             return DiagnosticSeverity.Information
         case 'hint':
-        default:
             return DiagnosticSeverity.Hint
+        default:
+            return fallback
     }
 }

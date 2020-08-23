@@ -2,10 +2,9 @@ import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
-import { Registry, TextRange } from '../types'
-import { CacheType, ClientCache, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
+import { isNamespacedType, NamespacedType, setCache, TextRange, TreeSummary } from '../types'
+import { CacheType, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
 import { Config, LintConfig } from '../types/Config'
-import { NamespaceSummary } from '../types/NamespaceSummary'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../types/ParsingError'
@@ -27,154 +26,246 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
      */
     /* istanbul ignore next */
     constructor(
-        private readonly type: string | string[],
+        private readonly type: string | string[] | TreeSummary,
         private readonly allowTag = false,
         private readonly isPredicate = false,
         private readonly allowUnknown = false,
         private readonly isDefinition = false
     ) {
         super()
+        if (typeof this.type === 'string' && this.type.startsWith('$')) {
+            const cacheType = this.type.slice(1)
+            if (!isNamespacedType(cacheType)) {
+                throw new Error(`Received non-NamespacedType: “${cacheType}”.`)
+            }
+        }
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<IdentityNode> {
-        const ans = ArgumentParserResult.create(new IdentityNode())
         const start = reader.cursor
-        let stringID = ''
-        let isTag = false
-
-        //#region Completions: prepare.
-        const { tagPool, idPool, complNamespaces, complFolders, complFiles } = this.setUpCompletion(ctx.cache, ctx.config, ctx.namespaceSummary, ctx.registry)
-        //#endregion
-
-        //#region Data.
-        let selectedRange: TextRange | undefined = undefined
-        let namespace: string | undefined = undefined;
-        ({ namespace, isTag, stringID, selectedRange } = this.parseData(reader, isTag, ans, start, tagPool, idPool, ctx.config, ctx.cursor, complNamespaces, complFolders, complFiles, stringID))
-        //#endregion
-
-        //#region Completions: apply.
-        this.applyCompletions(ans, start, ctx, complNamespaces, complFolders, complFiles, selectedRange?.start ?? ctx.cursor, selectedRange?.end ?? ctx.cursor)
-        //#endregion
-
-        //#region Errors.
-        if (reader.cursor - start && stringID) {
-            this.checkIfIdExist(isTag, ans, reader, namespace, stringID, start, ctx.config, ctx.cache, ctx.registry, ctx.namespaceSummary)
-        } else {
-            this.addEmptyError(start, ans)
-        }
-        //#endregion
-
-        //#region Cache.
-        this.addDefinitionCache(ans, stringID, start, reader.cursor)
-        //#endregion
-
-        //#region Tokens.
-        ans.tokens.push(Token.from(start, reader, TokenType.identity))
-        //#endregion
-
+        const idString = reader.readUntilOrEnd(' ')
+        const ans = ArgumentParserResult.create(IdentityNode.fromString(idString))
         ans.data[NodeRange] = { start, end: reader.cursor }
+
+        const options = this.getOptions(ctx)
+
+        this.validate(ans, ctx, options)
+        this.suggest(ans, ctx, options)
+        this.cache(ans, ctx, options)
+        this.tokenize(ans)
 
         return ans
     }
 
-    private parseData(reader: StringReader, isTag: boolean, ans: ArgumentParserResult<IdentityNode>, start: number, tagPool: string[], idPool: string[], config: Config, cursor: number, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, stringID: string) {
-        let namespace: string | undefined = undefined
-        const paths: string[] = []
-
-        // Whether this is a tag ID.
-        if (reader.peek() === IdentityNode.TagSymbol) {
-            reader.skip()
-            isTag = true
-            if (!this.allowTag) {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    locale('unexpected-datapack-tag')
-                ))
+    private resolvePool(ctx: ParsingContext): TreeSummary {
+        if (typeof this.type === 'string') {
+            let ans: TreeSummary = {}
+            if (this.type.startsWith('$')) {
+                const cacheType = this.type.slice(1) as NamespacedType
+                ans = this.mergeVanillaPool(
+                    TreeSummary.fromFlattened(Object.keys(ctx.cache[cacheType] ?? {})),
+                    cacheType, ctx
+                )
+            } else {
+                ans = TreeSummary.fromFlattened(Object.keys(ctx.registry[this.type].entries))
             }
-        }
-        let pool = isTag ? tagPool : idPool
-
-        const shouldOmitNamespace = !this.isPredicate && config.lint.idOmitDefaultNamespace && config.lint.idOmitDefaultNamespace[1]
-        const namespaceSeverity = config.lint.idOmitDefaultNamespace ? getDiagnosticSeverity(config.lint.idOmitDefaultNamespace[0]) : DiagnosticSeverity.Warning
-
-        let path0 = this.readValidString(reader, ans)
-        let selectedRange = this.completeBeginning(shouldOmitNamespace, start, cursor, reader, isTag, tagPool, complNamespaces, complFolders, complFiles, pool)
-        const path0Result = this.parseNamespaceAndFirstPath(reader, shouldOmitNamespace, path0, ans, start, namespaceSeverity, namespace, pool, cursor, complFolders, complFiles, paths);
-        ({ path0, namespace, pool } = path0Result)
-        selectedRange = path0Result.selectedRange ?? selectedRange
-        selectedRange = this.parseRemaningPaths(reader, ans, pool, paths, cursor, complFolders, complFiles) ?? selectedRange
-
-        ans.data = new IdentityNode(namespace, paths, isTag, typeof this.type === 'string' ? this.type : undefined)
-        stringID = ans.data.toString()
-        return { namespace, isTag, stringID, selectedRange }
-    }
-
-    private addEmptyError(start: number, ans: ArgumentParserResult<IdentityNode>) {
-        ans.errors.push(new ParsingError(
-            { start, end: start + 1 },
-            locale('expected-got',
-                locale('identity'),
-                locale('nothing')
-            ),
-            false
-        ))
-    }
-
-    private addDefinitionCache(ans: ArgumentParserResult<IdentityNode>, stringID: string, start: number, end: number) {
-        if (this.isDefinition && typeof this.type === 'string' && this.type.startsWith('$')) {
-            ans.cache = {
-                [this.type.slice(1)]: {
-                    [stringID]: { def: [{ start, end }], ref: [] }
+            if (this.allowTag) {
+                const tagType = IdentityNode.getTagType(this.type)
+                if (tagType) {
+                    const tagTree = TreeSummary.fromFlattened(Object.keys(ctx.cache[tagType] ?? {}))
+                    for (const key of Object.keys(tagTree)) {
+                        ans[`${IdentityNode.TagSymbol}${key}`] = tagTree[key]
+                    }
                 }
             }
+            return ans
+        } else if (this.type instanceof Array) {
+            return TreeSummary.fromFlattened(this.type)
+        } else {
+            return this.type
         }
     }
 
-    private applyCompletions(ans: ArgumentParserResult<IdentityNode>, idStart: number, ctx: ParsingContext, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, suggestionStart: number, suggestionEnd: number) {
-        // namespace -> CompletionItemKind.Module
-        // folder -> CompletionItemKind.Folder
-        // file -> CompletionItemKind.Field
-        /// advancement file -> CompletionItemKind.Event
-        /// function (tag) file -> CompletionItemKind.Function
-        let fileKind: CompletionItemKind
-        switch (this.type) {
-            case '$advancement':
-                fileKind = CompletionItemKind.Event
-                break
-            case '$function':
-            case '$tag/function':
-                fileKind = CompletionItemKind.Function
-                break
-            default:
-                fileKind = CompletionItemKind.Field
-                break
+    private resolveTagPool(ctx: ParsingContext): TreeSummary | undefined {
+        if (typeof this.type === 'string' && this.allowTag) {
+            const tagType = IdentityNode.getTagType(this.type)
+            if (tagType) {
+                return this.mergeVanillaPool(
+                    TreeSummary.fromFlattened(Object.keys(ctx.cache[tagType] ?? {})),
+                    tagType, ctx
+                )
+            }
         }
-        complNamespaces.forEach(k => void ans.completions.push({
-            label: k,
-            start: suggestionStart, end: suggestionEnd,
-            kind: CompletionItemKind.Module
-        }))
-        complFolders.forEach(k => void ans.completions.push({
-            label: k,
-            start: suggestionStart, end: suggestionEnd,
-            kind: CompletionItemKind.Folder
-        }))
-        complFiles.forEach(k => void ans.completions.push({
-            label: k,
-            start: suggestionStart, end: suggestionEnd,
-            kind: fileKind
-        }))
+        return undefined
+    }
 
-        // Add 'THIS' to completions
-        if (idStart === ctx.cursor && ctx.id &&
+    private mergeVanillaPool(tree: TreeSummary, type: CacheType, ctx: ParsingContext): TreeSummary {
+        if (isFileType(type)) {
+            return { ...tree, ...ctx.namespaceSummary[type] }
+        }
+        return tree
+    }
+
+    private getOptions(ctx: ParsingContext): IdentityParserOptions {
+        const idOmitDefaultNamespace = ctx.config.lint.idOmitDefaultNamespace
+        return {
+            canIncludeNamespace: this.isPredicate || !idOmitDefaultNamespace || !idOmitDefaultNamespace[1],
+            canOmitNamespace: !this.isPredicate && (!idOmitDefaultNamespace || idOmitDefaultNamespace[1]),
+            namespaceSeverity: getDiagnosticSeverity(idOmitDefaultNamespace?.[0]),
+            pool: this.resolvePool(ctx),
+            tagPool: this.resolveTagPool(ctx)
+        }
+    }
+
+    private validate(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
+        this.validateNotEmpty(ans)
+        this.validateAllowTag(ans)
+    }
+
+    private validateNotEmpty({ data, errors }: ArgumentParserResult<IdentityNode>) {
+        if (data.range.end - data.range.start <= 0) {
+            errors.push(new ParsingError(
+                { start: data.range.start, end: data.range.start + 1 },
+                locale('expected-got',
+                    locale('identity'),
+                    locale('nothing')
+                ),
+                false
+            ))
+        }
+    }
+
+    private validateAllowTag({ data, errors }: ArgumentParserResult<IdentityNode>) {
+        if (data.isTag && !this.allowTag) {
+            errors.push(new ParsingError(data.range,
+                locale('unexpected-datapack-tag')
+            ))
+        }
+    }
+
+    private validateChars({ data, errors }: ArgumentParserResult<IdentityNode>): string {
+        const start = reader.cursor
+        const value = reader.readUnquotedString()
+        const end = reader.cursor
+        if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
+            errors.push(new ParsingError(
+                { start, end },
+                locale('unexpected-character')
+            ))
+        }
+        return value
+    }
+
+    private suggest(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
+        this.suggestThis(ans, ctx)
+        this.suggestFirstPart(ans, ctx, options)
+        this.suggestRestParts(ans, ctx, options)
+    }
+
+    private suggestThis(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext) {
+        if (ans.data.range.start === ctx.cursor && ctx.id &&
             typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
         ) {
             ans.completions.push({
+                ...ans.data.range,
                 label: 'THIS',
                 insertText: ctx.id.toTagString(),
-                start: suggestionStart, end: suggestionEnd,
                 detail: ctx.id.toTagString(),
                 kind: CompletionItemKind.Snippet
+            })
+        }
+    }
+
+    private suggestFirstPart(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
+        const { data } = ans
+        const firstPartEnd = data.range.start + (
+            data.namespace !== undefined ? data.namespace.length : (data.path?.[0].length ?? 0)
+        )
+        if (data.range.start <= ctx.cursor && ctx.cursor <= firstPartEnd) {
+            this.addFirstPartSuggestions(ans, options, false)
+        }
+    }
+
+    private suggestRestParts(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
+        const { data } = ans
+        const firstPartEnd = data.range.start + (
+            data.namespace !== undefined ? data.namespace.length : (data.path?.[0].length ?? 0)
+        )
+        if (data.range.start <= ctx.cursor && ctx.cursor <= firstPartEnd) {
+            this.addFirstPartSuggestions(ans, options, false)
+        }
+    }
+
+    private addFirstPartSuggestions(ans: ArgumentParserResult<IdentityNode>, options: IdentityParserOptions, isTag: boolean) {
+        if (options.canIncludeNamespace) {
+            this.addSuggestions(ans, ans.data.range.start, options.pool, options.tagPool, true, true)
+        }
+        if (options.canOmitNamespace) {
+            this.addSuggestions(ans, ans.data.range.start, options.pool[IdentityNode.DefaultNamespace]?.$children, options.tagPool?.[IdentityNode.DefaultNamespace]?.$children, false, true)
+        }
+    }
+
+    private addSuggestions({ data, completions }: ArgumentParserResult<IdentityNode>, start: number, tree: TreeSummary = {}, tagTree: TreeSummary = {}, isNamespace = false, isTaggable = false) {
+        const addSingleSuggestion = (label: string, type: SuggestionType) => completions.push({
+            start, end: data.range.end, label, kind: this.getSuggestionKind(type)
+        })
+        const addSuggestionsForTree = (tree: TreeSummary, labelModifier = (l: string) => l) => {
+            for (const key of Object.keys(tree)) {
+                if (tree[key]!.$children && Object.keys(tree[key]!.$children!).length) {
+                    addSingleSuggestion(labelModifier(key.toString()), isNamespace ? SuggestionType.Namespace : SuggestionType.Folder)
+                }
+                if (tree[key]!.$end) {
+                    addSingleSuggestion(labelModifier(key.toString()), SuggestionType.File)
+                }
+            }
+        }
+        addSuggestionsForTree(tree)
+        addSuggestionsForTree(tagTree, l => isTaggable ? `${IdentityNode.TagSymbol}${l}` : l)
+    }
+
+    /**
+     * - namespace -> CompletionItemKind.Module
+     * - folder -> CompletionItemKind.Folder
+     * - file -> CompletionItemKind.Field
+     *   - advancement file -> CompletionItemKind.Event
+     *   - function (tag) file -> CompletionItemKind.Function
+     */
+    private getSuggestionKind(type: SuggestionType): CompletionItemKind {
+        switch (type) {
+            case SuggestionType.Namespace:
+                return CompletionItemKind.Module
+            case SuggestionType.Folder:
+                return CompletionItemKind.Folder
+            default:
+                switch (this.type) {
+                    case '$advancement':
+                        return CompletionItemKind.Event
+                    case '$function':
+                    case '$tag/function':
+                        return CompletionItemKind.Function
+                    default:
+                        return CompletionItemKind.Field
+                }
+        }
+    }
+
+    private cache(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
+        this.cacheDefinition(ans)
+    }
+
+    private tokenize(ans: ArgumentParserResult<IdentityNode>) {
+        ans.tokens.push(new Token(ans.data.range, TokenType.identity))
+    }
+
+    private cacheDefinition(ans: ArgumentParserResult<IdentityNode>) {
+        if (this.isDefinition && typeof this.type === 'string' && this.type.startsWith('$')) {
+            setCache(ans.cache, {
+                category: this.type.slice(1) as NamespacedType,
+                unit: ans.data.toString(),
+                pos: {
+                    type: 'def',
+                    value: ans.data.range
+                }
             })
         }
     }
@@ -344,41 +435,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
-    private setUpCompletion(cache: ClientCache, config: Config, namespaceSummary: NamespaceSummary, registries: Registry) {
-        const tagPool: string[] = []
-        const idPool: string[] = []
-        // Set `tagPool`.
-        if (this.allowTag) {
-            const type = IdentityNode.getTagType(this.type as string)!
-            const category = getSafeCategory(cache, type)
-            tagPool.push(...Object.keys(category))
-            if (config.env.dependsOnVanilla) {
-                tagPool.push(...this.getVanillaPool(type, namespaceSummary))
-            }
-        }
-        // Set `idPool`.
-        if (this.type instanceof Array) {
-            idPool.push(...this.type)
-        } else if (this.type.startsWith('$')) {
-            const type = this.type.slice(1) as CacheType
-            idPool.push(...Object.keys(getSafeCategory(cache, type)))
-            if (config.env.dependsOnVanilla) {
-                idPool.push(...this.getVanillaPool(type, namespaceSummary))
-            }
-        } else {
-            const registry = registries[this.type]
-            if (registry) {
-                idPool.push(...Object.keys(registry.entries))
-            } else {
-                console.error(`Identity registry “${this.type}” doesn't exist!`)
-            }
-        }
-        const complNamespaces = new Set<string>()
-        const complFolders = new Set<string>()
-        const complFiles = new Set<string>()
-        return { tagPool, idPool, complNamespaces, complFolders, complFiles }
-    }
-
     private shouldCheck() {
         return !this.allowUnknown && !this.isDefinition
     }
@@ -465,31 +521,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         }
     }
 
-    /* istanbul ignore next: tired of writing tests */
-    private getVanillaPool(type: CacheType, vanilla: NamespaceSummary): string[] {
-        const ans = vanilla[type as keyof NamespaceSummary] ?? []
-        if (type === 'loot_table') {
-            ans.push('minecraft:empty')
-        }
-        return ans
-    }
-
-    /**
-     * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
-     */
-    private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>): string {
-        const start = reader.cursor
-        const value = reader.readUnquotedString()
-        const end = reader.cursor
-        if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
-            ans.errors.push(new ParsingError(
-                { start, end },
-                locale('unexpected-character')
-            ))
-        }
-        return value
-    }
-
     /**
      * Add the first element of the `paths` to `complFolders` or `complFiles`, accordingly.
      * @param comlPaths The paths of the ID completion.
@@ -547,4 +578,18 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     getExamples(): string[] {
         return [`example${IdentityNode.NamespaceDelimiter}foo${IdentityNode.PathSep}bar`]
     }
+}
+
+const enum SuggestionType {
+    Namespace,
+    Folder,
+    File
+}
+
+interface IdentityParserOptions {
+    canOmitNamespace: boolean,
+    canIncludeNamespace: boolean,
+    namespaceSeverity: DiagnosticSeverity,
+    pool: TreeSummary,
+    tagPool: TreeSummary | undefined
 }

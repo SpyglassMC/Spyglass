@@ -260,8 +260,11 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
 
 type DocCommentData = { data: ArgumentNode }[]
 
-type AnnotationValue = { raw: string, range: TextRange }
-type Annotation = {
+interface AnnotationValue {
+    raw: string,
+    range: TextRange
+}
+interface Annotation {
     value: AnnotationValue,
     children?: Annotation[]
 }

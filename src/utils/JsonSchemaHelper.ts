@@ -537,7 +537,7 @@ export class JsonSchemaHelper {
     }
 }
 
-type SelectNodeResult = {
+interface SelectNodeResult {
     node: ASTNode | undefined,
     schema: INode | undefined,
     path: ModelPath,

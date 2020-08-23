@@ -20,7 +20,7 @@ import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTe
 
 type ShowMessage = (message: string) => void
 
-type DatapackLanguageServiceOptions = {
+interface DatapackLanguageServiceOptions {
     applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
     cacheFile?: CacheFile,
     capabilities?: ClientCapabilities,

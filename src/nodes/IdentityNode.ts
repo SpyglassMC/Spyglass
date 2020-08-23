@@ -20,6 +20,8 @@ export class IdentityNode extends ArgumentNode {
 
     readonly [NodeType] = 'Identity'
 
+    get range() { return this[NodeRange] }
+
     constructor(
         public namespace: string | undefined = undefined,
         public path: string[] = [],
@@ -51,6 +53,15 @@ export class IdentityNode extends ArgumentNode {
 
     private isDefaultNamespace() {
         return this.getNamespace() === IdentityNode.DefaultNamespace
+    }
+
+    /**
+     * Get all segments of this ID, including the namespace.
+     * @example IdentityNode.fromString('minecraft:foo/bar').getSegments() // ['minecraft', 'foo', 'bar']
+     * @example IdentityNode.fromString('foo/bar').getSegments() // ['minecraft', 'foo', 'bar']
+     */
+    getSegments() {
+        return [this.getNamespace(), ...this.path]
     }
 
     /**

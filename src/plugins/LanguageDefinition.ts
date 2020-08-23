@@ -1,7 +1,7 @@
 /**
  * Definition for a certain mcfunction-like language.
  */
-export type LanguageDefinition = {
+export interface LanguageDefinition {
     /**
      * File extensions associated to the language.
      * @example

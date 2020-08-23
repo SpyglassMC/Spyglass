@@ -325,6 +325,10 @@ export async function pathAccessible(path: string) {
         .catch(() => false)
 }
 
+export function ensureObj<K extends string, V>(obj: Partial<Record<K, any>>, key: K, val: NonNullable<V>): NonNullable<V> {
+    return obj[key] = obj[key] ?? val
+}
+
 export async function readFile(path: string): Promise<string> {
     return new Promise((resolve, reject) => {
         let data = ''

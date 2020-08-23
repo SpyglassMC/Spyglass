@@ -5,14 +5,14 @@ import { LanguageDefinition } from './LanguageDefinition'
 /**
  * Configuration for a certain mcfunction-like language.
  */
-export type LanguageConfig = {
+export interface LanguageConfig {
     /**
      * An array of `SyntaxComponent`s that the language supports.
      */
     syntaxComponentParsers?: SyntaxComponentParser[]
 }
 
-export type Contributions = {
+export interface Contributions {
     languageDefinitions: Map<string, LanguageDefinition>,
     syntaxComponentParsers: Map<string, SyntaxComponentParser>
 }

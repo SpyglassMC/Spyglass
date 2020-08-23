@@ -128,12 +128,7 @@ export function isNamespacedType(value: string): value is NamespacedType {
 /**
  * A category in `ClientCache`.
  */
-export type CacheCategory = {
-    /**
-     * The unit regarding this id.
-     */
-    [id: string]: CacheUnit | undefined
-}
+export interface CacheCategory extends Partial<Record<string, CacheUnit>> { }
 
 export type CacheUnitPositionType = 'dcl' | 'def' | 'ref'
 export const CacheUnitPositionTypes: CacheUnitPositionType[] = ['dcl', 'def', 'ref']
@@ -145,14 +140,17 @@ export function isCacheUnitPositionType(value: string): value is CacheUnitPositi
 /**
  * An unit in `CacheCategory`.
  */
-export type CacheUnit = {
+export interface CacheUnit extends Partial<Record<CacheUnitPositionType, CachePosition[]>> {
     /**
      * The user-defined documentation for the unit.
      */
     doc?: string
-} & { [key in CacheUnitPositionType]?: CachePosition[] }
+}
 
-export type CacheVisibility = { pattern: string, type: FileType | '*' }
+export interface CacheVisibility {
+    pattern: string,
+    type: FileType | '*'
+}
 
 /**
  * An element in `CacheUnit`.
@@ -378,6 +376,31 @@ export function getSafeCategory(cache: ClientCache | undefined, type: CacheType)
 export function setUpUnit(cache: ClientCache | undefined, type: CacheType, id: IdentityNode, defaultValue: CacheUnit = {}) {
     const stringID = id.toString()
     return ((cache = cache ?? {})[type] = cache[type] ?? {})[stringID] = cache[type]![stringID] ?? defaultValue
+}
+
+interface SetCachePath {
+    category: CacheType,
+    unit: string,
+    pos: {
+        type: CacheUnitPositionType,
+        value: CachePosition
+    }
+}
+export function setCache(cache: ClientCache, path: Pick<SetCachePath, 'category'>): CacheCategory
+export function setCache(cache: ClientCache, path: Pick<SetCachePath, 'category' | 'unit'>): CacheUnit
+export function setCache(cache: ClientCache, path: SetCachePath): CachePosition[]
+export function setCache(cache: ClientCache, { category, unit, pos }: Partial<SetCachePath>): ClientCache | CacheCategory | CacheUnit | CachePosition[] {
+    const ansCategory = cache[category!] = cache[category!] ?? {}
+    if (unit) {
+        const ansUnit = ansCategory[unit] = ansCategory[unit] ?? {}
+        if (pos) {
+            const ansPos = ansUnit[pos.type] = ansUnit[pos.type] ?? []
+            ansPos.push(pos.value)
+            return ansPos
+        }
+        return ansUnit
+    }
+    return ansCategory
 }
 
 export function getCompletions(cache: ClientCache, type: CacheType, start: number, end: number) {

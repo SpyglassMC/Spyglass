@@ -13,7 +13,7 @@ export const FilterDiagnostics = Symbol('FilterDiagnostics')
 export const GetHover = Symbol('GetHover')
 export const GetPlainKeys = Symbol('GetPlainKeys')
 
-export type DiagnosticMap = { [code in ErrorCode]?: Diagnostic[] }
+export interface DiagnosticMap extends Partial<Record<ErrorCode, Diagnostic[]>> { }
 
 const Triage = Symbol('Triage')
 

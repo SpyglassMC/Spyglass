@@ -1,11 +1,7 @@
-export type SingleRegistry = {
+export interface SingleRegistry {
     default?: string,
     protocol_id: number,
-    entries: {
-        [id: string]: {
-            protocol_id: number
-        }
-    }
+    entries: Record<string, { protocol_id: number }>
 }
 
 export interface Registry {

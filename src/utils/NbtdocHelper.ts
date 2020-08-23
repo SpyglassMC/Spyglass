@@ -39,49 +39,43 @@ import { DiagnosticConfig, getDiagnosticSeverity } from '../types/StylisticConfi
 import { remapTokens } from '../types/Token'
 import { StringReader } from './StringReader'
 
-type CompoundSupers = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
-type RegistrySupers = { Registry: { target: string, path: nbtdoc.FieldPath[] } }
+interface CompoundSupers { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
+interface RegistrySupers { Registry: { target: string, path: nbtdoc.FieldPath[] } }
 type Supers = CompoundSupers | RegistrySupers | null
 
 type BooleanDoc = 'Boolean'
 
-type ByteDoc = { Byte: nbtdoc.NumberTag }
+interface ByteDoc { Byte: nbtdoc.NumberTag }
 
-type ShortDoc = { Short: nbtdoc.NumberTag }
+interface ShortDoc { Short: nbtdoc.NumberTag }
 
-type IntDoc = { Int: nbtdoc.NumberTag }
+interface IntDoc { Int: nbtdoc.NumberTag }
 
-type LongDoc = { Long: nbtdoc.NumberTag }
+interface LongDoc { Long: nbtdoc.NumberTag }
 
-type FloatDoc = { Float: nbtdoc.NumberTag }
+interface FloatDoc { Float: nbtdoc.NumberTag }
 
-type DoubleDoc = { Double: nbtdoc.NumberTag }
+interface DoubleDoc { Double: nbtdoc.NumberTag }
 
 type StringDoc = 'String'
 
-type ByteArrayDoc = { ByteArray: nbtdoc.NumberArrayTag }
+interface ByteArrayDoc { ByteArray: nbtdoc.NumberArrayTag }
 
-type IntArrayDoc = { IntArray: nbtdoc.NumberArrayTag }
+interface IntArrayDoc { IntArray: nbtdoc.NumberArrayTag }
 
-type LongArrayDoc = { LongArray: nbtdoc.NumberArrayTag }
+interface LongArrayDoc { LongArray: nbtdoc.NumberArrayTag }
 
-export type CompoundDoc = { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
+export interface CompoundDoc { Compound: nbtdoc.Index<nbtdoc.CompoundTag> }
 
-type EnumDoc = { Enum: nbtdoc.Index<nbtdoc.EnumItem> }
+interface EnumDoc { Enum: nbtdoc.Index<nbtdoc.EnumItem> }
 
-export type ListDoc = { List: { length_range: [number, number] | null, value_type: nbtdoc.NbtValue } }
+export interface ListDoc { List: { length_range: [number, number] | null, value_type: nbtdoc.NbtValue } }
 
-export type IndexDoc = { Index: { target: string, path: nbtdoc.FieldPath[] } }
+export interface IndexDoc { Index: { target: string, path: nbtdoc.FieldPath[] } }
 
-type IdDoc = { Id: string }
+interface IdDoc { Id: string }
 
-export type OrDoc = { Or: nbtdoc.NbtValue[] }
-
-type NbtdocHelperOptions = {
-    description: string | null,
-    doc: nbtdoc.NbtValue,
-    tag: NbtCompoundNode | null
-}
+export interface OrDoc { Or: nbtdoc.NbtValue[] }
 
 export class NbtdocHelper {
     constructor(private readonly doc: nbtdoc.Root) { }
@@ -1117,8 +1111,7 @@ export class NbtdocHelper {
 
     static getKeyDescription(value: nbtdoc.NbtValue, description: string) {
         return `${NbtdocHelper.localeType(NbtdocHelper.getValueType(value))
-            }\n* * * * * *\n${
-            NbtdocHelper.handleDescription(description)}`
+            }\n* * * * * *\n${NbtdocHelper.handleDescription(description)}`
     }
 
     static forEachOrDoc<T>(ans: ArgumentParserResult<T>, reader: StringReader, doc: OrDoc, cb: (ans: ArgumentParserResult<T>, reader: StringReader, doc: nbtdoc.NbtValue) => any): void {

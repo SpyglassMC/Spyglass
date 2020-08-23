@@ -8,7 +8,6 @@ import { ClientCache, CommandComponent, CommandComponentData, Config, constructC
 import { StringReader } from '../utils/StringReader'
 
 type Range = TextRange | [number, number]
-type Object = { [key: string]: any }
 type Callback<T> = (e: T) => T
 
 function isTextRange(val: any): val is TextRange {

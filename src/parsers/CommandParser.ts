@@ -337,6 +337,6 @@ export class CommandParser implements Parser<CommandComponent> {
     }
 }
 
-type ParserResult = {
+interface ParserResult {
     data: CommandComponent
 }

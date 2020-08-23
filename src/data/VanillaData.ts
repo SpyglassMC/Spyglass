@@ -3,16 +3,16 @@
 import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
-import { compileNamespaceSummary, NamespaceSummary, RawNamespaceSummary } from '../types/NamespaceSummary'
+import { NamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
-import { requestText, pathAccessible, readFile } from '../utils'
+import { pathAccessible, readFile, requestText } from '../utils'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
 
-export type VanillaData = {
+export interface VanillaData {
     BlockDefinition: BlockDefinition,
     Nbtdoc: nbtdoc.Root,
     Registry: Registry,
@@ -20,9 +20,7 @@ export type VanillaData = {
 }
 
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
-export const FallbackRawNamespaceSummary: RawNamespaceSummary = require('./NamespaceSummary.json') as RawNamespaceSummary
-export const MyNamespaceSummary: Partial<NamespaceSummary> = require('./MyNamespaceSummary.json') as Partial<NamespaceSummary>
-export const FallbackNamespaceSummary: NamespaceSummary = compileNamespaceSummary(FallbackRawNamespaceSummary, MyNamespaceSummary)
+export const FallbackNamespaceSummary: NamespaceSummary = require('./NamespaceSummary.json') as NamespaceSummary
 export const FallbackNbtdoc: nbtdoc.Root = require('./Nbtdoc.json') as nbtdoc.Root
 export const FallbackRegistry: Registry = require('./Registry.json') as Registry
 
@@ -34,15 +32,15 @@ export const FallbackVanillaData: VanillaData = {
 }
 
 export const VanillaDataCache: {
-    BlockDefinition: { [version: string]: Promise<BlockDefinition> },
-    NamespaceSummary: { [version: string]: Promise<NamespaceSummary> },
-    Nbtdoc: { [version: string]: Promise<nbtdoc.Root> },
-    Registry: { [version: string]: Promise<Registry> }
+    BlockDefinition: Record<string, Promise<BlockDefinition>>,
+    NamespaceSummary: Record<string, Promise<NamespaceSummary>>,
+    Nbtdoc: Record<string, Promise<nbtdoc.Root>>,
+    Registry: Record<string, Promise<Registry>>
 } = {
-    BlockDefinition: { '20w28a': Promise.resolve(FallbackBlockDefinition) },
+    BlockDefinition: { '1.16.2': Promise.resolve(FallbackBlockDefinition) },
     NamespaceSummary: { '20w28a': Promise.resolve(FallbackNamespaceSummary) },
-    Nbtdoc: { '1.16.1': Promise.resolve(FallbackNbtdoc) },
-    Registry: { '20w28a': Promise.resolve(FallbackRegistry) }
+    Nbtdoc: { '1.16.2': Promise.resolve(FallbackNbtdoc) },
+    Registry: { '1.16.2': Promise.resolve(FallbackRegistry) }
 }
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
@@ -114,10 +112,6 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                         console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath.replace(globalStoragePath!, '${globalStoragePath}')}.`)
                     }
                     ans = json
-                }
-                if (type === 'NamespaceSummary') {
-                    ans = compileNamespaceSummary(ans as RawNamespaceSummary, MyNamespaceSummary)
-                    console.info(`[VanillaData: ${type} for ${version}] Merged MyNamespaceSummary.json in.`)
                 }
                 resolve(ans)
             } catch (e) {

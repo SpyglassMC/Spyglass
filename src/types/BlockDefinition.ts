@@ -1,4 +1,4 @@
-export type SingleBlockDefinition = {
+export interface SingleBlockDefinition {
     properties?: {
         [key: string]: string[]
     },
