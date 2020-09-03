@@ -84,7 +84,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 )
             }
             const category = getSafeCategory(ctx.cache, 'score_holder')
-            if (ctx.config.lint.strictScoreHolderCheck && ctx.config.lint.strictScoreHolderCheck![1] && !Object.keys(category).includes(plain)) {
+            if (ctx.config.lint.strictScoreHolderCheck && ctx.config.lint.strictScoreHolderCheck![1] && !EntityArgumentParser.UuidPattern.test(plain) && !Object.keys(category).includes(plain)) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + plain.length },
                     locale('undefined-scoreholder', locale('punc.quote', plain)),
