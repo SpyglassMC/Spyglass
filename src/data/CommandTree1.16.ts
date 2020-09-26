@@ -898,11 +898,11 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true,
                             children: {
                                 to: {
-                                    parser: new VectorArgumentParser(2),
+                                    parser: new VectorArgumentParser(2, 'integer'),
                                     executable: true
                                 }
                             }
@@ -913,11 +913,11 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true,
                             children: {
                                 to: {
-                                    parser: new VectorArgumentParser(2),
+                                    parser: new VectorArgumentParser(2, 'integer'),
                                     executable: true
                                 }
                             }
@@ -933,7 +933,7 @@ export const CommandTree: ICommandTree = {
                     executable: true,
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true
                         }
                     }
