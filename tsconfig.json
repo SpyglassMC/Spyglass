@@ -14,6 +14,7 @@
         "pretty": true,
         "alwaysStrict": true,
         "strictNullChecks": true,
+        "stripInternal": true,
         "declaration": true,
         "newLine": "LF",
         "resolveJsonModule": true
