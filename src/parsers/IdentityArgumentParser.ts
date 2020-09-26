@@ -34,6 +34,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         private readonly isDefinition = false
     ) {
         super()
+        if (typeof this.type === 'string' && !this.type.startsWith('$')) {
+            this.type = IdentityNode.fromString(this.type).toString()
+        }
     }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<IdentityNode> {

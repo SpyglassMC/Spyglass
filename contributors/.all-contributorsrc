@@ -26,6 +26,7 @@
       "contributions": [],
       "details": [
         { "type": "localization", "link": "commits?author=ChenCMD", "text": "Japanese (ja)" },
+        { "type": "code", "link": "commits?author=ChenCMD", "text": "#694" },
         { "type": "ideas", "link": "issues/410", "text": "#410" },
         { "type": "ideas", "link": "issues/582", "text": "#582" },
         { "type": "bug", "link": "issues/421", "text": "#421" },
@@ -104,6 +105,15 @@
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/681", "text": "#681" }
+      ]
+    },
+    {
+      "name": "eke0909",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/50884607?s=400&v=4",
+      "profile": "https://github.com/eke0909",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/700", "text": "#700" }
       ]
     },
     {
