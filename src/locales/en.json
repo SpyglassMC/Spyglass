@@ -145,6 +145,7 @@
     "time-unit": "a time unit",
     "too-long": "%0% exceeds the max length of %1%, which is %2%",
     "too-many-block-affected": "Too many blocks in the specified area (maximum %0%, specified %1%)",
+    "undefined-scoreholder": "Undefined score_holder %0%",
     "undefined-objective": "Undefined objective %0%",
     "undefined-tag": "Undefined tag %0%",
     "undefined-team": "Undefined team %0%",
