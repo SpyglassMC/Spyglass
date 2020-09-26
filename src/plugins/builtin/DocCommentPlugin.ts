@@ -249,6 +249,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
         for (const type of Object.keys(ans.cache)) {
             for (const id of Object.keys(ans.cache[type as CacheType]!)) {
                 const unit = ans.cache[type as CacheType]![id]!
+                docComment[NodeDescription] = docComment.valueOf()
                 unit.doc = docComment[NodeDescription]
                 for (const pos of [...unit.dcl ?? [], ...unit.def ?? []]) {
                     pos.visibility = visibility
@@ -275,11 +276,6 @@ class DocCommentNode extends ArgumentNode {
     annotations: Annotation[] = []
 
     functionID: IdentityNode | undefined = undefined
-
-    set [NodeDescription](_: string) { }
-    get [NodeDescription]() {
-        return this.valueOf()
-    }
 
     get flattenedAnnotations() {
         return DocCommentNode.flattenAnnotations(this.annotations)
