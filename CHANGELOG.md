@@ -1,3 +1,8 @@
+# [v3.0.3](https://github.com/SPGoding/datapack-language-server/compare/v3.0.2...v3.0.3) (2020-09-26)
+
+## 🐛 Bug Fixes
+- [`fec3da0`](https://github.com/SPGoding/datapack-language-server/commit/fec3da0)  Fix crashes related to @mcschema (Issues: [`#700`](https://github.com/SPGoding/datapack-language-server/issues/700))
+
 # [v3.0.2](https://github.com/SPGoding/datapack-language-server/compare/v3.0.1...v3.0.2) (2020-09-26)
 
 ## 🐛 Bug Fixes
