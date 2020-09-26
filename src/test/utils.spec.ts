@@ -99,7 +99,7 @@ interface CompletionPredicate extends CompletionItem {
 
 export function assertCompletions(string: string | StringReader, completions: ParserSuggestion[] | undefined, predicates: CompletionPredicate[] = []) {
     assert(completions?.length === predicates.length)
-    if (completions.length === 0) {
+    if (completions!.length === 0) {
         return
     }
     if (string instanceof StringReader) {
@@ -111,7 +111,7 @@ export function assertCompletions(string: string | StringReader, completions: Pa
         delete ans.insertText; delete ans.start; delete ans.end; delete ans.t
         return ans
     }
-    for (const [i, completion] of completions?.entries()) {
+    for (const [i, completion] of completions!.entries()) {
         const resolvedTexts: string[] = []
         let matched = false
         for (const predicate of predicates.filter(p => p.label === completion.label)) {
