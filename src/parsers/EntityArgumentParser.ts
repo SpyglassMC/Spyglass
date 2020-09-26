@@ -74,13 +74,24 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 false
             ))
         }
-        if (this.isScoreHolder && plain.length > 40) {
-            ans.errors.push(
-                new ParsingError(
-                    { start, end: start + plain.length },
-                    locale('too-long', locale('punc.quote', plain), locale('score-holder'), 40)
+        if (this.isScoreHolder) {
+            if (plain.length > 40) {
+                ans.errors.push(
+                    new ParsingError(
+                        { start, end: start + plain.length },
+                        locale('too-long', locale('punc.quote', plain), locale('score-holder'), 40)
+                    )
                 )
-            )
+            }
+            const category = getSafeCategory(ctx.cache, 'score_holder')
+            if (ctx.config.lint.strictScoreHolderCheck && ctx.config.lint.strictScoreHolderCheck![1] && !EntityArgumentParser.UuidPattern.test(plain) && !Object.keys(category).includes(plain)) {
+                ans.errors.push(new ParsingError(
+                    { start, end: start + plain.length },
+                    locale('undefined-scoreholder', locale('punc.quote', plain)),
+                    undefined,
+                    getDiagnosticSeverity(ctx.config.lint.strictScoreHolderCheck![0])
+                ))
+            }
         } else if (!this.isScoreHolder && plain.length > 16 && !EntityArgumentParser.UuidPattern.test(plain)) {
             ans.errors.push(
                 new ParsingError(
@@ -92,6 +103,19 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
         //#endregion
 
         //#region Cache
+        if (this.isScoreHolder) {
+            const category = getSafeCategory(ctx.cache, 'score_holder')
+            if (Object.keys(category).includes(plain)) {
+                ans.cache = {
+                    score_holder: {
+                        [plain]: {
+                            def: [],
+                            ref: [{ start, end: start + plain.length }]
+                        }
+                    }
+                }
+            }
+        }
         const category = getSafeCategory(ctx.cache, 'entity')
         if (Object.keys(category).includes(plain)) {
             ans.cache = {
