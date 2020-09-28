@@ -937,14 +937,14 @@ export const CommandTree: ICommandTree = {
                                     run: ({ data, errors }) => {
                                         const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode()).getChunk()
                                         const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode()).getChunk()
-                                        if (v1 === undefined || v2 === undefined) {
+                                        if (!(v1 && v2)) {
                                             return
                                         }
                                         const volume = v1.volumeTo(v2)
                                         if (volume && volume > 256) {
                                             errors.push(new ParsingError(
                                                 { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                                locale('-block-affected', 256, volume),
+                                                locale('too-many-chunk-affected', 256, volume),
                                                 undefined, DiagnosticSeverity.Error
                                             ))
                                         }

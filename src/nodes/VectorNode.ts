@@ -63,15 +63,16 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         const vexX = this[0]
         const vexZ = this.length === 3 ? this[2] : this[1]
         // TODO: support VectorElementType.Relative
-        if (vexX.type != VectorElementType.Absolute || vexZ.type != VectorElementType.Absolute) {
+        if (vexX.type !== VectorElementType.Absolute || vexZ.type !== VectorElementType.Absolute) {
             return undefined
         }
-        return Object.assign(new VectorNode(), {
-            length: 2,
-            0: new VectorElementNode(VectorElementType.Absolute, Math.floor(vexX.valueOf() / 16), ''),
-            1: new VectorElementNode(VectorElementType.Absolute, Math.floor(vexZ.valueOf() / 16), ''),
-            [NodeRange]: this[NodeRange]
-        })
+        const ans = new VectorNode()
+        ans.push(
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexX.valueOf() / 16), ''),
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexZ.valueOf() / 16), '')
+        )
+        ans[NodeRange] = this[NodeRange]
+        return ans
     }
 
     distanceTo(other: VectorNode) {
