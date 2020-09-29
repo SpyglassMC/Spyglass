@@ -133,7 +133,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
      * Add next element to `ans`, and also return it.
      */
     private parseElement(ans: ArgumentParserResult<VectorNode>, reader: StringReader, cursor: number, index: number, hasLocal: boolean, hasNonLocal: boolean) {
-        const ansElement = new VectorElementNode(VectorElementType.Absolute, 0, '')
+        const ansElement = new VectorElementNode(VectorElementType.Absolute, 0, '', this.type === 'float')
         const start = reader.cursor
 
         if (cursor === reader.cursor) {

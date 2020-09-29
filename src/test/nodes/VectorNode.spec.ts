@@ -195,7 +195,6 @@ describe('VectorNode Tests', () => {
     })
     describe('[GetCodeActions]() Tests', () => {
         const uri = 'file:///c:/data/spgoding/functions/foo.mcfunction'
-        const lineNumber = 10
         const info = mockParsingContext()
         it('Should return align actions', () => {
             const range = { start: 1, end: 2 }
@@ -235,6 +234,17 @@ describe('VectorNode Tests', () => {
                 0: new VectorElementNode(VectorElementType.Relative, 1, '1'),
                 1: new VectorElementNode(VectorElementType.Relative, 1, '1'),
                 2: new VectorElementNode(VectorElementType.Relative, 1.4, '1.4'),
+            })
+            const actual = node[GetCodeActions](uri, info, range, {})
+            assert.deepStrictEqual(actual, [])
+        })
+        it('Should not return align actions when the vector is not allowed float', () => {
+            const range = { start: 1, end: 2 }
+            const node = $(new VectorNode(), {
+                length: 3,
+                0: new VectorElementNode(VectorElementType.Absolute, 1, '1', false),
+                1: new VectorElementNode(VectorElementType.Relative, 1, '1', false),
+                2: new VectorElementNode(VectorElementType.Absolute, 1, '1', false),
             })
             const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [])

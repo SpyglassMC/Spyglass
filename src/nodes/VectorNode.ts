@@ -13,7 +13,7 @@ export const enum VectorElementType {
 }
 
 export class VectorElementNode extends NumberNode {
-    constructor(public type: VectorElementType, value: number, raw: string) {
+    constructor(public type: VectorElementType, value: number, raw: string, public allowsFloat: boolean = true) {
         super(value, raw)
     }
 
@@ -68,8 +68,8 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         }
         const ans = new VectorNode()
         ans.push(
-            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexX.valueOf() / 16), ''),
-            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexZ.valueOf() / 16), '')
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexX.valueOf() / 16), '', false),
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexZ.valueOf() / 16), '', false)
         )
         ans[NodeRange] = this[NodeRange]
         return ans
@@ -110,7 +110,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
     [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         if (Array.prototype.some.call(this,
-            (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')
+            (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.') && v.allowsFloat === true
         )) {
             ans.push(
                 getCodeAction(
