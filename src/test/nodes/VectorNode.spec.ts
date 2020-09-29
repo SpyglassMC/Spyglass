@@ -238,7 +238,7 @@ describe('VectorNode Tests', () => {
             const actual = node[GetCodeActions](uri, info, range, {})
             assert.deepStrictEqual(actual, [])
         })
-        it('Should not return align actions when the vector is not allowed float', () => {
+        it('Should not return align actions when the vector does not allow float', () => {
             const range = { start: 1, end: 2 }
             const node = $(new VectorNode(), {
                 length: 3,
