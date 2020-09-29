@@ -311,9 +311,9 @@ describe('CommandTree Tests', () => {
             assert.deepStrictEqual(data.data[3], {
                 data: $(new VectorNode(), [15, 20], {
                     length: 3,
-                    0: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [15, 16]),
-                    1: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [17, 18]),
-                    2: $(new VectorElementNode(VectorElementType.Relative, 0, ''), [19, 20])
+                    0: $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [15, 16]),
+                    1: $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [17, 18]),
+                    2: $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [19, 20])
                 }),
                 parser: 'vector.3D'
             })
@@ -338,9 +338,9 @@ describe('CommandTree Tests', () => {
                 {
                     data: $(new VectorNode(), [9, 14], v => {
                         v.push(
-                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [9, 10]),
-                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [11, 12]),
-                            $(new VectorElementNode(VectorElementType.Relative, 0, ''), [13, 14])
+                            $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [9, 10]),
+                            $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [11, 12]),
+                            $(new VectorElementNode(VectorElementType.Relative, 0, '', false), [13, 14])
                         )
                         return v
                     }),
