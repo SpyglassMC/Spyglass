@@ -8,6 +8,9 @@
         "datapack-language-server": "./lib/server.js"
     },
     "author": "SPGoding",
+    "contributors": [
+        "ChenCMD"
+    ],
     "license": "MIT",
     "directories": {
         "test": "src/test/"
