@@ -1,3 +1,9 @@
+# [v3.0.4](https://github.com/SPGoding/datapack-language-server/compare/v3.0.3...v3.0.4) (2020-10-02)
+
+## 🐛 Bug Fixes
+- [`cf530fd`](https://github.com/SPGoding/datapack-language-server/commit/cf530fd)  Optimize validations for various vector ranges (#699) (Issues: [`#699`](https://github.com/SPGoding/datapack-language-server/issues/699) [`#698`](https://github.com/SPGoding/datapack-language-server/issues/698))
+- [`e9359b0`](https://github.com/SPGoding/datapack-language-server/commit/e9359b0)  Fix showing align actions for int vectors (#705) (Issues: [`#705`](https://github.com/SPGoding/datapack-language-server/issues/705) [`#704`](https://github.com/SPGoding/datapack-language-server/issues/704))
+
 # [v3.0.3](https://github.com/SPGoding/datapack-language-server/compare/v3.0.2...v3.0.3) (2020-09-26)
 
 ## 🐛 Bug Fixes
