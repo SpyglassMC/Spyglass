@@ -339,7 +339,7 @@ export function testID(service: DatapackLanguageService, visibility: CacheVisibi
         .replace(/\*\*\//g, '.{0,}')
         .replace(/\*\*/g, '.{0,}')
         .replace(/\*/g, '[^:/]{0,}')}$`)
-    return regex.test(forID.toString())
+    return regex.test(forID.toString()) || regex.test(forID.toShortestString())
 }
 
 /**

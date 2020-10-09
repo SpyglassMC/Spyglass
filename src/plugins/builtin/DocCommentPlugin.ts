@@ -184,7 +184,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         }
                         break
                     case '@within':
-                        const sandboxPattern = (index: number) => escapeIdentityPattern(IdentityNode.fromString(anno[index].raw).toString())
+                        const sandboxPattern = (index: number) => escapeIdentityPattern(anno[index].raw)
                         if (anno.length === 2) {
                             visibilities.push({ type: '*', pattern: sandboxPattern(1) })
                         } else if (anno.length >= 3) {
