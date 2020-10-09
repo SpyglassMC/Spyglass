@@ -1,3 +1,11 @@
+# [v3.0.5](https://github.com/SPGoding/datapack-language-server/compare/v3.0.4...v3.0.5) (2020-10-09)
+
+## 🐛 Bug Fixes
+- [`d2993f2`](https://github.com/SPGoding/datapack-language-server/commit/d2993f2)  Fix @within * ** not working 
+
+## 🚑 Critical Hotfixes
+- [`eedc19d`](https://github.com/SPGoding/datapack-language-server/commit/eedc19d)  Fix @within wildcards not working (Issues: [`#706`](https://github.com/SPGoding/datapack-language-server/issues/706))
+
 # [v3.0.4](https://github.com/SPGoding/datapack-language-server/compare/v3.0.3...v3.0.4) (2020-10-02)
 
 ## 🐛 Bug Fixes
