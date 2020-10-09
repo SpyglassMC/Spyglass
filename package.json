@@ -31,8 +31,8 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.9.0",
-        "@mcschema/java-1.16": "^0.5.6",
+        "@mcschema/core": "^0.9.5",
+        "@mcschema/java-1.16": "^0.5.8",
         "@mcschema/locales": "^0.1.11",
         "appdata-path": "^1.0.0",
         "clone": "^2.1.2",
