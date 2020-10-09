@@ -100,8 +100,8 @@ describe('VectorArgumentParser Tests', () => {
             const actual = parser.parse(new StringReader('0 ~-0.5'), ctx)
             assert.deepStrictEqual(actual.data, $(new VectorNode(), [0, 7], {
                 length: 2,
-                0: $(new VectorElementNode(VectorElementType.Absolute, 0, '0'), [0, 1]),
-                1: $(new VectorElementNode(VectorElementType.Relative, -0.5, '-0.5'), [2, 7]),
+                0: $(new VectorElementNode(VectorElementType.Absolute, 0, '0', false), [0, 1]),
+                1: $(new VectorElementNode(VectorElementType.Relative, -0.5, '-0.5', false), [2, 7]),
             }))
             assert.deepStrictEqual(actual.errors, [])
         })

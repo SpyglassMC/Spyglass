@@ -79,6 +79,13 @@ export class IdentityNode extends ArgumentNode {
     }
 
     /**
+     * Convert the ID to the shortest stringified ID. WILL NOT begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
+     */
+    toShortestString() {
+        return `${this.getShortestNamespacePart()}${this.getPathPart()}`
+    }
+
+    /**
      * Convert the ID to a stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag.
      */
     toTagString() {

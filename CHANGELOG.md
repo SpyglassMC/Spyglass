@@ -1,3 +1,30 @@
+# [v3.0.5](https://github.com/SPGoding/datapack-language-server/compare/v3.0.4...v3.0.5) (2020-10-09)
+
+## 🐛 Bug Fixes
+- [`d2993f2`](https://github.com/SPGoding/datapack-language-server/commit/d2993f2)  Fix @within * ** not working 
+
+## 🚑 Critical Hotfixes
+- [`eedc19d`](https://github.com/SPGoding/datapack-language-server/commit/eedc19d)  Fix @within wildcards not working (Issues: [`#706`](https://github.com/SPGoding/datapack-language-server/issues/706))
+
+# [v3.0.4](https://github.com/SPGoding/datapack-language-server/compare/v3.0.3...v3.0.4) (2020-10-02)
+
+## 🐛 Bug Fixes
+- [`cf530fd`](https://github.com/SPGoding/datapack-language-server/commit/cf530fd)  Optimize validations for various vector ranges (#699) (Issues: [`#699`](https://github.com/SPGoding/datapack-language-server/issues/699) [`#698`](https://github.com/SPGoding/datapack-language-server/issues/698))
+- [`e9359b0`](https://github.com/SPGoding/datapack-language-server/commit/e9359b0)  Fix showing align actions for int vectors (#705) (Issues: [`#705`](https://github.com/SPGoding/datapack-language-server/issues/705) [`#704`](https://github.com/SPGoding/datapack-language-server/issues/704))
+
+# [v3.0.3](https://github.com/SPGoding/datapack-language-server/compare/v3.0.2...v3.0.3) (2020-09-26)
+
+## 🐛 Bug Fixes
+- [`fec3da0`](https://github.com/SPGoding/datapack-language-server/commit/fec3da0)  Fix crashes related to @mcschema (Issues: [`#700`](https://github.com/SPGoding/datapack-language-server/issues/700))
+
+# [v3.0.2](https://github.com/SPGoding/datapack-language-server/compare/v3.0.1...v3.0.2) (2020-09-26)
+
+## 🐛 Bug Fixes
+- [`11d6542`](https://github.com/SPGoding/datapack-language-server/commit/11d6542)  Fix not detecting data packs deeper than 1 (Issues: [`#660`](https://github.com/SPGoding/datapack-language-server/issues/660))
+- [`c576b9d`](https://github.com/SPGoding/datapack-language-server/commit/c576b9d)  Fix crashes when selecting JSON version 1.15 (Issues: [`#681`](https://github.com/SPGoding/datapack-language-server/issues/681))
+- [`59a4aea`](https://github.com/SPGoding/datapack-language-server/commit/59a4aea)  Fix crashing when @within has meta characters (Issues: [`#670`](https://github.com/SPGoding/datapack-language-server/issues/670))
+- [`c8f851b`](https://github.com/SPGoding/datapack-language-server/commit/c8f851b)  Add strictScoreHolderCheck config (#694) (Issues: [`#694`](https://github.com/SPGoding/datapack-language-server/issues/694))
+
 # [v3.0.1](https://github.com/SPGoding/datapack-language-server/compare/v3.0.0...v3.0.1) (2020-08-15)
 
 ## 🐛 Bug Fixes

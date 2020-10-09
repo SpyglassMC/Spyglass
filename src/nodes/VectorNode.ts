@@ -13,7 +13,7 @@ export const enum VectorElementType {
 }
 
 export class VectorElementNode extends NumberNode {
-    constructor(public type: VectorElementType, value: number, raw: string) {
+    constructor(public type: VectorElementType, value: number, raw: string, public allowsFloat: boolean = true) {
         super(value, raw)
     }
 
@@ -56,6 +56,25 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
         return ans
     }
 
+    getChunk() {
+        if (this.length !== 2 && this.length !== 3) {
+            return undefined
+        }
+        const vexX = this[0]
+        const vexZ = this.length === 3 ? this[2] : this[1]
+        // TODO: support VectorElementType.Relative
+        if (vexX.type !== VectorElementType.Absolute || vexZ.type !== VectorElementType.Absolute) {
+            return undefined
+        }
+        const ans = new VectorNode()
+        ans.push(
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexX.valueOf() / 16), '', false),
+            new VectorElementNode(VectorElementType.Absolute, Math.floor(vexZ.valueOf() / 16), '', false)
+        )
+        ans[NodeRange] = this[NodeRange]
+        return ans
+    }
+
     distanceTo(other: VectorNode) {
         if (this.length !== other.length) {
             return undefined
@@ -91,7 +110,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
     [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
         const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
         if (Array.prototype.some.call(this,
-            (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.')
+            (v: VectorElementNode) => v.type === VectorElementType.Absolute && !v.raw.includes('.') && v.allowsFloat === true
         )) {
             ans.push(
                 getCodeAction(

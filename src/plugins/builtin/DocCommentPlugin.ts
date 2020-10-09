@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver'
-import { arrayToCompletions, arrayToMessage, escapeRegex, plugins } from '../..'
+import { arrayToCompletions, arrayToMessage, escapeIdentityPattern, plugins } from '../..'
 import { locale } from '../../locales'
 import { ArgumentNode, IdentityNode, NodeDescription, NodeRange, NodeType } from '../../nodes'
 import { CacheType, CacheVisibility, combineArgumentParserResult, FileTypes, getCacheVisibilities, isFileType, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
@@ -184,7 +184,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         }
                         break
                     case '@within':
-                        const sandboxPattern = (index: number) => escapeRegex(IdentityNode.fromString(anno[index].raw).toString())
+                        const sandboxPattern = (index: number) => escapeIdentityPattern(anno[index].raw)
                         if (anno.length === 2) {
                             visibilities.push({ type: '*', pattern: sandboxPattern(1) })
                         } else if (anno.length >= 3) {
@@ -249,6 +249,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
         for (const type of Object.keys(ans.cache)) {
             for (const id of Object.keys(ans.cache[type as CacheType]!)) {
                 const unit = ans.cache[type as CacheType]![id]!
+                docComment[NodeDescription] = docComment.valueOf()
                 unit.doc = docComment[NodeDescription]
                 for (const pos of [...unit.dcl ?? [], ...unit.def ?? []]) {
                     pos.visibility = visibility
@@ -278,11 +279,6 @@ class DocCommentNode extends ArgumentNode {
     annotations: Annotation[] = []
 
     functionID: IdentityNode | undefined = undefined
-
-    set [NodeDescription](_: string) { }
-    get [NodeDescription]() {
-        return this.valueOf()
-    }
 
     get flattenedAnnotations() {
         return DocCommentNode.flattenAnnotations(this.annotations)

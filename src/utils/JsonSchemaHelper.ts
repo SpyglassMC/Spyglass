@@ -64,6 +64,10 @@ export class JsonSchemaHelper {
                         // Regular key suggestions for selected object.
                         if (selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end) {
                             // The cursor isn't out of the curly braces.
+                            /* DEBUG */ console.log('selectedPath', require('util').inspect(selectedPath, true, null))
+                            /* DEBUG */ console.log('selectedNode', require('util').inspect(selectedNode, true, null))
+                            /* DEBUG */ console.log('schema', require('util').inspect(schema, true, null))
+                            
                             ans.push(...this.suggestFromSchema(selectedPath, selectedNode, undefined, schema, ctx))
                         }
                     } else if (selectedNode.type === 'property') {
@@ -157,7 +161,7 @@ export class JsonSchemaHelper {
 
                 const childValuePath = valuePath.push(key)
                 const childValueSchema = schema.navigate(childValuePath, -1)
-                const preselect = childValueSchema?.force()
+                const preselect = !childValueSchema?.optional()
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
                 const detail = childValuePath.locale()
                 const documentation = childValuePath.localePush('help').strictLocale([], 6)
@@ -343,7 +347,7 @@ export class JsonSchemaHelper {
                 break
             case 'resource':
                 ans = new ctx.parsers.Identity(
-                    option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown
+                    option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown, option.params.isDefinition
                 ).parse(reader, ctx)
                 break
             case 'team':

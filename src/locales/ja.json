@@ -145,6 +145,8 @@
     "time-unit": "時間の単位",
     "too-long": "%0%は%1%の最大長%2%文字を超えています",
     "too-many-block-affected": "指定した領域にあるブロックが多すぎます（最大 %0%、指定 %1%）",
+    "too-many-chunk-affected": "指定した領域にあるチャンクが多すぎます（最大 %0%、指定 %1%）",
+    "undefined-scoreholder": "%0%は未定義のスコア保持者です",
     "undefined-objective": "%0%は未定義のオブジェクトです",
     "undefined-tag": "%0%は未定義のタグです",
     "undefined-team": "%0%は未定義のチームです",

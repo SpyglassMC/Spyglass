@@ -33,10 +33,14 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         private readonly isDefinition = false
     ) {
         super()
-        if (typeof this.type === 'string' && this.type.startsWith('$')) {
-            const cacheType = this.type.slice(1)
-            if (!isNamespacedType(cacheType)) {
-                throw new Error(`Received non-NamespacedType: “${cacheType}”.`)
+        if (typeof this.type === 'string') {
+            if (this.type.startsWith('$')) {
+                const cacheType = this.type.slice(1)
+                if (!isNamespacedType(cacheType)) {
+                    throw new Error(`Received non-NamespacedType: “${cacheType}”.`)
+                }
+            } else {
+                this.type = IdentityNode.fromString(this.type).toString()
             }
         }
     }

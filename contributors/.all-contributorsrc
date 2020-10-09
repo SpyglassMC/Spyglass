@@ -34,26 +34,7 @@
       "profile": "https://github.com/ChenCMD",
       "contributions": [],
       "details": [
-        { "type": "localization", "link": "commits?author=ChenCMD", "text": "Japanese (ja)" },
-        { "type": "ideas", "link": "issues/410", "text": "#410" },
-        { "type": "ideas", "link": "issues/582", "text": "#582" },
-        { "type": "bug", "link": "issues/421", "text": "#421" },
-        { "type": "bug", "link": "issues/534", "text": "#534" },
-        { "type": "bug", "link": "issues/589", "text": "#589" },
-        { "type": "bug", "link": "issues/590", "text": "#590" },
-        { "type": "bug", "link": "issues/591", "text": "#591" },
-        { "type": "bug", "link": "issues/603", "text": "#603" },
-        { "type": "bug", "link": "issues/604", "text": "#604" },
-        { "type": "bug", "link": "issues/630", "text": "#630" },
-        { "type": "bug", "link": "issues/631", "text": "#631" },
-        { "type": "bug", "link": "issues/606", "text": "#606" },
-        { "type": "bug", "link": "issues/638", "text": "#638" },
-        { "type": "bug", "link": "issues/642", "text": "#642" },
-        { "type": "bug", "link": "issues/643", "text": "#643" },
-        { "type": "bug", "link": "issues/644", "text": "#644" },
-        { "type": "bug", "link": "issues/650", "text": "#650" },
-        { "type": "bug", "link": "issues/656", "text": "#656" },
-        { "type": "bug", "link": "issues/670", "text": "#670" }
+        { "type": "collaborator", "link": "issues?q=author%3AChenCMD", "text": "Collaborator" }
       ]
     },
     {
@@ -81,6 +62,7 @@
       "contributions": [],
       "details": [
         { "type": "dependency", "link": "https://github.com/misode/minecraft-schemas", "text": "Maintains minecraft-schemas repository" },
+        { "type": "code", "link": "pull/711", "text": "#711" },
         { "type": "ideas", "link": "issues/445", "text": "#445" },
         { "type": "bug", "link": "issues/592", "text": "#592" },
         { "type": "bug", "link": "issues/593", "text": "#593" }
@@ -113,6 +95,15 @@
       "contributions": [],
       "details": [
         { "type": "bug", "link": "issues/681", "text": "#681" }
+      ]
+    },
+    {
+      "name": "eke0909",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/50884607?s=400&v=4",
+      "profile": "https://github.com/eke0909",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/700", "text": "#700" }
       ]
     },
     {
@@ -170,6 +161,10 @@
     "coffee": {
       "symbol": "☕",
       "description": "Financial support"
+    },
+    "collaborator": {
+      "symbol": "💎",
+      "description": "Collaborator of the Project"
     },
     "pizza": {
       "symbol": "🍕",

@@ -430,7 +430,8 @@ export const CommandTree: ICommandTree = {
                                 if (volume && volume > 32768) {
                                     errors.push(new ParsingError(
                                         { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume)
+                                        locale('too-many-block-affected', 32768, volume),
+                                        undefined, DiagnosticSeverity.Error
                                     ))
                                 }
                             },
@@ -859,7 +860,7 @@ export const CommandTree: ICommandTree = {
                                     errors.push(new ParsingError(
                                         { start: v1[NodeRange].start, end: v2[NodeRange].end },
                                         locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Warning
+                                        undefined, DiagnosticSeverity.Error
                                     ))
                                 }
                             },
@@ -898,11 +899,26 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('add'),
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true,
                             children: {
                                 to: {
-                                    parser: new VectorArgumentParser(2),
+                                    parser: new VectorArgumentParser(2, 'integer'),
+                                    run: ({ data, errors }) => {
+                                        const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode()).getChunk()
+                                        const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode()).getChunk()
+                                        if (!(v1 && v2)) {
+                                            return
+                                        }
+                                        const volume = v1.volumeTo(v2)
+                                        if (volume && volume > 256) {
+                                            errors.push(new ParsingError(
+                                                { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                                locale('too-many-chunk-affected', 256, volume),
+                                                undefined, DiagnosticSeverity.Error
+                                            ))
+                                        }
+                                    },
                                     executable: true
                                 }
                             }
@@ -913,11 +929,26 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('remove'),
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true,
                             children: {
                                 to: {
-                                    parser: new VectorArgumentParser(2),
+                                    parser: new VectorArgumentParser(2, 'integer'),
+                                    run: ({ data, errors }) => {
+                                        const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode()).getChunk()
+                                        const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode()).getChunk()
+                                        if (!(v1 && v2)) {
+                                            return
+                                        }
+                                        const volume = v1.volumeTo(v2)
+                                        if (volume && volume > 256) {
+                                            errors.push(new ParsingError(
+                                                { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                                locale('too-many-chunk-affected', 256, volume),
+                                                undefined, DiagnosticSeverity.Error
+                                            ))
+                                        }
+                                    },
                                     executable: true
                                 }
                             }
@@ -933,7 +964,7 @@ export const CommandTree: ICommandTree = {
                     executable: true,
                     children: {
                         pos: {
-                            parser: new VectorArgumentParser(2),
+                            parser: new VectorArgumentParser(2, 'integer'),
                             executable: true
                         }
                     }
@@ -2308,6 +2339,18 @@ export const CommandTree: ICommandTree = {
                             children: {
                                 end: {
                                     parser: new VectorArgumentParser(3, 'integer'),
+                                    run: ({ data, errors }) => {
+                                        const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
+                                        const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
+                                        const volume = v1.volumeTo(v2)
+                                        if (volume && volume > 32768) {
+                                            errors.push(new ParsingError(
+                                                { start: v1[NodeRange].start, end: v2[NodeRange].end },
+                                                locale('too-many-block-affected', 32768, volume),
+                                                undefined, DiagnosticSeverity.Error
+                                            ))
+                                        }
+                                    },
                                     children: {
                                         destination: {
                                             parser: new VectorArgumentParser(3, 'integer'),
