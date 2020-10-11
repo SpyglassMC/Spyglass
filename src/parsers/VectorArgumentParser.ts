@@ -19,7 +19,7 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
     identity = 'vector'
 
     constructor(
-        private readonly dimension: 2 | 3 | 4,
+        private readonly dimension: 1 | 2 | 3 | 4,
         private readonly type: 'float' | 'integer' = 'float',
         private readonly allowLocal = true,
         private readonly allowRelative = true,
@@ -224,7 +224,9 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
     }
 
     getExamples(): string[] {
-        if (this.dimension === 2) {
+        if (this.dimension === 1) {
+            return ['0', '~', '0.1', '~1']
+        } else if (this.dimension === 2) {
             return ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2']
         } else if (this.dimension === 3) {
             return ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5']
