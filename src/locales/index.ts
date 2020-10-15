@@ -37,21 +37,14 @@ async function setupLanguage(code: string) {
     const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
     JsonLocales.register(code, jsonLocale)
     JsonLocales.language = code
+
+    console.info(`[I18N] Set to “${code}”.`)
 }
 
 /* istanbul ignore next */
-export async function loadLocale(setting: string, defauldLocaleCode: string) {
-    if (setting.toLowerCase() === 'default') {
-        if (!language) {
-            await setupLanguage(defauldLocaleCode)
-            console.info(`[I18N] Default: “${language}”.`)
-        } else if (language !== defauldLocaleCode) {
-            language = defauldLocaleCode
-            await setupLanguage(defauldLocaleCode)
-            console.info(`[I18N] Default: “${language}”.`)
-        }
-    } else if (language !== setting) {
-        await setupLanguage(setting)
-        console.info(`[I18N] Specified: “${setting}”.`)
+export async function loadLocale(setting: string, defaultLocaleCode: string) {
+    const specifiedLanguage = setting.toLowerCase() === 'default' ? defaultLocaleCode : setting
+    if (language !== specifiedLanguage) {
+        return setupLanguage(specifiedLanguage)
     }
 }
