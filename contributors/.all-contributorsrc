@@ -11,6 +11,15 @@
   "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name.replace(new RegExp('\\\\|', 'g'), '&#124;') %></b></sub></a></td><td align=\"left\"><%= contributor.details ? contributor.details.map(v => `<a href=\"${v.link && v.link.startsWith('http') ? v.link : `https://github.com/SPGoding/datapack-language-server/${v.link || 'blob/master/CONTRIBUTING.md'}`}\" target=\"_blank\" title=\"${options.types[v.type].description}\">${options.types[v.type].symbol} ${v.text}</a>`).join('<br>') : '' %>",
   "contributors": [
     {
+      "name": "AOOAcat",
+      "avatar_url": "https://www.mcbbs.net/uc_server/data/avatar/002/11/39/76_avatar_big.jpg",
+      "profile": "https://www.mcbbs.net/home.php?mod=space&uid=2113976",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/724", "text": "#724" }
+      ]
+    },
+    {
       "name": "Arcensoth",
       "avatar_url": "https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4",
       "profile": "https://github.com/Arcensoth",

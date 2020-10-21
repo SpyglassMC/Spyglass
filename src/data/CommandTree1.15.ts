@@ -1010,7 +1010,7 @@ export const CommandTree: ICommandTree = {
                                             parser: new NumberArgumentParser('float', 0),
                                             children: {
                                                 count: {
-                                                    parser: new NumberArgumentParser('float', 0),
+                                                    parser: new NumberArgumentParser('integer', 0),
                                                     executable: true,
                                                     children: {
                                                         mode: {
