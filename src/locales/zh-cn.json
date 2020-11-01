@@ -5,7 +5,7 @@
     "argument-type.identity": "命名空间 ID",
     "argument-type.item": "物品",
     "argument-type.itemSlot": "物品栏位",
-    "argument-type.literal": "字面量",
+    "argument-type.literal": "文本",
     "argument-type.map": "映射",
     "argument-type.message": "消息",
     "argument-type.nbtPath": "NBT 路径",
