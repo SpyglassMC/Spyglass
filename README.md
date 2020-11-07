@@ -96,34 +96,35 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <!-- markdownlint-disable -->
 <table>
   <tr>
+    <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=2113976"><img src="https://www.mcbbs.net/uc_server/data/avatar/002/11/39/76_avatar_big.jpg" width="64px;" alt=""/><br /><sub><b>AOOAcat</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/724" target="_blank" title="Bug reports">🐛 #724</a></td>
     <td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mcdata repository</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Aeldrion</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Aeldrion" target="_blank" title="Localization">🌐 French (fr)</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4" width="64px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" target="_blank" title="Collaborator of the Project">💎 Collaborator</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/Ghoulboy78"><img src="https://avatars1.githubusercontent.com/u/53367549?s=460&v=4" width="64px;" alt=""/><br /><sub><b>Ghoulboy</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=Ghoulboy78" target="_blank" title="Localization">🌐 Italian (it)</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://afdian.net/@k_bai"><img src="https://pic1.afdiancdn.com/user/f34c5d62954411e8948a52540025c377/avatar/a08952a177bcf9aa806e710c0d695dc3_w719_h720_s657.jpg?imageView2/1/w/240/h/240" width="64px;" alt=""/><br /><sub><b>K_bai</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a><br><a href="https://github.com/SPGoding/datapack-language-server/pull/711" target="_blank" title="Code">💻 #711</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/445" target="_blank" title="Ideas, Planning, and Feedback">✨ #445</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/592" target="_blank" title="Bug reports">🐛 #592</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/593" target="_blank" title="Bug reports">🐛 #593</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=NeunEinser" target="_blank" title="Localization">🌐 German (de)</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/652" target="_blank" title="Bug reports">🐛 #652</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/653" target="_blank" title="Bug reports">🐛 #653</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/654" target="_blank" title="Bug reports">🐛 #654</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/485428324638916608/c10510b1dfa7a8174f3a1001618cafa9.webp?size=256" width="64px;" alt=""/><br /><sub><b>boon4681</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/681" target="_blank" title="Bug reports">🐛 #681</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/eke0909"><img src="https://avatars0.githubusercontent.com/u/50884607?s=400&v=4" width="64px;" alt=""/><br /><sub><b>eke0909</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/700" target="_blank" title="Bug reports">🐛 #700</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://www.mcbbs.net/home.php?mod=space&uid=10240"><img src="https://www.mcbbs.net/uc_server/avatar.php?uid=10240&size=middle" width="64px;" alt=""/><br /><sub><b>kakagRou</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/lakejason0"><img src="https://avatars1.githubusercontent.com/u/36039861?s=460&v=4" width="64px;" alt=""/><br /><sub><b>lakejason0</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/commits?author=lakejason0" target="_blank" title="Localization">🌐 Chinese (Traditional) (zh-tw)</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/655" target="_blank" title="Bug reports">🐛 #655</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/mathaym25"><img src="https://avatars2.githubusercontent.com/u/35702771?s=460&u=393d01acff13df6e83beb953bd6f916f514f5141&v=4" width="64px;" alt=""/><br /><sub><b>mathaym25</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/434" target="_blank" title="Bug reports">🐛 #434</a></td>
-    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Ideas, Planning, and Feedback">✨ #605</a></td>
   </tr>
   <tr>
+    <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Ideas, Planning, and Feedback">✨ #605</a></td>
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256" width="64px;" alt=""/><br /><sub><b>Ξи</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #660</a></td>
   </tr>
 </table>

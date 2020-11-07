@@ -182,13 +182,13 @@ export const VanillaConfig: Config = {
         permissionLevel: 2,
         dataSource: 'GitHub',
         dataVersion: 'Latest snapshot',
-        cmdVersion: '1.16',
+        cmdVersion: '1.17',
         defaultVisibility: 'public',
         dependsOnVanilla: true,
         detectionDepth: 1,
         exclude: [],
         include: [],
-        jsonVersion: '1.16',
+        jsonVersion: '1.17',
         language: 'Default'
     },
     lint: {

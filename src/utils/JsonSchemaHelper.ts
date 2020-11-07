@@ -1,9 +1,9 @@
-import { DataModel, INode, LOCALES as JsonLocales, ModelPath, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
+import { DataModel, INode, ModelPath, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
 import deepEqual from 'fast-deep-equal'
 import { ArrayASTNode, ASTNode, Hover, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
-import { resolveLocalePlaceholders } from '../locales'
+import { locale, segmentedLocale } from '../locales'
 import { IdentityNode } from '../nodes'
 import { CommandParser } from '../parsers/CommandParser'
 import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
@@ -100,8 +100,8 @@ export class JsonSchemaHelper {
             if (selectedNode && selectedType === 'key') {
                 const selectedRange = this.getNodeRange(selectedNode)
                 // Regular key suggestions for selected key.
-                const title = selectedPath.locale()
-                const help = selectedPath.localePush('help').strictLocale([], 6)
+                const title = segmentedLocale(selectedPath.getContext()) ?? selectedPath.getContext().pop() ?? ''
+                const help = segmentedLocale(selectedPath.contextPush('help').getContext(), [], 6, 2)
                 return {
                     range: { start: ctx.textDoc.positionAt(selectedRange.start), end: ctx.textDoc.positionAt(selectedRange.end) },
                     contents: {
@@ -163,8 +163,8 @@ export class JsonSchemaHelper {
                 const childValueSchema = schema.navigate(childValuePath, -1)
                 const preselect = !childValueSchema?.optional()
                 const defaultValueSnippet = this.getDefaultValueSnippet(childValueSchema?.default())
-                const detail = childValuePath.locale()
-                const documentation = childValuePath.localePush('help').strictLocale([], 6)
+                const detail = segmentedLocale(childValuePath.getContext()) ?? childValuePath.getContext().pop() ?? ''
+                const documentation = segmentedLocale(childValuePath.contextPush('help').getContext(), [], 6, 2)
                 const insertText = `${c.label}: ${defaultValueSnippet}`
                 return { ...c, preselect, detail, documentation, label: key, filterText, insertText, insertTextFormat: InsertTextFormat.Snippet }
             } : c => {
@@ -394,7 +394,7 @@ export class JsonSchemaHelper {
     private static convertSchemaError({ path, params, error }: PathError, node: ASTNode | undefined) {
         const pathElements = path.getArray()
         const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: Infinity }
-        let message = resolveLocalePlaceholders(JsonLocales.getLocale(error), params) ?? (
+        let message = locale(error, params) ?? (
             console.error('[convertSchemaError]', new Error(`Unknown JSON schema error “${error}”`)),
             ''
         )
@@ -534,8 +534,8 @@ export class JsonSchemaHelper {
         return new ModelPath(
             model.model,
             new Path(
-                model.modelArr.slice(0, -1),
-                model.localeArr.slice(0, -1)
+                model.getArray().slice(0, -1),
+                model.getContext().slice(0, -1)
             )
         )
     }

@@ -10,6 +10,11 @@ import { $, assertCompletions } from '../utils.spec'
 
 describe('VectorArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {
+        it('Should return examples for Vector1', () => {
+            const parser = new VectorArgumentParser(1)
+            const actual = parser.getExamples()
+            assert.deepStrictEqual(actual, ['0', '~', '0.1', '~1'])
+        })
         it('Should return examples for Vector2', () => {
             const parser = new VectorArgumentParser(2)
             const actual = parser.getExamples()

@@ -1,3 +1,13 @@
+# [v3.0.7](https://github.com/SPGoding/datapack-language-server/compare/v3.0.6...v3.0.7) (2020-10-21)
+
+## 🐛 Bug Fixes
+- [`b98a853`](https://github.com/SPGoding/datapack-language-server/commit/b98a853)  Fix parser type of &lt;count&gt; for /particle (Issues: [`#724`](https://github.com/SPGoding/datapack-language-server/issues/724))
+
+# [v3.0.6](https://github.com/SPGoding/datapack-language-server/compare/v3.0.5...v3.0.6) (2020-10-12)
+
+## 🐛 Bug Fixes
+- [`1d82110`](https://github.com/SPGoding/datapack-language-server/commit/1d82110)  Fix missing /spawnpoint angle arguments (#716) (Issues: [`#716`](https://github.com/SPGoding/datapack-language-server/issues/716) [`#720`](https://github.com/SPGoding/datapack-language-server/issues/720))
+
 # [v3.0.5](https://github.com/SPGoding/datapack-language-server/compare/v3.0.4...v3.0.5) (2020-10-09)
 
 ## 🐛 Bug Fixes

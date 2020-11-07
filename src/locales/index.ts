@@ -1,16 +1,16 @@
-import { LOCALES as JsonLocales } from '@mcschema/core'
 import { Locale } from '../types/Locale'
 import AmericanEnglish from './en.json'
+import JsonAmericanEnglish from '@mcschema/locales/src/en.json'
 
 const Locales: {
     en: Locale,
     [key: string]: Locale
 } = {
-    '': AmericanEnglish,
-    en: AmericanEnglish
+    en: { ...JsonAmericanEnglish, ...AmericanEnglish }
 }
 
 let language = ''
+Locales[language] = Locales.en
 
 /* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
@@ -29,29 +29,34 @@ export function resolveLocalePlaceholders(val: string | undefined, params?: stri
     })
 }
 
+export function segmentedLocale(segments: string[], params?: string[], depth = 5, minDepth = 1): string | undefined {
+    return [language, 'en'].reduce((prev, code) => {
+        if (prev !== undefined) return prev
+
+        const array = segments.slice(-depth);
+        while (array.length >= minDepth) {
+            const locale = resolveLocalePlaceholders(Locales[code][array.join('.')], params)
+            if (locale !== undefined) return locale
+            array.shift()
+        }
+
+        return undefined
+    }, undefined)
+}
+
 async function setupLanguage(code: string) {
     const locale = await import(`./${code}.json`)
-    Locales[code] = locale
+    const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
+    Locales[code] = { ...jsonLocale, ...locale }
     language = code
 
-    const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
-    JsonLocales.register(code, jsonLocale)
-    JsonLocales.language = code
+    console.info(`[I18N] Set to “${code}”.`)
 }
 
 /* istanbul ignore next */
-export async function loadLocale(setting: string, defauldLocaleCode: string) {
-    if (setting.toLowerCase() === 'default') {
-        if (!language) {
-            await setupLanguage(defauldLocaleCode)
-            console.info(`[I18N] Default: “${language}”.`)
-        } else if (language !== defauldLocaleCode) {
-            language = defauldLocaleCode
-            await setupLanguage(defauldLocaleCode)
-            console.info(`[I18N] Default: “${language}”.`)
-        }
-    } else if (language !== setting) {
-        await setupLanguage(setting)
-        console.info(`[I18N] Specified: “${setting}”.`)
+export async function loadLocale(setting: string, defaultLocaleCode: string) {
+    const specifiedLanguage = setting.toLowerCase() === 'default' ? defaultLocaleCode : setting
+    if (language !== specifiedLanguage) {
+        return setupLanguage(specifiedLanguage)
     }
 }
