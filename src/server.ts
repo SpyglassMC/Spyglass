@@ -491,7 +491,7 @@ async function getLatestVersions() {
             })
         ])
         const { latest: { release, snapshot }, versions }: { latest: { release: string, snapshot: string }, versions: { id: string }[] } = JSON.parse(str)
-        const processedVersion = '1.16.2-pre1'
+        const processedVersion = '1.16.2'
         const processedVersionIndex = versions.findIndex(v => v.id === processedVersion)
         const processedVersions = processedVersionIndex >= 0 ? versions.slice(0, processedVersionIndex + 1).map(v => v.id) : []
         ans = (release && snapshot) ? { latestRelease: release, latestSnapshot: snapshot, processedVersions } : undefined

@@ -77,7 +77,8 @@
         { "type": "localization", "link": "commits?author=NeunEinser", "text": "German (de)" },
         { "type": "bug", "link": "issues/652", "text": "#652" },
         { "type": "bug", "link": "issues/653", "text": "#653" },
-        { "type": "bug", "link": "issues/654", "text": "#654" }
+        { "type": "bug", "link": "issues/654", "text": "#654" },
+        { "type": "bug", "link": "issues/661", "text": "#661" }
       ]
     },
     {

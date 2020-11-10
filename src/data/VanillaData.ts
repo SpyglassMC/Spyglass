@@ -3,7 +3,7 @@
 import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
-import { compileNamespaceSummary, NamespaceSummary, RawNamespaceSummary } from '../types/NamespaceSummary'
+import { NamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
@@ -20,9 +20,8 @@ export type VanillaData = {
 }
 
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
-export const FallbackRawNamespaceSummary: RawNamespaceSummary = require('./NamespaceSummary.json') as RawNamespaceSummary
+export const FallbackNamespaceSummary: NamespaceSummary = require('./NamespaceSummary.json') as NamespaceSummary
 export const MyNamespaceSummary: Partial<NamespaceSummary> = require('./MyNamespaceSummary.json') as Partial<NamespaceSummary>
-export const FallbackNamespaceSummary: NamespaceSummary = compileNamespaceSummary(FallbackRawNamespaceSummary, MyNamespaceSummary)
 export const FallbackNbtdoc: nbtdoc.Root = require('./Nbtdoc.json') as nbtdoc.Root
 export const FallbackRegistry: Registry = require('./Registry.json') as Registry
 
@@ -49,12 +48,12 @@ export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Regi
 
 export type DataSource = 'GitHub' | '码云'
 
-function getUri(source: DataSource, maintainer: string, name: string, path: string) {
-    if (source === 'GitHub') {
-        return `https://raw.githubusercontent.com/${maintainer}/${name}/${path}`
-    } else {
-        return `https://gitee.com/SPGoding/${name}/raw/${path}`
-    }
+function getUri(_source: DataSource, maintainer: string, name: string, path: string) {
+    // if (source === 'GitHub') {
+    return `https://raw.githubusercontent.com/${maintainer}/${name}/${path}`
+    // } else {
+    //     return `https://gitee.com/SPGoding/${name}/raw/${path}`
+    // }
 }
 
 function getReportUri(type: DataType, source: DataSource, version: string, processedVersions: string[], isLatestSnapshot: boolean) {
@@ -67,9 +66,9 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
             }
         case 'NamespaceSummary':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/data/minecraft/data.min.json`)
+                return getUri(source, 'SPGoding', 'vanilla-datapack', `${isLatestSnapshot ? 'summary' : `${version}-summary`}/summary/flattened.min.json`)
             } else {
-                throw new Error(`No namespace summary for version ${version}.`)
+                return getUri(source, 'SPGoding', 'vanilla-datapack', 'summary/summary/flattened.min.json')
             }
         case 'Nbtdoc':
             return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${isLatestSnapshot ? 'generated' : `${version}-gen`}/build/generated.json`)
@@ -114,10 +113,6 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                         console.info(`[VanillaData: ${type} for ${version}] Saved at ${filePath.replace(globalStoragePath!, '${globalStoragePath}')}.`)
                     }
                     ans = json
-                }
-                if (type === 'NamespaceSummary') {
-                    ans = compileNamespaceSummary(ans as RawNamespaceSummary, MyNamespaceSummary)
-                    console.info(`[VanillaData: ${type} for ${version}] Merged MyNamespaceSummary.json in.`)
                 }
                 resolve(ans)
             } catch (e) {
