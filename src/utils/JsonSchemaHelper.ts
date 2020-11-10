@@ -274,7 +274,7 @@ export class JsonSchemaHelper {
         const out: { mapping: IndexMapping } = { mapping: {} }
         const rawReader = new StringReader(ctx.textDoc.getText(), rangeOfString.start, rangeOfString.end)
         try {
-            const value = rawReader.readString(out)
+            const value = rawReader.readString(out, true)
             const valueReader = new StringReader(value)
             const subCtx = {
                 ...ctx,

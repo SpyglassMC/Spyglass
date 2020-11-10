@@ -174,7 +174,7 @@ export class StringReader {
      * @param out Stores a mapping from in-string indices to real indices. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
+    readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }, looseEscapeCheck = false) {
         let ans = ''
         if (!this.canRead()) {
             out.mapping.start = this.cursor
@@ -183,7 +183,7 @@ export class StringReader {
         const quote = this.peek()
         if (StringReader.isQuote(quote)) {
             this.skip()
-            ans += this.readUntilQuote(quote, out)
+            ans += this.readUntilQuote(quote, out, looseEscapeCheck)
         } else {
             const start = this.cursor
             const end = this.cursor + 1
@@ -200,7 +200,7 @@ export class StringReader {
      * @param terminator Endding quote. Will not be included in the result.
      * @param out Stores a mapping from in-string indices to real indices. 
      */
-    private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }) {
+    private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }, looseEscapeCheck: boolean) {
         const start = this.cursor
         const escapeChar = '\\'
         let ans = ''
@@ -209,7 +209,7 @@ export class StringReader {
         while (this.canRead()) {
             const c = this.read()
             if (escaped) {
-                if (c === escapeChar || c === terminator) {
+                if (looseEscapeCheck || c === escapeChar || c === terminator) {
                     out.mapping.skipAt = out.mapping.skipAt || []
                     out.mapping.skipAt.push(ans.length)
                     ans += c
@@ -269,14 +269,14 @@ export class StringReader {
      * @param out Stores a mapping from in-string indices to real indices. 
      * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
      */
-    readString(out: { mapping: IndexMapping } = { mapping: {} }) {
+    readString(out: { mapping: IndexMapping } = { mapping: {} }, looseEscapeCheck = false) {
         if (!this.canRead()) {
             out.mapping.start = this.cursor
             return ''
         }
         const c = this.peek()
         if (StringReader.isQuote(c)) {
-            return this.readQuotedString(out)
+            return this.readQuotedString(out, looseEscapeCheck)
         } else {
             return this.readUnquotedString(out)
         }
