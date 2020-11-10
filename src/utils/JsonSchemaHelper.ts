@@ -67,7 +67,7 @@ export class JsonSchemaHelper {
                             /* DEBUG */ console.log('selectedPath', require('util').inspect(selectedPath, true, null))
                             /* DEBUG */ console.log('selectedNode', require('util').inspect(selectedNode, true, null))
                             /* DEBUG */ console.log('schema', require('util').inspect(schema, true, null))
-                            
+
                             ans.push(...this.suggestFromSchema(selectedPath, selectedNode, undefined, schema, ctx))
                         }
                     } else if (selectedNode.type === 'property') {
@@ -273,16 +273,22 @@ export class JsonSchemaHelper {
     private static legacyValidateFromStringValidator(rangeOfString: TextRange, stringNode: ASTNode, ctx: ParsingContext, validationOption: ValidationOption) {
         const out: { mapping: IndexMapping } = { mapping: {} }
         const rawReader = new StringReader(ctx.textDoc.getText(), rangeOfString.start, rangeOfString.end)
-        const value = rawReader.readString(out)
-        const valueReader = new StringReader(value)
-        const subCtx = {
-            ...ctx,
-            textDoc: TextDocument.create('dhp:///json_schema_helper.txt', 'plaintext', 0, value),
-            cursor: getInnerIndex(out.mapping, ctx.cursor)
-        }
-        return {
-            result: this.executeStringValidator(valueReader, subCtx, stringNode, validationOption),
-            out
+        try {
+            const value = rawReader.readString(out)
+            const valueReader = new StringReader(value)
+            const subCtx = {
+                ...ctx,
+                textDoc: TextDocument.create('dhp:///json_schema_helper.txt', 'plaintext', 0, value),
+                cursor: getInnerIndex(out.mapping, ctx.cursor)
+            }
+            return {
+                result: this.executeStringValidator(valueReader, subCtx, stringNode, validationOption),
+                out
+            }
+        } catch (e) {
+            const ans = LegacyValidateResult.create()
+            ans.errors.push(e)
+            return { result: ans, out }
         }
     }
 

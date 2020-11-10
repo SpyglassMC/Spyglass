@@ -124,7 +124,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
     <td align="center"><a href="https://github.com/pca006132"><img src="https://avatars3.githubusercontent.com/u/12198657?s=460&v=4" width="64px;" alt=""/><br /><sub><b>pca006132</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/605" target="_blank" title="Ideas, Planning, and Feedback">✨ #605</a></td>
   </tr>
   <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256" width="64px;" alt=""/><br /><sub><b>Ξи</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #660</a></td>
+    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256" width="64px;" alt=""/><br /><sub><b>Ξи</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #660</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #671</a></td>
   </tr>
 </table>
 
