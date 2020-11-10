@@ -2308,7 +2308,7 @@ export const CommandTree: ICommandTree = {
                                                 const key = `alias/${parser}` as CacheType
                                                 parsedLine.cache = {
                                                     [key]: {
-                                                        [alias.valueOf()]: { doc: value.valueOf(), def: [alias[NodeRange]], ref: [] }
+                                                        [alias.valueOf()]: { foo: value.valueOf(), def: [alias[NodeRange]], ref: [] }
                                                     }
                                                 }
                                             }

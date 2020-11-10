@@ -142,9 +142,10 @@ export class CommandParser implements Parser<CommandComponent> {
                     const unit = category![alias]!
                     completions.push({
                         label: alias,
-                        insertText: unit.doc,
+                        insertText: unit.foo,
                         start: reader.cursor, end: reader.cursor,
-                        detail: unit.doc,
+                        detail: unit.foo,
+                        documentation: unit.doc,
                         kind: CompletionItemKind.Snippet
                     })
                 }

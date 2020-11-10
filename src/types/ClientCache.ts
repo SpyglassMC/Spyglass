@@ -149,7 +149,11 @@ export type CacheUnit = {
     /**
      * The user-defined documentation for the unit.
      */
-    doc?: string
+    doc?: string,
+    /**
+     * Additional value for this unit. Currently it's only used by aliases.
+     */
+    foo?: any
 } & { [key in CacheUnitPositionType]?: CachePosition[] }
 
 export type CacheVisibility = { pattern: string, type: FileType | '*' }
@@ -163,10 +167,6 @@ export interface CachePosition extends TextRange {
      * An array of identities describing the visibility of this element.
      */
     visibility?: CacheVisibility[],
-    /**
-     * The scope of this position.
-     */
-    scope?: TextRange,
     startLine?: number,
     startChar?: number,
     endLine?: number,
@@ -261,7 +261,16 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
                         addPos(overridePos, ansUnit[type]!)
                     }
                 }
-                ansUnit.doc = overrideUnit.doc
+                if (overrideUnit.doc !== undefined) {
+                    ansUnit.doc = overrideUnit.doc
+                } else {
+                    delete ansUnit.doc
+                }
+                if (overrideUnit.foo !== undefined) {
+                    ansUnit.foo = overrideUnit.foo
+                } else {
+                    delete ansUnit.foo
+                }
             }
         }
     }
