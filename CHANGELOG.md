@@ -1,3 +1,14 @@
+# [v3.0.8](https://github.com/SPGoding/datapack-language-server/compare/v3.0.7...v3.0.8) (2020-11-10)
+
+## 🐛 Bug Fixes
+- [`0623039`](https://github.com/SPGoding/datapack-language-server/commit/0623039)  Fix not completing vanilla structures (Issues: [`#661`](https://github.com/SPGoding/datapack-language-server/issues/661) [`#662`](https://github.com/SPGoding/datapack-language-server/issues/662))
+- [`8411c5d`](https://github.com/SPGoding/datapack-language-server/commit/8411c5d)  Fix unable to remove descriptions from #declare (Issues: [`#678`](https://github.com/SPGoding/datapack-language-server/issues/678))
+- [`122debe`](https://github.com/SPGoding/datapack-language-server/commit/122debe)  Fix unable to add IMP-Doc to #alias commands (Issues: [`#669`](https://github.com/SPGoding/datapack-language-server/issues/669))
+
+## 🚑 Critical Hotfixes
+- [`b9269c9`](https://github.com/SPGoding/datapack-language-server/commit/b9269c9)  Fix crashing when strings in JSON aren&#x27;t closed (Issues: [`#671`](https://github.com/SPGoding/datapack-language-server/issues/671))
+- [`364e6a2`](https://github.com/SPGoding/datapack-language-server/commit/364e6a2)  Fix showing errors for Unicode escapes in JSONs (Issues: [`#665`](https://github.com/SPGoding/datapack-language-server/issues/665))
+
 # [v3.0.7](https://github.com/SPGoding/datapack-language-server/compare/v3.0.6...v3.0.7) (2020-10-21)
 
 ## 🐛 Bug Fixes
