@@ -39,10 +39,10 @@ export const VanillaDataCache: {
     Nbtdoc: { [version: string]: Promise<nbtdoc.Root> },
     Registry: { [version: string]: Promise<Registry> }
 } = {
-    BlockDefinition: { '20w28a': Promise.resolve(FallbackBlockDefinition) },
-    NamespaceSummary: { '20w28a': Promise.resolve(FallbackNamespaceSummary) },
-    Nbtdoc: { '1.16.1': Promise.resolve(FallbackNbtdoc) },
-    Registry: { '20w28a': Promise.resolve(FallbackRegistry) }
+    BlockDefinition: { '20w45a': Promise.resolve(FallbackBlockDefinition) },
+    NamespaceSummary: { '20w45a': Promise.resolve(FallbackNamespaceSummary) },
+    Nbtdoc: { '1.16.2': Promise.resolve(FallbackNbtdoc) },
+    Registry: { '20w45a': Promise.resolve(FallbackRegistry) }
 }
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
