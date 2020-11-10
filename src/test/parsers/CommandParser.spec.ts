@@ -108,7 +108,7 @@ describe('CommandParser Tests', () => {
                 cache: {
                     'alias/uuid': {
                         MyCustomUUID: {
-                            doc: '12345678-90ab-cdef-1234-567890abcdef',
+                            foo: '12345678-90ab-cdef-1234-567890abcdef',
                             def: [{ start: -1, end: -1 }], ref: []
                         }
                     }
