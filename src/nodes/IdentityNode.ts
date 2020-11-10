@@ -21,6 +21,9 @@ export class IdentityNode extends ArgumentNode {
     readonly [NodeType] = 'Identity'
 
     get range() { return this[NodeRange] }
+    set range(value: TextRange) {
+        this[NodeRange] = value
+    }
 
     constructor(
         public namespace: string | undefined = undefined,

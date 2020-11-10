@@ -1,6 +1,6 @@
 import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
+import { NodeDescription } from '../nodes/ArgumentNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { isNamespacedType, NamespacedType, setCache, TextRange, TreeSummary } from '../types'
 import { CacheType, FileType, getSafeCategory, isFileType } from '../types/ClientCache'
@@ -49,7 +49,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const start = reader.cursor
         const idString = reader.readUntilOrEnd(' ')
         const ans = ArgumentParserResult.create(IdentityNode.fromString(idString))
-        ans.data[NodeRange] = { start, end: reader.cursor }
+        ans.data.range = { start, end: reader.cursor }
 
         const options = this.getOptions(ctx)
 
@@ -124,6 +124,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     private validate(ans: ArgumentParserResult<IdentityNode>, ctx: ParsingContext, options: IdentityParserOptions) {
         this.validateNotEmpty(ans)
         this.validateAllowTag(ans)
+        this.validateChars(ans)
     }
 
     private validateNotEmpty({ data, errors }: ArgumentParserResult<IdentityNode>) {
@@ -148,12 +149,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     private validateChars({ data, errors }: ArgumentParserResult<IdentityNode>): string {
-        const start = reader.cursor
-        const value = reader.readUnquotedString()
-        const end = reader.cursor
+        const value = data.toString()
         if (!value.match(/^[a-z0-9\/\.\_\-]*$/)) {
             errors.push(new ParsingError(
-                { start, end },
+                data.range,
                 locale('unexpected-character')
             ))
         }
