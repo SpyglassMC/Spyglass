@@ -261,9 +261,7 @@ export function combineCache(base: ClientCache = {}, override: ClientCache = {},
                         addPos(overridePos, ansUnit[type]!)
                     }
                 }
-                if (overrideUnit.doc) {
-                    ansUnit.doc = overrideUnit.doc
-                }
+                ansUnit.doc = overrideUnit.doc
             }
         }
     }
