@@ -120,6 +120,7 @@ describe('CommandParser Tests', () => {
                     label: 'MyCustomUUID',
                     t: '12345678-90ab-cdef-1234-567890abcdef',
                     detail: '12345678-90ab-cdef-1234-567890abcdef',
+                    documentation: undefined,
                     kind: CompletionItemKind.Snippet
                 }
             ])
