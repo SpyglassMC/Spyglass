@@ -21,7 +21,6 @@ export type VanillaData = {
 
 export const FallbackBlockDefinition: BlockDefinition = require('./BlockDefinition.json') as BlockDefinition
 export const FallbackNamespaceSummary: NamespaceSummary = require('./NamespaceSummary.json') as NamespaceSummary
-export const MyNamespaceSummary: Partial<NamespaceSummary> = require('./MyNamespaceSummary.json') as Partial<NamespaceSummary>
 export const FallbackNbtdoc: nbtdoc.Root = require('./Nbtdoc.json') as nbtdoc.Root
 export const FallbackRegistry: Registry = require('./Registry.json') as Registry
 
