@@ -90,3 +90,5 @@ export async function getJsonSchemas(version: JsonSchemaVersion, registry: Regis
     const schemas = getSchemas(setUpJsonCollections(collections, registry))
     return schemas
 }
+
+export const FallbackJsonSchemas = getJsonSchemas('1.16', FallbackRegistry)
