@@ -30,7 +30,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 19w41a commands.
+ * Command tree of Minecraft Java Edition 1.15.2 commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {

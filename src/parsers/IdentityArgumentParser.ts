@@ -471,9 +471,9 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     /* istanbul ignore next: tired of writing tests */
     private getVanillaPool(type: CacheType, vanilla: NamespaceSummary): string[] {
         const ans = vanilla[type as keyof NamespaceSummary] ?? []
-        if (type === 'loot_table') {
-            ans.push('minecraft:empty')
-        }
+        // if (type === 'loot_table') {
+        //     ans.push('minecraft:empty')
+        // }
         return ans
     }
 

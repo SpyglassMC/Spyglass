@@ -43,6 +43,7 @@ export const FileTypes = [
     'dimension',
     'dimension_type',
     'function',
+    'item_modifier',
     'loot_table',
     'predicate',
     'recipe',

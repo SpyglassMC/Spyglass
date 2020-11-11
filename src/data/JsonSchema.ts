@@ -1,5 +1,5 @@
 import { CollectionRegistry, SchemaRegistry } from '@mcschema/core'
-import { getCollections as getFallbackCollections, getSchemas as getFallbackSchemas } from '@mcschema/java-1.16'
+import { getCollections as getFallbackCollections, getSchemas as getFallbackSchemas } from '@mcschema/java-1.17'
 import minimatch from 'minimatch'
 import { JsonSchemaVersion, Registry } from '../types'
 import { PathPatterns } from '../utils/PathPatterns'
@@ -11,6 +11,7 @@ export type JsonSchemaType =
     | 'advancement'
     | 'dimension'
     | 'dimension_type'
+    | 'item_modifier'
     | 'loot_table'
     | 'predicate'
     | 'recipe'
@@ -38,6 +39,7 @@ const globPatterns: Record<JsonSchemaType, string> = {
     advancement: PathPatterns.advancement,
     dimension: PathPatterns.dimension,
     dimension_type: PathPatterns.dimension_type,
+    item_modifier: PathPatterns.item_modifier,
     loot_table: PathPatterns.loot_table,
     predicate: PathPatterns.predicate,
     recipe: PathPatterns.recipe,
@@ -88,5 +90,3 @@ export async function getJsonSchemas(version: JsonSchemaVersion, registry: Regis
     const schemas = getSchemas(setUpJsonCollections(collections, registry))
     return schemas
 }
-
-export const FallbackJsonSchemas = getJsonSchemas('1.16', FallbackRegistry)

@@ -37,7 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 20w45a commands.
+ * Command tree of Minecraft Java Edition 20w46a commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1051,6 +1051,66 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        item: {
+            parser: new LiteralArgumentParser('item'),
+            children: {
+                target: {
+                    template: 'item_holder',
+                    children: {
+                        slot: {
+                            parser: new ItemSlotArgumentParser(),
+                            children: {
+                                [Switchable]: true,
+                                copy: {
+                                    parser: new LiteralArgumentParser('copy'),
+                                    children: {
+                                        source: {
+                                            template: 'item_holder',
+                                            children: {
+                                                slot: {
+                                                    parser: new ItemSlotArgumentParser(),
+                                                    executable: true,
+                                                    children: {
+                                                        modifier: {
+                                                            parser: new IdentityArgumentParser('$item_modifier'),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                modify: {
+                                    parser: new LiteralArgumentParser('modify'),
+                                    children: {
+                                        modifier: {
+                                            parser: new IdentityArgumentParser('$item_modifier'),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                replace: {
+                                    parser: new LiteralArgumentParser('replace'),
+                                    children: {
+                                        item: {
+                                            parser: new ItemArgumentParser(false),
+                                            executable: true,
+                                            children: {
+                                                count: {
+                                                    parser: new NumberArgumentParser('integer', 0, 64),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         kick: {
             parser: new LiteralArgumentParser('kick'),
             permission: 3,
@@ -1326,31 +1386,6 @@ export const CommandTree: ICommandTree = {
         reload: {
             parser: new LiteralArgumentParser('reload'),
             executable: true
-        },
-        replaceitem: {
-            parser: new LiteralArgumentParser('replaceitem'),
-            children: {
-                target: {
-                    template: 'item_holder',
-                    children: {
-                        slot: {
-                            parser: new ItemSlotArgumentParser(),
-                            children: {
-                                item: {
-                                    parser: new ItemArgumentParser(false),
-                                    executable: true,
-                                    children: {
-                                        count: {
-                                            parser: new NumberArgumentParser('integer', 0, 64),
-                                            executable: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         },
         'save-all': {
             parser: new LiteralArgumentParser('save-all'),
