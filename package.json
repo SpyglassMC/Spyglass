@@ -5,7 +5,7 @@
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "bin": {
-        "datapack-language-server": "./lib/server.js"
+        "datapack-language-server": "./bin/server"
     },
     "author": "SPGoding",
     "contributors": [
