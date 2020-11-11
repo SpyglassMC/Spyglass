@@ -31,7 +31,7 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.11.2",
+        "@mcschema/core": "^0.11.3",
         "@mcschema/java-1.16": "^0.5.14",
         "@mcschema/java-1.17": "^0.1.3",
         "@mcschema/locales": "^0.1.11",
@@ -71,6 +71,7 @@
         "eslint": "^7.9.0",
         "espower-typescript": "^9.0.2",
         "gitmoji-cli": "^3.2.9",
+        "lerna": "^3.22.1",
         "mocha": "^8.1.3",
         "nyc": "^15.1.0",
         "power-assert": "^1.6.1",
