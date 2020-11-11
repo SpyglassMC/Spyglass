@@ -1,3 +1,9 @@
+# [v3.0.9](https://github.com/SPGoding/datapack-language-server/compare/v3.0.8...v3.0.9) (2020-11-11)
+
+## 🐛 Bug Fixes
+- [`e27c993`](https://github.com/SPGoding/datapack-language-server/commit/e27c993)  Fix not executable on *nix; add shebang to bin/server 
+- [`e8bf056`](https://github.com/SPGoding/datapack-language-server/commit/e8bf056)  Fix not supporting item modifiers and /item
+
 # [v3.0.8](https://github.com/SPGoding/datapack-language-server/compare/v3.0.7...v3.0.8) (2020-11-10)
 
 ## 🐛 Bug Fixes
