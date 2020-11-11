@@ -1,11 +1,18 @@
-import { CommandTree, CommandTreeNode, CommandTreeNodes } from './types/CommandTree'
 import { CommandComponentNode } from './types/CommandComponent'
+import { CommandTree, CommandTreeNode, CommandTreeNodes } from './types/CommandTree'
 
 /**
  * @param lastIndex The index counted from the last, starting from `1`.
  */
 export function getArgOrDefault<T>(args: CommandComponentNode<T>[], lastIndex: number, fallback: T): T {
     return lastIndex <= args.length ? args[args.length - lastIndex].data : fallback
+}
+
+/**
+ * @param lastIndex The index counted from the last, starting from `1`.
+ */
+export function getArgData<T>(args: CommandComponentNode<T>[], lastIndex: number): CommandComponentNode<T> | undefined {
+    return lastIndex <= args.length ? args[args.length - lastIndex] : undefined
 }
 
 /**

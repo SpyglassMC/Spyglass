@@ -1,3 +1,4 @@
+import { TextRange } from '.'
 import { plugins } from '..'
 import { toFormattedString } from '../utils'
 import { combineCache } from './ClientCache'
@@ -5,7 +6,8 @@ import { LintConfig } from './Config'
 
 export type CommandComponentNode<T> = {
     data: T,
-    parser: string
+    parser: string,
+    range: TextRange
 }
 
 export type CommandComponentData = CommandComponentNode<any>[]

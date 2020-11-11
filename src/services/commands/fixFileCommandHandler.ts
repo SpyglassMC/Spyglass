@@ -1,9 +1,10 @@
 import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
-import { areOverlapped, Config, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
+import { areOverlapped, CommandComponent, Config, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
 import { getDiagnosticMap } from '../common'
 import { DatapackLanguageService } from '../DatapackLanguageService'
+import { fixCommandComponent } from '../onCodeAction'
 
 export async function fixFileCommandHandler({ uri, service }: { uri: Uri, service: DatapackLanguageService }) {
     const { doc, textDoc } = await service.getDocuments(uri)
@@ -38,16 +39,18 @@ async function getActions(service: DatapackLanguageService, doc: McfunctionDocum
         const diagnosticsMap = getDiagnosticMap(diagnostics)
 
         const selectedRange = { start: 0, end: Infinity }
+        const ctx = await service.getParsingContext({ textDoc, uri })
 
         if (node.data instanceof Array) {
             for (const { data } of node.data) {
                 /* istanbul ignore else */
                 if (data instanceof ArgumentNode) {
-                    const ctx = await service.getParsingContext({ textDoc, uri })
                     ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
                 }
             }
         }
+
+        fixCommandComponent(ans, ctx, node as CommandComponent, diagnosticsMap)
     }
 
     return ans

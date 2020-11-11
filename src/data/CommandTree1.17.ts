@@ -1,5 +1,5 @@
 import { DiagnosticSeverity } from 'vscode-languageserver'
-import { getArgOrDefault } from '../CommandTree'
+import { getArgData, getArgOrDefault } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange, VectorNode } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
@@ -30,7 +30,7 @@ import { TextComponentArgumentParser } from '../parsers/TextComponentArgumentPar
 import { TimeArgumentParser } from '../parsers/TimeArgumentParser'
 import { UuidArgumentParser } from '../parsers/UuidArgumentParser'
 import { VectorArgumentParser } from '../parsers/VectorArgumentParser'
-import { AlwaysValidates, ParsingError, Switchable } from '../types'
+import { AlwaysValidates, ErrorCode, ParsingError, Switchable } from '../types'
 import { CacheType, DeclarableTypes } from '../types/ClientCache'
 import { CommandTree as ICommandTree } from '../types/CommandTree'
 import { TokenType } from '../types/Token'
@@ -1386,6 +1386,49 @@ export const CommandTree: ICommandTree = {
         reload: {
             parser: new LiteralArgumentParser('reload'),
             executable: true
+        },
+        replaceitem: {
+            parser: new LiteralArgumentParser('replaceitem'),
+            children: {
+                target: {
+                    template: 'item_holder',
+                    children: {
+                        slot: {
+                            parser: new ItemSlotArgumentParser(),
+                            children: {
+                                item: {
+                                    parser: new ItemArgumentParser(false),
+                                    executable: true,
+                                    run: ({ data, errors }) => {
+                                        if (errors.length === 0) {
+                                            errors.push(new ParsingError(
+                                                { start: getArgData(data, 5)!.range.start, end: getArgData(data, 1)!.range.end },
+                                                locale('datafix.error.command-replaceitem'),
+                                                undefined, undefined, ErrorCode.CommandReplaceitem
+                                            ))
+                                        }
+                                    },
+                                    children: {
+                                        count: {
+                                            parser: new NumberArgumentParser('integer', 0, 64),
+                                            executable: true,
+                                            run: ({ data, errors }) => {
+                                                if (errors.length === 0) {
+                                                    errors.push(new ParsingError(
+                                                        { start: getArgData(data, 6)!.range.start, end: getArgData(data, 1)!.range.end },
+                                                        locale('datafix.error.command-replaceitem'),
+                                                        undefined, undefined, ErrorCode.CommandReplaceitem
+                                                    ))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
         'save-all': {
             parser: new LiteralArgumentParser('save-all'),
@@ -2900,7 +2943,7 @@ export const CommandTree: ICommandTree = {
                             children: {
                                 path: {
                                     parser: ({ data }) => {
-                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage' as 'block' | 'entity' | 'storage'
+                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
                                         if (type === 'entity') {
                                             const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
                                             const id = getNbtdocRegistryId(entity)

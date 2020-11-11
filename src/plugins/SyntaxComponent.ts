@@ -1,4 +1,4 @@
-import { ArgumentParserResult, LegacyValidateResult, LintConfig, ParserResult, ParsingContext, TextRange } from '../types'
+import { ArgumentParserResult, LegacyValidateResult, ParserResult, ParsingContext, TextRange } from '../types'
 import { StringReader } from '../utils/StringReader'
 
 export interface SyntaxComponentParser<T = unknown> {

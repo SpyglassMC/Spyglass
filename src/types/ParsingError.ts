@@ -6,6 +6,9 @@ import { remapTextRange, TextRange } from './TextRange'
 
 export const enum ErrorCode {
     BlockStateSortKeys,
+    //#region Command /replaceitem datafix: #738
+    CommandReplaceitem,
+    //#endregion,
     IdentityCompleteDefaultNamespace,
     IdentityOmitDefaultNamespace,
     IdentityUnknown,
