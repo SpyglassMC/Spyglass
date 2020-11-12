@@ -1,3 +1,13 @@
+# [v3.1.1](https://github.com/SPGoding/datapack-language-server/compare/v3.1.0...v3.1.1) (2020-11-12)
+
+## 🐛 Bug Fixes
+- [`6e57725`](https://github.com/SPGoding/datapack-language-server/commit/6e57725)  Fix range for JSON error goes to Infinity (Issues: [`#742`](https://github.com/SPGoding/datapack-language-server/issues/742))
+- [`26b53d8`](https://github.com/SPGoding/datapack-language-server/commit/26b53d8)  Fix not showing pop-ups for 3.1.0 Release Notes (Issues: [`#745`](https://github.com/SPGoding/datapack-language-server/issues/745))
+- [`75175cf`](https://github.com/SPGoding/datapack-language-server/commit/75175cf)  Move default support to the latest release (Issues: [`#746`](https://github.com/SPGoding/datapack-language-server/issues/746))
+
+## 🚑 Critical Hotfixes
+- [`ae5315b`](https://github.com/SPGoding/datapack-language-server/commit/ae5315b)  Fix crashes in JSON files (Issues: [`#747`](https://github.com/SPGoding/datapack-language-server/issues/747))
+
 # [v3.1.0](https://github.com/SPGoding/datapack-language-server/compare/v3.0.9...v3.1.0) (2020-11-12)
 
 ## ✨ New Features
