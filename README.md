@@ -115,9 +115,10 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Contributors for older versions
 
-- [1.0.0](./contributors/1.0.0.md)
-- [2.0.0](./contributors/2.0.0.md)
-- [2.1.0](./contributors/2.1.0.md)
+- [1.x.x](./contributors/1.x.x.md)
+- [2.0.x](./contributors/2.0.x.md)
+- [2.1.x](./contributors/2.1.x.md)
+- [3.0.x](./contributors/3.0.x.md)
 
 ## Contributing
 
