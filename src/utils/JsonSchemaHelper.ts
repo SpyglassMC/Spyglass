@@ -148,9 +148,6 @@ export class JsonSchemaHelper {
         // Do suggestions provided by the schema node's `suggest` method.
         const suggestions = valueSchema?.suggest(valuePath, value) ?? []
 
-        /* DEBUG */ console.log('valueSchema?.type', require('util').inspect(valueSchema?.type(valuePath), true, null))
-        
-
         return arrayToCompletions(
             suggestions, replacingRange.start, replacingRange.end,
             valueNode.type === 'object' ? c => {
