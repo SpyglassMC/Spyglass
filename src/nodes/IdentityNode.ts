@@ -211,7 +211,7 @@ export class IdentityNode extends ArgumentNode {
     }
 
     /**
-     * 
+     *
      * @param rel The relative path from the workspace. Returns `undefined` if the path is in an invalid
      * datapack category.
      */
@@ -222,7 +222,7 @@ export class IdentityNode extends ArgumentNode {
         }
         rel = path.normalize(rel)
         const segs = rel.split(/[/\\]/)
-        const ext = path.extname(rel)
+        const ext = rel.match(/(?<=\.)[^./\\]*?$/)?.pop() ?? ''
         const side = segs[0]
         if (side === 'data') {
             for (const type of Object.keys(PathPatterns)) {
