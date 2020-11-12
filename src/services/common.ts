@@ -1,16 +1,18 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
 import * as fs from 'fs'
 import { promises as fsp } from 'fs'
+import minimatch from 'minimatch'
 import path from 'path'
 import { Diagnostic, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI as Uri } from 'vscode-uri'
 import { JsonSchemaType } from '../data/JsonSchema'
 import { VanillaData } from '../data/VanillaData'
+import { locale } from '../locales'
 import { DiagnosticMap, getSelectedNode, JsonDocument, JsonNode } from '../nodes'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
-import { ErrorCode, isMcfunctionDocument, SyntaxComponent, TextRange, ValidateResult } from '../types'
+import { ErrorCode, isMcfunctionDocument, ParsingError, SyntaxComponent, TextRange, ValidateResult } from '../types'
 import { FileType } from '../types/ClientCache'
 import { CommandTree } from '../types/CommandTree'
 import { Config } from '../types/Config'
@@ -18,6 +20,7 @@ import { DatapackDocument } from '../types/DatapackDocument'
 import { PathAccessibleFunction, UrisOfIds } from '../types/handlers'
 import { TokenModifier, TokenType } from '../types/Token'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
+import { GeneralPathPattern, PathPatterns } from '../utils/PathPatterns'
 import { StringReader } from '../utils/StringReader'
 import { DatapackLanguageService } from './DatapackLanguageService'
 
@@ -64,6 +67,21 @@ export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], u
     })
 }
 
+function checkFilePath(errors: ParsingError[] | undefined, service: DatapackLanguageService, uri: Uri) { 
+    const rel = service.getRel(uri)
+    if (rel && errors && minimatch(rel, GeneralPathPattern, { dot: true })) {
+        for (const type of Object.keys(PathPatterns)) {
+            if (minimatch(rel, PathPatterns[type as FileType], { dot: true })) {
+                return
+            }
+        }
+        errors.push(new ParsingError(
+            { start: 0, end: 1 },
+            locale('incorrect-file-path')
+        ))
+    }
+}
+
 export function parseJsonNode({ service, textDoc, config, uri, schema, commandTree, vanillaData, jsonSchemas, schemaType }: { service: DatapackLanguageService, textDoc: TextDocument, config: Config, uri: Uri, schema: INode, commandTree: CommandTree, jsonSchemas: SchemaRegistry, schemaType: JsonSchemaType, vanillaData: VanillaData }): JsonNode {
     const ans: JsonNode = {
         json: service.jsonService.parseJSONDocument(textDoc) as JsonDocument,
@@ -72,6 +90,7 @@ export function parseJsonNode({ service, textDoc, config, uri, schema, commandTr
     }
     const ctx = service.getParsingContextSync({ textDoc, uri, commandTree, config, jsonSchemas, vanillaData })
     JsonSchemaHelper.validate(ans, ans.json.root, schema, ctx)
+    checkFilePath(ans.errors, service, uri)
     return ans
 }
 
@@ -100,6 +119,7 @@ export function parseSyntaxComponents(service: DatapackLanguageService, textDoc:
         lastLine = currentLine()
         reader.nextLine(textDoc)
     }
+    checkFilePath(ans?.[0]?.errors, service, uri)
     return ans
 }
 

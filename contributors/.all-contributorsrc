@@ -43,6 +43,7 @@
       "profile": "https://github.com/NeunEinser",
       "contributions": [],
       "details": [
+        { "type": "ideas", "link": "issues/736", "text": "#736" },
         { "type": "bug", "link": "issues/739", "text": "#739" }
       ]
     },

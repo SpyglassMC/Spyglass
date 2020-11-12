@@ -1,5 +1,7 @@
 import { FileType } from '../types/ClientCache'
 
+export const GeneralPathPattern = 'data/**/*.{json,mcfunction,nbt}'
+
 export const PathPatterns: Record<FileType, string> = {
     advancement: 'data/*/advancements/**/*.json',
     dimension: 'data/*/dimension/**/*.json',

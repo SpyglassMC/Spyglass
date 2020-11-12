@@ -73,6 +73,7 @@
     "expected-got": "Expected %0% but got %1%",
     "failed-to-resolve-cache-id": "Failed to resolve namespaced ID %1% in cache category %0%",
     "failed-to-resolve-registry-id": "Failed to resolve namespaced ID %1% in registry %0%",
+    "incorrect-file-path": "Data-pack Language Server couldn't figure out which category this file belongs to. Please double check the path of this file",
     "identity": "a namespaced ID",
     "integer": "an integer",
     "integer.between": "an integer between %0% and %1%",
