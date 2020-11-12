@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import clone from 'clone'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import { BlockDefinition } from '../types/BlockDefinition'
@@ -7,7 +8,7 @@ import { NamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
 import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
-import { requestText, pathAccessible, readFile } from '../utils'
+import { pathAccessible, readFile, requestText } from '../utils'
 
 let faildTimes = 0
 const MaxFaildTimes = 3
@@ -31,17 +32,21 @@ export const FallbackVanillaData: VanillaData = {
     Registry: FallbackRegistry
 }
 
-export const VanillaDataCache: {
+export function getVanillaDataCache(): {
     BlockDefinition: { [version: string]: Promise<BlockDefinition> },
     NamespaceSummary: { [version: string]: Promise<NamespaceSummary> },
     Nbtdoc: { [version: string]: Promise<nbtdoc.Root> },
     Registry: { [version: string]: Promise<Registry> }
-} = {
-    BlockDefinition: { '20w45a': Promise.resolve(FallbackBlockDefinition) },
-    NamespaceSummary: { '20w45a': Promise.resolve(FallbackNamespaceSummary) },
-    Nbtdoc: { '1.16.2': Promise.resolve(FallbackNbtdoc) },
-    Registry: { '20w45a': Promise.resolve(FallbackRegistry) }
+} {
+    return clone({
+        BlockDefinition: { '20w45a': Promise.resolve(FallbackBlockDefinition) },
+        NamespaceSummary: { '20w45a': Promise.resolve(FallbackNamespaceSummary) },
+        Nbtdoc: { '1.16.2': Promise.resolve(FallbackNbtdoc) },
+        Registry: { '20w45a': Promise.resolve(FallbackRegistry) }
+    })
 }
+
+export const VanillaDataCache = getVanillaDataCache()
 
 export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Registry'
 

@@ -1,5 +1,4 @@
 import { INode, SchemaRegistry } from '@mcschema/core'
-import minimatch from 'minimatch'
 import rfdc from 'rfdc'
 import { SynchronousPromise } from 'synchronous-promise'
 import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
@@ -9,8 +8,7 @@ import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOut
 import { plugins } from '..'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
-import { getVanillaData, VanillaData } from '../data/VanillaData'
-import { locale } from '../locales'
+import { getVanillaData, getVanillaDataCache, VanillaData, VanillaDataCache } from '../data/VanillaData'
 import { getSelectedNode, IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers'
 import { Contributions, LanguageConfig } from '../plugins/LanguageConfigImpl'
@@ -18,7 +16,6 @@ import { PluginLoader } from '../plugins/PluginLoader'
 import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForID, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
-import { GeneralPathPattern, PathPatterns } from '../utils/PathPatterns'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseJsonNode, parseSyntaxComponents } from './common'
 
 type ShowMessage = (message: string) => void
@@ -743,6 +740,15 @@ export class DatapackLanguageService {
 
     async onJSEvaluation(uri: Uri, range: lsp.Range) {
 
+    }
+
+    async onClearVanillaData() {
+        const newCache = getVanillaDataCache()
+        VanillaDataCache.BlockDefinition = newCache.BlockDefinition
+        VanillaDataCache.NamespaceSummary = newCache.NamespaceSummary
+        VanillaDataCache.Nbtdoc = newCache.Nbtdoc
+        VanillaDataCache.Registry = newCache.Registry
+        // TODO: remove files in globalStoragePath
     }
 
     async createFile(root: Uri, type: FileType, id: IdentityNode) {
