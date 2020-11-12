@@ -64,10 +64,6 @@ export class JsonSchemaHelper {
                         // Regular key suggestions for selected object.
                         if (selectedRange.start < ctx.cursor && ctx.cursor < selectedRange.end) {
                             // The cursor isn't out of the curly braces.
-                            /* DEBUG */ console.log('selectedPath', require('util').inspect(selectedPath, true, null))
-                            /* DEBUG */ console.log('selectedNode', require('util').inspect(selectedNode, true, null))
-                            /* DEBUG */ console.log('schema', require('util').inspect(schema, true, null))
-
                             ans.push(...this.suggestFromSchema(selectedPath, selectedNode, undefined, schema, ctx))
                         }
                     } else if (selectedNode.type === 'property') {
@@ -151,6 +147,9 @@ export class JsonSchemaHelper {
         }
         // Do suggestions provided by the schema node's `suggest` method.
         const suggestions = valueSchema?.suggest(valuePath, value) ?? []
+
+        /* DEBUG */ console.log('valueSchema?.type', require('util').inspect(valueSchema?.type(valuePath), true, null))
+        
 
         return arrayToCompletions(
             suggestions, replacingRange.start, replacingRange.end,
@@ -399,7 +398,7 @@ export class JsonSchemaHelper {
 
     private static convertSchemaError({ path, params, error }: PathError, node: ASTNode | undefined) {
         const pathElements = path.getArray()
-        const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: Infinity }
+        const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: 1 }
         let message = locale(error, params) ?? (
             console.error('[convertSchemaError]', new Error(`Unknown JSON schema error “${error}”`)),
             ''
