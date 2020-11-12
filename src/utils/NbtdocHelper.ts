@@ -720,7 +720,7 @@ export class NbtdocHelper {
             case 'minecraft:block_entity':
                 return 'minecraft:block_entity_type'
             case 'minecraft:dimension':
-                return 'minecraft:dimension_type'
+                return '$dimension'
             case 'minecraft:entity':
                 return 'minecraft:entity_type'
             case 'minecraft:loot_table':

@@ -16,7 +16,7 @@ Data-pack Language Server can provide many heavy language features for documents
     - [Visual Studio Code](#visual-studio-code)
   - [For Developers](#for-developers)
 - [Contributors](#contributors)
-  - [Contributors for 3.0.0](#contributors-for-300)
+  - [Contributors for 3.1.0](#contributors-for-310)
   - [Contributors for older versions](#contributors-for-older-versions)
   - [Contributing](#contributing)
 
@@ -89,7 +89,7 @@ them.
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
-## Contributors for 3.0.0
+## Contributors for 3.1.0
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -126,6 +126,9 @@ This project follows the [all-contributors](https://github.com/all-contributors/
   <tr>
     <td align="center"><a href="https://github.com/shurik204"><img src="https://avatars2.githubusercontent.com/u/43310372?s=460&u=91bc2eb7213cd4580be5de984f7f920397217103&v=4" width="64px;" alt=""/><br /><sub><b>shurik204</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/678" target="_blank" title="Bug reports">🐛 #678</a></td>
     <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256" width="64px;" alt=""/><br /><sub><b>Ξи</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #660</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/660" target="_blank" title="Bug reports">🐛 #671</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/zyjking"><img src="https://avatars2.githubusercontent.com/u/37742023?s=400&v=4" width="64px;" alt=""/><br /><sub><b>zyjking</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
   </tr>
 </table>
 
