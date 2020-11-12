@@ -104,10 +104,11 @@ This project follows the [all-contributors](https://github.com/all-contributors/
     <td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a></td>
   </tr>
   <tr>
+    <td align="center"><a href="https://github.com/MulverineX"><img src="https://avatars2.githubusercontent.com/u/12068027?s=460&u=525f7b144a55b7d894a75ee023baf9c469250c4b&v=4" width="64px;" alt=""/><br /><sub><b>MulverineX</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/747" target="_blank" title="Bug reports">🐛 #747</a></td>
     <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/736" target="_blank" title="Ideas, Planning, and Feedback">✨ #736</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/739" target="_blank" title="Bug reports">🐛 #739</a></td>
-    <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
   </tr>
   <tr>
+    <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
     <td align="center"><a href="https://github.com/zyjking"><img src="https://avatars2.githubusercontent.com/u/37742023?s=400&v=4" width="64px;" alt=""/><br /><sub><b>zyjking</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
   </tr>
 </table>

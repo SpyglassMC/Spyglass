@@ -416,9 +416,9 @@ export class JsonSchemaHelper {
         let childNode: ASTNode | undefined
         const ele = path[0]
         if (typeof ele === 'number') {
-            childNode = (node as ArrayASTNode).items[ele]
+            childNode = (node as ArrayASTNode).items?.[ele]
         } else {
-            childNode = (node as ObjectASTNode).properties.find(prop => prop.keyNode.value === ele)?.valueNode
+            childNode = (node as ObjectASTNode).properties?.find(prop => prop.keyNode.value === ele)?.valueNode
         }
         if (childNode) {
             return this.navigateNodes(childNode, (path.shift(), path))
@@ -446,7 +446,7 @@ export class JsonSchemaHelper {
                 nextNode = nextNode.parent
             }
         } else {
-            nextNode = node?.type === 'object' ? node.properties.find(prop => prop.keyNode.value === ele.push)?.valueNode : undefined
+            nextNode = node?.type === 'object' ? node.properties?.find(prop => prop.keyNode.value === ele.push)?.valueNode : undefined
         }
         return this.navigateRelativePath(nextNode, path.slice(1))
     }
