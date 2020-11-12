@@ -17,8 +17,8 @@ describe('onDocumentFormatting() Tests', () => {
                 mockCommand({
                     range: { start: 0, end: 20 },
                     data: [
-                        { parser: 'literal', data: 'fake' },
-                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'literal', data: 'fake', range: { start: 0, end: 4 } },
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']), range: { start: 5, end: 20 } }
                     ]
                 })
             ]
@@ -41,8 +41,8 @@ describe('onDocumentFormatting() Tests', () => {
                 mockCommand({
                     range: { start: 5, end: 25 },
                     data: [
-                        { parser: 'literal', data: 'fake' },
-                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'literal', data: 'fake', range: { start: 0, end: 4 } },
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']), range: { start: 5, end: 20 } }
                     ]
                 })
             ]
@@ -65,8 +65,8 @@ describe('onDocumentFormatting() Tests', () => {
                 mockCommand({
                     range: { start: 0, end: 21 },
                     data: [
-                        { parser: 'literal', data: 'wrong' },
-                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'literal', data: 'wrong', range: { start: 0, end: 5 } },
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']), range: { start: 6, end: 21 } }
                     ],
                     errors: [
                         new ParsingError({ start: 0, end: 5 }, '')
@@ -75,8 +75,8 @@ describe('onDocumentFormatting() Tests', () => {
                 mockCommand({
                     range: { start: 22, end: 42 },
                     data: [
-                        { parser: 'literal', data: 'fake' },
-                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']) }
+                        { parser: 'literal', data: 'fake', range: { start: 0, end: 4 } },
+                        { parser: 'identity', data: new IdentityNode('minecraft', ['stone']), range: { start: 5, end: 20 } }
                     ]
                 })
             ]

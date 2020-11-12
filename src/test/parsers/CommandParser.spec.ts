@@ -131,7 +131,7 @@ describe('CommandParser Tests', () => {
             const node: CommandTreeNode<string> = { parser: new TestArgumentParser(), executable: true }
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should handle redirect to children', async () => {
             const input = 'foo'
@@ -146,9 +146,9 @@ describe('CommandParser Tests', () => {
             const ctx = constructContext({ commandTree: tree })
             const parser = new CommandParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect' }
-            const line = CommandComponent.create([{ data: 'parsed', parser: 'test' }])
+            const line = CommandComponent.create([{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }])
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }, { data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should handle redirect to single', async () => {
             const input = 'foo'
@@ -163,9 +163,9 @@ describe('CommandParser Tests', () => {
             const ctx = constructContext({ commandTree: tree })
             const parser = new CommandParser()
             const node: CommandTreeNode<string> = { redirect: 'redirect.test' }
-            const line = CommandComponent.create([{ data: 'parsed', parser: 'test' }])
+            const line = CommandComponent.create([{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }])
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }, { data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should handle children template', async () => {
             const input = 'foo'
@@ -179,9 +179,9 @@ describe('CommandParser Tests', () => {
             const ctx = constructContext({ commandTree: tree })
             const parser = new CommandParser()
             const node: CommandTreeNode<string> = { template: 'template', executable: true }
-            const line = CommandComponent.create([{ data: 'parsed', parser: 'test' }])
+            const line = CommandComponent.create([{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }])
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }, { data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should handle single template', async () => {
             const input = 'foo'
@@ -195,9 +195,9 @@ describe('CommandParser Tests', () => {
             const ctx = constructContext({ commandTree: tree })
             const parser = new CommandParser()
             const node: CommandTreeNode<string> = { template: 'template.test', executable: true }
-            const line = CommandComponent.create([{ data: 'parsed', parser: 'test' }])
+            const line = CommandComponent.create([{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }])
             parser.parseSingle(new StringReader(input), ctx, 'node', node, line)
-            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }, { data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should return error when not executable', async () => {
             const input = 'foo'
@@ -212,7 +212,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 3, end: 5 }, 'Expected more arguments but got nothing')])
         })
         it('Should parse children when there are trailing data', async () => {
@@ -235,7 +235,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }, { data: 'bar', parser: 'test', range: { start: 4, end: 7 } }]
             )
         })
         it('Should return errors when arguments are not seperated by space', async () => {
@@ -257,7 +257,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
-            assert.deepStrictEqual(line.data, [{ data: 'f', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'f', parser: 'test', range: { start: 0, end: 1 } }])
             assert.deepStrictEqual(line.errors, [new ParsingError({ start: 1, end: 3 }, 'Expected a space to seperate two arguments')])
         })
         it('Should downgrade untolerable errors of children', async () => {
@@ -279,7 +279,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'node', tree.commands.test, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }, { data: 'bar', parser: 'test', range: { start: 4, end: 7 } }])
             assert.deepStrictEqual(line.errors,
                 [new ParsingError({ start: 4, end: 7 }, 'Expected “ERROR” and did get “ERROR”')]
             )
@@ -299,7 +299,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }]
             )
             assert.deepStrictEqual(line.errors,
                 [new ParsingError({ start: 3, end: 7 }, 'Expected nothing but got “ bar”')]
@@ -326,7 +326,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }]
             )
             assertCompletions(input, line.completions, [
                 { label: 'completion', t: 'foo completion' }
@@ -348,7 +348,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.test, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }]
             )
             assert.deepStrictEqual(line.errors,
                 [new ParsingError(
@@ -367,8 +367,8 @@ describe('CommandParser Tests', () => {
                             bar: {
                                 parser: new TestArgumentParser(),
                                 run: (parsedLine) => {
-                                    assert.deepStrictEqual(parsedLine.data, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
-                                    parsedLine.data.push({ data: 'baz', parser: 'test' })
+                                    assert.deepStrictEqual(parsedLine.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }, { data: 'bar', parser: 'test', range: { start: 4, end: 7 } }])
+                                    parsedLine.data.push({ data: 'baz', parser: 'test', range: { start: 233, end: 233 } })
                                 }
                             }
                         }
@@ -379,7 +379,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }, { data: 'baz', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }, { data: 'bar', parser: 'test', range: { start: 4, end: 7 } }, { data: 'baz', parser: 'test', range: { start: 233, end: 233 } }])
         })
         it('Should handle parser function', async () => {
             const input = 'foo bar'
@@ -399,7 +399,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }, { data: 'bar', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }, { data: 'bar', parser: 'test', range: { start: 4, end: 7 } }])
         })
     })
     describe('parseChildren() Tests', () => {
@@ -421,7 +421,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseChildren(reader, ctx, tree.children, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should return the first child if only tolerable error occurrs', async () => {
             const tree: CommandTree = {
@@ -442,7 +442,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create()
             parser.parseChildren(reader, ctx, tree.children, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }]
             )
             assert.deepStrictEqual(line.errors,
                 [new ParsingError({ start: 0, end: 3 }, 'Expected “error” and did get “error”')]
@@ -466,7 +466,7 @@ describe('CommandParser Tests', () => {
             const parser = new CommandParser()
             const line = CommandComponent.create()
             parser.parseChildren(reader, ctx, tree.children, line)
-            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
         it('Should restore the errors of the parsedLine if untolerable error occurrs', async () => {
             const tree: CommandTree = {
@@ -487,7 +487,7 @@ describe('CommandParser Tests', () => {
             const line = CommandComponent.create([], { errors: [new ParsingError({ start: 0, end: 1 }, 'Old error')] })
             parser.parseChildren(reader, ctx, tree.children, line)
             assert.deepStrictEqual(line.data,
-                [{ data: 'foo', parser: 'test' }]
+                [{ data: 'foo', parser: 'test', range: { start: 0, end: 3 } }]
             )
             assert.deepStrictEqual(line.errors,
                 [new ParsingError({ start: 0, end: 1 }, 'Old error')]
@@ -509,9 +509,9 @@ describe('CommandParser Tests', () => {
             const ctx = constructContext({ commandTree: tree })
             const reader = new StringReader('foo')
             const parser = new CommandParser()
-            const line = CommandComponent.create([{ data: 'parsed', parser: 'test' }])
+            const line = CommandComponent.create([{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }])
             parser.parseChildren(reader, ctx, tree.children, line)
-            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test' }, { data: 'foo', parser: 'test' }])
+            assert.deepStrictEqual(line.data, [{ data: 'parsed', parser: 'test', range: { start: -4, end: -1 } }, { data: 'foo', parser: 'test', range: { start: 0, end: 3 } }])
         })
     })
 
@@ -558,7 +558,11 @@ describe('CommandParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
                 data: CommandComponent.create(
-                    [{ data: 'a', parser: 'test' }, { data: 'b', parser: 'test' }, { data: 'c', parser: 'test' }],
+                    [
+                        { data: 'a', parser: 'test', range: { start: 0, end: 1 } }, 
+                        { data: 'b', parser: 'test', range: { start: 2, end: 3 } }, 
+                        { data: 'c', parser: 'test', range: { start: 4, end: 5 } }
+                    ],
                     {
                         range: { start: 0, end: 5 },
                         hint: {
@@ -608,7 +612,7 @@ describe('CommandParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
                 data: CommandComponent.create(
-                    [{ data: 'first', parser: 'test' }, { data: 'second', parser: 'test' }],
+                    [{ data: 'first', parser: 'test', range: { start: 0, end: 5 } }, { data: 'second', parser: 'test', range: { start: 6, end: 12 } }],
                     {
                         range: { start: 0, end: 12 },
                         hint: {
@@ -625,7 +629,7 @@ describe('CommandParser Tests', () => {
             const actual = parser.parse(reader, ctx)
             assert.deepStrictEqual(actual, {
                 data: CommandComponent.create(
-                    [{ data: 'foo', parser: 'test' }],
+                    [{ data: 'foo', parser: 'test', range: { start: 1, end: 4 } }],
                     {
                         range: { start: 0, end: 4 },
                         hint: {

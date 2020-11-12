@@ -18,17 +18,17 @@ describe('onDidChangeTextDocument() Tests', () => {
             nodes: [
                 mockCommand({
                     range: { start: 0, end: 8 },
-                    data: [{ data: '# Test 0', parser: 'string' }],
+                    data: [{ data: '# Test 0', parser: 'string', range: { start: 0, end: 8 } }],
                     tokens: [new Token({ start: 0, end: 8 }, TokenType.comment)]
                 }),
                 mockCommand({
                     range: { start: 9, end: 16 },
-                    data: [{ data: '# Test 1', parser: 'string' }],
+                    data: [{ data: '# Test 1', parser: 'string', range: { start: 9, end: 16 } }],
                     tokens: [new Token({ start: 9, end: 16 }, TokenType.comment)]
                 }),
                 mockCommand({
                     range: { start: 17, end: 25 },
-                    data: [{ data: '# Test 2', parser: 'string' }],
+                    data: [{ data: '# Test 2', parser: 'string', range: { start: 17, end: 25 } }],
                     tokens: [new Token({ start: 17, end: 25 }, TokenType.comment)]
                 })
             ]
@@ -48,7 +48,7 @@ describe('onDidChangeTextDocument() Tests', () => {
         assert(textDoc.version === version)
         assert.deepStrictEqual(doc.nodes, [
             CommandComponent.create(
-                [{ data: '# Modified', parser: 'string' }],
+                [{ data: '# Modified', parser: 'string', range: { start: 0, end: 10 } }],
                 {
                     range: { start: 0, end: 10 },
                 }

@@ -38,7 +38,7 @@ describe('common.ts Tests', () => {
             const nodes = parseSyntaxComponents(service, textDoc, 0, 5, config, uri, undefined, FallbackCommandTree, FallbackVanillaData, await FallbackJsonSchemas, languageConfigs)
 
             assert.deepStrictEqual(nodes, [
-                CommandComponent.create([{ data: '', parser: 'string' }], { range: { start: 5, end: 5 } })
+                CommandComponent.create([{ data: '', parser: 'string', range: { start: 5, end: 5 } }], { range: { start: 5, end: 5 } })
             ])
         })
         it('Should push a parsed node for other input', async () => {
@@ -51,7 +51,7 @@ describe('common.ts Tests', () => {
 
             assert.deepStrictEqual(nodes, [
                 CommandComponent.create(
-                    [{ data: '# test', parser: 'string' }],
+                    [{ data: '# test', parser: 'string', range: { start: 0, end: 6 } }],
                     {
                         range: { start: 0, end: 6 }
                     }
