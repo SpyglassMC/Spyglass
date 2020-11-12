@@ -154,21 +154,21 @@
       ]
     },
     {
-      "name": "Ξи",
-      "avatar_url": "https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256",
-      "contributions": [],
-      "details": [
-        { "type": "bug", "link": "issues/660", "text": "#660" },
-        { "type": "bug", "link": "issues/660", "text": "#671" }
-      ]
-    },
-    {
       "name": "zyjking",
       "avatar_url": "https://avatars2.githubusercontent.com/u/37742023?s=400&v=4",
       "profile": "https://github.com/zyjking",
       "contributions": [],
       "details": [
         { "type": "coffee", "link": "https://github.com/sponsors/SPGoding", "text": "Coffee" }
+      ]
+    },
+    {
+      "name": "Ξи",
+      "avatar_url": "https://cdn.discordapp.com/avatars/107952648312860672/c168fcedcbfebe58bf14034920945d7a.webp?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/660", "text": "#660" },
+        { "type": "bug", "link": "issues/660", "text": "#671" }
       ]
     }
   ],
