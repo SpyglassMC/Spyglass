@@ -1,3 +1,13 @@
+# [v3.1.0](https://github.com/SPGoding/datapack-language-server/compare/v3.0.9...v3.1.0) (2020-11-12)
+
+## ✨ New Features
+- [`b374c7c`](https://github.com/SPGoding/datapack-language-server/commit/b374c7c)  Add quickfixes for /replaceitem (Issues: [`#738`](https://github.com/SPGoding/datapack-language-server/issues/738))
+- [`bb97771`](https://github.com/SPGoding/datapack-language-server/commit/bb97771)  Show warnings when file path doesn&#x27;t seem right (Issues: [`#736`](https://github.com/SPGoding/datapack-language-server/issues/736))
+
+## 🐛 Bug Fixes
+- [`a9772bc`](https://github.com/SPGoding/datapack-language-server/commit/a9772bc)  Stop referencing dimension_type registry (Issues: [`#739`](https://github.com/SPGoding/datapack-language-server/issues/739))
+- [`a39b78a`](https://github.com/SPGoding/datapack-language-server/commit/a39b78a)  Stop validating empty NBT strings (Issues: [`#703`](https://github.com/SPGoding/datapack-language-server/issues/703))
+
 # [v3.0.9](https://github.com/SPGoding/datapack-language-server/compare/v3.0.8...v3.0.9) (2020-11-11)
 
 ## 🐛 Bug Fixes
