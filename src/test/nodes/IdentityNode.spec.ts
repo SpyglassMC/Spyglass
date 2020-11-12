@@ -176,9 +176,8 @@ describe('IdentityNode Tests', () => {
     })
     describe('static fromRel() Tests', () => {
         it('Should return correctly', async () => {
-            const { id, ext, side, category } = IdentityNode.fromRel('data/spgoding/functions/foo/bar.mcfunction') as any
+            const { id, side, category } = IdentityNode.fromRel('data/spgoding/functions/foo/bar.mcfunction') as any
             assert(id.toString() === 'spgoding:foo/bar')
-            assert(ext === '.mcfunction')
             assert(side === 'data')
             assert(category === 'function')
         })

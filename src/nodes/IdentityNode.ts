@@ -202,13 +202,12 @@ export class IdentityNode extends ArgumentNode {
      * datapack category.
      */
     /* istanbul ignore next */
-    static fromRel(rel: string | undefined): { id: IdentityNode, category: FileType, ext: string, side: 'assets' | 'data' } | undefined {
+    static fromRel(rel: string | undefined): { id: IdentityNode, category: FileType, side: 'assets' | 'data' } | undefined {
         if (!rel) {
             return undefined
         }
         rel = path.normalize(rel)
         const segs = rel.split(/[/\\]/)
-        const ext = path.extname(rel)
         const side = segs[0]
         if (side === 'data') {
             for (const type of Object.keys(PathPatterns)) {
@@ -238,7 +237,7 @@ export class IdentityNode extends ArgumentNode {
                     const lastPath = paths[paths.length - 1]
                     paths[paths.length - 1] = lastPath.slice(0, lastPath.lastIndexOf('.'))
                     const id = new IdentityNode(namespace, paths, undefined, `$${category}`)
-                    return { category, ext, id, side }
+                    return { category, id, side }
                 }
             }
         }
