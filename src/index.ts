@@ -1,4 +1,4 @@
-export const ReleaseNotesVersion = '3.0.0'
+export const ReleaseNotesVersion = '3.1.0'
 
 /**
  * The plugin API for the Data-pack Language Server.
