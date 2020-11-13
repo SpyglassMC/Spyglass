@@ -1,10 +1,12 @@
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { checkNamingConvention, getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
+import { arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -50,6 +52,18 @@ export class TeamArgumentParser extends ArgumentParser<string> {
             ))
         } else {
             if (this.isDefinition) {
+                if (ctx.config.lint.nameOfTeams && !checkNamingConvention(value, ctx.config.lint.nameOfTeams)) {
+                    const [severity, rule] = ctx.config.lint.nameOfTeams
+                    ans.errors.push(new ParsingError(
+                        { start, end: start + value.length },
+                        locale('team-not-following-convention',
+                            locale('punc.quote', value),
+                            arrayToMessage(rule)
+                        ),
+                        true,
+                        getDiagnosticSeverity(severity)
+                    ))
+                }
                 ans.cache = {
                     team: {
                         [value]: {
