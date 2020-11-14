@@ -1,10 +1,11 @@
 import { locale } from '../locales'
-import { getDiagnosticSeverity } from '../types'
+import { checkNamingConvention, getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenType } from '../types/Token'
+import { arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -38,13 +39,27 @@ export class TagArgumentParser extends ArgumentParser<string> {
                 ),
                 false
             ))
-        } else if (ctx.config.lint.strictTagCheck && ctx.config.lint.strictTagCheck![1] && !Object.keys(category).includes(value)) {
-            ans.errors.push(new ParsingError(
-                { start, end: start + value.length },
-                locale('undefined-tag', locale('punc.quote', value)),
-                undefined,
-                getDiagnosticSeverity(ctx.config.lint.strictTagCheck![0])
-            ))
+        } else {
+            if (ctx.config.lint.nameOfTags && !checkNamingConvention(value, ctx.config.lint.nameOfTags)) {
+                const [severity, rule] = ctx.config.lint.nameOfTags
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    locale('tag-not-following-convention',
+                        locale('punc.quote', value),
+                        arrayToMessage(rule)
+                    ),
+                    true,
+                    getDiagnosticSeverity(severity)
+                ))
+            }
+            if (ctx.config.lint.strictTagCheck && ctx.config.lint.strictTagCheck![1] && !Object.keys(category).includes(value)) {
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    locale('undefined-tag', locale('punc.quote', value)),
+                    undefined,
+                    getDiagnosticSeverity(ctx.config.lint.strictTagCheck![0])
+                ))
+            }
         }
         //#endregion
         //#region Cache

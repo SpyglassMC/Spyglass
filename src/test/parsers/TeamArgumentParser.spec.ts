@@ -60,6 +60,19 @@ describe('TeamArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'Expected a team but got nothing', false)
             ])
         })
+        it('Should report errors for team that do not follow the convention', () => {
+            const config = constructConfig({ lint: { nameOfTeams: ['warning', 'PascalCase'] } })
+            const ctx = constructContext({ cache, config })
+            const parser = new TeamArgumentParser()
+            const actual = parser.parse(new StringReader('foo'), ctx)
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    "Invalid team “foo” which doesn't follow “PascalCase” convention",
+                    true, DiagnosticSeverity.Warning
+                )
+            ])
+        })
         it('Should not return warning when the strict team check pass', async () => {
             const config = constructConfig({ lint: { strictTeamheck: true } })
             const ctx = constructContext({ cache, config, cursor: 0 })

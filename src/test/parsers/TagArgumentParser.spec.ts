@@ -60,6 +60,19 @@ describe('TagArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'Expected a tag but got nothing', false)
             ])
         })
+        it('Should report errors for tag that do not follow the convention', () => {
+            const config = constructConfig({ lint: { nameOfTags: ['warning', 'PascalCase'] } })
+            const ctx = constructContext({ cache, config })
+            const parser = new TagArgumentParser()
+            const actual = parser.parse(new StringReader('foo'), ctx)
+            assert.deepStrictEqual(actual.errors, [
+                new ParsingError(
+                    { start: 0, end: 3 },
+                    "Invalid tag “foo” which doesn't follow “PascalCase” convention",
+                    true, DiagnosticSeverity.Warning
+                )
+            ])
+        })
         it('Should not return warning when the strict tag check pass', async () => {
             const config = constructConfig({ lint: { strictTagCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })

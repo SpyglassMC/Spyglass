@@ -1,10 +1,12 @@
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
+import { checkNamingConvention, getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ParsingError } from '../types/ParsingError'
 import { Token, TokenModifier, TokenType } from '../types/Token'
+import { arrayToMessage } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
@@ -76,6 +78,18 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
                         DiagnosticSeverity.Warning
                     ))
                 }
+            }
+            if (ctx.config.lint.nameOfObjectives && !checkNamingConvention(value, ctx.config.lint.nameOfObjectives)) {
+                const [severity, rule] = ctx.config.lint.nameOfObjectives
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    locale('objective-not-following-convention',
+                        locale('punc.quote', value),
+                        arrayToMessage(rule)
+                    ),
+                    true,
+                    getDiagnosticSeverity(severity)
+                ))
             }
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(
