@@ -2,7 +2,7 @@ import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { NodeRange } from '../../nodes'
 import { VanillaConfig } from '../../types/Config'
-import { combineCommand, CommandComponent, commandToLintedString } from '../../types/CommandComponent'
+import { combineCommand, CommandComponent, componentToLintedString } from '../../types/CommandComponent'
 import { ParsingError } from '../../types/ParsingError'
 import { Token, TokenType } from '../../types/Token'
 
@@ -47,7 +47,7 @@ describe('Line Tests', () => {
             assert.deepStrictEqual(base.completions, [{ label: 'a', start: 0, end: Infinity }, { label: 'b', start: 0, end: Infinity }])
         })
     })
-    describe('commandToLintedString() Tests', () => {
+    describe('componentToLintedString() Tests', () => {
         it('Should return correctly', () => {
             const line = CommandComponent.create([
                 {
@@ -61,7 +61,7 @@ describe('Line Tests', () => {
                     range: { start: 8, end: 10 }
                 }
             ])
-            const actual = commandToLintedString(line, VanillaConfig.lint)
+            const actual = componentToLintedString(line, VanillaConfig.lint)
             assert(actual === 'execute if')
         })
     })
