@@ -98,7 +98,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
             while (reader.nextLine(ctx.textDoc), reader.canRead()) {
                 const lineStart = reader.cursor
                 reader.skipSpace()
-                if (reader.peek() === '#' && StringReader.isWhiteSpace(reader.peek(1))) {
+                if (reader.peek() === '#' && (StringReader.isWhiteSpace(reader.peek(1)) || reader.peek(1) === '@')) {
                     indentBeforeLastHash = reader.cursor - lineStart
                     reader.skip()
                     // Still in the range of doc comment.
@@ -160,8 +160,10 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     clonedReader.skip()
                     const indentStart = clonedReader.cursor
                     clonedReader.skipSpace()
-                    const nextIndent = clonedReader.cursor - indentStart
-                    if (nextIndent - indent >= 2) {
+                    const indentEnd = clonedReader.cursor
+                    const nextIndent = indentEnd - indentStart
+                    const skippedAdditionalSpaces = clonedReader.string.slice(indentStart + indent, indentEnd)
+                    if (skippedAdditionalSpaces.replace(/\t/g, '  ').length >= 2) {
                         reader.cursor = clonedReader.cursor
                         this.parseAnnotations(anno.children = anno.children ?? [], reader, ctx, nextIndent)
                         continue
