@@ -63,7 +63,7 @@ describe('TeamArgumentParser Tests', () => {
         it('Should report errors for team that do not follow the convention', () => {
             const config = constructConfig({ lint: { nameOfTeams: ['warning', 'PascalCase'] } })
             const ctx = constructContext({ cache, config })
-            const parser = new TeamArgumentParser(true)
+            const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(

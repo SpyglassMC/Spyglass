@@ -52,18 +52,6 @@ export class TeamArgumentParser extends ArgumentParser<string> {
             ))
         } else {
             if (this.isDefinition) {
-                if (ctx.config.lint.nameOfTeams && !checkNamingConvention(value, ctx.config.lint.nameOfTeams)) {
-                    const [severity, rule] = ctx.config.lint.nameOfTeams
-                    ans.errors.push(new ParsingError(
-                        { start, end: start + value.length },
-                        locale('team-not-following-convention',
-                            locale('punc.quote', value),
-                            arrayToMessage(rule)
-                        ),
-                        true,
-                        getDiagnosticSeverity(severity)
-                    ))
-                }
                 ans.cache = {
                     team: {
                         [value]: {
@@ -90,6 +78,18 @@ export class TeamArgumentParser extends ArgumentParser<string> {
                         DiagnosticSeverity.Warning
                     ))
                 }
+            }
+            if (ctx.config.lint.nameOfTeams && !checkNamingConvention(value, ctx.config.lint.nameOfTeams)) {
+                const [severity, rule] = ctx.config.lint.nameOfTeams
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    locale('team-not-following-convention',
+                        locale('punc.quote', value),
+                        arrayToMessage(rule)
+                    ),
+                    true,
+                    getDiagnosticSeverity(severity)
+                ))
             }
         }
         //#endregion

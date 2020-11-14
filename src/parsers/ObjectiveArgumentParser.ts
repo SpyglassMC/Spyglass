@@ -52,18 +52,6 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
             ))
         } else {
             if (this.isDefinition) {
-                if (ctx.config.lint.nameOfObjectives && !checkNamingConvention(value, ctx.config.lint.nameOfObjectives)) {
-                    const [severity, rule] = ctx.config.lint.nameOfObjectives
-                    ans.errors.push(new ParsingError(
-                        { start, end: start + value.length },
-                        locale('objective-not-following-convention',
-                            locale('punc.quote', value),
-                            arrayToMessage(rule)
-                        ),
-                        true,
-                        getDiagnosticSeverity(severity)
-                    ))
-                }
                 ans.cache = {
                     objective: {
                         [value]: {
@@ -90,6 +78,18 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
                         DiagnosticSeverity.Warning
                     ))
                 }
+            }
+            if (ctx.config.lint.nameOfObjectives && !checkNamingConvention(value, ctx.config.lint.nameOfObjectives)) {
+                const [severity, rule] = ctx.config.lint.nameOfObjectives
+                ans.errors.push(new ParsingError(
+                    { start, end: start + value.length },
+                    locale('objective-not-following-convention',
+                        locale('punc.quote', value),
+                        arrayToMessage(rule)
+                    ),
+                    true,
+                    getDiagnosticSeverity(severity)
+                ))
             }
             if (value.length > 16) {
                 ans.errors.push(new ParsingError(

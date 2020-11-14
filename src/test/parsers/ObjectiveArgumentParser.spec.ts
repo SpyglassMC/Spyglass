@@ -71,7 +71,7 @@ describe('ObjectiveArgumentParser Tests', () => {
         it('Should report errors for object that do not follow the convention', () => {
             const config = constructConfig({ lint: { nameOfObjectives: ['warning', 'PascalCase'] } })
             const ctx = constructContext({ cache, config })
-            const parser = new ObjectiveArgumentParser(true)
+            const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
