@@ -1,3 +1,13 @@
+# [v3.1.2](https://github.com/SPGoding/datapack-language-server/compare/v3.1.1...v3.1.2) (2020-11-22)
+
+## 🐛 Bug Fixes
+- [`1fa892c`](https://github.com/SPGoding/datapack-language-server/commit/1fa892c)  Fix nameOf* lint settings not working (#755) (Issues: [`#755`](https://github.com/SPGoding/datapack-language-server/issues/755) [`#750`](https://github.com/SPGoding/datapack-language-server/issues/750))
+- [`5fd95de`](https://github.com/SPGoding/datapack-language-server/commit/5fd95de)  Fix bad support for tab indents in IMP-Doc (Issues: [`#748`](https://github.com/SPGoding/datapack-language-server/issues/748))
+- [`91ae839`](https://github.com/SPGoding/datapack-language-server/commit/91ae839)  Fix flawed @mcschema/locales support (Issues: [`#756`](https://github.com/SPGoding/datapack-language-server/issues/756))
+- [`202420c`](https://github.com/SPGoding/datapack-language-server/commit/202420c)  Fix formatting of commands attached to IMP-Doc (Issues: [`#751`](https://github.com/SPGoding/datapack-language-server/issues/751))
+- [`d9f5934`](https://github.com/SPGoding/datapack-language-server/commit/d9f5934)  Support multiple selectors for /execute facing (Issues: [`#765`](https://github.com/SPGoding/datapack-language-server/issues/765))
+- [`641c68c`](https://github.com/SPGoding/datapack-language-server/commit/641c68c)  Fix no hover for IMP-Doc in beta (Issues: [`#758`](https://github.com/SPGoding/datapack-language-server/issues/758))
+
 # [v3.1.1](https://github.com/SPGoding/datapack-language-server/compare/v3.1.0...v3.1.1) (2020-11-12)
 
 ## 🐛 Bug Fixes
