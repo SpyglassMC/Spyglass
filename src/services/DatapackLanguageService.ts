@@ -538,7 +538,7 @@ export class DatapackLanguageService {
                 return null
             }
             const ctx = await this.getParsingContext({ cursor: offset, textDoc, uri })
-            return onHover({ node, ctx })
+            return onHover({ com: node, ctx })
         } else {
             const vanillaData = await this.getVanillaData(config)
             const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
