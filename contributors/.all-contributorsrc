@@ -76,6 +76,14 @@
       ]
     },
     {
+      "name": "chawdan",
+      "avatar_url": "https://cdn.discordapp.com/avatars/259792693368979458/ec53c2ef95e503b3d81284c6e9cf2415.webp?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/765", "text": "#765" }
+      ]
+    },
+    {
       "name": "zyjking",
       "avatar_url": "https://avatars2.githubusercontent.com/u/37742023?s=400&v=4",
       "profile": "https://github.com/zyjking",
