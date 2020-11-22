@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver'
 import { arrayToCompletions, arrayToMessage, escapeIdentityPattern, plugins } from '../..'
 import { locale } from '../../locales'
 import { ArgumentNode, IdentityNode, NodeDescription, NodeRange, NodeType } from '../../nodes'
-import { CacheType, CacheVisibility, combineArgumentParserResult, FileTypes, getCacheVisibilities, isFileType, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
+import { CacheType, CacheVisibility, combineArgumentParserResult, CommandComponent, FileTypes, getCacheVisibilities, isFileType, isInRange, ParsingContext, ParsingError, TextRange } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 import { CommandSyntaxComponentParser } from './McfunctionPlugin'
 
@@ -53,7 +53,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
     }
 
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<DocCommentData> {
-        const ans = plugins.SyntaxComponent.create<DocCommentData>(this.identity, [])
+        const ans = plugins.SyntaxComponent.create<DocCommentData>(this.identity, { doc: new DocCommentNode() })
         reader.skipSpace()
         const start = reader.cursor
         this.parseComment(ans, reader, ctx)
@@ -64,8 +64,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
     private parseComment(ans: plugins.SyntaxComponent<DocCommentData>, reader: StringReader, ctx: ParsingContext): void {
         const start = reader.cursor
         const isFunctionDoc = /^[ \t]*$/.test(reader.passedString)
-        const docComment = new DocCommentNode()
-        ans.data.push({ data: docComment })
+        const docComment = ans.data.doc
         const currentID = ctx.id?.toString()
         try {
             reader
@@ -95,10 +94,11 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 docComment.plainText += reader.readLine() + '\n'
             }
             let indentBeforeLastHash = 0
+            let endOfDocComment = reader.cursor
             while (reader.nextLine(ctx.textDoc), reader.canRead()) {
                 const lineStart = reader.cursor
                 reader.skipSpace()
-                if (reader.peek() === '#' && StringReader.isWhiteSpace(reader.peek(1))) {
+                if (reader.peek() === '#' && (StringReader.isWhiteSpace(reader.peek(1)) || reader.peek(1) === '@')) {
                     indentBeforeLastHash = reader.cursor - lineStart
                     reader.skip()
                     // Still in the range of doc comment.
@@ -110,10 +110,15 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                         docComment.plainText += reader.readLine() + '\n'
                     }
                 } else {
+                    endOfDocComment = reader
+                        .clone()
+                        .lastLine(ctx.textDoc)
+                        .skipLine()
+                        .cursor
                     if (!isFunctionDoc) {
                         // Attach the next command to this doc comment component.
                         const commandIndent = reader.cursor - lineStart
-                        this.parseCommand(ans, reader, ctx, indentBeforeLastHash, commandIndent)
+                        this.parseCommand(ans, reader, ctx, indentBeforeLastHash, commandIndent, reader.string.slice(lineStart, reader.cursor))
                     } else {
                         reader
                             .lastLine(ctx.textDoc)
@@ -122,8 +127,8 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     break
                 }
             }
-            docComment[NodeRange] = { start, end: reader.cursor }
-            docComment.raw = reader.string.slice(start, reader.cursor)
+            docComment[NodeRange] = { start, end: endOfDocComment }
+            docComment.raw = reader.string.slice(start, endOfDocComment)
         } catch (p) {
             ans.errors.push(p)
         }
@@ -160,8 +165,10 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     clonedReader.skip()
                     const indentStart = clonedReader.cursor
                     clonedReader.skipSpace()
-                    const nextIndent = clonedReader.cursor - indentStart
-                    if (nextIndent - indent >= 2) {
+                    const indentEnd = clonedReader.cursor
+                    const nextIndent = indentEnd - indentStart
+                    const skippedAdditionalSpaces = clonedReader.string.slice(indentStart + indent, indentEnd)
+                    if (skippedAdditionalSpaces.replace(/\t/g, '  ').length >= 2) {
                         reader.cursor = clonedReader.cursor
                         this.parseAnnotations(anno.children = anno.children ?? [], reader, ctx, nextIndent)
                         continue
@@ -226,21 +233,21 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
         return visibilities
     }
 
-    private parseCommand(ans: plugins.SyntaxComponent<DocCommentData>, reader: StringReader, ctx: ParsingContext, indentBeforeLastHash: number, commandIndent: number) {
+    private parseCommand(ans: plugins.SyntaxComponent<DocCommentData>, reader: StringReader, ctx: ParsingContext, indentBeforeLastHash: number, commandIndent: number, indent: string) {
         const parser = new CommandSyntaxComponentParser()
-        const cmdResult = parser.parse(reader, ctx)
-        ans.data.push(...cmdResult.data)
+        const cmdResult = parser.parse(reader, ctx);
+        (ans.data.commands = ans.data.commands ?? []).push({ component: cmdResult, indent })
         combineArgumentParserResult(ans, cmdResult)
-        if (commandIndent - indentBeforeLastHash >= 2) {
+        if (commandIndent - indentBeforeLastHash >= 1) {
             const clonedReader = reader
                 .clone()
                 .nextLine(ctx.textDoc)
             const nextLineStart = clonedReader.cursor
-            clonedReader.skipSpace()
+            const nextSkippedSpaces =  clonedReader.readSpace()
             const nextCommandIndent = clonedReader.cursor - nextLineStart
-            if (nextCommandIndent - indentBeforeLastHash >= 2) {
+            if (nextCommandIndent - indentBeforeLastHash >= 1) {
                 reader.cursor = clonedReader.cursor
-                this.parseCommand(ans, reader, ctx, indentBeforeLastHash, nextCommandIndent)
+                this.parseCommand(ans, reader, ctx, indentBeforeLastHash, nextCommandIndent, nextSkippedSpaces)
             }
         }
     }
@@ -259,13 +266,15 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
     }
 }
 
-type DocCommentData = { data: ArgumentNode }[]
+type DocCommentData = { doc: DocCommentNode, commands?: { component: CommandComponent, indent: string }[] }
 
 type AnnotationValue = { raw: string, range: TextRange }
 type Annotation = {
     value: AnnotationValue,
     children?: Annotation[]
 }
+
+export type DocCommentComponent = plugins.SyntaxComponent<DocCommentData>
 
 class DocCommentNode extends ArgumentNode {
     [NodeType] = 'builtin:doc_comment'

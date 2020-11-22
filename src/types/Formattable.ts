@@ -7,5 +7,5 @@ export interface Formattable {
 }
 
 export function isFormattable(value: unknown): value is Formattable {
-    return value && (value as any)[GetFormattedString] instanceof Function
+    return !!value && (value as any)[GetFormattedString] instanceof Function
 }

@@ -396,7 +396,7 @@ export class JsonSchemaHelper {
     private static convertSchemaError({ path, params, error }: PathError, node: ASTNode | undefined) {
         const pathElements = path.getArray()
         const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: 1 }
-        let message = locale(error, params) ?? (
+        let message = locale(`json.${error}`, ...(params ?? [])) ?? (
             console.error('[convertSchemaError]', new Error(`Unknown JSON schema error “${error}”`)),
             ''
         )

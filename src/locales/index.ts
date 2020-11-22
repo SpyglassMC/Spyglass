@@ -6,7 +6,7 @@ const Locales: {
     en: Locale,
     [key: string]: Locale
 } = {
-    en: { ...JsonAmericanEnglish, ...AmericanEnglish }
+    en: { ...addJsonPrefix(JsonAmericanEnglish), ...AmericanEnglish }
 }
 
 let language = ''
@@ -33,7 +33,7 @@ export function segmentedLocale(segments: string[], params?: string[], depth = 5
     return [language, 'en'].reduce((prev, code) => {
         if (prev !== undefined) return prev
 
-        const array = segments.slice(-depth);
+        const array = segments.slice(-depth)
         while (array.length >= minDepth) {
             const locale = resolveLocalePlaceholders(Locales[code][array.join('.')], params)
             if (locale !== undefined) return locale
@@ -47,10 +47,18 @@ export function segmentedLocale(segments: string[], params?: string[], depth = 5
 async function setupLanguage(code: string) {
     const locale = await import(`./${code}.json`)
     const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
-    Locales[code] = { ...jsonLocale, ...locale }
+    Locales[code] = { ...addJsonPrefix(jsonLocale), ...locale }
     language = code
 
     console.info(`[I18N] Set to “${code}”.`)
+}
+
+function addJsonPrefix(jsonLocale: any) {
+    const ans: any = {}
+    for (const key of Object.keys(jsonLocale)) {
+        ans[`json.${key}`] = jsonLocale[key]
+    }
+    return ans
 }
 
 /* istanbul ignore next */

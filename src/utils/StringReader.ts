@@ -44,8 +44,21 @@ export class StringReader {
         return this
     }
 
+    skipLine() {
+        this.readUntilOrEnd('\r', '\n')
+        return this
+    }
+
     read() {
         return this.string.charAt(this.cursor++)
+    }
+
+    readSpace() {
+        const start = this.cursor
+        while (this.canRead() && StringReader.isSpace(this.peek())) {
+            this.skip()
+        }
+        return this.string.slice(start, this.cursor)
     }
 
     skipSpace() {

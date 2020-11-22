@@ -31,7 +31,7 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.11.4",
+        "@mcschema/core": "^0.11.5",
         "@mcschema/java-1.16": "^0.5.14",
         "@mcschema/java-1.17": "^0.1.5",
         "@mcschema/locales": "^0.1.11",

@@ -1,4 +1,4 @@
-///<reference path="../typings/range.d.ts" />
+///<reference path="../typings/range.ts" />
 import range from 'python-range'
 import { locale } from '../locales'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'

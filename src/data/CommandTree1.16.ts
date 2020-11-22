@@ -2723,7 +2723,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('entity'),
                     children: {
                         target: {
-                            parser: new EntityArgumentParser('single', 'entities'),
+                            parser: new EntityArgumentParser('multiple', 'entities'),
                             children: {
                                 eyes_feet: {
                                     parser: new LiteralArgumentParser('eyes', 'feet'),

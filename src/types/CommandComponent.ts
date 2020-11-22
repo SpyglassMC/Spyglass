@@ -1,5 +1,6 @@
-import { TextRange } from '.'
-import { plugins } from '..'
+import { SyntaxComponent, TextRange } from '.'
+import { getEol, plugins } from '..'
+import { DocCommentComponent } from '../plugins/builtin/DocCommentPlugin'
 import { toFormattedString } from '../utils'
 import { combineCache } from './ClientCache'
 import { LintConfig } from './Config'
@@ -39,6 +40,11 @@ export function combineCommand(base: CommandComponent, override: CommandComponen
     return base
 }
 
-export function commandToLintedString(cmd: { data: { data: unknown }[] }, lint: LintConfig) {
-    return cmd.data.map(v => toFormattedString(v.data, lint)).join(' ')
+export function componentToLintedString(com: SyntaxComponent<unknown>, lint: LintConfig): string {
+    if (com.type === 'spgoding:doc_comment/doc_comment') {
+        const docCom = com as DocCommentComponent
+        return toFormattedString(docCom.data.doc, lint) + getEol(lint) + docCom.data.commands?.map(v => v.indent + componentToLintedString(v.component, lint)).join(getEol(lint))
+    }
+    const cmdCom = com as CommandComponent
+    return cmdCom.data.map(v => toFormattedString(v.data, lint)).join(' ')
 }

@@ -62,7 +62,8 @@
       "contributions": [],
       "details": [
         { "type": "ideas", "link": "issues/736", "text": "#736" },
-        { "type": "bug", "link": "issues/739", "text": "#739" }
+        { "type": "bug", "link": "issues/739", "text": "#739" },
+        { "type": "bug", "link": "issues/748", "text": "#748" }
       ]
     },
     {
@@ -72,6 +73,14 @@
       "contributions": [],
       "details": [
         { "type": "dependency", "link": "https://github.com/Yurihaia/mc-nbtdoc", "text": "Maintains mc-nbtdoc repository" }
+      ]
+    },
+    {
+      "name": "chawdan",
+      "avatar_url": "https://cdn.discordapp.com/avatars/259792693368979458/ec53c2ef95e503b3d81284c6e9cf2415.webp?size=256",
+      "contributions": [],
+      "details": [
+        { "type": "bug", "link": "issues/765", "text": "#765" }
       ]
     },
     {
