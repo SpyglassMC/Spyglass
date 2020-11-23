@@ -317,7 +317,10 @@ export function getCacheVisibilities(visibility: 'private' | 'internal' | 'publi
     return ans
 }
 
-export function testID(service: DatapackLanguageService, visibility: CacheVisibility | CacheVisibility[] = [], forType: FileType, forID: IdentityNode, definitionUri: string | undefined, config: Config): boolean {
+export function testID(service: DatapackLanguageService, visibility: CacheVisibility | CacheVisibility[] | null = [], forType: FileType, forID: IdentityNode, definitionUri: string | undefined, config: Config): boolean {
+    if (!visibility) {
+        return true
+    }
     if (visibility instanceof Array) {
         if (visibility.length) {
             return visibility.some(v => testID(service, v, forType, forID, definitionUri, config))
