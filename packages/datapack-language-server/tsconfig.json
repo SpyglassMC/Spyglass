@@ -1,22 +1,7 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "module": "commonjs",
-        "target": "ES2015",
         "rootDir": "src",
-        "outDir": "lib",
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "pretty": true,
-        "alwaysStrict": true,
-        "strictNullChecks": true,
-        "declaration": true,
-        "newLine": "LF",
-        "resolveJsonModule": true
+        "outDir": "lib"
     },
     "exclude": [
         "lib",
@@ -25,5 +10,6 @@
     "include": [
         "src/**/*.json",
         "src/**/*.ts"
-    ]
+    ],
+    "extends": "../../tsconfig.json"
 }

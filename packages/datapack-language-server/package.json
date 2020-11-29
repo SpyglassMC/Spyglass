@@ -16,13 +16,10 @@
         "test": "src/test/"
     },
     "scripts": {
+        "commit": "gitmoji -c",
         "build": "tsc",
         "circular": "webpack",
         "codecov": "codecov -f coverage/*.json",
-        "commit": "gitmoji -c",
-        "con": "cd contributors && all-contributors generate && cd ..",
-        "lint": "eslint --fix src/**/*.ts",
-        "lint:dry": "eslint --fix-dry-run src/**/*.ts",
         "release": "semantic-release",
         "release:dry": "semantic-release --dry-run",
         "test": "nyc mocha",
@@ -81,17 +78,17 @@
         "ts-node": "^9.0.0",
         "typescript": "^4.0.3",
         "webpack": "^5.0.0",
-        "webpack-cli": "^4.0.0"
+        "webpack-cli": "^4.0.0"        
     },
     "publishConfig": {
         "access": "public"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/SPGoding/datapack-language-server.git"
+        "url": "https://github.com/SPYGlassMC/datapack-language-server.git"
     },
-    "homepage": "https://github.com/SPGoding/datapack-language-server",
+    "homepage": "https://spyglassmc.com",
     "bugs": {
-        "url": "https://github.com/SPGoding/datapack-language-server/issues"
+        "url": "https://github.com/SPYGlassMC/datapack-language-server/issues"
     }
 }

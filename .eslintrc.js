@@ -14,7 +14,7 @@ module.exports = {
     ],
     "rules": {
         "@typescript-eslint/member-delimiter-style": [
-            "error",
+            "warn",
             {
                 "multiline": {
                     "delimiter": "comma",
@@ -26,26 +26,26 @@ module.exports = {
                 }
             }
         ],
-        "@typescript-eslint/prefer-for-of": "error",
-        "@typescript-eslint/prefer-readonly": "error",
+        "@typescript-eslint/prefer-for-of": "warn",
+        "@typescript-eslint/prefer-readonly": "warn",
         "@typescript-eslint/quotes": [
-            "error",
+            "warn",
             "single",
             {
                 "avoidEscape": true
             }
         ],
         "@typescript-eslint/semi": [
-            "error",
+            "warn",
             "never"
         ],
-        "comma-dangle": "error",
-        "eol-last": "error",
-        "no-fallthrough": "error",
-        "prefer-const": "error",
-        "prefer-object-spread": "error",
+        "comma-dangle": "warn",
+        "eol-last": "warn",
+        "no-fallthrough": "warn",
+        "prefer-const": "warn",
+        "prefer-object-spread": "warn",
         "quote-props": [
-            "error",
+            "warn",
             "as-needed"
         ]
     }
