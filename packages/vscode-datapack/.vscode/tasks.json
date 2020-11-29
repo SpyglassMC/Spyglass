@@ -1,0 +1,63 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"type": "npm",
+			"script": "watch",
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": {
+				"owner": "Webpack (Dev, Continuous)",
+				"severity": "error",
+				"fileLocation": "absolute",
+				"source": "webpack",
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "webpack is watching the files…",
+					"endsPattern": "\\s*\\+ (\\d+) hidden modules"
+				},
+				"pattern": [
+					{
+						"regexp": "ERROR in ([^\\(]*)\\((\\d+),(\\d+)\\):",
+						"file": 1,
+						"line": 2,
+						"column": 3
+					},
+					{
+						"regexp": "([A-Za-z0-9-]+):(.*)",
+						"message": 2,
+						"code": 1
+					}
+				]
+			}
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"isBackground": true,
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		}
+	]
+}

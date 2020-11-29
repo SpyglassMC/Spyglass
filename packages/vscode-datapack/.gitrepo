@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/SPYGlassMC/vscode-datapack.git
+	branch = master
+	commit = e72fd71394930e34858966942c5973cc26a3593c
+	parent = 7f79b0613e3f4de307630bc13f9f679b7a069f06
+	method = merge
+	cmdver = 0.4.3

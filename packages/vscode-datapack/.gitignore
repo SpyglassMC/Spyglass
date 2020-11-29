@@ -1,0 +1,7 @@
+/coverage
+/dist
+/node_modules
+/out
+/.datapack
+/.nyc_output
+/*.vsix
