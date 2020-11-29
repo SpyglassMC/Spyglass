@@ -1,5 +1,4 @@
-/coverage
-/lib
-/node_modules
-/.datapack
-/.nyc_output
+**/coverage
+**/lib
+**/node_modules
+**/.nyc_output
