@@ -75,7 +75,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 false
             ))
         }
-        if (this.isScoreHolder) {
+        if (this.isScoreHolder && plain !== '*') {
             if (plain.length > 40) {
                 ans.errors.push(
                     new ParsingError(
@@ -116,26 +116,28 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
         //#endregion
 
         //#region Cache
-        if (this.isScoreHolder) {
-            const category = getSafeCategory(ctx.cache, 'score_holder')
-            if (Object.keys(category).includes(plain)) {
-                ans.cache = {
-                    score_holder: {
-                        [plain]: {
-                            def: [],
-                            ref: [{ start, end: start + plain.length }]
+        if (plain !== '*') {
+            if (this.isScoreHolder) {
+                const category = getSafeCategory(ctx.cache, 'score_holder')
+                if (Object.keys(category).includes(plain)) {
+                    ans.cache = {
+                        score_holder: {
+                            [plain]: {
+                                def: [],
+                                ref: [{ start, end: start + plain.length }]
+                            }
                         }
                     }
                 }
             }
-        }
-        const category = getSafeCategory(ctx.cache, 'entity')
-        if (Object.keys(category).includes(plain)) {
-            ans.cache = {
-                entity: {
-                    [plain]: {
-                        def: [],
-                        ref: [{ start, end: start + plain.length }]
+            const category = getSafeCategory(ctx.cache, 'entity')
+            if (Object.keys(category).includes(plain)) {
+                ans.cache = {
+                    entity: {
+                        [plain]: {
+                            def: [],
+                            ref: [{ start, end: start + plain.length }]
+                        }
                     }
                 }
             }
