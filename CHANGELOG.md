@@ -1,3 +1,12 @@
+# [v3.2.0](https://github.com/SPGoding/datapack-language-server/compare/v3.1.2...v3.2.0) (2020-11-29)
+
+## ✨ New Features
+- [`4ba82c0`](https://github.com/SPGoding/datapack-language-server/commit/4ba82c0)  Extend the current Naming Convention config (#774) (Issues: [`#774`](https://github.com/SPGoding/datapack-language-server/issues/774))
+
+## 🐛 Bug Fixes
+- [`c15e3c9`](https://github.com/SPGoding/datapack-language-server/commit/c15e3c9)  Fix crashing when visibility is somehow null 
+- [`d9d27e2`](https://github.com/SPGoding/datapack-language-server/commit/d9d27e2)  Fix not quoting pure numbers (Issues: [`#769`](https://github.com/SPGoding/datapack-language-server/issues/769))
+
 # [v3.1.2](https://github.com/SPGoding/datapack-language-server/compare/v3.1.1...v3.1.2) (2020-11-22)
 
 ## 🐛 Bug Fixes
