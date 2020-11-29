@@ -32,34 +32,56 @@ const defaultValidators: Record<DefaultNamingConvention, RegExp> = {
  * @param config A naming convention config.
  */
 export function checkNamingConvention(identity: string, config: DiagnosticConfig<NamingConventionConfig>): boolean {
-    if (!config) return true
+    if (!config) {
+        return true
+    }
 
     const checkConvention = (identity: string, convention: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]): boolean => {
-        if (Array.isArray(convention)) return convention.some(v => checkConvention(identity, v))
+        if (Array.isArray(convention)) {
+            return convention.some(v => checkConvention(identity, v))
+        }
 
         if (typeof convention === 'string') {
             const isNamingConvention = (str: string): str is DefaultNamingConvention => DefaultNamingConventions.some(v => v === str)
-            if (convention.startsWith('/') && convention.endsWith('/')) return RegExp(convention.slice(1, -1)).test(identity)
-            else if (isNamingConvention(convention)) return defaultValidators[convention].test(identity)
+            if (convention.startsWith('/') && convention.endsWith('/')) {
+                return RegExp(convention.slice(1, -1)).test(identity)
+            }
+            else if (isNamingConvention(convention)) {
+                return defaultValidators[convention].test(identity)
+            }
             console.error(`[NamingConvention] Unknown NamingConvention ${convention}`)
             return true
         }
 
         if (convention.prefix) {
-            if (!identity.startsWith(convention.prefix)) return false
-            else identity = identity.slice(convention.prefix.length)
+            if (!identity.startsWith(convention.prefix)) {
+                return false
+            }
+            else {
+                identity = identity.slice(convention.prefix.length)
+            }
         }
         if (convention.suffix) {
-            if (!identity.endsWith(convention.suffix)) return false
-            else identity = identity.slice(0, -convention.suffix.length)
+            if (!identity.endsWith(convention.suffix)) {
+                return false
+            }
+            else {
+                identity = identity.slice(0, -convention.suffix.length)
+            }
         }
 
         const parts = identity.split(convention.sep)
         const conventionParts = convention.parts
-        if (!Array.isArray(conventionParts)) return parts.every(v => checkConvention(v, conventionParts))
+        if (!Array.isArray(conventionParts)) {
+            return parts.every(v => checkConvention(v, conventionParts))
+        }
 
-        if (parts.length < conventionParts.length && !convention.allowLessParts) return false
-        if (parts.length > conventionParts.length && !convention.allowMoreParts) return false
+        if (parts.length < conventionParts.length && !convention.allowLessParts) {
+            return false
+        }
+        if (parts.length > conventionParts.length && !convention.allowMoreParts) {
+            return false
+        }
         return parts.every((v, i) => checkConvention(v, conventionParts[i < conventionParts.length ? i : conventionParts.length - 1]))
     }
 
