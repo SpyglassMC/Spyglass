@@ -69,6 +69,22 @@ describe('NamingConventionConfig Tests', () => {
                 assert(actual === false)
             }
         })
+        it('Should return true for kebab-case', () => {
+            const identities = ['kebab', 'kebab-case', 'kebab-kebab-kebab']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', 'kebab-case']
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === true)
+            }
+        })
+        it('Should return false for kebab-case', () => {
+            const identities = ['', 'kebab-', 'kebAb-case']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', 'kebab-case']
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === false)
+            }
+        })
         it('Should return true for UPPERCASE', () => {
             const identities = ['UPPERCASE', 'UPPERCASE2']
             const config: DiagnosticConfig<NamingConventionConfig> = ['warning', 'UPPERCASE']
