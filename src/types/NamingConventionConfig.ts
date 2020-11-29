@@ -12,8 +12,8 @@ interface CustomNamingConvention {
     suffix?: string,
     allowLessParts?: boolean,
     allowMoreParts?: boolean,
-    parts: string | CustomNamingConvention | string[] | CustomNamingConvention[],
-    sep: string
+    parts?: string | CustomNamingConvention | string[] | CustomNamingConvention[],
+    sep?: string
 }
 
 const defaultValidators: Record<DefaultNamingConvention, RegExp> = {
@@ -45,8 +45,7 @@ export function checkNamingConvention(identity: string, config: DiagnosticConfig
             const isNamingConvention = (str: string): str is DefaultNamingConvention => DefaultNamingConventions.some(v => v === str)
             if (convention.startsWith('/') && convention.endsWith('/')) {
                 return RegExp(convention.slice(1, -1)).test(identity)
-            }
-            else if (isNamingConvention(convention)) {
+            } else if (isNamingConvention(convention)) {
                 return defaultValidators[convention].test(identity)
             }
             console.error(`[NamingConvention] Unknown NamingConvention ${convention}`)
@@ -56,22 +55,32 @@ export function checkNamingConvention(identity: string, config: DiagnosticConfig
         if (convention.prefix) {
             if (!identity.startsWith(convention.prefix)) {
                 return false
-            }
-            else {
+            } else {
                 identity = identity.slice(convention.prefix.length)
             }
         }
         if (convention.suffix) {
             if (!identity.endsWith(convention.suffix)) {
                 return false
-            }
-            else {
+            } else {
                 identity = identity.slice(0, -convention.suffix.length)
             }
         }
 
-        const parts = identity.split(convention.sep)
+        if (!convention.parts) {
+            return true
+        }
+
         const conventionParts = convention.parts
+        if (!convention.sep) {
+            if (!Array.isArray(conventionParts)) {
+                return checkConvention(identity, conventionParts)
+            } else {
+                return conventionParts.some((part: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]) => checkConvention(identity, part))
+            }
+        }
+
+        const parts = identity.split(convention.sep)
         if (!Array.isArray(conventionParts)) {
             return parts.every(v => checkConvention(v, conventionParts))
         }

@@ -193,6 +193,32 @@ describe('NamingConventionConfig Tests', () => {
                 assert(actual === false)
             }
         })
+        it('Should return true for prefixed/suffixed case', () => {
+            const identities = ['$camelCase!', '$PascalCase!']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', {
+                label: 'test',
+                prefix: '$',
+                suffix: '!',
+                parts: ['camelCase', 'PascalCase']
+            }]
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === true)
+            }
+        })
+        it('Should return false for prefixed/suffixed case', () => {
+            const identities = ['$kebab-case!', '$snake_case!', '$camelCase?', '#PascalCase!']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', {
+                label: 'test',
+                prefix: '$',
+                suffix: '!',
+                parts: ['camelCase', 'PascalCase']
+            }]
+            for (const id of identities) {
+                const actual = checkNamingConvention(id, config)
+                assert(actual === false)
+            }
+        })
         it('Should return true for more complex case', () => {
             const identities = [
                 'camelCase:PascalCase:lowercase+.-regexp/snake_case/UPPERCASE.SCREAMING_SCAKE_CASE*SCREAMING_SCAKE_CASE.kebab-case~kebab-case'
