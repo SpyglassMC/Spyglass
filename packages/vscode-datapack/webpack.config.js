@@ -13,7 +13,7 @@ module.exports = {
 
     entry: {
         extension: './src/extension.ts',
-        server: './node_modules/@spgoding/datapack-language-server/lib/server.js'
+        server: './node_modules/@spyglassmc/datapack-language-server/lib/server.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

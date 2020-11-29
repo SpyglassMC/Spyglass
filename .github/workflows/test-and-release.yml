@@ -9,6 +9,7 @@ env:
   GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
   GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 jobs:
   test-and-release:
     name: Test & Release
@@ -27,7 +28,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install Dependencies
-        run: npm i
+        run: npm run bootstrap
 
       - name: Test
         run: |
@@ -36,6 +37,5 @@ jobs:
 
       - name: Release
         run: |
-          rm -rf lib
           npm run build
           npm run release

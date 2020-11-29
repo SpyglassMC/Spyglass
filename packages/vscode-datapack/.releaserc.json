@@ -12,13 +12,13 @@
             "@semantic-release/github",
             {
                 "assets": "datapack-language-server.vsix",
-                "releasedLabels": [":rocket: released"]
+                "releasedLabels": ["🚀 released"]
             }
         ],
         [
             "@semantic-release/git",
             {
-                "message": "🔖 v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPGoding/vscode-datapack-helper-plus/releases/tag/${nextRelease.gitTag}"
+                "message": "🔖 Release vscode-datapack v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPYGlassMC/SPYGlass/releases/tag/${nextRelease.gitTag}"
             }
         ]
     ],

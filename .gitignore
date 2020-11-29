@@ -1,4 +1,9 @@
 **/coverage
-**/lib
 **/node_modules
 **/.nyc_output
+
+/packages/datapack-language-server/lib
+
+/packages/vscode-datapack/dist
+/packages/vscode-datapack/out
+/packages/vscode-datapack/**/*.vsix

@@ -1,25 +1,11 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "module": "commonjs",
-        "target": "ESNext",
         "rootDir": "src",
-        "outDir": "out",
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "pretty": true,
-        "alwaysStrict": true,
-        "strictNullChecks": true,
-        "declaration": true,
-        "newLine": "LF",
-        "resolveJsonModule": true
+        "outDir": "out"
     },
     "exclude": [
         "out",
         "dist"
-    ]
+    ],
+    "extends": "../../tsconfig.json"
 }

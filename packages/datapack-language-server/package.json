@@ -1,5 +1,5 @@
 {
-    "name": "@spgoding/datapack-language-server",
+    "name": "@spyglassmc/datapack-language-server",
     "description": "A language server for Minecraft: Java Edition datapacks",
     "version": "3.2.0",
     "main": "lib/index.js",

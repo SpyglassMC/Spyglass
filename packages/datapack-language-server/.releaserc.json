@@ -6,7 +6,8 @@
                 "releaseRules": {
                     "patch": {
                         "include": [
-                            "⚡"
+                            "⚡",
+                            "🩹"
                         ]
                     }
                 }
@@ -25,7 +26,7 @@
         [
             "@semantic-release/git",
             {
-                "message": "🔖 v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPGoding/datapack-language-server/releases/tag/${nextRelease.gitTag}"
+                "message": "🔖 Release datapack-language-server v${nextRelease.version}\n\n[skip ci]\n\nhttps://github.com/SPYGlassMC/SPYGlass/releases/tag/${nextRelease.gitTag}"
             }
         ]
     ],
