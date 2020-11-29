@@ -45,8 +45,14 @@ export function checkNamingConvention(identity: string, config: DiagnosticConfig
             return true
         }
 
-        if (convention.prefix && !identity.startsWith(convention.prefix)) return false
-        if (convention.suffix && !identity.endsWith(convention.suffix)) return false
+        if (convention.prefix) {
+            if (!identity.startsWith(convention.prefix)) return false
+            else identity = identity.slice(convention.prefix.length)
+        }
+        if (convention.suffix) {
+            if (!identity.endsWith(convention.suffix)) return false
+            else identity = identity.slice(0, -convention.suffix.length)
+        }
 
         const parts = identity.split(convention.sep)
         const conventionParts = convention.parts
@@ -54,7 +60,7 @@ export function checkNamingConvention(identity: string, config: DiagnosticConfig
 
         if (parts.length < conventionParts.length && !convention.allowLessParts) return false
         if (parts.length > conventionParts.length && !convention.allowMoreParts) return false
-        return parts.every((v, i) => checkConvention(v, conventionParts[i <= conventionParts.length ? i : conventionParts.length - 1]))
+        return parts.every((v, i) => checkConvention(v, conventionParts[i < conventionParts.length ? i : conventionParts.length - 1]))
     }
 
     return checkConvention(identity, config[1])
