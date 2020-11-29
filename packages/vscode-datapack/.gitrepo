@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/SPYGlassMC/vscode-datapack.git
 	branch = master
-	commit = e72fd71394930e34858966942c5973cc26a3593c
-	parent = 7f79b0613e3f4de307630bc13f9f679b7a069f06
+	commit = bc48e33639c1b4e4655a4aaa81fe87bccb068441
+	parent = ea936512f9c806b3c9dfa1982baf808489f6ff9d
 	method = merge
 	cmdver = 0.4.3
