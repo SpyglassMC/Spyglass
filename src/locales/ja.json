@@ -135,6 +135,7 @@
     "quote_prefer_double": "ここは二重引用符(“\"”)が最適です",
     "quote_prefer_single": "ここは一重引用符(“'”)が最適です",
     "score-holder": "スコア保持者",
+    "scoreholder-not-following-convention": "スコア保持者%0%は命名規則に従い%1%である必要があります",
     "server.new-version": "Data-pack Language Serverが%0%に更新されました",
     "server.progress.fixing-workspace.begin": "このワークスペース内のすべての修正可能な問題を一括修正する",
     "server.progress.fixing-workspace.report": "次のファイルを修正中: %0%",

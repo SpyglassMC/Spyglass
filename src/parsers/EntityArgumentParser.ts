@@ -88,7 +88,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                 const [severity, rule] = ctx.config.lint.nameOfScoreHolders
                 ans.errors.push(new ParsingError(
                     { start, end: start + plain.length },
-                    locale('objective-not-following-convention',
+                    locale('scoreholder-not-following-convention',
                         locale('punc.quote', plain),
                         arrayToMessage(getConventionNames(rule), true, 'or')
                     ),
