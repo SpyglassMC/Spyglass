@@ -135,6 +135,7 @@
     "quote_prefer_double": "Double quote (“\"”) is preferable here",
     "quote_prefer_single": "Single quote (“'”) is preferable here",
     "score-holder": "a score holder",
+    "scoreholder-not-following-convention": "Invalid score_holder %0% which doesn't follow %1% convention",
     "server.new-version": "The Data-pack Language Server has been updated to a newer version: %0%",
     "server.progress.fixing-workspace.begin": "Fixing all auto-fixable problems in the workspace",
     "server.progress.fixing-workspace.report": "fixing %0%",
