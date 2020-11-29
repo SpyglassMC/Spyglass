@@ -20,7 +20,7 @@ import { NbtPrimitiveNode } from '../nodes/NbtPrimitiveNode'
 import { NbtShortNode } from '../nodes/NbtShortNode'
 import { NbtStringNode } from '../nodes/NbtStringNode'
 import { IndexMapping } from '../types/IndexMapping'
-import { checkNamingConvention } from '../types/NamingConventionConfig'
+import { checkNamingConvention, getConventionNames } from '../types/NamingConventionConfig'
 import { nbtdoc } from '../types/nbtdoc'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -37,8 +37,8 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
     static identity = 'Nbt'
 
     /**
-     * The diagnostic level of nbt schema is `Warning`. 
-     * 
+     * The diagnostic level of nbt schema is `Warning`.
+     *
      * This field is used to trigger `Error` diagnostics.
      */
     private readonly expectedTypes: NbtNodeTypeName[]
@@ -272,7 +272,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
                                 { start, end },
                                 locale('key-not-following-convention',
                                     locale('punc.quote', key),
-                                    arrayToMessage(value)
+                                    arrayToMessage(getConventionNames(value), true, 'or')
                                 ),
                                 true,
                                 getDiagnosticSeverity(severity)

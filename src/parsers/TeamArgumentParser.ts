@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
-import { checkNamingConvention, getDiagnosticSeverity } from '../types'
+import { checkNamingConvention, getConventionNames, getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -85,7 +85,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
                     { start, end: start + value.length },
                     locale('team-not-following-convention',
                         locale('punc.quote', value),
-                        arrayToMessage(rule)
+                        arrayToMessage(getConventionNames(rule), true, 'or')
                     ),
                     true,
                     getDiagnosticSeverity(severity)

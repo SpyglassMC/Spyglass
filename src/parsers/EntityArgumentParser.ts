@@ -6,13 +6,14 @@ import { IsMapSorted, Keys, UnsortedKeys } from '../nodes/MapNode'
 import { NumberNode } from '../nodes/NumberNode'
 import { NumberRangeNode } from '../nodes/NumberRangeNode'
 import { EntitySelectorNodeChars, SelectorAdvancementsNode, SelectorArgumentKey, SelectorArgumentKeys, SelectorArgumentNodeChars, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode, SelectorSortMethod } from '../nodes/SelectorArgumentsNode'
+import { checkNamingConvention, getConventionNames } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { ErrorCode, ParsingError } from '../types/ParsingError'
 import { getDiagnosticSeverity } from '../types/StylisticConfig'
 import { Token, TokenType } from '../types/Token'
-import { arrayToCompletions, getNbtdocRegistryId } from '../utils'
+import { arrayToCompletions, arrayToMessage, getNbtdocRegistryId } from '../utils'
 import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 import { MapParser } from './MapParser'
@@ -82,6 +83,18 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                         locale('too-long', locale('punc.quote', plain), locale('score-holder'), 40)
                     )
                 )
+            }
+            if (ctx.config.lint.nameOfScoreHolders && !checkNamingConvention(plain, ctx.config.lint.nameOfScoreHolders)) {
+                const [severity, rule] = ctx.config.lint.nameOfScoreHolders
+                ans.errors.push(new ParsingError(
+                    { start, end: start + plain.length },
+                    locale('objective-not-following-convention',
+                        locale('punc.quote', plain),
+                        arrayToMessage(getConventionNames(rule), true, 'or')
+                    ),
+                    true,
+                    getDiagnosticSeverity(severity)
+                ))
             }
             const category = getSafeCategory(ctx.cache, 'score_holder')
             if (ctx.config.lint.strictScoreHolderCheck && ctx.config.lint.strictScoreHolderCheck![1] && !EntityArgumentParser.UuidPattern.test(plain) && !Object.keys(category).includes(plain)) {
