@@ -48,10 +48,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/SPYGlassMC/datapack-language-server.git"
+        "url": "https://github.com/SPYGlassMC/SPYGlass.git"
     },
     "homepage": "https://spyglassmc.com",
     "bugs": {
-        "url": "https://github.com/SPYGlassMC/datapack-language-server/issues"
+        "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
     }
 }
