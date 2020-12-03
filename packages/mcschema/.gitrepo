@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/misode/minecraft-schemas.git
 	branch = master
-	commit = c256ba531cea8375fc0965bfedfb0acc5a743ea8
-	parent = 1d50f94b20f08c288c7a428c3fca2106ecce09fe
+	commit = 35c5741c126c45c7a82785b95242a460341b7924
+	parent = e6de01d00eb5796ebe249f6a089cfc6d1c0f039b
 	method = merge
 	cmdver = 0.4.3
