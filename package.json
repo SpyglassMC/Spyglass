@@ -15,7 +15,7 @@
         "release:dry": "lerna run release:dry",
         "test": "lerna run test",
         "test:w": "lerna run test:w",
-        "watch": "lerna run watch"
+        "watch": "lerna run --parallel watch"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.1",

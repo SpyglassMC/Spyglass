@@ -8,8 +8,8 @@
 			"request": "launch",
 			"name": "Launch Client",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}"],
-			"outFiles": ["${workspaceRoot}/dist/**/*.js"]
+			"args": ["--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-datapack"],
+			"outFiles": ["${workspaceRoot}/packages/vscode-datapack/dist/**/*.js"]
 		},
 		{
 			"type": "node",
@@ -17,7 +17,7 @@
 			"name": "Attach to Server",
 			"port": 6009,
 			"restart": true,
-			"outFiles": ["${workspaceRoot}/dist/**/*.js"]
+			"outFiles": ["${workspaceRoot}/packages/vscode-datapack/dist/**/*.js"]
 		}
 	],
 	"compounds": [
