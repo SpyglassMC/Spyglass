@@ -16,6 +16,7 @@ export const PathPatterns: Record<FileType, string> = {
     'tag/entity_type': 'data/*/tags/entity_types/**/*.json',
     'tag/fluid': 'data/*/tags/fluids/**/*.json',
     'tag/function': 'data/*/tags/functions/**/*.json',
+    'tag/game_event': 'data/*/tags/game_events/**/*.json',
     'tag/item': 'data/*/tags/items/**/*.json',
     'worldgen/biome': 'data/*/worldgen/biome/**/*.json',
     'worldgen/configured_carver': 'data/*/worldgen/configured_carver/**/*.json',

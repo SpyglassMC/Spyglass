@@ -43,5 +43,6 @@ export function initTagsSchemas(schemas: SchemaRegistry, collections: Collection
   schemas.register('entity_type_tag', TagBase('entity_type'))
   schemas.register('fluid_tag', TagBase('fluid'))
   schemas.register('function_tag', TagBase('$function'))
+  schemas.register('game_event_tag', TagBase('game_event'))
   schemas.register('item_tag', TagBase('item'))
 }

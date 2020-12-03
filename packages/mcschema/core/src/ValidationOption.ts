@@ -243,6 +243,7 @@ export type ResourceType =
   | 'enchantment'
   | 'entity_type'
   | 'fluid'
+  | 'game_event'
   | 'item'
   | 'loot_condition_type'
   | 'loot_function_type'

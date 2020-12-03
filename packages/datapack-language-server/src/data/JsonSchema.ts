@@ -20,6 +20,7 @@ export type JsonSchemaType =
     | 'entity_type_tag'
     | 'fluid_tag'
     | 'function_tag'
+    | 'game_event_tag'
     | 'item_tag'
     /* worldgen */
     | 'biome'
@@ -48,6 +49,7 @@ const globPatterns: Record<JsonSchemaType, string> = {
     entity_type_tag: PathPatterns['tag/entity_type'],
     fluid_tag: PathPatterns['tag/fluid'],
     function_tag: PathPatterns['tag/function'],
+    game_event_tag: PathPatterns['tag/game_event'],
     item_tag: PathPatterns['tag/item'],
     /* worldgen */
     biome: PathPatterns['worldgen/biome'],

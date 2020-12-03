@@ -25,6 +25,7 @@ export const TagFileTypes = [
     'tag/entity_type',
     'tag/fluid',
     'tag/function',
+    'tag/game_event',
     'tag/item'
 ] as const
 export const WorldgenFileTypes = [
