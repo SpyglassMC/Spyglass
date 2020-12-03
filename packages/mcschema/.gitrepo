@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/misode/minecraft-schemas.git
+	branch = master
+	commit = c256ba531cea8375fc0965bfedfb0acc5a743ea8
+	parent = 1d50f94b20f08c288c7a428c3fca2106ecce09fe
+	method = merge
+	cmdver = 0.4.3
