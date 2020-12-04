@@ -69,7 +69,7 @@ export function initNoiseSettingsSchemas(schemas: SchemaRegistry, collections: C
       if (value?.noise?.height % 16 !== 0) {
         errors.add(path.push('noise').push('height'), 'error.height_multiple', 16)
       }
-      if (value?.noide?.min_y % 16 !== 0) {
+      if (value?.noise?.min_y % 16 !== 0) {
         errors.add(path.push('noise').push('min_y'), 'error.min_y_multiple', 16)
       }
       return value
