@@ -82,7 +82,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             ])
         })
         it('Should not return warning when the strict objective check pass', async () => {
-            const config = constructConfig({ lint: { strictObjectiveCheck: true } })
+            const config = constructConfig({ lint: { strictObjectiveCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
@@ -90,7 +90,7 @@ describe('ObjectiveArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return warning when the strict objective check fail', async () => {
-            const config = constructConfig({ lint: { strictObjectiveCheck: true } })
+            const config = constructConfig({ lint: { strictObjectiveCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })
             const parser = new ObjectiveArgumentParser()
             const actual = parser.parse(new StringReader('qux'), ctx)

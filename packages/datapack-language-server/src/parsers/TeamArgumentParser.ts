@@ -1,4 +1,3 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
 import { locale } from '../locales'
 import { checkNamingConvention, getConventionNames, getDiagnosticSeverity } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
@@ -75,7 +74,7 @@ export class TeamArgumentParser extends ArgumentParser<string> {
                         { start, end: start + value.length },
                         locale('undefined-team', locale('punc.quote', value)),
                         undefined,
-                        DiagnosticSeverity.Warning
+                        getDiagnosticSeverity(ctx.config.lint.strictTeamCheck[0])
                     ))
                 }
             }

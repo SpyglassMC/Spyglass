@@ -74,7 +74,7 @@ describe('TeamArgumentParser Tests', () => {
             ])
         })
         it('Should not return warning when the strict team check pass', async () => {
-            const config = constructConfig({ lint: { strictTeamheck: true } })
+            const config = constructConfig({ lint: { strictTeamCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config, cursor: 0 })
             const parser = new TeamArgumentParser()
             const actual = parser.parse(new StringReader('foo'), ctx)
@@ -83,7 +83,7 @@ describe('TeamArgumentParser Tests', () => {
         })
         it('Should return warning when the strict team check fail', async () => {
             const parser = new TeamArgumentParser()
-            const config = constructConfig({ lint: { strictTeamCheck: true } })
+            const config = constructConfig({ lint: { strictTeamCheck: ['warning', true] } })
             const ctx = constructContext({ cache, config })
             const actual = parser.parse(new StringReader('qux'), ctx)
             assert.deepStrictEqual(actual.data, 'qux')
