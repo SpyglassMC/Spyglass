@@ -119,7 +119,7 @@ describe('NamingConventionConfig Tests', () => {
         })
         it('Should return true for regexp', () => {
             const identities = ['$regexp', '$$double', '$']
-            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', '/^\\$.*$/']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', '/\\$.*/']
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === true)
@@ -127,7 +127,7 @@ describe('NamingConventionConfig Tests', () => {
         })
         it('Should return false for regexp', () => {
             const identities = ['regexp', 'd$ouble', '#regexp']
-            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', '/^\\$.*$/']
+            const config: DiagnosticConfig<NamingConventionConfig> = ['warning', '/\\$.*/']
             for (const id of identities) {
                 const actual = checkNamingConvention(id, config)
                 assert(actual === false)

@@ -44,7 +44,7 @@ export function checkNamingConvention(identity: string, config: DiagnosticConfig
         if (typeof convention === 'string') {
             const isNamingConvention = (str: string): str is DefaultNamingConvention => DefaultNamingConventions.some(v => v === str)
             if (convention.startsWith('/') && convention.endsWith('/')) {
-                return RegExp(convention.slice(1, -1)).test(identity)
+                return RegExp(`^${convention.slice(1, -1)}$`).test(identity)
             } else if (isNamingConvention(convention)) {
                 return defaultValidators[convention].test(identity)
             }
