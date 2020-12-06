@@ -258,7 +258,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
     private canParseKey(reader: StringReader) {
         // FIXME: after MC-175504 is fixed.
-        return reader.peek() === '"' || StringReader.canInUnquotedString(reader.peek())
+        return reader.peek() === '"' || (StringReader.canInUnquotedString(reader.peek()) && reader.peek() !== '.')
     }
 
     private canParseCompoundFilter(reader: StringReader) {
