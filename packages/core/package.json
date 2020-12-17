@@ -1,24 +1,16 @@
 {
-    "name": "@spyglassmc/datapack-language-server",
-    "description": "A language server for Minecraft: Java Edition datapacks",
-    "version": "3.2.0",
+    "name": "@spyglassmc/core",
+    "version": "0.1.0",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
-    "bin": {
-        "datapack-language-server": "./bin/server"
-    },
     "author": "SPGoding",
-    "contributors": [
-        "ChenCMD"
-    ],
     "license": "MIT",
     "directories": {
-        "test": "src/test/"
+        "test": "test/"
     },
     "scripts": {
         "commit": "gitmoji -c",
         "build": "tsc",
-        "circular": "webpack",
         "codecov": "codecov -f coverage/*.json",
         "release": "semantic-release",
         "release:dry": "semantic-release --dry-run",
@@ -27,44 +19,16 @@
         "posttest": "nyc report --reporter=json",
         "watch": "tsc -w"
     },
-    "dependencies": {
-        "@mcschema/core": "^0.11.7",
-        "@mcschema/java-1.16": "^0.5.15",
-        "@mcschema/java-1.17": "^0.1.9",
-        "@mcschema/locales": "^0.1.15",
-        "appdata-path": "^1.0.0",
-        "clone": "^2.1.2",
-        "fast-deep-equal": "^3.1.3",
-        "fs-extra": "^9.0.1",
-        "minimatch": "^3.0.4",
-        "python-range": "^1.0.4",
-        "rfdc": "^1.1.4",
-        "synchronous-promise": "^2.0.13",
-        "uuid": "^8.3.0",
-        "vscode-json-languageservice": "^3.6.0",
-        "vscode-languageserver": "^6.1.1",
-        "vscode-languageserver-textdocument": "^1.0.1",
-        "vscode-uri": "^2.1.2"
-    },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.1",
         "@semantic-release/changelog": "^5.0.1",
         "@semantic-release/git": "^9.0.0",
-        "@types/clone": "^2.1.0",
-        "@types/fs-extra": "^9.0.1",
-        "@types/minimatch": "^3.0.3",
         "@types/mocha": "^8.0.3",
         "@types/node": "^14.11.2",
         "@types/power-assert": "^1.5.3",
-        "@types/rfdc": "^1.1.0",
-        "@types/uuid": "^8.3.0",
-        "@types/webpack": "^4.41.22",
         "@typescript-eslint/eslint-plugin": "^4.9.1",
         "@typescript-eslint/parser": "^4.9.1",
-        "all-contributors-cli": "^6.17.1",
-        "circular-dependency-plugin": "^5.2.0",
         "codecov": "^3.7.2",
-        "dedent-js": "^1.0.1",
         "eslint": "^7.15.0",
         "espower-typescript": "^9.0.2",
         "gitmoji-cli": "^3.2.15",
@@ -76,9 +40,7 @@
         "source-map-support": "^0.5.19",
         "ts-loader": "^8.0.11",
         "ts-node": "^9.0.0",
-        "typescript": "^4.0.3",
-        "webpack": "^5.10.0",
-        "webpack-cli": "^4.2.0"
+        "typescript": "^4.0.3"
     },
     "publishConfig": {
         "access": "public"
