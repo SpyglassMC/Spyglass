@@ -1,0 +1,17 @@
+{
+  "name": "@spyglassmc/locales",
+  "version": "0.1.0",
+  "description": "Locales for the SPYGlass Project",
+  "keywords": [],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SPYGlassMC/SPYGlass.git"
+  },
+  "dependencies": {
+    "@mcschema/locales": "^0.1.17"
+  }
+}
