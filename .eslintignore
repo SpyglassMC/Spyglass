@@ -1,6 +1,10 @@
 **/test/**/*.ts
 **/webpack.config.js
 
+**/dist/**.*
+**/lib/**.*
+**/out/**.*
+
 /packages/mcschema/**/*.*
 
 .eslintrc.js

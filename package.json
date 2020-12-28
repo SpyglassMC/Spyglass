@@ -4,18 +4,19 @@
     "version": "1.0.0",
     "license": "MIT",
     "scripts": {
+        "init": "lerna bootstrap --hoist",
         "commit": "gitmoji -c",
         "con": "cd contributors && all-contributors generate && cd ..",
         "lint": "eslint --fix packages/**/*.ts",
         "lint:dry": "eslint --fix-dry-run packages/**/*.ts",
         "bootstrap": "lerna bootstrap",
-        "build": "lerna run build",
+        "build": "tsc -b packages",
         "codecov": "lerna run codecov",
         "release": "lerna run release",
         "release:dry": "lerna run release:dry",
         "test": "lerna run test",
         "test:w": "lerna run test:w",
-        "watch": "lerna run --parallel watch"
+        "watch": "tsc -w"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.1",

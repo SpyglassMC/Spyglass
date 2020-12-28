@@ -45,7 +45,7 @@ function _resolveLocalePlaceholders(val: string | undefined, params: string[]) {
 }
 
 function _segmentedLocalize(segments: string[], params: string[], depth: number, minDepth: number): string | undefined {
-    return [language, 'en'].reduce((prev, code) => {
+    return [language, 'en'].reduce((prev: string | undefined, code: string) => {
         if (prev !== undefined) return prev
 
         const array = segments.slice(-depth)

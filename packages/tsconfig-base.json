@@ -2,18 +2,22 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "moduleResolution": "node",
         "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
         "target": "ES2015",
+
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "pretty": true,
         "alwaysStrict": true,
-        "strictNullChecks": true,
+        "strict": true,
+
+        "pretty": true,
+        "noEmitOnError": true,
         "declaration": true,
-        "newLine": "LF",
-        "resolveJsonModule": true
+        "composite": true,
+        "newLine": "LF"
     }
 }

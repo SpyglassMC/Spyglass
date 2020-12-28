@@ -17,7 +17,7 @@
     },
     "scripts": {
         "commit": "gitmoji -c",
-        "build": "tsc",
+        "build": "tsc -b",
         "circular": "webpack",
         "codecov": "codecov -f coverage/*.json",
         "release": "semantic-release",
