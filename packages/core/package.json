@@ -17,6 +17,8 @@
     "release:dry": "semantic-release --dry-run",
     "test": "nyc mocha",
     "test:w": "mocha --watch",
+    "lint": "eslint --fix src/**/*.ts",
+    "lint:dry": "eslint --fix-dry-run src/**/*.ts",
     "posttest": "nyc report --reporter=json"
   },
   "devDependencies": {

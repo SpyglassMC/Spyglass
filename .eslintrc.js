@@ -39,11 +39,10 @@ module.exports = {
             "never"
         ],
         "@typescript-eslint/indent": [
-            "warning",
+            "warn",
             "tab"
         ],
         "indent": "off",
-        "comma-dangle": "warn",
         "eol-last": "warn",
         "no-fallthrough": "warn",
         "prefer-const": "warn",
@@ -51,6 +50,6 @@ module.exports = {
         "quote-props": [
             "warn",
             "as-needed"
-        ]
+        ],
     }
 };

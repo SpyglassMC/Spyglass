@@ -40,6 +40,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          npm i
           npm run init
           npm run build
 

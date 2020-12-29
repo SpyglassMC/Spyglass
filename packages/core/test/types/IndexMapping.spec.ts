@@ -1,3 +1,4 @@
+import assert from 'assert'
 import snapshot from 'snap-shot-it'
 import { it, describe } from 'mocha'
 import { IndexMapping } from '../../lib/types/IndexMapping'
@@ -11,34 +12,54 @@ describe('IndexMapping', () => {
 				IndexMapping.create,
 				undefined,
 				{},
-				{ start: { line: 2, character: 2 } },
-				{ merges: [{ start: { line: 1, character: 3 }, end: { line: 1, character: 4 } }] },
-				{ start: { line: 1, character: 2 }, merges: [{ start: { line: 1, character: 3 }, end: { line: 1, character: 4 } }] }
+				{ innerRange: Range.Beginning, outerRange: Range.Beginning, mapping: [] },
 			)
 		})
 	})
 	describe('toInnerPos() & toOuterPos()', () => {
-		it('Should work for escapes', () => {
-			/*
-			 * Index Tens - 000000000011111111112222222222
-			 * Index Ones - 012345678901234567890123456789
-			 * Outer      - "foo\"bar"
-			 * Inner      - foo"bar
-			 */
-			const mapping = IndexMapping.create({
-				start: Position.create({}),
-				merges: [Range.create({})]
+		const suites: { desc: string, mapping: IndexMapping, toInnerCases: { outer: Position, expected: Position }[], toOuterCases: { inner: Position, expected: Position }[] }[] = [
+			{
+				/*
+				 * Index Tens - 000000000011111111112222222222
+				 * Index Ones - 012345678901234567890123456789
+				 * Outer (L1) - "foo\"bar"
+				 * Inner (L0) - foo"bar
+				 */
+				desc: 'Should work for escapes',
+				mapping: IndexMapping.create({
+					outerRange: Range.create(1, 0, 1, 10),
+					innerRange: Range.create(0, 0, 0, 7),
+					mapping: [
+						{ from: Range.create(1, 4, 1, 6), to: Range.create(0, 3, 0, 4) },
+					]
+				}),
+				toInnerCases: [
+					{ outer: Position.create(1, 0), expected: Position.create(0, 0) },
+				],
+				toOuterCases: [
+					{ inner: Position.create(0, 0), expected: Position.create(1, 1) },
+				]
+			},
+		]
+		for (const { desc, mapping, toInnerCases, toOuterCases } of suites) {
+			describe(desc, () => {
+				describe('toInnerPos()', () => {
+					for (const { outer, expected } of toInnerCases) {
+						it(`Should return ${Position.toString(expected)} for ${Position.toString(outer)}`, () => {
+							const actual = IndexMapping.toInnerPos(mapping, outer)
+							assert.strictEqual(actual, expected)
+						})
+					}
+				})
+				describe('toOuterPos()', () => {
+					for (const { inner, expected } of toOuterCases) {
+						it(`Should return ${Position.toString(expected)} for ${Position.toString(inner)}`, () => {
+							const actual = IndexMapping.toInnerPos(mapping, inner)
+							assert.strictEqual(actual, expected)
+						})
+					}
+				})
 			})
-			const toInnerTester = (char: number) => IndexMapping.toInnerPos(mapping, Position.create({ character: char }))
-			const toOuterTester = (char: number) => IndexMapping.toOuterPos(mapping, Position.create({ character: char }))
-			snapshot(
-				toInnerTester,
-				1, 2, 3, 4, 5, 6, 7
-			)
-			snapshot(
-				toOuterTester,
-				0, 1, 2, 3, 4, 5, 6
-			)
-		})
+		}
 	})
 })

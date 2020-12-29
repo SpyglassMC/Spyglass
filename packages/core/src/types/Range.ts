@@ -23,12 +23,49 @@ export namespace Range {
 		} else {
 			const partial = param1 as Partial<Range>
 			return {
-				start: partial.start ?? Position.Zero,
-				end: partial.end ?? Position.Zero
+				start: partial.start ?? Position.Beginning,
+				end: partial.end ?? Position.Beginning
 			}
 		}
 	}
 
-	export const Beginning = Range.create(0, 0, 0, 1)
-	export const Full = Range.create(Position.Zero, Position.Infinity)
+	/**
+	 * ```typescript
+	 * {
+	 * 	start: { line: 0, character: 0 },
+	 * 	end: { line: 0, character: 1 }
+	 * }
+	 * ```
+	 */
+	export const Beginning = Object.freeze(Range.create(0, 0, 0, 1))
+
+	/**
+	 * ```typescript
+	 * {
+	 * 	start: { line: 0, character: 0 },
+	 * 	end: { line: Infinity, character: Infinity }
+	 * }
+	 * ```
+	 */
+	export const Full = Object.freeze(Range.create(Position.Beginning, Position.Infinity))
+
+	export function toString(range: Range): string {
+		return `${Position.toString(range.start)}..${Position.toString(range.end)}`
+	}
+
+	export function isIn(range: Range, pos: Position): boolean {
+		const { start, end } = range
+		// Check range of line number.
+		if (pos.line < start.line || pos.line > end.line) {
+			return false
+		}
+		if (start.line < pos.line && pos.line < end.line) {
+			return true
+		}
+		// Now `pos` is in the same line as `start` and/or `end`.
+		return (
+			(pos.line === start.line ? pos.character >= start.character : true) &&
+			(pos.line === end.line ? pos.character < end.character : true)
+		)
+	}
 }

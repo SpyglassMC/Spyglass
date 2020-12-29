@@ -1,110 +1,208 @@
-exports['IndexMapping create() Should create correctly create 1'] = {
+exports['IndexMapping create() Should create correctly create 11'] = {
   "name": "create",
   "behavior": [
     {
       "expect": {
-        "start": {
-          "line": 0,
-          "character": 0
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
         },
-        "merges": []
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
       }
     },
     {
       "given": {},
       "expect": {
-        "start": {
-          "line": 0,
-          "character": 0
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
         },
-        "merges": []
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
       }
     },
     {
       "given": {
-        "start": {
-          "line": 2,
-          "character": 2
-        }
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
       },
       "expect": {
-        "start": {
-          "line": 2,
-          "character": 2
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
         },
-        "merges": []
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
+      }
+    }
+  ]
+}
+
+exports['IndexMapping create() Should create correctly create 12'] = {
+  "name": "create",
+  "behavior": [
+    {
+      "expect": {
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
+      }
+    },
+    {
+      "given": {},
+      "expect": {
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
       }
     },
     {
       "given": {
-        "merges": [
-          {
-            "start": {
-              "line": 1,
-              "character": 3
-            },
-            "end": {
-              "line": 1,
-              "character": 4
-            }
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
           }
-        ]
+        },
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
+          }
+        },
+        "mapping": []
       },
       "expect": {
-        "start": {
-          "line": 0,
-          "character": 0
-        },
-        "merges": [
-          {
-            "start": {
-              "line": 1,
-              "character": 3
-            },
-            "end": {
-              "line": 1,
-              "character": 4
-            }
+        "outerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
           }
-        ]
-      }
-    },
-    {
-      "given": {
-        "start": {
-          "line": 1,
-          "character": 2
         },
-        "merges": [
-          {
-            "start": {
-              "line": 1,
-              "character": 3
-            },
-            "end": {
-              "line": 1,
-              "character": 4
-            }
+        "innerRange": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 1
           }
-        ]
-      },
-      "expect": {
-        "start": {
-          "line": 1,
-          "character": 2
         },
-        "merges": [
-          {
-            "start": {
-              "line": 1,
-              "character": 3
-            },
-            "end": {
-              "line": 1,
-              "character": 4
-            }
-          }
-        ]
+        "mapping": []
       }
     }
   ]

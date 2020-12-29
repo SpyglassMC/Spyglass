@@ -1,16 +1,18 @@
 import { Position } from './Position'
 import { Range } from './Range'
 
-export interface IndexMapping {
-	start: Position,
-	merges: Range[]
+export type IndexMapping = {
+	outerRange: Range,
+	innerRange: Range,
+	mapping: { from: Range, to: Range }[]
 }
 
 export namespace IndexMapping {
 	export function create(partial: Partial<IndexMapping> = {}): IndexMapping {
 		return {
-			start: partial.start ?? Position.Zero,
-			merges: partial.merges ?? []
+			outerRange: partial.outerRange ?? Range.Beginning,
+			innerRange: partial.innerRange ?? Range.Beginning,
+			mapping: partial.mapping ?? []
 		}
 	}
 

@@ -22,6 +22,21 @@ export namespace Position {
 		return _createFromPartial({ line, character })
 	}
 
-	export const Zero = Position.create(0, 0)
+	/**
+	 * ```typescript
+	 * { line: 0, character: 0 }
+	 * ```
+	 */
+	export const Beginning = Position.create(0, 0)
+
+	/**
+	 * ```typescript
+	 * { line: Infinity, character: Infinity }
+	 * ```
+	 */
 	export const Infinity = Position.create(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+
+	export function toString(pos: Position): string {
+		return `(${pos.line}, ${pos.character})`
+	}
 }

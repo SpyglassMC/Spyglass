@@ -2,5 +2,6 @@
     "require": [
         "source-map-support/register"
     ],
+    "inlineDiffs": true,
     "timeout": 10000
 }
