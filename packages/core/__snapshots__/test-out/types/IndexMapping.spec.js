@@ -23,13 +23,13 @@ exports['IndexMapping create() Should create correctly create 1'] = {
     {
       "given": {
         "start": {
-          "line": 1,
+          "line": 2,
           "character": 2
         }
       },
       "expect": {
         "start": {
-          "line": 1,
+          "line": 2,
           "character": 2
         },
         "merges": []
@@ -39,11 +39,11 @@ exports['IndexMapping create() Should create correctly create 1'] = {
       "given": {
         "merges": [
           {
-            "from": {
+            "start": {
               "line": 1,
               "character": 3
             },
-            "to": {
+            "end": {
               "line": 1,
               "character": 4
             }
@@ -57,11 +57,11 @@ exports['IndexMapping create() Should create correctly create 1'] = {
         },
         "merges": [
           {
-            "from": {
+            "start": {
               "line": 1,
               "character": 3
             },
-            "to": {
+            "end": {
               "line": 1,
               "character": 4
             }
@@ -77,11 +77,11 @@ exports['IndexMapping create() Should create correctly create 1'] = {
         },
         "merges": [
           {
-            "from": {
+            "start": {
               "line": 1,
               "character": 3
             },
-            "to": {
+            "end": {
               "line": 1,
               "character": 4
             }
@@ -95,11 +95,11 @@ exports['IndexMapping create() Should create correctly create 1'] = {
         },
         "merges": [
           {
-            "from": {
+            "start": {
               "line": 1,
               "character": 3
             },
-            "to": {
+            "end": {
               "line": 1,
               "character": 4
             }
