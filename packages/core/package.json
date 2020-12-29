@@ -1,56 +1,62 @@
 {
-    "name": "@spyglassmc/core",
-    "version": "0.1.0",
-    "main": "lib/index.js",
-    "types": "lib/index.d.ts",
-    "author": "SPGoding",
-    "license": "MIT",
-    "directories": {
-        "test": "test/"
-    },
-    "scripts": {
-        "commit": "gitmoji -c",
-        "build": "tsc",
-        "codecov": "codecov -f coverage/*.json",
-        "release": "semantic-release",
-        "release:dry": "semantic-release --dry-run",
-        "test": "nyc mocha",
-        "test:w": "mocha --watch",
-        "posttest": "nyc report --reporter=json",
-        "watch": "tsc -w"
-    },
-    "devDependencies": {
-        "@istanbuljs/nyc-config-typescript": "^1.0.1",
-        "@semantic-release/changelog": "^5.0.1",
-        "@semantic-release/git": "^9.0.0",
-        "@types/mocha": "^8.0.3",
-        "@types/node": "^14.11.2",
-        "@types/power-assert": "^1.5.3",
-        "@typescript-eslint/eslint-plugin": "^4.9.1",
-        "@typescript-eslint/parser": "^4.9.1",
-        "codecov": "^3.7.2",
-        "eslint": "^7.15.0",
-        "espower-typescript": "^9.0.2",
-        "gitmoji-cli": "^3.2.15",
-        "mocha": "^8.1.3",
-        "nyc": "^15.1.0",
-        "power-assert": "^1.6.1",
-        "semantic-release": "^17.3.0",
-        "semantic-release-gitmoji": "^1.3.4",
-        "source-map-support": "^0.5.19",
-        "ts-loader": "^8.0.11",
-        "ts-node": "^9.0.0",
-        "typescript": "^4.0.3"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/SPYGlassMC/SPYGlass.git"
-    },
-    "homepage": "https://spyglassmc.com",
-    "bugs": {
-        "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
+  "name": "@spyglassmc/core",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "SPGoding",
+  "license": "MIT",
+  "directories": {
+    "test": "test/"
+  },
+  "scripts": {
+    "commit": "gitmoji -c",
+    "build": "tsc --build",
+    "watch": "tsc --build --watch",
+    "codecov": "codecov -f coverage/*.json",
+    "release": "semantic-release",
+    "release:dry": "semantic-release --dry-run",
+    "test": "nyc mocha",
+    "test:w": "mocha --watch",
+    "posttest": "nyc report --reporter=json"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.11.2",
+    "@types/power-assert": "^1.5.3",
+    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/parser": "^4.9.1",
+    "codecov": "^3.7.2",
+    "eslint": "^7.15.0",
+    "gitmoji-cli": "^3.2.15",
+    "mocha": "^8.1.3",
+    "nyc": "^15.1.0",
+    "power-assert": "^1.6.1",
+    "semantic-release": "^17.3.0",
+    "semantic-release-gitmoji": "^1.3.4",
+    "snap-shot-it": "^7.9.3",
+    "source-map-support": "^0.5.19",
+    "ts-loader": "^8.0.11",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  },
+  "config": {
+    "snap-shot-it": {
+      "useRelativePath": true,
+      "sortSnapshots": true
     }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SPYGlassMC/SPYGlass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
+  }
 }

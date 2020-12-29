@@ -1,0 +1,6 @@
+{
+    "require": [
+        "source-map-support/register"
+    ],
+    "timeout": 10000
+}

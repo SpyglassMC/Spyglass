@@ -1,13 +1,12 @@
 module.exports = {
     "env": {
-        "browser": true,
         "es6": true,
         "node": true
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.json",
-        "sourceType": "module"
+        "tsconfigRootDir": __dirname,
+        "project": "./packages/**/tsconfig.json"
     },
     "plugins": [
         "@typescript-eslint"
@@ -39,6 +38,11 @@ module.exports = {
             "warn",
             "never"
         ],
+        "@typescript-eslint/indent": [
+            "warning",
+            "tab"
+        ],
+        "indent": "off",
         "comma-dangle": "warn",
         "eol-last": "warn",
         "no-fallthrough": "warn",

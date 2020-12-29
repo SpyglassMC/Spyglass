@@ -1,12 +1,15 @@
 {
-    "extends": "../tsconfig-base",
-    "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "lib"
-    },
-    "references": [
-        {
-            "path": "../locales"
-        }
-    ]
+	"extends": "../tsconfig-base",
+	"files": [],
+	"references": [
+		{
+			"path": "../locales"
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "test"
+		}
+	]
 }

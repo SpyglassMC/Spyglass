@@ -1,4 +1,3 @@
-**/test/**/*.ts
 **/webpack.config.js
 
 **/dist/**.*
@@ -7,4 +6,4 @@
 
 /packages/mcschema/**/*.*
 
-.eslintrc.js
+**/.eslintrc.js

@@ -23,10 +23,7 @@
 	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init`)
 	```
 2. ```shell
-	$ npm i -g lerna
-	```
-3. ```shell
-	$ lerna bootsrap --hoist
+	$ npm run init
 	```
 
 If you're using VS Code to develop SPYGlass, press F5 to run the VS Code extension in development environment.

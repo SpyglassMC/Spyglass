@@ -1,8 +1,4 @@
 {
-    "require": [
-        "espower-typescript/guess",
-        "source-map-support/register"
-    ],
-    "timeout": 10000,
+    "extends": "../.mocharc.jsonc",
     "spec": "src/test/**/*.spec.ts"
 }

@@ -4,6 +4,7 @@
 **/*.tsbuildinfo
 
 /packages/*/lib
+/packages/*/test-out
 
 /packages/vscode-datapack/dist
 /packages/vscode-datapack/out
