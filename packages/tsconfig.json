@@ -11,16 +11,7 @@
             "path": "locales"
         },
         {
-            "path": "mcschema/core"
-        },
-        {
-            "path": "mcschema/java/1.15"
-        },
-        {
-            "path": "mcschema/java/1.16"
-        },
-        {
-            "path": "mcschema/java/1.17"
+            "path": "mcschema"
         },
         {
             "path": "vscode-datapack"
