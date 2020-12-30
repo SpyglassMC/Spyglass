@@ -1,10 +1,10 @@
 import { OffsetPositionConverter, Position } from '.'
 
 export class Source {
+	public cursor = 0
+
 	constructor(
-		public string: string,
-		public cursor: number = 0,
-		public end: number = string.length
+		public string: string
 	) { }
 
 	get passedString() {
@@ -16,7 +16,7 @@ export class Source {
 	}
 
 	clone() {
-		const ans = new StringReader(this.string, this.cursor, this.end)
+		const ans = new Source(this.string, this.cursor, this.end)
 		return ans
 	}
 

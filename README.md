@@ -26,9 +26,13 @@
 	$ npm run init
 	```
 
-If you're using VS Code to develop SPYGlass, press F5 to run the VS Code extension in development environment.
+If you're using VS Code to develop SPYGlass:
+
+- Press F5 to run the VS Code extension in development environment.
+- Install the recommended [ESLint extension][eslint-extension]. Many linting errors can be fixed automatically when you save the file.
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
+[eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
 [misode]: https://github.com/misode
 [mcschema]: https://github.com/misode/minecraft-schemas
