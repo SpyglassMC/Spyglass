@@ -28,7 +28,7 @@ describe('IndexMap', () => {
 		pairs: [
 			{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
 			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
-		]
+		],
 	})
 	const toInnerCases: { input: number, expected: number | null }[] = [
 		{ input: 12, expected: null },

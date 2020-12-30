@@ -2,7 +2,7 @@ import { NbtCompoundNode } from './NbtCompoundNode'
 import { NbtNode } from './NbtNode'
 
 export abstract class NbtPrimitiveNode<T> extends NbtNode {
-    /**
+	/**
      * 
      * @param superNbt 
      * @param value 
@@ -10,19 +10,19 @@ export abstract class NbtPrimitiveNode<T> extends NbtNode {
      * should _not_ contain suffixes for number tags, but _should_ contain 
      * quotation marks for strings.
      */
-    constructor(
-        superNbt: NbtCompoundNode | null,
-        public value: T,
-        public raw: string
-    ) {
-        super(superNbt)
-    }
+	constructor(
+		superNbt: NbtCompoundNode | null,
+		public value: T,
+		public raw: string
+	) {
+		super(superNbt)
+	}
 
-    toString() {
-        return this.raw
-    }
+	toString() {
+		return this.raw
+	}
 
-    valueOf() {
-        return this.value
-    }
+	valueOf() {
+		return this.value
+	}
 }

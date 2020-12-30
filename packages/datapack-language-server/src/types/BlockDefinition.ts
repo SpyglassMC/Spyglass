@@ -1,16 +1,16 @@
 export type SingleBlockDefinition = {
-    properties?: {
-        [key: string]: string[]
-    },
-    states: {
-        id: number,
-        default?: boolean,
-        properties?: {
-            [key: string]: string
-        }
-    }[]
+	properties?: {
+		[key: string]: string[]
+	},
+	states: {
+		id: number,
+		default?: boolean,
+		properties?: {
+			[key: string]: string
+		}
+	}[]
 }
 
 export interface BlockDefinition {
-    [id: string]: SingleBlockDefinition | undefined
+	[id: string]: SingleBlockDefinition | undefined
 }

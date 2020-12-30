@@ -13,50 +13,50 @@ import { NbtPrimitiveNode } from './NbtPrimitiveNode'
 import { StringNode } from './StringNode'
 
 export class NbtStringNode extends NbtPrimitiveNode<string> implements StringNode {
-    readonly [NodeType]: string = 'NbtString'
-    readonly [NbtNodeType] = 'String'
+	readonly [NodeType]: string = 'NbtString'
+	readonly [NbtNodeType] = 'String'
 
-    constructor(
-        superNbt: NbtCompoundNode | null,
-        value: string, raw: string,
-        public mapping: IndexMapping
-    ) {
-        super(superNbt, value, raw)
-    }
+	constructor(
+		superNbt: NbtCompoundNode | null,
+		value: string, raw: string,
+		public mapping: IndexMapping
+	) {
+		super(superNbt, value, raw)
+	}
 
-    /* istanbul ignore next: datafix */
-    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
-        const node = new StringNode(this.value, this.raw, this.mapping)
-        node[NodeRange] = this[NodeRange]
-        const ans = node[GetCodeActions](uri, ctx, range, diagnostics)
+	/* istanbul ignore next: datafix */
+	[GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+		const node = new StringNode(this.value, this.raw, this.mapping)
+		node[NodeRange] = this[NodeRange]
+		const ans = node[GetCodeActions](uri, ctx, range, diagnostics)
 
-        //#region UUID datafix: #377
-        const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
-        if (uuidDiagnostics) {
-            try {
-                const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
-                ans.push(getCodeAction(
-                    'nbt-uuid-datafix', uuidDiagnostics,
-                    ctx.textDoc, this[NodeRange],
-                    newNode[GetFormattedString](ctx.config.lint)
-                ))
-            } catch (ignored) {
-                // Ignored.
-            }
-        }
-        //#endregion
+		//#region UUID datafix: #377
+		const uuidDiagnostics = diagnostics[ErrorCode.NbtUuidDatafixCompound]
+		if (uuidDiagnostics) {
+			try {
+				const newNode = nbtIntArrayFromBuffer(bufferFromString(this.valueOf()))
+				ans.push(getCodeAction(
+					'nbt-uuid-datafix', uuidDiagnostics,
+					ctx.textDoc, this[NodeRange],
+					newNode[GetFormattedString](ctx.config.lint)
+				))
+			} catch (ignored) {
+				// Ignored.
+			}
+		}
+		//#endregion
 
-        //#region Attribute name datafix: #381
-        const attributeDiagnostics = diagnostics[ErrorCode.NbtStringAttributeDatafix]
-        if (attributeDiagnostics) {
-            ans.push(getCodeAction(
-                'id-attribute-datafix', attributeDiagnostics,
-                ctx.textDoc, this[NodeRange],
-                `"${attributeNameToIdentity(this.valueOf())}"`
-            ))
-        }
-        //#endregion
+		//#region Attribute name datafix: #381
+		const attributeDiagnostics = diagnostics[ErrorCode.NbtStringAttributeDatafix]
+		if (attributeDiagnostics) {
+			ans.push(getCodeAction(
+				'id-attribute-datafix', attributeDiagnostics,
+				ctx.textDoc, this[NodeRange],
+				`"${attributeNameToIdentity(this.valueOf())}"`
+			))
+		}
+		//#endregion
 
-        return ans
-    }
+		return ans
+	}
 }

@@ -6,7 +6,7 @@ import { NbtNodeType } from './NbtNode'
 const NbtIntArrayChars = { openBracket: '[', type: 'I', sep: ',', closeBracket: ']' }
 
 export class NbtIntArrayNode extends NbtArrayNode<NbtIntNode> {
-    readonly [NodeType] = 'NbtIntArray'
-    readonly [NbtNodeType] = 'IntArray'
-    protected readonly chars = NbtIntArrayChars
+	readonly [NodeType] = 'NbtIntArray'
+	readonly [NbtNodeType] = 'IntArray'
+	protected readonly chars = NbtIntArrayChars
 }

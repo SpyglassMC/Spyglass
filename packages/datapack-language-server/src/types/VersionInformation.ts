@@ -1,5 +1,5 @@
 export interface VersionInformation {
-    latestSnapshot: string,
-    latestRelease: string,
-    processedVersions: string[]
+	latestSnapshot: string,
+	latestRelease: string,
+	processedVersions: string[]
 }

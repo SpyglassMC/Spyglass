@@ -15,32 +15,32 @@ type NbtPathElement =
     | NbtCompoundKeyNode
 
 export class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPathElement> {
-    [index: number]: NbtPathElement
+	[index: number]: NbtPathElement
 
-    static readonly IndexBegin = '['
-    static readonly IndexEnd = ']'
-    static readonly Sep = '.'
+	static readonly IndexBegin = '['
+	static readonly IndexEnd = ']'
+	static readonly Sep = '.'
 
-    readonly [NodeType] = 'NbtPath'
+	readonly [NodeType] = 'NbtPath'
 
-    length = 0
+	length = 0
 
-    push(...values: NbtPathElement[]) {
-        for (const value of values) {
-            this[this.length++] = value
-        }
-    }
+	push(...values: NbtPathElement[]) {
+		for (const value of values) {
+			this[this.length++] = value
+		}
+	}
 
-    /* istanbul ignore next */
-    *[Symbol.iterator](): Iterator<NbtPathElement, any, undefined> {
-        // You want me to call myself for iterating? Stupid!
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < this.length; i++) {
-            yield this[i]
-        }
-    }
+	/* istanbul ignore next */
+	*[Symbol.iterator](): Iterator<NbtPathElement, any, undefined> {
+		// You want me to call myself for iterating? Stupid!
+		// eslint-disable-next-line @typescript-eslint/prefer-for-of
+		for (let i = 0; i < this.length; i++) {
+			yield this[i]
+		}
+	}
 
-    [GetFormattedString](lint: LintConfig): string {
-        return Array.prototype.map.call(this, (ele: NbtPathElement) => toFormattedString(ele, lint)).join('')
-    }
+	[GetFormattedString](lint: LintConfig): string {
+		return Array.prototype.map.call(this, (ele: NbtPathElement) => toFormattedString(ele, lint)).join('')
+	}
 }

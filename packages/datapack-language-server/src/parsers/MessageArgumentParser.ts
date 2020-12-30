@@ -7,42 +7,42 @@ import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
 export class MessageArgumentParser extends ArgumentParser<MessageNode> {
-    static identity = 'Message'
-    readonly identity = 'message'
+	static identity = 'Message'
+	readonly identity = 'message'
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<MessageNode> {
-        const ans = ArgumentParserResult.create(new MessageNode())
-        const start = reader.cursor
+	parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<MessageNode> {
+		const ans = ArgumentParserResult.create(new MessageNode())
+		const start = reader.cursor
 
-        while (reader.canRead()) {
-            if (reader.peek() === '@' &&
+		while (reader.canRead()) {
+			if (reader.peek() === '@' &&
                 (reader.peek(1) === 'p' || reader.peek(1) === 'a' || reader.peek(1) === 'r' || reader.peek(1) === 's' || reader.peek(1) === 'e')
-            ) {
-                const entityResult = new ctx.parsers.Entity('multiple', 'entities').parse(reader, ctx)
-                ans.data.push(entityResult.data)
-                combineArgumentParserResult(ans, entityResult)
-            } else {
-                const start = reader.cursor
-                if (typeof ans.data[ans.data.length - 1] === 'string') {
-                    ans.data[ans.data.length - 1] += reader.read()
-                } else {
-                    ans.data.push(reader.read())
-                }
-                const lastToken = ans.tokens[ans.tokens.length - 1]
-                if (lastToken && lastToken.type === TokenType.string) {
-                    lastToken.range.end = reader.cursor
-                } else {
-                    ans.tokens.push(Token.from(start, reader, TokenType.string))
-                }
-            }
-        }
+			) {
+				const entityResult = new ctx.parsers.Entity('multiple', 'entities').parse(reader, ctx)
+				ans.data.push(entityResult.data)
+				combineArgumentParserResult(ans, entityResult)
+			} else {
+				const start = reader.cursor
+				if (typeof ans.data[ans.data.length - 1] === 'string') {
+					ans.data[ans.data.length - 1] += reader.read()
+				} else {
+					ans.data.push(reader.read())
+				}
+				const lastToken = ans.tokens[ans.tokens.length - 1]
+				if (lastToken && lastToken.type === TokenType.string) {
+					lastToken.range.end = reader.cursor
+				} else {
+					ans.tokens.push(Token.from(start, reader, TokenType.string))
+				}
+			}
+		}
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+		ans.data[NodeRange] = { start, end: reader.cursor }
 
-        return ans
-    }
+		return ans
+	}
 
-    getExamples(): string[] {
-        return ['Hello world!', 'foo', '@e', 'Hello @p :)']
-    }
+	getExamples(): string[] {
+		return ['Hello world!', 'foo', '@e', 'Hello @p :)']
+	}
 }

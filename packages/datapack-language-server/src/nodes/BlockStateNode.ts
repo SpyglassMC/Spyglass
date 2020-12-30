@@ -8,37 +8,37 @@ import { DiagnosticMap, GetCodeActions, NodeRange, NodeType } from './ArgumentNo
 import { Chars, ConfigKeys, MapNode, UnsortedKeys } from './MapNode'
 
 export const BlockStateNodeChars = {
-    openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']'
+	openBracket: '[', sep: '=', pairSep: ',', closeBracket: ']',
 }
 
 /**
  * The `[Keys]` property is not used in this node.
  */
 export class BlockStateNode extends MapNode<string, string> {
-    readonly [NodeType] = 'BlockState'
+	readonly [NodeType] = 'BlockState'
 
-    protected readonly [ConfigKeys] = {
-        bracketSpacing: 'blockStateBracketSpacing' as keyof LintConfig,
-        pairSepSpacing: 'blockStateCommaSpacing' as keyof LintConfig,
-        sepSpacing: 'blockStateEqualSpacing' as keyof LintConfig,
-        trailingPairSep: 'blockStateTrailingComma' as keyof LintConfig
-    }
+	protected readonly [ConfigKeys] = {
+		bracketSpacing: 'blockStateBracketSpacing' as keyof LintConfig,
+		pairSepSpacing: 'blockStateCommaSpacing' as keyof LintConfig,
+		sepSpacing: 'blockStateEqualSpacing' as keyof LintConfig,
+		trailingPairSep: 'blockStateTrailingComma' as keyof LintConfig,
+	}
 
-    protected readonly [Chars] = BlockStateNodeChars;
+	protected readonly [Chars] = BlockStateNodeChars;
 
-    [GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
-        const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
-        const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
-        if (relevantDiagnostics && ctx.config.lint.blockStateSortKeys) {
-            /* istanbul ignore next */
-            const keys = ctx.config.lint.blockStateSortKeys[1] === 'alphabetically' ?
-                this[UnsortedKeys].sort() : this[UnsortedKeys]
-            ans.push(getCodeAction(
-                'block-state-sort-keys', relevantDiagnostics,
-                ctx.textDoc, this[NodeRange],
-                this[GetFormattedString](ctx.config.lint, keys)
-            ))
-        }
-        return ans
-    }
+	[GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
+		const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
+		const relevantDiagnostics = diagnostics[ErrorCode.BlockStateSortKeys]
+		if (relevantDiagnostics && ctx.config.lint.blockStateSortKeys) {
+			/* istanbul ignore next */
+			const keys = ctx.config.lint.blockStateSortKeys[1] === 'alphabetically' ?
+				this[UnsortedKeys].sort() : this[UnsortedKeys]
+			ans.push(getCodeAction(
+				'block-state-sort-keys', relevantDiagnostics,
+				ctx.textDoc, this[NodeRange],
+				this[GetFormattedString](ctx.config.lint, keys)
+			))
+		}
+		return ans
+	}
 }

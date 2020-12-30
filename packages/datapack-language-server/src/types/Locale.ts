@@ -1,3 +1,3 @@
 export interface Locale {
-    [key: string]: string
+	[key: string]: string
 }

@@ -13,18 +13,18 @@ export namespace PositionRange {
 		if (typeof param1 === 'number') {
 			return {
 				start: Position.create(param1, param2 as number),
-				end: Position.create(param3!, param4!)
+				end: Position.create(param3!, param4!),
 			}
 		} else if (param2 !== undefined) {
 			return {
 				start: param1 as Position,
-				end: param2 as Position
+				end: param2 as Position,
 			}
 		} else {
 			const partial = param1 as Partial<PositionRange>
 			return {
 				start: partial.start ?? Position.Beginning,
-				end: partial.end ?? Position.Beginning
+				end: partial.end ?? Position.Beginning,
 			}
 		}
 	}

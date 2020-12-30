@@ -58,14 +58,14 @@ describe('Range', () => {
 					{ offset: 0, expected: false },
 					{ offset: 1, expected: true },
 					{ offset: 2, expected: false },
-					{ offset: 3, expected: false }
-				]
+					{ offset: 3, expected: false },
+				],
 			},
 			{
 				range: Range.Full,
 				cases: [
 					{ offset: 4, expected: true },
-				]
+				],
 			},
 		] as const
 		for (const { range, cases } of suites) {

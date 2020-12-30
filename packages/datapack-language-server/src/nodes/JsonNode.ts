@@ -6,6 +6,6 @@ import { JsonDocument } from './JsonDocument'
  * Represents a root node in a JSON file.
  */
 export interface JsonNode extends ValidateResult {
-    json: JsonDocument,
-    schemaType: JsonSchemaType
+	json: JsonDocument,
+	schemaType: JsonSchemaType
 }

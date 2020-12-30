@@ -42,24 +42,24 @@ export * from './VectorNode'
 export function getSelectedNode<T extends { [NodeRange]: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null }
 export function getSelectedNode<T extends { range: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null }
 export function getSelectedNode<T extends { [NodeRange]?: TextRange, range?: TextRange }>(nodes: T[], offset: number): { index: number, node: T | null } {
-    let left = 0
-    let right = nodes.length - 1
-    while (left <= right) {
-        const middle = Math.floor(left + (right - left) / 2)
-        const node = nodes[middle]
-        const range = (node[NodeRange] ?? node.range)!
-        if (range.start <= offset && offset <= range.end) {
-            // [ | )
-            return { node, index: middle }
-        } else if (range.end < offset) {
-            // [   ) |
-            left = middle + 1
-        } else if (offset < range.start) {
-            // | [   )
-            right = middle - 1
-        } else {
-            break
-        }
-    }
-    return { node: null, index: -1 }
+	let left = 0
+	let right = nodes.length - 1
+	while (left <= right) {
+		const middle = Math.floor(left + (right - left) / 2)
+		const node = nodes[middle]
+		const range = (node[NodeRange] ?? node.range)!
+		if (range.start <= offset && offset <= range.end) {
+			// [ | )
+			return { node, index: middle }
+		} else if (range.end < offset) {
+			// [   ) |
+			left = middle + 1
+		} else if (offset < range.start) {
+			// | [   )
+			right = middle - 1
+		} else {
+			break
+		}
+	}
+	return { node: null, index: -1 }
 }

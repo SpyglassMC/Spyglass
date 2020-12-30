@@ -3,9 +3,9 @@ import { LintConfig } from './Config'
 export const GetFormattedString = Symbol()
 
 export interface Formattable {
-    [GetFormattedString](lint: LintConfig): string
+	[GetFormattedString](lint: LintConfig): string
 }
 
 export function isFormattable(value: unknown): value is Formattable {
-    return !!value && (value as any)[GetFormattedString] instanceof Function
+	return !!value && (value as any)[GetFormattedString] instanceof Function
 }

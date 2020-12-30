@@ -1,20 +1,20 @@
 import { ArgumentNode, NodeType } from './ArgumentNode'
 
 export class NumberNode extends ArgumentNode {
-    readonly [NodeType]: string = 'Number'
+	readonly [NodeType]: string = 'Number'
 
-    constructor(
-        public value: number,
-        public raw: string
-    ) {
-        super()
-    }
+	constructor(
+		public value: number,
+		public raw: string
+	) {
+		super()
+	}
 
-    toString() {
-        return this.raw
-    }
+	toString() {
+		return this.raw
+	}
 
-    valueOf() {
-        return this.value
-    }
+	valueOf() {
+		return this.value
+	}
 }

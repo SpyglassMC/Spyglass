@@ -7,17 +7,17 @@ import { NbtCompoundNode } from './NbtCompoundNode'
 export type TextComponentType = NbtCompoundNode | string | TextComponentType[]
 
 export class TextComponentNode extends ArgumentNode {
-    [NodeType] = 'TextComponent'
+	[NodeType] = 'TextComponent'
 
-    constructor(
-        public raw: string,
-        public document?: TextDocument,
-        public jsonDocument?: JsonDocument
-    ) {
-        super()
-    }
+	constructor(
+		public raw: string,
+		public document?: TextDocument,
+		public jsonDocument?: JsonDocument
+	) {
+		super()
+	}
 
-    [GetFormattedString](): string {
-        return this.raw
-    }
+	[GetFormattedString](): string {
+		return this.raw
+	}
 }

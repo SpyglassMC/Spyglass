@@ -10,12 +10,12 @@ export namespace Range {
 		if (typeof param1 === 'number') {
 			return {
 				start: param1,
-				end: param2 as number
+				end: param2 as number,
 			}
 		} else {
 			return {
 				start: param1.start ?? 0,
-				end: param1.end ?? 0
+				end: param1.end ?? 0,
 			}
 		}
 	}

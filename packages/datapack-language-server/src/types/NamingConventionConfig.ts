@@ -4,26 +4,26 @@ export const DefaultNamingConventions = ['camelCase', 'PascalCase', 'snake_case'
 export type DefaultNamingConvention = typeof DefaultNamingConventions[number]
 export type NamingConventionConfig = string | ParentCustomNamingConvention | (string | ParentCustomNamingConvention)[]
 export interface ParentCustomNamingConvention extends CustomNamingConvention {
-    label: string
+	label: string
 }
 
 interface CustomNamingConvention {
-    prefix?: string,
-    suffix?: string,
-    allowLessParts?: boolean,
-    allowMoreParts?: boolean,
-    parts?: string | CustomNamingConvention | string[] | CustomNamingConvention[],
-    sep?: string
+	prefix?: string,
+	suffix?: string,
+	allowLessParts?: boolean,
+	allowMoreParts?: boolean,
+	parts?: string | CustomNamingConvention | string[] | CustomNamingConvention[],
+	sep?: string
 }
 
 const defaultValidators: Record<DefaultNamingConvention, RegExp> = {
-    camelCase: /^[a-z\d]+([A-Z\d]+[a-z\d]*)*$/,
-    PascalCase: /^([A-Z\d]+[a-z\d]*)+$/,
-    snake_case: /^[a-z\d]+(_[a-z\d]+)*$/,
-    SCREAMING_SNAKE_CASE: /^[A-Z\d]+(_[A-Z\d]+)*$/,
-    'kebab-case': /^[a-z\d]+(\-[a-z\d]+)*$/,
-    lowercase: /^[a-z\d]+$/,
-    UPPERCASE: /^[A-Z\d]+$/
+	camelCase: /^[a-z\d]+([A-Z\d]+[a-z\d]*)*$/,
+	PascalCase: /^([A-Z\d]+[a-z\d]*)+$/,
+	snake_case: /^[a-z\d]+(_[a-z\d]+)*$/,
+	SCREAMING_SNAKE_CASE: /^[A-Z\d]+(_[A-Z\d]+)*$/,
+	'kebab-case': /^[a-z\d]+(\-[a-z\d]+)*$/,
+	lowercase: /^[a-z\d]+$/,
+	UPPERCASE: /^[A-Z\d]+$/,
 }
 
 /**
@@ -32,72 +32,72 @@ const defaultValidators: Record<DefaultNamingConvention, RegExp> = {
  * @param config A naming convention config.
  */
 export function checkNamingConvention(identity: string, config: DiagnosticConfig<NamingConventionConfig>): boolean {
-    if (!config) {
-        return true
-    }
+	if (!config) {
+		return true
+	}
 
-    const checkConvention = (identity: string, convention: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]): boolean => {
-        if (Array.isArray(convention)) {
-            return convention.some(v => checkConvention(identity, v))
-        }
+	const checkConvention = (identity: string, convention: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]): boolean => {
+		if (Array.isArray(convention)) {
+			return convention.some(v => checkConvention(identity, v))
+		}
 
-        if (typeof convention === 'string') {
-            const isNamingConvention = (str: string): str is DefaultNamingConvention => DefaultNamingConventions.some(v => v === str)
-            if (convention.startsWith('/') && convention.endsWith('/')) {
-                return RegExp(`^${convention.slice(1, -1)}$`).test(identity)
-            } else if (isNamingConvention(convention)) {
-                return defaultValidators[convention].test(identity)
-            }
-            console.error(`[NamingConvention] Unknown NamingConvention ${convention}`)
-            return true
-        }
+		if (typeof convention === 'string') {
+			const isNamingConvention = (str: string): str is DefaultNamingConvention => DefaultNamingConventions.some(v => v === str)
+			if (convention.startsWith('/') && convention.endsWith('/')) {
+				return RegExp(`^${convention.slice(1, -1)}$`).test(identity)
+			} else if (isNamingConvention(convention)) {
+				return defaultValidators[convention].test(identity)
+			}
+			console.error(`[NamingConvention] Unknown NamingConvention ${convention}`)
+			return true
+		}
 
-        if (convention.prefix) {
-            if (!identity.startsWith(convention.prefix)) {
-                return false
-            } else {
-                identity = identity.slice(convention.prefix.length)
-            }
-        }
-        if (convention.suffix) {
-            if (!identity.endsWith(convention.suffix)) {
-                return false
-            } else {
-                identity = identity.slice(0, -convention.suffix.length)
-            }
-        }
+		if (convention.prefix) {
+			if (!identity.startsWith(convention.prefix)) {
+				return false
+			} else {
+				identity = identity.slice(convention.prefix.length)
+			}
+		}
+		if (convention.suffix) {
+			if (!identity.endsWith(convention.suffix)) {
+				return false
+			} else {
+				identity = identity.slice(0, -convention.suffix.length)
+			}
+		}
 
-        if (!convention.parts) {
-            return true
-        }
+		if (!convention.parts) {
+			return true
+		}
 
-        const conventionParts = convention.parts
-        if (!convention.sep) {
-            if (!Array.isArray(conventionParts)) {
-                return checkConvention(identity, conventionParts)
-            } else {
-                return conventionParts.some((part: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]) => checkConvention(identity, part))
-            }
-        }
+		const conventionParts = convention.parts
+		if (!convention.sep) {
+			if (!Array.isArray(conventionParts)) {
+				return checkConvention(identity, conventionParts)
+			} else {
+				return conventionParts.some((part: string | CustomNamingConvention | (string | ParentCustomNamingConvention)[]) => checkConvention(identity, part))
+			}
+		}
 
-        const parts = identity.split(convention.sep)
-        if (!Array.isArray(conventionParts)) {
-            return parts.every(v => checkConvention(v, conventionParts))
-        }
+		const parts = identity.split(convention.sep)
+		if (!Array.isArray(conventionParts)) {
+			return parts.every(v => checkConvention(v, conventionParts))
+		}
 
-        if (parts.length < conventionParts.length && !convention.allowLessParts) {
-            return false
-        }
-        if (parts.length > conventionParts.length && !convention.allowMoreParts) {
-            return false
-        }
-        return parts.every((v, i) => checkConvention(v, conventionParts[i < conventionParts.length ? i : conventionParts.length - 1]))
-    }
+		if (parts.length < conventionParts.length && !convention.allowLessParts) {
+			return false
+		}
+		if (parts.length > conventionParts.length && !convention.allowMoreParts) {
+			return false
+		}
+		return parts.every((v, i) => checkConvention(v, conventionParts[i < conventionParts.length ? i : conventionParts.length - 1]))
+	}
 
-    return checkConvention(identity, config[1])
+	return checkConvention(identity, config[1])
 }
 
 export function getConventionNames(convention: NamingConventionConfig): string[] {
-    if (!Array.isArray(convention)) convention = [convention]
-    return convention.map(v => typeof v === 'string' ? v : v.label)
+	if (!Array.isArray(convention)) convention = [convention]
+	return convention.map(v => typeof v === 'string' ? v : v.label)
 }

@@ -4,7 +4,7 @@ import McschemaFallback from '@mcschema/locales/src/en.json'
 type Locale = Record<string, string>
 
 const Locales: Record<string, Locale> = {
-	en: { ..._addPrefix(McschemaFallback, 'json'), ...Fallback }
+	en: { ..._addPrefix(McschemaFallback, 'json'), ...Fallback },
 }
 
 let language = 'en'

@@ -48,5 +48,8 @@ jobs:
           npm test
           npm run codecov
 
+      - name: Lint
+        run: npm run lint
+
       - name: Release
         run: npm run release

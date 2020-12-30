@@ -9,43 +9,43 @@ import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
 export class UuidArgumentParser extends ArgumentParser<string> {
-    static identity = 'Uuid'
-    readonly identity = 'uuid'
+	static identity = 'Uuid'
+	readonly identity = 'uuid'
 
-    static readonly Pattern = /^[0-9a-f]{1,8}-[0-9a-f]{1,4}-[0-9a-f]{1,4}-[0-9a-f]{1,4}-[0-9a-f]{1,12}$/i
+	static readonly Pattern = /^[0-9a-f]{1,8}-[0-9a-f]{1,4}-[0-9a-f]{1,4}-[0-9a-f]{1,4}-[0-9a-f]{1,12}$/i
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
-        const start = reader.cursor
-        const ans = ArgumentParserResult.create(reader.readUntilOrEnd(' '))
+	parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<string> {
+		const start = reader.cursor
+		const ans = ArgumentParserResult.create(reader.readUntilOrEnd(' '))
 
-        //#region Errors.
-        if (!UuidArgumentParser.Pattern.test(ans.data)) {
-            ans.errors.push(new ParsingError(
-                { start, end: reader.cursor },
-                locale('expected-got',
-                    locale('uuid'),
-                    locale('punc.quote', ans.data)
-                )
-            ))
-        }
-        //#endregion
+		//#region Errors.
+		if (!UuidArgumentParser.Pattern.test(ans.data)) {
+			ans.errors.push(new ParsingError(
+				{ start, end: reader.cursor },
+				locale('expected-got',
+					locale('uuid'),
+					locale('punc.quote', ans.data)
+				)
+			))
+		}
+		//#endregion
 
-        //#region Completions.
-        if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
-            const randomUuid = uuidV4()
-            ans.completions.push({
-                label: 'RANDOM',
-                start, end: reader.cursor,
-                insertText: randomUuid,
-                detail: randomUuid,
-                filterText: ans.data,
-                kind: CompletionItemKind.Snippet
-            })
-        }
-        //#endregion
+		//#region Completions.
+		if (start <= ctx.cursor && ctx.cursor <= reader.cursor) {
+			const randomUuid = uuidV4()
+			ans.completions.push({
+				label: 'RANDOM',
+				start, end: reader.cursor,
+				insertText: randomUuid,
+				detail: randomUuid,
+				filterText: ans.data,
+				kind: CompletionItemKind.Snippet,
+			})
+		}
+		//#endregion
 
-        ans.tokens.push(Token.from(start, reader, TokenType.number))
+		ans.tokens.push(Token.from(start, reader, TokenType.number))
 
-        return ans
-    }
+		return ans
+	}
 }

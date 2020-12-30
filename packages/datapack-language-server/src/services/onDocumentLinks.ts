@@ -5,36 +5,36 @@ import { CachePosition, CacheUnit, CacheUnitPositionTypes, DatapackDocument, isF
 import { DatapackLanguageService } from './DatapackLanguageService'
 
 export async function onDocumentLinks({ doc, textDoc, service }: { doc: DatapackDocument, textDoc: TextDocument, service: DatapackLanguageService }) {
-    try {
-        const ans: DocumentLink[] = []
-        for (const { cache } of doc.nodes) {
-            for (const type of Object.keys(cache ?? {})) {
-                if (isFileType(type)) {
-                    const category = cache![type]
-                    for (const id of Object.keys(category ?? {})) {
-                        const unit = category![id] as CacheUnit
-                        const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
-                        for (const pos of ref) {
-                            const link = {
-                                range: {
-                                    start: textDoc.positionAt(pos.start),
-                                    end: textDoc.positionAt(pos.end)
-                                },
-                                target: await service.getUriFromId(IdentityNode.fromString(id), type)
-                            }
-                            /* istanbul ignore next */
-                            if (link.target) {
-                                ans.push({ range: link.range, target: link.target.toString() })
-                            }
-                        }
-                    }
-                }
-            }
-        }
+	try {
+		const ans: DocumentLink[] = []
+		for (const { cache } of doc.nodes) {
+			for (const type of Object.keys(cache ?? {})) {
+				if (isFileType(type)) {
+					const category = cache![type]
+					for (const id of Object.keys(category ?? {})) {
+						const unit = category![id] as CacheUnit
+						const ref = CacheUnitPositionTypes.reduce<CachePosition[]>((p, c) => p.concat(unit[c] ?? []), [])
+						for (const pos of ref) {
+							const link = {
+								range: {
+									start: textDoc.positionAt(pos.start),
+									end: textDoc.positionAt(pos.end),
+								},
+								target: await service.getUriFromId(IdentityNode.fromString(id), type),
+							}
+							/* istanbul ignore next */
+							if (link.target) {
+								ans.push({ range: link.range, target: link.target.toString() })
+							}
+						}
+					}
+				}
+			}
+		}
 
-        return ans
-    } catch (e) {
-        console.error('[onDocumentLinks]', e)
-    }
-    return null
+		return ans
+	} catch (e) {
+		console.error('[onDocumentLinks]', e)
+	}
+	return null
 }

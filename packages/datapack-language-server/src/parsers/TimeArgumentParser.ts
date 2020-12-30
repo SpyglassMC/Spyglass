@@ -11,52 +11,52 @@ import { StringReader } from '../utils/StringReader'
 import { ArgumentParser } from './ArgumentParser'
 
 export class TimeArgumentParser extends ArgumentParser<TimeNode> {
-    static identity = 'Time'
-    static readonly Units = ['d', 's', 't']
+	static identity = 'Time'
+	static readonly Units = ['d', 's', 't']
 
-    readonly identity = 'time'
+	readonly identity = 'time'
 
-    constructor() {
-        super()
-    }
+	constructor() {
+		super()
+	}
 
-    parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TimeNode> {
-        const ans = ArgumentParserResult.create(new TimeNode(NaN, '', 't'))
+	parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<TimeNode> {
+		const ans = ArgumentParserResult.create(new TimeNode(NaN, '', 't'))
 
-        const start = reader.cursor
+		const start = reader.cursor
 
-        const numberResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float', 0).parse(reader, ctx)
-        combineArgumentParserResult(ans, numberResult)
-        ans.data.value = numberResult.data.valueOf()
-        ans.data.raw = numberResult.data.toString()
+		const numberResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float', 0).parse(reader, ctx)
+		combineArgumentParserResult(ans, numberResult)
+		ans.data.value = numberResult.data.valueOf()
+		ans.data.raw = numberResult.data.toString()
 
-        if (ctx.cursor === reader.cursor) {
-            ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units, ctx.cursor, ctx.cursor))
-        }
+		if (ctx.cursor === reader.cursor) {
+			ans.completions.push(...arrayToCompletions(TimeArgumentParser.Units, ctx.cursor, ctx.cursor))
+		}
 
-        if (StringReader.canInUnquotedString(reader.peek())) {
-            const start = reader.cursor
-            const unit = reader.read()
-            ans.tokens.push(Token.from(start, reader, TokenType.keyword))
-            if (unit === 'd' || unit === 's' || unit === 't') {
-                ans.data.unit = unit
-            } else {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    locale('expected-got',
-                        locale('time-unit'),
-                        locale('punc.quote', unit)
-                    )
-                ))
-            }
-        }
+		if (StringReader.canInUnquotedString(reader.peek())) {
+			const start = reader.cursor
+			const unit = reader.read()
+			ans.tokens.push(Token.from(start, reader, TokenType.keyword))
+			if (unit === 'd' || unit === 's' || unit === 't') {
+				ans.data.unit = unit
+			} else {
+				ans.errors.push(new ParsingError(
+					{ start, end: reader.cursor },
+					locale('expected-got',
+						locale('time-unit'),
+						locale('punc.quote', unit)
+					)
+				))
+			}
+		}
 
-        ans.data[NodeRange] = { start, end: reader.cursor }
+		ans.data[NodeRange] = { start, end: reader.cursor }
 
-        return ans
-    }
+		return ans
+	}
 
-    getExamples(): string[] {
-        return ['0d', '0s', '0t', '0']
-    }
+	getExamples(): string[] {
+		return ['0d', '0s', '0t', '0']
+	}
 }

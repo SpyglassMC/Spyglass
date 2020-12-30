@@ -58,7 +58,7 @@ describe('PositionRange', () => {
 					{ pos: Position.create(1, 3), expected: true },
 					{ pos: Position.create(1, 4), expected: false },
 					{ pos: Position.create(2, 3), expected: false },
-				]
+				],
 			},
 			{
 				range: PositionRange.create(1, 2, 3, 4),
@@ -76,13 +76,13 @@ describe('PositionRange', () => {
 					{ pos: Position.create(3, 4), expected: false },
 					{ pos: Position.create(3, 5), expected: false },
 					{ pos: Position.create(4, 3), expected: false },
-				]
+				],
 			},
 			{
 				range: PositionRange.Full,
 				cases: [
 					{ pos: Position.create(4, 2), expected: true },
-				]
+				],
 			},
 		] as const
 		for (const { range, cases } of suites) {

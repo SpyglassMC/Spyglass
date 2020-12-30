@@ -23,36 +23,36 @@ export function activate(context: ExtensionContext) {
 	const serverOptions: ServerOptions = {
 		run: {
 			module: serverModule,
-			transport: TransportKind.ipc
+			transport: TransportKind.ipc,
 		},
 		debug: {
 			module: serverModule,
 			transport: TransportKind.ipc,
-			options: debugOptions
-		}
+			options: debugOptions,
+		},
 	}
 
 	const documentSelector: DocumentSelector = [
 		{ language: 'mcfunction' },
 		{ scheme: 'file', pattern: '**/pack.mcmeta' },
-		{ scheme: 'file', pattern: '**/data/*/*/**/*.json' }
+		{ scheme: 'file', pattern: '**/data/*/*/**/*.json' },
 	]
 
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions & { synchronize: { fileEvents: FileSystemWatcher[] } } = {
 		documentSelector,
 		synchronize: {
-			fileEvents: []
+			fileEvents: [],
 		},
 		initializationOptions: {
-			storagePath: context.storagePath,
-			globalStoragePath: context.globalStoragePath,
+			storagePath: context.storageUri?.fsPath,
+			globalStoragePath: context.globalStorageUri.fsPath,
 			localeCode: getVSCodeLanguage(),
 			customCapabilities: {
-				checkServerVersion: true
-			}
+				checkServerVersion: true,
+			},
 		},
-		progressOnInitialization: true
+		progressOnInitialization: true,
 	}
 
 	if (workspace.workspaceFolders) {
@@ -81,7 +81,7 @@ export function activate(context: ExtensionContext) {
 	client.start()
 
 	client.onReady().then(() => {
-		client.onNotification('spgoding/datapack/checkServerVersion', ({ currentVersion, title, action, url }) => {
+		client.onNotification('spgoding/datapack/checkServerVersion', ({ currentVersion, title, action, url }: any) => {
 			const lastVersion = context.globalState.get('lastVersion')
 			if (lastVersion !== currentVersion) {
 				window
