@@ -1,6 +1,6 @@
 import assert from 'assert'
-import { describe, it } from "mocha"
-import snapshot from "snap-shot-it"
+import { describe, it } from 'mocha'
+import snapshot from 'snap-shot-it'
 import { Range } from '../../lib/types/Range'
 
 describe('Range', () => {
@@ -44,7 +44,7 @@ describe('Range', () => {
 		}
 	})
 	describe('length()', () => {
-		it(`Should return correctly`, () => {
+		it('Should return correctly', () => {
 			const range = Range.create(1, 2)
 			const actual = Range.length(range)
 			assert.strictEqual(actual, 1)

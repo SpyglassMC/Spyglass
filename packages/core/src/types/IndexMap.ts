@@ -11,7 +11,7 @@ export namespace IndexMap {
 		return {
 			outerRange: partial.outerRange ?? Range.Beginning,
 			innerRange: partial.innerRange ?? Range.Beginning,
-			pairs: partial.pairs ?? []
+			pairs: partial.pairs ?? [],
 		}
 	}
 

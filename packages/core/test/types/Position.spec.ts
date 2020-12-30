@@ -1,6 +1,6 @@
 import assert from 'assert'
-import snapshot from "snap-shot-it"
-import { it, describe } from "mocha"
+import snapshot from 'snap-shot-it'
+import { it, describe } from 'mocha'
 import { Position } from '../../lib/types/Position'
 
 describe('Position', () => {
