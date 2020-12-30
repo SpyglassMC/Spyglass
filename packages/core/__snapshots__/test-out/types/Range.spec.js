@@ -1,87 +1,34 @@
 exports['Range constants Should initialize correctly 1'] = {
-  "start": {
-    "line": 0,
-    "character": 0
-  },
-  "end": {
-    "line": 0,
-    "character": 1
-  }
+  "start": 0,
+  "end": 1
 }
 
 exports['Range constants Should initialize correctly 2'] = {
-  "start": {
-    "line": 0,
-    "character": 0
-  },
-  "end": {
-    "line": null,
-    "character": null
-  }
+  "start": 0,
+  "end": null
 }
 
 exports['Range create() Should create correctly 1'] = {
-  "start": {
-    "line": 1,
-    "character": 2
-  },
-  "end": {
-    "line": 3,
-    "character": 4
-  }
+  "start": 1,
+  "end": 2
 }
 
 exports['Range create() Should create correctly 2'] = {
-  "start": {
-    "line": 1,
-    "character": 2
-  },
-  "end": {
-    "line": 3,
-    "character": 4
-  }
+  "start": 0,
+  "end": 0
 }
 
 exports['Range create() Should create correctly 3'] = {
-  "start": {
-    "line": 0,
-    "character": 0
-  },
-  "end": {
-    "line": 0,
-    "character": 0
-  }
+  "start": 1,
+  "end": 0
 }
 
 exports['Range create() Should create correctly 4'] = {
-  "start": {
-    "line": 1,
-    "character": 2
-  },
-  "end": {
-    "line": 0,
-    "character": 0
-  }
+  "start": 0,
+  "end": 2
 }
 
 exports['Range create() Should create correctly 5'] = {
-  "start": {
-    "line": 0,
-    "character": 0
-  },
-  "end": {
-    "line": 3,
-    "character": 4
-  }
-}
-
-exports['Range create() Should create correctly 6'] = {
-  "start": {
-    "line": 1,
-    "character": 2
-  },
-  "end": {
-    "line": 3,
-    "character": 4
-  }
+  "start": 1,
+  "end": 2
 }

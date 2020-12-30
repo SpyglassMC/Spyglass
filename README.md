@@ -28,5 +28,7 @@
 
 If you're using VS Code to develop SPYGlass, press F5 to run the VS Code extension in development environment.
 
+Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
+
 [misode]: https://github.com/misode
 [mcschema]: https://github.com/misode/minecraft-schemas

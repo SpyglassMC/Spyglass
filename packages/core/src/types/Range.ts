@@ -1,71 +1,52 @@
-import { Position } from './Position'
-
 export interface Range {
-	start: Position,
-	end: Position
+	start: number,
+	end: number
 }
 
 export namespace Range {
-	export function create(startLine: number, startCharacter: number, endLine: number, endCharacter: number): Range
-	export function create(start: Position, end: Position): Range
+	export function create(start: number, end: number): Range
 	export function create(partial: Partial<Range>): Range
-	export function create(param1: number | Position | Partial<Range>, param2?: number | Position, param3?: number, param4?: number): Range {
+	export function create(param1: number | Partial<Range>, param2?: number): Range {
 		if (typeof param1 === 'number') {
 			return {
-				start: Position.create(param1, param2 as number),
-				end: Position.create(param3!, param4!)
-			}
-		} else if (param2 !== undefined) {
-			return {
-				start: param1 as Position,
-				end: param2 as Position
+				start: param1,
+				end: param2 as number
 			}
 		} else {
-			const partial = param1 as Partial<Range>
 			return {
-				start: partial.start ?? Position.Beginning,
-				end: partial.end ?? Position.Beginning
+				start: param1.start ?? 0,
+				end: param1.end ?? 0
 			}
 		}
 	}
 
 	/**
 	 * ```typescript
-	 * {
-	 * 	start: { line: 0, character: 0 },
-	 * 	end: { line: 0, character: 1 }
-	 * }
+	 * { start: 0, end: 1 }
 	 * ```
 	 */
-	export const Beginning = Object.freeze(Range.create(0, 0, 0, 1))
+	export const Beginning = Object.freeze(Range.create(0, 1))
 
 	/**
 	 * ```typescript
-	 * {
-	 * 	start: { line: 0, character: 0 },
-	 * 	end: { line: Infinity, character: Infinity }
-	 * }
+	 * { start: 0, end: Infinity }
 	 * ```
 	 */
-	export const Full = Object.freeze(Range.create(Position.Beginning, Position.Infinity))
+	export const Full = Object.freeze(Range.create(0, Number.POSITIVE_INFINITY))
 
 	export function toString(range: Range): string {
-		return `${Position.toString(range.start)}..${Position.toString(range.end)}`
+		return `[${range.start}, ${range.end})`
 	}
 
-	export function isIn(range: Range, pos: Position): boolean {
-		const { start, end } = range
-		// Check range of line number.
-		if (pos.line < start.line || pos.line > end.line) {
-			return false
-		}
-		if (start.line < pos.line && pos.line < end.line) {
-			return true
-		}
-		// Now `pos` is in the same line as `start` and/or `end`.
-		return (
-			(pos.line === start.line ? pos.character >= start.character : true) &&
-			(pos.line === end.line ? pos.character < end.character : true)
-		)
+	export function contains(range: Range, offset: number): boolean {
+		return range.start <= offset && offset < range.end
+	}
+
+	export function endsBefore(range: Range, offset: number): boolean {
+		return range.end <= offset
+	}
+
+	export function length(range: Range) {
+		return range.end - range.start
 	}
 }

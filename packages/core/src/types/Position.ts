@@ -37,6 +37,13 @@ export namespace Position {
 	export const Infinity = Position.create(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
 
 	export function toString(pos: Position): string {
-		return `(${pos.line}, ${pos.character})`
+		return `<${pos.line}, ${pos.character}>`
+	}
+
+	export function isBefore(pos1: Position, pos2: Position): boolean {
+		return (
+			pos1.line < pos2.line ||
+			(pos1.line === pos2.line && pos1.character < pos2.character)
+		)
 	}
 }
