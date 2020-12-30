@@ -17,14 +17,14 @@ export namespace PositionRange {
 			}
 		} else if (param2 !== undefined) {
 			return {
-				start: param1 as Position,
-				end: param2 as Position,
+				start: Position.create(param1 as Position),
+				end: Position.create(param2 as Position),
 			}
 		} else {
 			const partial = param1 as Partial<PositionRange>
 			return {
-				start: partial.start ?? Position.Beginning,
-				end: partial.end ?? Position.Beginning,
+				start: Position.create(partial.start ?? {}),
+				end: Position.create(partial.end ?? {}),
 			}
 		}
 	}

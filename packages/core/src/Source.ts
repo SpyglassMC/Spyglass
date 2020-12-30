@@ -1,4 +1,13 @@
-import { OffsetPositionConverter, Position } from '.'
+type Space =
+	| ' '
+	| '\t'
+type Newline =
+	| '\r\n'
+	| '\r'
+	| '\n'
+type Whitespace =
+	| Space
+	| Newline
 
 export class Source {
 	public cursor = 0
@@ -7,21 +16,14 @@ export class Source {
 		public string: string
 	) { }
 
-	get passedString() {
-		return this.string.slice(0, this.cursor)
-	}
-
-	get remainingString() {
-		return this.string.slice(this.cursor, this.end)
-	}
-
 	clone() {
-		const ans = new Source(this.string, this.cursor, this.end)
+		const ans = new Source(this.string)
+		ans.cursor = this.cursor
 		return ans
 	}
 
 	canRead(length = 1) {
-		return this.cursor + length <= this.end
+		return this.cursor + length <= this.string.length
 	}
 
 	/**
@@ -32,48 +34,48 @@ export class Source {
 		return this.string.charAt(this.cursor + offset)
 	}
 
-	/**
-	 * Skips the current character.
-	 * @param step The step to skip. @default 1
-	 */
-	skip(step = 1) {
-		this.cursor += step
-		return this
-	}
-
-	skipLine() {
-		this.readUntilOrEnd('\r', '\n')
-		return this
-	}
-
 	read() {
 		return this.string.charAt(this.cursor++)
 	}
 
-	readSpace() {
-		const start = this.cursor
-		while (this.canRead() && StringReader.isSpace(this.peek())) {
-			this.skip()
-		}
-		return this.string.slice(start, this.cursor)
+	/**
+	 * Skips the current character.
+	 * @param step The step to skip. @default 1
+	 */
+	skip(step = 1): this {
+		this.cursor += step
+		return this
 	}
 
-	skipSpace() {
-		while (this.canRead() && StringReader.isSpace(this.peek())) {
+	readLine() {
+		return this.readUntilOrEnd('\r', '\n')
+	}
+	skipLine(): this {
+		this.readLine()
+		return this
+	}
+
+	readSpace() {
+		const start = this.cursor
+		this.skipSpace()
+		return this.string.slice(start, this.cursor)
+	}
+	skipSpace(): this {
+		while (this.canRead() && Source.isSpace(this.peek())) {
 			this.skip()
 		}
 		return this
 	}
 
-	skipWhiteSpace() {
-		while (this.canRead() && StringReader.isWhiteSpace(this.peek())) {
+	skipWhitespace(): this {
+		while (this.canRead() && Source.isWhitespace(this.peek())) {
 			this.skip()
 		}
 		return this
 	}
 
 	/**
-	 * @param terminator Endding character. Will not be included in the result.
+	 * @param terminators Endding character. Will not be included in the result.
 	 */
 	readUntilOrEnd(...terminators: string[]) {
 		let ans = ''
@@ -89,37 +91,27 @@ export class Source {
 		return ans
 	}
 
-	readLine() {
-		return this.readUntilOrEnd('\r', '\n')
-	}
+	// lastLine(converter: OffsetPositionConverter) {
+	// 	const pos = converter.toPosition(this.cursor)
+	// 	this.cursor = converter.toOffset(Position.create(pos.line - 1, 0))
+	// 	return this
+	// }
 
-	readRemaining() {
-		const ans = this.remainingString
-		this.cursor = this.end
-		return ans
-	}
+	// nextLine(converter: OffsetPositionConverter) {
+	// 	const pos = converter.toPosition(this.cursor)
+	// 	this.cursor = converter.toOffset(Position.create(pos.line + 1, 0))
+	// 	return this
+	// }
 
-	lastLine(converter: OffsetPositionConverter) {
-		const pos = converter.toPosition(this.cursor)
-		this.cursor = converter.toOffset(Position.create(pos.line - 1, 0))
-		return this
-	}
-
-	nextLine(converter: OffsetPositionConverter) {
-		const pos = textDoc.positionAt(this.cursor)
-		this.cursor = textDoc.offsetAt({ line: pos.line + 1, character: 0 })
-		return this
-	}
-
-	static isSpace(c: string) {
+	static isSpace(c: string): c is Space {
 		return c === ' ' || c === '\t'
 	}
 
-	static isWhiteSpace(c: string) {
-		return c === ' ' || c === '\t' || c === '\r' || c === '\n' || c === '\r\n'
+	static isNewline(c: string): c is Newline {
+		return c === '\r\n' || c === '\r' || c === '\n'
 	}
 
-	static isLineSeparator(c: string) {
-		return c === '\r\n' || c === '\r' || c === '\n'
+	static isWhitespace(c: string): c is Whitespace {
+		return Source.isSpace(c) || Source.isNewline(c)
 	}
 }

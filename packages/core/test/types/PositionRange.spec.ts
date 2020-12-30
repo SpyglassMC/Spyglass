@@ -18,7 +18,7 @@ describe('PositionRange', () => {
 			const incoming = PositionRange.create(1, 2, 3, 4)
 
 			const result = PositionRange.create(incoming)
-			incoming.start = Position.Beginning
+			incoming.start.line = 42
 
 			assert.deepStrictEqual(result, PositionRange.create(1, 2, 3, 4))
 		})
