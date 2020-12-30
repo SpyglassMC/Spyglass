@@ -26,19 +26,18 @@ export class StringReader {
 	canRead(length = 1) {
 		return this.cursor + length <= this.end
 	}
-
 	/**
-     * Peeks a character at the current cursor.
-     * @param offset The index to offset from cursor. @default 0
-     */
+	 * Peeks a character at the current cursor.
+	 * @param offset The index to offset from cursor. @default 0
+	 */
 	peek(offset = 0) {
 		return this.string.charAt(this.cursor + offset)
 	}
 
 	/**
-     * Skips the current character.
-     * @param step The step to skip. @default 1
-     */
+	 * Skips the current character.
+	 * @param step The step to skip. @default 1
+	 */
 	skip(step = 1) {
 		this.cursor += step
 		return this
@@ -76,8 +75,8 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
-     */
+	 * @throws {ParsingError} When the value is NaN or have non-number char at the beginning.
+	 */
 	readNumber() {
 		const start = this.cursor
 		let str = ''
@@ -115,8 +114,8 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError} When the value is float or exceeds the range.
-     */
+	 * @throws {ParsingError} When the value is float or exceeds the range.
+	 */
 	readInt() {
 		const start = this.cursor
 		const str = this.readNumber()
@@ -140,9 +139,9 @@ export class StringReader {
 	}
 
 	/**
-     * @deprecated
-     * @throws When the value is float.
-     */
+	 * @deprecated
+	 * @throws When the value is float.
+	 */
 	readLong() {
 		const start = this.cursor
 		const str = this.readNumber()
@@ -163,16 +162,16 @@ export class StringReader {
 	}
 
 	/**
-     * @deprecated
-     */
+	 * @deprecated
+	 */
 	readDouble() {
 		const str = this.readNumber()
 		return parseFloat(str)
 	}
 
 	/**
-     * @param out Stores a mapping from in-string indices to real indices. 
-     */
+	 * @param out Stores a mapping from in-string indices to real indices. 
+	 */
 	readUnquotedString(out: { mapping: IndexMapping } = { mapping: {} }) {
 		let ans = ''
 		out.mapping.start = this.cursor
@@ -183,10 +182,10 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a mapping from in-string indices to real indices. 
-     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
-     */
+	 * @throws {ParsingError} If it's not an legal quoted string.
+	 * @param out Stores a mapping from in-string indices to real indices. 
+	 * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
+	 */
 	readQuotedString(out: { mapping: IndexMapping } = { mapping: {} }, looseEscapeCheck = false) {
 		let ans = ''
 		if (!this.canRead()) {
@@ -209,10 +208,10 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError}
-     * @param terminator Endding quote. Will not be included in the result.
-     * @param out Stores a mapping from in-string indices to real indices. 
-     */
+	 * @throws {ParsingError}
+	 * @param terminator Endding quote. Will not be included in the result.
+	 * @param out Stores a mapping from in-string indices to real indices. 
+	 */
 	private readUntilQuote(terminator: '"' | "'", out: { mapping: IndexMapping }, looseEscapeCheck: boolean) {
 		const start = this.cursor
 		const escapeChar = '\\'
@@ -257,8 +256,8 @@ export class StringReader {
 	}
 
 	/**
-     * @param terminator Endding character. Will not be included in the result.
-     */
+	 * @param terminator Endding character. Will not be included in the result.
+	 */
 	readUntilOrEnd(...terminators: string[]) {
 		let ans = ''
 		while (this.canRead()) {
@@ -278,10 +277,10 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError} If it's not an legal quoted string.
-     * @param out Stores a mapping from in-string indices to real indices. 
-     * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
-     */
+	 * @throws {ParsingError} If it's not an legal quoted string.
+	 * @param out Stores a mapping from in-string indices to real indices. 
+	 * @param isReadingJson Whether to read the whole JSON string, including quotes and escaping characters.
+	 */
 	readString(out: { mapping: IndexMapping } = { mapping: {} }, looseEscapeCheck = false) {
 		if (!this.canRead()) {
 			out.mapping.start = this.cursor
@@ -296,9 +295,9 @@ export class StringReader {
 	}
 
 	/**
-     * @deprecated
-     * @throws {ParsingError}
-     */
+	 * @deprecated
+	 * @throws {ParsingError}
+	 */
 	readBoolean() {
 		const start = this.cursor
 		const string = this.readString()
@@ -321,8 +320,8 @@ export class StringReader {
 	}
 
 	/**
-     * @throws {ParsingError} (tolerable) When the next char can't match the expected one.
-     */
+	 * @throws {ParsingError} (tolerable) When the next char can't match the expected one.
+	 */
 	expect(c: string) {
 		const start = this.cursor
 		const end = this.cursor + 1
@@ -370,8 +369,8 @@ export class StringReader {
 		// But it IS legal in NBT numbers, because Mojang used `readUnquotedString` to parse primitive tags in NBT parser.
 		return (
 			c === '0' || c === '1' || c === '2' || c === '3' ||
-            c === '4' || c === '5' || c === '6' || c === '7' ||
-            c === '8' || c === '9' || c === '-' || c === '.'
+			c === '4' || c === '5' || c === '6' || c === '7' ||
+			c === '8' || c === '9' || c === '-' || c === '.'
 		)
 	}
 
@@ -388,9 +387,9 @@ export class StringReader {
 	}
 
 	/**
-     * Whether the string can be used in unquoted string or not.
-     * @param string A string.
-     */
+	 * Whether the string can be used in unquoted string or not.
+	 * @param string A string.
+	 */
 	static canInUnquotedString(string: string) {
 		return /^[0-9a-zA-Z\_\-\.\+]+$/.test(string)
 	}

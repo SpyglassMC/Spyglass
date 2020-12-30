@@ -22,7 +22,7 @@ export class BlockNode extends ArgumentNode {
 		const id = this.id[GetFormattedString](lint)
 		const states = Object.keys(this.states).length > 0 ? this.states[GetFormattedString](lint) : ''
 		const tag = Object.keys(this.tag).length > 0 ? this.tag[GetFormattedString](lint) : ''
-        
+
 		return `${id}${states}${tag}`
 	}
 }

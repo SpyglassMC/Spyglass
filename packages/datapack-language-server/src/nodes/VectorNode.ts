@@ -18,8 +18,8 @@ export class VectorElementNode extends NumberNode {
 	}
 
 	/**
-     * Return the raw representation of this vector, including prefix.
-     */
+	 * Return the raw representation of this vector, including prefix.
+	 */
 	toString() {
 		return this.type + this.raw
 	}

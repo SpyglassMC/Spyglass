@@ -37,10 +37,10 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 	static identity = 'Nbt'
 
 	/**
-     * The diagnostic level of nbt schema is `Warning`.
-     *
-     * This field is used to trigger `Error` diagnostics.
-     */
+	 * The diagnostic level of nbt schema is `Warning`.
+	 *
+	 * This field is used to trigger `Error` diagnostics.
+	 */
 	private readonly expectedTypes: NbtNodeTypeName[]
 
 	readonly identity = 'nbtTag'
@@ -53,9 +53,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 		],
 		private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
 		/**
-         * `null`: Use compiled fallback for the registry.
-         * `undefined`: No validations from registry.
-         */
+		 * `null`: Use compiled fallback for the registry.
+		 * `undefined`: No validations from registry.
+		 */
 		private readonly id: string | nbtdoc.Index<nbtdoc.CompoundTag> | null | undefined = undefined,
 		private readonly isPredicate = false,
 		private readonly superNode: NbtCompoundNode | null = null,
@@ -71,8 +71,8 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 	}
 
 	/**
-     * @throws {string}
-     */
+	 * @throws {string}
+	 */
 	private static parseNumber<T = number>(
 		str: string,
 		range: string[],
@@ -257,16 +257,16 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 					} else {
 						// Check whether the current key follows the naming convention.
 						const isCustomKey = !(helper && doc) ||
-                            (
-                            	helper.readField(
-                            		helper.readCompound(
-                            			helper.resolveCompoundOrIndexDoc(doc, superNode, ctx)
-                            		),
-                            		key, ans.data
-                            	) === null
-                            )
+							(
+								helper.readField(
+									helper.readCompound(
+										helper.resolveCompoundOrIndexDoc(doc, superNode, ctx)
+									),
+									key, ans.data
+								) === null
+							)
 						if (isCustomKey && ctx.config.lint.nameOfNbtCompoundTagKeys &&
-                            !checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
+							!checkNamingConvention(key, ctx.config.lint.nameOfNbtCompoundTagKeys)) {
 							const [severity, value] = ctx.config.lint.nameOfNbtCompoundTagKeys
 							result.errors.push(new ParsingError(
 								{ start, end },
@@ -473,9 +473,9 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
 		const start = reader.cursor
 		try {
 			/**
-             * Move cursor to the end of the white spaces, so that we can provide
-             * completions when the cursor is inside the white spaces.
-             */
+			 * Move cursor to the end of the white spaces, so that we can provide
+			 * completions when the cursor is inside the white spaces.
+			 */
 			const skipWhiteSpace = () => {
 				const whiteSpaceStart = reader.cursor
 				reader.skipWhiteSpace()

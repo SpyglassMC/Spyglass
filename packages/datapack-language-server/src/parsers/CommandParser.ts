@@ -16,19 +16,19 @@ export class CommandParser implements Parser<CommandComponent> {
 	/* istanbul ignore next */
 	constructor(
 		/**
-         * Whether the line should begin with a slash (`/`).  
-         * `true` - Should. Will throw untolerable errors if the line doesn't match.   
-         * `false` - Shouldn't. Will throw untolerable errors if the line doesn't match.  
-         * `null` - Not care.
-         */
+		 * Whether the line should begin with a slash (`/`).  
+		 * `true` - Should. Will throw untolerable errors if the line doesn't match.   
+		 * `false` - Shouldn't. Will throw untolerable errors if the line doesn't match.  
+		 * `null` - Not care.
+		 */
 		private readonly leadingSlash: boolean | null = false,
 		/**
-         * The entry point will be used to access `tree`.
-         */
+		 * The entry point will be used to access `tree`.
+		 */
 		private readonly entryPoint: 'line' | 'commands' = 'line',
 		/**
-         * Allow the command not hitting executable nodes.
-         */
+		 * Allow the command not hitting executable nodes.
+		 */
 		private readonly allowPartial = false
 	) { }
 
@@ -297,8 +297,8 @@ export class CommandParser implements Parser<CommandComponent> {
 	}
 
 	/**
-     * @returns If parsed successfully.
-     */
+	 * @returns If parsed successfully.
+	 */
 	private tryParsingNodeInChildren(reader: StringReader, ctx: ParsingContext, key: string, node: CommandTreeNode<any>, parsedLine: CommandComponent, optional: boolean, isFirstArgument: boolean, isSoleChild: boolean, mustRollBack = false) {
 		const hasUntolerableErrors = (errors: ParsingError[]) => errors.filter(v => !v.tolerable).length > 0
 		const newReader = reader.clone()

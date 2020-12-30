@@ -11,14 +11,14 @@
 Data-pack Language Server can provide many heavy language features for documents in your datapack, including advancements, dimensions, dimension types, functions, loot tables, predicates, recipes, all kinds of tags, and all kinds of worldgen files.
 
 - [Installation](#installation)
-  - [For Use](#for-use)
-    - [Sublime Text 3](#sublime-text-3)
-    - [Visual Studio Code](#visual-studio-code)
-  - [For Developers](#for-developers)
+	- [For Use](#for-use)
+		- [Sublime Text 3](#sublime-text-3)
+		- [Visual Studio Code](#visual-studio-code)
+	- [For Developers](#for-developers)
 - [Contributors](#contributors)
-  - [Contributors for 3.1.0](#contributors-for-310)
-  - [Contributors for older versions](#contributors-for-older-versions)
-  - [Contributing](#contributing)
+	- [Contributors for 3.1.0](#contributors-for-310)
+	- [Contributors for older versions](#contributors-for-older-versions)
+	- [Contributing](#contributing)
 
 # Installation
 
@@ -35,36 +35,36 @@ Data-pack Language Server can provide many heavy language features for documents
 7. Configure LSP to add the Data-pack Language Server. Here's one example:
 ```json
 {
-  "clients": {
-    "datapack-language-server": {
-      "command": [
-        "datapack-language-server",
-        "--stdio"
-      ],
-      "enabled": true,
-      "languages": [
-        {
-          "languageId": "mcfunction",
-          "scopes": [
-            "source.mcfunction"
-          ],
-          "syntaxes": [
-            "Packages/language-mcfunction/mcfunction.tmLanguage"
-          ]
-        },
-        {
-          "languageId": "json",
-          "scopes": [
-            "source.json"
-          ],
-          "syntaxes": [
-            "Packages/JavaScript/JSON.sublime-syntax"
-          ]
-        }
-      ]
-    }
-  },
-  "only_show_lsp_completions": true
+	"clients": {
+		"datapack-language-server": {
+			"command": [
+				"datapack-language-server",
+				"--stdio"
+			],
+			"enabled": true,
+			"languages": [
+				{
+					"languageId": "mcfunction",
+					"scopes": [
+						"source.mcfunction"
+					],
+					"syntaxes": [
+						"Packages/language-mcfunction/mcfunction.tmLanguage"
+					]
+				},
+				{
+					"languageId": "json",
+					"scopes": [
+						"source.json"
+					],
+					"syntaxes": [
+						"Packages/JavaScript/JSON.sublime-syntax"
+					]
+				}
+			]
+		}
+	},
+	"only_show_lsp_completions": true
 }
 ```
 8. Open the Command Palette, select `LSP: Enable Language Server Globally`, and choose `datapack-language-server`.
@@ -95,26 +95,26 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mcdata repository</a></td>
-    <td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4" width="64px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" target="_blank" title="Collaborator of the Project">💎 Collaborator</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/Devon7925"><img src="https://avatars3.githubusercontent.com/u/22968971?s=400&v=4" width="64px;" alt=""/><br /><sub><b>Devon7925</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/703" target="_blank" title="Bug reports">🐛 #703</a></td>
-    <td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/MulverineX"><img src="https://avatars2.githubusercontent.com/u/12068027?s=460&u=525f7b144a55b7d894a75ee023baf9c469250c4b&v=4" width="64px;" alt=""/><br /><sub><b>MulverineX</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/747" target="_blank" title="Bug reports">🐛 #747</a></td>
-    <td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/736" target="_blank" title="Ideas, Planning, and Feedback">✨ #736</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/739" target="_blank" title="Bug reports">🐛 #739</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/748" target="_blank" title="Bug reports">🐛 #748</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
-    <td align="center"><a href="https://github.com/barraIhsan"><img src="https://avatars3.githubusercontent.com/u/57800056?s=400&u=95f69213851b71fc684cfd2c79b47c2bbaf0a47e&v=4" width="64px;" alt=""/><br /><sub><b>barraIhsan</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/769" target="_blank" title="Bug reports">🐛 #769</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/259792693368979458/ec53c2ef95e503b3d81284c6e9cf2415.webp?size=256" width="64px;" alt=""/><br /><sub><b>chawdan</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/765" target="_blank" title="Bug reports">🐛 #765</a></td>
-    <td align="center"><a href="https://github.com/zyjking"><img src="https://avatars2.githubusercontent.com/u/37742023?s=400&v=4" width="64px;" alt=""/><br /><sub><b>zyjking</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
-  </tr>
+	<tr>
+		<td align="center"><a href="https://github.com/Arcensoth"><img src="https://avatars2.githubusercontent.com/u/1885643?s=460&u=6c40bfd2701329a442810831d3a2cf954c8cf5de&v=4" width="64px;" alt=""/><br /><sub><b>Arcensoth</b></sub></a></td><td align="left"><a href="https://github.com/Arcensoth/mcdata" target="_blank" title="Dependency">⬆️ Maintains mcdata repository</a></td>
+		<td align="center"><a href="https://github.com/ChenCMD"><img src="https://avatars2.githubusercontent.com/u/46134240?s=460&u=ca934b86e5189ea9c598a51358571e777e21aa2f&v=4" width="64px;" alt=""/><br /><sub><b>ChenCMD</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues?q=author%3AChenCMD" target="_blank" title="Collaborator of the Project">💎 Collaborator</a></td>
+	</tr>
+	<tr>
+		<td align="center"><a href="https://github.com/Devon7925"><img src="https://avatars3.githubusercontent.com/u/22968971?s=400&v=4" width="64px;" alt=""/><br /><sub><b>Devon7925</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/703" target="_blank" title="Bug reports">🐛 #703</a></td>
+		<td align="center"><a href="https://github.com/misode"><img src="https://avatars1.githubusercontent.com/u/17352009?s=460&u=2813225036a78ea0c585fa5f9150d448c3a8ff8e&v=4" width="64px;" alt=""/><br /><sub><b>Misode</b></sub></a></td><td align="left"><a href="https://github.com/misode/minecraft-schemas" target="_blank" title="Dependency">⬆️ Maintains minecraft-schemas repository</a></td>
+	</tr>
+	<tr>
+		<td align="center"><a href="https://github.com/MulverineX"><img src="https://avatars2.githubusercontent.com/u/12068027?s=460&u=525f7b144a55b7d894a75ee023baf9c469250c4b&v=4" width="64px;" alt=""/><br /><sub><b>MulverineX</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/747" target="_blank" title="Bug reports">🐛 #747</a></td>
+		<td align="center"><a href="https://github.com/NeunEinser"><img src="https://avatars3.githubusercontent.com/u/12124394?s=460&v=4" width="64px;" alt=""/><br /><sub><b>NeunEinser</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/736" target="_blank" title="Ideas, Planning, and Feedback">✨ #736</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/739" target="_blank" title="Bug reports">🐛 #739</a><br><a href="https://github.com/SPGoding/datapack-language-server/issues/748" target="_blank" title="Bug reports">🐛 #748</a></td>
+	</tr>
+	<tr>
+		<td align="center"><a href="https://github.com/Yurihaia"><img src="https://avatars3.githubusercontent.com/u/17830663?s=400&u=4959d74e027642f5a207dcd5e112005c5932b844&v=4" width="64px;" alt=""/><br /><sub><b>Yurihaia</b></sub></a></td><td align="left"><a href="https://github.com/Yurihaia/mc-nbtdoc" target="_blank" title="Dependency">⬆️ Maintains mc-nbtdoc repository</a></td>
+		<td align="center"><a href="https://github.com/barraIhsan"><img src="https://avatars3.githubusercontent.com/u/57800056?s=400&u=95f69213851b71fc684cfd2c79b47c2bbaf0a47e&v=4" width="64px;" alt=""/><br /><sub><b>barraIhsan</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/769" target="_blank" title="Bug reports">🐛 #769</a></td>
+	</tr>
+	<tr>
+		<td align="center"><a href=""><img src="https://cdn.discordapp.com/avatars/259792693368979458/ec53c2ef95e503b3d81284c6e9cf2415.webp?size=256" width="64px;" alt=""/><br /><sub><b>chawdan</b></sub></a></td><td align="left"><a href="https://github.com/SPGoding/datapack-language-server/issues/765" target="_blank" title="Bug reports">🐛 #765</a></td>
+		<td align="center"><a href="https://github.com/zyjking"><img src="https://avatars2.githubusercontent.com/u/37742023?s=400&v=4" width="64px;" alt=""/><br /><sub><b>zyjking</b></sub></a></td><td align="left"><a href="https://github.com/sponsors/SPGoding" target="_blank" title="Financial support">☕ Coffee</a></td>
+	</tr>
 </table>
 
 <!-- markdownlint-restore -->

@@ -16,7 +16,7 @@ export class MessageArgumentParser extends ArgumentParser<MessageNode> {
 
 		while (reader.canRead()) {
 			if (reader.peek() === '@' &&
-                (reader.peek(1) === 'p' || reader.peek(1) === 'a' || reader.peek(1) === 'r' || reader.peek(1) === 's' || reader.peek(1) === 'e')
+				(reader.peek(1) === 'p' || reader.peek(1) === 'a' || reader.peek(1) === 'r' || reader.peek(1) === 's' || reader.peek(1) === 'e')
 			) {
 				const entityResult = new ctx.parsers.Entity('multiple', 'entities').parse(reader, ctx)
 				ans.data.push(entityResult.data)

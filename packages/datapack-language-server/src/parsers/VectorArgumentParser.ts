@@ -63,8 +63,8 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 
 		if (reader.canRead()) {
 			if (StringReader.canInNumber(reader.peek()) ||
-                reader.peek() === VectorElementType.Local ||
-                reader.peek() === VectorElementType.Relative
+				reader.peek() === VectorElementType.Local ||
+				reader.peek() === VectorElementType.Relative
 			) {
 				let dimension: number = this.dimension
 				let hasLocal = false
@@ -130,8 +130,8 @@ export class VectorArgumentParser extends ArgumentParser<VectorNode> {
 	}
 
 	/**
-     * Add next element to `ans`, and also return it.
-     */
+	 * Add next element to `ans`, and also return it.
+	 */
 	private parseElement(ans: ArgumentParserResult<VectorNode>, reader: StringReader, cursor: number, index: number, hasLocal: boolean, hasNonLocal: boolean) {
 		const ansElement = new VectorElementNode(VectorElementType.Absolute, 0, '', this.type === 'float')
 		const start = reader.cursor

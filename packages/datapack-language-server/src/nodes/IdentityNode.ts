@@ -25,8 +25,8 @@ export class IdentityNode extends ArgumentNode {
 		public path: string[] = [],
 		public isTag = false,
 		/**
-         * A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
-         */
+		 * A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
+		 */
 		public type: string | undefined = undefined
 	) {
 		super()
@@ -54,36 +54,36 @@ export class IdentityNode extends ArgumentNode {
 	}
 
 	/**
-     * Return the standardized namespace of this identity.
-     */
+	 * Return the standardized namespace of this identity.
+	 */
 	getNamespace() {
 		return this.namespace || IdentityNode.DefaultNamespace
 	}
 
 	/**
-     * Convert the ID to a stringified ID. Will NOT begin with TagSymbol (`#`) even if the ID is a tag.
-     */
+	 * Convert the ID to a stringified ID. Will NOT begin with TagSymbol (`#`) even if the ID is a tag.
+	 */
 	toString() {
 		return `${this.getLongestNamespacePart()}${this.getPathPart()}`
 	}
 
 	/**
-     * Convert the ID to the shortest stringified ID. WILL NOT begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
-     */
+	 * Convert the ID to the shortest stringified ID. WILL NOT begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
+	 */
 	toShortestString() {
 		return `${this.getShortestNamespacePart()}${this.getPathPart()}`
 	}
 
 	/**
-     * Convert the ID to a stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag.
-     */
+	 * Convert the ID to a stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag.
+	 */
 	toTagString() {
 		return `${this.getTagSymbolPart()}${this.getLongestNamespacePart()}${this.getPathPart()}`
 	}
 
 	/**
-     * Convert the ID to the shortest stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
-     */
+	 * Convert the ID to the shortest stringified tag ID. WILL begin with TagSymbol (`#`) if the ID is a tag. WILL omit the namespace if it is the default namespace.
+	 */
 	toShortestTagString() {
 		return `${this.getTagSymbolPart()}${this.getShortestNamespacePart()}${this.getPathPart()}`
 	}
@@ -170,11 +170,11 @@ export class IdentityNode extends ArgumentNode {
 	}
 
 	/**
-     * Convert the ID to a file path.
-     * @param category The category of this namespaced ID. e.g. `function`, `advancement`, etc.
-     * @param ext The extension of the file. Defaults to `.json`.
-     * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
-     */
+	 * Convert the ID to a file path.
+	 * @param category The category of this namespaced ID. e.g. `function`, `advancement`, etc.
+	 * @param ext The extension of the file. Defaults to `.json`.
+	 * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
+	 */
 	toRel(category: FileType, side: 'assets' | 'data' = 'data') {
 		const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
 		let ext: string
@@ -189,18 +189,18 @@ export class IdentityNode extends ArgumentNode {
 	}
 
 	/**
-     * - `$1`: Namespace.
-     * - `$2`
-     */
+	 * - `$1`: Namespace.
+	 * - `$2`
+	 */
 	static readonly RelativePathPatterns = {
 		File: 'data/*/*',
 	}
 
 	/**
-     * 
-     * @param rel The relative path from the workspace. Returns `undefined` if the path is in an invalid
-     * datapack category.
-     */
+	 * 
+	 * @param rel The relative path from the workspace. Returns `undefined` if the path is in an invalid
+	 * datapack category.
+	 */
 	/* istanbul ignore next */
 	static fromRel(rel: string | undefined): { id: IdentityNode, category: FileType, side: 'assets' | 'data' } | undefined {
 		if (!rel) {
@@ -258,9 +258,9 @@ export class IdentityNode extends ArgumentNode {
 	}
 
 	/**
-     * Get the tag cache type.
-     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
-     */
+	 * Get the tag cache type.
+	 * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
+	 */
 	static getTagType(type: string): TagFileType | undefined {
 		/* istanbul ignore next */
 		switch (type) {

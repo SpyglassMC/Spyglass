@@ -9,20 +9,20 @@ import { StringReader } from '../utils/StringReader'
 export abstract class ArgumentParser<T> implements Parser<T> {
 	static identity: string
 	/**
-     * Human-readable identity of the parser. Will be shown in hints.
-     */
+	 * Human-readable identity of the parser. Will be shown in hints.
+	 */
 	abstract readonly identity: string
 
 	/**
-     * Parse.
-     * @param reader Input reader.
-     * @param ctx A ParsingContext.
-     */
+	 * Parse.
+	 * @param reader Input reader.
+	 * @param ctx A ParsingContext.
+	 */
 	abstract parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<T>
 
 	/**
-     * Default implements to return something like `<id: string>`
-     */
+	 * Default implements to return something like `<id: string>`
+	 */
 	toHint(name: string, optional: boolean): string {
 		const prefix = optional ? '[<' : '<'
 		const suffix = optional ? '>]' : '>'
@@ -30,11 +30,11 @@ export abstract class ArgumentParser<T> implements Parser<T> {
 	}
 
 	/**
-     * Get examples of this argument.
-     * 
-     * @example
-     * return ['true', 'false']
-     */
+	 * Get examples of this argument.
+	 * 
+	 * @example
+	 * return ['true', 'false']
+	 */
 	getExamples(): string[] {
 		return []
 	}

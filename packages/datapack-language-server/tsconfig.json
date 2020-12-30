@@ -1,19 +1,19 @@
 {
-    "extends": "../tsconfig-base",
-    "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "lib"
-    },
-    "include": [
-        "src/**/*",
-        "src/**/*.json"
-    ],
-    "references": [
-        {
-            "path": "../core"
-        },
-        {
-            "path": "../locales"
-        }
-    ]
+	"extends": "../tsconfig-base",
+	"compilerOptions": {
+		"rootDir": "src",
+		"outDir": "lib"
+	},
+	"include": [
+		"src/**/*",
+		"src/**/*.json"
+	],
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "../locales"
+		}
+	]
 }

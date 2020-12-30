@@ -83,8 +83,8 @@ describe('onDocumentFormatting() Tests', () => {
 		}
 		const { textDoc } = mockParsingContext({
 			content: dedent`
-            wrong minecraft:stone
-            fake minecraft:stone`,
+				wrong minecraft:stone
+				fake minecraft:stone`,
 		})
 
 		const edits = onDocumentFormatting({ doc, textDoc, config })

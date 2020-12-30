@@ -9,7 +9,7 @@ import { mockCommand, mockParsingContext } from '../utils.spec'
 describe('onRenameRequest() Tests', () => {
 	const pathAccessible: PathAccessibleFunction = async abs => !!(
 		abs.match(/^c:[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]foo\.mcfunction$/i) ||
-        abs.match(/^d:[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]bar\.mcfunction$/i)
+		abs.match(/^d:[\\\/]data[\\\/]spgoding[\\\/]functions[\\\/]bar\.mcfunction$/i)
 	)
 	const readFile = async () => { throw 'Fake readFile() Intended Exception' }
 	const roots = [Uri.parse('file:///c:/'), Uri.parse('file:///d:/')]

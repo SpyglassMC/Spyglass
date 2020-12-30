@@ -1,7 +1,7 @@
 {
-   "version": "independent",
-   "npmClient": "npm",
-   "packages": [
-      "packages/**"
-   ]
+	"version": "independent",
+	"npmClient": "npm",
+	"packages": [
+		"packages/**"
+	]
 }

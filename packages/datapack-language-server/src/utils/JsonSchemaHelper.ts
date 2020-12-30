@@ -186,8 +186,8 @@ export class JsonSchemaHelper {
 	}
 
 	/**
-     * Replaces some values that require snippet insert positions with some magic strings.
-     */
+	 * Replaces some values that require snippet insert positions with some magic strings.
+	 */
 	private static jsonSnippetReplacer(this: any, _key: string, value: any): any {
 		if (deepEqual(value, {})) {
 			return JsonSchemaHelper.Replacers.EmptyObject
@@ -203,8 +203,8 @@ export class JsonSchemaHelper {
 	}
 
 	/**
-     * Resolve the magic strings provided from `jsonSnippetReplacer` function with the actual TextMate syntax.
-     */
+	 * Resolve the magic strings provided from `jsonSnippetReplacer` function with the actual TextMate syntax.
+	 */
 	private static resolveJsonSnippetMagicStrings(value: string) {
 		let insertIndex = 1
 		const replace = (value: string, searchValue: string | RegExp, replaceValue: (i: number) => string) => {
@@ -230,8 +230,8 @@ export class JsonSchemaHelper {
 	}
 
 	/**
-     * @param cb A callback that is called on every node.
-     */
+	 * @param cb A callback that is called on every node.
+	 */
 	private static walkAstNode(node: ASTNode, path: ModelPath, schema: INode, cb: (node: ASTNode, path: ModelPath, schema: INode) => any) {
 		cb(node, path, schema)
 		if (node.type === 'object') {
@@ -410,8 +410,8 @@ export class JsonSchemaHelper {
 	}
 
 	/**
-     * @param path Will be changed with the remaining elements after navigation.
-     */
+	 * @param path Will be changed with the remaining elements after navigation.
+	 */
 	private static navigateNodes(node: ASTNode, path: PathElement[]): ASTNode {
 		if (path.length === 0) {
 			return node
@@ -431,9 +431,9 @@ export class JsonSchemaHelper {
 	}
 
 	/**
-     * This function won't work if the path contains any `pop` after `push`, which should be fine.
-     * @param path Won't be changed.
-     */
+	 * This function won't work if the path contains any `pop` after `push`, which should be fine.
+	 * @param path Won't be changed.
+	 */
 	private static navigateRelativePath(node: ASTNode | undefined, path: RelativePath | undefined): ASTNode | undefined {
 		if (!path || !node) {
 			return undefined

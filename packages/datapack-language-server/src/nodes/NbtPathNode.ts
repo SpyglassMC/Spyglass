@@ -7,12 +7,12 @@ import { NbtCompoundNode } from './NbtCompoundNode'
 import { NumberNode } from './NumberNode'
 
 type NbtPathElement =
-    | typeof NbtPathNode.IndexBegin
-    | typeof NbtPathNode.IndexEnd
-    | typeof NbtPathNode.Sep
-    | NumberNode
-    | NbtCompoundNode
-    | NbtCompoundKeyNode
+	| typeof NbtPathNode.IndexBegin
+	| typeof NbtPathNode.IndexEnd
+	| typeof NbtPathNode.Sep
+	| NumberNode
+	| NbtCompoundNode
+	| NbtCompoundKeyNode
 
 export class NbtPathNode extends ArgumentNode implements ArrayLike<NbtPathElement> {
 	[index: number]: NbtPathElement

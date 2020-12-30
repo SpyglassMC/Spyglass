@@ -19,8 +19,8 @@ export class NbtCompoundKeyNode extends NbtStringNode {
 	[NodeDescription]: string
 
 	/**
-     * @param superNbt The compound node that contains this key.
-     */
+	 * @param superNbt The compound node that contains this key.
+	 */
 	constructor(
 		superNbt: NbtCompoundNode | null, value: string, raw: string, mapping: IndexMapping
 	) {

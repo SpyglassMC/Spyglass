@@ -25,8 +25,8 @@ export class StringNode extends ArgumentNode {
 	}
 
 	/**
-     * Return code actions for changing quotation marks when relevant diagnostics exist.
-     */
+	 * Return code actions for changing quotation marks when relevant diagnostics exist.
+	 */
 	[GetCodeActions](uri: string, ctx: ParsingContext, range: TextRange, diagnostics: DiagnosticMap) {
 		const ans = super[GetCodeActions](uri, ctx, range, diagnostics)
 

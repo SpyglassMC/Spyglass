@@ -25,9 +25,9 @@ export class MapParser<T extends MapNode<any, any>> {
 		const start = reader.cursor
 
 		/**
-         * Move cursor to the end of the white spaces, so that we can provide
-         * completions when the cursor is inside the white spaces.
-         */
+		 * Move cursor to the end of the white spaces, so that we can provide
+		 * completions when the cursor is inside the white spaces.
+		 */
 		const skipWhiteSpace = () => {
 			const whiteSpaceStart = reader.cursor
 			reader.skipWhiteSpace()

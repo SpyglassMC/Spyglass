@@ -10,8 +10,8 @@ import { mockCommand, mockParsingContext } from '../utils.spec'
 describe('onDocumentHighlight() Tests', () => {
 	const { textDoc } = mockParsingContext({
 		content: dedent`
-        kill SPGoding
-        kill SPGoding`,
+			kill SPGoding
+			kill SPGoding`,
 	})
 	const doc: McfunctionDocument = {
 		type: 'mcfunction',

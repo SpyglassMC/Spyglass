@@ -21,10 +21,10 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	readonly identity = 'identity'
 
 	/**
-     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`). 
-     * Alternatively, an array with all possible values.
-     * @param registries The registries.
-     */
+	 * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`). 
+	 * Alternatively, an array with all possible values.
+	 * @param registries The registries.
+	 */
 	/* istanbul ignore next */
 	constructor(
 		private readonly type: string | string[],
@@ -170,7 +170,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 
 		// Add 'THIS' to completions
 		if (idStart === ctx.cursor && ctx.id &&
-            typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
+			typeof this.type === 'string' && this.type.startsWith('$') && isFileType(this.type.slice(1))
 		) {
 			ans.completions.push({
 				label: 'THIS',
@@ -228,8 +228,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * @returns The range of the selected path.
-     */
+	 * @returns The range of the selected path.
+	 */
 	private completeBeginning(shouldOmit: boolean | null, start: number, cursor: number, reader: StringReader, isTag: boolean, tagPool: string[], complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>, pool: string[]) {
 		let selectedRange: TextRange | undefined = undefined
 		if (start <= cursor && cursor <= reader.cursor) {
@@ -241,8 +241,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * @returns The range of the selected path.
-     */
+	 * @returns The range of the selected path.
+	 */
 	private parseNamespaceAndFirstPath(reader: StringReader, shouldOmit: boolean | null, path0: string, ans: ArgumentParserResult<IdentityNode>, start: number, severity: DiagnosticSeverity, namespace: string | undefined, pool: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>, paths: string[]) {
 		let selectedRange: TextRange | undefined = undefined
 		if (reader.peek() === IdentityNode.NamespaceDelimiter) {
@@ -288,8 +288,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * @returns The range of the selected path.
-     */
+	 * @returns The range of the selected path.
+	 */
 	private parseRemaningPaths(reader: StringReader, ans: ArgumentParserResult<IdentityNode>, pool: string[], paths: string[], cursor: number, complFolders: Set<string>, complFiles: Set<string>) {
 		let selectedRange: TextRange | undefined = undefined
 		while (reader.peek() === IdentityNode.PathSep) {
@@ -478,8 +478,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
-     */
+	* Read an unquoted string and add errors if it contains non [a-z0-9/._-] character.
+	*/
 	private readValidString(reader: StringReader, ans: ArgumentParserResult<IdentityNode>): string {
 		const start = reader.cursor
 		const value = reader.readUnquotedString()
@@ -494,11 +494,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * Add the first element of the `paths` to `complFolders` or `complFiles`, accordingly.
-     * @param comlPaths The paths of the ID completion.
-     * @param complFolders Ans completion folders.
-     * @param complFiles Ans completion files.
-     */
+	 * Add the first element of the `paths` to `complFolders` or `complFiles`, accordingly.
+	 * @param comlPaths The paths of the ID completion.
+	 * @param complFolders Ans completion folders.
+	 * @param complFiles Ans completion files.
+	 */
 	private completeFolderOrFile(comlPaths: string[], complFolders: Set<string>, complFiles: Set<string>, parsedPathCount = 0) {
 		const diff = comlPaths.length - parsedPathCount
 		if (diff > 1) {
@@ -509,11 +509,11 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
 	}
 
 	/**
-     * Check if a parsed ID is valid in the specific cache unit.
-     * @param type The type of the cache unit.
-     * @param stringID The stringified ID.
-     * @param start The start of the whole parsing process of this ID.
-     */
+	 * Check if a parsed ID is valid in the specific cache unit.
+	 * @param type The type of the cache unit.
+	 * @param stringID The stringified ID.
+	 * @param start The start of the whole parsing process of this ID.
+	 */
 	private checkIDInCache(ans: ArgumentParserResult<IdentityNode>, reader: StringReader, type: CacheType, namespace = IdentityNode.DefaultNamespace, stringID: string, start: number, config: Config, cache: ClientCache, namespaceSummary: NamespaceSummary) {
 		const category = getSafeCategory(cache, type)
 		const canResolve = Object.keys(category)

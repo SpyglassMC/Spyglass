@@ -101,9 +101,9 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 				if (helper && doc) {
 					if (!(
 						NbtdocHelper.isListDoc(doc) ||
-                        NbtdocHelper.isByteArrayDoc(doc) ||
-                        NbtdocHelper.isIntArrayDoc(doc) ||
-                        NbtdocHelper.isLongArrayDoc(doc)
+						NbtdocHelper.isByteArrayDoc(doc) ||
+						NbtdocHelper.isIntArrayDoc(doc) ||
+						NbtdocHelper.isLongArrayDoc(doc)
 					)) {
 						ans.errors.push(new ParsingError(
 							{ start: reader.cursor, end: reader.cursor + 1 },

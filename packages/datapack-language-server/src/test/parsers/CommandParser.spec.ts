@@ -19,16 +19,16 @@ export class TestArgumentParser extends ArgumentParser<string> {
 	readonly identity = 'test'
 
 	/**
-     * Input `error` to attain a tolerable `ParsingError`.
-     * 
-     * Input `ERROR` to attain an untolerable `ParsingError`.
-     * 
-     * Input `cache` to attain a `LocalCache` containing `id`.
-     * 
-     * Input `CACHE` to attain a `LocalCache` containing both `id` and `description`.
-     * 
-     * Input `completion` to attain a completion.
-     */
+	 * Input `error` to attain a tolerable `ParsingError`.
+	 * 
+	 * Input `ERROR` to attain an untolerable `ParsingError`.
+	 * 
+	 * Input `cache` to attain a `LocalCache` containing `id`.
+	 * 
+	 * Input `CACHE` to attain a `LocalCache` containing both `id` and `description`.
+	 * 
+	 * Input `completion` to attain a completion.
+	 */
 	constructor(private readonly type: 'error' | 'ERROR' | 'cache' | 'CACHE' | 'completion' | 'only_one_char' | 'normal' = 'normal') { super() }
 
 	parse(reader: StringReader): ArgumentParserResult<string> {

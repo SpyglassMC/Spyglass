@@ -79,10 +79,10 @@ export function escapeString(str: string, quote: '"' | "'" | null = '"') {
  */
 export function quoteString(inner: string, quoteType: QuoteTypeConfig, forced: boolean) {
 	const shouldQuote = forced ||
-        !StringReader.canInUnquotedString(inner) ||
-        Array.from(inner).every(StringReader.canInNumber) ||
-        inner.toLowerCase() === 'false' ||
-        inner.toLowerCase() === 'true'
+		!StringReader.canInUnquotedString(inner) ||
+		Array.from(inner).every(StringReader.canInNumber) ||
+		inner.toLowerCase() === 'false' ||
+		inner.toLowerCase() === 'true'
 	if (shouldQuote) {
 		let quote: "'" | '"'
 		switch (quoteType) {

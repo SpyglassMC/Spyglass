@@ -35,9 +35,9 @@ describe('onDidChangeTextDocument() Tests', () => {
 		}
 		const { textDoc } = mockParsingContext({
 			content: dedent`
-            # Test 0
-            # Test 1
-            # Test 2`,
+				# Test 0
+				# Test 1
+				# Test 2`,
 		})
 		const contentChanges = [{ text: '# Modified' }]
 		const service = new DatapackLanguageService()

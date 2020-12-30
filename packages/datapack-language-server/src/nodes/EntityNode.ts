@@ -11,16 +11,16 @@ export class EntityNode extends ArgumentNode {
 
 	constructor(
 		/**
-         * Used for player names or entity UUIDs.
-         */
+		 * Used for player names or entity UUIDs.
+		 */
 		public plain: string | undefined = undefined,
 		/**
-         * Variable of this entity selector.
-         */
+		 * Variable of this entity selector.
+		 */
 		public variable: 'p' | 'a' | 'r' | 's' | 'e' | undefined = undefined,
 		/**
-         * Arguments of this entity selector.
-         */
+		 * Arguments of this entity selector.
+		 */
 		public argument = new SelectorArgumentsNode()
 	) {
 		super()
