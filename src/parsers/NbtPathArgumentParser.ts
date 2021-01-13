@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
 import { NbtCompoundKeyNode } from '../nodes/NbtCompoundKeyNode'

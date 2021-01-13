@@ -1,4 +1,4 @@
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import { fail } from 'power-assert'
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind } from 'vscode-languageserver/node'
 import { ArgumentParser } from '../../parsers/ArgumentParser'
 import { CommandParser } from '../../parsers/CommandParser'
 import { CommandComponent } from '../../types'
@@ -559,8 +559,8 @@ describe('CommandParser Tests', () => {
             assert.deepStrictEqual(actual, {
                 data: CommandComponent.create(
                     [
-                        { data: 'a', parser: 'test', range: { start: 0, end: 1 } }, 
-                        { data: 'b', parser: 'test', range: { start: 2, end: 3 } }, 
+                        { data: 'a', parser: 'test', range: { start: 0, end: 1 } },
+                        { data: 'b', parser: 'test', range: { start: 2, end: 3 } },
                         { data: 'c', parser: 'test', range: { start: 4, end: 5 } }
                     ],
                     {

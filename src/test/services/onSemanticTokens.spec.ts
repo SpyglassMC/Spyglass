@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { ProposedFeatures } from 'vscode-languageserver'
+import { ProposedFeatures } from 'vscode-languageserver/node'
 import { onSemanticTokens } from '../../services/onSemanticTokens'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'

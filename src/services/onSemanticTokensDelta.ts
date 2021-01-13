@@ -1,9 +1,9 @@
-import { ProposedFeatures } from 'vscode-languageserver'
+import { SemanticTokensBuilder } from 'vscode-languageserver/node'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { DatapackDocument } from '../types/DatapackDocument'
 
 /** istanbul ignore next: mostly reply on the builder, not ourselves. */
-export function onSemanticTokensEdits({ doc, previousResultId, textDoc, builder }: { doc: DatapackDocument, previousResultId: string, builder: ProposedFeatures.SemanticTokensBuilder, textDoc: TextDocument }) {
+export function onSemanticTokensDelta({ doc, previousResultId, textDoc, builder }: { doc: DatapackDocument, previousResultId: string, builder: SemanticTokensBuilder, textDoc: TextDocument }) {
     builder.previousResult(previousResultId)
 
     for (const { tokens } of doc.nodes) {
@@ -12,5 +12,5 @@ export function onSemanticTokensEdits({ doc, previousResultId, textDoc, builder 
             .forEach(t => builder!.push(...t.toArray(textDoc)))
     }
 
-    return builder.build/* Edits */()
+    return builder.build/* Delta */()
 }

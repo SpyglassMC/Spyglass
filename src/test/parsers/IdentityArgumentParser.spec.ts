@@ -1,6 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver/node'
+import { NodeDescription } from '../../nodes'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { IdentityArgumentParser } from '../../parsers/IdentityArgumentParser'
 import { constructConfig } from '../../types/Config'
@@ -10,7 +11,6 @@ import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { Registry } from '../../types/Registry'
 import { StringReader } from '../../utils/StringReader'
 import { $, assertCompletions } from '../utils.spec'
-import { NodeDescription } from '../../nodes'
 
 describe('IdentityArgumentParser Tests', () => {
     describe('getExamples() Tests', () => {

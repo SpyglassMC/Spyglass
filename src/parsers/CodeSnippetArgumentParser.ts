@@ -1,4 +1,4 @@
-import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver/node'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
 import { StringReader } from '../utils/StringReader'

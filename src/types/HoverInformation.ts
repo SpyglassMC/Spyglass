@@ -1,4 +1,4 @@
-import { MarkupContent } from 'vscode-languageserver'
+import { MarkupContent } from 'vscode-languageserver/node'
 import { TextRange } from './TextRange'
 
 export interface HoverInformation {

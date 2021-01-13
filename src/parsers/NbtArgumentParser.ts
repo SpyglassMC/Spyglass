@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { IsMapSorted, Keys } from '../nodes/MapNode'

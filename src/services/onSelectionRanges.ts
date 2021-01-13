@@ -1,5 +1,5 @@
-import { Position, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Position, Range } from 'vscode-languageserver/node'
 import { getSelectedNode } from '../nodes'
 import { McfunctionDocument } from '../types/DatapackDocument'
 

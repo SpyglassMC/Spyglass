@@ -1,4 +1,4 @@
-import { CompletionItem } from 'vscode-languageserver'
+import { CompletionItem } from 'vscode-languageserver/node'
 import { TextRange } from './TextRange'
 
 export interface ParserSuggestion extends CompletionItem, TextRange {

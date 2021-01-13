@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { TeamArgumentParser } from '../../parsers/TeamArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'

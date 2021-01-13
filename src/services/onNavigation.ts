@@ -1,5 +1,5 @@
-import { Location } from 'vscode-languageserver'
-import { CacheFile, getCacheFromOffset, getSafeCategory, CacheUnitPositionType } from '../types/ClientCache'
+import { Location } from 'vscode-languageserver/node'
+import { CacheFile, CacheUnitPositionType, getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
 import { DocNode } from '../types/handlers'
 
 export function onNavigation({ node, offset, cacheFile, type }: { cacheFile: CacheFile, offset: number, node: DocNode, type: CacheUnitPositionType }): Location[] | null {

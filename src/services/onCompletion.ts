@@ -1,5 +1,5 @@
-import { CompletionItem, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CompletionItem, InsertTextFormat } from 'vscode-languageserver/node'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { ParserSuggestion, SyntaxComponent } from '../types'
 import { Uri } from '../types/handlers'

@@ -1,10 +1,9 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver/node'
 import { CodeSnippetArgumentParser } from '../../parsers/CodeSnippetArgumentParser'
 import { constructConfig } from '../../types/Config'
 import { constructContext } from '../../types/ParsingContext'
-import { ParsingError } from '../../types/ParsingError'
 import { StringReader } from '../../utils/StringReader'
 import { assertCompletions } from '../utils.spec'
 

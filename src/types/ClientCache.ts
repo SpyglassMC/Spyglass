@@ -1,5 +1,5 @@
 import rfdc from 'rfdc'
-import { MarkupKind, Position } from 'vscode-languageserver'
+import { MarkupKind, Position } from 'vscode-languageserver/node'
 import { URI as Uri } from 'vscode-uri'
 import { Config } from '.'
 import { IdentityNode } from '../nodes'

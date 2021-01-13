@@ -1,4 +1,4 @@
-import { ClientCapabilities as LspClientCapabilities } from 'vscode-languageserver'
+import { ClientCapabilities as LspClientCapabilities } from 'vscode-languageserver/node'
 
 export interface ClientCapabilities {
     dynamicRegistration: {

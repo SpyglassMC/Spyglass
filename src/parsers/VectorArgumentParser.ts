@@ -1,4 +1,4 @@
-import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { NodeRange } from '../nodes/ArgumentNode'
 import { VectorElementNode, VectorElementType, VectorNode } from '../nodes/VectorNode'

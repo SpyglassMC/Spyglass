@@ -1,5 +1,5 @@
-import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CodeAction, CodeActionKind, Command, Diagnostic, Range } from 'vscode-languageserver/node'
 import { DatapackLanguageService, getCodeAction } from '..'
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'

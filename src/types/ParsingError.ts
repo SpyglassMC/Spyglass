@@ -1,5 +1,5 @@
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { IndexMapping } from './IndexMapping'
 import { remapTextRange, TextRange } from './TextRange'

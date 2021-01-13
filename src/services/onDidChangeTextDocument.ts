@@ -1,5 +1,5 @@
-import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Position, Range, TextDocumentContentChangeEvent } from 'vscode-languageserver/node'
 import { getSelectedNode } from '../nodes'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { Uri } from '../types'

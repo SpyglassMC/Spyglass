@@ -1,4 +1,4 @@
-import { Position } from 'vscode-languageserver'
+import { Position } from 'vscode-languageserver/node'
 import { plugins } from '../..'
 import { CommandParser } from '../../parsers/CommandParser'
 import { CommandComponentData, ParsingContext } from '../../types'

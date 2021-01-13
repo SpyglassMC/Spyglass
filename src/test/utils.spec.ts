@@ -1,7 +1,7 @@
 import deepEqual from 'fast-deep-equal'
 import assert, { fail } from 'power-assert'
-import { CompletionItem } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CompletionItem } from 'vscode-languageserver/node'
 import { ArgumentNode, NodeRange } from '../nodes'
 import { PluginLoader } from '../plugins/PluginLoader'
 import { ClientCache, CommandComponent, CommandComponentData, Config, constructContext, ParserSuggestion, ParsingContext, ParsingError, TextRange, Token, VanillaConfig } from '../types'

@@ -1,4 +1,4 @@
-import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver'
+import { CodeAction, Diagnostic, Hover } from 'vscode-languageserver/node'
 import { ParsingContext } from '../types'
 import { LintConfig } from '../types/Config'
 import { Formattable, GetFormattedString } from '../types/Formattable'

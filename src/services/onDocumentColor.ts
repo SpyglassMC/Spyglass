@@ -1,5 +1,5 @@
-import { ColorInformation } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { ColorInformation } from 'vscode-languageserver/node'
 import { getSafeCategory } from '../types/ClientCache'
 import { DatapackDocument } from '../types/DatapackDocument'
 

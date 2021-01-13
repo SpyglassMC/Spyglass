@@ -1,7 +1,7 @@
 import clone from 'clone'
 import rfdc from 'rfdc'
-import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver/node'
 import { arrayToCompletions, arrayToMessage, handleCompletionText, quoteString, remapParserSuggestion, removeDupliateCompletions, validateStringQuote } from '.'
 import { locale } from '../locales'
 import { NodeDescription, NodeRange } from '../nodes/ArgumentNode'
@@ -1123,8 +1123,7 @@ export class NbtdocHelper {
 
     static getKeyDescription(value: nbtdoc.NbtValue, description: string) {
         return `${NbtdocHelper.localeType(NbtdocHelper.getValueType(value))
-            }\n* * * * * *\n${
-            NbtdocHelper.handleDescription(description)}`
+            }\n* * * * * *\n${NbtdocHelper.handleDescription(description)}`
     }
 
     static forEachOrDoc<T>(ans: ArgumentParserResult<T>, reader: StringReader, doc: OrDoc, cb: (ans: ArgumentParserResult<T>, reader: StringReader, doc: nbtdoc.NbtValue) => any): void {

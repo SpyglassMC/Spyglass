@@ -1,5 +1,5 @@
 import { v4 as uuidV4 } from 'uuid'
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'

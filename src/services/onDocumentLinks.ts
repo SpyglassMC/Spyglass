@@ -1,5 +1,5 @@
-import { DocumentLink } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { DocumentLink } from 'vscode-languageserver/node'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CachePosition, CacheUnit, CacheUnitPositionTypes, DatapackDocument, isFileType } from '../types'
 import { DatapackLanguageService } from './DatapackLanguageService'

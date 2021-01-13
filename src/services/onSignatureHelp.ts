@@ -1,5 +1,5 @@
-import { SignatureInformation } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { SignatureInformation } from 'vscode-languageserver/node'
 import { LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { SyntaxComponent, Uri } from '../types'
 import { parseSyntaxComponents } from './common'

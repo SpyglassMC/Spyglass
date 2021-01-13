@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, InsertTextFormat } from 'vscode-languageserver/node'
 import { VectorElementNode, VectorElementType, VectorNode } from '../../nodes/VectorNode'
 import { VectorArgumentParser } from '../../parsers/VectorArgumentParser'
 import { constructContext, ParsingContext } from '../../types/ParsingContext'

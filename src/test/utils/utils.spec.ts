@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
 import os from 'os'
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { EntityNode } from '../../nodes/EntityNode'
 import { IdentityNode } from '../../nodes/IdentityNode'
 import { SelectorArgumentsNode } from '../../nodes/SelectorArgumentsNode'
@@ -10,7 +10,7 @@ import { Formattable, GetFormattedString } from '../../types/Formattable'
 import { ErrorCode, ParsingError } from '../../types/ParsingError'
 import { QuoteTypeConfig } from '../../types/QuoteTypeConfig'
 import { DiagnosticConfig } from '../../types/StylisticConfig'
-import { arrayToCompletions, arrayToMessage, escapeString, getEol, getNbtdocRegistryId, quoteString, remapParserSuggestion, toFormattedString, validateStringQuote, round } from '../../utils'
+import { arrayToCompletions, arrayToMessage, escapeString, getEol, getNbtdocRegistryId, quoteString, remapParserSuggestion, round, toFormattedString, validateStringQuote } from '../../utils'
 import { assertCompletions } from '../utils.spec'
 
 describe('utils.ts Tests', () => {
@@ -397,16 +397,16 @@ describe('utils.ts Tests', () => {
             assert.deepStrictEqual(actual, [])
         })
     })
-    describe('round() Tests',()=>{
-        it('Should return exactly when the number has less decimal places than required', ()=>{
+    describe('round() Tests', () => {
+        it('Should return exactly when the number has less decimal places than required', () => {
             const actual = round(10, 3)
             assert(actual === 10)
         })
-        it('Should round down', ()=>{
+        it('Should round down', () => {
             const actual = round(10.1234, 3)
             assert(actual === 10.123)
         })
-        it('Should round up', ()=>{
+        it('Should round up', () => {
             const actual = round(10.6789, 3)
             assert(actual === 10.679)
         })

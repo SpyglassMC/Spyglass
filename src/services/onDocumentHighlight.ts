@@ -1,5 +1,5 @@
-import { DocumentHighlight, Position } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { DocumentHighlight, Position } from 'vscode-languageserver/node'
 import { DocNode } from '../types'
 import { CachePosition, CacheUnitPositionTypes, getCacheFromOffset, getSafeCategory } from '../types/ClientCache'
 import { McfunctionDocument } from '../types/DatapackDocument'

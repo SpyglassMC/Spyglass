@@ -1,5 +1,5 @@
-import { ColorPresentation, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { ColorPresentation, Range } from 'vscode-languageserver/node'
 import { round } from '../utils'
 
 export function onColorPresentation({ textDoc, start, end, r, g, b }: { textDoc: TextDocument, start: number, end: number, r: number, g: number, b: number, a: number }) {

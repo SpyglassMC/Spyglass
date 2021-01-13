@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 
 export type SeverityConfig = 'hint' | 'information' | 'warning' | 'error'
 

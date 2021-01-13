@@ -4,8 +4,8 @@ import { promises as fsp } from 'fs'
 import https from 'https'
 import { EOL } from 'os'
 import rfdc from 'rfdc'
-import { CodeActionKind, CompletionItem, Diagnostic, Position, TextEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CodeActionKind, CompletionItem, Diagnostic, Position, TextEdit } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { EntityNode } from '../nodes/EntityNode'
 import { ParserSuggestion } from '../types'
@@ -261,7 +261,7 @@ export function remapParserSuggestion(completion: ParserSuggestion, param1: Inde
     const ans = rfdc()(completion)
     if (param1 instanceof Function) {
         if (ans.textEdit) {
-            const range = ans.textEdit.range
+            const range = (ans.textEdit as TextEdit).range
             ans.start = range.start.character
             ans.end = range.end.character
             range.start = param1(ans.start)
@@ -269,7 +269,7 @@ export function remapParserSuggestion(completion: ParserSuggestion, param1: Inde
         }
     } else {
         if (ans.textEdit) {
-            const range = ans.textEdit.range
+            const range = (ans.textEdit as TextEdit).range
             range.start.character = getOuterIndex(param1, range.start.character)
             range.end.character = getOuterIndex(param1, range.end.character)
         }
@@ -289,7 +289,7 @@ export function handleCompletionText<T extends CompletionItem>(origin: T, cb: (s
     let textEdit: TextEdit | undefined
     if (origin.textEdit) {
         textEdit = {
-            range: origin.textEdit.range,
+            range: (origin.textEdit as TextEdit).range,
             newText: cb(origin.textEdit.newText)
         }
     }

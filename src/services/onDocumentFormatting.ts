@@ -1,6 +1,6 @@
-import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Config, SyntaxComponent } from '../types'
+import { DiagnosticSeverity, TextEdit } from 'vscode-languageserver/node'
+import { Config } from '../types'
 import { componentToLintedString } from '../types/CommandComponent'
 import { McfunctionDocument } from '../types/DatapackDocument'
 import { getLspRange } from './common'

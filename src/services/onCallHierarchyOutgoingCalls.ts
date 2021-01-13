@@ -1,11 +1,11 @@
-import { Proposed } from 'vscode-languageserver'
+import { CallHierarchyOutgoingCall } from 'vscode-languageserver/node'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { FileType, getSafeCategory, isTagFileType } from '../types/ClientCache'
 import { DatapackLanguageService } from './DatapackLanguageService'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
-export async function onCallHierarchyOutgoingCalls({ service, id }: { service: DatapackLanguageService, id: string }): Promise<Proposed.CallHierarchyOutgoingCall[] | null> {
-    const ans: Proposed.CallHierarchyOutgoingCall[] = []
+export async function onCallHierarchyOutgoingCalls({ service, id }: { service: DatapackLanguageService, id: string }): Promise<CallHierarchyOutgoingCall[] | null> {
+    const ans: CallHierarchyOutgoingCall[] = []
 
     const addCalleesFrom = async (type: FileType) => {
         const category = getSafeCategory(service.cacheFile.cache, type)

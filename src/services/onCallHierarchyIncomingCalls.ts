@@ -1,10 +1,10 @@
-import { Proposed } from 'vscode-languageserver'
+import { CallHierarchyIncomingCall } from 'vscode-languageserver/node'
 import { CacheUnit, getSafeCategory } from '../types/ClientCache'
 import { DatapackLanguageService } from './DatapackLanguageService'
 import { getCallHierarchyItem, IdentityKind } from './onCallHierarchyPrepare'
 
 export async function onCallHierarchyIncomingCalls({ service, kind, id }: { kind: IdentityKind, id: string, service: DatapackLanguageService }) {
-    const ans: Proposed.CallHierarchyIncomingCall[] = []
+    const ans: CallHierarchyIncomingCall[] = []
 
     let unit: CacheUnit | undefined
     switch (kind) {

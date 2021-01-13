@@ -1,4 +1,4 @@
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind } from 'vscode-languageserver/node'
 import { fillChildrenTemplate, fillSingleTemplate } from '../CommandTree'
 import { locale } from '../locales'
 import { CacheType } from '../types/ClientCache'

@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
-import { Position } from 'vscode-languageserver'
+import { Position } from 'vscode-languageserver/node'
 import { onDocumentHighlight } from '../../services/onDocumentHighlight'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'

@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity, InsertTextFormat } from 'vscode-languageserver/node'
 import { NodeDescription, NodeRange } from '../../nodes/ArgumentNode'
 import { Keys } from '../../nodes/MapNode'
 import { NbtByteArrayNode } from '../../nodes/NbtByteArrayNode'
@@ -622,8 +622,8 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key'} },
-                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark'} }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a normal key' } },
+                { label: 'double"quote', t: `'double"quote'`, kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a crazy key with a double quotation mark' } }
             ])
         })
         it('Should return correctly for in-double-quote cases', async () => {
@@ -637,9 +637,9 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
-                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
-                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound' }}
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a normal key' } },
+                { label: 'double"quote', t: 'double\\"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a crazy key with a double quotation mark' } },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'The only field of this compound' } }
             ])
         })
         it('Should return correctly for in-single-quote cases', async () => {
@@ -653,9 +653,9 @@ describe('NbtdocHelper Tests', () => {
             helper.completeCompoundKeys(ans, ctx, tag, doc, inQuote, 0, Infinity)
 
             assertCompletions('', ans.completions, [
-                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a normal key' }},
-                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'This is a crazy key with a double quotation mark' }},
-                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value:'The only field of this compound'} }
+                { label: 'normal', t: 'normal', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a normal key' } },
+                { label: 'double"quote', t: 'double"quote', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'This is a crazy key with a double quotation mark' } },
+                { label: 'foo', t: 'foo', kind: CompletionItemKind.Property, detail: 'Type: boolean', documentation: { kind: 'markdown', value: 'The only field of this compound' } }
             ])
         })
     })

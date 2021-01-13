@@ -1,5 +1,5 @@
-import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver/node'
 import { StringReader } from '../utils/StringReader'
 import { getStringLines } from './common'
 

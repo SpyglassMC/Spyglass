@@ -1,6 +1,6 @@
 import minimatch from 'minimatch'
 import path, { sep } from 'path'
-import { CodeActionKind, Hover } from 'vscode-languageserver'
+import { CodeActionKind, Hover } from 'vscode-languageserver/node'
 import { locale } from '../locales'
 import { ParsingContext } from '../types'
 import { CacheType, FileType, getFileTypeFromCategory, isFileType, isTagFileType, isWorldgenRegistryFileType, TagFileType, WorldgenFileType } from '../types/ClientCache'

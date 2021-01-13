@@ -1,4 +1,4 @@
-import { Proposed, SymbolKind } from 'vscode-languageserver'
+import { CallHierarchyItem, SymbolKind } from 'vscode-languageserver/node'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { getCacheFromOffset } from '../types/ClientCache'
@@ -36,7 +36,7 @@ export enum IdentityKind {
     FunctionTag = SymbolKind.Class
 }
 
-export function getCallHierarchyItem(id: string = '', uri: string, startLine: number, endLine: number, start: number, end: number, kind: IdentityKind): Proposed.CallHierarchyItem {
+export function getCallHierarchyItem(id: string = '', uri: string, startLine: number, endLine: number, start: number, end: number, kind: IdentityKind): CallHierarchyItem {
     return {
         name: id,
         range: {

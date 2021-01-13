@@ -2,9 +2,9 @@ import { INode, SchemaRegistry } from '@mcschema/core'
 import rfdc from 'rfdc'
 import { SynchronousPromise } from 'synchronous-promise'
 import { CompletionItem, getLanguageService as getJsonLanguageService, LanguageService as JsonLanguageService } from 'vscode-json-languageservice'
-import * as lsp from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onNavigation, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensEdits, onSignatureHelp } from '.'
+import * as lsp from 'vscode-languageserver/node'
+import { fixFileCommandHandler, onCallHierarchyIncomingCalls, onCallHierarchyOutgoingCalls, onCallHierarchyPrepare, onCodeAction, onColorPresentation, onCompletion, onDidChangeTextDocument, onDocumentColor, onDocumentFormatting, onDocumentHighlight, onDocumentLinks, onFoldingRanges, onHover, onNavigation, onPrepareRename, onRenameRequest, onSelectionRanges, onSemanticTokens, onSemanticTokensDelta, onSignatureHelp } from '.'
 import { plugins } from '..'
 import { getCommandTree } from '../data/CommandTree'
 import { getJsonSchemas, getJsonSchemaType, JsonSchemaType } from '../data/JsonSchema'
@@ -13,7 +13,7 @@ import { getSelectedNode, IdentityNode } from '../nodes'
 import { ParserCollection } from '../parsers'
 import { Contributions, LanguageConfig } from '../plugins/LanguageConfigImpl'
 import { PluginLoader } from '../plugins/PluginLoader'
-import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForID, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
+import { CacheFile, CacheUnitPositionType, ClientCache, ClientCapabilities, combineCache, CommandTree, Config, constructContext, CreateWorkDoneProgressServerReporterFunction, DatapackDocument, DefaultCacheFile, DocNode, FetchConfigFunction, FileType, getCacheForID, getClientCapabilities, isMcfunctionDocument, isRelIncluded, ParserSuggestion, ParsingContext, ParsingError, PathAccessibleFunction, PublishDiagnosticsFunction, ReadFileFunction, removeCachePosition, removeCacheUnit, setUpUnit, trimCache, Uri, VanillaConfig, VersionInformation } from '../types'
 import { pathAccessible, readFile } from '../utils'
 import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getId, getRel, getRootIndex, getRootUri, getSelectedNodeFromInfo, getTextDocument, getUri, getUriFromId, parseJsonNode, parseSyntaxComponents } from './common'
@@ -24,7 +24,7 @@ type DatapackLanguageServiceOptions = {
     applyEdit?: (edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>,
     cacheFile?: CacheFile,
     capabilities?: ClientCapabilities,
-    createWorkDoneProgress?: CreateWorkDoneProgressFunction,
+    createWorkDoneProgress?: CreateWorkDoneProgressServerReporterFunction,
     defaultLocaleCode?: string,
     fetchConfig?: FetchConfigFunction,
     globalStoragePath?: string,
@@ -42,7 +42,7 @@ export class DatapackLanguageService {
     readonly applyEdit: ((edit: lsp.ApplyWorkspaceEditParams | lsp.WorkspaceEdit) => Promise<lsp.ApplyWorkspaceEditResponse>) | undefined
     public cacheFile: CacheFile
     readonly capabilities: Readonly<ClientCapabilities>
-    readonly createWorkDoneProgress: CreateWorkDoneProgressFunction | undefined
+    readonly createWorkDoneProgress: CreateWorkDoneProgressServerReporterFunction | undefined
     readonly defaultLocaleCode: string // TODO
     readonly globalStoragePath: string | undefined
     readonly jsonService: JsonLanguageService
@@ -58,7 +58,7 @@ export class DatapackLanguageService {
     readonly showInformationMessage: ShowMessage | undefined
     readonly versionInformation: VersionInformation | undefined
 
-    private readonly builders: Map<string, lsp.ProposedFeatures.SemanticTokensBuilder> = new Map()
+    private readonly builders: Map<string, lsp.SemanticTokensBuilder> = new Map()
     /**
      * Key: `${type}|${ID}`
      */
@@ -639,11 +639,11 @@ export class DatapackLanguageService {
         return onCallHierarchyPrepare({ service: this, textDoc, offset, node })
     }
 
-    async onCallHierarchyIncomingCalls({ kind, name: id }: lsp.Proposed.CallHierarchyItem) {
+    async onCallHierarchyIncomingCalls({ kind, name: id }: lsp.CallHierarchyItem) {
         return onCallHierarchyIncomingCalls({ kind, id, service: this })
     }
 
-    async onCallHierarchyOutgoingCalls({ name: id }: lsp.Proposed.CallHierarchyItem) {
+    async onCallHierarchyOutgoingCalls({ name: id }: lsp.CallHierarchyItem) {
         return onCallHierarchyOutgoingCalls({ id, service: this })
     }
 
@@ -720,6 +720,13 @@ export class DatapackLanguageService {
         return onSemanticTokens({ doc, builder, textDoc })
     }
 
+    async onSemanticTokensDelta(uri: Uri, previousResultId: string) {
+        return this.onSemanticTokensEdits(uri, previousResultId)
+    }
+
+    /**
+     * @deprecated Use `onSemanticTokensDelta` instead.
+     */
     async onSemanticTokensEdits(uri: Uri, previousResultId: string) {
         const doc = await this.docs.get(uri.toString())
         const config = await this.getConfig(uri)
@@ -728,7 +735,7 @@ export class DatapackLanguageService {
             return { data: [] }
         }
         const builder = this.getBuilder(uri)
-        return onSemanticTokensEdits({ doc, builder, previousResultId, textDoc })
+        return onSemanticTokensDelta({ doc, builder, previousResultId, textDoc })
     }
 
     async onAutoFixingFile(uri: Uri) {
@@ -888,7 +895,7 @@ export class DatapackLanguageService {
     }
 
     private createBuilder(uri: Uri) {
-        const builder = new lsp.ProposedFeatures.SemanticTokensBuilder()
+        const builder = new lsp.SemanticTokensBuilder()
         this.builders.set(uri.toString(), builder)
         return builder
     }

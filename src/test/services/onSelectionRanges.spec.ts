@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { Position } from 'vscode-languageserver'
+import { Position } from 'vscode-languageserver/node'
 import { onSelectionRanges } from '../../services/onSelectionRanges'
 import { McfunctionDocument } from '../../types'
 import { Token, TokenType } from '../../types/Token'

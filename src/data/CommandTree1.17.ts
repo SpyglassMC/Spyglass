@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from 'vscode-languageserver'
+import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { getArgData, getArgOrDefault } from '../CommandTree'
 import { locale } from '../locales'
 import { NodeRange, VectorNode } from '../nodes'

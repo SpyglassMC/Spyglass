@@ -1,4 +1,4 @@
-import { Hover } from 'vscode-languageserver'
+import { Hover } from 'vscode-languageserver/node'
 import { ArgumentNode, GetHover, NodeRange } from '../nodes/ArgumentNode'
 import { DocCommentComponent } from '../plugins/builtin/DocCommentPlugin'
 import { CommandComponent, isInRange, ParsingContext, SyntaxComponent } from '../types'

@@ -3,8 +3,7 @@ import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import rfdc from 'rfdc'
-import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
-import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
+import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind, WorkDoneProgressServerReporter } from 'vscode-languageserver/node'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
 import { loadLocale, locale } from './locales'
@@ -85,7 +84,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
     workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
 
-    const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
+    const result: InitializeResult = {
         capabilities: {
             callHierarchyProvider: true,
             colorProvider: true,
@@ -120,8 +119,8 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
             selectionRangeProvider: !capabilities.dynamicRegistration.selectionRange,
             semanticTokensProvider: {
                 legend: getSemanticTokensLegend(),
-                documentProvider: {
-                    edits: true
+                full: {
+                    delta: true
                 }
             },
             signatureHelpProvider: !capabilities.dynamicRegistration.signatureHelp ? {
@@ -386,13 +385,13 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri: uriString }
     return service.onSemanticTokens(uri)
 })
 
-connection.languages.semanticTokens.onEdits(async ({ textDocument: { uri: uriString }, previousResultId }) => {
+connection.languages.semanticTokens.onDelta(async ({ textDocument: { uri: uriString }, previousResultId }) => {
     const uri = service.parseUri(uriString)
-    return service.onSemanticTokensEdits(uri, previousResultId)
+    return service.onSemanticTokensDelta(uri, previousResultId)
 })
 
 connection.onExecuteCommand(async ({ command, arguments: args }) => {
-    let progress: WorkDoneProgress | undefined = undefined
+    let progress: WorkDoneProgressServerReporter | undefined = undefined
     try {
         switch (command) {
             case 'datapack.createFile': {
@@ -528,7 +527,7 @@ function saveCacheFileSync() {
     }
 }
 
-async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
+async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgressServerReporter | undefined) {
     try {
         // Check the files saved in the cache file.
         progress?.begin(locale('server.progress.updating-cache.begin'))
@@ -547,7 +546,7 @@ async function updateCacheFile(cacheFile: CacheFile, roots: Uri[], progress: Wor
     }
 }
 
-async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
+async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgressServerReporter | undefined) {
     const uriStrings = Object.keys(cacheFile.files).values()
     return partitionedIteration(uriStrings, async uriString => {
         progress?.report(locale('server.progress.updating-cache.report', locale('punc.quote', uriString)))
@@ -571,7 +570,7 @@ async function checkFilesInCache(cacheFile: CacheFile, roots: Uri[], progress: W
     })
 }
 
-async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgress | undefined) {
+async function addNewFilesToCache(cacheFile: CacheFile, roots: Uri[], progress: WorkDoneProgressServerReporter | undefined) {
     return Promise.all(roots.map(root => {
         const dataPath = path.join(root.fsPath, 'data')
         return walkFile(

@@ -3,8 +3,8 @@ import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import minimatch from 'minimatch'
 import path from 'path'
-import { Diagnostic, Proposed, Range } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Diagnostic, Range, SemanticTokensLegend } from 'vscode-languageserver/node'
 import { URI as Uri } from 'vscode-uri'
 import { JsonSchemaType } from '../data/JsonSchema'
 import { VanillaData } from '../data/VanillaData'
@@ -67,7 +67,7 @@ export function getUriFromId(pathExists: PathAccessibleFunction, roots: Uri[], u
     })
 }
 
-function checkFilePath(errors: ParsingError[] | undefined, service: DatapackLanguageService, uri: Uri) { 
+function checkFilePath(errors: ParsingError[] | undefined, service: DatapackLanguageService, uri: Uri) {
     const rel = service.getRel(uri)
     if (rel && errors && minimatch(rel, GeneralPathPattern, { dot: true })) {
         for (const type of Object.keys(PathPatterns)) {
@@ -165,7 +165,7 @@ export function getDiagnosticMap(diagnostics: Diagnostic[]) {
 }
 
 /* istanbul ignore next */
-export function getSemanticTokensLegend(): Proposed.SemanticTokensLegend {
+export function getSemanticTokensLegend(): SemanticTokensLegend {
     const tokenTypes: string[] = []
     for (let i = 0; i < TokenType._; i++) {
         const str = TokenType[i]

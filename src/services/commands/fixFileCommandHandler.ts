@@ -1,5 +1,5 @@
-import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver/node'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
 import { areOverlapped, CommandComponent, Config, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
 import { getDiagnosticMap } from '../common'

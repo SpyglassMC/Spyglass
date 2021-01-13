@@ -1,5 +1,5 @@
 import path from 'path'
-import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver'
+import { RenameFile, TextDocumentEdit, WorkspaceEdit } from 'vscode-languageserver/node'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { CacheUnitPositionTypes, getCacheFromOffset, getSafeCategory, isCacheUnitPositionType, isFileType, isInternalType, isNamespacedType, removeCachePosition } from '../types/ClientCache'
 import { DocNode, Uri } from '../types/handlers'

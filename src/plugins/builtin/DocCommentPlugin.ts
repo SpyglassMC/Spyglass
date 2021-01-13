@@ -1,4 +1,4 @@
-import { CompletionItemKind } from 'vscode-languageserver'
+import { CompletionItemKind } from 'vscode-languageserver/node'
 import { arrayToCompletions, arrayToMessage, escapeIdentityPattern, plugins } from '../..'
 import { locale } from '../../locales'
 import { ArgumentNode, IdentityNode, NodeDescription, NodeRange, NodeType } from '../../nodes'
@@ -243,7 +243,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 .clone()
                 .nextLine(ctx.textDoc)
             const nextLineStart = clonedReader.cursor
-            const nextSkippedSpaces =  clonedReader.readSpace()
+            const nextSkippedSpaces = clonedReader.readSpace()
             const nextCommandIndent = clonedReader.cursor - nextLineStart
             if (nextCommandIndent - indentBeforeLastHash >= 1) {
                 reader.cursor = clonedReader.cursor

@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver'
+import { CompletionItemKind, DiagnosticSeverity } from 'vscode-languageserver/node'
 import { NodeRange } from '../../nodes/ArgumentNode'
 import { EntityNode } from '../../nodes/EntityNode'
 import { IdentityNode } from '../../nodes/IdentityNode'

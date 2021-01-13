@@ -1,6 +1,6 @@
 import assert = require('power-assert')
 import { describe, it } from 'mocha'
-import { MarkupKind } from 'vscode-languageserver'
+import { MarkupKind } from 'vscode-languageserver/node'
 import { URI as Uri } from 'vscode-uri'
 import { ClientCache, combineCache, getCacheFromOffset, getCompletions, getSafeCategory, isFileType, isNamespacedType, isTagFileType, remapCachePosition, removeCachePosition, removeCacheUnit, trimCache } from '../../types/ClientCache'
 import { assertCompletions } from '../utils.spec'

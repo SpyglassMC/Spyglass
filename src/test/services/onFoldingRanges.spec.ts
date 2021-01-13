@@ -1,7 +1,7 @@
 import assert = require('power-assert')
 import dedent from 'dedent-js'
 import { describe, it } from 'mocha'
-import { FoldingRangeKind } from 'vscode-languageserver'
+import { FoldingRangeKind } from 'vscode-languageserver/node'
 import { onFoldingRanges } from '../../services/onFoldingRanges'
 import { mockParsingContext } from '../utils.spec'
 
