@@ -5,4 +5,6 @@ import { SpyglassCore } from './Core'
 })()
 
 export * from './Core'
-export * from './types'
+export * from './node'
+export * from './type'
+export * from './Source'

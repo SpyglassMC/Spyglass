@@ -4,5 +4,6 @@ import { Diagnostic, Range } from 'vscode-languageserver'
 export interface JsonDocument {
 	root: ASTNode,
 	syntaxErrors: Diagnostic[],
-	comments: Range[]
+	comments: Range[],
+	getNodeFromOffset(offset: number, includeRightBound?: boolean): ASTNode | undefined,
 }

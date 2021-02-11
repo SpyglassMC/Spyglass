@@ -30,7 +30,7 @@ export function resolveLocalePlaceholders(val: string | undefined, params?: stri
 }
 
 export function segmentedLocale(segments: string[], params?: string[], depth = 5, minDepth = 1): string | undefined {
-	return [language, 'en'].reduce((prev, code) => {
+	return [language, 'en'].reduce((prev: string | undefined, code) => {
 		if (prev !== undefined) return prev
 
 		const array = segments.slice(-depth)

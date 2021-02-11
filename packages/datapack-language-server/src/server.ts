@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import path from 'path'
 import rfdc from 'rfdc'
-import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, Proposed, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
+import { CodeActionKind, CompletionRequest, createConnection, DidChangeConfigurationNotification, DocumentFormattingRequest, DocumentHighlightRequest, FileChangeType, FoldingRangeRequest, InitializeResult, ProposedFeatures, SelectionRangeRequest, SignatureHelpRequest, TextDocumentSyncKind } from 'vscode-languageserver'
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 import { URI as Uri } from 'vscode-uri'
 import { ReleaseNotesVersion } from '.'
@@ -85,7 +85,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 
 	workspaceRootUriStrings = workspaceFolders?.map(v => v.uri) ?? []
 
-	const result: InitializeResult & { capabilities: Proposed.CallHierarchyServerCapabilities & Proposed.SemanticTokensServerCapabilities } = {
+	const result: InitializeResult = {
 		capabilities: {
 			callHierarchyProvider: true,
 			colorProvider: true,
@@ -120,9 +120,7 @@ connection.onInitialize(async ({ workspaceFolders, initializationOptions: { stor
 			selectionRangeProvider: !capabilities.dynamicRegistration.selectionRange,
 			semanticTokensProvider: {
 				legend: getSemanticTokensLegend(),
-				documentProvider: {
-					edits: true,
-				},
+				full: { delta: true },
 			},
 			signatureHelpProvider: !capabilities.dynamicRegistration.signatureHelp ? {
 				triggerCharacters: [' '],

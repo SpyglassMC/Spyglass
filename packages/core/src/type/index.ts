@@ -1,4 +1,5 @@
 export * from './IndexMap'
+export * from './Location'
 export * from './OffsetPositionConverter'
 export * from './Position'
 export * from './PositionRange'

@@ -37,7 +37,7 @@ export abstract class NbtNumberNode<T = number> extends NbtPrimitiveNode<T> {
 			}
 		}
 		for (const [code, id, getNode] of NbtNumberNode.actionProviders) {
-			pushActions(code, id, getNode.bind(this, this[SuperNode], this.valueOf(), this.toString()))
+			pushActions(code, id, getNode.bind(this, this[SuperNode]!, this.valueOf(), this.toString()))
 		}
 		return ans
 	}

@@ -3,40 +3,45 @@ type Parser = any
 type Processor = any
 type Validator = any
 //#endregion
-type CoreNodeNames =
-	| 'boolean'
-	| 'string'
-type CoreProcessorNames =
-	| 'color_provider'
-	| 'colorizer'
-	| 'validator'
+const CoreNodeNames = Object.freeze([
+	'boolean',
+	'string',
+] as const)
+type CoreNodeNames = typeof CoreNodeNames[number]
+
+const CoreProcessorNames = Object.freeze([
+	'color_provider',
+	'colorizer',
+	'validator',
+] as const)
+type CoreProcessorNames = typeof CoreProcessorNames[number]
 
 /**
  * The core of SPYGlass. You can register new parsers and processors or reference existing ones here.
  * This is a singleton; use the `getInstance` static method to get an instance. 
  */
-export class SpyglassCore<A extends string, P extends string> {
-	getParser(nodeName: CoreNodeNames | A): Parser {
+export class SpyglassCore<N extends string, P extends string> {
+	getParser(nodeName: CoreNodeNames | N): Parser {
 
 	}
 
-	registerParser(nodeName: CoreNodeNames | A, parser: Parser) {
+	registerParser(nodeName: CoreNodeNames | N, parser: Parser) {
 
 	}
 
-	getProcessor(processorName: CoreProcessorNames | P, nodeName: CoreNodeNames | A): Parser {
+	getProcessor(processorName: CoreProcessorNames | P, nodeName: CoreNodeNames | N): Parser {
 
 	}
 
-	registerProcessor(processorName: CoreProcessorNames | P, nodeName: CoreNodeNames | A, processor: Processor) {
+	registerProcessor(processorName: CoreProcessorNames | P, nodeName: CoreNodeNames | N, processor: Processor) {
 
 	}
 
-	getValidator(nodeName: CoreNodeNames | A): Validator {
+	getValidator(nodeName: CoreNodeNames | N): Validator {
 		return this.getProcessor('validator', nodeName)
 	}
 
-	registerValidator(nodeName: CoreNodeNames | A, validator: Validator) {
+	registerValidator(nodeName: CoreNodeNames | N, validator: Validator) {
 		this.registerProcessor('validator', nodeName, validator)
 	}
 

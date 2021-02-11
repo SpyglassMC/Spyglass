@@ -12,15 +12,14 @@ module.exports = {
 		"@typescript-eslint"
 	],
 	"ignorePatterns": [
-		"**/webpack.config.js",
-		"**/.eslintrc.js",
+		"**/*.js",
 
 		"**/node_modules",
 
-		"**/dist/**.*",
-		"**/lib/**.*",
-		"**/out/**.*",
-		"**/test-out/**.*",
+		"**/dist",
+		"**/lib",
+		"**/out",
+		"**/test-out",
 
 		"packages/mcschema",
 	],
