@@ -69,8 +69,8 @@ export class DatapackLanguageService {
 	private readonly urisOfIds: Map<string, Uri | null> = new Map()
 
 	private readonly plugins: Map<string, plugins.Plugin>
-	private languageConfigs: Map<string, LanguageConfig>
-	private contributions: Contributions
+	private languageConfigs!: Map<string, LanguageConfig>
+	private contributions!: Contributions
 
 	private static readonly ConfigCacheSize = 100
 	private static readonly OnDidUpdateCacheEventDelay = 1500

@@ -1,10 +1,13 @@
-import { SpyglassCore } from './Core'
+/* istanbul ignore file */
+
+import { CentralRegistry } from './CentralRegistry'
 
 (() => {
-	const core = SpyglassCore.getInstance()
+	const registry = CentralRegistry.getInstance()
+	registry
 })()
 
-export * from './Core'
+export * from './CentralRegistry'
 export * from './node'
-export * from './type'
 export * from './Source'
+export * from './type'

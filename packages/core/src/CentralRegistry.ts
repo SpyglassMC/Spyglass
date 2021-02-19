@@ -1,3 +1,5 @@
+import { CoreCategories, FileService, SymbolTableHelper, Uri } from './type'
+
 //#region TEMP
 type Parser = any
 type Processor = any
@@ -17,10 +19,10 @@ const CoreProcessorNames = Object.freeze([
 type CoreProcessorNames = typeof CoreProcessorNames[number]
 
 /**
- * The core of SPYGlass. You can register new parsers and processors or reference existing ones here.
+ * The central registry of SPYGlass. You can register new parsers and processors or acquire existing ones here.
  * This is a singleton; use the `getInstance` static method to get an instance. 
  */
-export class SpyglassCore<N extends string, P extends string> {
+export class CentralRegistry<N extends string, P extends string, C extends string> {
 	getParser(nodeName: CoreNodeNames | N): Parser {
 
 	}
@@ -49,15 +51,15 @@ export class SpyglassCore<N extends string, P extends string> {
 	 * Get an instance of `SpyglassCore`.
 	 * @template A A union type of AST node names.
 	 * @template P A union type of processor names.
+	 * @template C A union type of cache category names.
 	 */
-	static getInstance<A extends string = CoreNodeNames, P extends string = CoreProcessorNames>(): SpyglassCore<A, P> {
-		return SpyglassCore.instance ?? (SpyglassCore.instance = new SpyglassCore<A, P>())
+	static getInstance<A extends string = CoreNodeNames, P extends string = CoreProcessorNames, C extends string = CoreCategories>(): CentralRegistry<A, P, C> {
+		return CentralRegistry.instance ?? (CentralRegistry.instance = new CentralRegistry<A, P, C>())
 	}
 	private constructor() {
-		if (SpyglassCore.instance) {
+		if (CentralRegistry.instance) {
 			throw new Error('Use the `getInstance` static method to get an instance.')
 		}
-		// TODO: register core nodes and processors here.
 	}
-	private static instance: SpyglassCore<string, string>
+	private static instance: CentralRegistry<string, string, string>
 }
