@@ -4,7 +4,8 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"scripts": {
-		"init": "lerna bootstrap --hoist && npm run build",
+		"init:dependencies": "lerna bootstrap --hoist",
+		"init": "npm run init:dependencies && npm run build",
 		"build": "tsc -b packages",
 		"watch": "tsc -b -w packages",
 		"commit": "gitmoji -c",

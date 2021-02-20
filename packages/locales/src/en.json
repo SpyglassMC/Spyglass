@@ -143,7 +143,7 @@
 	"server.progress.updating-cache.report": "checking %0%",
 	"server.remove-cache-file": "The cache file of DHP was moved to a storage location provided by VSCode. You can safely delete the ugly “.datapack” folder in your workspace root.",
 	"server.show-release-notes": "Show Release Notes",
-	"space-seperating-arguments": "Expected a space to seperate two arguments",
+	"space-separating-arguments": "Expected a space to separate two arguments",
 	"string": "a string",
 	"tag": "a tag",
 	"tag-not-following-convention": "Invalid tag %0% which doesn't follow %1% convention",

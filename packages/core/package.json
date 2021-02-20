@@ -18,6 +18,11 @@
     "test": "nyc mocha",
     "posttest": "nyc report --reporter=json"
   },
+  "dependencies": {
+    "@spyglassmc/locales": "^0.1.0",
+    "vscode-languageserver-textdocument": "^1.0.1",
+    "vscode-uri": "^3.0.2"
+  },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@semantic-release/changelog": "^5.0.1",
@@ -55,9 +60,5 @@
   "homepage": "https://spyglassmc.com",
   "bugs": {
     "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
-  },
-  "dependencies": {
-    "vscode-languageserver-textdocument": "^1.0.1",
-    "vscode-uri": "^3.0.2"
   }
 }

@@ -1,5 +1,5 @@
-import Fallback from './en.json'
 import McschemaFallback from '@mcschema/locales/src/en.json'
+import Fallback from './en.json'
 
 type Locale = Record<string, string>
 
@@ -9,9 +9,9 @@ const Locales: Record<string, Locale> = {
 
 let language = 'en'
 
-export function localize(key: string, params?: any[]): string | undefined
-export function localize(segments: string[], params?: any[], depth?: number, minDepth?: number): string | undefined
-export function localize(param0: string | string[], params: any[] = [], depth = 5, minDepth = 1): string | undefined {
+export function localize(key: string, params?: any[]): string
+export function localize(segments: string[], params?: any[], depth?: number, minDepth?: number): string
+export function localize(param0: string | string[], params: any[] = [], depth = 5, minDepth = 1): string {
 	if (typeof param0 === 'string') {
 		return _localize(param0, params)
 	}
@@ -44,7 +44,7 @@ function _resolveLocalePlaceholders(val: string | undefined, params: string[]) {
 	})
 }
 
-function _segmentedLocalize(segments: string[], params: string[], depth: number, minDepth: number): string | undefined {
+function _segmentedLocalize(segments: string[], params: string[], depth: number, minDepth: number): string {
 	return [language, 'en'].reduce((prev: string | undefined, code: string) => {
 		if (prev !== undefined) return prev
 
@@ -56,18 +56,17 @@ function _segmentedLocalize(segments: string[], params: string[], depth: number,
 		}
 
 		return undefined
-	}, undefined)
+	}, undefined) ?? ''
 }
 
 async function _setupLanguage(code: string) {
 	const locale = await import(`./${code}.json`)
 	const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
-	Locales[code] = { ..._addPrefix(jsonLocale, 'json'), ...locale }
+	Locales[code] = { ..._addPrefix(jsonLocale, 'mcschema'), ...locale }
 	language = code
 
 	console.info(`[I18N] Set to “${code}”.`)
 }
-
 
 function _addPrefix(locale: Locale, prefix: string) {
 	const ans: Locale = {}

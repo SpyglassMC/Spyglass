@@ -1,4 +1,4 @@
-import { Node } from '../../core/src/node/Node'
+import { Node } from '@spyglassmc/core'
 import { CompoundDefinitionNode } from './CompoundDefinitionNode'
 import { DescribeClauseNode } from './DescribeClauseNode'
 import { EnumDefinitionNode } from './EnumDefinitionNode'
