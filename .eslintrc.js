@@ -41,6 +41,26 @@ module.exports = {
 			"warn",
 			"tab"
 		],
+		"@typescript-eslint/member-delimiter-style": [
+			"warn",
+			{
+				"multiline": {
+					"delimiter": "comma",
+					"requireLast": true
+				},
+				"singleline": {
+					"delimiter": "comma",
+					"requireLast": false
+				},
+				"overrides": {
+					"interface": {
+						"multiline": {
+							"delimiter": undefined
+						}
+					}
+				}
+			}
+		],
 		"comma-dangle": "off",
 		"@typescript-eslint/comma-dangle": ["warn", "always-multiline"],
 		"indent": "off",
