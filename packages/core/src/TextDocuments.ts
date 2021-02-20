@@ -52,10 +52,7 @@ export class TextDocuments {
 	 * @returns The up-to-date `TextDocument` for the URI, or `undefined` when such document hasn't been cached.
 	 */
 	public get(uri: Uri): TextDocument | undefined {
-		if (this.textDocumentCache.has(uri)) {
-			return this.textDocumentCache.get(uri)
-		}
-		return undefined
+		return this.textDocumentCache.has(uri) ? this.textDocumentCache.get(uri) : undefined
 	}
 
 	/**
@@ -78,9 +75,9 @@ export class TextDocuments {
 	 * Notifies that a new document was opened in the editor.
 	 */
 	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): void {
-		const textDoc = TextDocument.create(uri.toString(), languageID, version, content)
+		const doc = TextDocument.create(uri.toString(), languageID, version, content)
 		this.activeUris.add(uri)
-		this.textDocumentCache.set(uri, textDoc)
+		this.textDocumentCache.set(uri, doc)
 	}
 
 	/**
@@ -88,11 +85,11 @@ export class TextDocuments {
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
 	public onDidChange(uri: Uri, changes: TextDocumentContentChangeEvent[], version: number) {
-		const textDoc = this.get(uri)
-		if (!textDoc) {
+		const doc = this.get(uri)
+		if (!doc) {
 			throw new Error(`There is no TextDocument corresponding to '${uri.toString()}'`)
 		}
-		TextDocument.update(textDoc, changes, version)
+		TextDocument.update(doc, changes, version)
 	}
 
 	/**

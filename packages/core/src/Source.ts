@@ -75,7 +75,7 @@ export class Source {
 	}
 
 	/**
-	 * @param terminators Endding character. Will not be included in the result.
+	 * @param terminators Ending character. Will not be skipped or included in the result.
 	 */
 	readUntilOrEnd(...terminators: string[]) {
 		let ans = ''

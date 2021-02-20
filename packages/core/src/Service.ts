@@ -1,42 +1,32 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { CentralRegistry, FileService, Uri, UriUtils } from '.'
+import { FileService, MetaRegistry, Node } from '.'
+import { ParserContext } from './parser'
+import { FileParser } from './parser/FileParser'
+import { Source } from './Source'
+import { Logger } from './type'
 
 export class Service {
-	private readonly centralRegistry = CentralRegistry.getInstance()
+	private readonly metaRegistry = MetaRegistry.getInstance()
 	private readonly fs: FileService
-
-	private readonly uriCache = new Map<string, Uri>()
-	private readonly activeUris = new Set<Uri>()
-	private readonly watchedUris = new Set<Uri>()
-
-	private readonly textDocumentCache = new Map<string, TextDocument>()
+	private readonly logger: Logger
 
 	constructor({
-		fileService = FileService.create(),
+		fs = FileService.create(),
+		logger = Logger.create(),
 	} = {}) {
-		this.fs = fileService
+		this.fs = fs
+		this.logger = logger
 	}
 
-	public parseUri(uri: string): Uri {
-		function normalizeUri(): void {
-			uri = Uri.parse(uri).toString()
-		}
-		const rawParseUri = (uri: string): Uri => {
-			const ans = Uri.parse(uri)
-			this.uriCache.set(uri, ans)
-			return ans
-		}
-
-		normalizeUri()
-		return this.uriCache.get(uri) ?? rawParseUri(uri)
-	}
-
-	public async getTextDocument(uri: Uri, version = 0, languageID?: string): Promise<TextDocument> {
-		const getLanguageID = (uri: Uri): string => UriUtils.extname(uri)
-
-		const content = await this.fs.readFile(uri)
-		languageID ??= getLanguageID(uri)
-
-		return TextDocument.create(uri.toString(), languageID, version, content)
+	public parseTextDocument(doc: TextDocument): Node {
+		const fileParser: FileParser = this.metaRegistry.getParser('file')
+		const ctx = ParserContext.create({
+			metaRegistry: this.metaRegistry,
+			fs: this.fs,
+			logger: this.logger,
+			doc,
+		})
+		const src = new Source(doc.getText())
+		return fileParser.parse(src, ctx)
 	}
 }

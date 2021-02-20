@@ -3,6 +3,5 @@
 
 !lib/**/*.js
 !lib/**/*.d.ts
-!LICENSE
 !package.json
 !README.md

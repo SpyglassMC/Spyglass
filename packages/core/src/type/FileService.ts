@@ -11,21 +11,23 @@ export interface FileService {
 	 * @returns The corresponding `Uri` object. Same URIs always result in the same object instance.
 	 * @throws If `uri` is not in URI format.
 	 */
-	parseUri: (uri: string) => Uri
+	parseUri(uri: string): Uri
 
 	/**
 	 * @throws If the URI doesn't exist.
 	 */
-	readFile: (uri: Uri) => Promise<string>
+	readFile(uri: Uri): Promise<string>
 }
 
 export namespace FileService {
+	let instance: FileService | undefined
+
 	/**
 	 * @returns A `FileService` implementation that provides access to the real file system
 	 * based on build-in node.js modules.
 	 */
 	export function create(): FileService {
-		return new FileServiceImpl()
+		return instance ?? (instance = new FileServiceImpl())
 	}
 }
 
