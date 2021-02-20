@@ -32,19 +32,23 @@ describe('Source', () => {
 		}
 	})
 	describe('peek()', () => {
-		const suites: { string: string, cursor: number, offset?: number, expected: string }[] = [
-			{ string: 'fo', cursor: 0, offset: undefined, expected: 'f' },
-			{ string: 'fo', cursor: 0, offset: 0, expected: 'f' },
-			{ string: 'fo', cursor: 0, offset: 1, expected: 'o' },
-			{ string: 'fo', cursor: 0, offset: 2, expected: '' },
-			{ string: 'fo', cursor: 1, offset: 0, expected: 'o' },
-			{ string: 'fo', cursor: 1, offset: 1, expected: '' },
+		const suites: { string: string, cursor: number, length?: number, offset?: number, expected: string }[] = [
+			{ string: 'fo', cursor: 0, length: 1, offset: undefined, expected: 'f' },
+			{ string: 'fo', cursor: 0, length: 1, offset: 0, expected: 'f' },
+			{ string: 'fo', cursor: 0, length: 1, offset: 1, expected: 'o' },
+			{ string: 'fo', cursor: 0, length: 1, offset: 2, expected: '' },
+			{ string: 'fo', cursor: 1, length: 1, offset: 0, expected: 'o' },
+			{ string: 'fo', cursor: 1, length: 1, offset: 1, expected: '' },
+			{ string: 'fo', cursor: 0, length: undefined, offset: 0, expected: 'f' },
+			{ string: 'fo', cursor: 0, length: 0, offset: 0, expected: '' },
+			{ string: 'fo', cursor: 0, length: 2, offset: 0, expected: 'fo' },
+			{ string: 'fo', cursor: 0, length: 3, offset: 0, expected: 'fo' },
 		]
-		for (const { string, cursor, offset, expected } of suites) {
+		for (const { string, cursor, length, offset, expected } of suites) {
 			it(`Should return '${expected}' for ${markOffsetInString(string, cursor)} with offset ${offset}`, () => {
 				const src = new Source(string)
 				src.cursor = cursor
-				const actual = src.peek(offset)
+				const actual = src.peek(length, offset)
 				assert.strictEqual(actual, expected)
 				assert.strictEqual(src.cursor, cursor)
 			})

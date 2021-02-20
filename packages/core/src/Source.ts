@@ -27,11 +27,12 @@ export class Source {
 	}
 
 	/**
-	 * Peeks a character at the current cursor.
+	 * Peeks a substring from the current cursor.
+	 * @param length The length of the substring. @default 1
 	 * @param offset The index to offset from cursor. @default 0
 	 */
-	peek(offset = 0) {
-		return this.string.charAt(this.cursor + offset)
+	peek(length = 1, offset = 0) {
+		return this.string.substr(this.cursor + offset, length)
 	}
 
 	read() {

@@ -58,6 +58,7 @@
 	"code-action.vector-align-0.5": "Align this vector to block center",
 	"collection-length.between": "a collection with length between %0% and %1%",
 	"collection-length.exact": "a collection with length %0%",
+	"comment": "a comment starting with %0%",
 	"conjunction.and_2": " and ",
 	"conjunction.and_3+_1": ", ",
 	"conjunction.and_3+_2": ", and ",

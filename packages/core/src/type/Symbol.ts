@@ -72,7 +72,7 @@ const enum SymbolVisibility {
 	Within,
 }
 
-const SymbolTypeEnumToSymbolKey = new Map<SymbolType, keyof Symbol<string>>([
+const SymbolTypeEnumToSymbolKey = new Map<SymbolType, keyof Symbol>([
 	[SymbolType.Definition, 'def'],
 	[SymbolType.Declaration, 'dec'],
 	[SymbolType.Implementation, 'imp'],
@@ -80,18 +80,51 @@ const SymbolTypeEnumToSymbolKey = new Map<SymbolType, keyof Symbol<string>>([
 	[SymbolType.TypeDefinition, 'typedef'],
 ])
 
-interface SymbolMetadata<C extends string> {
+interface SymbolMetadata {
 	// Categorical information.
-	category: CoreCategories | C,
+	/**
+	 * The main category of this Symbol. Symbols in different categories are definitely
+	 * independent with each other. e.g. advancements and functions.
+	 */
+	category: string,
+	/**
+	 * An optional subcategory. Symbols under the same category but having different
+	 * subcategories may be used interchangeable in certain context. e.g. both 
+	 * nbtdoc compounds and nbtdoc enums can be used to describe the type of a field.
+	 */
+	subcategory?: string,
 	name: string,
 
 	// Other information.
 	doc?: string,
 	visibility?: SymbolVisibility,
-	members?: SymbolMap<C>,
+	members?: SymbolMap,
+	relations?: {
+		[type: string]: SymbolPath[],
+	},
 }
 
-interface Symbol<C extends string> extends SymbolMetadata<C> {
+/**
+ * @example
+ * {
+ * 	category: 'advancement',
+ * 	path: ['spgoding', 'foo/', 'bar'],
+ * }
+ * 
+ * {
+ * 	category: 'nbtdoc',
+ * 	path: ['util', 'minecraft', 'InventoryItem', 'Count'],
+ * }
+ */
+export interface SymbolPath {
+	category: string,
+	/**
+	 * Will be resolved as keys of the `members` property of the `Symbol`.
+	 */
+	path: string[]
+}
+
+interface Symbol extends SymbolMetadata {
 	def?: Location,
 	dec?: Location,
 	imp?: Location[],
@@ -99,35 +132,35 @@ interface Symbol<C extends string> extends SymbolMetadata<C> {
 	typedef?: Location[],
 }
 
-interface SymbolAddition<C extends string> extends SymbolMetadata<C> {
+interface SymbolAddition extends SymbolMetadata {
 	type: SymbolType,
 	location: Location
 }
 
-interface SymbolMap<C extends string> {
-	[identifier: string]: Symbol<C>
+interface SymbolMap {
+	[identifier: string]: Symbol
 }
 
-type SymbolTable<C extends string> = {
-	[category in CoreCategories | C]?: SymbolMap<C>
+interface SymbolTable {
+	[category: string]: SymbolMap | undefined
 }
 
-type SymbolTableStack<C extends string> = {
-	[category in CoreCategories | C]?: SymbolMap<C>[]
+interface SymbolTableStack {
+	[category: string]: SymbolMap[] | undefined
 }
 
-interface SplitSymbolTable<C extends string> {
-	[filePath: string]: SymbolTable<C>
+interface SplitSymbolTable {
+	[filePath: string]: SymbolTable
 }
 
-export class SymbolTableHelper<C extends string> {
-	public currentFile?: SymbolTableStack<C>
+export class SymbolTableHelper {
+	public currentFile?: SymbolTableStack
 
 	constructor(
-		public readonly global: SplitSymbolTable<C>
+		public readonly global: SplitSymbolTable
 	) { }
 
-	addSymbol(symbol: SymbolAddition<C>) {
+	addSymbol(symbol: SymbolAddition) {
 
 	}
 }

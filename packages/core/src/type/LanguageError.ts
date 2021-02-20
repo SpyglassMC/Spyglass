@@ -17,8 +17,14 @@ export const enum ErrorSeverity {
 	Information,
 	Warning,
 	Error,
+	/**
+	 * Doesn't even satisfy the fundamental requirement for this AST node. Usually used by
+	 * dispatcher parsers to try the next parser.
+	 */
+	Fatal,
 }
 
+/* istanbul ignore next */
 /**
  * @template E The type of error.
  */

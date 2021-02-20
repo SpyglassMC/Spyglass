@@ -4,18 +4,18 @@ export interface Range {
 }
 
 export namespace Range {
-	export function create(start: number, end: number): Range
+	export function create(start: number, end?: number): Range
 	export function create(partial: Partial<Range>): Range
 	export function create(param1: number | Partial<Range>, param2?: number): Range {
 		if (typeof param1 === 'number') {
 			return {
 				start: param1,
-				end: param2 as number,
+				end: param2 ?? (param1 + 1),
 			}
 		} else {
 			return {
 				start: param1.start ?? 0,
-				end: param1.end ?? 0,
+				end: param1.end ?? ((param1.start ?? 0) + 1),
 			}
 		}
 	}

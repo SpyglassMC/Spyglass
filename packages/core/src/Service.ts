@@ -19,7 +19,7 @@ export class Service {
 	}
 
 	public parseTextDocument(doc: TextDocument): Node {
-		const fileParser: FileParser = this.metaRegistry.getParser('file')
+		const fileParser = this.metaRegistry.getParser('file')
 		const ctx = ParserContext.create({
 			metaRegistry: this.metaRegistry,
 			fs: this.fs,
@@ -27,6 +27,6 @@ export class Service {
 			doc,
 		})
 		const src = new Source(doc.getText())
-		return fileParser.parse(src, ctx)
+		return new fileParser().parse(src, ctx)
 	}
 }

@@ -11,6 +11,7 @@ describe('Range', () => {
 			snapshot(Range.create({ start: 1 }))
 			snapshot(Range.create({ end: 2 }))
 			snapshot(Range.create({ start: 1, end: 2 }))
+			snapshot(Range.create(5))
 		})
 		it('Should create a new object from the passed-in Range', () => {
 			const incoming = Range.create(1, 2)

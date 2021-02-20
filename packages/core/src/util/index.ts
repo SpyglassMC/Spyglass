@@ -18,20 +18,18 @@ import { localize } from '@spyglassmc/locales'
  * arrayToMessage(['A', 'B'], false) // "A{conjunction.and_2}B"
  * arrayToMessage(['A', 'B', 'C'], false) // "A{conjunction.and_3+_1}B{conjunction.and_3+_2}C"
  */
-export function arrayToMessage(arr: string | string[], quoted = true, conjunction: 'and' | 'or' = 'or') {
-	if (typeof arr === 'string') {
-		arr = [arr]
-	}
+export function arrayToMessage(param: string | Iterable<string>, quoted = true, conjunction: 'and' | 'or' = 'or') {
 	const getPart = (str: string) => quoted ? localize('punc.quote', [str]) : str
+	const arr = (typeof param === 'string' ? [param] : Array.from(param))
+		.map(getPart)
 	switch (arr.length) {
 		case 0:
 			return localize('nothing')
 		case 1:
-			return getPart(arr[0])
+			return arr[0]
 		case 2:
-			return getPart(arr[0]) + localize(`conjunction.${conjunction}_2`) + getPart(arr[1])
+			return arr[0] + localize(`conjunction.${conjunction}_2`) + arr[1]
 		default:
-			arr = arr.map(v => getPart(v))
 			return `${arr.slice(0, -1).join(localize(`conjunction.${conjunction}_3+_1`))}${localize(`conjunction.${conjunction}_3+_2`)}${arr[arr.length - 1]}`
 	}
 }
