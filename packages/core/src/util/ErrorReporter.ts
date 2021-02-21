@@ -34,6 +34,7 @@ export class ErrorReporter<E = LanguageError> {
 	 * @throws If it is still during an attempt.
 	 */
 	dump(): readonly E[] {
+		/* istanbul ignore if */
 		if (this.inAttempt) {
 			throw new Error('The error reporter is still under an attempt')
 		}
@@ -55,9 +56,9 @@ export class ErrorReporter<E = LanguageError> {
 	 * It is completely possible to start another attempt during an attempt; you have to call
 	 * `endAttempt` twice as well.
 	 *
-	 * @see endAttempt
+	 * @see `endAttempt`, `attempt`
 	 */
-	startAttempt(): void {
+	private startAttempt(): void {
 		this.attemptedErrorStack.push([])
 	}
 
@@ -67,11 +68,12 @@ export class ErrorReporter<E = LanguageError> {
 	 * If there are no `ErrorSeverity.Fatal` errors reported during the last attempt, it reports all those errors again and returns true.
 	 * However, if there are `Fatal` errors, it returns `false` and drops all the errors.
 	 *
-	 * @see startAttempt
+	 * @see `startAttempt`, `attempt`
 	 * @throws If no attempt was started.
 	 */
-	endAttempt(): boolean {
+	private endAttempt(): boolean {
 		const attemptedErrors = this.attemptedErrorStack.pop()
+		/* istanbul ignore if */
 		if (!attemptedErrors) {
 			throw new Error('No attempt has been started yet')
 		}
@@ -82,6 +84,22 @@ export class ErrorReporter<E = LanguageError> {
 				this.report(e.message, e.range, e.severity)
 			}
 			return true
+		}
+	}
+
+	/**
+	 * Starts an attempt, calls `doer`, and ends the attempt.
+	 * @returns If the attempt was successful.
+	 * @see `startAttempt`, `endAttempt`
+	 */
+	attempt(doer: (this: void) => any): boolean {
+		try {
+			this.startAttempt()
+			doer()
+		} catch (e) {
+			console.error(e)
+		} finally {
+			return this.endAttempt()
 		}
 	}
 }
