@@ -1,8 +1,7 @@
 /* istanbul ignore file */
 
-import { CommentParser } from './parser/CommentParser'
 import { FileParser } from './parser/FileParser'
-import { Parser, ParserConstructable } from './parser/Parser'
+import { Parser } from './parser/Parser'
 
 //#region TEMP
 type Processor = any
@@ -33,7 +32,7 @@ export class MetaRegistry {
 	 * A map from language IDs to file extensions (including the leading dot).
 	 */
 	private readonly languages = new Map<string, Set<string>>()
-	private readonly parsers = new Map<string, ParserConstructable>()
+	private readonly parsers = new Map<string, Parser>()
 
 	// The functions below are overloaded so that we can get suggestions for many parameters in VS Code.
 
@@ -41,18 +40,18 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser`'s class for the node name.
 	 * @throws If there's no `Parser` registered for the node.
 	 */
-	public getParser(nodeName: CoreNodeName): ParserConstructable
-	public getParser(nodeName: string): ParserConstructable
-	public getParser(nodeName: CoreNodeName | string): ParserConstructable {
+	public getParser(nodeName: CoreNodeName): Parser
+	public getParser(nodeName: string): Parser
+	public getParser(nodeName: CoreNodeName | string): Parser {
 		if (this.parsers.has(nodeName)) {
 			return this.parsers.get(nodeName)!
 		}
 		throw new Error(`There is no parser registered for AST node type '${nodeName}'`)
 	}
 
-	public registerParser(nodeName: CoreNodeName, parser: ParserConstructable): void
-	public registerParser(nodeName: string, parser: ParserConstructable): void
-	public registerParser(nodeName: string, parser: ParserConstructable): void {
+	public registerParser(nodeName: CoreNodeName, parser: Parser): void
+	public registerParser(nodeName: string, parser: Parser): void
+	public registerParser(nodeName: string, parser: Parser): void {
 		this.parsers.set(nodeName, parser)
 	}
 
@@ -86,7 +85,7 @@ export class MetaRegistry {
 	 * @param extensions File extensions of this language (including the leading dot). e.g. `[".mcfunction"]`
 	 * @param mainParser The entry parser for this language. Will be automatically registered with the node name `${languageID}:main`.
 	 */
-	public registerLanguage(languageID: string, extensions: string[], mainParser?: ParserConstructable) {
+	public registerLanguage(languageID: string, extensions: string[], mainParser?: Parser) {
 		this.languages.set(languageID, new Set(extensions))
 		if (mainParser) {
 			this.registerParser(`${languageID}:main`, mainParser)
@@ -96,8 +95,8 @@ export class MetaRegistry {
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
 		registry => {
 			//registry.registerParser('boolean', '')
-			registry.registerParser('comment', CommentParser)
-			registry.registerParser('file', FileParser)
+			// registry.registerParser('comment', CommentParser)
+			registry.registerParser('file', FileParser.create())
 			//registry.registerParser('string', '')
 			// TODO: Register `mcmeta` as `json`.
 		},

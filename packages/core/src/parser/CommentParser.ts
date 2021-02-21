@@ -1,47 +1,44 @@
 import { localize } from '@spyglassmc/locales'
-import { CommentNode, Node } from '../node'
+import { Parser } from '.'
+import { CommentNode } from '../node'
 import { Source } from '../Source'
 import { ErrorSeverity, Range } from '../type'
 import { arrayToMessage } from '../util'
-import { Parser } from './Parser'
 import { ParserContext } from './ParserContext'
 
-export class CommentParser implements Parser<CommentNode> {
-	/**
-	 * @param singleLinePrefixes Prefix for single-line comments.
-	 */
-	constructor(
-		private readonly singleLinePrefixes: Set<string>
-	) { }
-
-	parse(src: Source, ctx: ParserContext): CommentNode {
-		src.skipWhitespace()
-		const start = src.cursor
-		const ans: CommentNode = {
-			type: 'comment',
-			range: Range.create(start),
-		}
-
-		for (const prefix of this.singleLinePrefixes) {
-			if (src.peek(prefix.length) === prefix) {
-				src.skipLine()
-				ans.range = Range.create(start, src.cursor)
-				return ans
-			}
-		}
-
-		ctx.err.report(
-			localize('expected', [
-				localize('comment', [arrayToMessage(this.singleLinePrefixes)]),
-			]),
-			ans.range,
-			ErrorSeverity.Fatal
-		)
-
-		return ans
-	}
+interface Options {
+	singleLinePrefixes: Set<string>
 }
 
-export interface CommentParserConstructable {
-	new(singleLinePrefixes: Set<string>): any
+function parseComment({ singleLinePrefixes }: Options, src: Source, ctx: ParserContext): CommentNode {
+	src.skipWhitespace()
+	const start = src.cursor
+	const ans: CommentNode = {
+		type: 'comment',
+		range: Range.create(start),
+	}
+
+	for (const prefix of singleLinePrefixes) {
+		if (src.peek(prefix.length) === prefix) {
+			src.skipLine()
+			ans.range = Range.create(start, src.cursor)
+			return ans
+		}
+	}
+
+	ctx.err.report(
+		localize('expected', [
+			localize('comment', [arrayToMessage(singleLinePrefixes)]),
+		]),
+		ans.range,
+		ErrorSeverity.Fatal
+	)
+
+	return ans
+}
+
+export namespace CommentParser {
+	export function create(options: Options): Parser<CommentNode> {
+		return parseComment.bind(undefined, options)
+	}
 }

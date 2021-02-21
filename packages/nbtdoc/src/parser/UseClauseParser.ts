@@ -1,8 +1,12 @@
-import { Node, Parser, ParserContext, Source } from '@spyglassmc/core'
+import { Parser, ParserContext, Source } from '@spyglassmc/core'
 import { UseClauseNode } from '..'
 
-export class UseClauseParser implements Parser<UseClauseNode> {
-	parse(src: Source, ctx: ParserContext): UseClauseNode {
-		throw new Error('Method not implemented.')
+function parse(src: Source, ctx: ParserContext): UseClauseNode {
+	throw new Error('Method not implemented.')
+}
+
+export namespace UseClauseParser {
+	export function create(): Parser<UseClauseNode> {
+		return parse
 	}
 }

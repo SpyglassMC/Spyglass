@@ -20,7 +20,7 @@ describe('ModuleDeclarationParser', () => {
 		]
 		for (const { content } of suites) {
 			it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
-				const parser = new ModuleDeclarationParser()
+				const parser = ModuleDeclarationParser.create()
 				snapshot(testParser(parser, content))
 			})
 		}

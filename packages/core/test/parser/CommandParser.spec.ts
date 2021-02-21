@@ -13,7 +13,7 @@ describe('CommentParser', () => {
 		]
 		for (const { prefixes, content } of suites) {
 			it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
-				const parser = new CommentParser(prefixes)
+				const parser = CommentParser.create({ singleLinePrefixes: prefixes })
 				snapshot(testParser(parser, content))
 			})
 		}

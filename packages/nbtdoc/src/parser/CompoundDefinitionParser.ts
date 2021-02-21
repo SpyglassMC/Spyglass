@@ -1,8 +1,12 @@
-import { Node, Parser, ParserContext, Source } from '@spyglassmc/core'
+import { Parser, ParserContext, Source } from '@spyglassmc/core'
 import { CompoundDefinitionNode } from '..'
 
-export class CompoundDefinitionParser implements Parser<CompoundDefinitionNode> {
-	parse(src: Source, ctx: ParserContext): CompoundDefinitionNode {
-		throw new Error('Method not implemented.')
+function parse(src: Source, ctx: ParserContext): CompoundDefinitionNode {
+	throw new Error('Method not implemented.')
+}
+
+export namespace CompoundDefinitionParser {
+	export function create(): Parser<CompoundDefinitionNode> {
+		return parse
 	}
 }

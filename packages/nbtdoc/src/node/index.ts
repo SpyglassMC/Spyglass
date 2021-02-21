@@ -7,7 +7,7 @@ import { CommentNode, Node } from '@spyglassmc/core'
  * 
  * [format]: https://github.com/Yurihaia/nbtdoc-rs/blob/master/docs/format.md
  */
-export interface SyntaxNode<T extends Node = Node> extends Node {
+export interface SyntaxRuleNode<T extends Node = Node> extends Node {
 	/**
 	 * An array of `Node`s that fully made up this node.
 	 */
@@ -24,28 +24,28 @@ export interface IdentifierToken extends Node {
 	text: string,
 }
 
-export interface CompoundDefinitionNode extends SyntaxNode {
+export interface CompoundDefinitionNode extends SyntaxRuleNode {
 	type: 'nbtdoc:compound_definition',
 }
 
-export interface DescribeClauseNode extends SyntaxNode {
+export interface DescribeClauseNode extends SyntaxRuleNode {
 	type: 'nbtdoc:describe_clause',
 }
 
-export interface EnumDefinitionNode extends SyntaxNode {
+export interface EnumDefinitionNode extends SyntaxRuleNode {
 	type: 'nbtdoc:enum_definition',
 }
 
-export interface InjectClauseNode extends SyntaxNode {
+export interface InjectClauseNode extends SyntaxRuleNode {
 	type: 'nbtdoc:inject_clause',
 }
 
-export interface ModuleDeclarationNode extends SyntaxNode<KeywordToken | IdentifierToken> {
+export interface ModuleDeclarationNode extends SyntaxRuleNode<KeywordToken | IdentifierToken> {
 	type: 'nbtdoc:module_declaration',
 	identifier?: IdentifierToken,
 }
 
-export interface UseClauseNode extends SyntaxNode {
+export interface UseClauseNode extends SyntaxRuleNode {
 	type: 'nbtdoc:use_clause',
 }
 
@@ -58,7 +58,7 @@ export type ContentNode =
 	| DescribeClauseNode
 	| InjectClauseNode
 
-export interface MainNode extends SyntaxNode {
+export interface MainNode extends SyntaxRuleNode {
 	type: 'nbtdoc:main',
 	nodes: ContentNode[],
 }

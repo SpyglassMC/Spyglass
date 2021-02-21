@@ -29,7 +29,7 @@ export function testParser(parser: Parser, text: string, {
 	const ctx = ParserContext.create({
 		doc: TextDocument.create(uri, languageID, 0, text),
 	})
-	const result = parser.parse(src, ctx)
+	const result = parser(src, ctx)
 	return {
 		node: result,
 		errors: ctx.err.dump(),
