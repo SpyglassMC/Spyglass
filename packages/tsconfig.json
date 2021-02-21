@@ -5,16 +5,13 @@
             "path": "core"
         },
         {
-            "path": "datapack-language-server"
-        },
-        {
             "path": "locales"
         },
         {
             "path": "mcschema"
         },
         {
-            "path": "vscode-datapack"
+            "path": "nbtdoc"
         }
     ]
 }

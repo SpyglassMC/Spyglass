@@ -15,8 +15,7 @@
 		"codecov": "lerna run codecov",
 		"release": "lerna run release",
 		"release:dry": "lerna run release:dry",
-		"test": "lerna run test",
-		"test:w": "lerna run test:w"
+		"test": "echo \"error\" && exit 1"
 	},
 	"devDependencies": {
 		"@istanbuljs/nyc-config-typescript": "^1.0.1",
