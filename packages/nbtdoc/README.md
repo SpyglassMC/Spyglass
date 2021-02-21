@@ -10,7 +10,7 @@ This package contains parsers amd processors for [the `nbtdoc` language][nbtdoc-
 
 ## Languages
 
-- `nbtdoc` language that is associated with the `.nbtdoc` file extension.
+- `nbtdoc` language that is associated with the `.nbtdoc` file extension. The implementation strictly follows the [NBTDoc Format][nbtdoc-format]
 
 ## AST Nodes
 

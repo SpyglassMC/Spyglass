@@ -1,8 +1,7 @@
 import assert from 'assert'
+import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { it, describe } from 'mocha'
-import { Position } from '../../lib/type/Position'
-import { PositionRange } from '../../lib/type/PositionRange'
+import { Position, PositionRange } from '../../lib'
 
 describe('PositionRange', () => {
 	describe('create()', () => {

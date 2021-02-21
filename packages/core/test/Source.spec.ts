@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
-import { Source } from '../lib/Source'
+import { Source } from '../lib'
 import { markOffsetInString, showWhiteSpaceGlyph } from './utils'
 
 describe('Source', () => {

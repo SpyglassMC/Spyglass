@@ -97,6 +97,7 @@ export class ErrorReporter<E = LanguageError> {
 			this.startAttempt()
 			doer()
 		} catch (e) {
+			/* istanbul ignore next */
 			console.error(e)
 		} finally {
 			return this.endAttempt()

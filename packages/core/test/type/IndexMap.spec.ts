@@ -1,8 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { IndexMap } from '../../lib/type/IndexMap'
-import { Range } from '../../lib/type/Range'
+import { IndexMap, Range } from '../../lib'
 
 describe('IndexMap', () => {
 	describe('create()', () => {

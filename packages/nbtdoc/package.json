@@ -10,6 +10,7 @@
   },
   "scripts": {
     "commit": "gitmoji -c",
+    "circular": "webpack",
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "codecov": "codecov -f coverage/*.json",

@@ -1,7 +1,8 @@
 /* istanbul ignore file */
 
-import { FileParser, Parser, ParserConstructable } from '.'
-import { CommentParser } from './parser'
+import { CommentParser } from './parser/CommentParser'
+import { FileParser } from './parser/FileParser'
+import { Parser, ParserConstructable } from './parser/Parser'
 
 //#region TEMP
 type Processor = any

@@ -1,50 +1,71 @@
-import { arrayToMessage, Parser, ParserContext, Range, Source } from '@spyglassmc/core'
+import { MetaRegistry, Parser, ParserContext, Range, Source } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { MainNode } from '../node/MainNode'
+import { MainNode } from '..'
+import { ContentNode } from '../node'
 
-export class MainParser implements Parser {
-	parse(src: Source, ctx: ParserContext): MainNode {
-		const start = src.cursor
+export class MainParser implements Parser<MainNode> {
+	private static SubParsers: Parser<ContentNode>[]
+
+	public parse(src: Source, ctx: ParserContext): MainNode {
+		const start = src
+			.skipWhitespace()
+			.cursor
+		const ans: MainNode = {
+			type: 'nbtdoc:main',
+			range: Range.create(start),
+			nodes: [],
+		}
 		while (src.canRead()) {
-			const key = src
-				.skipWhitespace()
-				.peek()
-			switch (key) {
-				case 'c':
-					// Compound definition.
-					
-					break
-				case 'e':
-					// Enum definition.
-
-					break
-				case 'm':
-					// Module declaration.
-
-					break
-				case 'u':
-					// Use clause.
-
-					break
-				case 'd':
-					// Describe clause.
-
-					break
-				case 'i':
-					// Inject clause.
-
-					break
-				default:
-					ctx.err.report(
-						localize('expected-got', [
-							arrayToMessage(['compound', 'enum', 'module', 'use', 'describe', 'inject']),
-							localize('punc.quote', [key]),
-						]),
-						Range.create(start, src.cursor)
-					)
-					break
+			const result = this.parseWithSubParser(ans, src, ctx)
+			if (!result) {
+				ctx.err.report(
+					localize('nbtdoc.error.main.unknown-syntax'),
+					ans.range
+				)
+				src.nextLine()
 			}
 		}
-		throw new Error('Method not implemented.')
+		ans.range = Range.create(start, src.cursor)
+		return ans
+	}
+
+	/**
+	 * @returns If any sub parser has parsed successfully.
+	 */
+	private parseWithSubParser(ans: MainNode, src: Source, ctx: ParserContext): boolean {
+		const start = src
+			.skipWhitespace()
+			.cursor
+		for (const parser of MainParser.ensureSubParsers(ctx.metaRegistry)) {
+			if (ctx.err.attempt(
+				() => ans.nodes.push(parser.parse(src, ctx))
+			)) {
+				return true
+			}
+			src.cursor = start
+		}
+		return false
+	}
+
+	private static ensureSubParsers(registry: MetaRegistry): Parser<ContentNode>[] {
+		if (!MainParser.SubParsers) {
+			const comment = registry.getParser('comment')
+			const compoundDefinition = registry.getParser('nbtdoc:compound_definition')
+			const describeClause = registry.getParser('nbtdoc:describe_clause')
+			const enumDefinition = registry.getParser('nbtdoc:enum_definition')
+			const injectClause = registry.getParser('nbtdoc:inject_clause')
+			const moduleDeclaration = registry.getParser('nbtdoc:module_declaration')
+			const useClause = registry.getParser('nbtdoc:use_clause')
+			MainParser.SubParsers = [
+				new comment(new Set(['//'])),
+				new compoundDefinition(),
+				new describeClause(),
+				new enumDefinition(),
+				new injectClause(),
+				new moduleDeclaration(),
+				new useClause(),
+			] as any
+		}
+		return MainParser.SubParsers
 	}
 }

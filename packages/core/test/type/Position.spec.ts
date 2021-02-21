@@ -1,7 +1,7 @@
 import assert from 'assert'
+import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { it, describe } from 'mocha'
-import { Position } from '../../lib/type/Position'
+import { Position } from '../../lib'
 
 describe('Position', () => {
 	describe('create()', () => {

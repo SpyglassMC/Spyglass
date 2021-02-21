@@ -1,8 +1,7 @@
 import assert, { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { Uri } from '../lib'
-import { TextDocuments } from '../lib/TextDocuments'
+import { TextDocuments, Uri } from '../lib'
 import { FileServiceImpl } from '../lib/util/FileService'
 
 describe('TextDocuments', () => {
