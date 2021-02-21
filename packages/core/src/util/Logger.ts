@@ -4,17 +4,17 @@ export interface Logger {
 	/**
 	 * Log a message.
 	 */
-	log(message: string): void
+	log(message: any): void
 
 	/**
 	 * Output a warning message.
 	 */
-	warn(message: string): void
+	warn(message: any): void
 
 	/**
 	 * Output an error message.
 	 */
-	error(message: string): void
+	error(message: any): void
 }
 
 export namespace Logger {
@@ -30,13 +30,13 @@ export namespace Logger {
 }
 
 class LogServiceImpl implements Logger {
-	log(message: string): void {
+	log(message: any): void {
 		console.log(message)
 	}
-	warn(message: string): void {
+	warn(message: any): void {
 		console.warn(message)
 	}
-	error(message: string): void {
+	error(message: any): void {
 		console.error(message)
 	}
 }

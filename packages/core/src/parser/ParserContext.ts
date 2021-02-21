@@ -2,7 +2,6 @@
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ErrorReporter, FileService, Logger, MetaRegistry } from '..'
-import { LanguageError } from '../type'
 
 export interface ParserContext {
 	metaRegistry: MetaRegistry,
@@ -19,7 +18,7 @@ export namespace ParserContext {
 			fs: ctx.fs ?? FileService.create(),
 			logger: ctx.logger ?? Logger.create(),
 			doc: ctx.doc ?? TextDocument.create('spyglass://placeholder', '', 0, ''),
-			err: ctx.err ?? new ErrorReporter(LanguageError.create),
+			err: ctx.err ?? new ErrorReporter(),
 		}
 	}
 }

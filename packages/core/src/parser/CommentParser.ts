@@ -7,8 +7,6 @@ import { Parser } from './Parser'
 import { ParserContext } from './ParserContext'
 
 export class CommentParser implements Parser<CommentNode> {
-	identity = 'comment'
-
 	/**
 	 * @param singleLinePrefixes Prefix for single-line comments.
 	 */

@@ -9,6 +9,10 @@ type Whitespace =
 	| Space
 	| Newline
 
+export const CRLF = '\r\n'
+export const CR = '\r'
+export const LF = '\n'
+
 export class Source {
 	public cursor = 0
 
@@ -48,11 +52,29 @@ export class Source {
 		return this
 	}
 
+	/**
+	 * Reads until the end of this line.
+	 */
 	readLine() {
-		return this.readUntilOrEnd('\r', '\n')
+		return this.readUntilOrEnd(CR, LF)
 	}
+	/**
+	 * Skips until the end of this line.
+	 */
 	skipLine(): this {
 		this.readLine()
+		return this
+	}
+	/**
+	 * Jumps to the beginning of the next line.
+	 */
+	nextLine(): this {
+		this.skipLine()
+		if (this.peek(2) === CRLF) {
+			this.skip(2)
+		} else if (this.peek() === CR || this.peek() === LF) {
+			this.skip()
+		}
 		return this
 	}
 

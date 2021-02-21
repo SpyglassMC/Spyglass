@@ -1,9 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { FileService, MetaRegistry, Node } from '.'
 import { ParserContext } from './parser'
-import { FileParser } from './parser/FileParser'
 import { Source } from './Source'
-import { Logger } from './type'
+import { Logger } from './util'
 
 export class Service {
 	private readonly metaRegistry = MetaRegistry.getInstance()

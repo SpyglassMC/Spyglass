@@ -8,8 +8,6 @@ import { ParserContext } from './ParserContext'
  * @throws If there's no parser registered for this language ID.
  */
 export class FileParser implements Parser {
-	identity = 'file'
-
 	parse(src: Source, ctx: ParserContext): Node {
 		const parser = ctx.metaRegistry.getParser(`${ctx.doc.languageId}:main`)
 		return new parser().parse(src, ctx)

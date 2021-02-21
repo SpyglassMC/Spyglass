@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { Uri } from '../lib'
 import { TextDocuments } from '../lib/TextDocuments'
-import { FileServiceImpl } from '../lib/type/FileService'
+import { FileServiceImpl } from '../lib/util/FileService'
 
 describe('TextDocuments', () => {
 	const testFileService = new class extends FileServiceImpl {
@@ -58,10 +58,11 @@ describe('TextDocuments', () => {
 			const docs = new TextDocuments({ fileService: testFileService })
 			try {
 				docs.onDidChange(Uris.foo_mcfunction, [], 1)
-				fail()
 			} catch (e) {
 				snapshot((e as Error).message)
+				return
 			}
+			fail()
 		})
 	})
 	describe('getOrRead()', () => {
@@ -86,10 +87,11 @@ describe('TextDocuments', () => {
 			const docs = new TextDocuments({ fileService: testFileService })
 			try {
 				await docs.getOrRead(Uris.nonexistent_mcfunction)
-				fail()
 			} catch (e) {
 				snapshot((e as Error).message)
+				return
 			}
+			fail()
 		})
 	})
 })

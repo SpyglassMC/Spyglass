@@ -126,6 +126,26 @@ describe('Source', () => {
 			})
 		}
 	})
+	describe('nextLine()', () => {
+		const suites: { string: string, cursor: number, expectedCursor: number }[] = [
+			{ string: 'qux', cursor: 0, expectedCursor: 3 },
+			{ string: 'qux\nfoobar', cursor: 0, expectedCursor: 4 },
+			{ string: 'qux\rfoobar', cursor: 0, expectedCursor: 4 },
+			{ string: 'qux\r\nfoobar', cursor: 0, expectedCursor: 5 },
+			{ string: 'qux\n\rfoobar', cursor: 0, expectedCursor: 4 },
+			{ string: 'qux\nfoobar', cursor: 3, expectedCursor: 4 },
+			{ string: 'qux\nfoobar', cursor: 4, expectedCursor: 10 },
+		]
+		for (const { string, cursor, expectedCursor } of suites) {
+			it(`Should skip from ${markOffsetInString(string, cursor)} to ${markOffsetInString(string, expectedCursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actualSelf = src.nextLine()
+				assert.strictEqual(actualSelf, src)
+				assert.strictEqual(actualSelf.cursor, expectedCursor)
+			})
+		}
+	})
 	describe('readSpace()', () => {
 		const suites: { string: string, cursor: number, expected: string }[] = [
 			{ string: 'foo', cursor: 0, expected: '' },
