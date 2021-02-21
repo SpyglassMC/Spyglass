@@ -503,6 +503,67 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
   "errors": []
 }
 
+exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zombie ;\' 1'] = {
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 28
+    },
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "mod"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 3,
+          "end": 19
+        }
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 20,
+          "end": 26
+        },
+        "text": "zombie"
+      },
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 27,
+          "end": 28
+        },
+        "text": ";"
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 20,
+        "end": 26
+      },
+      "text": "zombie"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 19
+      },
+      "message": "Doc comments are not allowed here; you might want to replace the three slashes with two slashes",
+      "severity": 3
+    }
+  ]
+}
+
 exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",

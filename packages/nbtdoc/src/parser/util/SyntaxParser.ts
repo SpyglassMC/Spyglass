@@ -1,4 +1,5 @@
 import { CommentNode, MetaRegistry, Node, Parser, ParserContext, Range, Source } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import { SyntaxNode } from '../..'
 
 type CommentParser = Parser<CommentNode>
@@ -20,7 +21,15 @@ export class SyntaxParser<T extends Node> implements Parser<SyntaxNode<(CommentN
 		for (const parser of this.subParsers) {
 			src.skipWhitespace()
 			while (src.canRead() && src.peek(2) === '//') {
-				ans.nodes.push(SyntaxParser.ensureCommentParser(ctx.metaRegistry).parse(src, ctx))
+				const isDocComment = src.peek(3) === '///'
+				const node = SyntaxParser.ensureCommentParser(ctx.metaRegistry).parse(src, ctx)
+				ans.nodes.push(node)
+				if (isDocComment) {
+					ctx.err.report(
+						localize('nbtdoc.error.syntax.doc-comment-unexpected'),
+						node.range,
+					)
+				}
 				src.skipWhitespace()
 			}
 

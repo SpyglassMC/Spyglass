@@ -13,6 +13,7 @@ describe('ModuleDeclarationParser', () => {
 			{ content: 'mod zombie;' },
 			{ content: 'modzombie;' },
 			{ content: 'mod// Comment.\nzombie ;' },
+			{ content: 'mod/// Doc Comment.\nzombie ;' },
 			{ content: 'mod zombie;// Trailing comment.' },
 			{ content: 'mod zombie;syntax test.' },
 			{ content: 'mod zombie\nsyntax test.' },
