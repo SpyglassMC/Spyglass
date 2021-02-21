@@ -15,8 +15,15 @@ export interface SyntaxRuleNode<T extends Node = Node> extends Node {
 }
 
 export interface KeywordToken extends Node {
-	type: 'nbtdoc:keyword',
 	text: string,
+}
+
+export interface ModKeywordToken extends KeywordToken {
+	type: 'nbtdoc:keyword/mod',
+}
+
+export interface SemiKeywordToken extends KeywordToken {
+	type: 'nbtdoc:keyword/;',
 }
 
 export interface IdentifierToken extends Node {
@@ -40,7 +47,7 @@ export interface InjectClauseNode extends SyntaxRuleNode {
 	type: 'nbtdoc:inject_clause',
 }
 
-export interface ModuleDeclarationNode extends SyntaxRuleNode<KeywordToken | IdentifierToken> {
+export interface ModuleDeclarationNode extends SyntaxRuleNode<ModKeywordToken | SemiKeywordToken | IdentifierToken> {
 	type: 'nbtdoc:module_declaration',
 	identifier?: IdentifierToken,
 }

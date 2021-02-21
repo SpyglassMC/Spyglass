@@ -7,7 +7,7 @@ exports['ModuleDeclarationParser parse() Should parse \'\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 0
@@ -23,7 +23,7 @@ exports['ModuleDeclarationParser parse() Should parse \'\' 1'] = {
         "text": ""
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 0,
           "end": 0
@@ -85,7 +85,7 @@ exports['ModuleDeclarationParser parse() Should parse \'m\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 0
@@ -101,7 +101,7 @@ exports['ModuleDeclarationParser parse() Should parse \'m\' 1'] = {
         "text": "m"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 1,
           "end": 1
@@ -155,7 +155,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -171,7 +171,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 10,
           "end": 10
@@ -209,7 +209,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -225,7 +225,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;\' 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 10,
           "end": 11
@@ -254,7 +254,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;// Trailing c
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -270,7 +270,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;// Trailing c
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 10,
           "end": 11
@@ -299,7 +299,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;syntax test.\
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -315,7 +315,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie;syntax test.\
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 10,
           "end": 11
@@ -344,7 +344,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie↓syntax test
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -360,7 +360,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie↓syntax test
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 11,
           "end": 11
@@ -398,7 +398,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -414,7 +414,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
         "text": ""
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 3,
           "end": 3
@@ -460,7 +460,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -483,7 +483,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 22,
           "end": 23
@@ -512,7 +512,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -535,7 +535,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 27,
           "end": 28
@@ -573,7 +573,7 @@ exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/mod",
         "range": {
           "start": 0,
           "end": 3
@@ -589,7 +589,7 @@ exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:keyword/;",
         "range": {
           "start": 9,
           "end": 10

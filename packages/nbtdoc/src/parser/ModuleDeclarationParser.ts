@@ -1,10 +1,11 @@
 import { CommentNode, ErrorSeverity, MetaRegistry, Parser, ParserContext, Range, Source } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { IdentifierToken, KeywordToken, ModuleDeclarationNode } from '..'
-import { SyntaxRuleNode } from '../node'
+import { IdentifierToken, ModuleDeclarationNode } from '..'
+import { ModKeywordToken, SemiKeywordToken } from '../node'
 import { SyntaxRuleParser } from './combinator'
 
-type CombinedParser = Parser<SyntaxRuleNode<CommentNode | KeywordToken | IdentifierToken>>
+type ComponentNode = CommentNode | ModKeywordToken | IdentifierToken | SemiKeywordToken
+type CombinedParser = Parser<ComponentNode[]>
 
 function parse(src: Source, ctx: ParserContext): ModuleDeclarationNode {
 	const start = src.cursor
@@ -15,13 +16,13 @@ function parse(src: Source, ctx: ParserContext): ModuleDeclarationNode {
 	}
 
 	const parser = getCombinedParser(ctx.metaRegistry)
-	ans.nodes = parser(src, ctx).nodes
+	ans.nodes = parser(src, ctx)
 
 	//#region Set `identifier` and report potential `Fatal` errors.
 	let hasModKeyword = false
 	let identifier: IdentifierToken | undefined
 	for (const node of ans.nodes) {
-		if (node.type === 'nbtdoc:keyword' && node.text === 'mod') {
+		if (node.type === 'nbtdoc:keyword/mod' && node.text === 'mod') {
 			hasModKeyword = true
 		} else if (node.type === 'nbtdoc:identifier') {
 			identifier = node
@@ -49,13 +50,13 @@ let combinedParser: CombinedParser
 
 function getCombinedParser(registry: MetaRegistry): CombinedParser {
 	if (!combinedParser) {
-		combinedParser = SyntaxRuleParser.create({
+		combinedParser = SyntaxRuleParser.create<ComponentNode>({
 			ruleParsers: [
-				registry.getParser('nbtdoc:keyword/mod'),
-				registry.getParser('nbtdoc:identifier'),
-				registry.getParser('nbtdoc:keyword/;'),
+				registry.getParser('nbtdoc:keyword/mod') as Parser<ModKeywordToken>,
+				registry.getParser('nbtdoc:identifier') as Parser<IdentifierToken>,
+				registry.getParser('nbtdoc:keyword/;') as Parser<SemiKeywordToken>,
 			],
-		}) as any
+		})
 	}
 	return combinedParser
 }

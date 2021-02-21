@@ -11,7 +11,7 @@ function parse({ literal, canBeFollowedByLetter }: Options, src: Source, ctx: Pa
 	src.skipWhitespace()
 	const start = src.cursor
 	const ans: KeywordToken = {
-		type: 'nbtdoc:keyword',
+		type: `nbtdoc:keyword/${literal}`,
 		range: Range.create(start),
 		text: '',
 	}
