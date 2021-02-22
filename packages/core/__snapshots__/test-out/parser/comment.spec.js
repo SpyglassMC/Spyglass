@@ -1,14 +1,14 @@
-exports['comment() parse() Should parse \'# Whoops.↓// The world is burning!\' 1'] = {
+exports['comment() Test "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['comment() parse() Should parse \'\' 1'] = {
+exports['comment() Test "# Whoops.↓// The world is burning!" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['comment() parse() Should parse \'// This is a comment.\' 1'] = {
+exports['comment() Test "// This is a comment." 1'] = {
   "node": {
     "type": "comment",
     "range": {
@@ -20,7 +20,7 @@ exports['comment() parse() Should parse \'// This is a comment.\' 1'] = {
   "errors": []
 }
 
-exports['comment() parse() Should parse \'// This is a comment.↓Another line here.\' 1'] = {
+exports['comment() Test "// This is a comment.↓Another line here." 1'] = {
   "node": {
     "type": "comment",
     "range": {

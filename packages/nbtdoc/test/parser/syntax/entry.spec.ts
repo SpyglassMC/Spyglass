@@ -1,22 +1,17 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { identifier } from '../../../lib'
+import { entry } from '../../../lib'
 
-describe('identifier()', () => {
+describe('entry()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: 'foo' },
-		{ content: '123' },
-		{ content: 'foo123' },
-		{ content: 'foo()bar' },
-		{ content: 'foo;bar' },
-		{ content: 'foo\nbar' },
-		{ content: 'foo你好;bar' },
+		{ content: 'mod describes;' },
+		{ content: 'mod describes minecraft:block;' },
 	]
 	for (const { content } of suites) {
 		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = identifier()
+			const parser = entry()
 			snapshot(testParser(parser, content))
 		})
 	}

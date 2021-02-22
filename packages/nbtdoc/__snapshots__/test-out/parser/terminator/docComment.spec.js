@@ -1,19 +1,19 @@
-exports['docComment() Should parse \'\' 1'] = {
+exports['docComment() Test "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['docComment() Should parse \'/\' 1'] = {
+exports['docComment() Test "/" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['docComment() Should parse \'// This is a comment.\' 1'] = {
+exports['docComment() Test "// This is a comment." 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['docComment() Should parse \'/// This is a doc comment.\' 1'] = {
+exports['docComment() Test "/// This is a doc comment." 1'] = {
   "node": {
     "type": "comment",
     "range": {
@@ -25,7 +25,7 @@ exports['docComment() Should parse \'/// This is a doc comment.\' 1'] = {
   "errors": []
 }
 
-exports['docComment() Should parse \'/// This is a doc comment.↓next line test;\' 1'] = {
+exports['docComment() Test "/// This is a doc comment.↓next line test;" 1'] = {
   "node": {
     "type": "comment",
     "range": {

@@ -11,7 +11,7 @@ describe('docComments()', () => {
 		{ content: '\t/// This is a doc comment.\n\t/// And more?\n\tfoo: Boolean' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
+		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = docComments()
 			snapshot(testParser(parser, content))
 		})

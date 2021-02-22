@@ -1,14 +1,14 @@
-exports['useClause() Should parse \'\' 1'] = {
+exports['useClause() Test "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['useClause() Should parse \'e\' 1'] = {
+exports['useClause() Test "e" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['useClause() Should parse \'export use foo::bar;// Trailing comment.\' 1'] = {
+exports['useClause() Test "export use foo::bar;// Trailing comment." 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -98,7 +98,7 @@ exports['useClause() Should parse \'export use foo::bar;// Trailing comment.\' 1
   "errors": []
 }
 
-exports['useClause() Should parse \'export use foo;\' 1'] = {
+exports['useClause() Test "export use foo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -172,7 +172,7 @@ exports['useClause() Should parse \'export use foo;\' 1'] = {
   "errors": []
 }
 
-exports['useClause() Should parse \'export use super::foo::bar; something else;\' 1'] = {
+exports['useClause() Test "export use super::foo::bar; something else;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -264,12 +264,12 @@ exports['useClause() Should parse \'export use super::foo::bar; something else;\
   "errors": []
 }
 
-exports['useClause() Should parse \'export\' 1'] = {
+exports['useClause() Test "export" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['useClause() Should parse \'exportusefoo;\' 1'] = {
+exports['useClause() Test "exportusefoo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -360,12 +360,12 @@ exports['useClause() Should parse \'exportusefoo;\' 1'] = {
   ]
 }
 
-exports['useClause() Should parse \'u\' 1'] = {
+exports['useClause() Test "u" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['useClause() Should parse \'use foo\' 1'] = {
+exports['useClause() Test "use foo" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -440,7 +440,7 @@ exports['useClause() Should parse \'use foo\' 1'] = {
   ]
 }
 
-exports['useClause() Should parse \'use foo;\' 1'] = {
+exports['useClause() Test "use foo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [
@@ -506,7 +506,7 @@ exports['useClause() Should parse \'use foo;\' 1'] = {
   "errors": []
 }
 
-exports['useClause() Should parse \'use\' 1'] = {
+exports['useClause() Test "use" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
     "nodes": [

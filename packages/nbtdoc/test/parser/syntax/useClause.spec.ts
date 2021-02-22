@@ -18,7 +18,7 @@ describe('useClause()', () => {
 		{ content: 'export use super::foo::bar; something else;' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
+		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = useClause()
 			snapshot(testParser(parser, content))
 		})

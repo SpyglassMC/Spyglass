@@ -18,7 +18,7 @@ describe('moduleDeclaration()', () => {
 		{ content: 'mod zombie\nsyntax test.' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
+		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = moduleDeclaration()
 			snapshot(testParser(parser, content))
 		})

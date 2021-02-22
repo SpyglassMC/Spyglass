@@ -16,7 +16,7 @@ describe('describesClause()', () => {
 		{ content: 'Foo describes minecraft:item[\n\tminecraft:stone,\n\tminecraft:grass_block,\n];' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
+		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = describesClause()
 			snapshot(testParser(parser, content))
 		})

@@ -1,16 +1,20 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
 import { AstNode, ErrorSeverity, Range, Source } from '..'
 
+type AttemptResult<N extends object = AstNode> = {
+	result: Result<N>,
+	updateSrcAndCtx: () => void,
+	endCursor: number,
+	errorAmount: number,
+}
+
 /**
  * Attempts to parse using the given `parser`.
  * @returns
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
  */
-export function attempt<N>(parser: Parser<N>, src: Source, ctx: ParserContext): {
-	result: Result<N>,
-	updateSrcAndCtx: () => void,
-} {
+export function attempt<N extends object = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
 		...ctx,
@@ -21,6 +25,8 @@ export function attempt<N>(parser: Parser<N>, src: Source, ctx: ParserContext): 
 
 	return {
 		result,
+		endCursor: tmpSrc.cursor,
+		errorAmount: tmpCtx.err.errors.length,
 		updateSrcAndCtx: () => {
 			src.cursor = tmpSrc.cursor
 			ctx.err.absorb(tmpCtx.err)
@@ -29,25 +35,25 @@ export function attempt<N>(parser: Parser<N>, src: Source, ctx: ParserContext): 
 }
 
 /**
- * @returns A parser that outputs the result of the first passed-in non-failing parser.
+ * @returns A parser that returns the result of the passed-in parser which produces the least amount of error.
+ * If there are more than one `parsers` produced the same amount of errors, it then takes the parser that went the furthest in `Source`.
+ * If there is still a tie, it takes the one closer to the beginning of the `parsers` array.
  * 
- * `Failure` when all of the passed-in parsers failed.
+ * `Failure` when all of the `parsers` failed.
  */
 export function any<N extends object = AstNode>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
-export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N>
+export function any<N extends object = AstNode>(parsers: [Parser<N>, ...Parser<N>[]]): Parser<N>
 export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N> {
 	return (src: Source, ctx: ParserContext): Result<N> => {
-		for (const [i, parser] of parsers.entries()) {
-			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
-			if (result === Failure && i !== parsers.length - 1) {
-				// This is still not the last parser.
-				continue
-			} else {
-				updateSrcAndCtx()
-				return result
-			}
+		const attempts: AttemptResult<N>[] = parsers
+			.map(parser => attempt(parser, src, ctx))
+			.filter(att => att.result !== Failure)
+			.sort((a, b) => (a.errorAmount - b.errorAmount) || (b.endCursor - a.endCursor))
+		if (attempts.length === 0) {
+			return Failure
 		}
-		throw new Error('No parser was passed in.')
+		attempts[0].updateSrcAndCtx()
+		return attempts[0].result
 	}
 }
 

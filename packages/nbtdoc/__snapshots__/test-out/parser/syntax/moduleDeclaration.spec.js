@@ -1,14 +1,14 @@
-exports['moduleDeclaration() Should parse \'\' 1'] = {
+exports['moduleDeclaration() Test "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'m\' 1'] = {
+exports['moduleDeclaration() Test "m" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'mod zombie\' 1'] = {
+exports['moduleDeclaration() Test "mod zombie" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -62,7 +62,7 @@ exports['moduleDeclaration() Should parse \'mod zombie\' 1'] = {
   ]
 }
 
-exports['moduleDeclaration() Should parse \'mod zombie;\' 1'] = {
+exports['moduleDeclaration() Test "mod zombie;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -107,7 +107,7 @@ exports['moduleDeclaration() Should parse \'mod zombie;\' 1'] = {
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'mod zombie;// Trailing comment.\' 1'] = {
+exports['moduleDeclaration() Test "mod zombie;// Trailing comment." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -152,7 +152,7 @@ exports['moduleDeclaration() Should parse \'mod zombie;// Trailing comment.\' 1'
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'mod zombie;syntax test.\' 1'] = {
+exports['moduleDeclaration() Test "mod zombie;syntax test." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -197,7 +197,7 @@ exports['moduleDeclaration() Should parse \'mod zombie;syntax test.\' 1'] = {
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'mod zombie↓syntax test.\' 1'] = {
+exports['moduleDeclaration() Test "mod zombie↓syntax test." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -251,7 +251,7 @@ exports['moduleDeclaration() Should parse \'mod zombie↓syntax test.\' 1'] = {
   ]
 }
 
-exports['moduleDeclaration() Should parse \'mod\' 1'] = {
+exports['moduleDeclaration() Test "mod" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -313,7 +313,7 @@ exports['moduleDeclaration() Should parse \'mod\' 1'] = {
   ]
 }
 
-exports['moduleDeclaration() Should parse \'mod// Comment.↓zombie ;\' 1'] = {
+exports['moduleDeclaration() Test "mod// Comment.↓zombie ;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -366,7 +366,7 @@ exports['moduleDeclaration() Should parse \'mod// Comment.↓zombie ;\' 1'] = {
   "errors": []
 }
 
-exports['moduleDeclaration() Should parse \'mod/// Doc Comment.↓zombie ;\' 1'] = {
+exports['moduleDeclaration() Test "mod/// Doc Comment.↓zombie ;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [
@@ -428,7 +428,7 @@ exports['moduleDeclaration() Should parse \'mod/// Doc Comment.↓zombie ;\' 1']
   ]
 }
 
-exports['moduleDeclaration() Should parse \'modzombie;\' 1'] = {
+exports['moduleDeclaration() Test "modzombie;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
     "nodes": [

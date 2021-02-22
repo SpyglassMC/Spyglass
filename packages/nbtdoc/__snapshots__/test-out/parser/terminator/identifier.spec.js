@@ -1,4 +1,4 @@
-exports['identifier() Should parse \'\' 1'] = {
+exports['identifier() Test "" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -19,7 +19,7 @@ exports['identifier() Should parse \'\' 1'] = {
   ]
 }
 
-exports['identifier() Should parse \'123\' 1'] = {
+exports['identifier() Test "123" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -40,7 +40,7 @@ exports['identifier() Should parse \'123\' 1'] = {
   ]
 }
 
-exports['identifier() Should parse \'foo\' 1'] = {
+exports['identifier() Test "foo" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -52,7 +52,7 @@ exports['identifier() Should parse \'foo\' 1'] = {
   "errors": []
 }
 
-exports['identifier() Should parse \'foo()bar\' 1'] = {
+exports['identifier() Test "foo()bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -64,7 +64,7 @@ exports['identifier() Should parse \'foo()bar\' 1'] = {
   "errors": []
 }
 
-exports['identifier() Should parse \'foo123\' 1'] = {
+exports['identifier() Test "foo123" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -76,7 +76,7 @@ exports['identifier() Should parse \'foo123\' 1'] = {
   "errors": []
 }
 
-exports['identifier() Should parse \'foo;bar\' 1'] = {
+exports['identifier() Test "foo;bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -88,7 +88,7 @@ exports['identifier() Should parse \'foo;bar\' 1'] = {
   "errors": []
 }
 
-exports['identifier() Should parse \'foo↓bar\' 1'] = {
+exports['identifier() Test "foo↓bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
@@ -100,7 +100,7 @@ exports['identifier() Should parse \'foo↓bar\' 1'] = {
   "errors": []
 }
 
-exports['identifier() Should parse \'foo你好;bar\' 1'] = {
+exports['identifier() Test "foo你好;bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier",
     "range": {
