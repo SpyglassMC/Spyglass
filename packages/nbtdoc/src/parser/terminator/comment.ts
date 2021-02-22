@@ -6,7 +6,7 @@ import { validate } from '..'
 /**
  * @returns A comment parser that accepts normal comments (`//`) and reports an error if it's a doc comment (`///`).
  * 
- * `Failure` when three isn't a comment.
+ * `Failure` when there isn't a comment.
  */
 export function comment(): Parser<CommentNode> {
 	return validate(

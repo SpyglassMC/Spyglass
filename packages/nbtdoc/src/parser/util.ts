@@ -58,6 +58,37 @@ export function syntax<CN extends AstNode>(parsers: Parser<CN | null>[]): Parser
 }
 
 /**
+ * @template CN Child node.
+ * 
+ * @returns A parser that follows a **SYNTAX** rule built with the passed-in parser being repeated zero or more times.
+ */
+export function repeat<CN extends AstNode>(parser: Parser<CN>): InfallibleParser<Syntax<CN>> {
+	return (src: Source, ctx: ParserContext): Syntax<CN> => {
+		const ans: Syntax<CN> = {
+			nodes: [],
+			range: Range.create(src),
+		}
+
+		while (src.canRead()) {
+			ans.nodes.push(...syntaxGap()(src, ctx))
+
+			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
+
+			if (result === Failure) {
+				break
+			}
+
+			updateSrcAndCtx()
+			ans.nodes.push(result)
+		}
+
+		ans.range.end = src.cursor
+
+		return ans
+	}
+}
+
+/**
  * Attempts to parse using the given `parser`.
  * @returns
  * - `result`: The result returned by the `parser`.
@@ -127,23 +158,29 @@ interface HavingRange {
 }
 
 /**
- * @returns The return value of `fn` with the `range` set to `result.range` if it was `undefined`. 
+ * @returns The return value of `fn`. If it is an object and doesn't have the `range` property, 
+ * it will be assigned the same `range` as the result of the `parser`.
  * 
  * `Failure` when the `parser` returns a `Failure`.
  */
-export function wrap<A extends HavingRange, B>(parser: InfallibleParser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): InfallibleParser<B & HavingRange>
-export function wrap<A extends HavingRange, B>(parser: Parser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): Parser<B & HavingRange>
-export function wrap<A extends HavingRange, B>(parser: Parser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): Parser<B & HavingRange> {
+export function wrap<A extends HavingRange, B>(parser: InfallibleParser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): InfallibleParser<B extends object ? (B extends HavingRange ? B : B & HavingRange) : B>
+export function wrap<A extends HavingRange, B>(parser: Parser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): Parser<B extends object ? (B extends HavingRange ? B : B & HavingRange) : B>
+export function wrap<A extends HavingRange, B>(parser: Parser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): Parser<B extends object ? (B extends HavingRange ? B : B & HavingRange) : B> {
 	return (src: Source, ctx: ParserContext) => {
 		const result = parser(src, ctx)
 		if (result === Failure) {
 			return Failure
 		}
 		const ans = fn(result, src, ctx)
-		return Object.freeze({
-			...ans,
-			range: (ans as any).range ?? result.range,
-		})
+		if (typeof ans === 'object') {
+			return Object.freeze({
+				...ans,
+				range: (ans as any).range ?? result.range,
+			})
+		}
+		else {
+			return Object.freeze(ans) as any
+		}
 	}
 }
 
