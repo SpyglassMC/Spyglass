@@ -17,11 +17,4 @@ export const enum ErrorSeverity {
 	Information,
 	Warning,
 	Error,
-	/**
-	 * Doesn't even satisfy the fundamental requirement for this AST node. Usually used by
-	 * dispatcher parsers to try the next parser.
-	 * 
-	 * Should be treated as the same severity as `Error` if not being used by a dispatcher parser.
-	 */
-	Fatal,
 }
