@@ -1,6 +1,25 @@
-import { AstNode, ErrorSeverity, Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source } from '@spyglassmc/core'
-import { SyntaxNode } from '../node'
-import { syntaxGap } from './syntaxGap'
+import { AstNode, CommentNode, ErrorSeverity, Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source, Success } from '@spyglassmc/core'
+import { comment } from '.'
+import { Syntax } from '../node'
+
+/**
+ * @returns A parser that parses the gap between **SYNTAX** rules, which may contains whitespace and regular comments.
+ */
+export function syntaxGap(): InfallibleParser<CommentNode[]> {
+	return (src: Source, ctx: ParserContext): CommentNode[] => {
+		const ans: CommentNode[] = []
+
+		src.skipWhitespace()
+
+		while (src.canRead() && src.peek(2) === '//') {
+			const result = comment()(src, ctx) as Success<CommentNode>
+			ans.push(result)
+			src.skipWhitespace()
+		}
+
+		return ans
+	}
+}
 
 /**
  * @template CN Child node.
@@ -9,11 +28,11 @@ import { syntaxGap } from './syntaxGap'
  * 
  * `Failure` when any of the `parsers` returns a `Failure`.
  */
-export function syntax<CN extends AstNode>(parsers: InfallibleParser<CN>[]): InfallibleParser<SyntaxNode<CN>>
-export function syntax<CN extends AstNode>(parsers: Parser<CN>[]): Parser<SyntaxNode<CN>>
-export function syntax<CN extends AstNode>(parsers: Parser<CN>[]): Parser<SyntaxNode<CN>> {
-	return (src: Source, ctx: ParserContext): Result<SyntaxNode<CN>> => {
-		const ans: SyntaxNode<CN> = {
+export function syntax<CN extends AstNode>(parsers: InfallibleParser<CN | null>[]): InfallibleParser<Syntax<CN>>
+export function syntax<CN extends AstNode>(parsers: Parser<CN | null>[]): Parser<Syntax<CN>>
+export function syntax<CN extends AstNode>(parsers: Parser<CN | null>[]): Parser<Syntax<CN>> {
+	return (src: Source, ctx: ParserContext): Result<Syntax<CN>> => {
+		const ans: Syntax<CN> = {
 			nodes: [],
 			range: Range.create(src),
 		}
@@ -24,6 +43,9 @@ export function syntax<CN extends AstNode>(parsers: Parser<CN>[]): Parser<Syntax
 			const result = parser(src, ctx)
 			if (result === Failure) {
 				return Failure
+			} else if (result === null) {
+				// An optional parser yielded `null`.
+				continue
 			}
 
 			ans.nodes.push(result)
@@ -32,6 +54,33 @@ export function syntax<CN extends AstNode>(parsers: Parser<CN>[]): Parser<Syntax
 		ans.range.end = src.cursor
 
 		return ans
+	}
+}
+
+/**
+ * Attempts to parse using the given `parser`.
+ * @returns
+ * - `result`: The result returned by the `parser`.
+ * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
+ */
+function attempt<N>(parser: Parser<N>, src: Source, ctx: ParserContext): {
+	result: Result<N>,
+	updateSrcAndCtx: () => void,
+} {
+	const tmpSrc = src.clone()
+	const tmpCtx = ParserContext.create({
+		...ctx,
+		err: ctx.err.derive(),
+	})
+
+	const result = parser(tmpSrc, tmpCtx)
+
+	return {
+		result,
+		updateSrcAndCtx: () => {
+			src.cursor = tmpSrc.cursor
+			ctx.err.absorb(tmpCtx.err)
+		},
 	}
 }
 
@@ -45,25 +94,31 @@ export function any<N extends {} = AstNode>(parsers: Parser<N>[]): Parser<N>
 export function any<N extends {} = AstNode>(parsers: Parser<N>[]): Parser<N> {
 	return (src: Source, ctx: ParserContext): Result<N> => {
 		for (const [i, parser] of parsers.entries()) {
-			const tmpSrc = src.clone()
-			const tmpErr = ctx.err.derive()
-			const tmpCtx = ParserContext.create({
-				...ctx,
-				err: tmpErr,
-			})
-
-			const result = parser(tmpSrc, tmpCtx)
-
+			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
 			if (result === Failure && i !== parsers.length - 1) {
 				// This is still not the last parser.
 				continue
 			} else {
-				src.cursor = tmpSrc.cursor
-				ctx.err.absorb(tmpErr)
+				updateSrcAndCtx()
 				return result
 			}
 		}
 		throw new Error('No parser was passed in.')
+	}
+}
+
+/**
+ * @returns A parser that takes an optional syntax component.
+ */
+export function optional<N extends {} = AstNode>(parser: Parser<N>): InfallibleParser<N | null> {
+	return (src: Source, ctx: ParserContext): N | null => {
+		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
+		if (result === Failure) {
+			return null
+		} else {
+			updateSrcAndCtx()
+			return result
+		}
 	}
 }
 
@@ -72,6 +127,8 @@ interface HavingRange {
 }
 
 /**
+ * @returns The return value of `fn` with the `range` set to `result.range` if it was `undefined`. 
+ * 
  * `Failure` when the `parser` returns a `Failure`.
  */
 export function wrap<A extends HavingRange, B>(parser: InfallibleParser<A>, fn: (result: A, src: Source, ctx: ParserContext) => B): InfallibleParser<B & HavingRange>
@@ -91,6 +148,8 @@ export function wrap<A extends HavingRange, B>(parser: Parser<A>, fn: (result: A
 }
 
 /**
+ * Checks if the result of `parser` is valid, and reports an error if it's not.
+ * 
  * `Failure` when the `parser` returns a `Failure`.
  */
 export function validate<N extends AstNode>(parser: InfallibleParser<N>, validator: (res: N, src: Source, ctx: ParserContext) => boolean, message: string, severity?: ErrorSeverity): InfallibleParser<N>

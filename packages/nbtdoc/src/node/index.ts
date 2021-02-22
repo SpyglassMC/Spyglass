@@ -3,13 +3,13 @@ import { AstNode, CommentNode, Range } from '@spyglassmc/core'
 // We use the suffix "token" for terminate AST nodes, and "node" for non-terminate syntax AST nodes.
 
 /**
- * AST nodes corresponding to syntax preceded with **SYNTAX** in the [format][format].
+ * A syntax rule preceded with **SYNTAX** in the [format][format].
  * 
  * [format]: https://github.com/Yurihaia/nbtdoc-rs/blob/master/docs/format.md
  * 
  * @template CN Child node.
  */
-export interface SyntaxNode<CN extends AstNode = AstNode> {
+export interface Syntax<CN extends AstNode = AstNode> {
 	/**
 	 * An array of `Node`s that fully made up this node.
 	 */
@@ -36,29 +36,37 @@ export interface IdentifierToken extends AstNode {
 	text: string,
 }
 
-export interface CompoundDefinitionNode extends AstNode, SyntaxNode {
+export interface IdentifierPathToken extends AstNode {
+	type: 'nbtdoc:identifier_path',
+	fromGlobalRoot: boolean,
+	path: (IdentifierToken | 'super')[]
+}
+
+export interface CompoundDefinitionNode extends AstNode, Syntax {
 	type: 'nbtdoc:compound_definition',
 }
 
-export interface DescribesClauseNode extends AstNode, SyntaxNode {
+export interface DescribesClauseNode extends AstNode, Syntax {
 	type: 'nbtdoc:describe_clause',
 }
 
-export interface EnumDefinitionNode extends AstNode, SyntaxNode {
+export interface EnumDefinitionNode extends AstNode, Syntax {
 	type: 'nbtdoc:enum_definition',
 }
 
-export interface InjectClauseNode extends AstNode, SyntaxNode {
+export interface InjectClauseNode extends AstNode, Syntax {
 	type: 'nbtdoc:inject_clause',
 }
 
-export interface ModuleDeclarationNode extends AstNode, SyntaxNode<KeywordToken | IdentifierToken | PunctuationToken> {
+export interface ModuleDeclarationNode extends AstNode, Syntax<KeywordToken | IdentifierToken | PunctuationToken> {
 	type: 'nbtdoc:module_declaration',
 	identifier?: IdentifierToken,
 }
 
-export interface UseClauseNode extends AstNode, SyntaxNode {
+export interface UseClauseNode extends AstNode, Syntax<KeywordToken | IdentifierPathToken | PunctuationToken> {
 	type: 'nbtdoc:use_clause',
+	isExport: boolean,
+	path?: IdentifierPathToken,
 }
 
 export type ContentNode =
@@ -71,7 +79,7 @@ export type ContentNode =
 	| InjectClauseNode
 	| ErrorNode
 
-export interface MainNode extends AstNode, SyntaxNode {
+export interface MainNode extends AstNode, Syntax {
 	type: 'nbtdoc:main',
 	nodes: ContentNode[],
 }

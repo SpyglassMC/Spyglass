@@ -1,3 +1,5 @@
 export * from './comment'
+export * from './error'
 export * from './identifier'
+export * from './identifierPath'
 export * from './keyword'

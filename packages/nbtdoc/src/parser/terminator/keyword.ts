@@ -12,11 +12,9 @@ interface Options {
  */
 export function keyword(literal: string, { canBeFollowedByLetter, infallible }: Options = {}): Parser<KeywordToken> {
 	return (src: Source, ctx: ParserContext): Result<KeywordToken> => {
-		src.skipWhitespace()
-		const start = src.cursor
 		const ans: KeywordToken = {
 			type: 'nbtdoc:keyword',
-			range: Range.create(start),
+			range: Range.create(src),
 			text: '',
 		}
 

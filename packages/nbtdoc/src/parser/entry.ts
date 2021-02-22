@@ -1,20 +1,22 @@
 import { InfallibleParser } from '@spyglassmc/core'
-import { MainNode } from '..'
-import { ContentNode } from '../node'
-import { moduleDeclaration } from './moduleDeclaration'
-import { error } from './terminator/error'
+import { describesClause, error, moduleDeclaration } from '.'
+import { ContentNode, MainNode } from '../node'
+import { compoundDefinition, enumDefinition, injectClause } from './syntax'
 import { any, wrap } from './util'
 
 export function entry(): InfallibleParser<MainNode> {
 	return wrap(
 		any<ContentNode>([
-			// describesClause(),
+			describesClause(),
+			compoundDefinition(),
+			enumDefinition(),
+			injectClause(),
 			moduleDeclaration(),
 			error(),
 		]),
 		res => ({
 			type: 'nbtdoc:main',
-			nodes: [res],
+			nodes: [res], // FIXME
 		})
 	)
 }

@@ -9,7 +9,7 @@ import { ErrorNode } from '../..'
 export function error(): InfallibleParser<ErrorNode> {
 	return (src: Source, ctx: ParserContext): ErrorNode => {
 		const start = src.cursor
-		src.nextLine()
+		src.skipLine()
 		const ans: ErrorNode = {
 			type: 'nbtdoc:error',
 			range: Range.create(start, src),
@@ -19,6 +19,8 @@ export function error(): InfallibleParser<ErrorNode> {
 			localize('nbtdoc.error.unknown-syntax'),
 			ans.range
 		)
+
+		src.nextLine()
 
 		return ans
 	}

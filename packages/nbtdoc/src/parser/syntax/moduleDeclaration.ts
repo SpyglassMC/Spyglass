@@ -1,8 +1,8 @@
 import { Parser } from '@spyglassmc/core'
-import { IdentifierToken, ModuleDeclarationNode } from '..'
-import { KeywordToken, PunctuationToken } from '../node'
-import { identifier, keyword, punctuation } from './terminator'
-import { syntax, wrap } from './util'
+import { IdentifierToken, ModuleDeclarationNode } from '../..'
+import { KeywordToken, PunctuationToken } from '../../node'
+import { identifier, keyword, punctuation } from '../terminator'
+import { syntax, wrap } from '../util'
 
 /**
  * `Failure` when there isn't the `mod` keyword.

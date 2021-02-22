@@ -9,7 +9,6 @@ const HardSeparations = new Set([
 
 export function identifier(): InfallibleParser<IdentifierToken> {
 	return (src: Source, ctx: ParserContext): IdentifierToken => {
-		src.skipWhitespace()
 		const start = src.cursor
 		const text = src.readUntilOrEnd(...HardSeparations)
 		const ans: IdentifierToken = {
