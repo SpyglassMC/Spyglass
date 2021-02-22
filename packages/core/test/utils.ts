@@ -13,6 +13,7 @@ export function showWhitespaceGlyph(string: string) {
 		.replace(/\t/g, '⮀')
 		.replace(/\r/g, '←')
 		.replace(/\n/g, '↓')
+		.replace(/\\/g, '⧵')
 }
 
 export function markOffsetInString(string: string, offset: number) {

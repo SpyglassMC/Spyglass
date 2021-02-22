@@ -10,7 +10,6 @@ export function float(): InfallibleParser<FloatToken> {
 		const ans: FloatToken = {
 			type: 'nbtdoc:float',
 			range: Range.create(src),
-			raw: '',
 			value: 0,
 		}
 
@@ -31,12 +30,12 @@ export function float(): InfallibleParser<FloatToken> {
 		}
 
 		ans.range.end = src.cursor
-		ans.raw = src.slice(ans.range)
-		ans.value = parseFloat(ans.raw) || 0
+		const raw = src.slice(ans.range)
+		ans.value = parseFloat(raw) || 0
 
-		if (!ans.raw) {
+		if (!raw) {
 			ctx.err.report(localize('expected', [localize('float')]), ans)
-		} else if (!Regex.test(ans.raw)) {
+		} else if (!Regex.test(raw)) {
 			ctx.err.report(localize('nbtdoc.error.float.illegal'), ans)
 		}
 

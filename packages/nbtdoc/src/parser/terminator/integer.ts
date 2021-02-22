@@ -9,7 +9,6 @@ export function integer(): InfallibleParser<IntegerToken> {
 		const ans: IntegerToken = {
 			type: 'nbtdoc:integer',
 			range: Range.create(src),
-			raw: '',
 			value: BigInt(0),
 		}
 
@@ -21,12 +20,16 @@ export function integer(): InfallibleParser<IntegerToken> {
 		}
 
 		ans.range.end = src.cursor
-		ans.raw = src.slice(ans.range)
-		ans.value = BigInt(ans.raw)
+		const raw = src.slice(ans.range)
+		try {
+			ans.value = BigInt(raw)
+		} catch (_) {
+			// Ignored. `raw` might be "-" here.
+		}
 
-		if (!ans.raw) {
+		if (!raw) {
 			ctx.err.report(localize('expected', [localize('integer')]), ans)
-		} else if (!Regex.test(ans.raw)) {
+		} else if (!Regex.test(raw)) {
 			ctx.err.report(localize('nbtdoc.error.integer.illegal'), ans)
 		}
 

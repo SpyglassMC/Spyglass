@@ -1,7 +1,5 @@
 import { AstNode, CommentNode, Range } from '@spyglassmc/core'
 
-// We use the suffix "token" for terminate AST nodes, and "node" for non-terminate syntax AST nodes.
-
 interface Syntax<CN extends AstNode = AstNode> {
 	/**
 	 * An array of `Node`s that fully made up this node.
@@ -81,19 +79,16 @@ export namespace MinecraftIdentifierToken {
 
 export interface StringToken extends AstNode {
 	type: 'nbtdoc:string',
-	raw: string,
 	value: string,
 }
 
 export interface IntegerToken extends AstNode {
 	type: 'nbtdoc:integer',
-	raw: string,
 	value: bigint,
 }
 
 export interface FloatToken extends AstNode {
 	type: 'nbtdoc:float',
-	raw: string,
 	value: number,
 }
 
