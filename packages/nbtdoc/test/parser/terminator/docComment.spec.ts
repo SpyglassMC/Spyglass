@@ -12,7 +12,7 @@ describe('docComment()', () => {
 		{ content: '/// This is a doc comment.\nnext line test;' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = docComment()
 			snapshot(testParser(parser, content))
 		})

@@ -12,7 +12,7 @@ describe('keyword()', () => {
 		{ content: 'foo something else;' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = keyword('foo')
 			snapshot(testParser(parser, content))
 		})
@@ -27,7 +27,7 @@ describe('punctuation()', () => {
 		{ content: ';\nsomething else;' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = punctuation(';')
 			snapshot(testParser(parser, content))
 		})

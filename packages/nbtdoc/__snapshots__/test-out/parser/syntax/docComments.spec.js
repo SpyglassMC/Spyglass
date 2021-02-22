@@ -1,4 +1,4 @@
-exports['docComments() Test "" 1'] = {
+exports['docComments() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
     "nodes": [],
@@ -11,7 +11,7 @@ exports['docComments() Test "" 1'] = {
   "errors": []
 }
 
-exports['docComments() Test "/// This is a doc comment." 1'] = {
+exports['docComments() Parse "/// This is a doc comment." 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
     "nodes": [
@@ -33,7 +33,7 @@ exports['docComments() Test "/// This is a doc comment." 1'] = {
   "errors": []
 }
 
-exports['docComments() Test "compound Something {}" 1'] = {
+exports['docComments() Parse "compound Something {}" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
     "nodes": [],
@@ -46,7 +46,7 @@ exports['docComments() Test "compound Something {}" 1'] = {
   "errors": []
 }
 
-exports['docComments() Test "⮀/// This is a doc comment.↓⮀/// And more?↓⮀foo: Boolean" 1'] = {
+exports['docComments() Parse "⮀/// This is a doc comment.↓⮀/// And more?↓⮀foo: Boolean" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
     "nodes": [

@@ -1,14 +1,14 @@
-exports['keyword() Test "" 1'] = {
+exports['keyword() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['keyword() Test "f" 1'] = {
+exports['keyword() Parse "f" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['keyword() Test "foo something else;" 1'] = {
+exports['keyword() Parse "foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:keyword",
     "range": {
@@ -20,7 +20,7 @@ exports['keyword() Test "foo something else;" 1'] = {
   "errors": []
 }
 
-exports['keyword() Test "foo" 1'] = {
+exports['keyword() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:keyword",
     "range": {
@@ -32,7 +32,7 @@ exports['keyword() Test "foo" 1'] = {
   "errors": []
 }
 
-exports['keyword() Test "foobar" 1'] = {
+exports['keyword() Parse "foobar" 1'] = {
   "node": {
     "type": "nbtdoc:keyword",
     "range": {
@@ -53,7 +53,7 @@ exports['keyword() Test "foobar" 1'] = {
   ]
 }
 
-exports['punctuation() Test "" 1'] = {
+exports['punctuation() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:punctuation",
     "text": "",
@@ -74,7 +74,7 @@ exports['punctuation() Test "" 1'] = {
   ]
 }
 
-exports['punctuation() Test ";" 1'] = {
+exports['punctuation() Parse ";" 1'] = {
   "node": {
     "type": "nbtdoc:punctuation",
     "text": ";",
@@ -86,7 +86,7 @@ exports['punctuation() Test ";" 1'] = {
   "errors": []
 }
 
-exports['punctuation() Test ";foo" 1'] = {
+exports['punctuation() Parse ";foo" 1'] = {
   "node": {
     "type": "nbtdoc:punctuation",
     "text": ";",
@@ -98,7 +98,7 @@ exports['punctuation() Test ";foo" 1'] = {
   "errors": []
 }
 
-exports['punctuation() Test ";↓something else;" 1'] = {
+exports['punctuation() Parse ";↓something else;" 1'] = {
   "node": {
     "type": "nbtdoc:punctuation",
     "text": ";",

@@ -1,4 +1,4 @@
-exports['identifierPath() Test "" 1'] = {
+exports['identifierPath() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
@@ -29,7 +29,7 @@ exports['identifierPath() Test "" 1'] = {
   ]
 }
 
-exports['identifierPath() Test "::foo::bar" 1'] = {
+exports['identifierPath() Parse "::foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": true,
@@ -59,7 +59,7 @@ exports['identifierPath() Test "::foo::bar" 1'] = {
   "errors": []
 }
 
-exports['identifierPath() Test "foo" 1'] = {
+exports['identifierPath() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
@@ -81,7 +81,7 @@ exports['identifierPath() Test "foo" 1'] = {
   "errors": []
 }
 
-exports['identifierPath() Test "foo::bar" 1'] = {
+exports['identifierPath() Parse "foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
@@ -111,7 +111,7 @@ exports['identifierPath() Test "foo::bar" 1'] = {
   "errors": []
 }
 
-exports['identifierPath() Test "super::foo something else;" 1'] = {
+exports['identifierPath() Parse "super::foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
@@ -134,7 +134,7 @@ exports['identifierPath() Test "super::foo something else;" 1'] = {
   "errors": []
 }
 
-exports['identifierPath() Test "super::foo" 1'] = {
+exports['identifierPath() Parse "super::foo" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
@@ -157,7 +157,7 @@ exports['identifierPath() Test "super::foo" 1'] = {
   "errors": []
 }
 
-exports['identifierPath() Test "super::foo::bar" 1'] = {
+exports['identifierPath() Parse "super::foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,

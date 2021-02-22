@@ -1,4 +1,4 @@
-exports['entry() Test "" 1'] = {
+exports['entry() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:main",
     "nodes": [],
@@ -10,7 +10,7 @@ exports['entry() Test "" 1'] = {
   "errors": []
 }
 
-exports['entry() Test "mod describes minecraft:block;" 1'] = {
+exports['entry() Parse "mod describes minecraft:block;" 1'] = {
   "node": {
     "type": "nbtdoc:main",
     "nodes": [
@@ -107,7 +107,7 @@ exports['entry() Test "mod describes minecraft:block;" 1'] = {
   "errors": []
 }
 
-exports['entry() Test "mod describes;" 1'] = {
+exports['entry() Parse "mod describes;" 1'] = {
   "node": {
     "type": "nbtdoc:main",
     "nodes": [

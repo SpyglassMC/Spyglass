@@ -14,7 +14,7 @@ describe('identifierPath()', () => {
 		{ content: 'super::foo something else;' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = identifierPath()
 			snapshot(testParser(parser, content))
 		})

@@ -11,7 +11,7 @@ describe('comment()', () => {
 		{ prefixes: new Set(['//']), content: '# Whoops.\n// The world is burning!' },
 	]
 	for (const { prefixes, content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = comment({ singleLinePrefixes: prefixes })
 			snapshot(testParser(parser, content))
 		})

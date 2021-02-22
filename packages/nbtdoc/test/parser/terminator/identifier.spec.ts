@@ -15,7 +15,7 @@ describe('identifier()', () => {
 		{ content: 'foo你好;bar' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = identifier()
 			snapshot(testParser(parser, content))
 		})

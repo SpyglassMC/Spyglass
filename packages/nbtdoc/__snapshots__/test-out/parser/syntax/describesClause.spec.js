@@ -1,4 +1,4 @@
-exports['describesClause() Test "" 1'] = {
+exports['describesClause() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": [
     {
@@ -12,7 +12,7 @@ exports['describesClause() Test "" 1'] = {
   ]
 }
 
-exports['describesClause() Test "Foo describes [];" 1'] = {
+exports['describesClause() Parse "Foo describes [];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -148,7 +148,7 @@ exports['describesClause() Test "Foo describes [];" 1'] = {
   ]
 }
 
-exports['describesClause() Test "Foo describes minecraft:item" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -245,7 +245,7 @@ exports['describesClause() Test "Foo describes minecraft:item" 1'] = {
   ]
 }
 
-exports['describesClause() Test "Foo describes minecraft:item; something else;" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item; something else;" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -333,7 +333,7 @@ exports['describesClause() Test "Foo describes minecraft:item; something else;" 
   "errors": []
 }
 
-exports['describesClause() Test "Foo describes minecraft:item;" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -421,7 +421,7 @@ exports['describesClause() Test "Foo describes minecraft:item;" 1'] = {
   "errors": []
 }
 
-exports['describesClause() Test "Foo describes minecraft:item[];" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -553,7 +553,7 @@ exports['describesClause() Test "Foo describes minecraft:item[];" 1'] = {
   ]
 }
 
-exports['describesClause() Test "Foo describes minecraft:item[minecraft:stone];" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -680,7 +680,7 @@ exports['describesClause() Test "Foo describes minecraft:item[minecraft:stone];"
   "errors": []
 }
 
-exports['describesClause() Test "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block,↓];" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block,↓];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [
@@ -872,7 +872,7 @@ exports['describesClause() Test "Foo describes minecraft:item[↓⮀minecraft:st
   ]
 }
 
-exports['describesClause() Test "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block↓];" 1'] = {
+exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block↓];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
     "nodes": [

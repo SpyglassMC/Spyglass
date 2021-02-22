@@ -23,7 +23,7 @@ function literal(literal: string, meta?: string, errorAmount = 0): Parser<Litera
 			range: Range.create(src, src.cursor + literal.length),
 		}
 		for (let i = 0; i < errorAmount; i++) {
-			ctx.err.report('Test Error', Range.Beginning)
+			ctx.err.report('Parse Error', Range.Beginning)
 		}
 		if (src.peek(literal.length) === literal) {
 			src.skip(literal.length)
@@ -43,7 +43,7 @@ describe('any()', () => {
 		{ parsers: [literal('foo', 'wrong', 2), literal('foo', 'correct', 1)], content: 'foo', parserToString: 'foo*2 | foo*1' },
 	]
 	for (const { content, parsers, parserToString } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}" with "${parserToString}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}" with "${parserToString}"`, () => {
 			const parser = any(parsers)
 			snapshot(testParser(parser, content))
 		})

@@ -1,4 +1,4 @@
-exports['any() Test "bar" with "foo | bar" 1'] = {
+exports['any() Parse "bar" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "bar",
@@ -10,7 +10,7 @@ exports['any() Test "bar" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['any() Test "foo" with "foo | bar" 1'] = {
+exports['any() Parse "foo" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -22,7 +22,7 @@ exports['any() Test "foo" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['any() Test "foo" with "foo*1 | foo*1" 1'] = {
+exports['any() Parse "foo" with "foo*1 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -38,13 +38,13 @@ exports['any() Test "foo" with "foo*1 | foo*1" 1'] = {
         "start": 0,
         "end": 1
       },
-      "message": "Test Error",
+      "message": "Parse Error",
       "severity": 3
     }
   ]
 }
 
-exports['any() Test "foo" with "foo*1 | foo*2" 1'] = {
+exports['any() Parse "foo" with "foo*1 | foo*2" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -60,13 +60,13 @@ exports['any() Test "foo" with "foo*1 | foo*2" 1'] = {
         "start": 0,
         "end": 1
       },
-      "message": "Test Error",
+      "message": "Parse Error",
       "severity": 3
     }
   ]
 }
 
-exports['any() Test "foo" with "foo*2 | foo*1" 1'] = {
+exports['any() Parse "foo" with "foo*2 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -82,13 +82,13 @@ exports['any() Test "foo" with "foo*2 | foo*1" 1'] = {
         "start": 0,
         "end": 1
       },
-      "message": "Test Error",
+      "message": "Parse Error",
       "severity": 3
     }
   ]
 }
 
-exports['any() Test "qux" with "foo | bar" 1'] = {
+exports['any() Parse "qux" with "foo | bar" 1'] = {
   "node": "FAILURE",
   "errors": []
 }

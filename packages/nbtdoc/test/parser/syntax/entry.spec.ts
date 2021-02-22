@@ -10,7 +10,7 @@ describe('entry()', () => {
 		{ content: 'mod describes minecraft:block;' },
 	]
 	for (const { content } of suites) {
-		it(`Test "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = entry()
 			snapshot(testParser(parser, content))
 		})

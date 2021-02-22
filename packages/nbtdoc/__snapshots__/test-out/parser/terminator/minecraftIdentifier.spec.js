@@ -1,4 +1,4 @@
-exports['minecraftIdentifier() Test "" 1'] = {
+exports['minecraftIdentifier() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -20,7 +20,7 @@ exports['minecraftIdentifier() Test "" 1'] = {
   ]
 }
 
-exports['minecraftIdentifier() Test ":/" 1'] = {
+exports['minecraftIdentifier() Parse ":/" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -36,7 +36,7 @@ exports['minecraftIdentifier() Test ":/" 1'] = {
   "errors": []
 }
 
-exports['minecraftIdentifier() Test "foo" 1'] = {
+exports['minecraftIdentifier() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -58,7 +58,7 @@ exports['minecraftIdentifier() Test "foo" 1'] = {
   ]
 }
 
-exports['minecraftIdentifier() Test "foo:" 1'] = {
+exports['minecraftIdentifier() Parse "foo:" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -73,7 +73,7 @@ exports['minecraftIdentifier() Test "foo:" 1'] = {
   "errors": []
 }
 
-exports['minecraftIdentifier() Test "foo:bar" 1'] = {
+exports['minecraftIdentifier() Parse "foo:bar" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -88,7 +88,7 @@ exports['minecraftIdentifier() Test "foo:bar" 1'] = {
   "errors": []
 }
 
-exports['minecraftIdentifier() Test "foo:bar/baz" 1'] = {
+exports['minecraftIdentifier() Parse "foo:bar/baz" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -104,7 +104,7 @@ exports['minecraftIdentifier() Test "foo:bar/baz" 1'] = {
   "errors": []
 }
 
-exports['minecraftIdentifier() Test "foo:bar:baz" 1'] = {
+exports['minecraftIdentifier() Parse "foo:bar:baz" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
@@ -119,7 +119,7 @@ exports['minecraftIdentifier() Test "foo:bar:baz" 1'] = {
   "errors": []
 }
 
-exports['minecraftIdentifier() Test "foo:bar↓something else;" 1'] = {
+exports['minecraftIdentifier() Parse "foo:bar↓something else;" 1'] = {
   "node": {
     "type": "nbtdoc:minecraft_identifier",
     "range": {
