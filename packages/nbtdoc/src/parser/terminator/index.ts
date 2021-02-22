@@ -1,5 +1,6 @@
 export * from './comment'
 export * from './docComment'
+export * from './float'
 export * from './identifier'
 export * from './identifierPath'
 export * from './integer'
