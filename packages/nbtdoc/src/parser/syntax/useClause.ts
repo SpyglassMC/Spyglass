@@ -17,7 +17,7 @@ export function useClause(): Parser<UseClauseNode> {
 			type: 'nbtdoc:use_clause',
 			nodes: res.nodes,
 			isExport: res.nodes.some(n => n.type === 'nbtdoc:keyword' && n.text === 'export'),
-			path: res.nodes.find((n): n is IdentifierPathToken => n.type === 'nbtdoc:identifier_path'),
+			path: res.nodes.find(IdentifierPathToken.is)!,
 		})
 	)
 }

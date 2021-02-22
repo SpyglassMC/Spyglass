@@ -365,6 +365,81 @@ exports['useClause() Should parse \'u\' 1'] = {
   "errors": []
 }
 
+exports['useClause() Should parse \'use foo\' 1'] = {
+  "node": {
+    "type": "nbtdoc:use_clause",
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "use"
+      },
+      {
+        "type": "nbtdoc:identifier_path",
+        "fromGlobalRoot": false,
+        "path": [
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "text": "foo"
+          }
+        ],
+        "range": {
+          "start": 4,
+          "end": 7
+        }
+      },
+      {
+        "type": "nbtdoc:punctuation",
+        "text": "",
+        "range": {
+          "start": 7,
+          "end": 7
+        }
+      }
+    ],
+    "isExport": false,
+    "path": {
+      "type": "nbtdoc:identifier_path",
+      "fromGlobalRoot": false,
+      "path": [
+        {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 4,
+            "end": 7
+          },
+          "text": "foo"
+        }
+      ],
+      "range": {
+        "start": 4,
+        "end": 7
+      }
+    },
+    "range": {
+      "start": 0,
+      "end": 7
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 7
+      },
+      "message": "Expected “;”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['useClause() Should parse \'use foo;\' 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",

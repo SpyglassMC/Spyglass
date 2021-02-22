@@ -104,7 +104,7 @@
 	"nbtdoc.error.keyword.separation": "a separation",
 	"nbtdoc.error.identifier": "an identifier",
 	"nbtdoc.error.identifier.illegal": "%0% doesn't follow the format of %1%",
-	"nbtdoc.error.unknown-syntax": "Failed to parse this line as any nbtdoc syntax",
+	"nbtdoc.error.minecraft-identifier.colon-expected": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
 	"nbtdoc.type": "Type: %0%",
 	"nbtdoc.type.Boolean": "boolean",
 	"nbtdoc.type.Byte": "byte",

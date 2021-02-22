@@ -8,8 +8,10 @@ interface Options {
 }
 
 /**
- * `Failure` when there isn't the expected keyword and `infallible` is set to false (default).
+ * `Failure` when there isn't the expected keyword and `infallible` is set to `false` (default).
  */
+export function keyword(literal: string, options: Options & { infallible: true }): InfallibleParser<KeywordToken>
+export function keyword(literal: string, options?: Options): Parser<KeywordToken>
 export function keyword(literal: string, { canBeFollowedByLetter, infallible }: Options = {}): Parser<KeywordToken> {
 	return (src: Source, ctx: ParserContext): Result<KeywordToken> => {
 		const ans: KeywordToken = {
@@ -21,7 +23,7 @@ export function keyword(literal: string, { canBeFollowedByLetter, infallible }: 
 		if (src.peek(literal.length) === literal) {
 			src.skip(literal.length)
 			ans.text = literal
-			if (!canBeFollowedByLetter && /^[a-z]$/.test(src.peek())) {
+			if (!canBeFollowedByLetter && /^[A-Za-z0-9_]$/.test(src.peek())) {
 				ctx.err.report(
 					localize('expected', [
 						localize('nbtdoc.error.keyword.separation'),
@@ -46,9 +48,14 @@ export function keyword(literal: string, { canBeFollowedByLetter, infallible }: 
 	}
 }
 
-export function punctuation(char: string): InfallibleParser<PunctuationToken> {
+/**
+ * `Failure` when there isn't the expected character and `fail` is set to `true` (defaults to `false`).
+ */
+export function punctuation(char: string, fail: true): Parser<PunctuationToken>
+export function punctuation(char: string): InfallibleParser<PunctuationToken>
+export function punctuation(char: string, fail?: true): Parser<PunctuationToken> {
 	return wrap(
-		keyword(char, { canBeFollowedByLetter: true, infallible: true }) as InfallibleParser<KeywordToken>,
+		keyword(char, { canBeFollowedByLetter: true, infallible: !fail }),
 		res => ({
 			type: 'nbtdoc:punctuation',
 			text: res.text,

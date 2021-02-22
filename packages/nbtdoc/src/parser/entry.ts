@@ -7,7 +7,7 @@ import { any, repeat, wrap } from './util'
 export function entry(): InfallibleParser<MainNode> {
 	return wrap(
 		repeat(
-			any<ContentNode>([
+			any<ContentNode>([ // FIXME: backtracing to handle `mod describes;` and `mod describes minecraft:block;` correctly.
 				describesClause(),
 				compoundDefinition(),
 				enumDefinition(),
