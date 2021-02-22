@@ -1,20 +1,18 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { comment } from '../../../lib'
+import { docComments } from '../../../lib'
 
-describe('comment()', () => {
+describe('docComments()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: '/' },
-		{ content: '//' },
-		{ content: '// This is a comment.' },
+		{ content: 'compound Something {}' },
 		{ content: '/// This is a doc comment.' },
-		{ content: '// This is a comment.\nnext line test;' },
+		{ content: '\t/// This is a doc comment.\n\t/// And more?\n\tfoo: Boolean' },
 	]
 	for (const { content } of suites) {
 		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
-			const parser = comment()
+			const parser = docComments()
 			snapshot(testParser(parser, content))
 		})
 	}

@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import { Source } from '../../lib'
-import { markOffsetInString, showWhiteSpaceGlyph } from '../utils'
+import { markOffsetInString, showWhitespaceGlyph } from '../utils'
 
 describe('Source', () => {
 	describe('clone()', () => {
@@ -153,7 +153,7 @@ describe('Source', () => {
 			{ string: ' \t', cursor: 0, expected: ' \t' },
 		]
 		for (const { string, cursor, expected } of suites) {
-			it(`Should return '${showWhiteSpaceGlyph(expected)}' for ${markOffsetInString(string, cursor)}`, () => {
+			it(`Should return '${showWhitespaceGlyph(expected)}' for ${markOffsetInString(string, cursor)}`, () => {
 				const src = new Source(string)
 				src.cursor = cursor
 				const actual = src.readSpace()
@@ -221,7 +221,7 @@ describe('Source', () => {
 				{ c: 'A', expected: false },
 			]
 			for (const { c, expected } of suites) {
-				it(`Should return ${expected} for '${showWhiteSpaceGlyph(c)}'`, () => {
+				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
 					const actual = Source.isSpace(c)
 					assert.strictEqual(actual, expected)
 				})
@@ -237,7 +237,7 @@ describe('Source', () => {
 				{ c: 'A', expected: false },
 			]
 			for (const { c, expected } of suites) {
-				it(`Should return ${expected} for '${showWhiteSpaceGlyph(c)}'`, () => {
+				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
 					const actual = Source.isNewline(c)
 					assert.strictEqual(actual, expected)
 				})
@@ -253,7 +253,7 @@ describe('Source', () => {
 				{ c: 'A', expected: false },
 			]
 			for (const { c, expected } of suites) {
-				it(`Should return ${expected} for '${showWhiteSpaceGlyph(c)}'`, () => {
+				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
 					const actual = Source.isWhitespace(c)
 					assert.strictEqual(actual, expected)
 				})

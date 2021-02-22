@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { comment } from '../../lib'
-import { showWhiteSpaceGlyph, testParser } from '../utils'
+import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('comment()', () => {
 	describe('parse()', () => {
@@ -12,7 +12,7 @@ describe('comment()', () => {
 			{ prefixes: new Set(['//']), content: '# Whoops.\n// The world is burning!' },
 		]
 		for (const { prefixes, content } of suites) {
-			it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
+			it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
 				const parser = comment({ singleLinePrefixes: prefixes })
 				snapshot(testParser(parser, content))
 			})

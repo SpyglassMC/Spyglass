@@ -1,4 +1,4 @@
-import { showWhiteSpaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { moduleDeclaration } from '../../../lib'
@@ -18,7 +18,7 @@ describe('moduleDeclaration()', () => {
 		{ content: 'mod zombie\nsyntax test.' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
+		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
 			const parser = moduleDeclaration()
 			snapshot(testParser(parser, content))
 		})

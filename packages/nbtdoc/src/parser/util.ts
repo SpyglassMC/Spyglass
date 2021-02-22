@@ -2,16 +2,18 @@ import { AstNode, CommentNode, ErrorSeverity, Failure, InfallibleParser, Parser,
 import { comment } from '.'
 import { SyntaxUtil } from '../node'
 
+// TODO: Move this whole file to `@spyglassmc/core`.
+
 /**
  * @returns A parser that parses the gap between **SYNTAX** rules, which may contains whitespace and regular comments.
  */
-export function syntaxGap(): InfallibleParser<CommentNode[]> {
+export function syntaxGap(noDocCommentsInGap = false): InfallibleParser<CommentNode[]> {
 	return (src: Source, ctx: ParserContext): CommentNode[] => {
 		const ans: CommentNode[] = []
 
 		src.skipWhitespace()
 
-		while (src.canRead() && src.peek(2) === '//') {
+		while (src.canRead() && src.peek(2) === '//' && (!noDocCommentsInGap || src.peek(3) !== '///')) {
 			const result = comment()(src, ctx) as Success<CommentNode>
 			ans.push(result)
 			src.skipWhitespace()
@@ -74,9 +76,9 @@ export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> |
  * 
  * @returns A parser that follows a **SYNTAX** rule built with the passed-in parser being repeated zero or more times.
  */
-export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SyntaxUtil<CN>>): void
-export function repeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>): InfallibleParser<SyntaxUtil<CN>>
-export function repeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>): InfallibleParser<SyntaxUtil<CN>> {
+export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SyntaxUtil<CN>>, noDocCommentsInGap?: boolean): void
+export function repeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>, noDocCommentsInGap?: boolean): InfallibleParser<SyntaxUtil<CN>>
+export function repeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>, noDocCommentsInGap = false): InfallibleParser<SyntaxUtil<CN>> {
 	return (src: Source, ctx: ParserContext): SyntaxUtil<CN> => {
 		const ans: SyntaxUtil<CN> = {
 			isSyntaxUtil: true,
@@ -85,7 +87,7 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>):
 		}
 
 		while (src.canRead()) {
-			ans.nodes.push(...syntaxGap()(src, ctx))
+			ans.nodes.push(...syntaxGap(noDocCommentsInGap)(src, ctx))
 
 			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
 

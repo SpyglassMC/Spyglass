@@ -76,6 +76,11 @@ export namespace MinecraftIdentifierToken {
 	}
 }
 
+export interface DocCommentsNode extends AstNode, Syntax<CommentNode> {
+	type: 'nbtdoc:doc_comments',
+	doc: string,
+}
+
 export interface CompoundDefinitionNode extends AstNode, Syntax {
 	type: 'nbtdoc:compound_definition',
 }

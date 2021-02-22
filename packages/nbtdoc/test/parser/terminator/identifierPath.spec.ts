@@ -1,4 +1,4 @@
-import { showWhiteSpaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { identifierPath } from '../../../lib'
@@ -14,7 +14,7 @@ describe('identifierPath()', () => {
 		{ content: 'super::foo something else;' },
 	]
 	for (const { content } of suites) {
-		it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
+		it(`Should parse '${showWhitespaceGlyph(content)}'`, () => {
 			const parser = identifierPath()
 			snapshot(testParser(parser, content))
 		})

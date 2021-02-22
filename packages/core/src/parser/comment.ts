@@ -6,13 +6,14 @@ import { Failure, Result } from './Parser'
 import { ParserContext } from './ParserContext'
 
 interface Options {
-	singleLinePrefixes: Set<string>
+	singleLinePrefixes: Set<string>,
+	includesEol?: boolean,
 }
 
 /**
  * `Failure` when three isn't a comment.
  */
-export function comment({ singleLinePrefixes }: Options): Parser<CommentNode> {
+export function comment({ singleLinePrefixes, includesEol }: Options): Parser<CommentNode> {
 	return (src: Source, ctx: ParserContext): Result<CommentNode> => {
 		src.skipWhitespace()
 		const start = src.cursor
@@ -24,7 +25,11 @@ export function comment({ singleLinePrefixes }: Options): Parser<CommentNode> {
 
 		for (const prefix of singleLinePrefixes) {
 			if (src.peek(prefix.length) === prefix) {
-				src.skipLine()
+				if (includesEol) {
+					src.nextLine()
+				} else {
+					src.skipLine()
+				}
 				ans.range.end = src.cursor
 				ans.comment = src.string.slice(start, src.cursor)
 				return Object.freeze(ans)

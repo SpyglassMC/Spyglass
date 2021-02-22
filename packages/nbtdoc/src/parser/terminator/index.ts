@@ -1,4 +1,5 @@
 export * from './comment'
+export * from './docComment'
 export * from './identifier'
 export * from './identifierPath'
 export * from './keyword'

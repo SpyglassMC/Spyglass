@@ -1,7 +1,7 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { AstNode, Failure, Parser, ParserContext, Source } from '../lib'
 
-export function showWhiteSpaceGlyph(string: string) {
+export function showWhitespaceGlyph(string: string) {
 	return string
 		.replace(/\t/g, '⮀')
 		.replace(/\r/g, '←')
@@ -9,7 +9,7 @@ export function showWhiteSpaceGlyph(string: string) {
 }
 
 export function markOffsetInString(string: string, offset: number) {
-	string = showWhiteSpaceGlyph(string)
+	string = showWhitespaceGlyph(string)
 	return "'" + string.slice(0, offset) + `|${string.charAt(offset)}` + string.slice(offset + 1) + "'"
 }
 
