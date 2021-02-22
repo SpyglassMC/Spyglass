@@ -1,9 +1,9 @@
 import { showWhiteSpaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { ModuleDeclarationParser } from '../../lib'
+import { moduleDeclaration } from '../../lib'
 
-describe('ModuleDeclarationParser', () => {
+describe('moduleDeclaration', () => {
 	describe('parse()', () => {
 		const suites: { content: string }[] = [
 			{ content: '' },
@@ -20,7 +20,7 @@ describe('ModuleDeclarationParser', () => {
 		]
 		for (const { content } of suites) {
 			it(`Should parse '${showWhiteSpaceGlyph(content)}'`, () => {
-				const parser = ModuleDeclarationParser.create()
+				const parser = moduleDeclaration()
 				snapshot(testParser(parser, content))
 			})
 		}

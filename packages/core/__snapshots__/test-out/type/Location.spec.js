@@ -2,7 +2,7 @@ exports['Location create() Should create correctly 1'] = {
   "uri": "",
   "range": {
     "start": 0,
-    "end": 1
+    "end": 0
   }
 }
 
@@ -10,7 +10,7 @@ exports['Location create() Should create correctly 2'] = {
   "uri": "file:///home/spgoding/test",
   "range": {
     "start": 0,
-    "end": 1
+    "end": 0
   }
 }
 

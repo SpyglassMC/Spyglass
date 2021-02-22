@@ -1,6 +1,6 @@
 import { Range } from '../type'
 
-export interface Node {
+export interface AstNode {
 	type: string,
 	range: Range,
 }

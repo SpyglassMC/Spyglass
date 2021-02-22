@@ -1,5 +1,20 @@
-import { Node } from '../node'
-import { Source } from '../Source'
+import { AstNode } from '../node'
+import { Source } from '../util/Source'
 import { ParserContext } from './ParserContext'
 
-export type Parser<N extends {} = Node> = (this: void, src: Source, ctx: ParserContext) => N
+/**
+ * A parser.
+ */
+export type Parser<N extends {} = AstNode> = (this: void, src: Source, ctx: ParserContext) => Result<N>
+
+/**
+ * A parser that always succeeds.
+ */
+export type InfallibleParser<N extends {} = AstNode> = (this: void, src: Source, ctx: ParserContext) => Success<N>
+
+export type Result<N> = Success<N> | Failure
+
+export type Success<N> = Readonly<N>
+
+export const Failure = Symbol('Failure')
+export type Failure = typeof Failure

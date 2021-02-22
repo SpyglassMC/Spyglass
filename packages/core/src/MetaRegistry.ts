@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 
-import { FileParser } from './parser/FileParser'
 import { Parser } from './parser/Parser'
 
 //#region TEMP
@@ -49,6 +48,9 @@ export class MetaRegistry {
 		throw new Error(`There is no parser registered for AST node type '${nodeName}'`)
 	}
 
+	/**
+	 * @deprecated Use `registerLanguage` to register entry parsers for each language.
+	 */
 	public registerParser(nodeName: CoreNodeName, parser: Parser): void
 	public registerParser(nodeName: string, parser: Parser): void
 	public registerParser(nodeName: string, parser: Parser): void {
@@ -94,10 +96,6 @@ export class MetaRegistry {
 
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
 		registry => {
-			//registry.registerParser('boolean', '')
-			// registry.registerParser('comment', CommentParser)
-			registry.registerParser('file', FileParser.create())
-			//registry.registerParser('string', '')
 			// TODO: Register `mcmeta` as `json`.
 		},
 	])

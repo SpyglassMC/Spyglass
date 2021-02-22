@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Node, Parser, ParserContext, Source } from '../lib'
+import { AstNode, Failure, Parser, ParserContext, Source } from '../lib'
 
 export function showWhiteSpaceGlyph(string: string) {
 	return string
@@ -21,7 +21,7 @@ export function testParser(parser: Parser, text: string, {
 	uri?: string,
 	languageID?: string,
 } = {}): {
-	node: Node,
+	node: AstNode | 'FAILURE',
 	errors: Readonly<any[]>,
 } {
 	/* eslint-enable @typescript-eslint/indent */
@@ -31,7 +31,7 @@ export function testParser(parser: Parser, text: string, {
 	})
 	const result = parser(src, ctx)
 	return {
-		node: result,
+		node: result === Failure ? 'FAILURE' : result,
 		errors: ctx.err.dump(),
 	}
 }

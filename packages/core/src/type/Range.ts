@@ -1,21 +1,26 @@
+import { Source } from '..'
+
 export interface Range {
 	start: number,
 	end: number
 }
 
 export namespace Range {
-	export function create(start: number, end?: number): Range
+	export function create(start: number | Source, end?: number | Source): Range
 	export function create(partial: Partial<Range>): Range
-	export function create(param1: number | Partial<Range>, param2?: number): Range {
-		if (typeof param1 === 'number') {
+	export function create(param1: Partial<Range> | number | Source, param2?: number | Source): Range {
+		if (typeof param1 === 'number' || param1 instanceof Source) {
+			const getOffset = (v: number | Source) => typeof v === 'number' ? v : v.cursor
+			const start = getOffset(param1)
 			return {
-				start: param1,
-				end: param2 ?? (param1 + 1),
+				start,
+				end: param2 ? getOffset(param2) : start,
 			}
 		} else {
+			const start = param1.start ?? 0
 			return {
-				start: param1.start ?? 0,
-				end: param1.end ?? ((param1.start ?? 0) + 1),
+				start,
+				end: param1.end ?? start,
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { ErrorReporter, ErrorSeverity, Range } from '../../lib'
@@ -11,6 +12,28 @@ describe('ErrorReporter', () => {
 			snapshot(err.dump())
 			err.report('Error message 3', Range.Beginning)
 			snapshot(err.dump())
+		})
+	})
+	describe('derive()', () => {
+		it('Should create a new reporter', () => {
+			const err = new ErrorReporter()
+			err.report('Error message 1', Range.Beginning)
+			err.report('Error message 2', Range.Beginning, ErrorSeverity.Warning)
+			const actual = err.derive()
+			assert.strictEqual(actual.errors.length, 0)
+		})
+	})
+	describe('absorb()', () => {
+		it('Should absorb another reporter', () => {
+			const err = new ErrorReporter()
+			err.report('Error message 1', Range.Beginning)
+			err.report('Error message 2', Range.Beginning, ErrorSeverity.Warning)
+			const tmpErr = new ErrorReporter()
+			tmpErr.report('Error message 3', Range.Beginning)
+			tmpErr.report('Error message 4', Range.Beginning, ErrorSeverity.Warning)
+			err.absorb(tmpErr)
+			snapshot(err)
+			snapshot(tmpErr)
 		})
 	})
 })

@@ -1,4 +1,4 @@
-export * from './CommentParser'
-export * from './FileParser'
+export * from './comment'
+export * from './file'
 export * from './Parser'
 export * from './ParserContext'

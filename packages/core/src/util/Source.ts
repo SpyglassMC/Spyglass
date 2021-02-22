@@ -20,7 +20,7 @@ export class Source {
 		public string: string
 	) { }
 
-	clone() {
+	clone(): Source {
 		const ans = new Source(this.string)
 		ans.cursor = this.cursor
 		return ans

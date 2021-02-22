@@ -1,161 +1,19 @@
-exports['ModuleDeclarationParser parse() Should parse \'\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "text": ""
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "text": ""
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "text": ""
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "text": ""
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected “mod”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an identifier",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected “;”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Cannot find the keyword “mod”",
-      "severity": 4
-    }
-  ]
+exports['moduleDeclaration parse() Should parse \'\' 1'] = {
+  "node": "FAILURE",
+  "errors": []
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'m\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "text": ""
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 0,
-          "end": 1
-        },
-        "text": "m"
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 1,
-          "end": 1
-        },
-        "text": ""
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "text": "m"
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected “mod”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 1,
-        "end": 2
-      },
-      "message": "Expected “;”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Cannot find the keyword “mod”",
-      "severity": 4
-    }
-  ]
+exports['moduleDeclaration parse() Should parse \'m\' 1'] = {
+  "node": "FAILURE",
+  "errors": []
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
+exports['moduleDeclaration parse() Should parse \'mod zombie\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 10
-    },
     "nodes": [
       {
-        "type": "nbtdoc:keyword/mod",
+        "type": "nbtdoc:keyword",
         "range": {
           "start": 0,
           "end": 3
@@ -171,12 +29,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword/;",
+        "type": "nbtdoc:punctuation",
+        "text": "",
         "range": {
           "start": 10,
           "end": 10
-        },
-        "text": ""
+        }
       }
     ],
     "identifier": {
@@ -186,12 +44,205 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
         "end": 10
       },
       "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 10
     }
   },
   "errors": [
     {
       "range": {
         "start": 10,
+        "end": 10
+      },
+      "message": "Expected “;”",
+      "severity": 3
+    }
+  ]
+}
+
+exports['moduleDeclaration parse() Should parse \'mod zombie;\' 1'] = {
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "mod"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 4,
+          "end": 10
+        },
+        "text": "zombie"
+      },
+      {
+        "type": "nbtdoc:punctuation",
+        "text": ";",
+        "range": {
+          "start": 10,
+          "end": 11
+        }
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 4,
+        "end": 10
+      },
+      "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 11
+    }
+  },
+  "errors": []
+}
+
+exports['moduleDeclaration parse() Should parse \'mod zombie;// Trailing comment.\' 1'] = {
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "mod"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 4,
+          "end": 10
+        },
+        "text": "zombie"
+      },
+      {
+        "type": "nbtdoc:punctuation",
+        "text": ";",
+        "range": {
+          "start": 10,
+          "end": 11
+        }
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 4,
+        "end": 10
+      },
+      "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 11
+    }
+  },
+  "errors": []
+}
+
+exports['moduleDeclaration parse() Should parse \'mod zombie;syntax test.\' 1'] = {
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "mod"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 4,
+          "end": 10
+        },
+        "text": "zombie"
+      },
+      {
+        "type": "nbtdoc:punctuation",
+        "text": ";",
+        "range": {
+          "start": 10,
+          "end": 11
+        }
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 4,
+        "end": 10
+      },
+      "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 11
+    }
+  },
+  "errors": []
+}
+
+exports['moduleDeclaration parse() Should parse \'mod zombie↓syntax test.\' 1'] = {
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "nodes": [
+      {
+        "type": "nbtdoc:keyword",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "text": "mod"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 4,
+          "end": 10
+        },
+        "text": "zombie"
+      },
+      {
+        "type": "nbtdoc:punctuation",
+        "text": "",
+        "range": {
+          "start": 11,
+          "end": 11
+        }
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 4,
+        "end": 10
+      },
+      "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 11
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 11,
         "end": 11
       },
       "message": "Expected “;”",
@@ -200,205 +251,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod zombie\' 1'] = {
   ]
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'mod zombie;\' 1'] = {
+exports['moduleDeclaration parse() Should parse \'mod\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 11
-    },
     "nodes": [
       {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "text": "mod"
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 4,
-          "end": 10
-        },
-        "text": "zombie"
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 10,
-          "end": 11
-        },
-        "text": ";"
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 4,
-        "end": 10
-      },
-      "text": "zombie"
-    }
-  },
-  "errors": []
-}
-
-exports['ModuleDeclarationParser parse() Should parse \'mod zombie;// Trailing comment.\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 11
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "text": "mod"
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 4,
-          "end": 10
-        },
-        "text": "zombie"
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 10,
-          "end": 11
-        },
-        "text": ";"
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 4,
-        "end": 10
-      },
-      "text": "zombie"
-    }
-  },
-  "errors": []
-}
-
-exports['ModuleDeclarationParser parse() Should parse \'mod zombie;syntax test.\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 11
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "text": "mod"
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 4,
-          "end": 10
-        },
-        "text": "zombie"
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 10,
-          "end": 11
-        },
-        "text": ";"
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 4,
-        "end": 10
-      },
-      "text": "zombie"
-    }
-  },
-  "errors": []
-}
-
-exports['ModuleDeclarationParser parse() Should parse \'mod zombie↓syntax test.\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 11
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "text": "mod"
-      },
-      {
-        "type": "nbtdoc:identifier",
-        "range": {
-          "start": 4,
-          "end": 10
-        },
-        "text": "zombie"
-      },
-      {
-        "type": "nbtdoc:keyword/;",
-        "range": {
-          "start": 11,
-          "end": 11
-        },
-        "text": ""
-      }
-    ],
-    "identifier": {
-      "type": "nbtdoc:identifier",
-      "range": {
-        "start": 4,
-        "end": 10
-      },
-      "text": "zombie"
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 11,
-        "end": 12
-      },
-      "message": "Expected “;”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
-  "node": {
-    "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "nodes": [
-      {
-        "type": "nbtdoc:keyword/mod",
+        "type": "nbtdoc:keyword",
         "range": {
           "start": 0,
           "end": 3
@@ -414,12 +272,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
         "text": ""
       },
       {
-        "type": "nbtdoc:keyword/;",
+        "type": "nbtdoc:punctuation",
+        "text": "",
         "range": {
           "start": 3,
           "end": 3
-        },
-        "text": ""
+        }
       }
     ],
     "identifier": {
@@ -429,6 +287,10 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
         "end": 3
       },
       "text": ""
+    },
+    "range": {
+      "start": 0,
+      "end": 3
     }
   },
   "errors": [
@@ -443,7 +305,7 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
     {
       "range": {
         "start": 3,
-        "end": 4
+        "end": 3
       },
       "message": "Expected “;”",
       "severity": 3
@@ -451,16 +313,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod\' 1'] = {
   ]
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie ;\' 1'] = {
+exports['moduleDeclaration parse() Should parse \'mod// Comment.↓zombie ;\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 23
-    },
     "nodes": [
       {
-        "type": "nbtdoc:keyword/mod",
+        "type": "nbtdoc:keyword",
         "range": {
           "start": 0,
           "end": 3
@@ -472,7 +330,8 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
         "range": {
           "start": 3,
           "end": 14
-        }
+        },
+        "comment": "// Comment."
       },
       {
         "type": "nbtdoc:identifier",
@@ -483,12 +342,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword/;",
+        "type": "nbtdoc:punctuation",
+        "text": ";",
         "range": {
           "start": 22,
           "end": 23
-        },
-        "text": ";"
+        }
       }
     ],
     "identifier": {
@@ -498,21 +357,21 @@ exports['ModuleDeclarationParser parse() Should parse \'mod// Comment.↓zombie 
         "end": 21
       },
       "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 23
     }
   },
   "errors": []
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zombie ;\' 1'] = {
+exports['moduleDeclaration parse() Should parse \'mod/// Doc Comment.↓zombie ;\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 28
-    },
     "nodes": [
       {
-        "type": "nbtdoc:keyword/mod",
+        "type": "nbtdoc:keyword",
         "range": {
           "start": 0,
           "end": 3
@@ -524,7 +383,8 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
         "range": {
           "start": 3,
           "end": 19
-        }
+        },
+        "comment": "/// Doc Comment."
       },
       {
         "type": "nbtdoc:identifier",
@@ -535,12 +395,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword/;",
+        "type": "nbtdoc:punctuation",
+        "text": ";",
         "range": {
           "start": 27,
           "end": 28
-        },
-        "text": ";"
+        }
       }
     ],
     "identifier": {
@@ -550,6 +410,10 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
         "end": 26
       },
       "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 28
     }
   },
   "errors": [
@@ -564,16 +428,12 @@ exports['ModuleDeclarationParser parse() Should parse \'mod/// Doc Comment.↓zo
   ]
 }
 
-exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
+exports['moduleDeclaration parse() Should parse \'modzombie;\' 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
-    "range": {
-      "start": 0,
-      "end": 10
-    },
     "nodes": [
       {
-        "type": "nbtdoc:keyword/mod",
+        "type": "nbtdoc:keyword",
         "range": {
           "start": 0,
           "end": 3
@@ -589,12 +449,12 @@ exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:keyword/;",
+        "type": "nbtdoc:punctuation",
+        "text": ";",
         "range": {
           "start": 9,
           "end": 10
-        },
-        "text": ";"
+        }
       }
     ],
     "identifier": {
@@ -604,13 +464,17 @@ exports['ModuleDeclarationParser parse() Should parse \'modzombie;\' 1'] = {
         "end": 9
       },
       "text": "zombie"
+    },
+    "range": {
+      "start": 0,
+      "end": 10
     }
   },
   "errors": [
     {
       "range": {
         "start": 3,
-        "end": 4
+        "end": 3
       },
       "message": "Expected a separation",
       "severity": 3

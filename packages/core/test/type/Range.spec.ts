@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { Range } from '../../lib'
+import { Range, Source } from '../../lib'
 
 describe('Range', () => {
 	describe('create()', () => {
@@ -12,6 +12,10 @@ describe('Range', () => {
 			snapshot(Range.create({ end: 2 }))
 			snapshot(Range.create({ start: 1, end: 2 }))
 			snapshot(Range.create(5))
+			const src = new Source('')
+			src.cursor = 6
+			snapshot(Range.create(src))
+			snapshot(Range.create(1, src))
 		})
 		it('Should create a new object from the passed-in Range', () => {
 			const incoming = Range.create(1, 2)
