@@ -1,7 +1,7 @@
-import { CommentNode, Parser } from '@spyglassmc/core'
+import { CommentNode, optional, Parser, wrap } from '@spyglassmc/core'
 import { DescribesClauseNode, IdentifierPathToken, KeywordToken, MinecraftIdentifierToken, PunctuationToken } from '../..'
 import { identifierPath, keyword, minecraftIdentifier, punctuation } from '../terminator'
-import { optional, repeat, syntax, wrap } from '../util'
+import { repeat, syntax } from '../util'
 
 type ChildNode = IdentifierPathToken | KeywordToken | MinecraftIdentifierToken | PunctuationToken | CommentNode
 

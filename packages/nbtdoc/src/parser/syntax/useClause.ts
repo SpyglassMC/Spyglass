@@ -1,6 +1,5 @@
-import { Parser } from '@spyglassmc/core'
-import { identifierPath, IdentifierPathToken, keyword, KeywordToken, punctuation, PunctuationToken, syntax, UseClauseNode, wrap } from '../..'
-import { optional } from '../util'
+import { optional, Parser, wrap } from '@spyglassmc/core'
+import { identifierPath, IdentifierPathToken, keyword, KeywordToken, punctuation, PunctuationToken, syntax, UseClauseNode } from '../..'
 
 /**
  * `Failure` when there isn't the `use` keyword.

@@ -1,8 +1,8 @@
-import { InfallibleParser } from '@spyglassmc/core'
+import { any, InfallibleParser, wrap } from '@spyglassmc/core'
 import { describesClause, moduleDeclaration } from '.'
 import { ContentNode, MainNode } from '../node'
 import { compoundDefinition, enumDefinition, injectClause } from './syntax'
-import { any, repeat, wrap } from './util'
+import { repeat } from './util'
 
 export function entry(): InfallibleParser<MainNode> {
 	return wrap(

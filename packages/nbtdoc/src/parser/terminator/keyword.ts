@@ -1,6 +1,6 @@
-import { Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source } from '@spyglassmc/core'
+import { Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source, wrap } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { KeywordToken, PunctuationToken, wrap } from '../..'
+import { KeywordToken, PunctuationToken } from '../..'
 
 interface Options {
 	canBeFollowedByLetter?: boolean,

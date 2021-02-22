@@ -1,7 +1,7 @@
-import { CommentNode, InfallibleParser } from '@spyglassmc/core'
+import { CommentNode, InfallibleParser, wrap } from '@spyglassmc/core'
 import { DocCommentsNode } from '../../node'
 import { docComment } from '../terminator'
-import { repeat, wrap } from '../util'
+import { repeat } from '../util'
 
 /**
  * @returns A parser that takes zero or more doc comments.

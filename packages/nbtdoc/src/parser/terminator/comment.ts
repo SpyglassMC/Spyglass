@@ -1,7 +1,6 @@
 import * as core from '@spyglassmc/core'
-import { CommentNode, Parser } from '@spyglassmc/core'
+import { CommentNode, Parser, validate } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { validate } from '..'
 
 /**
  * @returns A comment parser that accepts normal comments (`//`) and reports an error if it's a doc comment (`///`).
