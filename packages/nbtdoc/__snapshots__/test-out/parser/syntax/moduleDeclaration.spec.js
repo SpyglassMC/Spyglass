@@ -13,7 +13,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -29,7 +29,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 10,
@@ -67,7 +67,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -83,7 +83,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 10,
@@ -112,7 +112,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -128,7 +128,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 10,
@@ -157,7 +157,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -173,7 +173,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 10,
@@ -202,7 +202,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -218,7 +218,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 11,
@@ -256,7 +256,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -272,7 +272,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
         "text": ""
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 3,
@@ -318,7 +318,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -331,7 +331,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
           "start": 3,
           "end": 14
         },
-        "comment": "// Comment."
+        "comment": " Comment."
       },
       {
         "type": "nbtdoc:identifier",
@@ -342,7 +342,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 22,
@@ -371,7 +371,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -384,7 +384,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
           "start": 3,
           "end": 19
         },
-        "comment": "/// Doc Comment."
+        "comment": "/ Doc Comment."
       },
       {
         "type": "nbtdoc:identifier",
@@ -395,7 +395,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 27,
@@ -433,7 +433,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
     "type": "nbtdoc:module_declaration",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -449,7 +449,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
         "text": "zombie"
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 9,

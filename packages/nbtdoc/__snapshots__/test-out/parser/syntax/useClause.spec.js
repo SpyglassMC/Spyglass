@@ -13,7 +13,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 6
@@ -21,7 +21,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
         "text": "export"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 7,
           "end": 10
@@ -55,7 +55,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 19,
@@ -103,7 +103,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 6
@@ -111,7 +111,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
         "text": "export"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 7,
           "end": 10
@@ -137,7 +137,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 14,
@@ -177,7 +177,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 6
@@ -185,7 +185,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
         "text": "export"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 7,
           "end": 10
@@ -220,7 +220,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 26,
@@ -274,7 +274,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 6
@@ -282,7 +282,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
         "text": "export"
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 6,
           "end": 9
@@ -308,7 +308,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 12,
@@ -370,7 +370,7 @@ exports['useClause() Parse "use foo" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -396,7 +396,7 @@ exports['useClause() Parse "use foo" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 7,
@@ -445,7 +445,7 @@ exports['useClause() Parse "use foo;" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -471,7 +471,7 @@ exports['useClause() Parse "use foo;" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 7,
@@ -511,7 +511,7 @@ exports['useClause() Parse "use" 1'] = {
     "type": "nbtdoc:use_clause",
     "nodes": [
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 0,
           "end": 3
@@ -537,7 +537,7 @@ exports['useClause() Parse "use" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 3,

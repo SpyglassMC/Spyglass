@@ -36,7 +36,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
             }
           },
           {
-            "type": "nbtdoc:keyword",
+            "type": "nbtdoc:literal",
             "range": {
               "start": 4,
               "end": 13
@@ -55,7 +55,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
             ]
           },
           {
-            "type": "nbtdoc:punctuation",
+            "type": "nbtdoc:literal",
             "text": ";",
             "range": {
               "start": 29,
@@ -115,7 +115,7 @@ exports['entry() Parse "mod describes;" 1'] = {
         "type": "nbtdoc:module_declaration",
         "nodes": [
           {
-            "type": "nbtdoc:keyword",
+            "type": "nbtdoc:literal",
             "range": {
               "start": 0,
               "end": 3
@@ -131,7 +131,7 @@ exports['entry() Parse "mod describes;" 1'] = {
             "text": "describes"
           },
           {
-            "type": "nbtdoc:punctuation",
+            "type": "nbtdoc:literal",
             "text": ";",
             "range": {
               "start": 13,

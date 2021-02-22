@@ -31,7 +31,7 @@ export function comment({ singleLinePrefixes, includesEol }: Options): Parser<Co
 					src.skipLine()
 				}
 				ans.range.end = src.cursor
-				ans.comment = src.string.slice(start, src.cursor)
+				ans.comment = src.string.slice(start + prefix.length, src.cursor)
 				return Object.freeze(ans)
 			}
 		}

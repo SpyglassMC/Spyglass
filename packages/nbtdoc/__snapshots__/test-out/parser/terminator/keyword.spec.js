@@ -10,7 +10,7 @@ exports['keyword() Parse "f" 1'] = {
 
 exports['keyword() Parse "foo something else;" 1'] = {
   "node": {
-    "type": "nbtdoc:keyword",
+    "type": "nbtdoc:literal",
     "range": {
       "start": 0,
       "end": 3
@@ -22,7 +22,7 @@ exports['keyword() Parse "foo something else;" 1'] = {
 
 exports['keyword() Parse "foo" 1'] = {
   "node": {
-    "type": "nbtdoc:keyword",
+    "type": "nbtdoc:literal",
     "range": {
       "start": 0,
       "end": 3
@@ -34,7 +34,7 @@ exports['keyword() Parse "foo" 1'] = {
 
 exports['keyword() Parse "foobar" 1'] = {
   "node": {
-    "type": "nbtdoc:keyword",
+    "type": "nbtdoc:literal",
     "range": {
       "start": 0,
       "end": 3
@@ -55,7 +55,7 @@ exports['keyword() Parse "foobar" 1'] = {
 
 exports['punctuation() Parse "" 1'] = {
   "node": {
-    "type": "nbtdoc:punctuation",
+    "type": "nbtdoc:literal",
     "text": "",
     "range": {
       "start": 0,
@@ -76,7 +76,7 @@ exports['punctuation() Parse "" 1'] = {
 
 exports['punctuation() Parse ";" 1'] = {
   "node": {
-    "type": "nbtdoc:punctuation",
+    "type": "nbtdoc:literal",
     "text": ";",
     "range": {
       "start": 0,
@@ -88,7 +88,7 @@ exports['punctuation() Parse ";" 1'] = {
 
 exports['punctuation() Parse ";foo" 1'] = {
   "node": {
-    "type": "nbtdoc:punctuation",
+    "type": "nbtdoc:literal",
     "text": ";",
     "range": {
       "start": 0,
@@ -100,7 +100,7 @@ exports['punctuation() Parse ";foo" 1'] = {
 
 exports['punctuation() Parse ";↓something else;" 1'] = {
   "node": {
-    "type": "nbtdoc:punctuation",
+    "type": "nbtdoc:literal",
     "text": ";",
     "range": {
       "start": 0,

@@ -1,3 +1,5 @@
+import { Range, RangeLike } from '..'
+
 type Space =
 	| ' '
 	| '\t'
@@ -50,6 +52,11 @@ export class Source {
 	skip(step = 1): this {
 		this.cursor += step
 		return this
+	}
+
+	slice(rangeLike: RangeLike): string {
+		const range = Range.get(rangeLike)
+		return this.string.slice(range.start, range.end)
 	}
 
 	/**

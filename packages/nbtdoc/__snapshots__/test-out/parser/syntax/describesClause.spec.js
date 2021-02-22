@@ -35,7 +35,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -52,7 +52,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "path": []
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "[",
         "range": {
           "start": 14,
@@ -69,7 +69,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "path": []
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "]",
         "range": {
           "start": 15,
@@ -77,7 +77,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 16,
@@ -134,7 +134,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "start": 14,
         "end": 14
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     },
     {
@@ -142,7 +142,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "start": 15,
         "end": 15
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     }
   ]
@@ -171,7 +171,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -190,7 +190,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "",
         "range": {
           "start": 28,
@@ -268,7 +268,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -287,7 +287,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 28,
@@ -356,7 +356,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -375,7 +375,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 28,
@@ -444,7 +444,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -463,7 +463,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "[",
         "range": {
           "start": 28,
@@ -480,7 +480,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "path": []
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "]",
         "range": {
           "start": 29,
@@ -488,7 +488,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 30,
@@ -547,7 +547,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "start": 29,
         "end": 29
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     }
   ]
@@ -576,7 +576,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -595,7 +595,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "[",
         "range": {
           "start": 28,
@@ -614,7 +614,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "]",
         "range": {
           "start": 44,
@@ -622,7 +622,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 45,
@@ -703,7 +703,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -722,7 +722,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "[",
         "range": {
           "start": 28,
@@ -741,7 +741,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ",",
         "range": {
           "start": 46,
@@ -760,7 +760,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ",",
         "range": {
           "start": 70,
@@ -777,7 +777,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "path": []
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "]",
         "range": {
           "start": 72,
@@ -785,7 +785,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 73,
@@ -866,7 +866,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "start": 72,
         "end": 72
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     }
   ]
@@ -895,7 +895,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         }
       },
       {
-        "type": "nbtdoc:keyword",
+        "type": "nbtdoc:literal",
         "range": {
           "start": 4,
           "end": 13
@@ -914,7 +914,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "[",
         "range": {
           "start": 28,
@@ -933,7 +933,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ",",
         "range": {
           "start": 46,
@@ -952,7 +952,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": "]",
         "range": {
           "start": 71,
@@ -960,7 +960,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         }
       },
       {
-        "type": "nbtdoc:punctuation",
+        "type": "nbtdoc:literal",
         "text": ";",
         "range": {
           "start": 72,

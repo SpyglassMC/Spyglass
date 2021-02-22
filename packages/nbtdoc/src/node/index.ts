@@ -31,14 +31,17 @@ export interface ErrorNode extends AstNode {
 	type: 'nbtdoc:error',
 }
 
-export interface PunctuationToken extends AstNode {
-	type: 'nbtdoc:punctuation',
-	text: string,
+export interface LiteralToken<T extends string = string> extends AstNode {
+	type: 'nbtdoc:literal',
+	text: T,
 }
-
-export interface KeywordToken extends AstNode {
-	type: 'nbtdoc:keyword',
-	text: string,
+export namespace LiteralToken {
+	export function is<T extends string>(obj: object, literal?: T | T[]): obj is LiteralToken<T> {
+		return (
+			(obj as LiteralToken).type === 'nbtdoc:literal' &&
+			(literal === undefined || (Array.isArray(literal) ? literal.includes((obj as LiteralToken<T>).text) : (obj as LiteralToken).text === literal))
+		)
+	}
 }
 
 export interface IdentifierToken extends AstNode {
@@ -46,7 +49,7 @@ export interface IdentifierToken extends AstNode {
 	text: string,
 }
 export namespace IdentifierToken {
-	export function is(obj: object): obj is IdentifierToken{
+	export function is(obj: object): obj is IdentifierToken {
 		return (obj as IdentifierToken).type === 'nbtdoc:identifier'
 	}
 }
@@ -57,7 +60,7 @@ export interface IdentifierPathToken extends AstNode {
 	path: (IdentifierToken | 'super')[],
 }
 export namespace IdentifierPathToken {
-	export function is(obj: object): obj is IdentifierPathToken{
+	export function is(obj: object): obj is IdentifierPathToken {
 		return (obj as IdentifierPathToken).type === 'nbtdoc:identifier_path'
 	}
 }
@@ -71,9 +74,27 @@ export interface MinecraftIdentifierToken extends AstNode {
 	path: string[],
 }
 export namespace MinecraftIdentifierToken {
-	export function is(obj: object): obj is MinecraftIdentifierToken{
+	export function is(obj: object): obj is MinecraftIdentifierToken {
 		return (obj as MinecraftIdentifierToken).type === 'nbtdoc:minecraft_identifier'
 	}
+}
+
+export interface StringToken extends AstNode {
+	type: 'nbtdoc:string',
+	raw: string,
+	value: string,
+}
+
+export interface IntegerToken extends AstNode {
+	type: 'nbtdoc:integer',
+	raw: string,
+	value: bigint,
+}
+
+export interface FloatToken extends AstNode {
+	type: 'nbtdoc:float',
+	raw: string,
+	value: number,
 }
 
 export interface DocCommentsNode extends AstNode, Syntax<CommentNode> {
@@ -85,27 +106,31 @@ export interface CompoundDefinitionNode extends AstNode, Syntax {
 	type: 'nbtdoc:compound_definition',
 }
 
-export interface DescribesClauseNode extends AstNode, Syntax<IdentifierPathToken | KeywordToken | MinecraftIdentifierToken | PunctuationToken> {
+export interface DescribesClauseNode extends AstNode, Syntax<IdentifierPathToken | LiteralToken | MinecraftIdentifierToken> {
 	type: 'nbtdoc:describes_clause',
 	path: IdentifierPathToken,
 	registry: MinecraftIdentifierToken,
 	objects: MinecraftIdentifierToken[] | null,
 }
 
-export interface EnumDefinitionNode extends AstNode, Syntax {
+export const EnumType = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
+export type EnumType = typeof EnumType[number]
+
+export interface EnumDefinitionNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | IntegerToken | FloatToken | StringToken> {
 	type: 'nbtdoc:enum_definition',
+	enumType: LiteralToken<EnumType>,
 }
 
 export interface InjectClauseNode extends AstNode, Syntax {
 	type: 'nbtdoc:inject_clause',
 }
 
-export interface ModuleDeclarationNode extends AstNode, Syntax<KeywordToken | IdentifierToken | PunctuationToken> {
+export interface ModuleDeclarationNode extends AstNode, Syntax<LiteralToken | IdentifierToken> {
 	type: 'nbtdoc:module_declaration',
 	identifier: IdentifierToken,
 }
 
-export interface UseClauseNode extends AstNode, Syntax<KeywordToken | IdentifierPathToken | PunctuationToken> {
+export interface UseClauseNode extends AstNode, Syntax<LiteralToken | IdentifierPathToken> {
 	type: 'nbtdoc:use_clause',
 	isExport: boolean,
 	path: IdentifierPathToken,

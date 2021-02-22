@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
-import { Source } from '../../lib'
+import { Range, Source } from '../../lib'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils'
 
 describe('Source', () => {
@@ -88,6 +88,13 @@ describe('Source', () => {
 				assert.strictEqual(actualSelf.cursor, expectedCursor)
 			})
 		}
+	})
+	describe('slice()', () => {
+		it('Should return correctly', () => {
+			const src = new Source('foo bar baz qux')
+			assert.strictEqual(src.slice(Range.create(0, 1)), 'f')
+			assert.strictEqual(src.slice(Range.create(5, 8)), 'ar ')
+		})
 	})
 	describe('readLine()', () => {
 		const suites: { string: string, cursor: number, expected: string }[] = [

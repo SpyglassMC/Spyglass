@@ -2,6 +2,9 @@ import { AstNode } from './AstNode'
 
 export interface CommentNode extends AstNode {
 	type: 'comment',
+	/**
+	 * The actual comment with prefixes and suffixes removed.
+	 */
 	comment: string,
 }
 

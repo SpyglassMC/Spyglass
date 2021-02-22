@@ -1,6 +1,5 @@
 import { Parser, wrap } from '@spyglassmc/core'
-import { IdentifierToken, ModuleDeclarationNode } from '../..'
-import { KeywordToken, PunctuationToken } from '../../node'
+import { IdentifierToken, LiteralToken, ModuleDeclarationNode } from '../..'
 import { identifier, keyword, punctuation } from '../terminator'
 import { syntax } from '../util'
 
@@ -9,7 +8,7 @@ import { syntax } from '../util'
  */
 export function moduleDeclaration(): Parser<ModuleDeclarationNode> {
 	return wrap(
-		syntax<KeywordToken | IdentifierToken | PunctuationToken>([
+		syntax<LiteralToken | IdentifierToken>([
 			keyword('mod'),
 			identifier(),
 			punctuation(';'),

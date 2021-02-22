@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { Range, Source } from '../../lib'
+import { AstNode, Range, Source } from '../../lib'
 
 describe('Range', () => {
 	describe('create()', () => {
@@ -24,6 +24,25 @@ describe('Range', () => {
 			incoming.start = 0
 
 			assert.deepStrictEqual(result, Range.create(1, 2))
+		})
+	})
+	describe('get()', () => {
+		it('Should clone a Range', () => {
+			const actual = Range.get(Range.Beginning)
+			assert.deepStrictEqual(actual, Range.Beginning)
+			assert.notStrictEqual(actual, Range.Beginning)
+		})
+		it("Should clone an AstNode's Range", () => {
+			const node: AstNode = { type: 'ast', range: Range.Beginning }
+			const actual = Range.get(node)
+			assert.deepStrictEqual(actual, node.range)
+			assert.notStrictEqual(actual, node.range)
+		})
+		it('Should create from a Source', () => {
+			const src = new Source('foobar')
+			src.cursor = 4
+			const actual = Range.get(src)
+			assert.deepStrictEqual(actual, Range.create(4, 4))
 		})
 	})
 	describe('toString()', () => {

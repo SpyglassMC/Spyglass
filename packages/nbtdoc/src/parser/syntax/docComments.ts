@@ -12,7 +12,7 @@ export function docComments(): InfallibleParser<DocCommentsNode> {
 		res => ({
 			type: 'nbtdoc:doc_comments',
 			nodes: res.nodes,
-			doc: res.nodes.filter(CommentNode.is).map(v => v.comment.slice(3)).join(''),
+			doc: res.nodes.filter(CommentNode.is).map(v => v.comment).join(''),
 		})
 	)
 }

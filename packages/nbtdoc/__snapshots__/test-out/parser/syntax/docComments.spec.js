@@ -21,7 +21,7 @@ exports['docComments() Parse "/// This is a doc comment." 1'] = {
           "start": 0,
           "end": 26
         },
-        "comment": "/// This is a doc comment."
+        "comment": " This is a doc comment."
       }
     ],
     "doc": " This is a doc comment.",
@@ -56,7 +56,7 @@ exports['docComments() Parse "⮀/// This is a doc comment.↓⮀/// And more?�
           "start": 1,
           "end": 28
         },
-        "comment": "/// This is a doc comment.\n"
+        "comment": " This is a doc comment.\n"
       },
       {
         "type": "comment",
@@ -64,7 +64,7 @@ exports['docComments() Parse "⮀/// This is a doc comment.↓⮀/// And more?�
           "start": 29,
           "end": 43
         },
-        "comment": "/// And more?\n"
+        "comment": " And more?\n"
       }
     ],
     "doc": " This is a doc comment.\n And more?\n",

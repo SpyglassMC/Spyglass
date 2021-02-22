@@ -15,5 +15,9 @@ describe('comment()', () => {
 			const parser = comment({ singleLinePrefixes: prefixes })
 			snapshot(testParser(parser, content))
 		})
+		it(`Parse "${showWhitespaceGlyph(content)}" with "includesEol" on`, () => {
+			const parser = comment({ singleLinePrefixes: prefixes, includesEol: true })
+			snapshot(testParser(parser, content))
+		})
 	}
 })

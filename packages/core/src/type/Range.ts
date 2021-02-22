@@ -1,4 +1,7 @@
-import { Source } from '..'
+import { AstNode, Source } from '..'
+
+
+export type RangeLike = Range | AstNode | Source
 
 export interface Range {
 	start: number,
@@ -23,6 +26,21 @@ export namespace Range {
 				end: param1.end ?? start,
 			}
 		}
+	}
+
+	/**
+	 * Get a range from a `RangeLike`.
+	 * 
+	 * @returns
+	 * - `Range`: a clone of it.
+	 * - `AstNode`: a clone of its range.
+	 * - `Source`: a range with both positions set to the its `cursor`.
+	 */
+	export function get(range: RangeLike): Range {
+		if (range instanceof Source) {
+			return Range.create(range.cursor)
+		}
+		return Range.create((range as AstNode).range ?? (range as Range))
 	}
 
 	/**

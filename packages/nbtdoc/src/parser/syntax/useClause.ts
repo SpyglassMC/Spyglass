@@ -1,12 +1,12 @@
 import { optional, Parser, wrap } from '@spyglassmc/core'
-import { identifierPath, IdentifierPathToken, keyword, KeywordToken, punctuation, PunctuationToken, syntax, UseClauseNode } from '../..'
+import { identifierPath, IdentifierPathToken, keyword, LiteralToken, punctuation, syntax, UseClauseNode } from '../..'
 
 /**
  * `Failure` when there isn't the `use` keyword.
  */
 export function useClause(): Parser<UseClauseNode> {
 	return wrap(
-		syntax<KeywordToken | IdentifierPathToken | PunctuationToken>([
+		syntax<LiteralToken | IdentifierPathToken>([
 			optional(keyword('export')),
 			keyword('use'),
 			identifierPath(),
@@ -15,7 +15,7 @@ export function useClause(): Parser<UseClauseNode> {
 		res => ({
 			type: 'nbtdoc:use_clause',
 			nodes: res.nodes,
-			isExport: res.nodes.some(n => n.type === 'nbtdoc:keyword' && n.text === 'export'),
+			isExport: res.nodes.some(n => LiteralToken.is(n, 'export')),
 			path: res.nodes.find(IdentifierPathToken.is)!,
 		})
 	)

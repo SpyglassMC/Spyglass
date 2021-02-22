@@ -27,7 +27,7 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 				localize('expected', [
 					localize('nbtdoc.error.identifier'),
 				]),
-				ans.range
+				ans
 			)
 		} else if (!text.match(regex)) {
 			ctx.err.report(
@@ -35,7 +35,7 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 					localize('punc.quote', [text]),
 					localize('punc.quote', [regex.toString()]),
 				]),
-				ans.range
+				ans
 			)
 		}
 

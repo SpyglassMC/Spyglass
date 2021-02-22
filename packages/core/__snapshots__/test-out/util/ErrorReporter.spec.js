@@ -78,8 +78,8 @@ exports['ErrorReporter report() & dump() Should report and dump errors correctly
 exports['ErrorReporter report() & dump() Should report and dump errors correctly 2'] = [
   {
     "range": {
-      "start": 0,
-      "end": 1
+      "start": 4,
+      "end": 4
     },
     "message": "Error message 3",
     "severity": 3

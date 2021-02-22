@@ -14,7 +14,7 @@ exports['minecraftIdentifier() Parse "" 1'] = {
         "start": 0,
         "end": 0
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     }
   ]
@@ -52,7 +52,7 @@ exports['minecraftIdentifier() Parse "foo" 1'] = {
         "start": 3,
         "end": 3
       },
-      "message": "Expected a colon; namespaces of Minecraft identifiers can not be omitted in nbtdoc files",
+      "message": "Expected the colon (“:”) of Minecraft identifier",
       "severity": 3
     }
   ]

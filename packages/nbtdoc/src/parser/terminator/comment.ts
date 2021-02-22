@@ -12,7 +12,7 @@ export function comment(): Parser<CommentNode> {
 		core.comment({
 			singleLinePrefixes: new Set(['//']),
 		}),
-		res => !res.comment.startsWith('///'),
+		(res, src) => !src.slice(res).startsWith('///'),
 		localize('nbtdoc.error.syntax.doc-comment-unexpected')
 	)
 }

@@ -1,6 +1,13 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { AstNode, Failure, Parser, ParserContext, Source } from '../lib'
 
+// Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
+Object.defineProperty(BigInt.prototype, 'toJSON', {
+	get() {
+		return () => String(this)
+	},
+})
+
 export function showWhitespaceGlyph(string: string) {
 	return string
 		.replace(/\t/g, '⮀')
