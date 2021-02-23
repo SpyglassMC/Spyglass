@@ -21,7 +21,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -90,7 +90,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -157,7 +157,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -203,7 +203,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -254,7 +254,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -300,7 +300,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -342,7 +342,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -388,7 +388,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -430,7 +430,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -501,7 +501,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -562,7 +562,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -635,7 +635,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -689,7 +689,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -798,7 +798,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -881,7 +881,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     },
     "nodes": [
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -973,7 +973,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       }
     ],
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {

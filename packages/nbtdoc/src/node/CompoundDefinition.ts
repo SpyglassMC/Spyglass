@@ -1,8 +1,9 @@
 import { AstNode, Range } from '@spyglassmc/core'
-import { DocCommentsNode, FloatToken, IdentifierPathToken, IdentifierToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
+import { DocCommentsNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
 
 export interface CompoundDefinitionNode extends AstNode, Syntax<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
+	doc: DocCommentsNode,
 	identifier: IdentifierToken,
 	extends: CompoundExtendable | null,
 	fields: CompoundFieldNode[],
@@ -21,10 +22,10 @@ export namespace RegistryIndexNode {
 	}
 }
 
-export type CompoundExtendable = RegistryIndexNode | IdentifierPathToken
+export type CompoundExtendable = RegistryIndexNode | IdentPathToken
 export namespace CompoundExtendable {
 	export function is(obj: object): obj is CompoundExtendable {
-		return RegistryIndexNode.is(obj) || IdentifierPathToken.is(obj)
+		return RegistryIndexNode.is(obj) || IdentPathToken.is(obj)
 	}
 }
 
@@ -42,7 +43,7 @@ export namespace CompoundFieldNode {
 
 export type CompoundFieldChild =
 	| DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
-	| IntRangeNode | NatRangeNode | FloatRangeNode | RegistryIndexNode | IdentifierPathToken | MinecraftIdentifierToken
+	| IntRangeNode | NatRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | MinecraftIdentifierToken
 
 export type CompoundFieldKey = IdentifierToken | StringToken
 export namespace CompoundFieldKey {
@@ -131,7 +132,7 @@ export type CompoundFieldTypeNode = {
 	registry: MinecraftIdentifierToken,
 } | {
 	typeType: 'path',
-	path: IdentifierPathToken,
+	path: IdentPathToken,
 } | {
 	typeType: 'union',
 	members: CompoundFieldTypeNode[],
@@ -175,7 +176,7 @@ export namespace FloatRangeNode {
 export type FieldPathKey = LiteralToken<'super'> | IdentifierToken | StringToken
 export namespace FieldPathKey {
 	export function is(obj: object): obj is FieldPathKey {
-		return LiteralToken.is('super')(obj) || IdentifierPathToken.is(obj) || StringToken.is(obj)
+		return LiteralToken.is('super')(obj) || IdentifierToken.is(obj) || StringToken.is(obj)
 	}
 }
 

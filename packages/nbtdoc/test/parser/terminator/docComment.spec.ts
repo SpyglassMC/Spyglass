@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { docComment } from '../../../lib'
 
-describe('docComment()', () => {
+describe('docComment', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: '/' },
@@ -13,7 +13,7 @@ describe('docComment()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = docComment()
+			const parser = docComment
 			snapshot(testParser(parser, content))
 		})
 	}

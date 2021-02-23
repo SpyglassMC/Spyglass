@@ -31,14 +31,14 @@ export namespace IdentifierToken {
 	}
 }
 
-export interface IdentifierPathToken extends AstNode {
-	type: 'nbtdoc:identifier_path',
+export interface IdentPathToken extends AstNode {
+	type: 'nbtdoc:ident_path',
 	fromGlobalRoot: boolean,
 	path: (IdentifierToken | LiteralToken<'super'>)[],
 }
-export namespace IdentifierPathToken {
-	export function is(obj: object): obj is IdentifierPathToken {
-		return (obj as IdentifierPathToken).type === 'nbtdoc:identifier_path'
+export namespace IdentPathToken {
+	export function is(obj: object): obj is IdentPathToken {
+		return (obj as IdentPathToken).type === 'nbtdoc:ident_path'
 	}
 }
 
@@ -105,9 +105,9 @@ export namespace DocCommentsNode {
 	}
 }
 
-export interface DescribesClauseNode extends AstNode, Syntax<IdentifierPathToken | LiteralToken | MinecraftIdentifierToken> {
+export interface DescribesClauseNode extends AstNode, Syntax<IdentPathToken | LiteralToken | MinecraftIdentifierToken> {
 	type: 'nbtdoc:describes_clause',
-	path: IdentifierPathToken,
+	path: IdentPathToken,
 	registry: MinecraftIdentifierToken,
 	objects: MinecraftIdentifierToken[] | null,
 }
@@ -121,10 +121,10 @@ export interface ModuleDeclarationNode extends AstNode, Syntax<LiteralToken | Id
 	identifier: IdentifierToken,
 }
 
-export interface UseClauseNode extends AstNode, Syntax<LiteralToken | IdentifierPathToken> {
+export interface UseClauseNode extends AstNode, Syntax<LiteralToken | IdentPathToken> {
 	type: 'nbtdoc:use_clause',
 	isExport: boolean,
-	path: IdentifierPathToken,
+	path: IdentPathToken,
 }
 
 export type ContentNode =

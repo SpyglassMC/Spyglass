@@ -1,9 +1,9 @@
 import { CommentNode, map, optional, Parser } from '@spyglassmc/core'
-import { DescribesClauseNode, IdentifierPathToken, LiteralToken, MinecraftIdentifierToken } from '../..'
-import { identifierPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
+import { DescribesClauseNode, IdentPathToken, LiteralToken, MinecraftIdentifierToken } from '../..'
+import { identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 
-type ChildNode = IdentifierPathToken | LiteralToken | MinecraftIdentifierToken | CommentNode
+type ChildNode = IdentPathToken | LiteralToken | MinecraftIdentifierToken | CommentNode
 
 /**
  * `Failure` when there isn't the `describes` keyword.
@@ -11,7 +11,7 @@ type ChildNode = IdentifierPathToken | LiteralToken | MinecraftIdentifierToken |
 export function describesClause(): Parser<DescribesClauseNode> {
 	return map(
 		syntax<ChildNode>([
-			identifierPath(),
+			identPath(),
 			keyword('describes'),
 			minecraftIdentifier(),
 			optional(syntax<ChildNode>([
@@ -31,7 +31,7 @@ export function describesClause(): Parser<DescribesClauseNode> {
 				type: 'nbtdoc:describes_clause',
 				range: res.range,
 				nodes: res.nodes,
-				path: res.nodes.find(IdentifierPathToken.is)!,
+				path: res.nodes.find(IdentPathToken.is)!,
 				registry: mcIds[0],
 				objects: mcIds.length > 1 ? mcIds.slice(1) : null,
 			}

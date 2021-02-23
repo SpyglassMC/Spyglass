@@ -1,11 +1,11 @@
 import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
-import { IdentifierPathToken } from '../../node'
+import { IdentPathToken } from '../../node'
 import { identifier } from './identifier'
 
-export function identifierPath(): InfallibleParser<IdentifierPathToken> {
-	return (src: Source, ctx: ParserContext): IdentifierPathToken => {
-		const ans: IdentifierPathToken = {
-			type: 'nbtdoc:identifier_path',
+export function identPath(): InfallibleParser<IdentPathToken> {
+	return (src: Source, ctx: ParserContext): IdentPathToken => {
+		const ans: IdentPathToken = {
+			type: 'nbtdoc:ident_path',
 			fromGlobalRoot: false,
 			path: [],
 			range: Range.create(src),

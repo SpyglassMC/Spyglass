@@ -1,9 +1,9 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { identifierPath } from '../../../lib'
+import { identPath } from '../../../lib'
 
-describe('identifierPath()', () => {
+describe('identPath()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: 'foo' },
@@ -15,7 +15,7 @@ describe('identifierPath()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = identifierPath()
+			const parser = identPath()
 			snapshot(testParser(parser, content))
 		})
 	}

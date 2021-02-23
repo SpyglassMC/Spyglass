@@ -23,14 +23,6 @@ export function syntaxGap(forbidsDocCommentsInGap = false): InfallibleParser<Com
 	}
 }
 
-// Temporary fix for https://github.com/microsoft/TypeScript/issues/17002.
-// TODO(blocked): Remove this when unneeded.
-declare global {
-	interface ArrayConstructor {
-		isArray(arg: readonly any[] | any): arg is readonly any[]
-	}
-}
-
 /**
  * @template CN Child node.
  * 

@@ -5,9 +5,7 @@ import { comment, CommentNode, Parser } from '@spyglassmc/core'
  * 
  * `Failure` when there isn't a doc comment.
  */
-export function docComment(): Parser<CommentNode> {
-	return comment({
-		singleLinePrefixes: new Set(['///']),
-		includesEol: true,
-	})
-}
+export const docComment: Parser<CommentNode> = comment({
+	singleLinePrefixes: new Set(['///']),
+	includesEol: true,
+})

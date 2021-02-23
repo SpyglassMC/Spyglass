@@ -26,7 +26,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
         },
         "nodes": [
           {
-            "type": "nbtdoc:identifier_path",
+            "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
             "path": [
               {
@@ -72,7 +72,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
           }
         ],
         "path": {
-          "type": "nbtdoc:identifier_path",
+          "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
           "path": [
             {

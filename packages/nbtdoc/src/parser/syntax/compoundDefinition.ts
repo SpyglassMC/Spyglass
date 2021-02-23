@@ -1,8 +1,8 @@
-import { any, InfallibleParser, map, optional, Parser, repeat, sequence, SequenceUtil } from '@spyglassmc/core'
+import { any, InfallibleParser, map, optional, Parser, ParserContext, repeat, sequence, SequenceUtil, Source, Success } from '@spyglassmc/core'
 import { CompoundDefinitionNode } from '../..'
-import { CompoundChild, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierPathToken, IdentifierToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
-import { float, identifier, identifierPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
-import { syntax } from '../util'
+import { CompoundChild, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
+import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
+import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
 
 /**
@@ -11,9 +11,9 @@ import { docComments } from './docComments'
 export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 	return map(
 		syntax<CompoundChild>([
-			docComments(),
-			keyword('compound'), identifier(), optional(extendsClause()), punctuation('{'),
-			compoundFields(),
+			docComments,
+			keyword('compound'), identifier(), optional(extendsClause), punctuation('{'),
+			compoundFields,
 			punctuation('}'),
 		], true),
 		res => {
@@ -21,6 +21,7 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 				type: 'nbtdoc:compound_definition',
 				range: res.range,
 				nodes: res.nodes,
+				doc: res.nodes.find(DocCommentsNode.is)!,
 				identifier: res.nodes.find(IdentifierToken.is)!,
 				extends: res.nodes.find(CompoundExtendable.is) ?? null,
 				fields: res.nodes.filter(CompoundFieldNode.is),
@@ -30,105 +31,45 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 	)
 }
 
-function extendsClause(): Parser<SyntaxUtil<LiteralToken | CompoundExtendable>> {
-	return syntax<LiteralToken | CompoundExtendable>([
-		keyword('extends'),
-		any<CompoundExtendable>([registryIndex(), identifierPath()]),
-	])
-}
+/**
+ * `Failure` when there is no `@` marker.
+ */
+const intRange = _intRange<IntegerToken, IntRangeNode>('nbtdoc:int_range', integer())
 
-function registryIndex(): InfallibleParser<RegistryIndexNode> {
-	return map(
-		syntax<RegistryIndexChild>([
-			minecraftIdentifier(),
-			punctuation('['),
-			fieldPath(),
-			punctuation(']'),
-		]),
-		res => {
-			const ans: RegistryIndexNode = {
-				type: 'nbtdoc:registry_index',
-				range: res.range,
-				nodes: res.nodes,
-				registry: res.nodes.find(MinecraftIdentifierToken.is)!,
-				path: res.nodes.filter(FieldPathKey.is),
-			}
-			return ans
-		}
-	)
-}
+/**
+ * `Failure` when there is no `@` marker.
+ */
+const natRange = _intRange<IntegerToken, NatRangeNode>('nbtdoc:nat_range', integer(true))
 
-function fieldPath(): InfallibleParser<SequenceUtil<FieldPathKey | LiteralToken>> {
-	return sequence<FieldPathKey | LiteralToken>([
-		fieldPathKey(),
-		repeat(sequence<FieldPathKey | LiteralToken>([
-			marker(','),
-			fieldPathKey(),
-		])),
-	])
-}
+/**
+ * `Failure` when there is no `@` marker.
+ */
+const floatRange = _intRange<FloatToken, FloatRangeNode>('nbtdoc:float_range', float())
 
-function fieldPathKey(): InfallibleParser<FieldPathKey> {
-	return any<FieldPathKey>([
-		keyword('super'),
-		string(),
-		identifier(),
-	])
-}
+const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any<CompoundFieldKey>([identifier(), string()])
 
-function compoundFields(): InfallibleParser<SyntaxUtil<CompoundChild>> {
-	return syntax<CompoundChild>([
-		compoundField(),
-		repeat(syntax<CompoundChild>([
-			marker(','),
-			compoundField(),
-		])),
-	])
-}
-
-function compoundField(): InfallibleParser<CompoundFieldNode> {
-	return map(
-		syntax<CompoundFieldChild>([
-			docComments(),
-			compoundFieldKey(), punctuation(':'), compoundFieldType(),
-		], true),
-		res => {
-			const ans: CompoundFieldNode = {
-				type: 'nbtdoc:compound_definition/field',
-				range: res.range,
-				nodes: res.nodes,
-				doc: res.nodes.find(DocCommentsNode.is)!,
-				key: res.nodes.find(IdentifierToken.is)!,
-				fieldType: res.nodes.find(CompoundFieldTypeNode.is)!,
-			}
-			return ans
-		}
-	)
-}
-
-function compoundFieldKey(): InfallibleParser<CompoundFieldKey> {
-	return any<CompoundFieldKey>([identifier(), string()])
-}
-
-function compoundFieldType(): InfallibleParser<CompoundFieldTypeNode> {
+function compoundFieldType(src: Source, ctx: ParserContext): Success<CompoundFieldTypeNode> {
 	return map(
 		any([
 			syntax<CompoundFieldChild>([keyword('boolean')]),
 			syntax<CompoundFieldChild>([keyword('string')]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange()), punctuation('['), punctuation(']'), optional(natRange())]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange()), punctuation('['), punctuation(']'), optional(natRange())]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange()), punctuation('['), punctuation(']'), optional(natRange())]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange())]),
-			syntax<CompoundFieldChild>([keyword('short'), optional(intRange())]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange())]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange())]),
-			syntax<CompoundFieldChild>([keyword('float'), optional(floatRange())]),
-			syntax<CompoundFieldChild>([keyword('double'), optional(floatRange())]),
-			syntax<CompoundFieldChild>([marker('['), compoundFieldType(), punctuation(']'), optional(natRange())]),
+			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
+			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
+			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
+			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange)]),
+			syntax<CompoundFieldChild>([keyword('short'), optional(intRange)]),
+			syntax<CompoundFieldChild>([keyword('int'), optional(intRange)]),
+			syntax<CompoundFieldChild>([keyword('long'), optional(intRange)]),
+			syntax<CompoundFieldChild>([keyword('float'), optional(floatRange)]),
+			syntax<CompoundFieldChild>([keyword('double'), optional(floatRange)]),
+			syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(natRange)]),
 			syntax<CompoundFieldChild>([keyword('id'), punctuation('('), minecraftIdentifier(), punctuation(')')]),
-			syntax<CompoundFieldChild>([marker('('), compoundFieldType(), repeat(syntax<CompoundFieldChild>([marker(','), compoundFieldType()])), punctuation(')')]),
-			syntax<CompoundFieldChild>([registryIndex()]),
-			syntax<CompoundFieldChild>([identifierPath()]),
+			any([
+				syntax<CompoundFieldChild>([marker('('), marker(')')]),
+				syntax<CompoundFieldChild>([marker('('), compoundFieldType, syntaxRepeat(syntax<CompoundFieldChild>([marker('|'), compoundFieldType])), punctuation(')')]),
+			]),
+			syntax<CompoundFieldChild>([registryIndex]),
+			syntax<CompoundFieldChild>([identPath()]),
 		]),
 		res => {
 			const literals = res.nodes.filter(LiteralToken.is())
@@ -235,7 +176,7 @@ function compoundFieldType(): InfallibleParser<CompoundFieldTypeNode> {
 					}
 					return ans
 				} else {
-					const path = res.nodes.find(IdentifierPathToken.is)!
+					const path = res.nodes.find(IdentPathToken.is)!
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
@@ -246,8 +187,34 @@ function compoundFieldType(): InfallibleParser<CompoundFieldTypeNode> {
 				}
 			}
 		}
-	)
+	)(src, ctx) as any
 }
+
+const compoundField: InfallibleParser<CompoundFieldNode> = map(
+	syntax<CompoundFieldChild>([
+		docComments,
+		compoundFieldKey, punctuation(':'), compoundFieldType,
+	], true),
+	res => {
+		const ans: CompoundFieldNode = {
+			type: 'nbtdoc:compound_definition/field',
+			range: res.range,
+			nodes: res.nodes,
+			doc: res.nodes.find(DocCommentsNode.is)!,
+			key: res.nodes.find(CompoundFieldKey.is)!,
+			fieldType: res.nodes.find(CompoundFieldTypeNode.is)!,
+		}
+		return ans
+	}
+)
+
+const compoundFields: InfallibleParser<SyntaxUtil<CompoundChild>> = syntax<CompoundChild>([
+	compoundField,
+	syntaxRepeat(syntax<CompoundChild>([
+		marker(','),
+		compoundField,
+	], true)),
+], true)
 
 /**
  * `Failure` when there is no `@` marker.
@@ -287,23 +254,40 @@ function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode |
 	)
 }
 
-/**
- * `Failure` when there is no `@` marker.
- */
-function intRange(): Parser<IntRangeNode> {
-	return _intRange<IntegerToken, IntRangeNode>('nbtdoc:int_range', integer())
-}
+const fieldPathKey: InfallibleParser<FieldPathKey> = any<FieldPathKey>([
+	keyword('super'),
+	string(),
+	identifier(),
+])
 
-/**
- * `Failure` when there is no `@` marker.
- */
-function natRange(): Parser<NatRangeNode> {
-	return _intRange<IntegerToken, NatRangeNode>('nbtdoc:nat_range', integer(true))
-}
+const fieldPath: InfallibleParser<SequenceUtil<FieldPathKey | LiteralToken>> = sequence<FieldPathKey | LiteralToken>([
+	fieldPathKey,
+	repeat(sequence<FieldPathKey | LiteralToken>([
+		marker(','),
+		fieldPathKey,
+	])),
+])
 
-/**
- * `Failure` when there is no `@` marker.
- */
-function floatRange(): Parser<FloatRangeNode> {
-	return _intRange<FloatToken, FloatRangeNode>('nbtdoc:float_range', float())
-}
+const registryIndex: InfallibleParser<RegistryIndexNode> = map(
+	syntax<RegistryIndexChild>([
+		minecraftIdentifier(),
+		punctuation('['),
+		fieldPath,
+		punctuation(']'),
+	]),
+	res => {
+		const ans: RegistryIndexNode = {
+			type: 'nbtdoc:registry_index',
+			range: res.range,
+			nodes: res.nodes,
+			registry: res.nodes.find(MinecraftIdentifierToken.is)!,
+			path: res.nodes.filter(FieldPathKey.is),
+		}
+		return ans
+	}
+)
+
+const extendsClause: Parser<SyntaxUtil<LiteralToken | CompoundExtendable>> = syntax<LiteralToken | CompoundExtendable>([
+	keyword('extends'),
+	any<CompoundExtendable>([registryIndex, identPath()]),
+])

@@ -12,10 +12,10 @@ import { docComments } from './docComments'
 export function enumDefinition(): Parser<EnumDefinitionNode> {
 	return map(
 		syntax<EnumChild>([
-			docComments(),
-			keyword('enum'), punctuation('('), enumType(), punctuation(')'), identifier(), punctuation('{'),
-			enumField(),
-			syntaxRepeat(syntax<EnumChild>([marker(','), enumField()], true)),
+			docComments,
+			keyword('enum'), punctuation('('), enumType, punctuation(')'), identifier(), punctuation('{'),
+			enumField,
+			syntaxRepeat(syntax<EnumChild>([marker(','), enumField], true)),
 			punctuation('}'),
 		], true),
 		res => {
@@ -33,39 +33,36 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 	)
 }
 
-function enumType(): InfallibleParser<LiteralToken<EnumTypeOrEmpty>> {
-	return recover<LiteralToken<EnumTypeOrEmpty>>(
-		any(EnumTypes.map(t => keyword(t))),
-		(src, ctx) => {
-			ctx.err.report(localize('expected', [
-				arrayToMessage(EnumTypes),
-			]), src)
-			const ans: LiteralToken<''> = {
-				type: 'nbtdoc:literal',
-				value: '',
-				range: Range.create(src),
-			}
-			return ans
+const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
+	any(EnumTypes.map(t => keyword(t))),
+	(src, ctx) => {
+		ctx.err.report(localize('expected', [
+			arrayToMessage(EnumTypes),
+		]), src)
+		const ans: LiteralToken<''> = {
+			type: 'nbtdoc:literal',
+			value: '',
+			range: Range.create(src),
 		}
-	)
-}
+		return ans
+	}
+)
 
-function enumField(): InfallibleParser<EnumFieldNode> {
-	return map(
-		syntax<EnumFieldChild>([
-			docComments(),
-			identifier(), punctuation('='), any<Primitive>([integer(), float(), string()]),
-		], true),
-		res => {
-			const ans: EnumFieldNode = {
-				type: 'nbtdoc:enum_definition/field',
-				range: res.range,
-				nodes: res.nodes,
-				doc: res.nodes.find(DocCommentsNode.is)!,
-				key: res.nodes.find(IdentifierToken.is)!,
-				value: res.nodes.find(Primitive.is)!,
-			}
-			return ans
+
+const enumField: InfallibleParser<EnumFieldNode> = map(
+	syntax<EnumFieldChild>([
+		docComments,
+		identifier(), punctuation('='), any<Primitive>([integer(), float(), string()]),
+	], true),
+	res => {
+		const ans: EnumFieldNode = {
+			type: 'nbtdoc:enum_definition/field',
+			range: res.range,
+			nodes: res.nodes,
+			doc: res.nodes.find(DocCommentsNode.is)!,
+			key: res.nodes.find(IdentifierToken.is)!,
+			value: res.nodes.find(Primitive.is)!,
 		}
-	)
-}
+		return ans
+	}
+)

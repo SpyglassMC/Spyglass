@@ -1,7 +1,7 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
 import { AstNode, ErrorSeverity, Range, SequenceUtil, Source } from '..'
 
-type AttemptResult<N extends object = AstNode> = {
+type AttemptResult<N  = AstNode> = {
 	result: Result<N>,
 	updateSrcAndCtx: () => void,
 	endCursor: number,
@@ -14,7 +14,7 @@ type AttemptResult<N extends object = AstNode> = {
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
  */
-export function attempt<N extends object = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
+export function attempt<N = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
 		...ctx,
@@ -126,9 +126,9 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>
  * 
  * `Failure` when all of the `parsers` failed.
  */
-export function any<N extends object = AstNode>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
-export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N>
-export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N> {
+export function any<N = AstNode>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
+export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N>
+export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N> {
 	return (src: Source, ctx: ParserContext): Result<N> => {
 		const attempts: AttemptResult<N>[] = parsers
 			.map(parser => attempt(parser, src, ctx))
@@ -147,18 +147,22 @@ export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N>
  * 
  * @returns A parser that takes an optional syntax component.
  */
-export function optional<N extends object = AstNode>(parser: InfallibleParser<N>): void
-export function optional<N extends object = AstNode>(parser: Parser<N>): InfallibleParser<N | null>
-export function optional<N extends object = AstNode>(parser: Parser<N>): InfallibleParser<N | null> {
-	return (src: Source, ctx: ParserContext): N | null => {
-		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
-		if (result === Failure) {
-			return null
-		} else {
-			updateSrcAndCtx()
-			return result
-		}
-	}
+export function optional<N = AstNode>(parser: InfallibleParser<N>): void
+export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null>
+export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null> {
+	return any<N | null>([
+		parser,
+		() => null,
+	])
+	// return (src: Source, ctx: ParserContext): N | null => {
+	// 	const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
+	// 	if (result === Failure) {
+	// 		return null
+	// 	} else {
+	// 		updateSrcAndCtx()
+	// 		return result
+	// 	}
+	// }
 }
 
 /**

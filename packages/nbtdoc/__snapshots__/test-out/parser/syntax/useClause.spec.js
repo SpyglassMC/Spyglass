@@ -33,7 +33,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -69,7 +69,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
     ],
     "isExport": true,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -123,7 +123,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -151,7 +151,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
     ],
     "isExport": true,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -197,7 +197,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -241,7 +241,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
     ],
     "isExport": true,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -308,7 +308,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -336,7 +336,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
     ],
     "isExport": true,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -396,7 +396,7 @@ exports['useClause() Parse "use foo" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -424,7 +424,7 @@ exports['useClause() Parse "use foo" 1'] = {
     ],
     "isExport": false,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -471,7 +471,7 @@ exports['useClause() Parse "use foo;" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -499,7 +499,7 @@ exports['useClause() Parse "use foo;" 1'] = {
     ],
     "isExport": false,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
@@ -537,7 +537,7 @@ exports['useClause() Parse "use" 1'] = {
         "value": "use"
       },
       {
-        "type": "nbtdoc:identifier_path",
+        "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
         "path": [
           {
@@ -565,7 +565,7 @@ exports['useClause() Parse "use" 1'] = {
     ],
     "isExport": false,
     "path": {
-      "type": "nbtdoc:identifier_path",
+      "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
       "path": [
         {
