@@ -34,8 +34,8 @@ export interface LiteralToken<T extends string = string> extends AstNode {
 	text: T,
 }
 export namespace LiteralToken {
-	export function is<T extends string>(obj: object, literal?: T | T[]): obj is LiteralToken<T> {
-		return (
+	export function is<T extends string>(literal?: T | T[] | readonly T[]): (obj: object) => obj is LiteralToken<T> {
+		return (obj: object): obj is LiteralToken<T> => (
 			(obj as LiteralToken).type === 'nbtdoc:literal' &&
 			(literal === undefined || (Array.isArray(literal) ? literal.includes((obj as LiteralToken<T>).text) : (obj as LiteralToken).text === literal))
 		)
@@ -77,6 +77,15 @@ export namespace MinecraftIdentifierToken {
 	}
 }
 
+export type PrimitiveToken = FloatToken | IntegerToken | StringToken
+export namespace PrimitiveToken {
+	export function is(obj: object): obj is PrimitiveToken {
+		return (obj as PrimitiveToken).type === 'nbtdoc:float' ||
+			(obj as PrimitiveToken).type === 'nbtdoc:integer' ||
+			(obj as PrimitiveToken).type === 'nbtdoc:string'
+	}
+}
+
 export interface StringToken extends AstNode {
 	type: 'nbtdoc:string',
 	value: string,
@@ -96,6 +105,11 @@ export interface DocCommentsNode extends AstNode, Syntax<CommentNode> {
 	type: 'nbtdoc:doc_comments',
 	doc: string,
 }
+export namespace DocCommentsNode {
+	export function is(obj: object): obj is DocCommentsNode {
+		return (obj as DocCommentsNode).type === 'nbtdoc:doc_comments'
+	}
+}
 
 export interface CompoundDefinitionNode extends AstNode, Syntax {
 	type: 'nbtdoc:compound_definition',
@@ -111,9 +125,27 @@ export interface DescribesClauseNode extends AstNode, Syntax<IdentifierPathToken
 export const EnumType = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
 export type EnumType = typeof EnumType[number]
 
-export interface EnumDefinitionNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | IntegerToken | FloatToken | StringToken> {
+export const EnumTypeOrEmpty = [...EnumType, ''] as const
+export type EnumTypeOrEmpty = typeof EnumTypeOrEmpty[number]
+
+export interface EnumFieldNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | IntegerToken | FloatToken | StringToken> {
+	type: 'nbtdoc:enum_definition/field',
+	doc: DocCommentsNode,
+	key: IdentifierToken,
+	value: IntegerToken | FloatToken | StringToken
+}
+export namespace EnumFieldNode {
+	export function is(obj: object): obj is EnumFieldNode {
+		return (obj as EnumFieldNode).type === 'nbtdoc:enum_definition/field'
+	}
+}
+
+export interface EnumDefinitionNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | EnumFieldNode> {
 	type: 'nbtdoc:enum_definition',
-	enumType: LiteralToken<EnumType>,
+	doc: DocCommentsNode,
+	enumType: LiteralToken<EnumTypeOrEmpty>,
+	identifier: IdentifierToken,
+	fields: EnumFieldNode[],
 }
 
 export interface InjectClauseNode extends AstNode, Syntax {

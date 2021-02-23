@@ -1,9 +1,8 @@
-import { Parser } from '.'
+import { Parser, ParserContext } from '.'
 import { CommentNode } from '../node'
 import { Range } from '../type'
 import { Source } from '../util/Source'
 import { Failure, Result } from './Parser'
-import { ParserContext } from './ParserContext'
 
 interface Options {
 	singleLinePrefixes: Set<string>,

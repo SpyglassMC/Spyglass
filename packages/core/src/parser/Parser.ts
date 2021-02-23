@@ -1,6 +1,6 @@
+import { ParserContext } from '.'
 import { AstNode } from '../node'
 import { Source } from '../util/Source'
-import { ParserContext } from './ParserContext'
 
 /**
  * A parser.

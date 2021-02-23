@@ -48,24 +48,24 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 	}
 }
 
-export function literal(literal: string): InfallibleParser<LiteralToken> {
-	return _literal(literal, false, true)
+export function literal<T extends string = string>(literal: T): InfallibleParser<LiteralToken<T | ''>> {
+	return _literal(literal, false, true) as InfallibleParser<LiteralToken<T | ''>>
 }
 
 /**
  * `Failure` when there isn't the expected character.
  */
-export function keyword(keyword: string): Parser<LiteralToken> {
-	return _literal(keyword, false, false)
+export function keyword<T extends string = string>(keyword: T): Parser<LiteralToken<T>> {
+	return _literal(keyword, false, false) as Parser<LiteralToken<T>>
 }
 
-export function punctuation(char: string): InfallibleParser<LiteralToken> {
-	return _literal(char, true, true)
+export function punctuation<T extends string = string>(char: T): InfallibleParser<LiteralToken<T | ''>> {
+	return _literal(char, true, true) as InfallibleParser<LiteralToken<T | ''>>
 }
 
 /**
  * `Failure` when there isn't the expected character.
  */
-export function marker(char: string): Parser<LiteralToken> {
-	return _literal(char, true, false)
+export function marker<T extends string = string>(char: T): Parser<LiteralToken<T>> {
+	return _literal(char, true, false) as Parser<LiteralToken<T>>
 }

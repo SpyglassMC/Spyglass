@@ -38,9 +38,9 @@ declare global {
  * 
  * `Failure` when any of the `parsers` returns a `Failure`.
  */
-export function syntax<CN extends AstNode>(parsers: InfallibleParser<CN | SyntaxUtil<CN> | null>[]): InfallibleParser<SyntaxUtil<CN>>
-export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> | null>[]): Parser<SyntaxUtil<CN>>
-export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> | null>[]): Parser<SyntaxUtil<CN>> {
+export function syntax<CN extends AstNode>(parsers: InfallibleParser<CN | SyntaxUtil<CN> | null>[], noDocCommentsInGap?: boolean): InfallibleParser<SyntaxUtil<CN>>
+export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> | null>[], noDocCommentsInGap?: boolean): Parser<SyntaxUtil<CN>>
+export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> | null>[], noDocCommentsInGap = false): Parser<SyntaxUtil<CN>> {
 	return (src: Source, ctx: ParserContext): Result<SyntaxUtil<CN>> => {
 		const ans: SyntaxUtil<CN> = {
 			isSyntaxUtil: true,
@@ -49,7 +49,7 @@ export function syntax<CN extends AstNode>(parsers: Parser<CN | SyntaxUtil<CN> |
 		}
 
 		for (const parser of parsers) {
-			ans.nodes.push(...syntaxGap()(src, ctx))
+			ans.nodes.push(...syntaxGap(noDocCommentsInGap)(src, ctx))
 
 			const result = parser(src, ctx)
 			if (result === Failure) {

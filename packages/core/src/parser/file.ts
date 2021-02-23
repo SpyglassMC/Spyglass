@@ -1,7 +1,7 @@
+import { ParserContext } from '.'
 import { AstNode } from '../node'
 import { Source } from '../util/Source'
 import { Parser, Result } from './Parser'
-import { ParserContext } from './ParserContext'
 
 /**
  * Dispatches to the corresponding `${languageID}:main` parser.

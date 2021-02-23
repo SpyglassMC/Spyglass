@@ -1,5 +1,5 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
-import { AstNode, ErrorSeverity, Range, Source } from '..'
+import { AstNode, ErrorSeverity, Source } from '..'
 
 type AttemptResult<N extends object = AstNode> = {
 	result: Result<N>,
@@ -42,7 +42,7 @@ export function attempt<N extends object = AstNode>(parser: Parser<N>, src: Sour
  * `Failure` when all of the `parsers` failed.
  */
 export function any<N extends object = AstNode>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
-export function any<N extends object = AstNode>(parsers: [Parser<N>, ...Parser<N>[]]): Parser<N>
+export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N>
 export function any<N extends object = AstNode>(parsers: Parser<N>[]): Parser<N> {
 	return (src: Source, ctx: ParserContext): Result<N> => {
 		const attempts: AttemptResult<N>[] = parsers
@@ -77,7 +77,25 @@ export function optional<N extends object = AstNode>(parser: Parser<N>): Infalli
 }
 
 /**
- * @returns The return value of `fn`.
+ * @param parser Must be fallible.
+ * 
+ * @returns A parser that returns the return value of the `parser`, or the return value of `defaultValue` it it's a `Failure`.
+ */
+export function recover<N>(parser: InfallibleParser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): void
+export function recover<N>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N>
+export function recover<N>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N> {
+	return (src: Source, ctx: ParserContext): N => {
+		const result = parser(src, ctx)
+		if (result === Failure) {
+			const ans = defaultValue(src, ctx)
+			return Object.freeze(ans)
+		}
+		return result
+	}
+}
+
+/**
+ * @returns A parser that returns the return value of `fn`.
  * 
  * `Failure` when the `parser` returns a `Failure`.
  */
@@ -92,32 +110,6 @@ export function map<A, B>(parser: Parser<A>, fn: (res: A, src: Source, ctx: Pars
 		const ans = fn(result, src, ctx)
 		return Object.freeze(ans)
 	}
-}
-
-interface HavingRange {
-	range: Range
-}
-type ResultB<B> = B extends HavingRange ? B : B & HavingRange
-
-/**
- * @returns The return value of `fn`. If it doesn't have the `range` property, 
- * it will be assigned the same `range` as the result of the `parser`.
- * 
- * `Failure` when the `parser` returns a `Failure`.
- */
-export function wrap<A extends HavingRange, B extends object>(parser: InfallibleParser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): InfallibleParser<ResultB<B>>
-export function wrap<A extends HavingRange, B extends object>(parser: Parser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): Parser<ResultB<B>>
-export function wrap<A extends HavingRange, B extends object>(parser: Parser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): Parser<ResultB<B>> {
-	return map(
-		parser,
-		(res, src, ctx) => {
-			const ans = fn(res, src, ctx)
-			return Object.freeze({
-				...ans,
-				range: (ans as HavingRange).range ?? res.range,
-			}) as ResultB<B>
-		}
-	)
 }
 
 /**

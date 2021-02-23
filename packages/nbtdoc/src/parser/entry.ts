@@ -1,10 +1,10 @@
-import { any, InfallibleParser, wrap } from '@spyglassmc/core'
+import { any, InfallibleParser, map } from '@spyglassmc/core'
 import { ContentNode, MainNode } from '../node'
 import { describesClause, moduleDeclaration, useClause } from './syntax'
 import { repeat } from './util'
 
 export function entry(): InfallibleParser<MainNode> {
-	return wrap(
+	return map(
 		repeat(
 			any<ContentNode>([
 				// compoundDefinition(),
@@ -15,9 +15,13 @@ export function entry(): InfallibleParser<MainNode> {
 				useClause(),
 			])
 		),
-		res => ({
-			type: 'nbtdoc:main',
-			nodes: res.nodes,
-		})
+		res => {
+			const ans : MainNode = {
+				type: 'nbtdoc:main',
+				range: res.range,
+				nodes: res.nodes,
+			}
+			return ans
+		}
 	)
 }
