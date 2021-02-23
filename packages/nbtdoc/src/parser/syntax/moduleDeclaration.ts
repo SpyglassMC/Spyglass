@@ -1,5 +1,5 @@
 import { map, Parser } from '@spyglassmc/core'
-import { IdentifierToken, LiteralToken, ModuleDeclarationNode } from '../..'
+import { IdentifierToken, LiteralToken, ModuleDeclarationNode } from '../../node'
 import { identifier, keyword, punctuation } from '../terminator'
 import { syntax } from '../util'
 

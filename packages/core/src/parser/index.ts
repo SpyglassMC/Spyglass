@@ -1,4 +1,5 @@
 export * from './comment'
+export * from './empty'
 export * from './file'
 export * from './Parser'
 export * from './ParserContext'

@@ -105,6 +105,7 @@
 	"nbtdoc.error.float.illegal": "Encountered illegal float number",
 	"nbtdoc.error.identifier": "an identifier",
 	"nbtdoc.error.identifier.illegal": "%0% doesn't follow the format of %1%",
+	"nbtdoc.error.inject-clause.definition-expected": "Expected either an enum inject or a compound inject",
 	"nbtdoc.error.integer.illegal": "Leading zeros are not allowed",
 	"nbtdoc.error.integer.natural": "a natural number (i.e. greater than or equal to one)",
 	"nbtdoc.error.keyword.separation": "a separation",

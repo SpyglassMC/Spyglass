@@ -1,4 +1,4 @@
-import { AstNode, Range } from '@spyglassmc/core'
+import { AstNode } from '@spyglassmc/core'
 import { DocCommentsNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
 
 export interface CompoundDefinitionNode extends AstNode, Syntax<CompoundChild> {
@@ -82,9 +82,8 @@ export type CompoundFieldType = typeof CompoundFieldTypes[number]
  * 
  * [doc]: https://github.com/Yurihaia/nbtdoc-rs/blob/master/docs/format.md#field-type
  */
-export type CompoundFieldTypeNode = {
+export type CompoundFieldTypeNode = AstNode & {
 	type: 'nbtdoc:compound_definition/field/type',
-	range: Range,
 	typeType: string,
 } & ({
 	typeType: 'boolean',

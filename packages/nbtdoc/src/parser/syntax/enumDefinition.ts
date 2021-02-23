@@ -1,7 +1,6 @@
 import { any, arrayToMessage, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { EnumDefinitionNode } from '../..'
-import { DocCommentsNode, EnumChild, EnumFieldChild, EnumFieldNode, EnumTypeOrEmpty, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
+import { DocCommentsNode, EnumChild, EnumDefinitionNode, EnumFieldChild, EnumFieldNode, EnumTypeOrEmpty, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive, SyntaxUtil } from '../../node'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -14,8 +13,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 		syntax<EnumChild>([
 			docComments,
 			keyword('enum'), punctuation('('), enumType, punctuation(')'), identifier(), punctuation('{'),
-			enumField,
-			syntaxRepeat(syntax<EnumChild>([marker(','), enumField], true)),
+			enumFields,
 			punctuation('}'),
 		], true),
 		res => {
@@ -33,7 +31,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 	)
 }
 
-const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
+export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
 	any(EnumTypes.map(t => keyword(t))),
 	(src, ctx) => {
 		ctx.err.report(localize('expected', [
@@ -66,3 +64,8 @@ const enumField: InfallibleParser<EnumFieldNode> = map(
 		return ans
 	}
 )
+
+export const enumFields: InfallibleParser<SyntaxUtil<LiteralToken | EnumFieldNode>> = syntax<LiteralToken | EnumFieldNode>([
+	enumField,
+	syntaxRepeat(syntax<LiteralToken | EnumFieldNode>([marker(','), enumField], true)),
+], true)

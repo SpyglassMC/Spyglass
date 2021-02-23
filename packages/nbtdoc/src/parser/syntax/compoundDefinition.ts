@@ -1,6 +1,5 @@
 import { any, InfallibleParser, map, optional, Parser, ParserContext, repeat, sequence, SequenceUtil, Source, Success } from '@spyglassmc/core'
-import { CompoundDefinitionNode } from '../..'
-import { CompoundChild, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
+import { CompoundChild, CompoundDefinitionNode, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
 import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -208,9 +207,9 @@ const compoundField: InfallibleParser<CompoundFieldNode> = map(
 	}
 )
 
-const compoundFields: InfallibleParser<SyntaxUtil<CompoundChild>> = syntax<CompoundChild>([
+export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | CompoundFieldNode>> = syntax<LiteralToken | CompoundFieldNode>([
 	compoundField,
-	syntaxRepeat(syntax<CompoundChild>([
+	syntaxRepeat(syntax<LiteralToken | CompoundFieldNode>([
 		marker(','),
 		compoundField,
 	], true)),

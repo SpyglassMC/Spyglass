@@ -1,5 +1,5 @@
 import { CommentNode, map, optional, Parser } from '@spyglassmc/core'
-import { DescribesClauseNode, IdentPathToken, LiteralToken, MinecraftIdentifierToken } from '../..'
+import { DescribesClauseNode, IdentPathToken, LiteralToken, MinecraftIdentifierToken } from '../../node'
 import { identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 

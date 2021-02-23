@@ -1,9 +1,11 @@
 import { AstNode, CommentNode, Sequence, SequenceUtil } from '@spyglassmc/core'
 import { CompoundDefinitionNode } from './CompoundDefinition'
 import { EnumDefinitionNode } from './EnumDefinition'
+import { InjectClauseNode } from './InjectClause'
 
 export * from './CompoundDefinition'
 export * from './EnumDefinition'
+export * from './InjectClause'
 
 export type Syntax<CN extends AstNode = AstNode> = Sequence<CN | CommentNode>
 export type SyntaxUtil<CN extends AstNode = AstNode> = SequenceUtil<CN | CommentNode>
@@ -110,10 +112,6 @@ export interface DescribesClauseNode extends AstNode, Syntax<IdentPathToken | Li
 	path: IdentPathToken,
 	registry: MinecraftIdentifierToken,
 	objects: MinecraftIdentifierToken[] | null,
-}
-
-export interface InjectClauseNode extends AstNode, Syntax {
-	type: 'nbtdoc:inject_clause',
 }
 
 export interface ModuleDeclarationNode extends AstNode, Syntax<LiteralToken | IdentifierToken> {

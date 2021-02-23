@@ -1,5 +1,7 @@
 import { map, optional, Parser } from '@spyglassmc/core'
-import { identPath, IdentPathToken, keyword, LiteralToken, punctuation, syntax, UseClauseNode } from '../..'
+import { IdentPathToken, LiteralToken, UseClauseNode } from '../../node'
+import { identPath, keyword, punctuation } from '../terminator'
+import { syntax } from '../util'
 
 /**
  * `Failure` when there isn't the `use` keyword.

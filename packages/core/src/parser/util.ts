@@ -143,26 +143,24 @@ export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N> {
 }
 
 /**
- * @param parser Must be fallible.
- * 
  * @returns A parser that takes an optional syntax component.
  */
 export function optional<N = AstNode>(parser: InfallibleParser<N>): void
 export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null>
 export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null> {
-	return any<N | null>([
-		parser,
-		() => null,
-	])
-	// return (src: Source, ctx: ParserContext): N | null => {
-	// 	const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
-	// 	if (result === Failure) {
-	// 		return null
-	// 	} else {
-	// 		updateSrcAndCtx()
-	// 		return result
-	// 	}
-	// }
+	// return any<N | null>([
+	// 	parser,
+	// 	empty,
+	// ])
+	return (src: Source, ctx: ParserContext): N | null => {
+		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
+		if (result === Failure) {
+			return null
+		} else {
+			updateSrcAndCtx()
+			return result
+		}
+	}
 }
 
 /**

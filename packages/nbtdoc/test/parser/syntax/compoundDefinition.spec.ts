@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { compoundDefinition } from '../../../lib'
 
-describe.only('compoundDefinition()', () => {
+describe('compoundDefinition()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: 'compound' },

@@ -1,11 +1,7 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { LiteralToken } from '../..'
+import { LiteralToken } from '../../node'
 
-interface Options {
-	canBeFollowedByLetter?: boolean,
-	infallible?: boolean,
-}
 
 /**
  * `Failure` when there isn't the expected literal and `infallible` is set to `false`.

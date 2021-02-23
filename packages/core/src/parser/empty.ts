@@ -1,7 +1,3 @@
 import { InfallibleParser } from '..'
 
-export function empty(): InfallibleParser<null> {
-	return (): null => {
-		return null
-	}
-}
+export const empty: InfallibleParser<null> = () => null
