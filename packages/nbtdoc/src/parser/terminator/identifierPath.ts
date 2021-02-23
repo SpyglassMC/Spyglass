@@ -18,8 +18,13 @@ export function identifierPath(): InfallibleParser<IdentifierPathToken> {
 
 		do {
 			if (src.peek(5) === 'super') {
+				const start = src.cursor
 				src.skip(5)
-				ans.path.push('super')
+				ans.path.push({
+					type: 'nbtdoc:literal',
+					range: Range.create(start, src),
+					value: 'super',
+				})
 			} else {
 				ans.path.push(identifier()(src, ctx))
 			}

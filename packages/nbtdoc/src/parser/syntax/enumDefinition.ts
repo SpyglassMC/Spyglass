@@ -1,24 +1,21 @@
 import { any, arrayToMessage, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { EnumDefinitionNode } from '../..'
-import { DocCommentsNode, EnumFieldNode, EnumType, EnumTypeOrEmpty, IdentifierToken, LiteralToken, PrimitiveToken } from '../../node'
+import { DocCommentsNode, EnumChild, EnumFieldChild, EnumFieldNode, EnumTypeOrEmpty, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
-import { repeat, syntax } from '../util'
+import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
-
-type ChildNode = DocCommentsNode | LiteralToken | IdentifierToken | EnumFieldNode
-type FieldChildNode = DocCommentsNode | LiteralToken | IdentifierToken | PrimitiveToken
 
 /**
  * `Failure` when there's no `enum` keyword.
  */
 export function enumDefinition(): Parser<EnumDefinitionNode> {
 	return map(
-		syntax<ChildNode>([
+		syntax<EnumChild>([
 			docComments(),
 			keyword('enum'), punctuation('('), enumType(), punctuation(')'), identifier(), punctuation('{'),
 			enumField(),
-			repeat(syntax<ChildNode>([marker(','), enumField()], true)),
+			syntaxRepeat(syntax<EnumChild>([marker(','), enumField()], true)),
 			punctuation('}'),
 		], true),
 		res => {
@@ -27,7 +24,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 				range: res.range,
 				nodes: res.nodes,
 				doc: res.nodes.find(DocCommentsNode.is)!,
-				enumType: res.nodes.find(LiteralToken.is(EnumTypeOrEmpty))!,
+				enumType: res.nodes.find(LiteralToken.is(EnumTypesOrEmpty))!,
 				identifier: res.nodes.find(IdentifierToken.is)!,
 				fields: res.nodes.filter(EnumFieldNode.is),
 			}
@@ -38,10 +35,10 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 
 function enumType(): InfallibleParser<LiteralToken<EnumTypeOrEmpty>> {
 	return recover<LiteralToken<EnumTypeOrEmpty>>(
-		any(EnumType.map(t => keyword(t))),
+		any(EnumTypes.map(t => keyword(t))),
 		(src, ctx) => {
 			ctx.err.report(localize('expected', [
-				arrayToMessage(EnumType),
+				arrayToMessage(EnumTypes),
 			]), src)
 			const ans: LiteralToken<''> = {
 				type: 'nbtdoc:literal',
@@ -55,9 +52,9 @@ function enumType(): InfallibleParser<LiteralToken<EnumTypeOrEmpty>> {
 
 function enumField(): InfallibleParser<EnumFieldNode> {
 	return map(
-		syntax<FieldChildNode>([
+		syntax<EnumFieldChild>([
 			docComments(),
-			identifier(), punctuation('='), any<PrimitiveToken>([integer(), float(), string()]),
+			identifier(), punctuation('='), any<Primitive>([integer(), float(), string()]),
 		], true),
 		res => {
 			const ans: EnumFieldNode = {
@@ -66,7 +63,7 @@ function enumField(): InfallibleParser<EnumFieldNode> {
 				nodes: res.nodes,
 				doc: res.nodes.find(DocCommentsNode.is)!,
 				key: res.nodes.find(IdentifierToken.is)!,
-				value: res.nodes.find(PrimitiveToken.is)!,
+				value: res.nodes.find(Primitive.is)!,
 			}
 			return ans
 		}

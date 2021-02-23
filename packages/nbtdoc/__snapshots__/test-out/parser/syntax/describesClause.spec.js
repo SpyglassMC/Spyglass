@@ -30,7 +30,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -99,7 +99,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -166,7 +166,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -212,7 +212,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -263,7 +263,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -309,7 +309,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -351,7 +351,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -397,7 +397,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -439,7 +439,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -510,7 +510,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -571,7 +571,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -644,7 +644,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -698,7 +698,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -807,7 +807,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {
@@ -890,7 +890,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
               "start": 0,
               "end": 3
             },
-            "text": "Foo"
+            "value": "Foo"
           }
         ],
         "range": {
@@ -982,7 +982,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
             "start": 0,
             "end": 3
           },
-          "text": "Foo"
+          "value": "Foo"
         }
       ],
       "range": {

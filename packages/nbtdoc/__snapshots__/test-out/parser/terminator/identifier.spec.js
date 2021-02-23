@@ -5,7 +5,7 @@ exports['identifier() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "text": ""
+    "value": ""
   },
   "errors": [
     {
@@ -26,7 +26,7 @@ exports['identifier() Parse "123" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "123"
+    "value": "123"
   },
   "errors": [
     {
@@ -47,7 +47,7 @@ exports['identifier() Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -59,7 +59,7 @@ exports['identifier() Parse "foo()bar" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -71,7 +71,7 @@ exports['identifier() Parse "foo123" 1'] = {
       "start": 0,
       "end": 6
     },
-    "text": "foo123"
+    "value": "foo123"
   },
   "errors": []
 }
@@ -83,7 +83,7 @@ exports['identifier() Parse "foo;bar" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -95,7 +95,7 @@ exports['identifier() Parse "foo↓bar" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -107,7 +107,7 @@ exports['identifier() Parse "foo你好;bar" 1'] = {
       "start": 0,
       "end": 5
     },
-    "text": "foo你好"
+    "value": "foo你好"
   },
   "errors": [
     {

@@ -35,7 +35,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
                   "start": 0,
                   "end": 3
                 },
-                "text": "mod"
+                "value": "mod"
               }
             ],
             "range": {
@@ -81,7 +81,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
                 "start": 0,
                 "end": 3
               },
-              "text": "mod"
+              "value": "mod"
             }
           ],
           "range": {
@@ -136,7 +136,7 @@ exports['entry() Parse "mod describes;" 1'] = {
               "start": 4,
               "end": 13
             },
-            "text": "describes"
+            "value": "describes"
           },
           {
             "type": "nbtdoc:literal",
@@ -153,7 +153,7 @@ exports['entry() Parse "mod describes;" 1'] = {
             "start": 4,
             "end": 13
           },
-          "text": "describes"
+          "value": "describes"
         }
       }
     ]

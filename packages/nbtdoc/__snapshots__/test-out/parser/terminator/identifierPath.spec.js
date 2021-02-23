@@ -9,7 +9,7 @@ exports['identifierPath() Parse "" 1'] = {
           "start": 0,
           "end": 0
         },
-        "text": ""
+        "value": ""
       }
     ],
     "range": {
@@ -40,7 +40,7 @@ exports['identifierPath() Parse "::foo::bar" 1'] = {
           "start": 2,
           "end": 5
         },
-        "text": "foo"
+        "value": "foo"
       },
       {
         "type": "nbtdoc:identifier",
@@ -48,7 +48,7 @@ exports['identifierPath() Parse "::foo::bar" 1'] = {
           "start": 7,
           "end": 10
         },
-        "text": "bar"
+        "value": "bar"
       }
     ],
     "range": {
@@ -70,7 +70,7 @@ exports['identifierPath() Parse "foo" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "foo"
+        "value": "foo"
       }
     ],
     "range": {
@@ -92,7 +92,7 @@ exports['identifierPath() Parse "foo::bar" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "foo"
+        "value": "foo"
       },
       {
         "type": "nbtdoc:identifier",
@@ -100,7 +100,7 @@ exports['identifierPath() Parse "foo::bar" 1'] = {
           "start": 5,
           "end": 8
         },
-        "text": "bar"
+        "value": "bar"
       }
     ],
     "range": {
@@ -116,14 +116,21 @@ exports['identifierPath() Parse "super::foo something else;" 1'] = {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
     "path": [
-      "super",
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": "super"
+      },
       {
         "type": "nbtdoc:identifier",
         "range": {
           "start": 7,
           "end": 10
         },
-        "text": "foo"
+        "value": "foo"
       }
     ],
     "range": {
@@ -139,14 +146,21 @@ exports['identifierPath() Parse "super::foo" 1'] = {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
     "path": [
-      "super",
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": "super"
+      },
       {
         "type": "nbtdoc:identifier",
         "range": {
           "start": 7,
           "end": 10
         },
-        "text": "foo"
+        "value": "foo"
       }
     ],
     "range": {
@@ -162,14 +176,21 @@ exports['identifierPath() Parse "super::foo::bar" 1'] = {
     "type": "nbtdoc:identifier_path",
     "fromGlobalRoot": false,
     "path": [
-      "super",
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": "super"
+      },
       {
         "type": "nbtdoc:identifier",
         "range": {
           "start": 7,
           "end": 10
         },
-        "text": "foo"
+        "value": "foo"
       },
       {
         "type": "nbtdoc:identifier",
@@ -177,7 +198,7 @@ exports['identifierPath() Parse "super::foo::bar" 1'] = {
           "start": 12,
           "end": 15
         },
-        "text": "bar"
+        "value": "bar"
       }
     ],
     "range": {

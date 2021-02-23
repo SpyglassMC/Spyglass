@@ -30,7 +30,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
           "start": 4,
           "end": 10
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -47,7 +47,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
         "start": 4,
         "end": 10
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": [
@@ -84,7 +84,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
           "start": 4,
           "end": 10
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -101,7 +101,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
         "start": 4,
         "end": 10
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": []
@@ -129,7 +129,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
           "start": 4,
           "end": 10
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -146,7 +146,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
         "start": 4,
         "end": 10
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": []
@@ -174,7 +174,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
           "start": 4,
           "end": 10
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -191,7 +191,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
         "start": 4,
         "end": 10
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": []
@@ -219,7 +219,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
           "start": 4,
           "end": 10
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -236,7 +236,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
         "start": 4,
         "end": 10
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": [
@@ -273,7 +273,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
           "start": 3,
           "end": 3
         },
-        "text": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -290,7 +290,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
         "start": 3,
         "end": 3
       },
-      "text": ""
+      "value": ""
     }
   },
   "errors": [
@@ -343,7 +343,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
           "start": 15,
           "end": 21
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -360,7 +360,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
         "start": 15,
         "end": 21
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": []
@@ -396,7 +396,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
           "start": 20,
           "end": 26
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -413,7 +413,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
         "start": 20,
         "end": 26
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": [
@@ -450,7 +450,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
           "start": 3,
           "end": 9
         },
-        "text": "zombie"
+        "value": "zombie"
       },
       {
         "type": "nbtdoc:literal",
@@ -467,7 +467,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
         "start": 3,
         "end": 9
       },
-      "text": "zombie"
+      "value": "zombie"
     }
   },
   "errors": [

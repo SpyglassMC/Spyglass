@@ -19,7 +19,7 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 		const ans: IdentifierToken = {
 			type: 'nbtdoc:identifier',
 			range: Range.create(start, src),
-			text,
+			value: text,
 		}
 
 		if (!text && !allowEmpty) {

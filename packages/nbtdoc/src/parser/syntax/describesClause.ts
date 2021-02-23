@@ -1,7 +1,7 @@
 import { CommentNode, map, optional, Parser } from '@spyglassmc/core'
 import { DescribesClauseNode, IdentifierPathToken, LiteralToken, MinecraftIdentifierToken } from '../..'
 import { identifierPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
-import { repeat, syntax } from '../util'
+import { syntax, syntaxRepeat } from '../util'
 
 type ChildNode = IdentifierPathToken | LiteralToken | MinecraftIdentifierToken | CommentNode
 
@@ -17,7 +17,7 @@ export function describesClause(): Parser<DescribesClauseNode> {
 			optional(syntax<ChildNode>([
 				marker('['),
 				minecraftIdentifier(),
-				repeat<ChildNode>(syntax<ChildNode>([
+				syntaxRepeat<ChildNode>(syntax<ChildNode>([
 					marker(','),
 					minecraftIdentifier(),
 				])),

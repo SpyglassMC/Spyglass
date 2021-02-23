@@ -38,6 +38,6 @@ export function minecraftIdentifier(): InfallibleParser<MinecraftIdentifierToken
 function minecraftIdentifierPart(): InfallibleParser<string> {
 	return map(
 		identifier({ regex: Regex, allowEmpty: true }),
-		res => res.text
+		res => res.value
 	)
 }

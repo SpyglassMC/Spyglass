@@ -1,14 +1,14 @@
 import { CommentNode, InfallibleParser, map } from '@spyglassmc/core'
 import { DocCommentsNode } from '../../node'
 import { docComment } from '../terminator'
-import { repeat } from '../util'
+import { syntaxRepeat } from '../util'
 
 /**
  * @returns A parser that takes zero or more doc comments.
  */
 export function docComments(): InfallibleParser<DocCommentsNode> {
 	return map(
-		repeat<CommentNode>(docComment(), true),
+		syntaxRepeat<CommentNode>(docComment(), true),
 		res => {
 			const ans: DocCommentsNode = {
 				type: 'nbtdoc:doc_comments',

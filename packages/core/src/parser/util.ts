@@ -1,5 +1,5 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
-import { AstNode, ErrorSeverity, Source } from '..'
+import { AstNode, ErrorSeverity, Range, SequenceUtil, Source } from '..'
 
 type AttemptResult<N extends object = AstNode> = {
 	result: Result<N>,
@@ -31,6 +31,91 @@ export function attempt<N extends object = AstNode>(parser: Parser<N>, src: Sour
 			src.cursor = tmpSrc.cursor
 			ctx.err.absorb(tmpCtx.err)
 		},
+	}
+}
+
+/**
+ * @template CN Child node.
+ * 
+ * @param parseGap A parser that parses gaps between nodes in the sequence.
+ * 
+ * @returns A parser that takes a sequence built with the passed-in parsers.
+ * 
+ * `Failure` when any of the `parsers` returns a `Failure`.
+ */
+export function sequence<CN extends AstNode>(parsers: InfallibleParser<CN | SequenceUtil<CN> | null>[], parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>>
+export function sequence<CN extends AstNode>(parsers: Parser<CN | SequenceUtil<CN> | null>[], parseGap?: InfallibleParser<CN[]>): Parser<SequenceUtil<CN>>
+export function sequence<CN extends AstNode>(parsers: Parser<CN | SequenceUtil<CN> | null>[], parseGap?: InfallibleParser<CN[]>): Parser<SequenceUtil<CN>> {
+	return (src: Source, ctx: ParserContext): Result<SequenceUtil<CN>> => {
+		const ans: SequenceUtil<CN> = {
+			isSequenceUtil: true,
+			nodes: [],
+			range: Range.create(src),
+		}
+
+		for (const parser of parsers) {
+			if (parseGap) {
+				ans.nodes.push(...parseGap(src, ctx))
+			}
+
+			const result = parser(src, ctx)
+			if (result === Failure) {
+				return Failure
+			} else if (result === null) {
+				continue
+			} else if (SequenceUtil.is(result)) {
+				ans.nodes.push(...result.nodes)
+			} else {
+				ans.nodes.push(result)
+			}
+		}
+
+		ans.range.end = src.cursor
+
+		return ans
+	}
+}
+
+/**
+ * @template CN Child node.
+ * 
+ * @param parser Must be fallible, as an infallible parser being repeated will result in an infinite loop.
+ * @param parseGap A parser that parses gaps between nodes in the sequence.
+ * 
+ * @returns A parser that takes a sequence with the passed-in parser being repeated zero or more times.
+ */
+export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): void
+export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>>
+export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>> {
+	return (src: Source, ctx: ParserContext): SequenceUtil<CN> => {
+		const ans: SequenceUtil<CN> = {
+			isSequenceUtil: true,
+			nodes: [],
+			range: Range.create(src),
+		}
+
+		while (src.canRead()) {
+			if (parseGap) {
+				ans.nodes.push(...parseGap(src, ctx))
+			}
+
+			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
+
+			if (result === Failure) {
+				break
+			}
+
+			updateSrcAndCtx()
+			if (SequenceUtil.is(result)) {
+				ans.nodes.push(...result.nodes)
+			} else {
+				ans.nodes.push(result)
+			}
+		}
+
+		ans.range.end = src.cursor
+
+		return ans
 	}
 }
 

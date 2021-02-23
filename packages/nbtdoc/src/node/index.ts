@@ -1,33 +1,12 @@
-import { AstNode, CommentNode, Range } from '@spyglassmc/core'
+import { AstNode, CommentNode, Sequence, SequenceUtil } from '@spyglassmc/core'
+import { CompoundDefinitionNode } from './CompoundDefinition'
+import { EnumDefinitionNode } from './EnumDefinition'
 
-interface Syntax<CN extends AstNode = AstNode> {
-	/**
-	 * An array of `Node`s that fully made up this node.
-	 */
-	nodes: (CommentNode | CN)[],
-}
+export * from './CompoundDefinition'
+export * from './EnumDefinition'
 
-/**
- * A utility object for temporarily storing a syntax rule preceded with **SYNTAX** in the [format][format].
- * 
- * [format]: https://github.com/Yurihaia/nbtdoc-rs/blob/master/docs/format.md
- * 
- * @template CN Child node.
- */
-export interface SyntaxUtil<CN extends AstNode = AstNode> extends Syntax<CN> {
-	isSyntaxUtil: true,
-	range: Range,
-}
-
-export namespace SyntaxUtil {
-	export function is<CN extends AstNode>(obj: object | undefined | null): obj is SyntaxUtil<CN> {
-		return !!obj && (obj as SyntaxUtil).isSyntaxUtil
-	}
-}
-
-export interface ErrorNode extends AstNode {
-	type: 'nbtdoc:error',
-}
+export type Syntax<CN extends AstNode = AstNode> = Sequence<CN | CommentNode>
+export type SyntaxUtil<CN extends AstNode = AstNode> = SequenceUtil<CN | CommentNode>
 
 export interface LiteralToken<T extends string = string> extends AstNode {
 	type: 'nbtdoc:literal',
@@ -44,7 +23,7 @@ export namespace LiteralToken {
 
 export interface IdentifierToken extends AstNode {
 	type: 'nbtdoc:identifier',
-	text: string,
+	value: string,
 }
 export namespace IdentifierToken {
 	export function is(obj: object): obj is IdentifierToken {
@@ -55,7 +34,7 @@ export namespace IdentifierToken {
 export interface IdentifierPathToken extends AstNode {
 	type: 'nbtdoc:identifier_path',
 	fromGlobalRoot: boolean,
-	path: (IdentifierToken | 'super')[],
+	path: (IdentifierToken | LiteralToken<'super'>)[],
 }
 export namespace IdentifierPathToken {
 	export function is(obj: object): obj is IdentifierPathToken {
@@ -77,18 +56,23 @@ export namespace MinecraftIdentifierToken {
 	}
 }
 
-export type PrimitiveToken = FloatToken | IntegerToken | StringToken
-export namespace PrimitiveToken {
-	export function is(obj: object): obj is PrimitiveToken {
-		return (obj as PrimitiveToken).type === 'nbtdoc:float' ||
-			(obj as PrimitiveToken).type === 'nbtdoc:integer' ||
-			(obj as PrimitiveToken).type === 'nbtdoc:string'
+export type Primitive = FloatToken | IntegerToken | StringToken
+export namespace Primitive {
+	export function is(obj: object): obj is Primitive {
+		return (obj as Primitive).type === 'nbtdoc:float' ||
+			(obj as Primitive).type === 'nbtdoc:integer' ||
+			StringToken.is(obj)
 	}
 }
 
 export interface StringToken extends AstNode {
 	type: 'nbtdoc:string',
 	value: string,
+}
+export namespace StringToken {
+	export function is(obj: object): obj is StringToken {
+		return (obj as StringToken).type === 'nbtdoc:string'
+	}
 }
 
 export interface IntegerToken extends AstNode {
@@ -111,41 +95,11 @@ export namespace DocCommentsNode {
 	}
 }
 
-export interface CompoundDefinitionNode extends AstNode, Syntax {
-	type: 'nbtdoc:compound_definition',
-}
-
 export interface DescribesClauseNode extends AstNode, Syntax<IdentifierPathToken | LiteralToken | MinecraftIdentifierToken> {
 	type: 'nbtdoc:describes_clause',
 	path: IdentifierPathToken,
 	registry: MinecraftIdentifierToken,
 	objects: MinecraftIdentifierToken[] | null,
-}
-
-export const EnumType = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
-export type EnumType = typeof EnumType[number]
-
-export const EnumTypeOrEmpty = [...EnumType, ''] as const
-export type EnumTypeOrEmpty = typeof EnumTypeOrEmpty[number]
-
-export interface EnumFieldNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | IntegerToken | FloatToken | StringToken> {
-	type: 'nbtdoc:enum_definition/field',
-	doc: DocCommentsNode,
-	key: IdentifierToken,
-	value: IntegerToken | FloatToken | StringToken
-}
-export namespace EnumFieldNode {
-	export function is(obj: object): obj is EnumFieldNode {
-		return (obj as EnumFieldNode).type === 'nbtdoc:enum_definition/field'
-	}
-}
-
-export interface EnumDefinitionNode extends AstNode, Syntax<DocCommentsNode | LiteralToken | IdentifierToken | EnumFieldNode> {
-	type: 'nbtdoc:enum_definition',
-	doc: DocCommentsNode,
-	enumType: LiteralToken<EnumTypeOrEmpty>,
-	identifier: IdentifierToken,
-	fields: EnumFieldNode[],
 }
 
 export interface InjectClauseNode extends AstNode, Syntax {
@@ -171,7 +125,6 @@ export type ContentNode =
 	| UseClauseNode
 	| DescribesClauseNode
 	| InjectClauseNode
-	| ErrorNode
 
 export interface MainNode extends AstNode, Syntax {
 	type: 'nbtdoc:main',
