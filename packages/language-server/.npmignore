@@ -1,0 +1,11 @@
+/.*
+/contributors
+/coverage
+/img
+/node_modules
+/src
+/CHANGELOG.md
+/CODE_OF_CONDUCT.md
+/CONTRIBUTING.md
+/tsconfig.json
+/tslint.json

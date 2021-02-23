@@ -31,10 +31,10 @@ export async function loadLocale(
 function _localize(key: string, params: any[]) {
 	const value: string | undefined = Locales[language][key] ?? Locales.en[key]
 
-	return _resolveLocalePlaceholders(value, params) ?? (
+	return _resolveLocalePlaceholders(value, params) ?? '' /* (
 		console.error(new Error(`Unknown locale key “${key}”`)),
 		''
-	)
+	) */
 }
 
 function _resolveLocalePlaceholders(val: string | undefined, params: string[]) {
@@ -65,7 +65,7 @@ async function _setupLanguage(code: string) {
 	Locales[code] = { ..._addPrefix(jsonLocale, 'mcschema'), ...locale }
 	language = code
 
-	console.info(`[I18N] Set to “${code}”.`)
+	// console.info(`[I18N] Set to “${code}”.`)
 }
 
 function _addPrefix(locale: Locale, prefix: string) {
