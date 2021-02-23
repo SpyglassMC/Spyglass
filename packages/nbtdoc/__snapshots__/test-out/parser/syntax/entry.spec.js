@@ -1,11 +1,11 @@
 exports['entry() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:main",
-    "nodes": [],
     "range": {
       "start": 0,
       "end": 0
-    }
+    },
+    "nodes": []
   },
   "errors": []
 }
@@ -13,9 +13,17 @@ exports['entry() Parse "" 1'] = {
 exports['entry() Parse "mod describes minecraft:block;" 1'] = {
   "node": {
     "type": "nbtdoc:main",
+    "range": {
+      "start": 0,
+      "end": 30
+    },
     "nodes": [
       {
         "type": "nbtdoc:describes_clause",
+        "range": {
+          "start": 0,
+          "end": 30
+        },
         "nodes": [
           {
             "type": "nbtdoc:identifier_path",
@@ -41,7 +49,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
               "start": 4,
               "end": 13
             },
-            "text": "describes"
+            "value": "describes"
           },
           {
             "type": "nbtdoc:minecraft_identifier",
@@ -56,11 +64,11 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
           },
           {
             "type": "nbtdoc:literal",
-            "text": ";",
             "range": {
               "start": 29,
               "end": 30
-            }
+            },
+            "value": ";"
           }
         ],
         "path": {
@@ -92,17 +100,9 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
             "block"
           ]
         },
-        "objects": null,
-        "range": {
-          "start": 0,
-          "end": 30
-        }
+        "objects": null
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 30
-    }
+    ]
   },
   "errors": []
 }
@@ -110,9 +110,17 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
 exports['entry() Parse "mod describes;" 1'] = {
   "node": {
     "type": "nbtdoc:main",
+    "range": {
+      "start": 0,
+      "end": 14
+    },
     "nodes": [
       {
         "type": "nbtdoc:module_declaration",
+        "range": {
+          "start": 0,
+          "end": 14
+        },
         "nodes": [
           {
             "type": "nbtdoc:literal",
@@ -120,7 +128,7 @@ exports['entry() Parse "mod describes;" 1'] = {
               "start": 0,
               "end": 3
             },
-            "text": "mod"
+            "value": "mod"
           },
           {
             "type": "nbtdoc:identifier",
@@ -132,11 +140,11 @@ exports['entry() Parse "mod describes;" 1'] = {
           },
           {
             "type": "nbtdoc:literal",
-            "text": ";",
             "range": {
               "start": 13,
               "end": 14
-            }
+            },
+            "value": ";"
           }
         ],
         "identifier": {
@@ -146,17 +154,9 @@ exports['entry() Parse "mod describes;" 1'] = {
             "end": 13
           },
           "text": "describes"
-        },
-        "range": {
-          "start": 0,
-          "end": 14
         }
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 14
-    }
+    ]
   },
   "errors": []
 }

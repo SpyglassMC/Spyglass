@@ -15,7 +15,7 @@ exports['keyword() Parse "foo something else;" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -27,7 +27,7 @@ exports['keyword() Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -39,7 +39,7 @@ exports['keyword() Parse "foobar" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": [
     {
@@ -60,7 +60,7 @@ exports['literal() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "text": ""
+    "value": ""
   },
   "errors": [
     {
@@ -81,7 +81,7 @@ exports['literal() Parse "f" 1'] = {
       "start": 0,
       "end": 0
     },
-    "text": ""
+    "value": ""
   },
   "errors": [
     {
@@ -102,7 +102,7 @@ exports['literal() Parse "foo something else;" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -114,7 +114,7 @@ exports['literal() Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": []
 }
@@ -126,7 +126,7 @@ exports['literal() Parse "foobar" 1'] = {
       "start": 0,
       "end": 3
     },
-    "text": "foo"
+    "value": "foo"
   },
   "errors": [
     {
@@ -152,7 +152,7 @@ exports['marker() Parse ";" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }
@@ -164,7 +164,7 @@ exports['marker() Parse ";foo" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }
@@ -176,7 +176,7 @@ exports['marker() Parse ";↓something else;" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }
@@ -188,7 +188,7 @@ exports['punctuation() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "text": ""
+    "value": ""
   },
   "errors": [
     {
@@ -209,7 +209,7 @@ exports['punctuation() Parse ";" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }
@@ -221,7 +221,7 @@ exports['punctuation() Parse ";foo" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }
@@ -233,7 +233,7 @@ exports['punctuation() Parse ";↓something else;" 1'] = {
       "start": 0,
       "end": 1
     },
-    "text": ";"
+    "value": ";"
   },
   "errors": []
 }

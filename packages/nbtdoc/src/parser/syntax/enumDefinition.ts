@@ -45,7 +45,7 @@ function enumType(): InfallibleParser<LiteralToken<EnumTypeOrEmpty>> {
 			]), src)
 			const ans: LiteralToken<''> = {
 				type: 'nbtdoc:literal',
-				text: '',
+				value: '',
 				range: Range.create(src),
 			}
 			return ans

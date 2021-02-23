@@ -17,12 +17,12 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 		const ans: LiteralToken = {
 			type: 'nbtdoc:literal',
 			range: Range.create(src),
-			text: '',
+			value: '',
 		}
 
 		if (src.peek(literal.length) === literal) {
 			src.skip(literal.length)
-			ans.text = literal
+			ans.value = literal
 			if (!canBeFollowedByLetter && /^[A-Za-z0-9_]$/.test(src.peek())) {
 				ctx.err.report(
 					localize('expected', [

@@ -11,6 +11,10 @@ exports['useClause() Parse "e" 1'] = {
 exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 20
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -18,7 +22,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
           "start": 0,
           "end": 6
         },
-        "text": "export"
+        "value": "export"
       },
       {
         "type": "nbtdoc:literal",
@@ -26,7 +30,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
           "start": 7,
           "end": 10
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -56,11 +60,11 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 19,
           "end": 20
-        }
+        },
+        "value": ";"
       }
     ],
     "isExport": true,
@@ -89,10 +93,6 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
         "start": 11,
         "end": 19
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 20
     }
   },
   "errors": []
@@ -101,6 +101,10 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
 exports['useClause() Parse "export use foo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 15
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -108,7 +112,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
           "start": 0,
           "end": 6
         },
-        "text": "export"
+        "value": "export"
       },
       {
         "type": "nbtdoc:literal",
@@ -116,7 +120,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
           "start": 7,
           "end": 10
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -138,11 +142,11 @@ exports['useClause() Parse "export use foo;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 14,
           "end": 15
-        }
+        },
+        "value": ";"
       }
     ],
     "isExport": true,
@@ -163,10 +167,6 @@ exports['useClause() Parse "export use foo;" 1'] = {
         "start": 11,
         "end": 14
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 15
     }
   },
   "errors": []
@@ -175,6 +175,10 @@ exports['useClause() Parse "export use foo;" 1'] = {
 exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 27
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -182,7 +186,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
           "start": 0,
           "end": 6
         },
-        "text": "export"
+        "value": "export"
       },
       {
         "type": "nbtdoc:literal",
@@ -190,7 +194,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
           "start": 7,
           "end": 10
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -221,11 +225,11 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 26,
           "end": 27
-        }
+        },
+        "value": ";"
       }
     ],
     "isExport": true,
@@ -255,10 +259,6 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
         "start": 11,
         "end": 26
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 27
     }
   },
   "errors": []
@@ -272,6 +272,10 @@ exports['useClause() Parse "export" 1'] = {
 exports['useClause() Parse "exportusefoo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -279,7 +283,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
           "start": 0,
           "end": 6
         },
-        "text": "export"
+        "value": "export"
       },
       {
         "type": "nbtdoc:literal",
@@ -287,7 +291,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
           "start": 6,
           "end": 9
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -309,11 +313,11 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 12,
           "end": 13
-        }
+        },
+        "value": ";"
       }
     ],
     "isExport": true,
@@ -334,10 +338,6 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
         "start": 9,
         "end": 12
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 13
     }
   },
   "errors": [
@@ -368,6 +368,10 @@ exports['useClause() Parse "u" 1'] = {
 exports['useClause() Parse "use foo" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -375,7 +379,7 @@ exports['useClause() Parse "use foo" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -397,11 +401,11 @@ exports['useClause() Parse "use foo" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 7,
           "end": 7
-        }
+        },
+        "value": ""
       }
     ],
     "isExport": false,
@@ -422,10 +426,6 @@ exports['useClause() Parse "use foo" 1'] = {
         "start": 4,
         "end": 7
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 7
     }
   },
   "errors": [
@@ -443,6 +443,10 @@ exports['useClause() Parse "use foo" 1'] = {
 exports['useClause() Parse "use foo;" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -450,7 +454,7 @@ exports['useClause() Parse "use foo;" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -472,11 +476,11 @@ exports['useClause() Parse "use foo;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 7,
           "end": 8
-        }
+        },
+        "value": ";"
       }
     ],
     "isExport": false,
@@ -497,10 +501,6 @@ exports['useClause() Parse "use foo;" 1'] = {
         "start": 4,
         "end": 7
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 8
     }
   },
   "errors": []
@@ -509,6 +509,10 @@ exports['useClause() Parse "use foo;" 1'] = {
 exports['useClause() Parse "use" 1'] = {
   "node": {
     "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -516,7 +520,7 @@ exports['useClause() Parse "use" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "use"
+        "value": "use"
       },
       {
         "type": "nbtdoc:identifier_path",
@@ -538,11 +542,11 @@ exports['useClause() Parse "use" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 3,
           "end": 3
-        }
+        },
+        "value": ""
       }
     ],
     "isExport": false,
@@ -563,10 +567,6 @@ exports['useClause() Parse "use" 1'] = {
         "start": 3,
         "end": 3
       }
-    },
-    "range": {
-      "start": 0,
-      "end": 3
     }
   },
   "errors": [

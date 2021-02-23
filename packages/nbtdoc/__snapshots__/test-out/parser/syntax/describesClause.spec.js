@@ -15,6 +15,10 @@ exports['describesClause() Parse "" 1'] = {
 exports['describesClause() Parse "Foo describes [];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 17
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -40,7 +44,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -53,11 +57,11 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "[",
         "range": {
           "start": 14,
           "end": 15
-        }
+        },
+        "value": "["
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -70,19 +74,19 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "]",
         "range": {
           "start": 15,
           "end": 16
-        }
+        },
+        "value": "]"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 16,
           "end": 17
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -122,11 +126,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "namespace": "",
         "path": []
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 17
-    }
+    ]
   },
   "errors": [
     {
@@ -151,6 +151,10 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
 exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 28
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -176,7 +180,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -191,11 +195,11 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 28,
           "end": 28
-        }
+        },
+        "value": ""
       }
     ],
     "path": {
@@ -227,11 +231,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
         "item"
       ]
     },
-    "objects": null,
-    "range": {
-      "start": 0,
-      "end": 28
-    }
+    "objects": null
   },
   "errors": [
     {
@@ -248,6 +248,10 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
 exports['describesClause() Parse "Foo describes minecraft:item; something else;" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 29
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -273,7 +277,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -288,11 +292,11 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -324,11 +328,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
         "item"
       ]
     },
-    "objects": null,
-    "range": {
-      "start": 0,
-      "end": 29
-    }
+    "objects": null
   },
   "errors": []
 }
@@ -336,6 +336,10 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
 exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 29
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -361,7 +365,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -376,11 +380,11 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -412,11 +416,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
         "item"
       ]
     },
-    "objects": null,
-    "range": {
-      "start": 0,
-      "end": 29
-    }
+    "objects": null
   },
   "errors": []
 }
@@ -424,6 +424,10 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
 exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 31
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -449,7 +453,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -464,11 +468,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "[",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": "["
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -481,19 +485,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "]",
         "range": {
           "start": 29,
           "end": 30
-        }
+        },
+        "value": "]"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 30,
           "end": 31
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -535,11 +539,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "namespace": "",
         "path": []
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 31
-    }
+    ]
   },
   "errors": [
     {
@@ -556,6 +556,10 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
 exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 46
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -581,7 +585,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -596,11 +600,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       },
       {
         "type": "nbtdoc:literal",
-        "text": "[",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": "["
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -615,19 +619,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       },
       {
         "type": "nbtdoc:literal",
-        "text": "]",
         "range": {
           "start": 44,
           "end": 45
-        }
+        },
+        "value": "]"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 45,
           "end": 46
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -671,11 +675,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
           "stone"
         ]
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 46
-    }
+    ]
   },
   "errors": []
 }
@@ -683,6 +683,10 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
 exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block,↓];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 74
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -708,7 +712,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -723,11 +727,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": "[",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": "["
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -742,11 +746,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": ",",
         "range": {
           "start": 46,
           "end": 47
-        }
+        },
+        "value": ","
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -761,11 +765,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": ",",
         "range": {
           "start": 70,
           "end": 71
-        }
+        },
+        "value": ","
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -778,19 +782,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": "]",
         "range": {
           "start": 72,
           "end": 73
-        }
+        },
+        "value": "]"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 73,
           "end": 74
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -854,11 +858,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "",
         "path": []
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 74
-    }
+    ]
   },
   "errors": [
     {
@@ -875,6 +875,10 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
 exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:stone,↓⮀minecraft:grass_block↓];" 1'] = {
   "node": {
     "type": "nbtdoc:describes_clause",
+    "range": {
+      "start": 0,
+      "end": 73
+    },
     "nodes": [
       {
         "type": "nbtdoc:identifier_path",
@@ -900,7 +904,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
           "start": 4,
           "end": 13
         },
-        "text": "describes"
+        "value": "describes"
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -915,11 +919,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": "[",
         "range": {
           "start": 28,
           "end": 29
-        }
+        },
+        "value": "["
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -934,11 +938,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": ",",
         "range": {
           "start": 46,
           "end": 47
-        }
+        },
+        "value": ","
       },
       {
         "type": "nbtdoc:minecraft_identifier",
@@ -953,19 +957,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       },
       {
         "type": "nbtdoc:literal",
-        "text": "]",
         "range": {
           "start": 71,
           "end": 72
-        }
+        },
+        "value": "]"
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 72,
           "end": 73
-        }
+        },
+        "value": ";"
       }
     ],
     "path": {
@@ -1020,11 +1024,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
           "grass_block"
         ]
       }
-    ],
-    "range": {
-      "start": 0,
-      "end": 73
-    }
+    ]
   },
   "errors": []
 }

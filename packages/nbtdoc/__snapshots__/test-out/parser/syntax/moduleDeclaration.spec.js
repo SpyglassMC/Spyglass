@@ -11,6 +11,10 @@ exports['moduleDeclaration() Parse "m" 1'] = {
 exports['moduleDeclaration() Parse "mod zombie" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 10
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -18,7 +22,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -30,11 +34,11 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 10,
           "end": 10
-        }
+        },
+        "value": ""
       }
     ],
     "identifier": {
@@ -44,10 +48,6 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
         "end": 10
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 10
     }
   },
   "errors": [
@@ -65,6 +65,10 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
 exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 11
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -72,7 +76,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -84,11 +88,11 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 10,
           "end": 11
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -98,10 +102,6 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
         "end": 10
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 11
     }
   },
   "errors": []
@@ -110,6 +110,10 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
 exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 11
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -117,7 +121,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -129,11 +133,11 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 10,
           "end": 11
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -143,10 +147,6 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
         "end": 10
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 11
     }
   },
   "errors": []
@@ -155,6 +155,10 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
 exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 11
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -162,7 +166,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -174,11 +178,11 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 10,
           "end": 11
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -188,10 +192,6 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
         "end": 10
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 11
     }
   },
   "errors": []
@@ -200,6 +200,10 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
 exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 11
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -207,7 +211,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -219,11 +223,11 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 11,
           "end": 11
-        }
+        },
+        "value": ""
       }
     ],
     "identifier": {
@@ -233,10 +237,6 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
         "end": 10
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 11
     }
   },
   "errors": [
@@ -254,6 +254,10 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
 exports['moduleDeclaration() Parse "mod" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -261,7 +265,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -273,11 +277,11 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
         "range": {
           "start": 3,
           "end": 3
-        }
+        },
+        "value": ""
       }
     ],
     "identifier": {
@@ -287,10 +291,6 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
         "end": 3
       },
       "text": ""
-    },
-    "range": {
-      "start": 0,
-      "end": 3
     }
   },
   "errors": [
@@ -316,6 +316,10 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
 exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 23
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -323,7 +327,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "comment",
@@ -343,11 +347,11 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 22,
           "end": 23
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -357,10 +361,6 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
         "end": 21
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 23
     }
   },
   "errors": []
@@ -369,6 +369,10 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
 exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 28
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -376,7 +380,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "comment",
@@ -396,11 +400,11 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 27,
           "end": 28
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -410,10 +414,6 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
         "end": 26
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 28
     }
   },
   "errors": [
@@ -431,6 +431,10 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
 exports['moduleDeclaration() Parse "modzombie;" 1'] = {
   "node": {
     "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 10
+    },
     "nodes": [
       {
         "type": "nbtdoc:literal",
@@ -438,7 +442,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
           "start": 0,
           "end": 3
         },
-        "text": "mod"
+        "value": "mod"
       },
       {
         "type": "nbtdoc:identifier",
@@ -450,11 +454,11 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
       },
       {
         "type": "nbtdoc:literal",
-        "text": ";",
         "range": {
           "start": 9,
           "end": 10
-        }
+        },
+        "value": ";"
       }
     ],
     "identifier": {
@@ -464,10 +468,6 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
         "end": 9
       },
       "text": "zombie"
-    },
-    "range": {
-      "start": 0,
-      "end": 10
     }
   },
   "errors": [

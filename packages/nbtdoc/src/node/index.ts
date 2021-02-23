@@ -31,13 +31,13 @@ export interface ErrorNode extends AstNode {
 
 export interface LiteralToken<T extends string = string> extends AstNode {
 	type: 'nbtdoc:literal',
-	text: T,
+	value: T,
 }
 export namespace LiteralToken {
 	export function is<T extends string>(literal?: T | T[] | readonly T[]): (obj: object) => obj is LiteralToken<T> {
 		return (obj: object): obj is LiteralToken<T> => (
 			(obj as LiteralToken).type === 'nbtdoc:literal' &&
-			(literal === undefined || (Array.isArray(literal) ? literal.includes((obj as LiteralToken<T>).text) : (obj as LiteralToken).text === literal))
+			(literal === undefined || (Array.isArray(literal) ? literal.includes((obj as LiteralToken<T>).value) : (obj as LiteralToken).value === literal))
 		)
 	}
 }

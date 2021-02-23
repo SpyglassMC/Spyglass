@@ -35,7 +35,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 26,
           "end": 30
         },
-        "text": "enum"
+        "value": "enum"
       },
       {
         "type": "nbtdoc:literal",
@@ -43,7 +43,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 30,
           "end": 31
         },
-        "text": "("
+        "value": "("
       },
       {
         "type": "nbtdoc:literal",
@@ -51,7 +51,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 31,
           "end": 36
         },
-        "text": "float"
+        "value": "float"
       },
       {
         "type": "nbtdoc:literal",
@@ -59,7 +59,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 36,
           "end": 37
         },
-        "text": ")"
+        "value": ")"
       },
       {
         "type": "nbtdoc:identifier",
@@ -75,7 +75,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 47,
           "end": 48
         },
-        "text": "{"
+        "value": "{"
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -116,7 +116,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "start": 84,
               "end": 85
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:float",
@@ -168,7 +168,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 89,
           "end": 90
         },
-        "text": ","
+        "value": ","
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -209,7 +209,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "start": 126,
               "end": 127
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:float",
@@ -261,7 +261,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 132,
           "end": 133
         },
-        "text": "}"
+        "value": "}"
       }
     ],
     "doc": {
@@ -288,7 +288,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
         "start": 31,
         "end": 36
       },
-      "text": "float"
+      "value": "float"
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -338,7 +338,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "start": 84,
               "end": 85
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:float",
@@ -423,7 +423,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "start": 126,
               "end": 127
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:float",
@@ -506,7 +506,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 26,
           "end": 30
         },
-        "text": "enum"
+        "value": "enum"
       },
       {
         "type": "nbtdoc:literal",
@@ -514,7 +514,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 30,
           "end": 31
         },
-        "text": "("
+        "value": "("
       },
       {
         "type": "nbtdoc:literal",
@@ -522,7 +522,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 31,
           "end": 37
         },
-        "text": "string"
+        "value": "string"
       },
       {
         "type": "nbtdoc:literal",
@@ -530,7 +530,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 37,
           "end": 38
         },
-        "text": ")"
+        "value": ")"
       },
       {
         "type": "nbtdoc:identifier",
@@ -546,7 +546,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 48,
           "end": 49
         },
-        "text": "{"
+        "value": "{"
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -595,7 +595,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "start": 106,
               "end": 107
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:string",
@@ -655,7 +655,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 114,
           "end": 115
         },
-        "text": "}"
+        "value": "}"
       }
     ],
     "doc": {
@@ -682,7 +682,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
         "start": 31,
         "end": 37
       },
-      "text": "string"
+      "value": "string"
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -740,7 +740,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "start": 106,
               "end": 107
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:string",
@@ -822,7 +822,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 0,
           "end": 4
         },
-        "text": "enum"
+        "value": "enum"
       },
       {
         "type": "nbtdoc:literal",
@@ -830,11 +830,11 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "text": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
-        "text": "",
+        "value": "",
         "range": {
           "start": 4,
           "end": 4
@@ -846,7 +846,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "text": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:identifier",
@@ -862,7 +862,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "text": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -894,7 +894,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "start": 4,
               "end": 4
             },
-            "text": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:integer",
@@ -937,7 +937,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "text": ""
+        "value": ""
       }
     ],
     "doc": {
@@ -955,7 +955,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
         "start": 4,
         "end": 4
       },
-      "text": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -996,7 +996,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "start": 4,
               "end": 4
             },
-            "text": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:integer",
@@ -1134,7 +1134,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 0,
           "end": 4
         },
-        "text": "enum"
+        "value": "enum"
       },
       {
         "type": "nbtdoc:literal",
@@ -1142,7 +1142,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 4,
           "end": 5
         },
-        "text": "("
+        "value": "("
       },
       {
         "type": "nbtdoc:literal",
@@ -1150,7 +1150,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 5,
           "end": 9
         },
-        "text": "byte"
+        "value": "byte"
       },
       {
         "type": "nbtdoc:literal",
@@ -1158,7 +1158,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 9,
           "end": 10
         },
-        "text": ")"
+        "value": ")"
       },
       {
         "type": "nbtdoc:identifier",
@@ -1174,7 +1174,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 20,
           "end": 21
         },
-        "text": "{"
+        "value": "{"
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -1206,7 +1206,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 25,
               "end": 26
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:integer",
@@ -1249,7 +1249,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 28,
           "end": 29
         },
-        "text": ","
+        "value": ","
       },
       {
         "type": "nbtdoc:enum_definition/field",
@@ -1281,7 +1281,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 29,
               "end": 29
             },
-            "text": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:integer",
@@ -1324,7 +1324,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 29,
           "end": 30
         },
-        "text": "}"
+        "value": "}"
       }
     ],
     "doc": {
@@ -1342,7 +1342,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
         "start": 5,
         "end": 9
       },
-      "text": "byte"
+      "value": "byte"
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -1383,7 +1383,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 25,
               "end": 26
             },
-            "text": "="
+            "value": "="
           },
           {
             "type": "nbtdoc:integer",
@@ -1450,7 +1450,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 29,
               "end": 29
             },
-            "text": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:integer",

@@ -1,12 +1,12 @@
 exports['docComments() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
-    "nodes": [],
-    "doc": "",
     "range": {
       "start": 0,
       "end": 0
-    }
+    },
+    "nodes": [],
+    "doc": ""
   },
   "errors": []
 }
@@ -14,6 +14,10 @@ exports['docComments() Parse "" 1'] = {
 exports['docComments() Parse "/// This is a doc comment." 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
+    "range": {
+      "start": 0,
+      "end": 26
+    },
     "nodes": [
       {
         "type": "comment",
@@ -24,11 +28,7 @@ exports['docComments() Parse "/// This is a doc comment." 1'] = {
         "comment": " This is a doc comment."
       }
     ],
-    "doc": " This is a doc comment.",
-    "range": {
-      "start": 0,
-      "end": 26
-    }
+    "doc": " This is a doc comment."
   },
   "errors": []
 }
@@ -36,12 +36,12 @@ exports['docComments() Parse "/// This is a doc comment." 1'] = {
 exports['docComments() Parse "compound Something {}" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
-    "nodes": [],
-    "doc": "",
     "range": {
       "start": 0,
       "end": 0
-    }
+    },
+    "nodes": [],
+    "doc": ""
   },
   "errors": []
 }
@@ -49,6 +49,10 @@ exports['docComments() Parse "compound Something {}" 1'] = {
 exports['docComments() Parse "⮀/// This is a doc comment.↓⮀/// And more?↓⮀foo: Boolean" 1'] = {
   "node": {
     "type": "nbtdoc:doc_comments",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
     "nodes": [
       {
         "type": "comment",
@@ -67,11 +71,7 @@ exports['docComments() Parse "⮀/// This is a doc comment.↓⮀/// And more?�
         "comment": " And more?\n"
       }
     ],
-    "doc": " This is a doc comment.\n And more?\n",
-    "range": {
-      "start": 0,
-      "end": 44
-    }
+    "doc": " This is a doc comment.\n And more?\n"
   },
   "errors": []
 }
