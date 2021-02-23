@@ -1,5 +1,5 @@
-import { AstNode } from '@spyglassmc/core'
-import { DocCommentsNode, IdentifierPathToken, IdentifierToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
+import { AstNode, Range } from '@spyglassmc/core'
+import { DocCommentsNode, FloatToken, IdentifierPathToken, IdentifierToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
 
 export interface CompoundDefinitionNode extends AstNode, Syntax<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
@@ -40,7 +40,9 @@ export namespace CompoundFieldNode {
 	}
 }
 
-export type CompoundFieldChild = DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
+export type CompoundFieldChild =
+	| DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
+	| IntRangeNode | NatRangeNode | FloatRangeNode | RegistryIndexNode | IdentifierPathToken | MinecraftIdentifierToken
 
 export type CompoundFieldKey = IdentifierToken | StringToken
 export namespace CompoundFieldKey {
@@ -49,14 +51,124 @@ export namespace CompoundFieldKey {
 	}
 }
 
-export const CompoundFieldTypes = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
+export const CompoundFieldIterableTypes = ['byte', 'int', 'long'] as const
+export type CompoundFieldIterableType = typeof CompoundFieldIterableTypes[number]
+export const CompoundFieldTypes = [...CompoundFieldIterableTypes, 'short', 'float', 'double', 'boolean', 'string'] as const
 export type CompoundFieldType = typeof CompoundFieldTypes[number]
-export interface CompoundFieldTypeNode extends AstNode {
-	type: 'nbtdoc:compound_definition/field/type'
-}
+/**
+ * @see [doc][doc]
+ * 
+ * **SYNTAX**  
+ * 
+ * | type                                                                   | Description                    |
+ * | ---------------------------------------------------------------------- | ------------------------------ |
+ * | `boolean`                                                              | Byte (0b or 1b)                |
+ * | `byte` _IntRange_ `[` `]` _NatRange_                                   | Byte Array                     |
+ * | `int` _IntRange_ `[` `]` _NatRange_                                    | Int Array                      |
+ * | `long` _IntRange_ `[` `]` _NatRange_                                   | Long Array                     |
+ * | `byte` _IntRange_                                                      | Byte                           |
+ * | `short` _IntRange_                                                     | Short                          |
+ * | `int` _IntRange_                                                       | Int                            |
+ * | `long` _IntRange_                                                      | Long                           |
+ * | `float` _FloatRange_                                                   | Float                          |
+ * | `double` _FloatRange_                                                  | Double                         |
+ * | `string`                                                               | String                         |
+ * | `[` _FieldType_ `]` _Range_                                            | List                           |
+ * | [_RegistryIndex_](#Registry-Index)                                     | Compound (dynamically indexed) |
+ * | `id` `(` [MINECRAFT_IDENT](#Minecraft-Identifier) `)`                  | String (with id validation)    |
+ * | [IDENT_PATH](#Identifier-Path)                                         | Compound or Enum               |
+ * | `(` ( _FieldType_ ( `\|`  _FieldType_ )<sup>\*</sup> )<sup>?</sup> `)` | Union type                     |
+ * 
+ * [doc]: https://github.com/Yurihaia/nbtdoc-rs/blob/master/docs/format.md#field-type
+ */
+export type CompoundFieldTypeNode = {
+	type: 'nbtdoc:compound_definition/field/type',
+	range: Range,
+	typeType: string,
+} & ({
+	typeType: 'boolean',
+} | {
+	typeType: 'string',
+} | {
+	typeType: 'byte_array',
+	valueRange: IntRangeNode | null,
+	lengthRange: NatRangeNode | null,
+} | {
+	typeType: 'int_array',
+	valueRange: IntRangeNode | null,
+	lengthRange: NatRangeNode | null,
+} | {
+	typeType: 'long_array',
+	valueRange: IntRangeNode | null,
+	lengthRange: NatRangeNode | null,
+} | {
+	typeType: 'byte',
+	valueRange: IntRangeNode | null,
+} | {
+	typeType: 'short',
+	valueRange: IntRangeNode | null,
+} | {
+	typeType: 'int',
+	valueRange: IntRangeNode | null,
+} | {
+	typeType: 'long',
+	valueRange: IntRangeNode | null,
+} | {
+	typeType: 'float',
+	valueRange: FloatRangeNode | null,
+} | {
+	typeType: 'double',
+	valueRange: FloatRangeNode | null,
+} | {
+	typeType: 'list',
+	item: CompoundFieldTypeNode,
+	lengthRange: NatRangeNode | null,
+} | {
+	typeType: 'index',
+	index: RegistryIndexNode,
+} | {
+	typeType: 'id',
+	registry: MinecraftIdentifierToken,
+} | {
+	typeType: 'path',
+	path: IdentifierPathToken,
+} | {
+	typeType: 'union',
+	members: CompoundFieldTypeNode[],
+})
 export namespace CompoundFieldTypeNode {
 	export function is(obj: object): obj is CompoundFieldTypeNode {
 		return (obj as CompoundFieldTypeNode).type === 'nbtdoc:compound_definition/field/type'
+	}
+}
+
+export interface IntRangeNode extends AstNode, Syntax<LiteralToken | IntegerToken> {
+	type: 'nbtdoc:int_range',
+	value: [bigint | null, bigint | null],
+}
+export namespace IntRangeNode {
+	export function is(obj: object): obj is IntRangeNode {
+		return (obj as IntRangeNode).type === 'nbtdoc:int_range'
+	}
+}
+
+export interface NatRangeNode extends AstNode, Syntax<LiteralToken | IntegerToken> {
+	type: 'nbtdoc:nat_range',
+	value: [bigint | null, bigint | null],
+}
+export namespace NatRangeNode {
+	export function is(obj: object): obj is NatRangeNode {
+		return (obj as NatRangeNode).type === 'nbtdoc:nat_range'
+	}
+}
+
+export interface FloatRangeNode extends AstNode, Syntax<LiteralToken | FloatToken> {
+	type: 'nbtdoc:float_range',
+	value: [number | null, number | null],
+}
+export namespace FloatRangeNode {
+	export function is(obj: object): obj is FloatRangeNode {
+		return (obj as FloatRangeNode).type === 'nbtdoc:float_range'
 	}
 }
 

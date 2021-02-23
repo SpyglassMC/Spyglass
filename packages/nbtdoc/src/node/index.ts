@@ -79,10 +79,20 @@ export interface IntegerToken extends AstNode {
 	type: 'nbtdoc:integer',
 	value: bigint,
 }
+export namespace IntegerToken {
+	export function is(obj: object): obj is IntegerToken {
+		return (obj as IntegerToken).type === 'nbtdoc:integer'
+	}
+}
 
 export interface FloatToken extends AstNode {
 	type: 'nbtdoc:float',
 	value: number,
+}
+export namespace FloatToken {
+	export function is(obj: object): obj is FloatToken {
+		return (obj as FloatToken).type === 'nbtdoc:float'
+	}
 }
 
 export interface DocCommentsNode extends AstNode, Syntax<CommentNode> {
