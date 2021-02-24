@@ -18,29 +18,25 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
-      - name: Cache Node Modules
-        uses: actions/cache@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node2-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node2-
+            ${{ runner.os }}-node-
 
-      - name: Install Dependencies
-        run: npm i
+      - run: npm i
 
-      - name: Build
-        run: npm run build
+      - run: npm run build
 
-      - name: Test
-        run: |
-          npm test
-          npm run codecov
+      - run: npm test
 
-      - name: Lint
-        run: npm run lint
+      - run: npm run lint
