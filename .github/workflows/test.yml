@@ -28,12 +28,14 @@ jobs:
 
       - uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          path: |
+            node_modules
+            **/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
-      - run: npm i
+      - run: |
+          npm i
+          npm run init
 
       - run: npm run build
 
