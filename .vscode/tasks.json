@@ -3,28 +3,20 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "build",
+			"script": "watch",
 			"group": "build",
-			"presentation": {
-				"panel": "dedicated",
-				"reveal": "never"
-			},
-			"problemMatcher": [
-				"$tsc"
-			]
+			"isBackground": true,
+			"problemMatcher": "$tsc-watch",
+			"label": "npm: watch",
+			"detail": "Compiles all packages to JavaScript."
 		},
 		{
 			"type": "npm",
 			"script": "watch",
+			"group": "build",
 			"isBackground": true,
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"presentation": {
-				"panel": "dedicated",
-				"reveal": "never"
-			},
+			"path": "packages/vscode-extension/",
+			"dependsOn": "npm: watch",
 			"problemMatcher": {
 				"owner": "Webpack (Dev, Continuous)",
 				"severity": "error",
@@ -32,8 +24,8 @@
 				"source": "webpack",
 				"background": {
 					"activeOnStart": true,
-					"beginsPattern": "webpack is watching the files…",
-					"endsPattern": "\\s*\\+ (\\d+) hidden modules"
+					"beginsPattern": "^\\s*\\[webpack-cli\\] Compilation starting\\.\\.\\.",
+					"endsPattern": "^\\s*webpack [\\d\\.]+ compiled successfully in \\d+ ms"
 				},
 				"pattern": [
 					{
@@ -48,16 +40,9 @@
 						"code": 1
 					}
 				]
-			}
-		},
-		{
-			"type": "npm",
-			"script": "test",
-			"isBackground": true,
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			}
+			},
+			"label": "npm: watch - packages/vscode-extension",
+			"detail": "Builds the VS Code extension."
 		}
 	]
 }

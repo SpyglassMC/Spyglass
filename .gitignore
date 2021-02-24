@@ -3,6 +3,8 @@
 **/.nyc_output
 **/*.tsbuildinfo
 
+/.vscode/settings.json
+
 /packages/*/lib
 /packages/*/out
 /packages/*/dist

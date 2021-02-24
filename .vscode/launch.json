@@ -9,7 +9,8 @@
 			"name": "Launch Client",
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"],
-			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"]
+			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"],
+			"preLaunchTask": "npm: watch - packages/vscode-extension"
 		},
 		{
 			"type": "node",

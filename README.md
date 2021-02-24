@@ -28,8 +28,9 @@
 
 If you're using VS Code to develop SPYGlass:
 
-- Press F5 to run the VS Code extension in development environment.
-- Install the recommended [ESLint extension][eslint-extension]. Many linting errors can be fixed automatically when you save the file.
+- Install the recommended [ESLint extension][eslint-extension]. Make a copy of `.vscode/settings.template.json` and rename it to `.vscode/settings.json`.
+  Now your VS Code should automatically fix all linting errors every time you save the file.
+- Press F5 to run the VS Code extension in development environment. VS Code will automatically compile all packages and build the extension file in watch mode.
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
