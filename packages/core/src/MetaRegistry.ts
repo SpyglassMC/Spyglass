@@ -89,22 +89,6 @@ export class MetaRegistry {
 		this.languages.set(languageID, options)
 	}
 
-	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
-		registry => {
-			// TODO: Register `mcmeta` as `json`.
-		},
-	])
-
-	public static addInitializer(initializer: (this: void, registry: MetaRegistry) => void): void {
-		if (this.initializers.has(initializer)) {
-			return
-		}
-		if (this.instance) {
-			initializer(this.instance)
-		}
-		this.initializers.add(initializer)
-	}
-
 	/**
 	 * Get an instance of `MetaRegistry`.
 	 */
@@ -114,9 +98,6 @@ export class MetaRegistry {
 	private constructor() {
 		if (MetaRegistry.instance) {
 			throw new Error('Use the `getInstance` static method to get an instance.')
-		}
-		for (const initializer of MetaRegistry.initializers) {
-			initializer(this)
 		}
 	}
 	private static instance: MetaRegistry
