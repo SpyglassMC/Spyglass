@@ -73,14 +73,11 @@ export class TextDocuments {
 
 	/**
 	 * Notifies that a new document was opened in the editor.
-	 * 
-	 * @returns The `TextDocument` being created.
 	 */
-	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): TextDocument {
+	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): void {
 		const doc = TextDocument.create(uri.toString(), languageID, version, content)
 		this.activeUris.add(uri)
 		this.textDocumentCache.set(uri, doc)
-		return doc
 	}
 
 	/**

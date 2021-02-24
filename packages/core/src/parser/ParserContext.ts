@@ -11,7 +11,7 @@ export interface ParserContext {
 	fs: FileService,
 	logger: Logger,
 	doc: TextDocument,
-	err: ErrorReporter<unknown>,
+	err: ErrorReporter,
 }
 
 export namespace ParserContext {
