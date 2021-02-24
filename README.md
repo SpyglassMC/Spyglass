@@ -23,7 +23,7 @@
 	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init
 	```
 2. ```shell
-	$ npm run init
+	$ npm run build
 	```
 
 If you're using VS Code to develop SPYGlass:

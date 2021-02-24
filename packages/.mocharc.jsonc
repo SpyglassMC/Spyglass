@@ -1,8 +1,0 @@
-{
-    "require": [
-        "source-map-support/register"
-    ],
-    "inlineDiffs": true,
-    "color": true,
-    "timeout": 10000
-}

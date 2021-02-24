@@ -1,14 +1,14 @@
-exports['comment() Parse "" 1'] = {
+exports['nbtdoc comment() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['comment() Parse "/" 1'] = {
+exports['nbtdoc comment() Parse "/" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['comment() Parse "// This is a comment." 1'] = {
+exports['nbtdoc comment() Parse "// This is a comment." 1'] = {
   "node": {
     "type": "comment",
     "range": {
@@ -20,7 +20,7 @@ exports['comment() Parse "// This is a comment." 1'] = {
   "errors": []
 }
 
-exports['comment() Parse "// This is a comment.↓next line test;" 1'] = {
+exports['nbtdoc comment() Parse "// This is a comment.↓next line test;" 1'] = {
   "node": {
     "type": "comment",
     "range": {
@@ -32,7 +32,7 @@ exports['comment() Parse "// This is a comment.↓next line test;" 1'] = {
   "errors": []
 }
 
-exports['comment() Parse "//" 1'] = {
+exports['nbtdoc comment() Parse "//" 1'] = {
   "node": {
     "type": "comment",
     "range": {
@@ -44,7 +44,7 @@ exports['comment() Parse "//" 1'] = {
   "errors": []
 }
 
-exports['comment() Parse "/// This is a doc comment." 1'] = {
+exports['nbtdoc comment() Parse "/// This is a doc comment." 1'] = {
   "node": {
     "type": "comment",
     "range": {

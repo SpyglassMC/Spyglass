@@ -4,7 +4,6 @@
   "description": "Locales for the SPYGlass Project",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "keywords": [],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

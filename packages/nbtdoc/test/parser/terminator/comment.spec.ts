@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { comment } from '../../../lib'
 
-describe('comment()', () => {
+describe('nbtdoc comment()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: '/' },
