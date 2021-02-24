@@ -4,8 +4,8 @@
 **/*.tsbuildinfo
 
 /packages/*/lib
+/packages/*/out
+/packages/*/dist
 /packages/*/test-out
 
-/packages/vscode-extension/dist
-/packages/vscode-extension/out
 /packages/vscode-extension/**/*.vsix
