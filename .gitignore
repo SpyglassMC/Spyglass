@@ -6,6 +6,6 @@
 /packages/*/lib
 /packages/*/test-out
 
-/packages/vscode-datapack/dist
-/packages/vscode-datapack/out
-/packages/vscode-datapack/**/*.vsix
+/packages/vscode-extension/dist
+/packages/vscode-extension/out
+/packages/vscode-extension/**/*.vsix

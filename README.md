@@ -10,8 +10,8 @@
 - `@spyglassmc/mcfunction`: The `mcfunction` parser and interpreter.
 - `@spyglassmc/snbt`: The SNBT parser.
 - `@spyglassmc/json`: The JSON validator based on [Misode][misode]'s [mcschema][mcschema] structure.
-- `@spyglassmc/datapack-language-server`: The language server wrapped around other packages.
-- `@spyglassmc/vscode-datapack`: The VS Code extension for editing data packs. Implemented based on the language server.
+- `@spyglassmc/language-server`: The language server wrapped around other packages.
+- `@spyglassmc/vscode-extension`: The VS Code extension implemented based on the language server.
 
 ## Contributing
 
