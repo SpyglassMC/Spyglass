@@ -18,13 +18,12 @@ export function localize(param0: string | string[], params: any[] = [], depth = 
 	return _segmentedLocalize(param0, params, depth, minDepth)
 }
 
-export async function loadLocale(
-	setting: string,
-	defaultLocaleCode = 'en'
-) {
-	const specifiedLanguage = setting.toLowerCase() === 'default' ? defaultLocaleCode : setting
-	if (specifiedLanguage !== language) {
-		return _setupLanguage(specifiedLanguage)
+/**
+ * @param locale An [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag). Defaults to `en`.
+ */
+export async function loadLocale(locale = 'en'): Promise<void> {
+	if (locale !== language) {
+		return _setupLanguage(locale)
 	}
 }
 
