@@ -20,7 +20,7 @@
 	```
 	or
 	```shell
-	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init`)
+	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init
 	```
 2. ```shell
 	$ npm run init
