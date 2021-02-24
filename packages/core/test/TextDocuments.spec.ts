@@ -12,7 +12,7 @@ describe('TextDocuments', () => {
 				case Uris.foo_mcfunction:
 					return '# foo\n'
 				default:
-					throw new Error(`Path not exists: '${uri.fsPath}'`)
+					throw new Error(`URI does not exists: '${uri.toString()}'`)
 			}
 		}
 	}

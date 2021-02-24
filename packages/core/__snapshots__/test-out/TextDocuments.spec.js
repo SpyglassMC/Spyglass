@@ -32,7 +32,7 @@ exports['TextDocuments getOrRead() Should return the cached result 1'] = {
 }
 
 exports['TextDocuments getOrRead() Should throw an error if the URI doesn\'t exist 1'] = `
-Path not exists: '\\nonexistent.mcfunction'
+URI does not exists: 'file:///nonexistent.mcfunction'
 `
 
 exports['TextDocuments onDidChange() Should throw an error if the file hasn\'t been opened yet 1'] = `
