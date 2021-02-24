@@ -7,5 +7,8 @@ export * from './node'
 export * from './parser'
 
 MetaRegistry.addInitializer((registry) => {
-	registry.registerLanguage('nbtdoc', ['.nbtdoc'], entry())
+	registry.registerLanguage('nbtdoc', {
+		extensions: ['.nbtdoc'],
+		parser: entry,
+	})
 })

@@ -40,7 +40,7 @@ Jigsaw describes minecraft:block[minecraft:jigsaw];`,
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = entry()
+			const parser = entry
 			snapshot(testParser(parser, content))
 		})
 	}
