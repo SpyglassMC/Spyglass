@@ -13,7 +13,7 @@ module.exports = {
 
     entry: {
         extension: './src/extension.ts',
-        server: './node_modules/@spyglassmc/language-server/lib/server.js'
+        server: '../language-server/lib/server.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
