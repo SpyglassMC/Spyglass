@@ -4,7 +4,6 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"scripts": {
-		"init": "lerna exec -- npm i",
 		"build": "tsc -b packages",
 		"watch": "tsc -b -w packages",
 		"commit": "gitmoji -c",
@@ -24,7 +23,6 @@
 		"codecov": "^3.7.2",
 		"eslint": "^7.20.0",
 		"gitmoji-cli": "^3.2.18",
-		"lerna": "^3.22.1",
 		"mocha": "^8.3.0",
 		"nyc": "^15.1.0",
 		"snap-shot-it": "^7.9.6",

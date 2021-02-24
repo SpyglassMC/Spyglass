@@ -23,7 +23,7 @@
 	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init
 	```
 2. ```shell
-	$ npm run init && npm run build
+	$ npm i && npm run build
 	```
 
 If you're using VS Code to develop SPYGlass:
@@ -31,6 +31,15 @@ If you're using VS Code to develop SPYGlass:
 - Install the recommended [ESLint extension][eslint-extension]. Make a copy of `.vscode/settings.template.json` and rename it to `.vscode/settings.json`.
   Now your VS Code should automatically fix all linting errors every time you save the file.
 - Press F5 to run the VS Code extension in development environment. VS Code will automatically compile all packages and build the extension file in watch mode.
+
+Or if you prefer the command line tool:
+
+- `npm run build` to build all packages.
+- `npm run watch` to watch changes and build all packages.
+- `npm test` to test all packages.
+- `npm run lint` to check linting errors.
+- `npm run lint:fix` to fix all auto-fixable linting errors.
+- `npm commit` to fix all auto-fixable linting errors.
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
