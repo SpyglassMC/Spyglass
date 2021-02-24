@@ -23,6 +23,8 @@ jobs:
         with:
           node-version: "14"
 
+      - run: npm i -g npm@7
+
       - uses: actions/cache@v2
         with:
           path: |
