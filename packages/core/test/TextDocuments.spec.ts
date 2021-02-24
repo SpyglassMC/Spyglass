@@ -39,7 +39,7 @@ describe('TextDocuments', () => {
 	})
 	describe('onDidOpen(), onDidChange(), onDidClose(), get()', () => {
 		it('Should handle a cycle of file operations correctly', () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 			assert.strictEqual(docs.get(Uris.foo_mcfunction), undefined)
 
 			docs.onDidOpen(Uris.foo_mcfunction, 'mcfunction', 0, '# foo\n')
@@ -54,7 +54,7 @@ describe('TextDocuments', () => {
 	})
 	describe('onDidChange()', () => {
 		it("Should throw an error if the file hasn't been opened yet", () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 			try {
 				docs.onDidChange(Uris.foo_mcfunction, [], 1)
 			} catch (e) {
@@ -66,24 +66,24 @@ describe('TextDocuments', () => {
 	})
 	describe('getOrRead()', () => {
 		it('Should return the cached result', async () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 
 			docs.onDidOpen(Uris.foo_mcfunction, 'mcfunction', 3, '# foo\n')
 
 			snapshot(await docs.getOrRead(Uris.foo_mcfunction))
 		})
 		it('Should construct the TextDocument from parameters', async () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 
 			snapshot(await docs.getOrRead(Uris.foo_mcfunction, 'mcfunction', 5, 'Some content passed through parameter\n'))
 		})
 		it('Should construct the TextDocument from the actual file', async () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 
 			snapshot(await docs.getOrRead(Uris.foo_mcfunction))
 		})
 		it("Should throw an error if the URI doesn't exist", async () => {
-			const docs = new TextDocuments({ fileService: testFileService })
+			const docs = new TextDocuments({ fs: testFileService })
 			try {
 				await docs.getOrRead(Uris.nonexistent_mcfunction)
 			} catch (e) {

@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode, FileService, MetaRegistry } from '.'
+import { AstNode, file, FileService, MetaRegistry } from '.'
 import { ParserContext, Result } from './parser'
 import { Logger } from './util'
 import { Source } from './util/Source'
@@ -17,8 +17,7 @@ export class Service {
 		this.logger = logger
 	}
 
-	public parseTextDocument(doc: TextDocument): Result<AstNode> {
-		const parseFile = this.metaRegistry.getParser('file')
+	public parseTextDocument<N = AstNode>(doc: TextDocument): Result<N> {
 		const ctx = ParserContext.create({
 			metaRegistry: this.metaRegistry,
 			fs: this.fs,
@@ -26,6 +25,6 @@ export class Service {
 			doc,
 		})
 		const src = new Source(doc.getText())
-		return parseFile(src, ctx)
+		return file<N>()(src, ctx)
 	}
 }

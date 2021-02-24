@@ -1,15 +1,15 @@
 import { ParserContext } from '.'
 import { AstNode } from '../node'
 import { Source } from '../util/Source'
-import { Parser, Result } from './Parser'
+import { InfallibleParser } from './Parser'
 
 /**
  * Dispatches to the corresponding `${languageID}:main` parser.
  * @throws If there's no parser registered for this language ID.
  */
-export function file(): Parser {
-	return (src: Source, ctx: ParserContext): Result<AstNode> => {
-		const parser = ctx.metaRegistry.getParser(`${ctx.doc.languageId}:main`)
+export function file<N = AstNode>(): InfallibleParser<N> {
+	return (src: Source, ctx: ParserContext): N => {
+		const parser = ctx.metaRegistry.getParser<N>(ctx.doc.languageId)
 		return parser(src, ctx)
 	}
 }

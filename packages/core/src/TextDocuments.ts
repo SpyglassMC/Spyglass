@@ -24,10 +24,10 @@ export class TextDocuments {
 	constructor(
 		/* istanbul ignore next */
 		{
-			fileService = FileService.create(),
+			fs = FileService.create(),
 		} = {}
 	) {
-		this.fs = fileService
+		this.fs = fs
 
 		this.onDidOpen = this.onDidOpen.bind(this)
 		this.onDidChange = this.onDidChange.bind(this)
@@ -73,11 +73,14 @@ export class TextDocuments {
 
 	/**
 	 * Notifies that a new document was opened in the editor.
+	 * 
+	 * @returns The `TextDocument` being created.
 	 */
-	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): void {
+	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): TextDocument {
 		const doc = TextDocument.create(uri.toString(), languageID, version, content)
 		this.activeUris.add(uri)
 		this.textDocumentCache.set(uri, doc)
+		return doc
 	}
 
 	/**

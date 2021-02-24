@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
-import { Parser } from './parser/Parser'
+import { AstNode } from '.'
+import { InfallibleParser, Parser } from './parser/Parser'
 
 //#region TEMP
 type Processor = any
@@ -21,6 +22,16 @@ export const CoreProcessorNames = Object.freeze([
 ] as const)
 export type CoreProcessorName = typeof CoreProcessorNames[number]
 
+export interface LanguageOptions {
+	/**
+	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
+	 */ 
+	extensions: string[],
+	/**
+	 * A parser for this language.
+	 */ 
+	parser: InfallibleParser,
+}
 
 /**
  * The meta registry of SPYGlass. You can register new parsers, processors, and languages here.
@@ -28,33 +39,21 @@ export type CoreProcessorName = typeof CoreProcessorNames[number]
  */
 export class MetaRegistry {
 	/**
-	 * A map from language IDs to file extensions (including the leading dot).
+	 * A map from language IDs to language options.
 	 */
-	private readonly languages = new Map<string, Set<string>>()
-	private readonly parsers = new Map<string, Parser>()
+	private readonly languages = new Map<string, LanguageOptions>()
 
 	// The functions below are overloaded so that we can get suggestions for many parameters in VS Code.
 
 	/**
-	 * @returns The corresponding `Parser`'s class for the node name.
-	 * @throws If there's no `Parser` registered for the node.
+	 * @returns The corresponding `Parser` for the language ID.
+	 * @throws If there's no such language in the registry.
 	 */
-	public getParser(nodeName: CoreNodeName): Parser
-	public getParser(nodeName: string): Parser
-	public getParser(nodeName: CoreNodeName | string): Parser {
-		if (this.parsers.has(nodeName)) {
-			return this.parsers.get(nodeName)!
+	public getParser<N = AstNode>(languageID: string): InfallibleParser<N> {
+		if (this.languages.has(languageID)) {
+			return this.languages.get(languageID)!.parser as unknown as InfallibleParser<N>
 		}
-		throw new Error(`There is no parser registered for AST node type '${nodeName}'`)
-	}
-
-	/**
-	 * @deprecated Use `registerLanguage` to register entry parsers for each language.
-	 */
-	public registerParser(nodeName: CoreNodeName, parser: Parser): void
-	public registerParser(nodeName: string, parser: Parser): void
-	public registerParser(nodeName: string, parser: Parser): void {
-		this.parsers.set(nodeName, parser)
+		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}
 
 	public getProcessor(processorName: CoreProcessorName, nodeName: CoreNodeName): Parser
@@ -84,14 +83,10 @@ export class MetaRegistry {
 	/**
 	 * Registers a new language.
 	 * @param languageID The language ID. e.g. `"mcfunction"`
-	 * @param extensions File extensions of this language (including the leading dot). e.g. `[".mcfunction"]`
-	 * @param mainParser The entry parser for this language. Will be automatically registered with the node name `${languageID}:main`.
+	 * @param options The language options for this language.
 	 */
-	public registerLanguage(languageID: string, extensions: string[], mainParser?: Parser) {
-		this.languages.set(languageID, new Set(extensions))
-		if (mainParser) {
-			this.registerParser(`${languageID}:main`, mainParser)
-		}
+	public registerLanguage(languageID: string, options: LanguageOptions) {
+		this.languages.set(languageID, options)
 	}
 
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
