@@ -1,12 +1,11 @@
 {
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
-		"rootDir": ".",
-		"noEmit": true
+		"outDir": "../test-out"
 	},
 	"references": [
 		{
-			"path": ".."
+			"path": "../src"
 		}
 	]
 }

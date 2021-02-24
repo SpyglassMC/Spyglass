@@ -2,11 +2,16 @@
     "extends": "../tsconfig-base",
     "compilerOptions": {
         "rootDir": "src",
-        "outFile": "out/index.js"
+        "outDir": "out",
+        "declarationMap": false,
+        "sourceMap": false
     },
+    "files": [
+        "src/extension.ts"
+    ],
     "references": [
         {
-            "path": "../datapack-language-server"
+            "path": "../language-server"
         }
     ]
 }

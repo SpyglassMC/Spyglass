@@ -5,6 +5,9 @@
             "path": "core"
         },
         {
+            "path": "language-server"
+        },
+        {
             "path": "locales"
         },
         {
@@ -12,6 +15,9 @@
         },
         {
             "path": "nbtdoc"
+        },
+        {
+            "path": "vscode-extension"
         }
     ]
 }

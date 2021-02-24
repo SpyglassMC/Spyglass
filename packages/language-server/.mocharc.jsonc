@@ -1,4 +1,4 @@
 {
 	"extends": "../.mocharc.jsonc",
-	"spec": "src/test/**/*.spec.ts"
+	"spec": "test-out/**/*.spec.js"
 }
