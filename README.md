@@ -22,7 +22,12 @@
 	```shell
 	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init
 	```
-2. ```shell
+2. Make sure you're using an npm version higher than or equal to 7.0.0, as this repository utilizes npm@7's workspaces feature.
+   ```shell
+	$ npm -v
+	$ npm i -g npm@7 # Update if it's not already 7.x.x.
+	```
+3. ```shell
 	$ npm i && npm run build
 	```
 
