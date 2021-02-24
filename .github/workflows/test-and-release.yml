@@ -20,16 +20,15 @@ jobs:
         with:
           submodules: 'recursive'
 
-      # - name: Cache Node Modules
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
-      #       ${{ runner.os }}-
+      - name: Cache Node Modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            **/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Install Dependencies
+      - name: Install Dependencies & Build
         run: |
           npm i
           npm run init
