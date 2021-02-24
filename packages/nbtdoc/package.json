@@ -15,6 +15,7 @@
     "watch": "tsc --build --watch",
     "codecov": "codecov -f coverage/*.json",
     "test": "nyc mocha",
+    "testByLerna": "npm run test",
     "posttest": "nyc report --reporter=json"
   },
   "dependencies": {

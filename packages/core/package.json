@@ -16,6 +16,7 @@
     "release": "semantic-release",
     "release:dry": "semantic-release --dry-run",
     "test": "nyc mocha",
+    "testByLerna": "npm run test",
     "posttest": "nyc report --reporter=json"
   },
   "dependencies": {

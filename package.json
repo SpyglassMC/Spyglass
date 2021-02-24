@@ -15,7 +15,7 @@
 		"codecov": "lerna run codecov",
 		"release": "lerna run release",
 		"release:dry": "lerna run release:dry",
-		"test": "echo \"error\" && exit 1"
+		"test": "lerna run testByLerna"
 	},
 	"devDependencies": {
 		"@semantic-release/changelog": "^5.0.1",
