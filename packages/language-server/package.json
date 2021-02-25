@@ -9,7 +9,7 @@
     "test": "test/"
   },
   "bin": {
-    "datapack-language-server": "./bin/server"
+    "spyglassmc-language-server": "./bin/server"
   },
   "dependencies": {
     "vscode-languageserver": "^7.0.0",
