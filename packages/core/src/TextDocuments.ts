@@ -87,7 +87,7 @@ export class TextDocuments implements TextDocuments {
 	 * Notifies that an existing document was changed in the editor.
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
-	public onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number) {
+	public onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): void {
 		const doc = this.get(uri)
 		if (!doc) {
 			throw new Error(`There is no TextDocument corresponding to '${uri}'`)
@@ -106,7 +106,7 @@ export class TextDocuments implements TextDocuments {
 	/**
 	 * Notifies that a watched file was modified in the file system.
 	 */
-	public onWatchedFileModified(uri: string) {
+	public onWatchedFileModified(uri: string): void {
 		this.watchedUris.delete(uri)
 		this.clearCache(uri)
 	}
@@ -114,7 +114,7 @@ export class TextDocuments implements TextDocuments {
 	/**
 	 * Notifies that a watched file was deleted from the file system.
 	 */
-	public onWatchedFileDeleted(uri: string) {
+	public onWatchedFileDeleted(uri: string): void {
 		this.watchedUris.delete(uri)
 		this.clearCache(uri)
 	}
@@ -122,7 +122,7 @@ export class TextDocuments implements TextDocuments {
 	/**
 	 * Remove the cache for `uri` if it is neither active nor watched.
 	 */
-	private clearCache(uri: string) {
+	private clearCache(uri: string): void {
 		if (!this.activeUris.has(uri) && !this.watchedUris.has(uri)) {
 			this.docCache.delete(uri)
 			this.nodeCache.delete(uri)
