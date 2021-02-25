@@ -7,8 +7,10 @@ export * from './node'
 export * from './parser'
 
 export function initializeNbtdoc() {
-	MetaRegistry.getInstance().registerLanguage('nbtdoc', {
-		extensions: ['.nbtdoc'],
-		parser: entry,
+	MetaRegistry.addInitializer((registry) => {
+		registry.registerLanguage('nbtdoc', {
+			extensions: ['.nbtdoc'],
+			parser: entry,
+		})
 	})
 }
