@@ -6,6 +6,7 @@
 	"scripts": {
 		"build": "tsc -b packages",
 		"watch": "tsc -b -w packages",
+		"clean": "tsc -b packages --clean",
 		"commit": "gitmoji -c",
 		"con": "cd contributors && all-contributors generate && cd ..",
 		"lint": "eslint packages/*/{src,test}/**/*.ts",

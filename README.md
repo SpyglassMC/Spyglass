@@ -41,6 +41,7 @@ Or if you prefer the command line tool:
 
 - `npm run build` to build all packages.
 - `npm run watch` to watch changes and build all packages.
+- `npm run clean` to remove all js output.
 - `npm test` to test all packages.
 - `npm run lint` to check linting errors.
 - `npm run lint:fix` to fix all auto-fixable linting errors.
