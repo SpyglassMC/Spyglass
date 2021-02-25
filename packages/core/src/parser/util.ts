@@ -1,7 +1,8 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
 import { AstNode, ErrorSeverity, Range, SequenceUtil, Source } from '..'
+import { ErrorReporter } from '../util'
 
-type AttemptResult<N  = AstNode> = {
+export type AttemptResult<N  = AstNode> = {
 	result: Result<N>,
 	updateSrcAndCtx: () => void,
 	endCursor: number,
@@ -18,7 +19,7 @@ export function attempt<N = AstNode>(parser: Parser<N>, src: Source, ctx: Parser
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
 		...ctx,
-		err: ctx.err.derive(),
+		err: new ErrorReporter(),
 	})
 
 	const result = parser(tmpSrc, tmpCtx)

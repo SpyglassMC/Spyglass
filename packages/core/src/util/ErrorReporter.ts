@@ -24,14 +24,6 @@ export class ErrorReporter {
 	}
 
 	/**
-	 * @returns A new `ErrorReporter`.
-	 * @deprecated Use `new ErrorReporter()` instead.
-	 */
-	derive(): ErrorReporter {
-		return new ErrorReporter()
-	}
-
-	/**
 	 * Adds all errors from another reporter's error stack to the current reporter.
 	 * This method does not affect the passed-in reporter.
 	 */
