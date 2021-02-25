@@ -1,0 +1,26 @@
+{
+	"core": {
+		"dependencies": [
+			"locales"
+		]
+	},
+	"language-server": {
+		"dependencies": [
+			"core",
+			"locales",
+			"nbtdoc"
+		]
+	},
+	"locales": {},
+	"nbtdoc": {
+		"dependencies": [
+			"core",
+			"locales"
+		]
+	},
+	"vscode-extension": {
+		"dependencies": [
+			"language-server"
+		]
+	}
+}
