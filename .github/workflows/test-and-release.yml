@@ -32,12 +32,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm i
+      - run: npm ci
 
       - run: npm run build
 
       - run: npm test
-
-      - run: npm run lint
 
       - run: npm run release
