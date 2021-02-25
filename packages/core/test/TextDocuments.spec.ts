@@ -1,26 +1,26 @@
 import assert, { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { TextDocuments, Uri } from '../lib'
+import { TextDocuments } from '../lib'
 import { FileServiceImpl } from '../lib/util/FileService'
 
 describe('TextDocuments', () => {
 	const testFileService = new class extends FileServiceImpl {
 		/** @override */
-		async readFile(uri: Uri): Promise<string> {
+		async readFile(uri: string): Promise<string> {
 			switch (uri) {
 				case Uris.foo_mcfunction:
 					return '# foo\n'
 				default:
-					throw new Error(`URI does not exists: '${uri.toString()}'`)
+					throw new Error(`URI does not exists: '${uri}'`)
 			}
 		}
 	}
 	const Uris = {
-		pack_mcmeta: testFileService.parseUri('file:///pack.mcmeta'),
-		foo_mcfunction: testFileService.parseUri('file:///foo.mcfunction'),
-		_mcfunction: testFileService.parseUri('file:///.mcfunction'),
-		nonexistent_mcfunction: testFileService.parseUri('file:///nonexistent.mcfunction'),
+		pack_mcmeta: 'file:///pack.mcmeta',
+		foo_mcfunction: 'file:///foo.mcfunction',
+		_mcfunction: 'file:///.mcfunction',
+		nonexistent_mcfunction: 'file:///nonexistent.mcfunction',
 	}
 
 	describe('static getLanguageID()', () => {
@@ -64,28 +64,23 @@ describe('TextDocuments', () => {
 			fail()
 		})
 	})
-	describe('getOrRead()', () => {
+	describe('read()', () => {
 		it('Should return the cached result', async () => {
 			const docs = new TextDocuments({ fs: testFileService })
 
 			docs.onDidOpen(Uris.foo_mcfunction, 'mcfunction', 3, '# foo\n')
 
-			snapshot(await docs.getOrRead(Uris.foo_mcfunction))
-		})
-		it('Should construct the TextDocument from parameters', async () => {
-			const docs = new TextDocuments({ fs: testFileService })
-
-			snapshot(await docs.getOrRead(Uris.foo_mcfunction, 'mcfunction', 5, 'Some content passed through parameter\n'))
+			snapshot(await docs.read(Uris.foo_mcfunction))
 		})
 		it('Should construct the TextDocument from the actual file', async () => {
 			const docs = new TextDocuments({ fs: testFileService })
 
-			snapshot(await docs.getOrRead(Uris.foo_mcfunction))
+			snapshot(await docs.read(Uris.foo_mcfunction))
 		})
 		it("Should throw an error if the URI doesn't exist", async () => {
 			const docs = new TextDocuments({ fs: testFileService })
 			try {
-				await docs.getOrRead(Uris.nonexistent_mcfunction)
+				await docs.read(Uris.nonexistent_mcfunction)
 			} catch (e) {
 				snapshot((e as Error).message)
 				return

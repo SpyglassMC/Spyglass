@@ -7,7 +7,7 @@ import { FileService } from '../util/FileService'
 import { Logger } from '../util/Logger'
 
 export interface ParserContext {
-	metaRegistry: MetaRegistry,
+	meta: MetaRegistry,
 	fs: FileService,
 	logger: Logger,
 	doc: TextDocument,
@@ -17,7 +17,7 @@ export interface ParserContext {
 export namespace ParserContext {
 	export function create(ctx: Partial<ParserContext>): ParserContext {
 		return {
-			metaRegistry: ctx.metaRegistry ?? MetaRegistry.getInstance(),
+			meta: ctx.meta ?? MetaRegistry.getInstance(),
 			fs: ctx.fs ?? FileService.create(),
 			logger: ctx.logger ?? Logger.create(),
 			doc: ctx.doc ?? TextDocument.create('spyglass://placeholder', '', 0, ''),

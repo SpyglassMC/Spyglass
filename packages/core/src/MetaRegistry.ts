@@ -25,11 +25,11 @@ export type CoreProcessorName = typeof CoreProcessorNames[number]
 export interface LanguageOptions {
 	/**
 	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
-	 */ 
+	 */
 	extensions: string[],
 	/**
 	 * A parser for this language.
-	 */ 
+	 */
 	parser: InfallibleParser,
 }
 
@@ -89,8 +89,21 @@ export class MetaRegistry {
 		this.languages.set(languageID, options)
 	}
 
+	/**
+	 * @param fileExtension The file extension including the leading dot. e.g. `".mcfunction"`.
+	 * @returns The language ID registered for the file extension, or `undefined`.
+	 */
+	public getLanguageID(fileExtension: string): string | undefined {
+		for (const [languageID, { extensions }] of this.languages) {
+			if (extensions.includes(fileExtension)) {
+				return languageID
+			}
+		}
+		return undefined
+	}
+
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
-		registry => {
+		_registry => {
 			// TODO: Register `mcmeta` as `json`.
 		},
 	])

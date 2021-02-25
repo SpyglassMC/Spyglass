@@ -9,7 +9,7 @@ import { InfallibleParser } from './Parser'
  */
 export function file<N = AstNode>(): InfallibleParser<N> {
 	return (src: Source, ctx: ParserContext): N => {
-		const parser = ctx.metaRegistry.getParser<N>(ctx.doc.languageId)
+		const parser = ctx.meta.getParser<N>(ctx.doc.languageId)
 		return parser(src, ctx)
 	}
 }

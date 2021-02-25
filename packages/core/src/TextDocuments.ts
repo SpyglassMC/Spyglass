@@ -1,25 +1,24 @@
 import { TextDocument, TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
-import { FileService, Uri } from '.'
+import { AstNode, FileService, MetaRegistry } from '.'
 
-/**
- * A `TextDocument` manager that interacts with the file system and provides up-to-date `TextDocument`s.
- */
-export class TextDocuments {
+export class TextDocuments implements TextDocuments {
 	private readonly fs: FileService
 
 	/**
-	 * URI of files that are currently opened in the editor, whose changes shall be sent to the manager
-	 * by client notifications via `TextDocumentContentChangeEvent`.
+	 * URI of files that are currently opened in the editor, whose changes shall be sent to the manager's
+	 * `onDidX` methods by client notifications via `TextDocumentContentChangeEvent`. The content of those
+	 * URIs are always up-to-date.
 	 */
-	private readonly activeUris = new Set<Uri>()
+	private readonly activeUris = new Set<string>()
 	/**
-	 * URI of files that are watched by the client, whose change states shall be sent to the manager
-	 * by client notifications.
+	 * URI of files that are watched by the client and are update to date. Changes to these files shall be
+	 * sent to the manager's `onWatchedFileX` methods by client notifications. Once a watched file is changed,
+	 * it is removed from this set.
 	 */
-	// TODO
-	private readonly watchedUris = new Set<Uri>()
+	private readonly watchedUris = new Set<string>()
 
-	private readonly textDocumentCache = new Map<Uri, TextDocument>()
+	private readonly docCache = new Map<string, TextDocument>()
+	private readonly nodeCache = new Map<string, AstNode>()
 
 	constructor(
 		/* istanbul ignore next */
@@ -32,62 +31,66 @@ export class TextDocuments {
 		this.onDidOpen = this.onDidOpen.bind(this)
 		this.onDidChange = this.onDidChange.bind(this)
 		this.onDidClose = this.onDidClose.bind(this)
+		this.onWatchedFileDeleted = this.onWatchedFileDeleted.bind(this)
+		this.onWatchedFileModified = this.onWatchedFileModified.bind(this)
 	}
 
 	/**
-	 * @returns The language ID of the file.
-	 * 
-	 * | Extension Name | Language ID   |
-	 * | -------------- | ------------- |
-	 * | `mcmeta`       | `json`        |
-	 * | Other          | The extension |
+	 * @returns The language ID of the file, or the file extension without the leading dot.
 	 */
-	public static getLanguageID(uri: Uri): string {
-		let ext = uri.toString()
-		ext = ext.slice(ext.lastIndexOf('.') + 1)
-		return ext === 'mcmeta' ? 'json' : ext
+	public static getLanguageID(uri: string): string {
+		let ext = uri
+		ext = ext.slice(ext.lastIndexOf('.'))
+		return MetaRegistry.getInstance().getLanguageID(ext) ?? ext.slice(1)
 	}
 
 	/**
-	 * @returns The up-to-date `TextDocument` for the URI, or `undefined` when such document hasn't been cached.
+	 * @returns The up-to-date `TextDocument` for the URI, or `undefined` when such document isn't available in cache.
 	 */
-	public get(uri: Uri): TextDocument | undefined {
-		return this.textDocumentCache.has(uri) ? this.textDocumentCache.get(uri) : undefined
+	public get(uri: string): TextDocument | undefined {
+		return this.docCache.get(uri)
 	}
 
 	/**
-	 * @returns The up-to-date `TextDocument` for the URI, or a new `TextDocument` created from the parameters.
-	 * @throws If the URI doesn't exist.
+	 * @returns The up-to-date `TextDocument` for the URI.
+	 * @param isWatched Whether this URI is being watched by a file watcher, whose changes will be sent to `onWatchedFileX` methods of this class.
+	 * @throws If URI exists in neither the cache nor the file system.
 	 */
-	public async getOrRead(uri: Uri, languageID?: string, version = 0, content?: string): Promise<TextDocument> {
+	public async read(uri: string, isWatched = false): Promise<TextDocument> {
 		const cachedResult = this.get(uri)
 		if (cachedResult) {
 			return cachedResult
 		}
 
-		content ??= await this.fs.readFile(uri)
-		languageID ??= TextDocuments.getLanguageID(uri)
-
-		return TextDocument.create(uri.toString(), languageID, version, content)
+		const content = await this.fs.readFile(uri)
+		const languageID = TextDocuments.getLanguageID(uri)
+		const doc = TextDocument.create(uri, languageID, 0, content)
+		if (isWatched) {
+			this.watchedUris.add(uri)
+			if (!this.activeUris.has(uri)) {
+				this.docCache.set(uri, doc)
+			}
+		}
+		return doc
 	}
 
 	/**
 	 * Notifies that a new document was opened in the editor.
 	 */
-	public onDidOpen(uri: Uri, languageID: string, version: number, content: string): void {
-		const doc = TextDocument.create(uri.toString(), languageID, version, content)
+	public onDidOpen(uri: string, languageID: string, version: number, content: string): void {
+		const doc = TextDocument.create(uri, languageID, version, content)
 		this.activeUris.add(uri)
-		this.textDocumentCache.set(uri, doc)
+		this.docCache.set(uri, doc)
 	}
 
 	/**
 	 * Notifies that an existing document was changed in the editor.
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
-	public onDidChange(uri: Uri, changes: TextDocumentContentChangeEvent[], version: number) {
+	public onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number) {
 		const doc = this.get(uri)
 		if (!doc) {
-			throw new Error(`There is no TextDocument corresponding to '${uri.toString()}'`)
+			throw new Error(`There is no TextDocument corresponding to '${uri}'`)
 		}
 		TextDocument.update(doc, changes, version)
 	}
@@ -95,8 +98,42 @@ export class TextDocuments {
 	/**
 	 * Notifies that an existing document was closed in the editor.
 	 */
-	public onDidClose(uri: Uri): void {
+	public onDidClose(uri: string): void {
 		this.activeUris.delete(uri)
-		this.textDocumentCache.delete(uri)
+		this.clearCache(uri)
+	}
+
+	/**
+	 * Notifies that a watched file was modified in the file system.
+	 */
+	public onWatchedFileModified(uri: string) {
+		this.watchedUris.delete(uri)
+		this.clearCache(uri)
+	}
+
+	/**
+	 * Notifies that a watched file was deleted from the file system.
+	 */
+	public onWatchedFileDeleted(uri: string) {
+		this.watchedUris.delete(uri)
+		this.clearCache(uri)
+	}
+
+	/**
+	 * Remove the cache for `uri` if it is neither active nor watched.
+	 */
+	private clearCache(uri: string) {
+		if (!this.activeUris.has(uri) && !this.watchedUris.has(uri)) {
+			this.docCache.delete(uri)
+			this.nodeCache.delete(uri)
+		}
+	}
+	
+	public cacheNode(uri: string, node: AstNode): void {
+		this.nodeCache.set(uri, node)
+	}
+
+	public getCachedNode(uri: string): AstNode | undefined {
+		return this.nodeCache.get(uri)
 	}
 }

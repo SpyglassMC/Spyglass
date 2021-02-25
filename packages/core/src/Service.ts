@@ -1,31 +1,33 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { AstNode, file, FileService, MetaRegistry } from '.'
 import { ParserContext } from './parser'
+import { TextDocuments } from './TextDocuments'
 import { LanguageError } from './type'
-import { Logger } from './util'
-import { Source } from './util/Source'
+import { Logger, Source } from './util'
 
-interface Options<E> {
+interface Options {
 	fs?: FileService,
 	logger?: Logger,
 }
 
-export class Service<E> {
-	private readonly metaRegistry = MetaRegistry.getInstance()
-	private readonly fs: FileService
-	private readonly logger: Logger
+export class Service {
+	public readonly meta = MetaRegistry.getInstance()
+	public readonly fs: FileService
+	public readonly logger: Logger
+	public readonly textDocuments: TextDocuments
 
 	constructor({
 		fs = FileService.create(),
 		logger = Logger.create(),
-	}: Options<E> = {}) {
+	}: Options = {}) {
 		this.fs = fs
 		this.logger = logger
+		this.textDocuments = new TextDocuments({ fs })
 	}
 
-	public parseTextDocument<N = AstNode>(doc: TextDocument): { node: Readonly<N>, errors: readonly LanguageError[] } {
+	public parse<N = AstNode>(doc: TextDocument): { node: Readonly<N>, errors: readonly LanguageError[] } {
 		const ctx = ParserContext.create({
-			metaRegistry: this.metaRegistry,
+			meta: this.meta,
 			fs: this.fs,
 			logger: this.logger,
 			doc,
@@ -36,5 +38,9 @@ export class Service<E> {
 			node: result,
 			errors: ctx.err.dump(),
 		}
+	}
+
+	public colorize<N = AstNode>(doc: TextDocument, node: Readonly<N>): readonly /* ColorToken */[] {
+		throw 'Unimplemented Error.'
 	}
 }

@@ -11,18 +11,14 @@ if (process.argv.length === 2) {
 	process.argv.push('--stdio')
 }
 
-const workspaceRootUris: core.Uri[] = []
+const workspaceRootUris: ls.WorkspaceFolder[] = []
 
 const connection = ls.createConnection()
-const fs = core.FileService.create()
+
 const logger: core.Logger = connection.console
-const textDocuments = new core.TextDocuments({
-	fs,
-})
-const service = new core.Service({
-	fs,
-	logger,
-})
+const service = new core.Service({ logger })
+const fs = service.fs
+const textDocuments = service.textDocuments
 
 nbtdoc.initializeNbtdoc()
 
@@ -34,7 +30,7 @@ connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, in
 	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
 	logger.info(`[onInitialize] capabilities = ${JSON.stringify(capabilities)}`)
 
-	workspaceRootUris.push(...workspaceFolders?.map(v => fs.parseUri(v.uri)) ?? [])
+	workspaceRootUris.push(...workspaceFolders ?? [])
 
 	const result: ls.InitializeResult = {
 		capabilities: {
@@ -54,32 +50,29 @@ connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, in
 	return result
 })
 
-connection.onDidOpenTextDocument(async ({ textDocument: { text, uri: uriString, version, languageId: languageID } }) => {
-	const uri = fs.parseUri(uriString)
+connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {
 	textDocuments.onDidOpen(uri, languageID, version, text)
 
 	const doc = textDocuments.get(uri)!
-	const { errors } = service.parseTextDocument(doc)
+	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
 		diagnostics: Transformer.errors(errors, doc),
-		uri: uriString,
+		uri,
 		version,
 	})
 })
-connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri: uriString, version } }) => {
-	const uri = fs.parseUri(uriString)
+connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
 	textDocuments.onDidChange(uri, contentChanges, version)
 
 	const doc = textDocuments.get(uri)!
-	const { errors } = service.parseTextDocument(doc)
+	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
 		diagnostics: Transformer.errors(errors, doc),
-		uri: uriString,
+		uri,
 		version,
 	})
 })
-connection.onDidCloseTextDocument(({ textDocument: { uri: uriString } }) => {
-	const uri = fs.parseUri(uriString)
+connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	textDocuments.onDidClose(uri)
 })
 
