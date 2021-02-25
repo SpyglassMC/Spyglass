@@ -23,20 +23,6 @@ describe('TextDocuments', () => {
 		nonexistent_mcfunction: 'file:///nonexistent.mcfunction',
 	}
 
-	describe('static getLanguageID()', () => {
-		it("Should return 'json' for 'pack.mcmeta'", () => {
-			const actual = TextDocuments.getLanguageID(Uris.pack_mcmeta)
-			assert.strictEqual(actual, 'json')
-		})
-		it("Should return 'mcfunction' for 'foo.mcfunction'", () => {
-			const actual = TextDocuments.getLanguageID(Uris.foo_mcfunction)
-			assert.strictEqual(actual, 'mcfunction')
-		})
-		it("Should return 'mcfunction' for '.mcfunction'", () => {
-			const actual = TextDocuments.getLanguageID(Uris._mcfunction)
-			assert.strictEqual(actual, 'mcfunction')
-		})
-	})
 	describe('onDidOpen(), onDidChange(), onDidClose(), get()', () => {
 		it('Should handle a cycle of file operations correctly', () => {
 			const docs = new TextDocuments({ fs: testFileService })

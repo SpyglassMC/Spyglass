@@ -102,11 +102,7 @@ export class MetaRegistry {
 		return undefined
 	}
 
-	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
-		_registry => {
-			// TODO: Register `mcmeta` as `json`.
-		},
-	])
+	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>()
 
 	public static addInitializer(initializer: (this: void, registry: MetaRegistry) => void): void {
 		if (this.initializers.has(initializer)) {
