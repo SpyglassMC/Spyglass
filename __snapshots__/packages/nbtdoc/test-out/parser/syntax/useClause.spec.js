@@ -15,7 +15,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
       "start": 0,
       "end": 20
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -105,7 +105,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
       "start": 0,
       "end": 15
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -179,7 +179,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
       "start": 0,
       "end": 27
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -290,7 +290,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
       "start": 0,
       "end": 13
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -386,7 +386,7 @@ exports['useClause() Parse "use foo" 1'] = {
       "start": 0,
       "end": 7
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -461,7 +461,7 @@ exports['useClause() Parse "use foo;" 1'] = {
       "start": 0,
       "end": 8
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -527,7 +527,7 @@ exports['useClause() Parse "use" 1'] = {
       "start": 0,
       "end": 3
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {

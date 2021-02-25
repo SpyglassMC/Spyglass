@@ -1,10 +1,10 @@
 import { AstNode, Range } from '..'
 
-export interface Sequence<CN extends AstNode = AstNode> {
+export interface SequenceNode<CN extends AstNode = AstNode> extends AstNode {
 	/**
 	 * An array of `AstNode`s that fully make up this node.
 	 */
-	nodes: CN[],
+	children: CN[],
 }
 
 /**
@@ -12,9 +12,10 @@ export interface Sequence<CN extends AstNode = AstNode> {
  * 
  * @template CN Child node.
  */
-export interface SequenceUtil<CN extends AstNode = AstNode> extends Sequence<CN> {
+export interface SequenceUtil<CN extends AstNode = AstNode> {
 	isSequenceUtil: true,
 	range: Range,
+	nodes: CN[],
 }
 
 export namespace SequenceUtil {

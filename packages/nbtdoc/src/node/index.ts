@@ -1,4 +1,4 @@
-import { AstNode, CommentNode, Sequence, SequenceUtil } from '@spyglassmc/core'
+import { AstNode, CommentNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
 import { CompoundDefinitionNode } from './CompoundDefinition'
 import { EnumDefinitionNode } from './EnumDefinition'
 import { InjectClauseNode } from './InjectClause'
@@ -7,7 +7,7 @@ export * from './CompoundDefinition'
 export * from './EnumDefinition'
 export * from './InjectClause'
 
-export type Syntax<CN extends AstNode = AstNode> = Sequence<CN | CommentNode>
+export type SyntaxNode<CN extends AstNode = AstNode> = SequenceNode<CN | CommentNode>
 export type SyntaxUtil<CN extends AstNode = AstNode> = SequenceUtil<CN | CommentNode>
 
 export interface LiteralToken<T extends string = string> extends AstNode {
@@ -97,7 +97,7 @@ export namespace FloatToken {
 	}
 }
 
-export interface DocCommentsNode extends AstNode, Syntax<CommentNode> {
+export interface DocCommentsNode extends SyntaxNode<CommentNode> {
 	type: 'nbtdoc:doc_comments',
 	doc: string,
 }
@@ -107,19 +107,19 @@ export namespace DocCommentsNode {
 	}
 }
 
-export interface DescribesClauseNode extends AstNode, Syntax<IdentPathToken | LiteralToken | MinecraftIdentifierToken> {
+export interface DescribesClauseNode extends SyntaxNode<IdentPathToken | LiteralToken | MinecraftIdentifierToken> {
 	type: 'nbtdoc:describes_clause',
 	path: IdentPathToken,
 	registry: MinecraftIdentifierToken,
 	objects: MinecraftIdentifierToken[] | null,
 }
 
-export interface ModuleDeclarationNode extends AstNode, Syntax<LiteralToken | IdentifierToken> {
+export interface ModuleDeclarationNode extends SyntaxNode<LiteralToken | IdentifierToken> {
 	type: 'nbtdoc:module_declaration',
 	identifier: IdentifierToken,
 }
 
-export interface UseClauseNode extends AstNode, Syntax<LiteralToken | IdentPathToken> {
+export interface UseClauseNode extends SyntaxNode<LiteralToken | IdentPathToken> {
 	type: 'nbtdoc:use_clause',
 	isExport: boolean,
 	path: IdentPathToken,
@@ -134,7 +134,7 @@ export type ContentNode =
 	| DescribesClauseNode
 	| InjectClauseNode
 
-export interface MainNode extends AstNode, Syntax {
+export interface MainNode extends SyntaxNode {
 	type: 'nbtdoc:main',
-	nodes: ContentNode[],
+	children: ContentNode[],
 }

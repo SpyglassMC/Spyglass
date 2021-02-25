@@ -1,16 +1,15 @@
 import { AstNode } from '@spyglassmc/core'
-import { CompoundFieldNode, IdentPathToken, LiteralToken, Syntax } from '.'
+import { CompoundFieldNode, IdentPathToken, LiteralToken, SyntaxNode } from '.'
 import { EnumFieldNode, EnumTypeOrEmpty } from './EnumDefinition'
 
-
-export interface InjectClauseNode extends AstNode, Syntax<InjectClauseChild> {
+export interface InjectClauseNode extends SyntaxNode<InjectClauseChild> {
 	type: 'nbtdoc:inject_clause',
 	def: DefinitionInject | null,
 }
 
 export type InjectClauseChild = LiteralToken | DefinitionInject
 
-export type DefinitionInject = AstNode & Syntax<DefinitionInjectChild> & (
+export type DefinitionInject = AstNode & SyntaxNode<DefinitionInjectChild> & (
 	{
 		type: 'nbtdoc:inject_clause/compound',
 		path: IdentPathToken,

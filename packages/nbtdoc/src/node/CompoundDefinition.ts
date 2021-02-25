@@ -1,7 +1,7 @@
 import { AstNode } from '@spyglassmc/core'
-import { DocCommentsNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, Syntax } from './index'
+import { DocCommentsNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, SyntaxNode } from './index'
 
-export interface CompoundDefinitionNode extends AstNode, Syntax<CompoundChild> {
+export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
 	doc: DocCommentsNode,
 	identifier: IdentifierToken,
@@ -11,7 +11,7 @@ export interface CompoundDefinitionNode extends AstNode, Syntax<CompoundChild> {
 
 export type CompoundChild = DocCommentsNode | LiteralToken | IdentifierToken | CompoundFieldNode | CompoundExtendable
 
-export interface RegistryIndexNode extends AstNode, Syntax {
+export interface RegistryIndexNode extends SyntaxNode {
 	type: 'nbtdoc:registry_index',
 	registry: MinecraftIdentifierToken,
 	path: FieldPathKey[],
@@ -29,7 +29,7 @@ export namespace CompoundExtendable {
 	}
 }
 
-export interface CompoundFieldNode extends AstNode, Syntax<CompoundFieldChild> {
+export interface CompoundFieldNode extends SyntaxNode<CompoundFieldChild> {
 	type: 'nbtdoc:compound_definition/field',
 	doc: DocCommentsNode,
 	key: CompoundFieldKey,
@@ -142,7 +142,7 @@ export namespace CompoundFieldTypeNode {
 	}
 }
 
-export interface IntRangeNode extends AstNode, Syntax<LiteralToken | IntegerToken> {
+export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
 	type: 'nbtdoc:int_range',
 	value: [bigint | null, bigint | null],
 }
@@ -152,7 +152,7 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface NatRangeNode extends AstNode, Syntax<LiteralToken | IntegerToken> {
+export interface NatRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
 	type: 'nbtdoc:nat_range',
 	value: [bigint | null, bigint | null],
 }
@@ -162,7 +162,7 @@ export namespace NatRangeNode {
 	}
 }
 
-export interface FloatRangeNode extends AstNode, Syntax<LiteralToken | FloatToken> {
+export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatToken> {
 	type: 'nbtdoc:float_range',
 	value: [number | null, number | null],
 }

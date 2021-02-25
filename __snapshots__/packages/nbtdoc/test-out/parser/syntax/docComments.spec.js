@@ -5,7 +5,7 @@ exports['docComments Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "nodes": [],
+    "children": [],
     "doc": ""
   },
   "errors": []
@@ -18,7 +18,7 @@ exports['docComments Parse "/// This is a doc comment." 1'] = {
       "start": 0,
       "end": 26
     },
-    "nodes": [
+    "children": [
       {
         "type": "comment",
         "range": {
@@ -40,7 +40,7 @@ exports['docComments Parse "compound Something {}" 1'] = {
       "start": 0,
       "end": 0
     },
-    "nodes": [],
+    "children": [],
     "doc": ""
   },
   "errors": []
@@ -53,7 +53,7 @@ exports['docComments Parse "⮀/// This is a doc comment.↓⮀/// And more?↓�
       "start": 0,
       "end": 44
     },
-    "nodes": [
+    "children": [
       {
         "type": "comment",
         "range": {

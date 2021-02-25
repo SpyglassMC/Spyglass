@@ -1,7 +1,6 @@
-import { AstNode } from '@spyglassmc/core'
-import { DocCommentsNode, IdentifierToken, LiteralToken, Primitive, Syntax } from './index'
+import { DocCommentsNode, IdentifierToken, LiteralToken, Primitive, SyntaxNode } from './index'
 
-export interface EnumDefinitionNode extends AstNode, Syntax<EnumChild> {
+export interface EnumDefinitionNode extends SyntaxNode<EnumChild> {
 	type: 'nbtdoc:enum_definition'
 	doc: DocCommentsNode
 	enumType: LiteralToken<EnumTypeOrEmpty>
@@ -11,7 +10,7 @@ export interface EnumDefinitionNode extends AstNode, Syntax<EnumChild> {
 
 export type EnumChild = DocCommentsNode | LiteralToken | IdentifierToken | EnumFieldNode
 
-export interface EnumFieldNode extends AstNode, Syntax<EnumFieldChild> {
+export interface EnumFieldNode extends SyntaxNode<EnumFieldChild> {
 	type: 'nbtdoc:enum_definition/field'
 	doc: DocCommentsNode
 	key: IdentifierToken

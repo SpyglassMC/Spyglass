@@ -10,7 +10,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
       "start": 0,
       "end": 29
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -25,7 +25,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
           "start": 7,
           "end": 29
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -112,7 +112,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
         "start": 7,
         "end": 29
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -203,7 +203,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
       "start": 0,
       "end": 98
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -218,7 +218,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
           "start": 7,
           "end": 98
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -267,14 +267,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 61
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 30,
                   "end": 50
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -317,7 +317,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 30,
                 "end": 50
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -360,14 +360,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 65,
               "end": 96
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 65,
                   "end": 85
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -410,7 +410,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 65,
                 "end": 85
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -481,14 +481,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 61
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 30,
                   "end": 50
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -531,7 +531,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 30,
                 "end": 50
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -566,14 +566,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 65,
               "end": 96
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 65,
                   "end": 85
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -616,7 +616,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 65,
                 "end": 85
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -654,7 +654,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         "start": 7,
         "end": 98
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -703,14 +703,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 30,
             "end": 61
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 30,
                 "end": 50
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -753,7 +753,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 50
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -796,14 +796,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 65,
             "end": 96
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 65,
                 "end": 85
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -846,7 +846,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 65,
               "end": 85
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -917,14 +917,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 30,
             "end": 61
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 30,
                 "end": 50
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -967,7 +967,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 50
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -1002,14 +1002,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 65,
             "end": 96
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 65,
                 "end": 85
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1052,7 +1052,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 65,
               "end": 85
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -1094,7 +1094,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
       "start": 0,
       "end": 61
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -1109,7 +1109,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
           "start": 7,
           "end": 61
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -1158,14 +1158,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 59
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 30,
                   "end": 48
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1208,7 +1208,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 30,
                 "end": 48
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1279,14 +1279,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 59
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 30,
                   "end": 48
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1329,7 +1329,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "start": 30,
                 "end": 48
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1367,7 +1367,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         "start": 7,
         "end": 61
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -1416,14 +1416,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 30,
             "end": 59
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 30,
                 "end": 48
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1466,7 +1466,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 48
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -1537,14 +1537,14 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
             "start": 30,
             "end": 59
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 30,
                 "end": 48
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1587,7 +1587,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
               "start": 30,
               "end": 48
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -1629,7 +1629,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
       "start": 0,
       "end": 15
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -1644,7 +1644,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
           "start": 7,
           "end": 15
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -1715,7 +1715,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
         "start": 7,
         "end": 15
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -1815,7 +1815,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
       "start": 0,
       "end": 28
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -1830,7 +1830,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
           "start": 7,
           "end": 28
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -1903,14 +1903,14 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 27,
                   "end": 27
                 },
-                "nodes": [],
+                "children": [],
                 "doc": ""
               },
               {
@@ -1944,7 +1944,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             "key": {
@@ -2014,14 +2014,14 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 27,
                   "end": 27
                 },
-                "nodes": [],
+                "children": [],
                 "doc": ""
               },
               {
@@ -2055,7 +2055,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             "key": {
@@ -2084,7 +2084,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
         "start": 7,
         "end": 28
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -2157,14 +2157,14 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
             "start": 27,
             "end": 27
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 27,
                 "end": 27
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             {
@@ -2198,7 +2198,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           "key": {
@@ -2268,14 +2268,14 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
             "start": 27,
             "end": 27
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 27,
                 "end": 27
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             {
@@ -2309,7 +2309,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           "key": {
@@ -2375,7 +2375,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
       "start": 0,
       "end": 109
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -2390,7 +2390,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           "start": 7,
           "end": 109
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -2463,14 +2463,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 69
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 35,
                   "end": 55
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -2513,7 +2513,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 35,
                 "end": 55
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -2556,14 +2556,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 72,
               "end": 107
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 72,
                   "end": 92
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -2606,7 +2606,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 72,
                 "end": 92
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -2685,14 +2685,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 69
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 35,
                   "end": 55
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -2735,7 +2735,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 35,
                 "end": 55
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -2770,14 +2770,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 72,
               "end": 107
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 72,
                   "end": 92
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -2820,7 +2820,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 72,
                 "end": 92
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -2858,7 +2858,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         "start": 7,
         "end": 109
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -2931,14 +2931,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 35,
             "end": 69
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 35,
                 "end": 55
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -2981,7 +2981,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 55
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3024,14 +3024,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 72,
             "end": 107
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 72,
                 "end": 92
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3074,7 +3074,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 72,
               "end": 92
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3153,14 +3153,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 35,
             "end": 69
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 35,
                 "end": 55
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3203,7 +3203,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 55
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3238,14 +3238,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 72,
             "end": 107
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 72,
                 "end": 92
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3288,7 +3288,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 72,
               "end": 92
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3330,7 +3330,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
       "start": 0,
       "end": 68
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -3345,7 +3345,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           "start": 7,
           "end": 68
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -3418,14 +3418,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 66
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 35,
                   "end": 53
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -3468,7 +3468,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 35,
                 "end": 53
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3547,14 +3547,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 66
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 35,
                   "end": 53
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -3597,7 +3597,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 35,
                 "end": 53
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3635,7 +3635,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         "start": 7,
         "end": 68
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -3708,14 +3708,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 35,
             "end": 66
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 35,
                 "end": 53
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3758,7 +3758,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 53
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3837,14 +3837,14 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "start": 35,
             "end": 66
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 35,
                 "end": 53
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -3887,7 +3887,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "start": 35,
               "end": 53
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -3929,7 +3929,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
       "start": 0,
       "end": 11
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -3944,7 +3944,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
           "start": 7,
           "end": 11
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -4009,14 +4009,14 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 11,
                   "end": 11
                 },
-                "nodes": [],
+                "children": [],
                 "doc": ""
               },
               {
@@ -4050,7 +4050,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             "key": {
@@ -4112,14 +4112,14 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 11,
                   "end": 11
                 },
-                "nodes": [],
+                "children": [],
                 "doc": ""
               },
               {
@@ -4153,7 +4153,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             "key": {
@@ -4182,7 +4182,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
         "start": 7,
         "end": 11
       },
-      "nodes": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -4247,14 +4247,14 @@ exports['injectClause() Parse "inject enum" 1'] = {
             "start": 11,
             "end": 11
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 11,
                 "end": 11
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             {
@@ -4288,7 +4288,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           "key": {
@@ -4350,14 +4350,14 @@ exports['injectClause() Parse "inject enum" 1'] = {
             "start": 11,
             "end": 11
           },
-          "nodes": [
+          "children": [
             {
               "type": "nbtdoc:doc_comments",
               "range": {
                 "start": 11,
                 "end": 11
               },
-              "nodes": [],
+              "children": [],
               "doc": ""
             },
             {
@@ -4391,7 +4391,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           "key": {
@@ -4497,7 +4497,7 @@ exports['injectClause() Parse "inject" 1'] = {
       "start": 0,
       "end": 6
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {

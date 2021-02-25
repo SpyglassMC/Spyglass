@@ -30,7 +30,7 @@ export function describesClause(): Parser<DescribesClauseNode> {
 			const ans: DescribesClauseNode = {
 				type: 'nbtdoc:describes_clause',
 				range: res.range,
-				nodes: res.nodes,
+				children: res.nodes,
 				path: res.nodes.find(IdentPathToken.is)!,
 				registry: mcIds[0],
 				objects: mcIds.length > 1 ? mcIds.slice(1) : null,

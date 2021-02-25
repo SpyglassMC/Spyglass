@@ -20,7 +20,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 			const ans: EnumDefinitionNode = {
 				type: 'nbtdoc:enum_definition',
 				range: res.range,
-				nodes: res.nodes,
+				children: res.nodes,
 				doc: res.nodes.find(DocCommentsNode.is)!,
 				enumType: res.nodes.find(LiteralToken.is(EnumTypesOrEmpty))!,
 				identifier: res.nodes.find(IdentifierToken.is)!,
@@ -56,7 +56,7 @@ const enumField: InfallibleParser<EnumFieldNode> = map(
 		const ans: EnumFieldNode = {
 			type: 'nbtdoc:enum_definition/field',
 			range: res.range,
-			nodes: res.nodes,
+			children: res.nodes,
 			doc: res.nodes.find(DocCommentsNode.is)!,
 			key: res.nodes.find(IdentifierToken.is)!,
 			value: res.nodes.find(Primitive.is)!,

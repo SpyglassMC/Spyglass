@@ -19,7 +19,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       "start": 0,
       "end": 17
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -155,7 +155,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       "start": 0,
       "end": 28
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -252,7 +252,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       "start": 0,
       "end": 29
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -340,7 +340,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       "start": 0,
       "end": 29
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -428,7 +428,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       "start": 0,
       "end": 31
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -560,7 +560,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       "start": 0,
       "end": 46
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -687,7 +687,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       "start": 0,
       "end": 74
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
@@ -879,7 +879,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       "start": 0,
       "end": 73
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,

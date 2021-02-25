@@ -17,7 +17,7 @@ export function moduleDeclaration(): Parser<ModuleDeclarationNode> {
 			const ans: ModuleDeclarationNode = {
 				type: 'nbtdoc:module_declaration',
 				range: res.range,
-				nodes: res.nodes,
+				children: res.nodes,
 				identifier: res.nodes.find(IdentifierToken.is)!,
 			}
 			return ans

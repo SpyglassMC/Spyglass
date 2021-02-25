@@ -15,7 +15,7 @@ exports['moduleDeclaration() Parse "mod zombie" 1'] = {
       "start": 0,
       "end": 10
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -69,7 +69,7 @@ exports['moduleDeclaration() Parse "mod zombie;" 1'] = {
       "start": 0,
       "end": 11
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -114,7 +114,7 @@ exports['moduleDeclaration() Parse "mod zombie;// Trailing comment." 1'] = {
       "start": 0,
       "end": 11
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -159,7 +159,7 @@ exports['moduleDeclaration() Parse "mod zombie;syntax test." 1'] = {
       "start": 0,
       "end": 11
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -204,7 +204,7 @@ exports['moduleDeclaration() Parse "mod zombie↓syntax test." 1'] = {
       "start": 0,
       "end": 11
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -258,7 +258,7 @@ exports['moduleDeclaration() Parse "mod" 1'] = {
       "start": 0,
       "end": 3
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -320,7 +320,7 @@ exports['moduleDeclaration() Parse "mod// Comment.↓zombie ;" 1'] = {
       "start": 0,
       "end": 23
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -373,7 +373,7 @@ exports['moduleDeclaration() Parse "mod/// Doc Comment.↓zombie ;" 1'] = {
       "start": 0,
       "end": 28
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -435,7 +435,7 @@ exports['moduleDeclaration() Parse "modzombie;" 1'] = {
       "start": 0,
       "end": 10
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {

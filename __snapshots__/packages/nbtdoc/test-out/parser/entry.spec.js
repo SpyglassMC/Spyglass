@@ -5,7 +5,7 @@ exports['entry() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "nodes": []
+    "children": []
   },
   "errors": []
 }
@@ -17,14 +17,14 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
       "start": 0,
       "end": 30
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:describes_clause",
         "range": {
           "start": 0,
           "end": 30
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
@@ -114,14 +114,14 @@ exports['entry() Parse "mod describes;" 1'] = {
       "start": 0,
       "end": 14
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:module_declaration",
         "range": {
           "start": 0,
           "end": 14
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -168,7 +168,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
       "start": 0,
       "end": 851
     },
-    "nodes": [
+    "children": [
       {
         "type": "comment",
         "range": {
@@ -199,14 +199,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           "start": 220,
           "end": 634
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 220,
               "end": 238
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -282,14 +282,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 284,
               "end": 352
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 284,
                   "end": 336
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -350,7 +350,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 284,
                 "end": 336
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -411,14 +411,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 355,
               "end": 419
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 355,
                   "end": 407
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -461,7 +461,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 355,
                 "end": 407
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -504,14 +504,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 422,
               "end": 490
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 422,
                   "end": 478
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -554,7 +554,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 422,
                 "end": 478
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -597,14 +597,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 493,
               "end": 553
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 493,
                   "end": 534
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -647,7 +647,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 493,
                 "end": 534
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -690,14 +690,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 556,
               "end": 632
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 556,
                   "end": 618
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -740,7 +740,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 556,
                 "end": 618
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -784,7 +784,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
             "start": 220,
             "end": 238
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -837,14 +837,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 284,
               "end": 352
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 284,
                   "end": 336
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -905,7 +905,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 284,
                 "end": 336
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -958,14 +958,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 355,
               "end": 419
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 355,
                   "end": 407
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1008,7 +1008,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 355,
                 "end": 407
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1043,14 +1043,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 422,
               "end": 490
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 422,
                   "end": 478
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1093,7 +1093,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 422,
                 "end": 478
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1128,14 +1128,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 493,
               "end": 553
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 493,
                   "end": 534
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1178,7 +1178,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 493,
                 "end": 534
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1213,14 +1213,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 556,
               "end": 632
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 556,
                   "end": 618
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1263,7 +1263,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 556,
                 "end": 618
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1300,14 +1300,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           "start": 636,
           "end": 798
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 636,
               "end": 652
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -1373,14 +1373,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 678,
               "end": 733
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 678,
                   "end": 712
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1423,7 +1423,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 678,
                 "end": 712
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1466,14 +1466,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 736,
               "end": 796
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 736,
                   "end": 777
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1516,7 +1516,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 736,
                 "end": 777
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1560,7 +1560,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
             "start": 636,
             "end": 652
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -1595,14 +1595,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 678,
               "end": 733
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 678,
                   "end": 712
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1645,7 +1645,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 678,
                 "end": 712
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1680,14 +1680,14 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "start": 736,
               "end": 796
             },
-            "nodes": [
+            "children": [
               {
                 "type": "nbtdoc:doc_comments",
                 "range": {
                   "start": 736,
                   "end": 777
                 },
-                "nodes": [
+                "children": [
                   {
                     "type": "comment",
                     "range": {
@@ -1730,7 +1730,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "start": 736,
                 "end": 777
               },
-              "nodes": [
+              "children": [
                 {
                   "type": "comment",
                   "range": {
@@ -1767,7 +1767,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           "start": 800,
           "end": 851
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,

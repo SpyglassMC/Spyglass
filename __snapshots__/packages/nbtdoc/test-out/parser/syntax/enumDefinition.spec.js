@@ -10,14 +10,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
       "start": 0,
       "end": 133
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:doc_comments",
         "range": {
           "start": 0,
           "end": 26
         },
-        "nodes": [
+        "children": [
           {
             "type": "comment",
             "range": {
@@ -83,14 +83,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 50,
           "end": 89
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 50,
               "end": 80
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -133,7 +133,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "start": 50,
             "end": 80
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -176,14 +176,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 92,
           "end": 131
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 92,
               "end": 122
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -226,7 +226,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "start": 92,
             "end": 122
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -270,7 +270,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
         "start": 0,
         "end": 26
       },
-      "nodes": [
+      "children": [
         {
           "type": "comment",
           "range": {
@@ -305,14 +305,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 50,
           "end": 89
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 50,
               "end": 80
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -355,7 +355,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "start": 50,
             "end": 80
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -390,14 +390,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "start": 92,
           "end": 131
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 92,
               "end": 122
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -440,7 +440,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "start": 92,
             "end": 122
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -481,14 +481,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
       "start": 0,
       "end": 115
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:doc_comments",
         "range": {
           "start": 0,
           "end": 26
         },
-        "nodes": [
+        "children": [
           {
             "type": "comment",
             "range": {
@@ -554,14 +554,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 51,
           "end": 113
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 51,
               "end": 102
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -612,7 +612,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "start": 51,
             "end": 102
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -664,7 +664,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
         "start": 0,
         "end": 26
       },
-      "nodes": [
+      "children": [
         {
           "type": "comment",
           "range": {
@@ -699,14 +699,14 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "start": 51,
           "end": 113
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 51,
               "end": 102
             },
-            "nodes": [
+            "children": [
               {
                 "type": "comment",
                 "range": {
@@ -757,7 +757,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "start": 51,
             "end": 102
           },
-          "nodes": [
+          "children": [
             {
               "type": "comment",
               "range": {
@@ -806,14 +806,14 @@ exports['enumDefinition() Parse "enum" 1'] = {
       "start": 0,
       "end": 4
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:doc_comments",
         "range": {
           "start": 0,
           "end": 0
         },
-        "nodes": [],
+        "children": [],
         "doc": ""
       },
       {
@@ -870,14 +870,14 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 4,
               "end": 4
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -911,7 +911,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "start": 4,
             "end": 4
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {
@@ -946,7 +946,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
         "start": 0,
         "end": 0
       },
-      "nodes": [],
+      "children": [],
       "doc": ""
     },
     "enumType": {
@@ -972,14 +972,14 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 4,
               "end": 4
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -1013,7 +1013,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "start": 4,
             "end": 4
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {
@@ -1118,14 +1118,14 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
       "start": 0,
       "end": 30
     },
-    "nodes": [
+    "children": [
       {
         "type": "nbtdoc:doc_comments",
         "range": {
           "start": 0,
           "end": 0
         },
-        "nodes": [],
+        "children": [],
         "doc": ""
       },
       {
@@ -1182,14 +1182,14 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 21,
           "end": 28
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 21,
               "end": 21
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -1223,7 +1223,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 21,
             "end": 21
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {
@@ -1257,14 +1257,14 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 29,
           "end": 29
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 29,
               "end": 29
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -1298,7 +1298,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 29,
             "end": 29
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {
@@ -1333,7 +1333,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
         "start": 0,
         "end": 0
       },
-      "nodes": [],
+      "children": [],
       "doc": ""
     },
     "enumType": {
@@ -1359,14 +1359,14 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 21,
           "end": 28
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 21,
               "end": 21
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -1400,7 +1400,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 21,
             "end": 21
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {
@@ -1426,14 +1426,14 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "start": 29,
           "end": 29
         },
-        "nodes": [
+        "children": [
           {
             "type": "nbtdoc:doc_comments",
             "range": {
               "start": 29,
               "end": 29
             },
-            "nodes": [],
+            "children": [],
             "doc": ""
           },
           {
@@ -1467,7 +1467,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 29,
             "end": 29
           },
-          "nodes": [],
+          "children": [],
           "doc": ""
         },
         "key": {

@@ -19,7 +19,7 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 			const ans: CompoundDefinitionNode = {
 				type: 'nbtdoc:compound_definition',
 				range: res.range,
-				nodes: res.nodes,
+				children: res.nodes,
 				doc: res.nodes.find(DocCommentsNode.is)!,
 				identifier: res.nodes.find(IdentifierToken.is)!,
 				extends: res.nodes.find(CompoundExtendable.is) ?? null,
@@ -198,7 +198,7 @@ const compoundField: InfallibleParser<CompoundFieldNode> = map(
 		const ans: CompoundFieldNode = {
 			type: 'nbtdoc:compound_definition/field',
 			range: res.range,
-			nodes: res.nodes,
+			children: res.nodes,
 			doc: res.nodes.find(DocCommentsNode.is)!,
 			key: res.nodes.find(CompoundFieldKey.is)!,
 			fieldType: res.nodes.find(CompoundFieldTypeNode.is)!,
@@ -245,7 +245,7 @@ function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode |
 			const ans: R = {
 				type,
 				range: res.range,
-				nodes: res.nodes,
+				children: res.nodes,
 				value: value as R['value'],
 			} as R
 			return ans
@@ -278,7 +278,7 @@ const registryIndex: InfallibleParser<RegistryIndexNode> = map(
 		const ans: RegistryIndexNode = {
 			type: 'nbtdoc:registry_index',
 			range: res.range,
-			nodes: res.nodes,
+			children: res.nodes,
 			registry: res.nodes.find(MinecraftIdentifierToken.is)!,
 			path: res.nodes.filter(FieldPathKey.is),
 		}
