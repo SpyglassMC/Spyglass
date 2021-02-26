@@ -18,7 +18,7 @@ export namespace Transformer {
 				return ls.DiagnosticSeverity.Information
 			case core.ErrorSeverity.Warning:
 				return ls.DiagnosticSeverity.Warning
-			default:
+			case core.ErrorSeverity.Error:
 				return ls.DiagnosticSeverity.Error
 		}
 	}
