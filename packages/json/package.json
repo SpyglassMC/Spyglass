@@ -1,0 +1,25 @@
+{
+  "name": "@spyglassmc/json",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "SPGoding",
+  "license": "MIT",
+  "directories": {
+    "test": "test/"
+  },
+  "dependencies": {
+    "vscode-json-languageservice": "4.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SPYGlassMC/SPYGlass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
+  }
+}

@@ -4,6 +4,12 @@
 			"locales"
 		]
 	},
+	"json": {
+		"dependencies": [
+			"core",
+			"locales"
+		]
+	},
 	"language-server": {
 		"dependencies": [
 			"core",
