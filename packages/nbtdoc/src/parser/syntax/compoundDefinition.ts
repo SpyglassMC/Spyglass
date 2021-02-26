@@ -12,8 +12,10 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 		syntax<CompoundChild>([
 			docComments,
 			keyword('compound'), identifier(), optional(extendsClause), punctuation('{'),
-			compoundFields,
-			punctuation('}'),
+			any<LiteralToken | SyntaxUtil<CompoundChild>>([
+				marker('}'),
+				syntax<CompoundChild>([compoundFields, punctuation('}')], true),
+			]),
 		], true),
 		res => {
 			const ans: CompoundDefinitionNode = {

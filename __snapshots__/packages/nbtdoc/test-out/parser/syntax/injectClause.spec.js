@@ -1680,6 +1680,109 @@ exports['injectClause() Parse "inject compound" 1'] = {
             "value": ""
           },
           {
+            "type": "nbtdoc:compound_definition/field",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [
+              {
+                "type": "nbtdoc:doc_comments",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "children": [],
+                "doc": ""
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "value": ""
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "value": ""
+              },
+              {
+                "type": "nbtdoc:compound_definition/field/type",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "typeType": "path",
+                "path": {
+                  "type": "nbtdoc:ident_path",
+                  "fromGlobalRoot": false,
+                  "children": [
+                    {
+                      "type": "nbtdoc:identifier",
+                      "range": {
+                        "start": 15,
+                        "end": 15
+                      },
+                      "value": ""
+                    }
+                  ],
+                  "range": {
+                    "start": 15,
+                    "end": 15
+                  }
+                }
+              }
+            ],
+            "doc": {
+              "type": "nbtdoc:doc_comments",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "children": [],
+              "doc": ""
+            },
+            "key": {
+              "type": "nbtdoc:identifier",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            "fieldType": {
+              "type": "nbtdoc:compound_definition/field/type",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "typeType": "path",
+              "path": {
+                "type": "nbtdoc:ident_path",
+                "fromGlobalRoot": false,
+                "children": [
+                  {
+                    "type": "nbtdoc:identifier",
+                    "range": {
+                      "start": 15,
+                      "end": 15
+                    },
+                    "value": ""
+                  }
+                ],
+                "range": {
+                  "start": 15,
+                  "end": 15
+                }
+              }
+            }
+          },
+          {
             "type": "nbtdoc:literal",
             "range": {
               "start": 15,
@@ -1706,7 +1809,111 @@ exports['injectClause() Parse "inject compound" 1'] = {
             "end": 15
           }
         },
-        "fields": []
+        "fields": [
+          {
+            "type": "nbtdoc:compound_definition/field",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [
+              {
+                "type": "nbtdoc:doc_comments",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "children": [],
+                "doc": ""
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "value": ""
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "value": ""
+              },
+              {
+                "type": "nbtdoc:compound_definition/field/type",
+                "range": {
+                  "start": 15,
+                  "end": 15
+                },
+                "typeType": "path",
+                "path": {
+                  "type": "nbtdoc:ident_path",
+                  "fromGlobalRoot": false,
+                  "children": [
+                    {
+                      "type": "nbtdoc:identifier",
+                      "range": {
+                        "start": 15,
+                        "end": 15
+                      },
+                      "value": ""
+                    }
+                  ],
+                  "range": {
+                    "start": 15,
+                    "end": 15
+                  }
+                }
+              }
+            ],
+            "doc": {
+              "type": "nbtdoc:doc_comments",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "children": [],
+              "doc": ""
+            },
+            "key": {
+              "type": "nbtdoc:identifier",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            "fieldType": {
+              "type": "nbtdoc:compound_definition/field/type",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "typeType": "path",
+              "path": {
+                "type": "nbtdoc:ident_path",
+                "fromGlobalRoot": false,
+                "children": [
+                  {
+                    "type": "nbtdoc:identifier",
+                    "range": {
+                      "start": 15,
+                      "end": 15
+                    },
+                    "value": ""
+                  }
+                ],
+                "range": {
+                  "start": 15,
+                  "end": 15
+                }
+              }
+            }
+          }
+        ]
       }
     ],
     "def": {
@@ -1751,6 +1958,109 @@ exports['injectClause() Parse "inject compound" 1'] = {
           "value": ""
         },
         {
+          "type": "nbtdoc:compound_definition/field",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [
+            {
+              "type": "nbtdoc:doc_comments",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "children": [],
+              "doc": ""
+            },
+            {
+              "type": "nbtdoc:identifier",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            {
+              "type": "nbtdoc:literal",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            {
+              "type": "nbtdoc:compound_definition/field/type",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "typeType": "path",
+              "path": {
+                "type": "nbtdoc:ident_path",
+                "fromGlobalRoot": false,
+                "children": [
+                  {
+                    "type": "nbtdoc:identifier",
+                    "range": {
+                      "start": 15,
+                      "end": 15
+                    },
+                    "value": ""
+                  }
+                ],
+                "range": {
+                  "start": 15,
+                  "end": 15
+                }
+              }
+            }
+          ],
+          "doc": {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          "key": {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "value": ""
+          },
+          "fieldType": {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "typeType": "path",
+            "path": {
+              "type": "nbtdoc:ident_path",
+              "fromGlobalRoot": false,
+              "children": [
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 15,
+                    "end": 15
+                  },
+                  "value": ""
+                }
+              ],
+              "range": {
+                "start": 15,
+                "end": 15
+              }
+            }
+          }
+        },
+        {
           "type": "nbtdoc:literal",
           "range": {
             "start": 15,
@@ -1777,7 +2087,111 @@ exports['injectClause() Parse "inject compound" 1'] = {
           "end": 15
         }
       },
-      "fields": []
+      "fields": [
+        {
+          "type": "nbtdoc:compound_definition/field",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [
+            {
+              "type": "nbtdoc:doc_comments",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "children": [],
+              "doc": ""
+            },
+            {
+              "type": "nbtdoc:identifier",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            {
+              "type": "nbtdoc:literal",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "value": ""
+            },
+            {
+              "type": "nbtdoc:compound_definition/field/type",
+              "range": {
+                "start": 15,
+                "end": 15
+              },
+              "typeType": "path",
+              "path": {
+                "type": "nbtdoc:ident_path",
+                "fromGlobalRoot": false,
+                "children": [
+                  {
+                    "type": "nbtdoc:identifier",
+                    "range": {
+                      "start": 15,
+                      "end": 15
+                    },
+                    "value": ""
+                  }
+                ],
+                "range": {
+                  "start": 15,
+                  "end": 15
+                }
+              }
+            }
+          ],
+          "doc": {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          "key": {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "value": ""
+          },
+          "fieldType": {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "typeType": "path",
+            "path": {
+              "type": "nbtdoc:ident_path",
+              "fromGlobalRoot": false,
+              "children": [
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 15,
+                    "end": 15
+                  },
+                  "value": ""
+                }
+              ],
+              "range": {
+                "start": 15,
+                "end": 15
+              }
+            }
+          }
+        }
+      ]
     }
   },
   "errors": [
@@ -1795,6 +2209,30 @@ exports['injectClause() Parse "inject compound" 1'] = {
         "end": 15
       },
       "message": "Expected “{”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 15,
+        "end": 15
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 15,
+        "end": 15
+      },
+      "message": "Expected “:”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 15,
+        "end": 15
+      },
+      "message": "Expected an identifier",
       "severity": 3
     },
     {

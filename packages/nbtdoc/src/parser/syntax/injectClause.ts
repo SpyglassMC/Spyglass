@@ -1,7 +1,7 @@
-import { any, empty, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
+import { any, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { CompoundFieldNode, DefinitionInject, DefinitionInjectChild, EnumFieldNode, EnumTypesOrEmpty, IdentPathToken, InjectClauseChild, InjectClauseNode, LiteralToken, SyntaxUtil } from '../../node'
-import { identPath, keyword, punctuation } from '../terminator'
+import { identPath, keyword, marker, punctuation } from '../terminator'
 import { syntax } from '../util'
 import { compoundFields } from './compoundDefinition'
 import { enumFields, enumType } from './enumDefinition'
@@ -37,8 +37,10 @@ const definitionInject: InfallibleParser<DefinitionInject | null> = map(
 			], true),
 			syntax<DefinitionInjectChild>([
 				keyword('compound'), identPath(), punctuation('{'),
-				any([compoundFields, empty]),
-				punctuation('}'),
+				any<LiteralToken | SyntaxUtil<DefinitionInjectChild>>([
+					marker('}'),
+					syntax<DefinitionInjectChild>([compoundFields, punctuation('}')], true),
+				]),
 			], true),
 		]),
 		(src, ctx) => {
