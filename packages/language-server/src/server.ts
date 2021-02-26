@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as ls from 'vscode-languageserver/node'
-import { Transformer } from './util'
+import { transformer } from './util'
 
 if (process.argv.length === 2) {
 	// When the server is launched from the cmd script, the process arguments
@@ -56,7 +56,7 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	const doc = textDocuments.get(uri)!
 	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: Transformer.errors(errors, doc),
+		diagnostics: transformer.errors(errors, doc),
 		uri,
 		version,
 	})
@@ -67,7 +67,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	const doc = textDocuments.get(uri)!
 	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: Transformer.errors(errors, doc),
+		diagnostics: transformer.errors(errors, doc),
 		uri,
 		version,
 	})

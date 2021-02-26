@@ -5,7 +5,7 @@ import * as ls from 'vscode-languageserver/node'
 /**
  * A series of functions that can transform `@spyglassmc/core` types to `vscode-languageserver` types.
  */
-export namespace Transformer {
+export namespace transformer {
 	export function range(range: core.Range, doc: TextDocument): ls.Range {
 		return ls.Range.create(doc.positionAt(range.start), doc.positionAt(range.end))
 	}
