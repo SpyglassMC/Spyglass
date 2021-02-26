@@ -43,7 +43,7 @@ export namespace CompoundFieldNode {
 
 export type CompoundFieldChild =
 	| DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
-	| IntRangeNode | NatRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | MinecraftIdentifierToken
+	| IntRangeNode | UnsignedRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | MinecraftIdentifierToken
 
 export type CompoundFieldKey = IdentifierToken | StringToken
 export namespace CompoundFieldKey {
@@ -92,15 +92,15 @@ export type CompoundFieldTypeNode = AstNode & {
 } | {
 	typeType: 'byte_array',
 	valueRange: IntRangeNode | null,
-	lengthRange: NatRangeNode | null,
+	lengthRange: UnsignedRangeNode | null,
 } | {
 	typeType: 'int_array',
 	valueRange: IntRangeNode | null,
-	lengthRange: NatRangeNode | null,
+	lengthRange: UnsignedRangeNode | null,
 } | {
 	typeType: 'long_array',
 	valueRange: IntRangeNode | null,
-	lengthRange: NatRangeNode | null,
+	lengthRange: UnsignedRangeNode | null,
 } | {
 	typeType: 'byte',
 	valueRange: IntRangeNode | null,
@@ -122,7 +122,7 @@ export type CompoundFieldTypeNode = AstNode & {
 } | {
 	typeType: 'list',
 	item: CompoundFieldTypeNode,
-	lengthRange: NatRangeNode | null,
+	lengthRange: UnsignedRangeNode | null,
 } | {
 	typeType: 'index',
 	index: RegistryIndexNode,
@@ -152,13 +152,13 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface NatRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
-	type: 'nbtdoc:nat_range',
+export interface UnsignedRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
+	type: 'nbtdoc:unsigned_range',
 	value: [bigint | null, bigint | null],
 }
-export namespace NatRangeNode {
-	export function is(obj: object): obj is NatRangeNode {
-		return (obj as NatRangeNode).type === 'nbtdoc:nat_range'
+export namespace UnsignedRangeNode {
+	export function is(obj: object): obj is UnsignedRangeNode {
+		return (obj as UnsignedRangeNode).type === 'nbtdoc:unsigned_range'
 	}
 }
 

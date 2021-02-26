@@ -655,7 +655,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             },
             "typeType": "list",
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 57,
                 "end": 62
@@ -752,7 +752,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                     ]
                   },
                   "lengthRange": {
-                    "type": "nbtdoc:nat_range",
+                    "type": "nbtdoc:unsigned_range",
                     "range": {
                       "start": 36,
                       "end": 39
@@ -844,7 +844,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           },
           "typeType": "list",
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 57,
               "end": 62
@@ -941,7 +941,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                   ]
                 },
                 "lengthRange": {
-                  "type": "nbtdoc:nat_range",
+                  "type": "nbtdoc:unsigned_range",
                   "range": {
                     "start": 36,
                     "end": 39
@@ -1076,7 +1076,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             },
             "typeType": "list",
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 57,
                 "end": 62
@@ -1173,7 +1173,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                     ]
                   },
                   "lengthRange": {
-                    "type": "nbtdoc:nat_range",
+                    "type": "nbtdoc:unsigned_range",
                     "range": {
                       "start": 36,
                       "end": 39
@@ -1265,7 +1265,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           },
           "typeType": "list",
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 57,
               "end": 62
@@ -1362,7 +1362,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                   ]
                 },
                 "lengthRange": {
-                  "type": "nbtdoc:nat_range",
+                  "type": "nbtdoc:unsigned_range",
                   "range": {
                     "start": 36,
                     "end": 39
@@ -1727,7 +1727,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
             },
             "typeType": "list",
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 29,
                 "end": 34
@@ -1798,7 +1798,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
           },
           "typeType": "list",
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 29,
               "end": 34
@@ -1912,7 +1912,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
             },
             "typeType": "list",
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 29,
                 "end": 34
@@ -1983,7 +1983,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
           },
           "typeType": "list",
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 29,
               "end": 34
@@ -3184,7 +3184,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "typeType": "long_array",
             "valueRange": null,
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 27,
                 "end": 30
@@ -3240,7 +3240,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
           "typeType": "long_array",
           "valueRange": null,
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 27,
               "end": 30
@@ -3339,7 +3339,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "typeType": "long_array",
             "valueRange": null,
             "lengthRange": {
-              "type": "nbtdoc:nat_range",
+              "type": "nbtdoc:unsigned_range",
               "range": {
                 "start": 27,
                 "end": 30
@@ -3395,7 +3395,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
           "typeType": "long_array",
           "valueRange": null,
           "lengthRange": {
-            "type": "nbtdoc:nat_range",
+            "type": "nbtdoc:unsigned_range",
             "range": {
               "start": 27,
               "end": 30

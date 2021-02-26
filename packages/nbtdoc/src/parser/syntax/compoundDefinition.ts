@@ -1,5 +1,5 @@
 import { any, InfallibleParser, map, optional, Parser, ParserContext, repeat, sequence, SequenceUtil, Source } from '@spyglassmc/core'
-import { CompoundChild, CompoundDefinitionNode, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
+import { CompoundChild, CompoundDefinitionNode, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexChild, RegistryIndexNode, SyntaxUtil, UnsignedRangeNode } from '../../node'
 import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -38,7 +38,7 @@ const intRange = _intRange<IntegerToken, IntRangeNode>('nbtdoc:int_range', integ
 /**
  * `Failure` when there is no `@` marker.
  */
-const natRange = _intRange<IntegerToken, NatRangeNode>('nbtdoc:nat_range', integer(true))
+const unsignedRange = _intRange<IntegerToken, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true))
 
 /**
  * `Failure` when there is no `@` marker.
@@ -52,16 +52,16 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 		any([
 			syntax<CompoundFieldChild>([keyword('boolean')]),
 			syntax<CompoundFieldChild>([keyword('string')]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), punctuation('['), punctuation(']'), optional(natRange)]),
+			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
+			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
+			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
 			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('short'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('int'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('long'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('float'), optional(floatRange)]),
 			syntax<CompoundFieldChild>([keyword('double'), optional(floatRange)]),
-			syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(natRange)]),
+			syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(unsignedRange)]),
 			syntax<CompoundFieldChild>([keyword('id'), punctuation('('), minecraftIdentifier(), punctuation(')')]),
 			any([
 				syntax<CompoundFieldChild>([marker('('), marker(')')]),
@@ -89,7 +89,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					case 'long': {
 						if (literals[1]?.value === '[') {
 							const valueRange = res.nodes.find(IntRangeNode.is) ?? null
-							const lengthRange = res.nodes.find(NatRangeNode.is) ?? null
+							const lengthRange = res.nodes.find(UnsignedRangeNode.is) ?? null
 							const ans: CompoundFieldTypeNode = {
 								type: 'nbtdoc:compound_definition/field/type',
 								range: res.range,
@@ -126,7 +126,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 
 					case '[': {
-						const lengthRange = res.nodes.find(NatRangeNode.is) ?? null
+						const lengthRange = res.nodes.find(UnsignedRangeNode.is) ?? null
 						const item = res.nodes.find(CompoundFieldTypeNode.is)!
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
@@ -218,7 +218,7 @@ export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | Compound
 /**
  * `Failure` when there is no `@` marker.
  */
-function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode | NatRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>): Parser<R> {
+function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>): Parser<R> {
 	return map(
 		syntax<LiteralToken | T>([
 			marker('@'),
