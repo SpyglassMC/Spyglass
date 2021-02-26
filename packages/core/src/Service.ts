@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode, ColorToken, file, FileService, MetaRegistry } from '.'
+import { AstNode, ColorToken, file, FileService, MetaRegistry, Returnable } from '.'
 import { ParserContext } from './parser'
 import { TextDocuments } from './TextDocuments'
 import { LanguageError } from './type'
@@ -25,7 +25,7 @@ export class Service {
 		this.textDocuments = new TextDocuments({ fs })
 	}
 
-	public parse<N = AstNode>(doc: TextDocument): { node: Readonly<N>, errors: readonly LanguageError[] } {
+	public parse<N extends Returnable = AstNode>(doc: TextDocument): { node: N, errors: readonly LanguageError[] } {
 		const ctx = ParserContext.create({
 			meta: this.meta,
 			fs: this.fs,
@@ -41,7 +41,7 @@ export class Service {
 		}
 	}
 
-	public colorize<N = AstNode>(node: Readonly<N>, doc: TextDocument): readonly ColorToken[] {
+	public colorize<N = AstNode>(node: N, doc: TextDocument): readonly ColorToken[] {
 		const colorizer = this.meta.getColorizer<N>(doc.languageId)
 		return colorizer(node, doc)
 	}

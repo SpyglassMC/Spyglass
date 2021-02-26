@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode, Failure, Parser, ParserContext, Source } from '../lib'
+import { AstNode, Failure, LanguageError, Parser, ParserContext, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
 Object.defineProperty(BigInt.prototype, 'toJSON', {
@@ -30,7 +30,7 @@ export function testParser(parser: Parser, text: string, {
 	languageID?: string,
 } = {}): {
 	node: AstNode | 'FAILURE',
-	errors: Readonly<any[]>,
+	errors: readonly LanguageError[],
 } {
 	/* eslint-enable @typescript-eslint/indent */
 	const src = new Source(text)

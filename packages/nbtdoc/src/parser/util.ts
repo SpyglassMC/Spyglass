@@ -1,4 +1,4 @@
-import { AstNode, CommentNode, InfallibleParser, Parser, ParserContext, repeat, sequence, Source, Success } from '@spyglassmc/core'
+import { AstNode, CommentNode, InfallibleParser, Parser, ParserContext, repeat, sequence, Source } from '@spyglassmc/core'
 import { comment } from '.'
 import { SyntaxUtil } from '..'
 
@@ -14,7 +14,7 @@ export function syntaxGap(forbidsDocCommentsInGap = false): InfallibleParser<Com
 		src.skipWhitespace()
 
 		while (src.canRead() && src.peek(2) === '//' && (!forbidsDocCommentsInGap || src.peek(3) !== '///')) {
-			const result = comment()(src, ctx) as Success<CommentNode>
+			const result = comment()(src, ctx) as CommentNode
 			ans.push(result)
 			src.skipWhitespace()
 		}

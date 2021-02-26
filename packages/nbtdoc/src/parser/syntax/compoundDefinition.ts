@@ -1,4 +1,4 @@
-import { any, InfallibleParser, map, optional, Parser, ParserContext, repeat, sequence, SequenceUtil, Source, Success } from '@spyglassmc/core'
+import { any, InfallibleParser, map, optional, Parser, ParserContext, repeat, sequence, SequenceUtil, Source } from '@spyglassmc/core'
 import { CompoundChild, CompoundDefinitionNode, CompoundExtendable, CompoundFieldChild, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, NatRangeNode, RegistryIndexChild, RegistryIndexNode, SyntaxUtil } from '../../node'
 import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
@@ -47,7 +47,7 @@ const floatRange = _intRange<FloatToken, FloatRangeNode>('nbtdoc:float_range', f
 
 const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any<CompoundFieldKey>([identifier(), string()])
 
-function compoundFieldType(src: Source, ctx: ParserContext): Success<CompoundFieldTypeNode> {
+function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNode {
 	return map(
 		any([
 			syntax<CompoundFieldChild>([keyword('boolean')]),

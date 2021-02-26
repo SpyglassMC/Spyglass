@@ -2,7 +2,7 @@ import { ColorToken, ColorTokenType, traverseLeaves } from '@spyglassmc/core'
 import { LeafNode, MainNode } from '../node'
 
 export namespace colorizer {
-	export function entry(node: Readonly<MainNode>): readonly ColorToken[] {
+	export function entry(node: MainNode): readonly ColorToken[] {
 		const ans: ColorToken[] = []
 		traverseLeaves(node, leaf => {
 			let type: ColorTokenType | undefined

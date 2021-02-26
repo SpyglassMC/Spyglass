@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { AstNode } from '.'
+import { AstNode, Returnable } from '.'
 import { InfallibleParser, Parser } from './parser/Parser'
 import { Colorizer, colorizer } from './processor'
 
@@ -54,7 +54,7 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParser<N = AstNode>(languageID: string): InfallibleParser<N> {
+	public getParser<N extends Returnable = AstNode>(languageID: string): InfallibleParser<N> {
 		if (this.languages.has(languageID)) {
 			return this.languages.get(languageID)!.parser as unknown as InfallibleParser<N>
 		}

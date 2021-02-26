@@ -1,8 +1,8 @@
 import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
-import { AstNode, ErrorSeverity, Range, SequenceUtil, Source } from '..'
+import { AstNode, ErrorSeverity, Range, Returnable, SequenceUtil, Source } from '..'
 import { ErrorReporter } from '../util'
 
-export type AttemptResult<N  = AstNode> = {
+export type AttemptResult<N extends Returnable = AstNode> = {
 	result: Result<N>,
 	updateSrcAndCtx: () => void,
 	endCursor: number,
@@ -15,7 +15,7 @@ export type AttemptResult<N  = AstNode> = {
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
  */
-export function attempt<N = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
+export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
 		...ctx,
@@ -127,9 +127,9 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>
  * 
  * `Failure` when all of the `parsers` failed.
  */
-export function any<N = AstNode>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
-export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N>
-export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N> {
+export function any<N extends Returnable>(parsers: [...Parser<N>[], InfallibleParser<N>]): InfallibleParser<N>
+export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N>
+export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N> {
 	return (src: Source, ctx: ParserContext): Result<N> => {
 		const attempts: AttemptResult<N>[] = parsers
 			.map(parser => attempt(parser, src, ctx))
@@ -146,9 +146,9 @@ export function any<N = AstNode>(parsers: Parser<N>[]): Parser<N> {
 /**
  * @returns A parser that takes an optional syntax component.
  */
-export function optional<N = AstNode>(parser: InfallibleParser<N>): void
-export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null>
-export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | null> {
+export function optional<N extends Returnable>(parser: InfallibleParser<N>): void
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | null>
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | null> {
 	// return any<N | null>([
 	// 	parser,
 	// 	empty,
@@ -169,14 +169,14 @@ export function optional<N = AstNode>(parser: Parser<N>): InfallibleParser<N | n
  * 
  * @returns A parser that returns the return value of the `parser`, or the return value of `defaultValue` it it's a `Failure`.
  */
-export function recover<N>(parser: InfallibleParser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): void
-export function recover<N>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N>
-export function recover<N>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N> {
+export function recover<N extends Returnable>(parser: InfallibleParser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): void
+export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N>
+export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N> {
 	return (src: Source, ctx: ParserContext): N => {
 		const result = parser(src, ctx)
 		if (result === Failure) {
 			const ans = defaultValue(src, ctx)
-			return Object.freeze(ans)
+			return ans
 		}
 		return result
 	}
@@ -187,16 +187,16 @@ export function recover<N>(parser: Parser<N>, defaultValue: (src: Source, ctx: P
  * 
  * `Failure` when the `parser` returns a `Failure`.
  */
-export function map<A, B>(parser: InfallibleParser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): InfallibleParser<B>
-export function map<A, B>(parser: Parser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): Parser<B>
-export function map<A, B>(parser: Parser<A>, fn: (res: A, src: Source, ctx: ParserContext) => B): Parser<B> {
-	return (src: Source, ctx: ParserContext): Result<B> => {
+export function map<NA extends Returnable, NB extends Returnable>(parser: InfallibleParser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): InfallibleParser<NB>
+export function map<NA extends Returnable, NB extends Returnable>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB>
+export function map<NA extends Returnable, NB extends Returnable>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB> {
+	return (src: Source, ctx: ParserContext): Result<NB> => {
 		const result = parser(src, ctx)
 		if (result === Failure) {
 			return Failure
 		}
 		const ans = fn(result, src, ctx)
-		return Object.freeze(ans)
+		return ans
 	}
 }
 

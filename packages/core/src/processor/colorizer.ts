@@ -2,7 +2,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { AstNode } from '../node'
 import { Range, RangeLike } from '../type'
 
-export type Colorizer<N = AstNode> = (node: Readonly<N>, doc: TextDocument /* , symbols: SymbolTableHelper */) => readonly ColorToken[]
+export type Colorizer<N = AstNode> = (node: N, doc: TextDocument /* , symbols: SymbolTableHelper */) => readonly ColorToken[]
 
 export namespace colorizer {
 	export const fallback: Colorizer<unknown> = () => []
