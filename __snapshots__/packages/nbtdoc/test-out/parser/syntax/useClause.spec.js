@@ -4,7 +4,76 @@ exports['useClause() Parse "" 1'] = {
 }
 
 exports['useClause() Parse "e" 1'] = {
-  "node": "FAILURE",
+  "node": {
+    "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:ident_path",
+        "fromGlobalRoot": false,
+        "path": [
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 1,
+              "end": 1
+            },
+            "value": ""
+          }
+        ],
+        "range": {
+          "start": 1,
+          "end": 1
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": ""
+      }
+    ],
+    "isExport": false,
+    "path": {
+      "type": "nbtdoc:ident_path",
+      "fromGlobalRoot": false,
+      "path": [
+        {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 1,
+            "end": 1
+          },
+          "value": ""
+        }
+      ],
+      "range": {
+        "start": 1,
+        "end": 1
+      }
+    }
+  },
   "errors": [
     {
       "range": {
@@ -12,6 +81,30 @@ exports['useClause() Parse "e" 1'] = {
         "end": 1
       },
       "message": "Expected “export”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “use”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “;”",
       "severity": 3
     }
   ]
@@ -288,8 +381,102 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
 }
 
 exports['useClause() Parse "export" 1'] = {
-  "node": "FAILURE",
-  "errors": []
+  "node": {
+    "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "children": [
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "value": "export"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 6
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:ident_path",
+        "fromGlobalRoot": false,
+        "path": [
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 6,
+              "end": 6
+            },
+            "value": ""
+          }
+        ],
+        "range": {
+          "start": 6,
+          "end": 6
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 6
+        },
+        "value": ""
+      }
+    ],
+    "isExport": true,
+    "path": {
+      "type": "nbtdoc:ident_path",
+      "fromGlobalRoot": false,
+      "path": [
+        {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 6,
+            "end": 6
+          },
+          "value": ""
+        }
+      ],
+      "range": {
+        "start": 6,
+        "end": 6
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 6,
+        "end": 6
+      },
+      "message": "Expected “use”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 6,
+        "end": 6
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 6,
+        "end": 6
+      },
+      "message": "Expected “;”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['useClause() Parse "exportusefoo;" 1'] = {
