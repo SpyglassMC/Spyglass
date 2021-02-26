@@ -21,7 +21,9 @@ module.exports = {
 		"**/out",
 		"**/test-out",
 
-		"packages/mcschema",
+		"/packages/mcschema",
+		
+		"/scripts",
 	],
 	"rules": {
 		"@typescript-eslint/prefer-for-of": "warn",
