@@ -3430,12 +3430,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
   "errors": []
 }
 
-exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }" 1'] = {
+exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.second] }" 1'] = {
   "node": {
     "type": "nbtdoc:compound_definition",
     "range": {
       "start": 0,
-      "end": 43
+      "end": 50
     },
     "children": [
       {
@@ -3475,7 +3475,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
         "type": "nbtdoc:compound_definition/field",
         "range": {
           "start": 15,
-          "end": 41
+          "end": 48
         },
         "children": [
           {
@@ -3507,14 +3507,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
               "start": 20,
-              "end": 41
+              "end": 48
             },
             "typeType": "index",
             "index": {
               "type": "nbtdoc:registry_index",
               "range": {
                 "start": 20,
-                "end": 41
+                "end": 48
               },
               "children": [
                 {
@@ -3550,6 +3550,22 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                     "start": 40,
                     "end": 41
                   },
+                  "value": "."
+                },
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 41,
+                    "end": 47
+                  },
+                  "value": "second"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 47,
+                    "end": 48
+                  },
                   "value": "]"
                 }
               ],
@@ -3572,6 +3588,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                     "end": 40
                   },
                   "value": "name"
+                },
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 41,
+                    "end": 47
+                  },
+                  "value": "second"
                 }
               ]
             }
@@ -3598,14 +3622,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
           "type": "nbtdoc:compound_definition/field/type",
           "range": {
             "start": 20,
-            "end": 41
+            "end": 48
           },
           "typeType": "index",
           "index": {
             "type": "nbtdoc:registry_index",
             "range": {
               "start": 20,
-              "end": 41
+              "end": 48
             },
             "children": [
               {
@@ -3641,6 +3665,22 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                   "start": 40,
                   "end": 41
                 },
+                "value": "."
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 41,
+                  "end": 47
+                },
+                "value": "second"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 47,
+                  "end": 48
+                },
                 "value": "]"
               }
             ],
@@ -3663,6 +3703,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                   "end": 40
                 },
                 "value": "name"
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 41,
+                  "end": 47
+                },
+                "value": "second"
               }
             ]
           }
@@ -3671,8 +3719,8 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
       {
         "type": "nbtdoc:literal",
         "range": {
-          "start": 42,
-          "end": 43
+          "start": 49,
+          "end": 50
         },
         "value": "}"
       }
@@ -3700,7 +3748,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
         "type": "nbtdoc:compound_definition/field",
         "range": {
           "start": 15,
-          "end": 41
+          "end": 48
         },
         "children": [
           {
@@ -3732,14 +3780,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
               "start": 20,
-              "end": 41
+              "end": 48
             },
             "typeType": "index",
             "index": {
               "type": "nbtdoc:registry_index",
               "range": {
                 "start": 20,
-                "end": 41
+                "end": 48
               },
               "children": [
                 {
@@ -3775,6 +3823,22 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                     "start": 40,
                     "end": 41
                   },
+                  "value": "."
+                },
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 41,
+                    "end": 47
+                  },
+                  "value": "second"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 47,
+                    "end": 48
+                  },
                   "value": "]"
                 }
               ],
@@ -3797,6 +3861,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                     "end": 40
                   },
                   "value": "name"
+                },
+                {
+                  "type": "nbtdoc:identifier",
+                  "range": {
+                    "start": 41,
+                    "end": 47
+                  },
+                  "value": "second"
                 }
               ]
             }
@@ -3823,14 +3895,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
           "type": "nbtdoc:compound_definition/field/type",
           "range": {
             "start": 20,
-            "end": 41
+            "end": 48
           },
           "typeType": "index",
           "index": {
             "type": "nbtdoc:registry_index",
             "range": {
               "start": 20,
-              "end": 41
+              "end": 48
             },
             "children": [
               {
@@ -3866,6 +3938,22 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                   "start": 40,
                   "end": 41
                 },
+                "value": "."
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 41,
+                  "end": 47
+                },
+                "value": "second"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 47,
+                  "end": 48
+                },
                 "value": "]"
               }
             ],
@@ -3888,6 +3976,14 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name] }
                   "end": 40
                 },
                 "value": "name"
+              },
+              {
+                "type": "nbtdoc:identifier",
+                "range": {
+                  "start": 41,
+                  "end": 47
+                },
+                "value": "second"
               }
             ]
           }

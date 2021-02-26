@@ -8,7 +8,7 @@ describe('compoundDefinition()', () => {
 		{ content: '' },
 		{ content: 'compound' },
 		{ content: 'compound Foo { Bar: () }' },
-		{ content: 'compound Foo { Bar: minecraft:block[name] }' },
+		{ content: 'compound Foo { Bar: minecraft:block[name.second] }' },
 		{ content: 'compound Foo { Bar: id(minecraft:entity) }' },
 		{ content: 'compound Foo { Bar: boolean }' },
 		{ content: 'compound Foo { Bar: byte[] }' },

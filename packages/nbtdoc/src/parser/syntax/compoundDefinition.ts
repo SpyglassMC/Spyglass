@@ -264,7 +264,7 @@ const fieldPathKey: InfallibleParser<FieldPathKey> = any<FieldPathKey>([
 const fieldPath: InfallibleParser<SequenceUtil<FieldPathKey | LiteralToken>> = sequence<FieldPathKey | LiteralToken>([
 	fieldPathKey,
 	repeat(sequence<FieldPathKey | LiteralToken>([
-		marker(','),
+		marker('.'),
 		fieldPathKey,
 	])),
 ])
