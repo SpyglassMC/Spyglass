@@ -105,5 +105,5 @@
     "datapack.config.snippets": "代码片段。",
     "datapack.description": "为数据包中各类文件提供重量级语言特性",
     "datapack.displayName": "Data-pack Helper Plus",
-    "datapack.trace.server": "跟踪 VS Code 和数据包语言服务器之间的通信。"
+    "spyglass.trace.server": "跟踪 VS Code 和数据包语言服务器之间的通信。"
 }

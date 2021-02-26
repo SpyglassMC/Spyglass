@@ -2,7 +2,7 @@ exports['identPath() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:identifier",
         "range": {
@@ -33,7 +33,7 @@ exports['identPath() Parse "::foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": true,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:identifier",
         "range": {
@@ -63,7 +63,7 @@ exports['identPath() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:identifier",
         "range": {
@@ -85,7 +85,7 @@ exports['identPath() Parse "foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:identifier",
         "range": {
@@ -115,7 +115,7 @@ exports['identPath() Parse "super::foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -145,7 +145,7 @@ exports['identPath() Parse "super::foo" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {
@@ -175,7 +175,7 @@ exports['identPath() Parse "super::foo::bar" 1'] = {
   "node": {
     "type": "nbtdoc:ident_path",
     "fromGlobalRoot": false,
-    "path": [
+    "children": [
       {
         "type": "nbtdoc:literal",
         "range": {

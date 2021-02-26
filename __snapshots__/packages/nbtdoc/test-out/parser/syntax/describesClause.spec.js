@@ -23,7 +23,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -92,7 +92,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -159,7 +159,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -205,7 +205,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -256,7 +256,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -302,7 +302,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -344,7 +344,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -390,7 +390,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -432,7 +432,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -503,7 +503,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -564,7 +564,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -637,7 +637,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -691,7 +691,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -800,7 +800,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -883,7 +883,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -975,7 +975,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {

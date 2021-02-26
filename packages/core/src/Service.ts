@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode, file, FileService, MetaRegistry } from '.'
+import { AstNode, ColorToken, file, FileService, MetaRegistry } from '.'
 import { ParserContext } from './parser'
 import { TextDocuments } from './TextDocuments'
 import { LanguageError } from './type'
@@ -34,13 +34,15 @@ export class Service {
 		})
 		const src = new Source(doc.getText())
 		const result = file<N>()(src, ctx)
+		this.textDocuments.cacheNode(doc.uri, result as unknown as AstNode | null)
 		return {
 			node: result,
 			errors: ctx.err.dump(),
 		}
 	}
 
-	public colorize<N = AstNode>(doc: TextDocument, node: Readonly<N>): readonly /* ColorToken */[] {
-		throw 'Unimplemented Error.'
+	public colorize<N = AstNode>(node: Readonly<N>, doc: TextDocument): readonly ColorToken[] {
+		const colorizer = this.meta.getColorizer<N>(doc.languageId)
+		return colorizer(node, doc)
 	}
 }

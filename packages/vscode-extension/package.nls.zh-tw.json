@@ -105,5 +105,5 @@
     "datapack.config.snippets": "程式碼片段。",
     "datapack.description": "為 Minecraft Java版 資料包檔案提供重量級語言特性",
     "datapack.displayName": "Data-pack Helper Plus",
-    "datapack.trace.server": "跟蹤 VS Code 和資料包語言伺服器之間的通訊。"
+    "spyglass.trace.server": "跟蹤 VS Code 和資料包語言伺服器之間的通訊。"
 }

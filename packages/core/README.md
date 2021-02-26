@@ -8,9 +8,3 @@
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me/)
 
 This package is the core of the SPYGlass Project. It defines the structure of a parser or validator, and provides the `SpyglassCore` class to help manage those things.
-
-## Terminology
-
-- Device: Can be either a Parser or a kind of Processor.
-- Parser: A Device that takes `TextDocument` as a parameter and outputs an Abstract Syntax Tree Node (AST Node).
-- Processor: A device that takes an AST Node produced by a Parser, analyzes it, and outputs useful data like code suggestions and color information.

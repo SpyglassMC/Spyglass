@@ -7,7 +7,7 @@ export function identPath(): InfallibleParser<IdentPathToken> {
 		const ans: IdentPathToken = {
 			type: 'nbtdoc:ident_path',
 			fromGlobalRoot: false,
-			path: [],
+			children: [],
 			range: Range.create(src),
 		}
 
@@ -20,13 +20,13 @@ export function identPath(): InfallibleParser<IdentPathToken> {
 			if (src.peek(5) === 'super') {
 				const start = src.cursor
 				src.skip(5)
-				ans.path.push({
+				ans.children.push({
 					type: 'nbtdoc:literal',
 					range: Range.create(start, src),
 					value: 'super',
 				})
 			} else {
-				ans.path.push(identifier()(src, ctx))
+				ans.children.push(identifier()(src, ctx))
 			}
 		} while (src.peek(2) === '::' && src.skip(2))
 

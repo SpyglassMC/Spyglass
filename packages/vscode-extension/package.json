@@ -144,7 +144,19 @@
       ]
     },
     "configuration": {
-      "title": "SPYGlass"
+      "title": "SPYGlass",
+      "properties": {
+        "spyglass.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "markdownDescription": "%spyglass.trace.server%",
+          "default": "off"
+        }
+      }
     },
     "configurationDefaults": {
       "[json]": {
@@ -159,90 +171,16 @@
     },
     "semanticTokenTypes": [
       {
-        "id": "annotation",
-        "description": "An annotation in doc comments"
-      },
-      {
-        "id": "boolean",
-        "description": "A real boolean value"
-      },
-      {
-        "id": "entity",
-        "description": "An entity or a score holder"
-      },
-      {
-        "id": "literal",
-        "description": "A literal argument"
-      },
-      {
-        "id": "identity",
-        "description": "A namespaced ID"
-      },
-      {
-        "id": "vector",
-        "description": "A vector"
+        "id": "resourceLocation",
+        "description": "A resource location."
       }
     ],
-    "semanticTokenModifiers": [
-      {
-        "id": "firstArgument",
-        "description": "The first argument in a command"
-      },
-      {
-        "id": "inString",
-        "description": "The token is in a string"
-      }
-    ],
+    "semanticTokenModifiers": [],
     "semanticTokenScopes": [
       {
         "scopes": {
-          "annotation:json": [
-            "support.type.doc.annotation.json"
-          ],
-          "annotation:mcfunction": [
-            "support.type.doc.annotation.mcfunction"
-          ],
-          "boolean:json": [
-            "constant.language.boolean.json"
-          ],
-          "boolean:mcfunction": [
-            "constant.language.boolean.mcfunction"
-          ],
-          "entity:json": [
-            "support.class.entity.json"
-          ],
-          "entity:mcfunction": [
-            "support.class.entity.mcfunction"
-          ],
-          "literal:json": [
-            "keyword.other.json"
-          ],
-          "literal:mcfunction": [
-            "keyword.other.mcfunction"
-          ],
-          "literal.firstArgument:json": [
-            "keyword.control.json"
-          ],
-          "literal.firstArgument:mcfunction": [
-            "keyword.control.mcfunction"
-          ],
-          "identity:json": [
-            "entity.name.function.json"
-          ],
-          "identity:mcfunction": [
-            "entity.name.function.mcfunction"
-          ],
-          "vector:json": [
-            "constant.numeric.vector.json"
-          ],
-          "vector:mcfunction": [
-            "constant.numeric.vector.mcfunction"
-          ],
-          "*.inString:json": [
-            "markup.italic.in-string.json"
-          ],
-          "*.inString:mcfunction": [
-            "markup.italic.in-string.mcfunction"
+          "resourceLocation": [
+            "entity.name.function"
           ]
         }
       }

@@ -2,6 +2,7 @@
 
 import { AstNode } from '.'
 import { InfallibleParser, Parser } from './parser/Parser'
+import { Colorizer, colorizer } from './processor'
 
 //#region TEMP
 type Processor = any
@@ -31,6 +32,10 @@ export interface LanguageOptions {
 	 * A parser for this language.
 	 */
 	parser: InfallibleParser,
+	/**
+	 * A colorizer for this language.
+	 */
+	colorizer?: Colorizer<any>,
 }
 
 /**
@@ -66,6 +71,13 @@ export class MetaRegistry {
 	public registerProcessor(processorName: string, nodeName: string, processor: Processor): void
 	public registerProcessor(processorName: string, nodeName: string, processor: Processor): void {
 		throw ''
+	}
+
+	/**
+	 * @returns The corresponding `Colorizer` for the language ID, or a fallback colorizer that produces nothing.
+	 */
+	public getColorizer<N = AstNode>(languageID: string): Colorizer<N> {
+		return (this.languages.get(languageID)?.colorizer ?? colorizer.fallback) as unknown as Colorizer<N>
 	}
 
 	public getValidator(nodeName: CoreNodeName): Validator

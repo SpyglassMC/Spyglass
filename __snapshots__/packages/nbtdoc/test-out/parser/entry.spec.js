@@ -28,7 +28,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -74,7 +74,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {
@@ -245,7 +245,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -327,7 +327,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "path": {
                   "type": "nbtdoc:ident_path",
                   "fromGlobalRoot": false,
-                  "path": [
+                  "children": [
                     {
                       "type": "nbtdoc:identifier",
                       "range": {
@@ -380,7 +380,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "path": {
                 "type": "nbtdoc:ident_path",
                 "fromGlobalRoot": false,
-                "path": [
+                "children": [
                   {
                     "type": "nbtdoc:identifier",
                     "range": {
@@ -807,7 +807,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
         "extends": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -882,7 +882,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "path": {
                   "type": "nbtdoc:ident_path",
                   "fromGlobalRoot": false,
-                  "path": [
+                  "children": [
                     {
                       "type": "nbtdoc:identifier",
                       "range": {
@@ -935,7 +935,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "path": {
                 "type": "nbtdoc:ident_path",
                 "fromGlobalRoot": false,
-                "path": [
+                "children": [
                   {
                     "type": "nbtdoc:identifier",
                     "range": {
@@ -1771,7 +1771,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -1844,7 +1844,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {

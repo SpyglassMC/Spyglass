@@ -104,5 +104,5 @@
     "datapack.config.snippets": "Extraits de code.",
     "datapack.description": "Fonctionnalités étendues pour les langages des data packs de Minecraft : Java Edition",
     "datapack.displayName": "Data-pack Helper Plus",
-    "datapack.trace.server": "Trace la communication entre VS Code et le serveur de langage data-pack."
+    "spyglass.trace.server": "Trace la communication entre VS Code et le serveur de langage data-pack."
 }

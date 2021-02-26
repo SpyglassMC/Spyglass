@@ -56,7 +56,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -138,7 +138,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "path": {
               "type": "nbtdoc:ident_path",
               "fromGlobalRoot": false,
-              "path": [
+              "children": [
                 {
                   "type": "nbtdoc:identifier",
                   "range": {
@@ -191,7 +191,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "path": {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -339,7 +339,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
     "extends": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -414,7 +414,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "path": {
               "type": "nbtdoc:ident_path",
               "fromGlobalRoot": false,
-              "path": [
+              "children": [
                 {
                   "type": "nbtdoc:identifier",
                   "range": {
@@ -467,7 +467,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "path": {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -791,7 +791,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                   "path": {
                     "type": "nbtdoc:ident_path",
                     "fromGlobalRoot": false,
-                    "path": [
+                    "children": [
                       {
                         "type": "nbtdoc:literal",
                         "range": {
@@ -980,7 +980,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                 "path": {
                   "type": "nbtdoc:ident_path",
                   "fromGlobalRoot": false,
-                  "path": [
+                  "children": [
                     {
                       "type": "nbtdoc:literal",
                       "range": {
@@ -1212,7 +1212,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                   "path": {
                     "type": "nbtdoc:ident_path",
                     "fromGlobalRoot": false,
-                    "path": [
+                    "children": [
                       {
                         "type": "nbtdoc:literal",
                         "range": {
@@ -1401,7 +1401,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                 "path": {
                   "type": "nbtdoc:ident_path",
                   "fromGlobalRoot": false,
-                  "path": [
+                  "children": [
                     {
                       "type": "nbtdoc:literal",
                       "range": {
@@ -3981,7 +3981,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
             "path": {
               "type": "nbtdoc:ident_path",
               "fromGlobalRoot": false,
-              "path": [
+              "children": [
                 {
                   "type": "nbtdoc:identifier",
                   "range": {
@@ -4025,7 +4025,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
           "path": {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -4112,7 +4112,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
             "path": {
               "type": "nbtdoc:ident_path",
               "fromGlobalRoot": false,
-              "path": [
+              "children": [
                 {
                   "type": "nbtdoc:identifier",
                   "range": {
@@ -4156,7 +4156,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
           "path": {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {

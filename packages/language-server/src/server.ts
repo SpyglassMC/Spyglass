@@ -17,7 +17,6 @@ const connection = ls.createConnection()
 
 const logger: core.Logger = connection.console
 const service = new core.Service({ logger })
-const fs = service.fs
 const textDocuments = service.textDocuments
 
 nbtdoc.initializeNbtdoc()
@@ -44,6 +43,12 @@ connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, in
 					changeNotifications: true,
 				},
 			},
+			semanticTokensProvider: {
+				documentSelector: [{ language: 'nbtdoc' }],
+				legend: transformer.semanticTokensLegend(),
+				full: { delta: false },
+				range: false,
+			},
 		},
 	}
 
@@ -56,7 +61,7 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	const doc = textDocuments.get(uri)!
 	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.errors(errors, doc),
+		diagnostics: transformer.diagnostics(errors, doc),
 		uri,
 		version,
 	})
@@ -67,13 +72,20 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	const doc = textDocuments.get(uri)!
 	const { errors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.errors(errors, doc),
+		diagnostics: transformer.diagnostics(errors, doc),
 		uri,
 		version,
 	})
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	textDocuments.onDidClose(uri)
+})
+
+connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
+	const doc = textDocuments.get(uri)!
+	const node = textDocuments.getCachedNode(uri)!
+	const tokens = service.colorize(node, doc)
+	return transformer.semanticTokens(tokens, doc)
 })
 
 connection.listen()

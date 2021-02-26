@@ -18,7 +18,7 @@ export class TextDocuments implements TextDocuments {
 	private readonly watchedUris = new Set<string>()
 
 	private readonly docCache = new Map<string, TextDocument>()
-	private readonly nodeCache = new Map<string, AstNode>()
+	private readonly nodeCache = new Map<string, AstNode | null>()
 
 	constructor(
 		/* istanbul ignore next */
@@ -128,12 +128,12 @@ export class TextDocuments implements TextDocuments {
 			this.nodeCache.delete(uri)
 		}
 	}
-	
-	public cacheNode(uri: string, node: AstNode): void {
+
+	public cacheNode(uri: string, node: AstNode | null): void {
 		this.nodeCache.set(uri, node)
 	}
 
-	public getCachedNode(uri: string): AstNode | undefined {
+	public getCachedNode(uri: string): AstNode | null | undefined {
 		return this.nodeCache.get(uri)
 	}
 }

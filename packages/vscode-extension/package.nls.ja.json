@@ -106,5 +106,5 @@
     "datapack.config.snippets": "コードスニペット",
     "datapack.description": "Minecraft: Java Edition データパックファイル用の言語機能",
     "datapack.displayName": "Data-pack Helper Plus",
-    "datapack.trace.server": "VS Code と DHP 言語サーバー間の通信をトレースします"
+    "spyglass.trace.server": "VS Code と DHP 言語サーバー間の通信をトレースします"
 }

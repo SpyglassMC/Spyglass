@@ -37,7 +37,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -80,7 +80,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -124,7 +124,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -167,7 +167,7 @@ exports['injectClause() Parse "inject compound super::Foo {}" 1'] = {
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -230,7 +230,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -451,7 +451,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -666,7 +666,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -887,7 +887,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -1121,7 +1121,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -1249,7 +1249,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -1379,7 +1379,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -1507,7 +1507,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -1656,7 +1656,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -1691,7 +1691,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {
@@ -1727,7 +1727,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {
@@ -1762,7 +1762,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -1866,7 +1866,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -1984,7 +1984,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -2120,7 +2120,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -2238,7 +2238,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -2426,7 +2426,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -2655,7 +2655,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -2894,7 +2894,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -3123,7 +3123,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -3381,7 +3381,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:literal",
                 "range": {
@@ -3517,7 +3517,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -3671,7 +3671,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:literal",
               "range": {
@@ -3807,7 +3807,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -3980,7 +3980,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
           {
             "type": "nbtdoc:ident_path",
             "fromGlobalRoot": false,
-            "path": [
+            "children": [
               {
                 "type": "nbtdoc:identifier",
                 "range": {
@@ -4090,7 +4090,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
         "path": {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {
@@ -4218,7 +4218,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
         {
           "type": "nbtdoc:ident_path",
           "fromGlobalRoot": false,
-          "path": [
+          "children": [
             {
               "type": "nbtdoc:identifier",
               "range": {
@@ -4328,7 +4328,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
       "path": {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {

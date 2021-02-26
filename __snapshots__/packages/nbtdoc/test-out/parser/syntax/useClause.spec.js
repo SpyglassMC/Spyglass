@@ -30,7 +30,7 @@ exports['useClause() Parse "e" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -58,7 +58,7 @@ exports['useClause() Parse "e" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -137,7 +137,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -173,7 +173,7 @@ exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -227,7 +227,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -255,7 +255,7 @@ exports['useClause() Parse "export use foo;" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -301,7 +301,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:literal",
             "range": {
@@ -345,7 +345,7 @@ exports['useClause() Parse "export use super::foo::bar; something else;" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:literal",
           "range": {
@@ -407,7 +407,7 @@ exports['useClause() Parse "export" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -435,7 +435,7 @@ exports['useClause() Parse "export" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -506,7 +506,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -534,7 +534,7 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -589,7 +589,7 @@ exports['useClause() Parse "u" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -617,7 +617,7 @@ exports['useClause() Parse "u" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -680,7 +680,7 @@ exports['useClause() Parse "use foo" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -708,7 +708,7 @@ exports['useClause() Parse "use foo" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -755,7 +755,7 @@ exports['useClause() Parse "use foo;" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -783,7 +783,7 @@ exports['useClause() Parse "use foo;" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {
@@ -821,7 +821,7 @@ exports['useClause() Parse "use" 1'] = {
       {
         "type": "nbtdoc:ident_path",
         "fromGlobalRoot": false,
-        "path": [
+        "children": [
           {
             "type": "nbtdoc:identifier",
             "range": {
@@ -849,7 +849,7 @@ exports['useClause() Parse "use" 1'] = {
     "path": {
       "type": "nbtdoc:ident_path",
       "fromGlobalRoot": false,
-      "path": [
+      "children": [
         {
           "type": "nbtdoc:identifier",
           "range": {

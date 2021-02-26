@@ -1,5 +1,5 @@
 import { AstNode, CommentNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
-import { CompoundDefinitionNode } from './CompoundDefinition'
+import { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
 import { EnumDefinitionNode } from './EnumDefinition'
 import { InjectClauseNode } from './InjectClause'
 
@@ -36,7 +36,7 @@ export namespace IdentifierToken {
 export interface IdentPathToken extends AstNode {
 	type: 'nbtdoc:ident_path',
 	fromGlobalRoot: boolean,
-	path: (IdentifierToken | LiteralToken<'super'>)[],
+	children: (IdentifierToken | LiteralToken<'super'>)[],
 }
 export namespace IdentPathToken {
 	export function is(obj: object): obj is IdentPathToken {
@@ -138,3 +138,11 @@ export interface MainNode extends SyntaxNode {
 	type: 'nbtdoc:main',
 	children: ContentNode[],
 }
+
+export type LeafNode =
+	| LiteralToken
+	| IdentifierToken
+	| MinecraftIdentifierToken
+	| Primitive
+	| CommentNode
+	| CompoundFieldTypeNode
