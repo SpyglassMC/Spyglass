@@ -1,0 +1,40 @@
+import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
+import { IntegerToken } from '../../node'
+
+const Regex = /^-?(0|[1-9][0-9]*)$/
+
+export function integer(isUnsigned = false): InfallibleParser<IntegerToken> {
+	return (src: Source, ctx: ParserContext): IntegerToken => {
+		const ans: IntegerToken = {
+			type: 'nbtdoc:integer',
+			range: Range.create(src),
+			value: BigInt(0),
+		}
+
+		if (src.peek() === '-') {
+			src.skip()
+		}
+		while (src.canRead() && /^[0-9]$/.test(src.peek())) {
+			src.skip()
+		}
+
+		ans.range.end = src.cursor
+		const raw = src.slice(ans.range)
+		try {
+			ans.value = BigInt(raw)
+		} catch (_) {
+			// Ignored. `raw` might be "-" here.
+		}
+
+		if (!raw) {
+			ctx.err.report(localize('expected', [localize('integer')]), ans)
+		} else if (!Regex.test(raw)) {
+			ctx.err.report(localize('nbtdoc.error.integer.illegal'), ans)
+		} else if (isUnsigned && ans.value < 0){
+			ctx.err.report(localize('expected', [localize('nbtdoc.error.integer.unsigned')]), ans)
+		}
+
+		return ans
+	}
+}

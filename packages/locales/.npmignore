@@ -1,0 +1,8 @@
+*
+*/**
+
+!lib/**/*.js
+!lib/**/*.json
+!lib/**/*.d.ts
+!package.json
+!README.md

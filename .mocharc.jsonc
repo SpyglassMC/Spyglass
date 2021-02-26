@@ -1,8 +1,9 @@
 {
-    "require": [
-        "espower-typescript/guess",
-        "source-map-support/register"
-    ],
-    "timeout": 10000,
-    "spec": "src/test/**/*.spec.ts"
+	"require": [
+		 "source-map-support/register"
+	],
+	"inlineDiffs": true,
+	"color": true,
+	"timeout": 10000,
+	"spec": "packages/*/test-out/**/*.spec.js"
 }

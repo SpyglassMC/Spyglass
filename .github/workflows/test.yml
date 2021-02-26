@@ -1,9 +1,11 @@
 name: Test
 on:
   push:
-    branches-ignore:
-      - released
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -14,24 +16,58 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+          fetch-depth: 2
 
-      - name: Cache Node Modules
-        uses: actions/cache@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - run: npm i -g npm@7
+
+      - name: Cache node modules
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-            ${{ runner.os }}-
 
-      - name: Install Dependencies
-        run: npm i
+      - name: Cache tsc build
+        uses: actions/cache@v2
+        with:
+          path: |
+            packages/*/lib
+            packages/*/out
+            packages/*/test-out
+          key: ${{ runner.os }}-tsc-build-${{ hashFiles('**/*.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-tsc-build-
 
-      - name: Test
+      # https://github.community/t/accessing-commit-message-in-pull-request-event/17158/8
+      - name: Get commit message (push)
+        if: github.event_name == 'push'
         run: |
-          npm test
-          npm run codecov
+          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$(git log --format=%B -n 1 HEAD)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Get commit message (pull request)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$(git log --format=%B -n 1 HEAD^2)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - run: npm run clean
+        if: "contains(env.COMMIT_MESSAGE, '[ci clean]') || contains(env.GITHUB_ENV, '[clean ci]')"
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: npm test
+
+      - run: npm run lint

@@ -1,52 +1,76 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "node": true
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": "tsconfig.json",
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "@typescript-eslint/member-delimiter-style": [
-            "error",
-            {
-                "multiline": {
-                    "delimiter": "comma",
-                    "requireLast": false
-                },
-                "singleline": {
-                    "delimiter": "comma",
-                    "requireLast": false
-                }
-            }
-        ],
-        "@typescript-eslint/prefer-for-of": "error",
-        "@typescript-eslint/prefer-readonly": "error",
-        "@typescript-eslint/quotes": [
-            "error",
-            "single",
-            {
-                "avoidEscape": true
-            }
-        ],
-        "@typescript-eslint/semi": [
-            "error",
-            "never"
-        ],
-        "comma-dangle": "error",
-        "eol-last": "error",
-        "no-fallthrough": "error",
-        "prefer-const": "error",
-        "prefer-object-spread": "error",
-        "quote-props": [
-            "error",
-            "as-needed"
-        ]
-    }
-};
+	"env": {
+		"es6": true,
+		"node": true
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"tsconfigRootDir": __dirname,
+		"project": "./packages/**/tsconfig.json"
+	},
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"ignorePatterns": [
+		"**/*.js",
+
+		"**/node_modules",
+
+		"**/dist",
+		"**/lib",
+		"**/out",
+		"**/test-out",
+
+		"packages/mcschema",
+	],
+	"rules": {
+		"@typescript-eslint/prefer-for-of": "warn",
+		"@typescript-eslint/prefer-readonly": "warn",
+		"@typescript-eslint/quotes": [
+			"warn",
+			"single",
+			{
+				"avoidEscape": true
+			}
+		],
+		"@typescript-eslint/semi": [
+			"warn",
+			"never"
+		],
+		"@typescript-eslint/indent": [
+			"warn",
+			"tab"
+		],
+		"@typescript-eslint/member-delimiter-style": [
+			"warn",
+			{
+				"multiline": {
+					"delimiter": "comma",
+					"requireLast": true
+				},
+				"singleline": {
+					"delimiter": "comma",
+					"requireLast": false
+				},
+				"overrides": {
+					"interface": {
+						"multiline": {
+							"delimiter": undefined
+						}
+					}
+				}
+			}
+		],
+		"comma-dangle": "off",
+		"@typescript-eslint/comma-dangle": ["warn", "always-multiline"],
+		"indent": "off",
+		"eol-last": "warn",
+		"no-fallthrough": "warn",
+		"prefer-const": "warn",
+		"prefer-object-spread": "warn",
+		"quote-props": [
+			"warn",
+			"as-needed"
+		],
+	}
+}

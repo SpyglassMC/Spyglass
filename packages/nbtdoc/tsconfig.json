@@ -1,0 +1,18 @@
+{
+	"extends": "../tsconfig-base",
+	"files": [],
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "../locales"
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "test"
+		}
+	]
+}

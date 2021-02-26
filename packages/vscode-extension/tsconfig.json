@@ -1,0 +1,17 @@
+{
+	"extends": "../tsconfig-base",
+	"compilerOptions": {
+		"rootDir": "src",
+		"outDir": "out",
+		"declarationMap": false,
+		"sourceMap": false
+	},
+	"files": [
+		"src/extension.ts"
+	],
+	"references": [
+		{
+			"path": "../language-server"
+		}
+	]
+}

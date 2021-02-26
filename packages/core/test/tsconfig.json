@@ -1,0 +1,11 @@
+{
+	"extends": "../../tsconfig-base",
+	"compilerOptions": {
+		"outDir": "../test-out"
+	},
+	"references": [
+		{
+			"path": "../src"
+		}
+	]
+}
