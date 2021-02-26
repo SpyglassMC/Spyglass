@@ -19,7 +19,7 @@
 		]
 	},
 	"vscode-extension": {
-		"dependencies": [
+		"devDependencies": [
 			"language-server"
 		]
 	}
