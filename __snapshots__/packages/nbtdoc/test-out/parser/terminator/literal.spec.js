@@ -4,8 +4,24 @@ exports['keyword() Parse "" 1'] = {
 }
 
 exports['keyword() Parse "f" 1'] = {
-  "node": "FAILURE",
-  "errors": []
+  "node": {
+    "type": "nbtdoc:literal",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "value": ""
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "Expected “foo”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['keyword() Parse "foo something else;" 1'] = {
@@ -79,7 +95,7 @@ exports['literal() Parse "f" 1'] = {
     "type": "nbtdoc:literal",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 1
     },
     "value": ""
   },
@@ -87,7 +103,7 @@ exports['literal() Parse "f" 1'] = {
     {
       "range": {
         "start": 0,
-        "end": 0
+        "end": 1
       },
       "message": "Expected “foo”",
       "severity": 3

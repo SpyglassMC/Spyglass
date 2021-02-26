@@ -16,8 +16,22 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 			value: '',
 		}
 
-		if (src.peek(literal.length) === literal) {
-			src.skip(literal.length)
+		let partialMatch = false
+		let fullMatch = true
+
+		for (const expectedChar of literal) {
+			if (src.peek() === expectedChar) {
+				src.skip()
+				partialMatch = true
+			} else {
+				fullMatch = false
+				break
+			}
+		}
+
+		ans.range.end = src.cursor
+
+		if (fullMatch) {
 			ans.value = literal
 			if (!canBeFollowedByLetter && /^[A-Za-z0-9_]$/.test(src.peek())) {
 				ctx.err.report(
@@ -27,7 +41,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 					src
 				)
 			}
-		} else if (infallible) {
+		} else if (partialMatch || infallible) {
 			ctx.err.report(
 				localize('expected', [
 					localize('punc.quote', [literal]),
@@ -37,8 +51,6 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 		} else {
 			return Failure
 		}
-
-		ans.range.end = src.cursor
 
 		return ans
 	}

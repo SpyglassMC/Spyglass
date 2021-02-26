@@ -5,7 +5,16 @@ exports['useClause() Parse "" 1'] = {
 
 exports['useClause() Parse "e" 1'] = {
   "node": "FAILURE",
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "Expected “export”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['useClause() Parse "export use foo::bar;// Trailing comment." 1'] = {
@@ -375,8 +384,94 @@ exports['useClause() Parse "exportusefoo;" 1'] = {
 }
 
 exports['useClause() Parse "u" 1'] = {
-  "node": "FAILURE",
-  "errors": []
+  "node": {
+    "type": "nbtdoc:use_clause",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:ident_path",
+        "fromGlobalRoot": false,
+        "path": [
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 1,
+              "end": 1
+            },
+            "value": ""
+          }
+        ],
+        "range": {
+          "start": 1,
+          "end": 1
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": ""
+      }
+    ],
+    "isExport": false,
+    "path": {
+      "type": "nbtdoc:ident_path",
+      "fromGlobalRoot": false,
+      "path": [
+        {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 1,
+            "end": 1
+          },
+          "value": ""
+        }
+      ],
+      "range": {
+        "start": 1,
+        "end": 1
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "Expected “use”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “;”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['useClause() Parse "use foo" 1'] = {

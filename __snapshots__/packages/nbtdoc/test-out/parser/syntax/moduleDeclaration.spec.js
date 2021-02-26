@@ -4,8 +4,73 @@ exports['moduleDeclaration() Parse "" 1'] = {
 }
 
 exports['moduleDeclaration() Parse "m" 1'] = {
-  "node": "FAILURE",
-  "errors": []
+  "node": {
+    "type": "nbtdoc:module_declaration",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": ""
+      }
+    ],
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "value": ""
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "Expected “mod”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “;”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['moduleDeclaration() Parse "mod zombie" 1'] = {

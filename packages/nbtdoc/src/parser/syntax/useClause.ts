@@ -1,6 +1,6 @@
-import { map, optional, Parser } from '@spyglassmc/core'
+import { any, map, Parser } from '@spyglassmc/core'
 import { IdentPathToken, LiteralToken, UseClauseNode } from '../../node'
-import { identPath, keyword, punctuation } from '../terminator'
+import { identPath, keyword, literal, punctuation } from '../terminator'
 import { syntax } from '../util'
 
 /**
@@ -9,8 +9,10 @@ import { syntax } from '../util'
 export function useClause(): Parser<UseClauseNode> {
 	return map(
 		syntax<LiteralToken | IdentPathToken>([
-			optional(keyword('export')),
-			keyword('use'),
+			any([
+				syntax<LiteralToken>([ keyword('export'), literal('use') ]),
+				syntax<LiteralToken>([ keyword('use') ]),
+			]),
 			identPath(),
 			punctuation(';'),
 		]),
