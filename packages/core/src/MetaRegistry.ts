@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
-import { AstNode, Returnable } from '.'
-import { InfallibleParser, Parser } from './parser/Parser'
+import { AstNode } from '.'
+import { EntryNode, EntryParser, Parser } from './parser/Parser'
 import { Colorizer, colorizer } from './processor'
 
 //#region TEMP
@@ -31,7 +31,7 @@ export interface LanguageOptions {
 	/**
 	 * A parser for this language.
 	 */
-	parser: InfallibleParser,
+	parser: EntryParser<any>,
 	/**
 	 * A colorizer for this language.
 	 */
@@ -54,9 +54,9 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParser<N extends Returnable = AstNode>(languageID: string): InfallibleParser<N> {
+	public getParser<N extends EntryNode>(languageID: string): EntryParser<N> {
 		if (this.languages.has(languageID)) {
-			return this.languages.get(languageID)!.parser as unknown as InfallibleParser<N>
+			return this.languages.get(languageID)!.parser as unknown as EntryParser<N>
 		}
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}

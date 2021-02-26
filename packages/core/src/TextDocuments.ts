@@ -1,5 +1,6 @@
 import { TextDocument, TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { AstNode, FileService, MetaRegistry } from '.'
+import { EntryNode } from './parser'
 
 export class TextDocuments implements TextDocuments {
 	private readonly fs: FileService
@@ -129,11 +130,11 @@ export class TextDocuments implements TextDocuments {
 		}
 	}
 
-	public cacheNode(uri: string, node: AstNode | null): void {
+	public cacheNode(uri: string, node: EntryNode): void {
 		this.nodeCache.set(uri, node)
 	}
 
-	public getCachedNode(uri: string): AstNode | null | undefined {
+	public getCachedNode(uri: string): EntryNode | undefined {
 		return this.nodeCache.get(uri)
 	}
 }
