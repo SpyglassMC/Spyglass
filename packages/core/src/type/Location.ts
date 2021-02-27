@@ -9,7 +9,7 @@ export namespace Location {
 	export function create(partial: Partial<Location>): Location {
 		return {
 			uri: partial.uri ?? '',
-			range: Range.create(partial.range ?? {}),
+			range: Range.get(partial.range ?? { start: 0, end: 0 }),
 		}
 	}
 }

@@ -1,7 +1,8 @@
-import { AstNode, Source } from '..'
+import { Offset, OffsetLike } from './Offset'
 
-
-export type RangeLike = Range | AstNode | Source
+export type RangeLike =
+	| Range | RangeContainer | OffsetLike
+	| ((this: void) => Range | RangeContainer | OffsetLike)
 
 export interface Range {
 	start: number,
@@ -9,38 +10,41 @@ export interface Range {
 }
 
 export namespace Range {
-	export function create(start: number | Source, end?: number | Source): Range
-	export function create(partial: Partial<Range>): Range
-	export function create(param1: Partial<Range> | number | Source, param2?: number | Source): Range {
-		if (typeof param1 === 'number' || param1 instanceof Source) {
-			const getOffset = (v: number | Source) => typeof v === 'number' ? v : v.cursor
-			const start = getOffset(param1)
-			return {
-				start,
-				end: param2 ? getOffset(param2) : start,
-			}
-		} else {
-			const start = param1.start ?? 0
-			return {
-				start,
-				end: param1.end ?? start,
-			}
-		}
-	}
-
 	/**
-	 * Get a range from a `RangeLike`.
+	 * Gets a range from `RangeLike`.
 	 * 
 	 * @returns
 	 * - `Range`: a clone of it.
-	 * - `AstNode`: a clone of its range.
-	 * - `Source`: a range with both positions set to the its `cursor`.
+	 * - `RangeContainer`: a clone of its range.
+	 * - `OffsetLike`: a range with both positions set to the offset.
 	 */
 	export function get(range: RangeLike): Range {
-		if (range instanceof Source) {
-			return Range.create(range.cursor)
+		const evaluated = typeof range === 'function' ? range() : range
+		if (Range.is(evaluated)) {
+			return Range.create(evaluated.start, evaluated.end)
+		} if (RangeContainer.is(evaluated)) {
+			return Range.create(evaluated.range.start, evaluated.range.end)
 		}
-		return Range.create((range as AstNode).range ?? (range as Range))
+		return Range.create(evaluated)
+	}
+
+	/**
+	 * Creates a range from `OffsetLike`. If only `start` is passed in, `end` will be the same value as `start`.
+	 */
+	export function create(start: OffsetLike, end?: OffsetLike): Range {
+		start = Offset.get(start)
+		return {
+			start,
+			end: end !== undefined ? Offset.get(end) : start,
+		}
+	}
+
+	export function is(obj: unknown): obj is Range {
+		return (
+			!!obj && typeof obj === 'object' &&
+			typeof (obj as Range).start === 'number' &&
+			typeof (obj as Range).end === 'number'
+		)
 	}
 
 	/**
@@ -71,5 +75,18 @@ export namespace Range {
 
 	export function length(range: Range) {
 		return range.end - range.start
+	}
+}
+
+export interface RangeContainer {
+	range: Range,
+	[key: string]: any,
+}
+export namespace RangeContainer {
+	export function is(obj: unknown): obj is RangeContainer {
+		return (
+			!!obj && typeof obj === 'object' &&
+			Range.is((obj as RangeContainer).range)
+		)
 	}
 }
