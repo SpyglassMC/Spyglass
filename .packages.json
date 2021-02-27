@@ -13,6 +13,7 @@
 	"language-server": {
 		"dependencies": [
 			"core",
+			"json",
 			"locales",
 			"nbtdoc"
 		]

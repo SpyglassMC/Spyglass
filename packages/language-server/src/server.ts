@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as chokidar from 'chokidar'
@@ -14,6 +15,7 @@ if (process.argv.length === 2) {
 }
 
 nbtdoc.initializeNbtdoc()
+json.initializeJson()
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
