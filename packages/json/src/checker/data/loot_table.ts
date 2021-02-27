@@ -1,4 +1,4 @@
-import { pick, dispatch, listOf, record, string, intRange, int, resource, opt, as } from '../primitives'
+import { as, dispatch, int, intRange, listOf, opt, pick, record, resource, string } from '../primitives'
 
 const item_modifier = record({})
 const predicate = record({})
