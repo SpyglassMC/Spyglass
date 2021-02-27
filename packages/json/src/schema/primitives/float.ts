@@ -1,24 +1,22 @@
 import { JsonNumberAstNode } from '../../node'
 import { SchemaContext } from '../SchemaContext'
 
-export function float(ctx: SchemaContext) {
+export function float(ctx: SchemaContext): ctx is SchemaContext<JsonNumberAstNode> {
 	if (!JsonNumberAstNode.is(ctx.node)) {
-		return ctx.error('expected.float')
+		ctx.error('Expected a float')
+		return false
 	}
 	return true
 }
 
-export function floatRange(min: number, max: number) {
+export function floatRange(min: number | null, max: number | null) {
 	return (ctx: SchemaContext) => {
-		if (!JsonNumberAstNode.is(ctx.node)) {
-			return ctx.error('expected.float')
+		if (!float(ctx)) return
+
+		if (min !== null && min < ctx.node.value) {
+			ctx.error(`Expected a float greater than or equal to ${min}`)
+		} else if (max !== null && max > ctx.node.value) {
+			ctx.error(`Expected a float smaller than or equal to ${max}`)
 		}
-		if (min < ctx.node.value) {
-			return ctx.error('expected.float_larger')
-		}
-		if (max > ctx.node.value) {
-			return ctx.error('expected.float_smaller')
-		}
-		return true
 	}
 }

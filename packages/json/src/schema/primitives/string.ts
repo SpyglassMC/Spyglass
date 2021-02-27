@@ -1,21 +1,25 @@
 import { JsonStringAstNode } from '../../node'
 import { SchemaContext } from '../SchemaContext'
 
-export function string(ctx: SchemaContext) {
+export function string(ctx: SchemaContext): ctx is SchemaContext<JsonStringAstNode> {
 	if(!JsonStringAstNode.is(ctx.node)) {
-		return ctx.error('expected.string')
+		ctx.error('Expected a string')
+		return false
 	}
 	return true
 }
 
 export function enumString(values: string[]) {
 	return (ctx: SchemaContext) => {
-		if(!JsonStringAstNode.is(ctx.node)) {
-			return ctx.error('expected.string')
-		}
+		if (!string(ctx)) return
+
 		if (!values.includes(ctx.node.value)) {
-			return ctx.error('')
+			ctx.error(`Expected one of ${values.join(', ')}`)
 		}
-		return true
 	}
+}
+
+export function resource(id: string) {
+	// TODO
+	return string
 }
