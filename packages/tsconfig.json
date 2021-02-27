@@ -11,9 +11,6 @@
             "path": "locales"
         },
         {
-            "path": "mcschema"
-        },
-        {
             "path": "nbtdoc"
         },
         {

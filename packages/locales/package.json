@@ -11,8 +11,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SPYGlassMC/SPYGlass.git"
-  },
-  "dependencies": {
-    "@mcschema/locales": "^0.1.17"
   }
 }

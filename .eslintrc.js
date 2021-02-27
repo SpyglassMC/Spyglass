@@ -21,8 +21,6 @@ module.exports = {
 		"**/out",
 		"**/test-out",
 
-		"/packages/mcschema",
-		
 		"/scripts",
 	],
 	"rules": {

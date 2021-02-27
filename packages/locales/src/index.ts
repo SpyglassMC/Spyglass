@@ -1,10 +1,9 @@
-import McschemaFallback from '@mcschema/locales/src/en.json'
 import Fallback from './en.json'
 
 type Locale = Record<string, string>
 
 const Locales: Record<string, Locale> = {
-	en: { ..._addPrefix(McschemaFallback, 'json'), ...Fallback },
+	en: Fallback,
 }
 
 let language = 'en'
@@ -60,8 +59,7 @@ function _segmentedLocalize(segments: string[], params: string[], depth: number,
 
 async function _setupLanguage(code: string) {
 	const locale = await import(`./${code}.json`)
-	const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
-	Locales[code] = { ..._addPrefix(jsonLocale, 'mcschema'), ...locale }
+	Locales[code] = locale
 	language = code
 
 	// console.info(`[I18N] Set to “${code}”.`)

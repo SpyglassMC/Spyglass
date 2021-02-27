@@ -1,3 +1,0 @@
-[submodule "packages/mcschema"]
-	path = packages/mcschema
-	url = https://github.com/misode/minecraft-schemas.git
