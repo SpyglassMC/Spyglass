@@ -70,6 +70,7 @@
 	"duplicate-key": "Duplicate key %0%",
 	"ending-quote": "an ending quote %0%",
 	"entity": "an entity",
+	"error.unparseable-content": "Encountered unparseable content",
 	"expected": "Expected %0%",
 	"expected-got": "Expected %0% but got %1%",
 	"failed-to-resolve-cache-id": "Failed to resolve namespaced ID %1% in cache category %0%",

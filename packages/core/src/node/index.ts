@@ -1,3 +1,5 @@
 export * from './AstNode'
 export * from './CommentNode'
+export * from './ErrorNode'
+export * from './FileNode'
 export * from './Sequence'

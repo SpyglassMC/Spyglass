@@ -121,6 +121,11 @@ export class Source {
 		return ans
 	}
 
+	skipRemaining(): this {
+		this.cursor = this.string.length
+		return this
+	}
+
 	// lastLine(converter: OffsetPositionConverter) {
 	// 	const pos = converter.toPosition(this.cursor)
 	// 	this.cursor = converter.toOffset(Position.create(pos.line - 1, 0))

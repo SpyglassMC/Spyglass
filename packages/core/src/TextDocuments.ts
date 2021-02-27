@@ -1,6 +1,6 @@
 import { TextDocument, TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
-import { AstNode, FileService, MetaRegistry } from '.'
-import { EntryNode } from './parser'
+import { FileService, MetaRegistry } from '.'
+import { FileNode } from './node'
 
 export class TextDocuments implements TextDocuments {
 	private readonly fs: FileService
@@ -19,7 +19,7 @@ export class TextDocuments implements TextDocuments {
 	private readonly watchedUris = new Set<string>()
 
 	private readonly docCache = new Map<string, TextDocument>()
-	private readonly nodeCache = new Map<string, AstNode | null>()
+	private readonly nodeCache = new Map<string, FileNode<any>>()
 
 	constructor(
 		/* istanbul ignore next */
@@ -130,11 +130,11 @@ export class TextDocuments implements TextDocuments {
 		}
 	}
 
-	public cacheNode(uri: string, node: EntryNode): void {
+	public cacheNode(uri: string, node: FileNode<any>): void {
 		this.nodeCache.set(uri, node)
 	}
 
-	public getCachedNode(uri: string): EntryNode | undefined {
+	public getCachedNode(uri: string): FileNode<any> | undefined {
 		return this.nodeCache.get(uri)
 	}
 }

@@ -1,8 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { ColorToken, file, FileService, MetaRegistry } from '.'
-import { EntryNode, ParserContext, Result } from './parser'
+import { AstNode, FileNode } from './node'
+import { ParserContext } from './parser'
 import { TextDocuments } from './TextDocuments'
-import { LanguageError } from './type'
 import { Logger, Source } from './util'
 
 interface Options {
@@ -25,7 +25,7 @@ export class Service {
 		this.textDocuments = new TextDocuments({ fs })
 	}
 
-	public parse<N extends EntryNode>(doc: TextDocument): { node: Result<N>, errors: readonly LanguageError[] } {
+	public parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = ParserContext.create({
 			meta: this.meta,
 			fs: this.fs,
@@ -33,16 +33,13 @@ export class Service {
 			doc,
 		})
 		const src = new Source(doc.getText())
-		const result = file<N>()(src, ctx)
-		this.textDocuments.cacheNode(doc.uri, result as unknown as EntryNode)
-		return {
-			node: result,
-			errors: ctx.err.dump(),
-		}
+		const result = file()(src, ctx)
+		this.textDocuments.cacheNode(doc.uri, result )
+		return result
 	}
 
-	public colorize<N = EntryNode>(node: N, doc: TextDocument): readonly ColorToken[] {
-		const colorizer = this.meta.getColorizer<N>(doc.languageId)
+	public colorize(node: FileNode<AstNode>, doc: TextDocument): readonly ColorToken[] {
+		const colorizer = this.meta.getColorizer(doc.languageId)
 		return colorizer(node, doc)
 	}
 }

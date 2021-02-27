@@ -217,6 +217,21 @@ describe('Source', () => {
 			})
 		}
 	})
+	describe('skipRemaining()', () => {
+		const suites: { string: string, cursor: number, expectedCursor: number }[] = [
+			{ string: 'foo', cursor: 0, expectedCursor: 3 },
+			{ string: 'foo bar baz qux', cursor: 2, expectedCursor: 15 },
+		]
+		for (const { string, cursor, expectedCursor } of suites) {
+			it(`Should skip from ${markOffsetInString(string, cursor)} to ${markOffsetInString(string, expectedCursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actualSelf = src.skipRemaining()
+				assert.strictEqual(actualSelf, src)
+				assert.strictEqual(actualSelf.cursor, expectedCursor)
+			})
+		}
+	})
 	describe('static', () => {
 		describe('isSpace()', () => {
 			const suites: { c: string, expected: boolean }[] = [

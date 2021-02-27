@@ -1,14 +1,39 @@
 import { ParserContext } from '.'
+import { AstNode, ErrorNode } from '../node'
+import { FileNode } from '../node/FileNode'
+import { Range } from '../type'
 import { Source } from '../util/Source'
-import { EntryNode, EntryParser, Result } from './Parser'
+import { error } from './error'
+import { EntryNode, Failure, InfallibleParser } from './Parser'
 
 /**
- * Dispatches to the corresponding `${languageID}:main` parser.
+ * Dispatches to the corresponding parser for the language.
  * @throws If there's no parser registered for this language ID.
  */
-export function file<N extends EntryNode>(): EntryParser<N> {
-	return (src: Source, ctx: ParserContext): Result<N> => {
-		const parser = ctx.meta.getParser<N>(ctx.doc.languageId)
-		return parser(src, ctx)
+export function file(): InfallibleParser<FileNode<AstNode>> {
+	return (src: Source, ctx: ParserContext): FileNode<AstNode> => {
+		const fullRange = Range.create(src, src.string.length)
+		const ans: FileNode<AstNode> = {
+			type: 'file',
+			range: fullRange,
+			children: [],
+			parserErrors: [],
+			binderErrors: [],
+			checkerErrors: [],
+		}
+
+		const parser = ctx.meta.getParser<EntryNode>(ctx.doc.languageId)
+		const result = parser(src, ctx)
+		if (result !== Failure && result !== null) {
+			ans.children.push(result)
+		}
+
+		if (src.skipWhitespace().canRead()) {
+			ans.children.push(error(src, ctx) as ErrorNode)
+		}
+
+		ans.parserErrors = ctx.err.dump()
+
+		return ans
 	}
 }
