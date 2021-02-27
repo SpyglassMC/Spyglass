@@ -1,23 +1,27 @@
 import { testParser } from '@spyglassmc/core/test-out/utils'
-import { JsonAstNode } from './node'
 import { entry } from './parser'
-import './schema/data/loot_table'
-import { loot_table } from './schema/data/loot_table'
-import { SchemaContext } from './schema/SchemaContext'
+import { loot_table } from './checker/data/loot_table'
+import { CheckerContext } from './checker/CheckerContext'
+import { ErrorReporter, Failure } from '@spyglassmc/core'
+import { JsonAstNode } from './node'
 
-const table1 = testParser(entry, `{
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "item"
-        }
-      ]
-    }
-  ]
+const result = testParser(entry, `{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "item",
+					"name": "hello"
+				}
+			]
+		}
+	]
 }`)
 
-console.log(table1)
-const ctx1 = new SchemaContext(table1.node as JsonAstNode, '')
-loot_table(ctx1)
+if (result.node !== 'FAILURE') {
+	const reporter = new ErrorReporter()
+	const ctx = new CheckerContext(result.node as JsonAstNode, '', reporter)
+	loot_table(ctx)
+	console.log(reporter)
+}
