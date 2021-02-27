@@ -1,4 +1,4 @@
-import { ErrorSeverity } from '@spyglassmc/core'
+import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { JsonAstNode, JsonObjectAstNode } from '../../node'
 import { Checker } from '../Checker'
 import { CheckerContext } from '../CheckerContext'
@@ -7,11 +7,14 @@ import { as } from './util'
 type OptChecker = {
 	opt: Checker<JsonAstNode>,
 }
-function isOpt(checker: Checker<JsonAstNode> | OptChecker): checker is OptChecker {
+
+type PropertyChecker = Checker<JsonAstNode> | OptChecker
+
+function isOpt(checker: PropertyChecker): checker is OptChecker {
 	return (checker as OptChecker).opt !== undefined
 }
 
-export function object(keys: () => string[], values: (key: string) => Checker<JsonAstNode> | OptChecker) {
+export function object(keys: () => string[], values: (key: string) => PropertyChecker) {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report('Expected an object', node)
@@ -19,7 +22,7 @@ export function object(keys: () => string[], values: (key: string) => Checker<Js
 			const givenKeys = node.properties.map(n => n.key.value)
 			keys().filter(k => !isOpt(values(k))).forEach(k => {
 				if (!givenKeys.includes(k)) {
-					ctx.err.report(`Missing key "${k}"`, node)
+					ctx.err.report(`Missing key "${k}"`, Range.create(node.range.start, node.range.start + 1))
 				}})
 			const hasSeen = new Set<string>()
 			node.properties.forEach(prop => {
@@ -37,7 +40,7 @@ export function object(keys: () => string[], values: (key: string) => Checker<Js
 	}
 }
 
-export function record(properties: Record<string, Checker<JsonAstNode> | OptChecker>) {
+export function record(properties: Record<string, PropertyChecker>) {
 	return object(
 		() => Object.keys(properties),
 		(key) => properties[key]
@@ -56,7 +59,7 @@ export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, valu
 			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
 			const dispatcher = node.properties[dispatcherIndex]
 			if (!dispatcher) {
-				ctx.err.report(`Missing key "${keyName}"`, node)
+				ctx.err.report(`Missing key "${keyName}"`, Range.create(node.range.start, node.range.start + 1))
 			} else if (dispatcher.value) {
 				keyChecker(dispatcher.value, ctx)
 				if (dispatcher.value.type === 'json:string') {
@@ -69,8 +72,11 @@ export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, valu
 	}
 }
 
-export function pick(value: string, cases: Record<string, Record<string, Checker<JsonAstNode> | OptChecker>>) {
+export function pick(value: string, cases: Record<string, Record<string, PropertyChecker>>) {
 	const properties = cases[value.replace(/^minecraft:/, '')]
+	if (properties === undefined) {
+		return {}
+	}
 	Object.keys(properties).forEach(key => {
 		const p = properties[key]
 		properties[key] = isOpt(p) ? as(key, p.opt) : as(key, p)
