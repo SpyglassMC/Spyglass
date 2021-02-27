@@ -11,7 +11,16 @@ exports['error() Parse "whatever↓all errors" 1'] = {
       "end": 19
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 19
+      },
+      "message": "Encountered unparseable content",
+      "severity": 3
+    }
+  ]
 }
 
 exports['error() Parse "⮀" 1'] = {
@@ -22,5 +31,14 @@ exports['error() Parse "⮀" 1'] = {
       "end": 1
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "Encountered unparseable content",
+      "severity": 3
+    }
+  ]
 }
