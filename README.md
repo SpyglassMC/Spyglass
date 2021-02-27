@@ -14,11 +14,7 @@
 ## Contributing
 
 1. ```shell
-	$ git clone https://github.com/SPYGlassMC/SPYGlass.git --recursive
-	```
-	or
-	```shell
-	$ git clone https://github.com/SPYGlassMC/SPYGlass.git && git submodule update --init
+	$ git clone https://github.com/SPYGlassMC/SPYGlass.git
 	```
 2. Make sure you're using an npm version higher than or equal to 7.0.0, as this repository utilizes npm@7's workspaces feature.
    ```shell
