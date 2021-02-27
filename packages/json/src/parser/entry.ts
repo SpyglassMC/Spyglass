@@ -1,11 +1,11 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import { Failure, Parser, ParserContext, Range, Source } from '@spyglassmc/core'
 import { getLanguageService, TextDocument, Diagnostic } from 'vscode-json-languageservice'
 import { JsonAstNode } from '../node'
 import { transformer } from './transformer'
 
 const jsonLanguageService = getLanguageService({})
 
-export const entry: InfallibleParser<JsonAstNode> = (src: Source, ctx: ParserContext) => {
+export const entry: Parser<JsonAstNode> = (src: Source, ctx: ParserContext) => {
 	const textDocument = TextDocument.create('', 'json', 1, src.string)
 	const jsonDocument = jsonLanguageService.parseJSONDocument(textDocument)
 	const diagnostics = (jsonDocument as any)['syntaxErrors'] as Diagnostic[]
@@ -15,11 +15,7 @@ export const entry: InfallibleParser<JsonAstNode> = (src: Source, ctx: ParserCon
 		ctx.err.report(d.message, Range.create(start, end))
 	})
 	if (jsonDocument.root === undefined) {
-		return {
-			type: 'json:object',
-			range: Range.create(0, 0),
-			properties: [],
-		}
+		return Failure
 	}
 	return transformer(jsonDocument.root)
 }

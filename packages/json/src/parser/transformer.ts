@@ -22,6 +22,6 @@ export function transformer(node: VscodeAstNode): JsonAstNode {
 		case 'boolean':
 			return { type: 'json:boolean', range, value: node.value }
 		case 'null':
-			return { type: 'json:null', range, value: null }
+			return { type: 'json:null', range }
 	}
 }
