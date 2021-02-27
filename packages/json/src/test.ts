@@ -22,4 +22,5 @@ if (result.node !== 'FAILURE') {
 	const ctx = CheckerContext.create({})
 	loot_table(result.node as JsonAstNode, ctx)
 	console.log(ctx.err.errors)
+	console.log(JSON.stringify(result.node, null, 2))
 }
