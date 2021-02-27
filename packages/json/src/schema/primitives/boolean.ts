@@ -1,9 +1,10 @@
-import { JsonBooleanAstNode } from '../../node';
-import { SchemaContext } from '../SchemaContext';
+import { JsonBooleanAstNode } from '../../node'
+import { SchemaContext } from '../SchemaContext'
 
-export function boolean(ctx: SchemaContext) {
+export function boolean(ctx: SchemaContext): ctx is SchemaContext<JsonBooleanAstNode> {
 	if (!JsonBooleanAstNode.is(ctx.node)) {
-		return ctx.error('expected.boolean');
+		ctx.error('Expected a boolean')
+		return false
 	}
-	return true;
+	return true
 }

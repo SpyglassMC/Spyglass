@@ -4,7 +4,7 @@ export interface SchemaContext<N extends JsonAstNode = JsonAstNode> {
 	node: N,
 	context: string,
 	with<NN extends JsonAstNode>(node: NN): SchemaContext<NN>,
-	error(message: string): false,
+	error(message: string): void,
 }
 
 export class SchemaContext<N extends JsonAstNode = JsonAstNode> {
@@ -16,12 +16,15 @@ export class SchemaContext<N extends JsonAstNode = JsonAstNode> {
 		this.context = context
 	}
 
+	public clone() {
+		return new SchemaContext({ ...this.node }, this.context)
+	}
+
 	public with<NN extends JsonAstNode>(node: NN) {
 		return new SchemaContext(node, this.context)
 	}
 
 	public error(message: string, severity?: 'error' | 'warning') {
 		console.error(message)
-		return false
 	}
 }

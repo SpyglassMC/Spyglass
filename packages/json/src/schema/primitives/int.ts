@@ -1,24 +1,22 @@
 import { JsonNumberAstNode } from '../../node'
 import { SchemaContext } from '../SchemaContext'
 
-export function int(ctx: SchemaContext) {
+export function int(ctx: SchemaContext): ctx is SchemaContext<JsonNumberAstNode> {
 	if (!JsonNumberAstNode.is(ctx.node) || !ctx.node.isInteger) {
-		return ctx.error('expected.int')
+		ctx.error('Expected an int')
+		return false
 	}
 	return true
 }
 
-export function intRange(min: number, max: number) {
+export function intRange(min: number | null, max: number | null) {
 	return (ctx: SchemaContext) => {
-		if (!JsonNumberAstNode.is(ctx.node) || !ctx.node.isInteger) {
-			return ctx.error('expected.int')
+		if (!int(ctx)) return
+
+		if (min !== null && min < ctx.node.value) {
+			ctx.error(`Expected an int larger than or equal to ${min}`)
+		} else if (max !== null && max > ctx.node.value) {
+			ctx.error(`Expected an int smaller than or equal to ${max}`)
 		}
-		if (min < ctx.node.value) {
-			return ctx.error('expected.int_larger')
-		}
-		if (max > ctx.node.value) {
-			return ctx.error('expected.int_smaller')
-		}
-		return true
 	}
 }
