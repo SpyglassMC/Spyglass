@@ -1,20 +1,20 @@
-import { JsonNumberAstNode } from '../../node'
+import { JsonAstNode, JsonNumberAstNode } from '../../node'
 import { CheckerContext } from '../CheckerContext'
 
-export function int(ctx: CheckerContext) {
-	if (!JsonNumberAstNode.is(ctx.node) || !ctx.node.isInteger) {
-		ctx.report('Expected an int')
+export function int(node: JsonAstNode, ctx: CheckerContext) {
+	if (!JsonNumberAstNode.is(node) || !node.isInteger) {
+		ctx.err.report('Expected an int', node)
 	}
 }
 
 export function intRange(min: number | null, max: number | null) {
-	return (ctx: CheckerContext) => {
-		if (!JsonNumberAstNode.is(ctx.node) || !ctx.node.isInteger) {
-			ctx.report('Expected an int')
-		} else if (min !== null && min < ctx.node.value) {
-			ctx.report(`Expected an int larger than or equal to ${min}`)
-		} else if (max !== null && max > ctx.node.value) {
-			ctx.report(`Expected an int smaller than or equal to ${max}`)
+	return (node: JsonAstNode, ctx: CheckerContext) => {
+		if (!JsonNumberAstNode.is(node) || !node.isInteger) {
+			ctx.err.report('Expected an int', node)
+		} else if (min !== null && min < node.value) {
+			ctx.err.report(`Expected an int larger than or equal to ${min}`, node)
+		} else if (max !== null && max > node.value) {
+			ctx.err.report(`Expected an int smaller than or equal to ${max}`, node)
 		}
 	}
 }
