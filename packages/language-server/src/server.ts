@@ -59,9 +59,9 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	textDocuments.onDidOpen(uri, languageID, version, text)
 
 	const doc = textDocuments.get(uri)!
-	const { errors } = service.parse(doc)
+	const { parserErrors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.diagnostics(errors, doc),
+		diagnostics: transformer.diagnostics(parserErrors, doc),
 		uri,
 		version,
 	})
@@ -70,9 +70,9 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	textDocuments.onDidChange(uri, contentChanges, version)
 
 	const doc = textDocuments.get(uri)!
-	const { errors } = service.parse(doc)
+	const { parserErrors } = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.diagnostics(errors, doc),
+		diagnostics: transformer.diagnostics(parserErrors, doc),
 		uri,
 		version,
 	})
