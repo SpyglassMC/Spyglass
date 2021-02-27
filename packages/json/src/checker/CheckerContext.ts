@@ -1,26 +1,17 @@
-import { ErrorReporter, ErrorSeverity } from '@spyglassmc/core'
-import { JsonAstNode } from '../node'
+import { ErrorReporter, Logger, MetaRegistry } from '@spyglassmc/core'
 
-export class CheckerContext {
-	public readonly node: JsonAstNode
-	public readonly context: string
-	private readonly reporter: ErrorReporter
+export interface CheckerContext {
+	meta: MetaRegistry,
+	logger: Logger,
+	err: ErrorReporter,
+}
 
-	constructor(node: JsonAstNode, context: string, reporter: ErrorReporter) {
-		this.node = node
-		this.context = context
-		this.reporter = reporter
-	}
-
-	public clone() {
-		return new CheckerContext({ ...this.node }, this.context, this.reporter)
-	}
-
-	public with(node: JsonAstNode, context?: string) {
-		return new CheckerContext(node, context ?? this.context, this.reporter)
-	}
-
-	public report(message: string, severity?: ErrorSeverity) {
-		this.reporter.report(message, this.node.range, severity)
+export namespace CheckerContext {
+	export function create(ctx: Partial<CheckerContext>): CheckerContext {
+		return {
+			meta: ctx.meta ?? MetaRegistry.getInstance(),
+			logger: ctx.logger ?? Logger.create(),
+			err: ctx.err ?? new ErrorReporter(),
+		}
 	}
 }

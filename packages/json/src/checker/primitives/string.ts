@@ -1,28 +1,28 @@
-import { JsonStringAstNode } from '../../node'
+import { JsonAstNode, JsonStringAstNode } from '../../node'
 import { CheckerContext } from '../CheckerContext'
 
-export function string(ctx: CheckerContext) {
-	if(!JsonStringAstNode.is(ctx.node)) {
-		ctx.report('Expected a string')
+export function string(node: JsonAstNode, ctx: CheckerContext) {
+	if(!JsonStringAstNode.is(node)) {
+		ctx.err.report('Expected a string', node)
 	}
 }
 
 export function enumString(values: string[]) {
-	return (ctx: CheckerContext) => {
-		if(!JsonStringAstNode.is(ctx.node)) {
-			ctx.report('Expected a string')
-		} else if (!values.includes(ctx.node.value)) {
-			ctx.report(`Expected one of ${values.join(', ')}`)
+	return (node: JsonAstNode, ctx: CheckerContext) => {
+		if(!JsonStringAstNode.is(node)) {
+			ctx.err.report('Expected a string', node.range)
+		} else if (!values.includes(node.value)) {
+			ctx.err.report(`Expected one of ${values.join(', ')}`, node)
 		}
 	}
 }
 
 export function resource(id: string) {
-	return (ctx: CheckerContext) => {
-		if(!JsonStringAstNode.is(ctx.node)) {
-			ctx.report('Expected a string')
+	return (node: JsonAstNode, ctx: CheckerContext) => {
+		if(!JsonStringAstNode.is(node)) {
+			ctx.err.report('Expected a string', node)
 		} else {
-			ctx.node.resource = id
+			node.resource = id
 		}
 	}
 }
