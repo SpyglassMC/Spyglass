@@ -5,7 +5,7 @@ import { Range, RangeLike } from '../type'
 export type Colorizer<N = AstNode> = (node: N, doc: TextDocument /* , symbols: SymbolTableHelper */) => readonly ColorToken[]
 
 export namespace colorizer {
-	export const fallback: Colorizer<unknown> = () => []
+	export const fallback: Colorizer<any> = () => []
 }
 
 export interface ColorToken {
@@ -25,7 +25,7 @@ export namespace ColorToken {
 
 // Built-in LSP semantic tokens: https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens
 
-export const ColorTokenTypes = [
+export const ColorTokenTypes = Object.freeze([
 	'comment',
 	'enum',
 	'enumMember',
@@ -41,10 +41,10 @@ export const ColorTokenTypes = [
 	'type',
 	// Below are custom types.
 	'resourceLocation',
-] as const
+] as const)
 export type ColorTokenType = typeof ColorTokenTypes[number]
 
-export const ColorTokenModifiers = [
+export const ColorTokenModifiers = Object.freeze([
 	'declaration',
 	'defaultLibrary',
 	'definition',
@@ -53,5 +53,5 @@ export const ColorTokenModifiers = [
 	'modification',
 	'readonly',
 	// Below are custom modifiers.
-] as const
+] as const)
 export type ColorTokenModifier = typeof ColorTokenModifiers[number]
