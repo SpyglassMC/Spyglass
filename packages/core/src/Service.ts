@@ -4,11 +4,13 @@ import { AstNode, FileNode } from './node'
 import { ParserContext } from './parser'
 import { ProcessorContext } from './processor'
 import { TextDocuments } from './TextDocuments'
-import { Logger, Source, SymbolTableUtil } from './util'
+import { SpecialUri, UriBinderContext } from './type'
+import { Logger, Source, SymbolTableUtil, walk } from './util'
 
 interface Options {
 	fs?: FileService,
 	logger?: Logger,
+	roots?: string[],
 	symbols?: SymbolTableUtil,
 }
 
@@ -16,16 +18,22 @@ export class Service {
 	public readonly meta = MetaRegistry.getInstance()
 	public readonly fs: FileService
 	public readonly logger: Logger
-	public readonly textDocuments: TextDocuments
+	/**
+	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
+	 */
+	public readonly roots: string[]
 	public readonly symbols: SymbolTableUtil
+	public readonly textDocuments: TextDocuments
 
 	constructor({
 		fs = FileService.create(),
 		logger = Logger.create(),
+		roots = [],
 		symbols = new SymbolTableUtil({}),
 	}: Options = {}) {
 		this.fs = fs
 		this.logger = logger
+		this.roots = roots.map(r => r.endsWith('/') ? r : `${r}/`)
 		this.symbols = symbols
 		this.textDocuments = new TextDocuments({ fs })
 	}
@@ -36,6 +44,7 @@ export class Service {
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
+			roots: this.roots,
 		})
 		const src = new Source(doc.getText())
 		const result = file()(src, ctx)
@@ -44,14 +53,43 @@ export class Service {
 	}
 
 	public colorize(node: FileNode<AstNode>, doc: TextDocument): readonly ColorToken[] {
-		const ctx = ProcessorContext.create({
+		const colorizer = this.meta.getColorizer(doc.languageId)
+		return colorizer(node, this.getProcessorCtx(doc))
+	}
+
+	public async bindUris(): Promise<void> {
+		try {
+			const uris: string[] = []
+			for (const root of this.roots) {
+				await walk(this.fs, root, u => uris.push(u))
+			}
+
+			const ctx: UriBinderContext = this.getProcessorCtx(undefined as any)
+			this.symbols.open(SpecialUri.UriBinder)
+
+			for (const binder of this.meta.getUriBinders()) {
+				binder(uris, ctx)
+			}
+			this.symbols.close()
+		} catch (e) {
+			this.logger.error(JSON.stringify(e))
+		}
+	}
+
+	public setRoots(roots: string[]) {
+		roots = roots.map(r => r.endsWith('/') ? r : `${r}/`)
+		this.roots.splice(0, this.roots.length, ...roots)
+	}
+
+	private getProcessorCtx(doc: TextDocument): ProcessorContext {
+		return ProcessorContext.create({
 			doc,
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
+			roots: this.roots,
+			service: this,
 			symbols: this.symbols,
 		})
-		const colorizer = this.meta.getColorizer(doc.languageId)
-		return colorizer(node, ctx)
 	}
 }

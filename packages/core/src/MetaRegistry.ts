@@ -3,6 +3,7 @@
 import { AstNode } from '.'
 import { EntryNode, EntryParser, Parser } from './parser/Parser'
 import { Colorizer, colorizer } from './processor'
+import { UriBinder } from './type'
 
 //#region TEMP
 type Processor = any
@@ -47,6 +48,7 @@ export class MetaRegistry {
 	 * A map from language IDs to language options.
 	 */
 	private readonly languages = new Map<string, LanguageOptions>()
+	private readonly uriBinders = new Set<UriBinder>()
 
 	// The functions below are overloaded so that we can get suggestions for many parameters in VS Code.
 
@@ -112,6 +114,13 @@ export class MetaRegistry {
 			}
 		}
 		return undefined
+	}
+
+	public registerUriBinder(uriBinder: UriBinder): void {
+		this.uriBinders.add(uriBinder)
+	}
+	public getUriBinders(): Set<UriBinder> {
+		return this.uriBinders
 	}
 
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>()

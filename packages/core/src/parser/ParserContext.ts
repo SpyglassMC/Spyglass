@@ -12,6 +12,7 @@ export interface ParserContext {
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
+	roots: string[],
 }
 
 /**
@@ -23,6 +24,7 @@ export interface ParserContextLike {
 	fs?: FileService,
 	logger?: Logger,
 	meta?: MetaRegistry,
+	roots?: string[],
 }
 
 export namespace ParserContext {
@@ -33,6 +35,7 @@ export namespace ParserContext {
 			fs: ctx.fs ?? FileService.create(),
 			logger: ctx.logger ?? Logger.create(),
 			meta: ctx.meta ?? MetaRegistry.getInstance(),
+			roots: ctx.roots ?? [],
 		}
 	}
 }

@@ -11,7 +11,7 @@ if (process.argv.length === 2) {
 	process.argv.push('--stdio')
 }
 
-const workspaceRootUris: ls.WorkspaceFolder[] = []
+const workspaceFolders: ls.WorkspaceFolder[] = []
 
 const connection = ls.createConnection()
 
@@ -21,15 +21,19 @@ const textDocuments = service.textDocuments
 
 nbtdoc.initializeNbtdoc()
 
-connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, initializationOptions, workspaceFolders }) => {
+connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, initializationOptions, workspaceFolders: wsFolders }) => {
 	logger.info(`[onInitialize] processId = ${JSON.stringify(processId)}`)
 	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(clientInfo)}`)
 	logger.info(`[onInitialize] locale = ${JSON.stringify(locale)}`)
-	logger.info(`[onInitialize] workspaceFolders = ${JSON.stringify(workspaceFolders)}`)
+	logger.info(`[onInitialize] workspaceFolders = ${JSON.stringify(wsFolders)}`)
 	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
 	logger.info(`[onInitialize] capabilities = ${JSON.stringify(capabilities)}`)
 
-	workspaceRootUris.push(...workspaceFolders ?? [])
+	workspaceFolders.push(...wsFolders ?? [])
+
+	await bindUris()
+
+	/* DEBUG */ logger.log(JSON.stringify(service.symbols, undefined, '\t'))
 
 	const result: ls.InitializeResult = {
 		capabilities: {
@@ -89,6 +93,11 @@ connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
 })
 
 connection.listen()
+
+async function bindUris(): Promise<void> {
+	service.setRoots(workspaceFolders.map(w => w.uri))
+	return service.bindUris()
+}
 
 let isUp = true
 function exit() {

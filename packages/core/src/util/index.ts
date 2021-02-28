@@ -1,5 +1,6 @@
 export * from './ErrorReporter'
 export { FileService, Uri } from './FileService'
+export * from './fileUtil'
 export * from './Logger'
 export * from './misc'
 export * from './Source'
