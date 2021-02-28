@@ -8,13 +8,15 @@ type OptChecker = {
 	opt: Checker<JsonAstNode>,
 }
 
-type PropertyChecker = Checker<JsonAstNode> | OptChecker
+type CheckerProperty = Checker<JsonAstNode> | OptChecker
 
-function isOpt(checker: PropertyChecker): checker is OptChecker {
+type CheckerRecord = Record<string, CheckerProperty>
+
+function isOpt(checker: CheckerProperty): checker is OptChecker {
 	return (checker as OptChecker).opt !== undefined
 }
 
-export function object(keys: () => string[], values: (key: string) => PropertyChecker) {
+export function object(keys: () => string[], values: (key: string) => CheckerProperty): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report('Expected an object', node)
@@ -40,18 +42,18 @@ export function object(keys: () => string[], values: (key: string) => PropertyCh
 	}
 }
 
-export function record(properties: Record<string, PropertyChecker>) {
+export function record(properties: CheckerRecord): Checker<JsonAstNode> {
 	return object(
 		() => Object.keys(properties),
 		(key) => properties[key]
 	)
 }
 
-export function opt(checker: Checker<JsonAstNode>) {
+export function opt(checker: Checker<JsonAstNode>): OptChecker {
 	return { opt: checker }
 }
 
-export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, values: (value: string) => Checker<JsonAstNode>) {
+export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, values: (value: string) => Checker<JsonAstNode>): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report('Expected an object', node)
@@ -72,7 +74,7 @@ export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, valu
 	}
 }
 
-export function pick(value: string, cases: Record<string, Record<string, PropertyChecker>>) {
+export function pick(value: string, cases: Record<string, CheckerRecord>): CheckerRecord {
 	const properties = cases[value.replace(/^minecraft:/, '')]
 	if (properties === undefined) {
 		return {}

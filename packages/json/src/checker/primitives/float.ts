@@ -1,4 +1,5 @@
 import { JsonAstNode, JsonNumberAstNode } from '../../node'
+import { Checker } from '../Checker'
 import { CheckerContext } from '../CheckerContext'
 
 export function float(node: JsonAstNode, ctx: CheckerContext) {
@@ -7,7 +8,7 @@ export function float(node: JsonAstNode, ctx: CheckerContext) {
 	}
 }
 
-export function floatRange(min: number | null, max: number | null) {
+export function floatRange(min: number | null, max: number | null): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonNumberAstNode.is(node)) {
 			ctx.err.report('Expected a float', node)
