@@ -5,7 +5,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 1'] = [
         "category": "nbtdoc",
         "identifier": "test",
         "visibility": 1,
-        "def": [
+        "definition": [
           {
             "uri": "file:///test.nbtdoc",
             "range": {
@@ -24,7 +24,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 1'] = [
         "category": "nbtdoc",
         "identifier": "test",
         "visibility": 0,
-        "def": [
+        "definition": [
           {
             "uri": "file:///test.nbtdoc",
             "range": {
@@ -44,7 +44,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 2'] = {
       "category": "nbtdoc",
       "identifier": "test",
       "visibility": 2,
-      "def": [
+      "definition": [
         {
           "uri": "file:///test.nbtdoc",
           "range": {
@@ -60,7 +60,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 2'] = {
           }
         }
       ],
-      "ref": [
+      "reference": [
         {
           "uri": "file:///test.nbtdoc",
           "range": {
@@ -81,7 +81,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 2'] = {
       "category": "nbtdoc",
       "identifier": "test2",
       "visibility": 2,
-      "def": [
+      "definition": [
         {
           "uri": "file:///test.nbtdoc",
           "range": {
@@ -100,7 +100,7 @@ exports['SymbolTableUtil open() Should remove all URIs of the file before openin
       "category": "nbtdoc",
       "identifier": "test",
       "visibility": 2,
-      "def": [
+      "definition": [
         {
           "uri": "file:///another_test.nbtdoc",
           "range": {

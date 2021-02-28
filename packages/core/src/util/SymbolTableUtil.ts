@@ -191,12 +191,7 @@ export class SymbolTableUtil {
 
 export interface SymbolAddition extends SymbolMetadata {
 	/**
-	 * The existing form of this `Symbol`. Available values:
-	 * - `def`: Definition.
-	 * - `dec`: Declaration.
-	 * - `imp`: Implementation.
-	 * - `ref`: Reference.
-	 * - `typedef`: Type Definition.
+	 * The existing form of this `Symbol`.
 	 */
 	form: SymbolForm,
 	range: RangeLike,

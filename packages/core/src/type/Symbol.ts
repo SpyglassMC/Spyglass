@@ -46,16 +46,17 @@ export const DeclarableCategories = Object.freeze([
 	...FileCategories,
 	...MiscCategories,
 ] as const)
-export const CoreCategories = Object.freeze([
+export const AllCategories = Object.freeze([
 	...DeclarableCategories,
+	'nbtdoc',
 ] as const)
 
-export type TagFileCategories = typeof TagFileCategories[number]
-export type WorldgenFileCategories = typeof WorldgenFileCategories[number]
-export type FileCategories = typeof FileCategories[number]
-export type MiscCategories = typeof MiscCategories[number]
-export type DeclarableCategories = typeof DeclarableCategories[number]
-export type CoreCategories = typeof CoreCategories[number]
+export type TagFileCategory = typeof TagFileCategories[number]
+export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
+export type FileCategory = typeof FileCategories[number]
+export type MiscCategory = typeof MiscCategories[number]
+export type DeclarableCategory = typeof DeclarableCategories[number]
+export type AllCategory = typeof AllCategories[number]
 
 export const enum SymbolVisibility {
 	Block,
@@ -128,7 +129,7 @@ export interface SymbolPath {
 	path: string[],
 }
 
-export const SymbolForms = Object.freeze(['def', 'dec', 'imp', 'ref', 'typedef'] as const)
+export const SymbolForms = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
 export type SymbolForm = typeof SymbolForms[number]
 
 export interface Symbol extends SymbolMetadata, Partial<Record<SymbolForm, SymbolLocation[]>> { }
@@ -158,15 +159,10 @@ export interface SymbolMap {
 	[identifier: string]: Symbol | undefined,
 }
 
-export interface SymbolTable {
+export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined,
 }
 
-export interface SplitTable {
-	[SpecialUri.UriVisitor]?: SymbolTable,
-	[uri: string]: SymbolTable | undefined,
-}
-
 export const enum SpecialUri {
-	UriVisitor = 'spyglassmc://uri_visitor',
+	UriBinder = 'spyglassmc://uri_binder',
 }

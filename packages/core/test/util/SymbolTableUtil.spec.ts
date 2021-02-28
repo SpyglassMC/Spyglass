@@ -9,7 +9,7 @@ describe('SymbolTableUtil', () => {
 	const symbol: SymbolAddition = {
 		category: 'nbtdoc',
 		identifier: 'test',
-		form: 'def',
+		form: 'definition',
 		range: 1,
 		visibility: SymbolVisibility.Public,
 	}
@@ -87,8 +87,8 @@ describe('SymbolTableUtil', () => {
 			symbols.pushBlock()
 			symbols.pushBlock()
 			symbols.enter({ ...symbol })
-			symbols.enter({ ...symbol, form: 'ref', range: 2 })
-			symbols.enter({ ...symbol, form: 'ref', range: 3 })
+			symbols.enter({ ...symbol, form: 'reference', range: 2 })
+			symbols.enter({ ...symbol, form: 'reference', range: 3 })
 			symbols.enter({ ...symbol, range: 4, visibility: SymbolVisibility.Block })
 			symbols.enter({ ...symbol, range: 5, visibility: SymbolVisibility.File })
 			symbols.enter({ ...symbol, range: 6, visibility: SymbolVisibility.Restricted, visibilityRestriction: ['spgoding:**'] })
