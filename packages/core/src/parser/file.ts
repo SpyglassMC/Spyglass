@@ -1,10 +1,10 @@
-import { ParserContext } from '.'
 import { AstNode, ErrorNode } from '../node'
 import { FileNode } from '../node/FileNode'
 import { Range } from '../type'
 import { Source } from '../util/Source'
 import { error } from './error'
 import { EntryNode, Failure, InfallibleParser } from './Parser'
+import { ParserContext } from './ParserContext'
 
 /**
  * Dispatches to the corresponding parser for the language.

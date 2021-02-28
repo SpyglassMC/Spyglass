@@ -1,8 +1,8 @@
-import { TextDocument } from 'vscode-languageserver-textdocument'
 import { AstNode } from '../node'
 import { Range, RangeLike } from '../type'
+import { ProcessorContext } from './ProcessorContext'
 
-export type Colorizer<N = AstNode> = (node: N, doc: TextDocument /* , symbols: SymbolTableHelper */) => readonly ColorToken[]
+export type Colorizer<N = AstNode> = (node: N, ctx: ProcessorContext) => readonly ColorToken[]
 
 export namespace colorizer {
 	export const fallback: Colorizer<any> = () => []

@@ -1,9 +1,9 @@
 import { localize } from '@spyglassmc/locales'
 import { InfallibleParser } from '..'
 import { ErrorNode } from '../node'
+import { ParserContext } from './ParserContext'
 import { Range } from '../type'
 import { Source } from '../util'
-import { ParserContext } from './ParserContext'
 
 /**
  * Returns an error node containing all the remaining text (including whitespace),

@@ -1,6 +1,7 @@
-import { Failure, InfallibleParser, Parser, ParserContext, Result } from '.'
 import { AstNode, ErrorSeverity, Range, Returnable, SequenceUtil, Source } from '..'
 import { ErrorReporter } from '../util'
+import { Failure, InfallibleParser, Parser, Result } from './Parser'
+import { ParserContext } from './ParserContext'
 
 export type AttemptResult<N extends Returnable = AstNode> = {
 	result: Result<N>,
