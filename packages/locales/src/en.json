@@ -1,4 +1,5 @@
 {
+	"array": "an array",
 	"boolean": "a boolean",
 	"code-action.block-state-sort-keys": "Sort block state",
 	"code-action.command-replaceitem": "Update this command to /item ... replace",
@@ -49,6 +50,7 @@
 	"key-not-following-convention": "Invalid key %0% which doesn't follow %1% convention",
 	"leading-slash": "a leading slash “/”",
 	"long": "a long",
+	"missing-key": "Missing key %0%",
 	"mixed-coordinates": "Cannot mix local coordinates and non-local coordinates together",
 	"more-arguments": "more arguments",
 	"nbt-path.filter": "a compound filter",
@@ -96,6 +98,7 @@
 	"number.<=": "a number smaller than or equal to %0%",
 	"number.>=": "a number greater than or equal to %0%",
 	"number.between": "a number between %0% and %1%",
+	"object": "an object",
 	"objective": "an objective",
 	"objective-not-following-convention": "Invalid objective %0% which doesn't follow %1% convention",
 	"parser.float.exponent-disallowed": "Exponent disallowed",

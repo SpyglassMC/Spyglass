@@ -10,7 +10,7 @@ export function colorizer(root: JsonAstNode): readonly ColorToken[] {
 				type = 'number'
 				break
 			case 'json:boolean':
-				type = 'number'
+				type = 'modifier'
 				break
 			case 'json:string':
 				const p = parents[parents.length - 1] as JsonAstNode

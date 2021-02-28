@@ -1,28 +1,19 @@
+import { localize } from '@spyglassmc/locales'
 import { JsonAstNode, JsonStringAstNode } from '../../node'
 import { Checker } from '../Checker'
 import { CheckerContext } from '../CheckerContext'
 
-export function string(node: JsonAstNode, ctx: CheckerContext) {
+export function string(node: JsonAstNode, ctx: CheckerContext): node is JsonStringAstNode {
 	if(!JsonStringAstNode.is(node)) {
-		ctx.err.report('Expected a string', node)
+		ctx.err.report(localize('expected', [localize('string')]), node)
+		return false
 	}
-}
-
-export function enumString(values: string[]): Checker<JsonAstNode> {
-	return (node: JsonAstNode, ctx: CheckerContext) => {
-		if(!JsonStringAstNode.is(node)) {
-			ctx.err.report('Expected a string', node.range)
-		} else if (!values.includes(node.value)) {
-			ctx.err.report(`Expected one of ${values.join(', ')}`, node)
-		}
-	}
+	return true
 }
 
 export function resource(id: string): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
-		if(!JsonStringAstNode.is(node)) {
-			ctx.err.report('Expected a string', node)
-		} else {
+		if (string(node, ctx)) {
 			node.resource = id
 		}
 	}

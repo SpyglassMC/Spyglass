@@ -1,4 +1,5 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import { JsonAstNode, JsonObjectAstNode } from '../../node'
 import { Checker } from '../Checker'
 import { CheckerContext } from '../CheckerContext'
@@ -19,22 +20,19 @@ function isOpt(checker: CheckerProperty): checker is OptChecker {
 export function object(keys: () => string[], values: (key: string) => CheckerProperty): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
-			ctx.err.report('Expected an object', node)
+			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
 			const givenKeys = node.properties.map(n => n.key.value)
 			keys().filter(k => !isOpt(values(k))).forEach(k => {
 				if (!givenKeys.includes(k)) {
-					ctx.err.report(`Missing key "${k}"`, Range.create(node.range.start, node.range.start + 1))
+					ctx.err.report(localize('missing-key', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
 				}})
-			const hasSeen = new Set<string>()
 			node.properties.forEach(prop => {
-				if (!keys().includes(prop.key.value)) {
-					ctx.err.report(`Unknown object key "${prop.key.value}"`, prop.key, ErrorSeverity.Warning)
-				} else if (hasSeen.has(prop.key.value)) {
-					ctx.err.report('Duplicate object key', prop.key, ErrorSeverity.Warning)
+				const key = prop.key.value
+				if (!keys().includes(key)) {
+					ctx.err.report(localize('unknown-key', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Warning)
 				} else if (prop.value !== undefined) {
-					hasSeen.add(prop.key.value)
-					const value = values(prop.key.value);
+					const value = values(key);
 					(isOpt(value) ? value.opt : value)(prop.value, ctx)
 				}
 			})
@@ -56,12 +54,12 @@ export function opt(checker: Checker<JsonAstNode>): OptChecker {
 export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, values: (value: string) => Checker<JsonAstNode>): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
-			ctx.err.report('Expected an object', node)
+			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
 			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
 			const dispatcher = node.properties[dispatcherIndex]
 			if (!dispatcher) {
-				ctx.err.report(`Missing key "${keyName}"`, Range.create(node.range.start, node.range.start + 1))
+				ctx.err.report(localize('missing-key', [localize('punc.quote', [keyName])]), Range.create(node.range.start, node.range.start + 1))
 			} else if (dispatcher.value) {
 				keyChecker(dispatcher.value, ctx)
 				if (dispatcher.value.type === 'json:string') {
