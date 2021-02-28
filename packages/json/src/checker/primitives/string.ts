@@ -1,4 +1,5 @@
 import { JsonAstNode, JsonStringAstNode } from '../../node'
+import { Checker } from '../Checker'
 import { CheckerContext } from '../CheckerContext'
 
 export function string(node: JsonAstNode, ctx: CheckerContext) {
@@ -7,7 +8,7 @@ export function string(node: JsonAstNode, ctx: CheckerContext) {
 	}
 }
 
-export function enumString(values: string[]) {
+export function enumString(values: string[]): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report('Expected a string', node.range)
@@ -17,7 +18,7 @@ export function enumString(values: string[]) {
 	}
 }
 
-export function resource(id: string) {
+export function resource(id: string): Checker<JsonAstNode> {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report('Expected a string', node)
