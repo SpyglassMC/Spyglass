@@ -1,4 +1,5 @@
 import { Location } from './Location'
+import { Range, RangeLike } from './Range'
 
 export const TagFileCategories = Object.freeze([
 	'tag/block',
@@ -56,32 +57,16 @@ export type MiscCategories = typeof MiscCategories[number]
 export type DeclarableCategories = typeof DeclarableCategories[number]
 export type CoreCategories = typeof CoreCategories[number]
 
-const enum SymbolType {
-	Definition,
-	Declaration,
-	Implementation,
-	Reference,
-	TypeDefinition,
-}
-
-const enum SymbolVisibility {
+export const enum SymbolVisibility {
 	Block,
 	File,
-	Internal,
 	Public,
-	Within,
+	Restricted,
 }
 
-const SymbolTypeEnumToSymbolKey = new Map<SymbolType, keyof Symbol>([
-	[SymbolType.Definition, 'def'],
-	[SymbolType.Declaration, 'dec'],
-	[SymbolType.Implementation, 'imp'],
-	[SymbolType.Reference, 'ref'],
-	[SymbolType.TypeDefinition, 'typedef'],
-])
-
-interface SymbolMetadata {
+export interface SymbolMetadata {
 	// Categorical information.
+	identifier: string,
 	/**
 	 * The main category of this Symbol. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
@@ -89,18 +74,37 @@ interface SymbolMetadata {
 	category: string,
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
-	 * subcategories may be used interchangeable in certain context. e.g. both 
-	 * nbtdoc compounds and nbtdoc enums can be used to describe the type of a field.
+	 * subcategories may be used interchangeablely in certain context. e.g. both 
+	 * nbtdoc compounds and nbtdoc enums can be used to describe the type of a field,
+	 * but cannot be used in a `/function` command, so they should be put in a category
+	 * other than `function` (like `nbtdoc`), and with different subcategories.
 	 */
 	subcategory?: string,
-	name: string,
 
 	// Other information.
+	/**
+	 * The visibility of this `Symbol`.
+	 */
+	visibility: SymbolVisibility,
+	/**
+	 * An array of regular expressions in string form. Only exists if `visibility` is set to `Restricted`.
+	 */
+	visibilityRestriction?: string[],
+	/**
+	 * The documentation for this `Symbol`. May be edited by doc comments.
+	 */
 	doc?: string,
-	visibility?: SymbolVisibility,
+	/**
+	 * Whether this Symbol comes from a default library (e.g. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
+	 * 
+	 * [mc-data]: https://github.com/Arcensoth/mc-data
+	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
+	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
+	 */
+	fromDefaultLibrary?: true,
 	members?: SymbolMap,
 	relations?: {
-		[type: string]: SymbolPath[],
+		[key: string]: SymbolPath[],
 	},
 }
 
@@ -121,46 +125,48 @@ export interface SymbolPath {
 	/**
 	 * Will be resolved as keys of the `members` property of the `Symbol`.
 	 */
-	path: string[]
+	path: string[],
 }
 
-interface Symbol extends SymbolMetadata {
-	def?: Location,
-	dec?: Location,
-	imp?: Location[],
-	ref?: Location[],
-	typedef?: Location[],
+export const SymbolForms = Object.freeze(['def', 'dec', 'imp', 'ref', 'typedef'] as const)
+export type SymbolForm = typeof SymbolForms[number]
+
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolForm, SymbolLocation[]>> { }
+
+export interface SymbolLocation extends Location {
+	/**
+	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
+	 * ```nbtdoc
+	 * 0123456789012345
+	 * compound Foo {}
+	 * ```
+	 * 
+	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
+	 */
+	fullRange?: Range,
 }
-
-interface SymbolAddition extends SymbolMetadata {
-	type: SymbolType,
-	location: Location
-}
-
-interface SymbolMap {
-	[identifier: string]: Symbol
-}
-
-interface SymbolTable {
-	[category: string]: SymbolMap | undefined
-}
-
-interface SymbolTableStack {
-	[category: string]: SymbolMap[] | undefined
-}
-
-interface SplitSymbolTable {
-	[filePath: string]: SymbolTable
-}
-
-export class SymbolTableHelper {
-	public currentFile?: SymbolTableStack
-
-	constructor(
-		public readonly global: SplitSymbolTable
-	) { }
-
-	addSymbol(symbol: SymbolAddition) {
-
+export namespace SymbolLocation {
+	export function create(uri: string, range: RangeLike, fullRange?: RangeLike): SymbolLocation {
+		return {
+			...Location.create(uri, range),
+			...fullRange ? { fullRange: Range.get(fullRange) } : {},
+		}
 	}
+}
+
+export interface SymbolMap {
+	[identifier: string]: Symbol | undefined,
+}
+
+export interface SymbolTable {
+	[category: string]: SymbolMap | undefined,
+}
+
+export interface SplitTable {
+	[SpecialUri.UriVisitor]?: SymbolTable,
+	[uri: string]: SymbolTable | undefined,
+}
+
+export const enum SpecialUri {
+	UriVisitor = 'spyglassmc://uri_visitor',
 }
