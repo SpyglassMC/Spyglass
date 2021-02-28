@@ -1,11 +1,11 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { ColorToken, file, FileService, MetaRegistry } from '.'
-import { AstNode, FileNode } from './node'
-import { ParserContext } from './parser'
-import { ProcessorContext } from './processor'
+import { SpecialUri, SymbolTableUtil, UriBinderContext } from '../binder'
+import { AstNode, FileNode } from '../node'
+import { file, ParserContext } from '../parser'
+import { ColorToken, ProcessorContext } from '../processor'
+import { FileService, Logger, MetaRegistry, walk } from '../service'
+import { Source } from '../source'
 import { TextDocuments } from './TextDocuments'
-import { SpecialUri, UriBinderContext } from './type'
-import { Logger, Source, SymbolTableUtil, walk } from './util'
 
 interface Options {
 	fs?: FileService,

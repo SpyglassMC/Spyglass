@@ -1,5 +1,4 @@
-import { Location } from './Location'
-import { Range, RangeLike } from './Range'
+import { Location, Range, RangeLike } from '../source'
 
 export const TagFileCategories = Object.freeze([
 	'tag/block',

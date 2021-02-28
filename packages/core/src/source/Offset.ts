@@ -1,4 +1,4 @@
-import { Source } from '../util'
+import { Source } from './Source'
 
 export type OffsetLike =
 	| number | Source

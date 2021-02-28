@@ -1,6 +1,5 @@
 import { CommentNode } from '../node'
-import { Range } from '../type'
-import { Source } from '../util/Source'
+import { Range, Source } from '../source'
 import { Failure, Parser, Result } from './Parser'
 import { ParserContext } from './ParserContext'
 

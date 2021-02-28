@@ -1,10 +1,7 @@
 /* istanbul ignore file */
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { MetaRegistry } from '../MetaRegistry'
-import { ErrorReporter } from '../util/ErrorReporter'
-import { FileService } from '../util/FileService'
-import { Logger } from '../util/Logger'
+import { ErrorReporter, FileService, Logger, MetaRegistry } from '../service'
 
 export interface ParserContext {
 	doc: TextDocument,

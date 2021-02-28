@@ -1,5 +1,5 @@
-import { any, arrayToMessage, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { any, InfallibleParser, map, Parser, Range, recover } from '@spyglassmc/core'
+import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { DocCommentsNode, EnumChild, EnumDefinitionNode, EnumFieldChild, EnumFieldNode, EnumTypeOrEmpty, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive, SyntaxUtil } from '../../node'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'

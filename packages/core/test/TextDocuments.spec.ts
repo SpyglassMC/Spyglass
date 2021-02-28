@@ -2,7 +2,7 @@ import assert, { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocuments } from '../lib'
-import { FileServiceImpl } from '../lib/util/FileService'
+import { FileServiceImpl } from '../lib/service/FileService'
 
 describe('TextDocuments', () => {
 	const testFileService = new class extends FileServiceImpl {

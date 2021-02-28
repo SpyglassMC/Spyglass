@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
+import { SymbolTableUtil } from '../binder/SymbolUtil'
 import { ParserContext } from '../parser'
 import type { ParserContextLike } from '../parser/ParserContext'
-import type { Service } from '../Service'
-import { SymbolTableUtil } from '../util/SymbolTableUtil'
+import type { Service } from '../service'
 
 export interface ProcessorContext extends ParserContext {
 	service: Service,

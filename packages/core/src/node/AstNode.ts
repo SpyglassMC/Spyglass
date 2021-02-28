@@ -1,4 +1,4 @@
-import { Range } from '../type'
+import { Range } from '../source'
 
 export interface AstNode {
 	readonly type: string,

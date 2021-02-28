@@ -1,5 +1,5 @@
 import { AstNode } from '../node'
-import { Source } from '../util/Source'
+import { Source } from '../source'
 import { ParserContext } from './ParserContext'
 
 /**

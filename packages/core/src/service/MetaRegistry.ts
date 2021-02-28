@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
-import { AstNode } from '.'
-import { EntryNode, EntryParser, Parser } from './parser/Parser'
-import { Colorizer, colorizer } from './processor'
-import { UriBinder } from './type'
+import { UriBinder } from '../binder'
+import { AstNode } from '../node'
+import { EntryNode, EntryParser, Parser } from '../parser'
+import { Colorizer, colorizer } from '../processor'
 
 //#region TEMP
 type Processor = any

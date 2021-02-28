@@ -1,5 +1,5 @@
 import { AstNode } from '../node'
-import { Range, RangeLike } from '../type'
+import { Range, RangeLike } from '../source'
 import { ProcessorContext } from './ProcessorContext'
 
 export type Colorizer<N = AstNode> = (node: N, ctx: ProcessorContext) => readonly ColorToken[]

@@ -1,6 +1,7 @@
 import { TextDocument, TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
-import { FileService, MetaRegistry } from '.'
-import { FileNode } from './node'
+import { FileNode } from '../node'
+import { FileService } from './FileService'
+import { MetaRegistry } from './MetaRegistry'
 
 export class TextDocuments implements TextDocuments {
 	private readonly fs: FileService

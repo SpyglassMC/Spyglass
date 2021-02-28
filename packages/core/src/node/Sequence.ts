@@ -1,4 +1,5 @@
-import { AstNode, Range } from '..'
+import { AstNode } from '../node'
+import { Range } from '../source'
 
 export interface SequenceNode<CN extends AstNode = AstNode> extends AstNode {
 	/**
