@@ -2,7 +2,7 @@ import assert from 'assert'
 import { describe, it } from 'mocha'
 import { arrayToMessage } from '../lib'
 
-describe('arrayToMessage() Parses', () => {
+describe('arrayToMessage() Tests', () => {
 	it('Should return message for an empty array', () => {
 		const arr: string[] = []
 		const actual = arrayToMessage(arr)
