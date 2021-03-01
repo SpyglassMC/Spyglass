@@ -17,8 +17,8 @@ export const parser: Parser<JsonAstNode> = (src: Source, ctx: ParserContext) => 
 	const root = transformer(jsonDocument.root)
 
 	// Temporary run checker here until checker is added to core
-	const checkerCtx = CheckerContext.create({ err: ctx.err })
-	const checker = checkerFromUri(ctx.doc.uri)
+	const checkerCtx = CheckerContext.create({ err: ctx.err, roots: ctx.roots })
+	const checker = checkerFromUri(ctx.doc.uri, ctx)
 	checker(root, checkerCtx)
 
 	return root
