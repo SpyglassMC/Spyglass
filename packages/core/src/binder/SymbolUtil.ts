@@ -11,6 +11,8 @@ export class SymbolUtil {
 	public openedStack: SymbolStack | null = null
 	public openedUri: string | null = null
 
+	private isUriBinding = false
+
 	constructor(
 		public readonly global: SymbolTable
 	) {
@@ -45,6 +47,21 @@ export class SymbolUtil {
 		this.openedUri = null
 	}
 
+	/* istanbul ignore next */
+	/**
+	 * Do not use this method. This should only be called by `Service` before executing `UriBinder`s.
+	 */
+	public startUriBinding(): void {
+		this.isUriBinding = true
+	}
+	/* istanbul ignore next */
+	/**
+	 * Do not use this method. This should only be called by `Service` after executing `UriBinder`s.
+	 */
+	public endUriBinding(): void {
+		this.isUriBinding = false
+	}
+
 	/**
 	 * Enters a `Symbol` into the `SymbolTable`.
 	 * 
@@ -59,7 +76,19 @@ export class SymbolUtil {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
 		}
 		const table = SymbolUtil.getTable(this.openedStack, this.global, symbol.visibility)
-		return SymbolUtil.enter(table, symbol, this.openedUri)
+		return SymbolUtil.enter(table, symbol, this.openedUri, this.isUriBinding)
+	}
+
+	/**
+	 * Enters a `Symbol` into the `SymbolTable` for the provided `uri`.
+	 * 
+	 * @throws If the `symbol` is not of visibility `Public` or `Restricted`.
+	 */
+	public enterFor(uri: string, symbol: SymbolAddition): void {
+		if (symbol.visibility !== SymbolVisibility.Public && symbol.visibility !== SymbolVisibility.Restricted) {
+			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' for '${uri}' because of its visibility`)
+		}
+		return SymbolUtil.enter(this.global, symbol, uri, this.isUriBinding)
 	}
 
 	/**
@@ -137,7 +166,7 @@ export class SymbolUtil {
 	/**
 	 * @returns The `SymbolTable` that should be used to insert the `Symbol` with the given `visibility`.
 	 */
-	private static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility): SymbolTable {
+	private static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable {
 		switch (visibility) {
 			case SymbolVisibility.Block:
 				return stack[stack.length - 1]
@@ -145,15 +174,16 @@ export class SymbolUtil {
 				return stack[0]
 			case SymbolVisibility.Public:
 			case SymbolVisibility.Restricted:
+			default:
 				return global
 		}
 	}
 
-	private static enter(table: SymbolTable, addition: SymbolAddition, uri: string): void {
+	private static enter(table: SymbolTable, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
 		const map: SymbolMap = table[addition.category] ??= Object.create(null)
 		const symbol: Symbol = map[addition.identifier] ??= SymbolUtil.getMetadata(addition)
 		const arr = symbol[addition.form] ??= []
-		arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange))
+		arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange, isUriBinding))
 		// TODO: Merge other SymbolMetadata as well.
 	}
 
@@ -180,12 +210,13 @@ export class SymbolUtil {
 	 */
 	private static isVisible(symbol: Symbol, _uri: string | null): boolean | null {
 		switch (symbol.visibility) {
+			case SymbolVisibility.Restricted:
+				return false // FIXME: check with workspace root URIs.
 			case SymbolVisibility.Block:
 			case SymbolVisibility.File:
 			case SymbolVisibility.Public:
+			default:
 				return true
-			case SymbolVisibility.Restricted:
-				return false // FIXME: check with workspace root URIs.
 		}
 	}
 }

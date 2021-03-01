@@ -60,10 +60,11 @@ export class Service {
 			}
 
 			const ctx = this.getUriBinderCtx()
-			ctx.symbols
+			ctx.symbols.startUriBinding()
 			for (const binder of this.meta.getUriBinders()) {
 				binder(uris, ctx)
 			}
+			ctx.symbols.endUriBinding()
 		} catch (e) {
 			this.logger.error(JSON.stringify(e))
 		}

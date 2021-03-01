@@ -83,9 +83,9 @@ export interface SymbolMetadata {
 
 	// Other information.
 	/**
-	 * The visibility of this `Symbol`.
+	 * The visibility of this `Symbol`. Defaults to `SymbolVisibility.Public`.
 	 */
-	visibility: SymbolVisibility,
+	visibility?: SymbolVisibility,
 	/**
 	 * An array of regular expressions in string form. Only exists if `visibility` is set to `Restricted`.
 	 */
@@ -144,12 +144,17 @@ export interface SymbolLocation extends Location {
 	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
 	 */
 	fullRange?: Range,
+	/**
+	 * Whether this Location is contributed by a `UriBinder`.
+	 */
+	isUriBound?: true,
 }
 export namespace SymbolLocation {
-	export function create(uri: string, range: RangeLike, fullRange?: RangeLike): SymbolLocation {
+	export function create(uri: string, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean): SymbolLocation {
 		return {
 			...Location.create(uri, range),
 			...fullRange ? { fullRange: Range.get(fullRange) } : {},
+			...isUriBound ? { isUriBound } : {},
 		}
 	}
 }
@@ -160,8 +165,4 @@ export interface SymbolMap {
 
 export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined,
-}
-
-export const enum SpecialUri {
-	UriBinder = 'spyglassmc://uri_binder',
 }
