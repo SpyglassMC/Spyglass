@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import { MetaRegistry } from '@spyglassmc/core'
+import { uriBinder } from './binder'
 import { colorizer } from './colorizer'
 import { parser } from './parser'
 
@@ -14,5 +15,6 @@ export function initializeJson() {
 			parser,
 			colorizer,
 		})
+		registry.registerUriBinder(uriBinder)
 	})
 }

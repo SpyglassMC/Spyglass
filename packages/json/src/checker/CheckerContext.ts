@@ -4,6 +4,7 @@ export interface CheckerContext {
 	meta: MetaRegistry,
 	logger: Logger,
 	err: ErrorReporter,
+	roots: string[],
 }
 
 export namespace CheckerContext {
@@ -12,6 +13,7 @@ export namespace CheckerContext {
 			meta: ctx.meta ?? MetaRegistry.getInstance(),
 			logger: ctx.logger ?? Logger.create(),
 			err: ctx.err ?? new ErrorReporter(),
+			roots: ctx.roots ?? [],
 		}
 	}
 }
