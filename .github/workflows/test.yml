@@ -35,16 +35,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Cache tsc build
-        uses: actions/cache@v2
-        with:
-          path: |
-            packages/*/lib
-            packages/*/out
-            packages/*/test-out
-          key: ${{ runner.os }}-tsc-build-${{ hashFiles('**/*.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-tsc-build-
+      # - name: Cache tsc build
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       packages/*/lib
+      #       packages/*/out
+      #       packages/*/test-out
+      #     key: ${{ runner.os }}-tsc-build-${{ hashFiles('**/*.ts') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-tsc-build-
 
       # https://github.community/t/accessing-commit-message-in-pull-request-event/17158/8
       - name: Get commit message (push)
@@ -60,8 +60,8 @@ jobs:
           echo "$(git log --format=%B -n 1 HEAD^2)" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - run: npm run clean
-        if: "contains(env.COMMIT_MESSAGE, '[ci clean]') || contains(env.GITHUB_ENV, '[clean ci]')"
+      # - run: npm run clean
+      #   if: "contains(env.COMMIT_MESSAGE, '[ci clean]') || contains(env.GITHUB_ENV, '[clean ci]')"
 
       - run: npm ci
 
