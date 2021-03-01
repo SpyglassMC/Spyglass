@@ -31,7 +31,7 @@ export class SymbolUtil {
 		}
 		this.openedStack = [Object.create(null)]
 		this.openedUri = uri
-		SymbolUtil.removeUri(this.global, uri)
+		SymbolUtil.removeLocations(this.global, l => l.uri === uri)
 	}
 
 	/**
@@ -53,6 +53,7 @@ export class SymbolUtil {
 	 */
 	public startUriBinding(): void {
 		this.isUriBinding = true
+		SymbolUtil.removeLocations(this.global, l => !!l.isUriBound)
 	}
 	/* istanbul ignore next */
 	/**
@@ -146,8 +147,10 @@ export class SymbolUtil {
 
 	/**
 	 * Remove all references to the specific `uri` from the `table`.
+	 * 
+	 * @param predicate All locations that should be removed.
 	 */
-	private static removeUri(table: SymbolTable, uri: string): void {
+	private static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => boolean): void {
 		Object.setPrototypeOf(table, null)
 		for (const category in table) {
 			const map: SymbolMap = Object.setPrototypeOf(table[category]!, null)
@@ -157,7 +160,7 @@ export class SymbolUtil {
 					if (!symbol[form]) {
 						continue
 					}
-					symbol[form] = symbol[form]!.filter(l => l.uri !== uri)
+					symbol[form] = symbol[form]!.filter(l => !predicate(l))
 				}
 			}
 		}
