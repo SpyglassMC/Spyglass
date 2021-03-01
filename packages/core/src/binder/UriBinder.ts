@@ -1,5 +1,3 @@
-import { ProcessorContext } from '../processor'
+import { UriBinderContext } from '../service'
 
 export type UriBinder = (uris: string[], ctx: UriBinderContext) => void
-
-export type UriBinderContext = Omit<ProcessorContext, 'doc'>

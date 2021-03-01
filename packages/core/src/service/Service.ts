@@ -1,9 +1,9 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { SpecialUri, SymbolUtil, UriBinderContext } from '../binder'
+import { SymbolUtil } from '../binder'
 import { AstNode, FileNode } from '../node'
-import { file, ParserContext } from '../parser'
-import { ColorToken, ProcessorContext } from '../processor'
-import { FileService, Logger, MetaRegistry, walk } from '../service'
+import { file } from '../parser'
+import { ColorToken } from '../processor'
+import { ContextBase, FileService, Logger, MetaRegistry, ParserContext, ProcessorContext, UriBinderContext, walk } from '../service'
 import { Source } from '../source'
 import { TextDocuments } from './TextDocuments'
 
@@ -39,13 +39,7 @@ export class Service {
 	}
 
 	public parse(doc: TextDocument): FileNode<AstNode> {
-		const ctx = ParserContext.create({
-			doc,
-			fs: this.fs,
-			logger: this.logger,
-			meta: this.meta,
-			roots: this.roots,
-		})
+		const ctx = this.getParserCtx(doc)
 		const src = new Source(doc.getText())
 		const result = file()(src, ctx)
 		this.textDocuments.cacheNode(doc.uri, result)
@@ -60,17 +54,16 @@ export class Service {
 	public async bindUris(): Promise<void> {
 		try {
 			const uris: string[] = []
+
 			for (const root of this.roots) {
 				await walk(this.fs, root, u => uris.push(u))
 			}
 
-			const ctx: UriBinderContext = this.getProcessorCtx(undefined as any)
-			this.symbols.open(SpecialUri.UriBinder)
-
+			const ctx = this.getUriBinderCtx()
+			ctx.symbols
 			for (const binder of this.meta.getUriBinders()) {
 				binder(uris, ctx)
 			}
-			this.symbols.close()
 		} catch (e) {
 			this.logger.error(JSON.stringify(e))
 		}
@@ -81,14 +74,30 @@ export class Service {
 		this.roots.splice(0, this.roots.length, ...roots)
 	}
 
-	private getProcessorCtx(doc: TextDocument): ProcessorContext {
-		return ProcessorContext.create({
-			doc,
+	private getCtxBase(): ContextBase {
+		return ContextBase.create({
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
 			roots: this.roots,
-			service: this,
+		})
+	}
+	private getParserCtx(doc: TextDocument): ParserContext {
+		return ParserContext.create({
+			...this.getCtxBase(),
+			doc,
+		})
+	}
+	private getProcessorCtx(doc: TextDocument): ProcessorContext {
+		return ProcessorContext.create({
+			...this.getCtxBase(),
+			doc,
+			symbols: this.symbols,
+		})
+	}
+	private getUriBinderCtx(): UriBinderContext {
+		return UriBinderContext.create({
+			...this.getCtxBase(),
 			symbols: this.symbols,
 		})
 	}

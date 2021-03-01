@@ -1,3 +1,4 @@
+export * from './Context'
 export * from './ErrorReporter'
 export { FileService, FileStats, Uri } from './FileService'
 export * from './fileUtil'

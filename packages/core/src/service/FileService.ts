@@ -29,7 +29,7 @@ export interface FileService {
 
 	stat(uri: string): Promise<FileStats>
 
-	resolve(fromUri: string, toUri: string): string
+	join(fromUri: string, toUri: string): string
 
 	/**
 	 * @param fileUri A file URI.
@@ -77,7 +77,7 @@ export class FileServiceImpl implements FileService {
 		return fsp.stat(new Uri(uri))
 	}
 
-	public resolve(fromUri: string, toUri: string): string {
+	public join(fromUri: string, toUri: string): string {
 		return (fromUri.endsWith('/') ? fromUri : `${fromUri}/`) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
 	}
 

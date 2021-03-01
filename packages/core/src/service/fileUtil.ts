@@ -6,10 +6,10 @@ import { FileService, FileStats } from './FileService'
  * @returns The relative path from one of the `roots` to the `uri`, or `null` if the `uri` is not under any roots.
  * The separation used in the relative path is always slash (`/`).
  */
-export function getRel(roots: string[], uri: string): string | null {
-	for (const root of roots) {
-		if (uri.startsWith(root)) {
-			return decodeURI(uri.slice(root.length))
+export function getRel(rootUris: string[], uri: string): string | null {
+	for (const rootUri of rootUris) {
+		if (uri.startsWith(rootUri)) {
+			return decodeURI(uri.slice(rootUri.length))
 		}
 	}
 	return null
@@ -29,7 +29,7 @@ export async function walk(fs: FileService, uri: string, callbackFn: (this: void
 			if (name === '.git') {
 				continue
 			}
-			await walk(fs, fs.resolve(uri, name), callbackFn)
+			await walk(fs, fs.join(uri, name), callbackFn)
 		}
 	} else if (stat.isFile()) {
 		callbackFn(uri, stat)
