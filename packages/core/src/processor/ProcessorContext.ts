@@ -1,18 +1,18 @@
 /* istanbul ignore file */
 
-import { SymbolTableUtil } from '../binder/SymbolUtil'
+import { SymbolUtil } from '../binder/SymbolUtil'
 import { ParserContext } from '../parser'
 import type { ParserContextLike } from '../parser/ParserContext'
 import type { Service } from '../service'
 
 export interface ProcessorContext extends ParserContext {
 	service: Service,
-	symbols: SymbolTableUtil,
+	symbols: SymbolUtil,
 }
 
 interface ProcessorContextLike extends ParserContextLike {
 	service: Service,
-	symbols?: SymbolTableUtil,
+	symbols?: SymbolUtil,
 }
 
 export namespace ProcessorContext {
@@ -20,7 +20,7 @@ export namespace ProcessorContext {
 		return {
 			...ParserContext.create(ctx),
 			service: ctx.service,
-			symbols: ctx.symbols ?? new SymbolTableUtil({}),
+			symbols: ctx.symbols ?? new SymbolUtil({}),
 		}
 	}
 }

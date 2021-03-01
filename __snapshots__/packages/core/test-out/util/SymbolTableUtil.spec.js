@@ -1,4 +1,4 @@
-exports['SymbolTableUtil enter() Should enter multiple symbols 1'] = [
+exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
   {
     "nbtdoc": {
       "test": {
@@ -38,7 +38,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 1'] = [
   }
 ]
 
-exports['SymbolTableUtil enter() Should enter multiple symbols 2'] = {
+exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
   "nbtdoc": {
     "test": {
       "category": "nbtdoc",
@@ -94,7 +94,7 @@ exports['SymbolTableUtil enter() Should enter multiple symbols 2'] = {
   }
 }
 
-exports['SymbolTableUtil open() Should remove all URIs of the file before opening 1'] = {
+exports['SymbolUtil open() Should remove all URIs of the file before opening 1'] = {
   "nbtdoc": {
     "test": {
       "category": "nbtdoc",

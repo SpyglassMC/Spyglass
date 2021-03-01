@@ -1,9 +1,9 @@
 import assert, { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { SymbolAddition, SymbolTableUtil, SymbolVisibility } from '../../lib'
+import { SymbolAddition, SymbolUtil, SymbolVisibility } from '../../lib'
 
-describe('SymbolTableUtil', () => {
+describe('SymbolUtil', () => {
 	const fileUri = 'file:///test.nbtdoc'
 	const anotherFileUri = 'file:///another_test.nbtdoc'
 	const symbol: SymbolAddition = {
@@ -15,14 +15,14 @@ describe('SymbolTableUtil', () => {
 	}
 	describe('open()', () => {
 		it('Should open correctly', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			assert.strictEqual(symbols.openedUri, fileUri)
 			assert.deepStrictEqual(symbols.openedStack, [Object.create(null)])
 			assert.deepStrictEqual(symbols.global, Object.create(null))
 		})
 		it('Should remove all URIs of the file before opening', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 
 			symbols.open(fileUri)
 			symbols.enter(symbol)
@@ -39,7 +39,7 @@ describe('SymbolTableUtil', () => {
 			snapshot(symbols.global)
 		})
 		it('Should throw error when a file is already opened', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			try {
 				symbols.open(anotherFileUri)
@@ -52,7 +52,7 @@ describe('SymbolTableUtil', () => {
 	})
 	describe('close()', () => {
 		it('Should close correctly', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			symbols.close()
 			assert.strictEqual(symbols.openedUri, null)
@@ -60,7 +60,7 @@ describe('SymbolTableUtil', () => {
 			assert.deepStrictEqual(symbols.global, Object.create(null))
 		})
 		it('Should throw error when no file has been opened', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			try {
 				symbols.close()
 			} catch (e) {
@@ -72,7 +72,7 @@ describe('SymbolTableUtil', () => {
 	})
 	describe('enter()', () => {
 		it('Should throw error when no file has been opened', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			try {
 				symbols.enter(symbol)
 			} catch (e) {
@@ -82,7 +82,7 @@ describe('SymbolTableUtil', () => {
 			fail()
 		})
 		it('Should enter multiple symbols', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			symbols.pushBlock()
 			symbols.pushBlock()
@@ -100,7 +100,7 @@ describe('SymbolTableUtil', () => {
 	})
 	describe('pushBlock()', () => {
 		it('Should throw error when there is no file being opened', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			try {
 				symbols.pushBlock()
 			} catch (e) {
@@ -110,7 +110,7 @@ describe('SymbolTableUtil', () => {
 			fail()
 		})
 		it('Should push a new object with null prototype', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			symbols.pushBlock()
 			assert.deepStrictEqual(symbols.openedStack, [Object.create(null), Object.create(null)])
@@ -118,7 +118,7 @@ describe('SymbolTableUtil', () => {
 	})
 	describe('popBlock()', () => {
 		it('Should throw error when there is no file being opened', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			try {
 				symbols.popBlock()
 			} catch (e) {
@@ -128,7 +128,7 @@ describe('SymbolTableUtil', () => {
 			fail()
 		})
 		it('Should throw error when it is the last element in the stack', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			try {
 				symbols.popBlock()
@@ -139,7 +139,7 @@ describe('SymbolTableUtil', () => {
 			fail()
 		})
 		it('Should pop out correctly', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			symbols.pushBlock()
 			symbols.popBlock()
@@ -164,22 +164,22 @@ describe('SymbolTableUtil', () => {
 			},
 		} as const
 		it('Should return null when there is no such category', () => {
-			const symbols = new SymbolTableUtil({})
+			const symbols = new SymbolUtil({})
 			const actual = symbols.lookup({ category: 'nbtdoc', path: ['Foo'] })
 			assert.strictEqual(actual, null)
 		})
 		it('Should return null when there is no such symbol', () => {
-			const symbols = new SymbolTableUtil(global)
+			const symbols = new SymbolUtil(global)
 			const actual = symbols.lookup({ category: 'nbtdoc', path: ['NonExistent'] })
 			assert.strictEqual(actual, null)
 		})
 		it('Should return null when there is no such member of a symbol', () => {
-			const symbols = new SymbolTableUtil(global)
+			const symbols = new SymbolUtil(global)
 			const actual = symbols.lookup({ category: 'nbtdoc', path: ['Foo', 'NonExistent'] })
 			assert.strictEqual(actual, null)
 		})
 		it('Should return the selected symbol', () => {
-			const symbols = new SymbolTableUtil(global)
+			const symbols = new SymbolUtil(global)
 			const actual = symbols.lookup({ category: 'nbtdoc', path: ['Foo'] })
 			assert.deepStrictEqual(actual, {
 				symbol: global.nbtdoc.Foo,
@@ -187,7 +187,7 @@ describe('SymbolTableUtil', () => {
 			})
 		})
 		it('Should return the selected member of a symbol', () => {
-			const symbols = new SymbolTableUtil(global)
+			const symbols = new SymbolUtil(global)
 			const actual = symbols.lookup({ category: 'nbtdoc', path: ['Foo', 'Bar'] })
 			assert.deepStrictEqual(actual,{
 				symbol: global.nbtdoc.Foo.members.Bar,

@@ -7,7 +7,7 @@ import { Symbol, SymbolForm, SymbolForms, SymbolLocation, SymbolMap, SymbolMetad
 //
 // -- SPGoding 02/27/2021
 
-export class SymbolTableUtil {
+export class SymbolUtil {
 	public openedStack: SymbolStack | null = null
 	public openedUri: string | null = null
 
@@ -29,7 +29,7 @@ export class SymbolTableUtil {
 		}
 		this.openedStack = [Object.create(null)]
 		this.openedUri = uri
-		SymbolTableUtil.removeUri(this.global, uri)
+		SymbolUtil.removeUri(this.global, uri)
 	}
 
 	/**
@@ -58,8 +58,8 @@ export class SymbolTableUtil {
 		if (!this.openedStack || !this.openedUri) {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
 		}
-		const table = SymbolTableUtil.getTable(this.openedStack, this.global, symbol.visibility)
-		return SymbolTableUtil.enter(table, symbol, this.openedUri)
+		const table = SymbolUtil.getTable(this.openedStack, this.global, symbol.visibility)
+		return SymbolUtil.enter(table, symbol, this.openedUri)
 	}
 
 	/**
@@ -79,7 +79,7 @@ export class SymbolTableUtil {
 				i++
 			}
 			if (symbol) {
-				return { symbol, visible: SymbolTableUtil.isVisible(symbol, this.openedUri) }
+				return { symbol, visible: SymbolUtil.isVisible(symbol, this.openedUri) }
 			}
 		}
 		return null
@@ -151,7 +151,7 @@ export class SymbolTableUtil {
 
 	private static enter(table: SymbolTable, addition: SymbolAddition, uri: string): void {
 		const map: SymbolMap = table[addition.category] ??= Object.create(null)
-		const symbol: Symbol = map[addition.identifier] ??= SymbolTableUtil.getMetadata(addition)
+		const symbol: Symbol = map[addition.identifier] ??= SymbolUtil.getMetadata(addition)
 		const arr = symbol[addition.form] ??= []
 		arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange))
 		// TODO: Merge other SymbolMetadata as well.

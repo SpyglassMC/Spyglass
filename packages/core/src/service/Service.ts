@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { SpecialUri, SymbolTableUtil, UriBinderContext } from '../binder'
+import { SpecialUri, SymbolUtil, UriBinderContext } from '../binder'
 import { AstNode, FileNode } from '../node'
 import { file, ParserContext } from '../parser'
 import { ColorToken, ProcessorContext } from '../processor'
@@ -11,7 +11,7 @@ interface Options {
 	fs?: FileService,
 	logger?: Logger,
 	roots?: string[],
-	symbols?: SymbolTableUtil,
+	symbols?: SymbolUtil,
 }
 
 export class Service {
@@ -22,14 +22,14 @@ export class Service {
 	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 */
 	public readonly roots: string[]
-	public readonly symbols: SymbolTableUtil
+	public readonly symbols: SymbolUtil
 	public readonly textDocuments: TextDocuments
 
 	constructor({
 		fs = FileService.create(),
 		logger = Logger.create(),
 		roots = [],
-		symbols = new SymbolTableUtil({}),
+		symbols = new SymbolUtil({}),
 	}: Options = {}) {
 		this.fs = fs
 		this.logger = logger
