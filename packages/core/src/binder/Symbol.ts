@@ -158,6 +158,7 @@ export interface SymbolLocation extends Location {
 	isUriBound?: true,
 }
 export namespace SymbolLocation {
+	/* istanbul ignore next */
 	export function create(uri: string, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean): SymbolLocation {
 		return {
 			...Location.create(uri, range),

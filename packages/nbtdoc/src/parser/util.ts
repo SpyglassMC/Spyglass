@@ -7,7 +7,10 @@ import { SyntaxUtil } from '..'
 /**
  * @returns A parser that parses the gap between **SYNTAX** rules, which may contains whitespace and regular comments.
  */
-export function syntaxGap(forbidsDocCommentsInGap = false): InfallibleParser<CommentNode[]> {
+export function syntaxGap(
+	/* istanbul ignore next */
+	forbidsDocCommentsInGap = false
+): InfallibleParser<CommentNode[]> {
 	return (src: Source, ctx: ParserContext): CommentNode[] => {
 		const ans: CommentNode[] = []
 

@@ -24,3 +24,20 @@ describe('integer()', () => {
 		})
 	}
 })
+describe('integer(unsigned = true)', () => {
+	const suites: { content: string }[] = [
+		{ content: '' },
+		{ content: 'foo' },
+		{ content: '0' },
+		{ content: '1' },
+		{ content: '-1' },
+		{ content: '01' },
+		{ content: '-01' },
+	]
+	for (const { content } of suites) {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			const parser = integer(true)
+			snapshot(testParser(parser, content))
+		})
+	}
+})

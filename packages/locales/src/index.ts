@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import Fallback from './en.json'
 
 type Locale = Record<string, string>

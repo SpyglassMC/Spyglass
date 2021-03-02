@@ -14,12 +14,13 @@ export interface ColorToken {
 	modifiers?: ColorTokenModifier[]
 }
 export namespace ColorToken {
+	/* istanbul ignore next */
 	export function create(range: RangeLike, type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken {
-		const ans: ColorToken = {
+		return {
 			range: Range.get(range),
-			type, modifiers,
+			type,
+			modifiers,
 		}
-		return ans
 	}
 }
 

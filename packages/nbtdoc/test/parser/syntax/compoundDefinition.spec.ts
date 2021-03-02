@@ -11,11 +11,18 @@ describe('compoundDefinition()', () => {
 		{ content: 'compound Foo { Bar: minecraft:block[name.second] }' },
 		{ content: 'compound Foo { Bar: id(minecraft:entity) }' },
 		{ content: 'compound Foo { Bar: boolean }' },
+		{ content: 'compound Foo { Bar: byte }' },
+		{ content: 'compound Foo { Bar: int @ 1 }' },
+		{ content: 'compound Foo { Bar: long @ 2.. }' },
+		{ content: 'compound Foo { Bar: short @ ..3 }' },
+		{ content: 'compound Foo { Bar: float }' },
+		{ content: 'compound Foo { Bar: float @ 1.2..3.4 }' },
+		{ content: 'compound Foo { Bar: double @ 5.6e3 }' },
 		{ content: 'compound Foo { Bar: byte[] }' },
 		{ content: 'compound Foo { Bar: int @ 0..1 [] }' },
 		{ content: 'compound Foo { Bar: long[] @ 4 }' },
 		{ content: 'compound Foo { Bar: [string] @ ..1 }' },
-		{ content: 'compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] @ ..1 }' },
+		{ content: 'compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] }' },
 		{
 			content: `/// Doc comment for the compound.
 compound Jigsaw extends super::BlockEntity {

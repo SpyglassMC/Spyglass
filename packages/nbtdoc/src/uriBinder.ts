@@ -6,15 +6,15 @@ const NbtdocRootPrefix = 'nbtdoc/'
 
 export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
 	let urisAndRels: [string, string][] = []
-	for (let uri of uris) {
+	for (const uri of uris) {
 		if (!uri.endsWith(Extension)) {
 			continue
 		}
-		uri = uri.slice(0, -Extension.length)
 		let rel = getRel(ctx.roots, uri)
 		if (!rel) {
 			continue
 		}
+		rel = rel.slice(0, -Extension.length)
 		if (rel.endsWith(ModuleFileSuffix)) {
 			rel = rel.slice(0, -ModuleFileSuffix.length)
 		}

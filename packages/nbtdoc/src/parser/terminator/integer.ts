@@ -4,6 +4,9 @@ import { IntegerToken } from '../../node'
 
 const Regex = /^-?(0|[1-9][0-9]*)$/
 
+/**
+ * @param isUnsigned Defaults to `false`.
+ */
 export function integer(isUnsigned = false): InfallibleParser<IntegerToken> {
 	return (src: Source, ctx: ParserContext): IntegerToken => {
 		const ans: IntegerToken = {
@@ -29,10 +32,13 @@ export function integer(isUnsigned = false): InfallibleParser<IntegerToken> {
 
 		if (!raw) {
 			ctx.err.report(localize('expected', [localize('integer')]), ans)
-		} else if (!Regex.test(raw)) {
-			ctx.err.report(localize('nbtdoc.error.integer.illegal'), ans)
-		} else if (isUnsigned && ans.value < 0){
-			ctx.err.report(localize('expected', [localize('nbtdoc.error.integer.unsigned')]), ans)
+		} else {
+			if (!Regex.test(raw)) {
+				ctx.err.report(localize('nbtdoc.error.integer.illegal'), ans)
+			}
+			if (isUnsigned && ans.value < 0) {
+				ctx.err.report(localize('expected', [localize('nbtdoc.error.integer.unsigned')]), ans)
+			}
 		}
 
 		return ans

@@ -574,12 +574,12 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
   "errors": []
 }
 
-exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] @ ..1 }" 1'] = {
+exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] }" 1'] = {
   "node": {
     "type": "nbtdoc:compound_definition",
     "range": {
       "start": 0,
-      "end": 64
+      "end": 58
     },
     "children": [
       {
@@ -619,7 +619,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
         "type": "nbtdoc:compound_definition/field",
         "range": {
           "start": 15,
-          "end": 62
+          "end": 57
         },
         "children": [
           {
@@ -651,46 +651,10 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
               "start": 22,
-              "end": 62
+              "end": 57
             },
             "typeType": "list",
-            "lengthRange": {
-              "type": "nbtdoc:unsigned_range",
-              "range": {
-                "start": 57,
-                "end": 62
-              },
-              "children": [
-                {
-                  "type": "nbtdoc:literal",
-                  "range": {
-                    "start": 57,
-                    "end": 58
-                  },
-                  "value": "@"
-                },
-                {
-                  "type": "nbtdoc:literal",
-                  "range": {
-                    "start": 59,
-                    "end": 61
-                  },
-                  "value": ".."
-                },
-                {
-                  "type": "nbtdoc:integer",
-                  "range": {
-                    "start": 61,
-                    "end": 62
-                  },
-                  "value": "1"
-                }
-              ],
-              "value": [
-                null,
-                "1"
-              ]
-            },
+            "lengthRange": null,
             "item": {
               "type": "nbtdoc:compound_definition/field/type",
               "range": {
@@ -840,46 +804,10 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "type": "nbtdoc:compound_definition/field/type",
           "range": {
             "start": 22,
-            "end": 62
+            "end": 57
           },
           "typeType": "list",
-          "lengthRange": {
-            "type": "nbtdoc:unsigned_range",
-            "range": {
-              "start": 57,
-              "end": 62
-            },
-            "children": [
-              {
-                "type": "nbtdoc:literal",
-                "range": {
-                  "start": 57,
-                  "end": 58
-                },
-                "value": "@"
-              },
-              {
-                "type": "nbtdoc:literal",
-                "range": {
-                  "start": 59,
-                  "end": 61
-                },
-                "value": ".."
-              },
-              {
-                "type": "nbtdoc:integer",
-                "range": {
-                  "start": 61,
-                  "end": 62
-                },
-                "value": "1"
-              }
-            ],
-            "value": [
-              null,
-              "1"
-            ]
-          },
+          "lengthRange": null,
           "item": {
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
@@ -1011,8 +939,8 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
       {
         "type": "nbtdoc:literal",
         "range": {
-          "start": 63,
-          "end": 64
+          "start": 57,
+          "end": 58
         },
         "value": "}"
       }
@@ -1040,7 +968,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
         "type": "nbtdoc:compound_definition/field",
         "range": {
           "start": 15,
-          "end": 62
+          "end": 57
         },
         "children": [
           {
@@ -1072,46 +1000,10 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
               "start": 22,
-              "end": 62
+              "end": 57
             },
             "typeType": "list",
-            "lengthRange": {
-              "type": "nbtdoc:unsigned_range",
-              "range": {
-                "start": 57,
-                "end": 62
-              },
-              "children": [
-                {
-                  "type": "nbtdoc:literal",
-                  "range": {
-                    "start": 57,
-                    "end": 58
-                  },
-                  "value": "@"
-                },
-                {
-                  "type": "nbtdoc:literal",
-                  "range": {
-                    "start": 59,
-                    "end": 61
-                  },
-                  "value": ".."
-                },
-                {
-                  "type": "nbtdoc:integer",
-                  "range": {
-                    "start": 61,
-                    "end": 62
-                  },
-                  "value": "1"
-                }
-              ],
-              "value": [
-                null,
-                "1"
-              ]
-            },
+            "lengthRange": null,
             "item": {
               "type": "nbtdoc:compound_definition/field/type",
               "range": {
@@ -1261,46 +1153,10 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "type": "nbtdoc:compound_definition/field/type",
           "range": {
             "start": 22,
-            "end": 62
+            "end": 57
           },
           "typeType": "list",
-          "lengthRange": {
-            "type": "nbtdoc:unsigned_range",
-            "range": {
-              "start": 57,
-              "end": 62
-            },
-            "children": [
-              {
-                "type": "nbtdoc:literal",
-                "range": {
-                  "start": 57,
-                  "end": 58
-                },
-                "value": "@"
-              },
-              {
-                "type": "nbtdoc:literal",
-                "range": {
-                  "start": 59,
-                  "end": 61
-                },
-                "value": ".."
-              },
-              {
-                "type": "nbtdoc:integer",
-                "range": {
-                  "start": 61,
-                  "end": 62
-                },
-                "value": "1"
-              }
-            ],
-            "value": [
-              null,
-              "1"
-            ]
-          },
+          "lengthRange": null,
           "item": {
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
@@ -2242,6 +2098,218 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
   "errors": []
 }
 
+exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 26
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 25
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 25
+            },
+            "typeType": "byte",
+            "valueRange": null
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 25
+          },
+          "typeType": "byte",
+          "valueRange": null
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 25,
+          "end": 26
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 25
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 25
+            },
+            "typeType": "byte",
+            "valueRange": null
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 25
+          },
+          "typeType": "byte",
+          "valueRange": null
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
   "node": {
     "type": "nbtdoc:compound_definition",
@@ -2451,6 +2519,930 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
           "typeType": "byte_array",
           "valueRange": null,
           "lengthRange": null
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 36
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 34
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 34
+            },
+            "typeType": "double",
+            "valueRange": {
+              "type": "nbtdoc:float_range",
+              "range": {
+                "start": 27,
+                "end": 34
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 27,
+                    "end": 28
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 29,
+                    "end": 34
+                  },
+                  "value": 5600
+                }
+              ],
+              "value": [
+                5600,
+                5600
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 34
+          },
+          "typeType": "double",
+          "valueRange": {
+            "type": "nbtdoc:float_range",
+            "range": {
+              "start": 27,
+              "end": 34
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 27,
+                  "end": 28
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 29,
+                  "end": 34
+                },
+                "value": 5600
+              }
+            ],
+            "value": [
+              5600,
+              5600
+            ]
+          }
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 35,
+          "end": 36
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 34
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 34
+            },
+            "typeType": "double",
+            "valueRange": {
+              "type": "nbtdoc:float_range",
+              "range": {
+                "start": 27,
+                "end": 34
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 27,
+                    "end": 28
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 29,
+                    "end": 34
+                  },
+                  "value": 5600
+                }
+              ],
+              "value": [
+                5600,
+                5600
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 34
+          },
+          "typeType": "double",
+          "valueRange": {
+            "type": "nbtdoc:float_range",
+            "range": {
+              "start": 27,
+              "end": 34
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 27,
+                  "end": 28
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 29,
+                  "end": 34
+                },
+                "value": 5600
+              }
+            ],
+            "value": [
+              5600,
+              5600
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 38
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 36
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 36
+            },
+            "typeType": "float",
+            "valueRange": {
+              "type": "nbtdoc:float_range",
+              "range": {
+                "start": 26,
+                "end": 36
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 28,
+                    "end": 31
+                  },
+                  "value": 1.2
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 31,
+                    "end": 33
+                  },
+                  "value": ".."
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 33,
+                    "end": 36
+                  },
+                  "value": 3.4
+                }
+              ],
+              "value": [
+                1.2,
+                3.4
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 36
+          },
+          "typeType": "float",
+          "valueRange": {
+            "type": "nbtdoc:float_range",
+            "range": {
+              "start": 26,
+              "end": 36
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 28,
+                  "end": 31
+                },
+                "value": 1.2
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 31,
+                  "end": 33
+                },
+                "value": ".."
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 33,
+                  "end": 36
+                },
+                "value": 3.4
+              }
+            ],
+            "value": [
+              1.2,
+              3.4
+            ]
+          }
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 37,
+          "end": 38
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 36
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 36
+            },
+            "typeType": "float",
+            "valueRange": {
+              "type": "nbtdoc:float_range",
+              "range": {
+                "start": 26,
+                "end": 36
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 28,
+                    "end": 31
+                  },
+                  "value": 1.2
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 31,
+                    "end": 33
+                  },
+                  "value": ".."
+                },
+                {
+                  "type": "nbtdoc:float",
+                  "range": {
+                    "start": 33,
+                    "end": 36
+                  },
+                  "value": 3.4
+                }
+              ],
+              "value": [
+                1.2,
+                3.4
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 36
+          },
+          "typeType": "float",
+          "valueRange": {
+            "type": "nbtdoc:float_range",
+            "range": {
+              "start": 26,
+              "end": 36
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 28,
+                  "end": 31
+                },
+                "value": 1.2
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 31,
+                  "end": 33
+                },
+                "value": ".."
+              },
+              {
+                "type": "nbtdoc:float",
+                "range": {
+                  "start": 33,
+                  "end": 36
+                },
+                "value": 3.4
+              }
+            ],
+            "value": [
+              1.2,
+              3.4
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 27
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 26
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 26
+            },
+            "typeType": "float",
+            "valueRange": null
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 26
+          },
+          "typeType": "float",
+          "valueRange": null
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 26,
+          "end": 27
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 26
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 26
+            },
+            "typeType": "float",
+            "valueRange": null
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 26
+          },
+          "typeType": "float",
+          "valueRange": null
         }
       }
     ]
@@ -3095,6 +4087,686 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
             ]
           },
           "lengthRange": null
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 29
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 27
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 27
+            },
+            "typeType": "int",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 24,
+                "end": 27
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 24,
+                    "end": 25
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "1"
+                }
+              ],
+              "value": [
+                "1",
+                "1"
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 27
+          },
+          "typeType": "int",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 24,
+              "end": 27
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 24,
+                  "end": 25
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "1"
+              }
+            ],
+            "value": [
+              "1",
+              "1"
+            ]
+          }
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 28,
+          "end": 29
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 27
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 27
+            },
+            "typeType": "int",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 24,
+                "end": 27
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 24,
+                    "end": 25
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "1"
+                }
+              ],
+              "value": [
+                "1",
+                "1"
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 27
+          },
+          "typeType": "int",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 24,
+              "end": 27
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 24,
+                  "end": 25
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "1"
+              }
+            ],
+            "value": [
+              "1",
+              "1"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 32
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 30
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 30
+            },
+            "typeType": "long",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 25,
+                "end": 30
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 25,
+                    "end": 26
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 27,
+                    "end": 28
+                  },
+                  "value": "2"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 28,
+                    "end": 30
+                  },
+                  "value": ".."
+                }
+              ],
+              "value": [
+                "2",
+                null
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 30
+          },
+          "typeType": "long",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 25,
+              "end": 30
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 25,
+                  "end": 26
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 27,
+                  "end": 28
+                },
+                "value": "2"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 28,
+                  "end": 30
+                },
+                "value": ".."
+              }
+            ],
+            "value": [
+              "2",
+              null
+            ]
+          }
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 31,
+          "end": 32
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 30
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 30
+            },
+            "typeType": "long",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 25,
+                "end": 30
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 25,
+                    "end": 26
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 27,
+                    "end": 28
+                  },
+                  "value": "2"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 28,
+                    "end": 30
+                  },
+                  "value": ".."
+                }
+              ],
+              "value": [
+                "2",
+                null
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 30
+          },
+          "typeType": "long",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 25,
+              "end": 30
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 25,
+                  "end": 26
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 27,
+                  "end": 28
+                },
+                "value": "2"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 28,
+                  "end": 30
+                },
+                "value": ".."
+              }
+            ],
+            "value": [
+              "2",
+              null
+            ]
+          }
         }
       }
     ]
@@ -3985,6 +5657,362 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
                 },
                 "value": "second"
               }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 33
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "doc": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 31
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 31
+            },
+            "typeType": "short",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 26,
+                "end": 31
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 28,
+                    "end": 30
+                  },
+                  "value": ".."
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 30,
+                    "end": 31
+                  },
+                  "value": "3"
+                }
+              ],
+              "value": [
+                null,
+                "3"
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 31
+          },
+          "typeType": "short",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 26,
+              "end": 31
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 28,
+                  "end": 30
+                },
+                "value": ".."
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 30,
+                  "end": 31
+                },
+                "value": "3"
+              }
+            ],
+            "value": [
+              null,
+              "3"
+            ]
+          }
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 32,
+          "end": 33
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "doc": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "extends": null,
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 31
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "doc": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 20,
+              "end": 31
+            },
+            "typeType": "short",
+            "valueRange": {
+              "type": "nbtdoc:int_range",
+              "range": {
+                "start": 26,
+                "end": 31
+              },
+              "children": [
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 26,
+                    "end": 27
+                  },
+                  "value": "@"
+                },
+                {
+                  "type": "nbtdoc:literal",
+                  "range": {
+                    "start": 28,
+                    "end": 30
+                  },
+                  "value": ".."
+                },
+                {
+                  "type": "nbtdoc:integer",
+                  "range": {
+                    "start": 30,
+                    "end": 31
+                  },
+                  "value": "3"
+                }
+              ],
+              "value": [
+                null,
+                "3"
+              ]
+            }
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "doc": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 20,
+            "end": 31
+          },
+          "typeType": "short",
+          "valueRange": {
+            "type": "nbtdoc:int_range",
+            "range": {
+              "start": 26,
+              "end": 31
+            },
+            "children": [
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 26,
+                  "end": 27
+                },
+                "value": "@"
+              },
+              {
+                "type": "nbtdoc:literal",
+                "range": {
+                  "start": 28,
+                  "end": 30
+                },
+                "value": ".."
+              },
+              {
+                "type": "nbtdoc:integer",
+                "range": {
+                  "start": 30,
+                  "end": 31
+                },
+                "value": "3"
+              }
+            ],
+            "value": [
+              null,
+              "3"
             ]
           }
         }
