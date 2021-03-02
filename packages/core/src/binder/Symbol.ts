@@ -87,7 +87,7 @@ export interface SymbolMetadata {
 	 */
 	visibility?: SymbolVisibility,
 	/**
-	 * An array of regular expressions in string form. Only exists if `visibility` is set to `Restricted`.
+	 * An array of regular expressions in string form. Only exists if `visibility` is set to `SymbolVisibility.Restricted`.
 	 */
 	visibilityRestriction?: string[],
 	/**
@@ -102,9 +102,8 @@ export interface SymbolMetadata {
 	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
 	 */
 	fromDefaultLibrary?: true,
-	members?: SymbolMap,
 	relations?: {
-		[key: string]: SymbolPath[],
+		[relationship: string]: SymbolPath[],
 	},
 }
 
@@ -112,7 +111,7 @@ export interface SymbolMetadata {
  * @example
  * {
  * 	category: 'advancement',
- * 	path: ['spgoding', 'foo/', 'bar'],
+ * 	path: ['spgoding:foo/bar'],
  * }
  * 
  * {
@@ -125,13 +124,22 @@ export interface SymbolPath {
 	/**
 	 * Will be resolved as keys of the `members` property of the `Symbol`.
 	 */
-	path: string[],
+	path: [string, ...string[]],
+}
+export namespace SymbolPath {
+	export function create(category: AllCategory, ...path: [string, ...string[]]): SymbolPath
+	export function create(category: string, ...path: [string, ...string[]]): SymbolPath
+	export function create(category: string, ...path: [string, ...string[]]): SymbolPath {
+		return { category, path }
+	}
 }
 
 export const SymbolForms = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
 export type SymbolForm = typeof SymbolForms[number]
 
-export interface Symbol extends SymbolMetadata, Partial<Record<SymbolForm, SymbolLocation[]>> { }
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolForm, SymbolLocation[]>> {
+	members?: SymbolMap,
+}
 
 export interface SymbolLocation extends Location {
 	/**

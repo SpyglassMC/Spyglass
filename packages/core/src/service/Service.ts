@@ -52,6 +52,8 @@ export class Service {
 	}
 
 	public async bindUris(): Promise<void> {
+		const ctx = this.getUriBinderCtx()
+		ctx.symbols.startUriBinding()
 		try {
 			const uris: string[] = []
 
@@ -59,14 +61,13 @@ export class Service {
 				await walk(this.fs, root, u => uris.push(u))
 			}
 
-			const ctx = this.getUriBinderCtx()
-			ctx.symbols.startUriBinding()
 			for (const binder of this.meta.getUriBinders()) {
 				binder(uris, ctx)
 			}
-			ctx.symbols.endUriBinding()
 		} catch (e) {
-			this.logger.error(JSON.stringify(e))
+			this.logger.error(e?.toString())
+		} finally {
+			ctx.symbols.endUriBinding()
 		}
 	}
 

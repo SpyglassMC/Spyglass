@@ -15,9 +15,7 @@ export class SymbolUtil {
 
 	constructor(
 		public readonly global: SymbolTable
-	) {
-		Object.setPrototypeOf(this.global, null)
-	}
+	) { }
 
 	/**
 	 * Opens a file URI for future `enter` and `lookup` operations. This method doesn't actually do anything to the
@@ -29,7 +27,7 @@ export class SymbolUtil {
 		if (this.openedStack && this.openedUri) {
 			throw new Error(`Unable to open '${uri}' as the util is already occupied by '${this.openedUri}'`)
 		}
-		this.openedStack = [Object.create(null)]
+		this.openedStack = [{}]
 		this.openedUri = uri
 		SymbolUtil.removeLocations(this.global, l => l.uri === uri)
 	}
@@ -77,19 +75,51 @@ export class SymbolUtil {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
 		}
 		const table = SymbolUtil.getTable(this.openedStack, this.global, symbol.visibility)
-		return SymbolUtil.enter(table, symbol, this.openedUri, this.isUriBinding)
+		return SymbolUtil.enterTable(table, symbol, this.openedUri, this.isUriBinding)
 	}
 
 	/**
 	 * Enters a `Symbol` into the `SymbolTable` for the provided `uri`.
 	 * 
-	 * @throws If the `symbol` is not of visibility `Public` or `Restricted`.
+	 * @throws If the `symbol` is of visibility `Block` or `File`.
 	 */
 	public enterFor(uri: string, symbol: SymbolAddition): void {
-		if (symbol.visibility !== SymbolVisibility.Public && symbol.visibility !== SymbolVisibility.Restricted) {
+		if (symbol.visibility === SymbolVisibility.Block || symbol.visibility === SymbolVisibility.File) {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' for '${uri}' because of its visibility`)
 		}
-		return SymbolUtil.enter(this.global, symbol, uri, this.isUriBinding)
+		return SymbolUtil.enterTable(this.global, symbol, uri, this.isUriBinding)
+	}
+
+	/**
+	 * Enters a `Symbol` as a member of the `Symbol` specified by `path`.
+	 * 
+	 * @throws When no file is opened.
+	 * @throws When the `Symbol` specified by `path` doesn't exist.
+	 */
+	public enterMember(path: SymbolPath, symbol: SymbolAddition): void {
+		if (!this.openedStack || !this.openedUri) {
+			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
+		}
+		const parent = this.lookup(path)
+		if (!parent) {
+			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
+		}
+		const members: SymbolMap = parent.symbol.members ??= {}
+		SymbolUtil.enterMap(members, symbol, this.openedUri!, this.isUriBinding)
+	}
+
+	/**
+	 * Enters a `Symbol` as a member of the `Symbol` specified by `path`.
+	 * 
+	 * @throws When the `Symbol` specified by `path` doesn't exist.
+	 */
+	public enterMemberFor(uri: string, path: SymbolPath, symbol: SymbolAddition): void {
+		const parent = this.lookup(path)
+		if (!parent) {
+			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
+		}
+		const members: SymbolMap = parent.symbol.members ??= {}
+		SymbolUtil.enterMap(members, symbol, uri, this.isUriBinding)
 	}
 
 	/**
@@ -100,6 +130,7 @@ export class SymbolUtil {
 	 * Or `null` if no such symbol can be found.
 	 */
 	public lookup({ category, path }: SymbolPath): { symbol: Symbol, visible: boolean | null } | null {
+		// TODO: Lookup in local stack as well.
 		const map = this.global[category]
 		if (map) {
 			let symbol = map[path[0]]
@@ -126,7 +157,7 @@ export class SymbolUtil {
 		if (!this.openedStack || !this.openedUri) {
 			throw new Error('Unable to push a new block as no file is opened')
 		}
-		this.openedStack.push(Object.create(null))
+		this.openedStack.push({})
 	}
 
 	/**
@@ -151,10 +182,9 @@ export class SymbolUtil {
 	 * @param predicate All locations that should be removed.
 	 */
 	private static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => boolean): void {
-		Object.setPrototypeOf(table, null)
-		for (const category in table) {
-			const map: SymbolMap = Object.setPrototypeOf(table[category]!, null)
-			for (const identifier in map) {
+		for (const category of Object.keys(table)) {
+			const map = table[category]!
+			for (const identifier of Object.keys(map)) {
 				const symbol = map[identifier]!
 				for (const form of SymbolForms) {
 					if (!symbol[form]) {
@@ -182,26 +212,57 @@ export class SymbolUtil {
 		}
 	}
 
-	private static enter(table: SymbolTable, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
-		const map: SymbolMap = table[addition.category] ??= Object.create(null)
-		const symbol: Symbol = map[addition.identifier] ??= SymbolUtil.getMetadata(addition)
-		const arr = symbol[addition.form] ??= []
-		arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange, isUriBinding))
-		// TODO: Merge other SymbolMetadata as well.
+	private static enterTable(table: SymbolTable, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
+		const map: SymbolMap = table[addition.category] ??= {}
+		this.enterMap(map, addition, uri, isUriBinding)
+	}
+
+	private static enterMap(map: SymbolMap, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
+		let symbol: Symbol | undefined = map[addition.identifier]
+		if (symbol) {
+			this.mergeSymbol(symbol, addition)
+		} else {
+			symbol = map[addition.identifier] = SymbolUtil.getMetadata(addition)
+		}
+		if (addition.form && addition.range) {
+			const arr = symbol[addition.form] ??= []
+			arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange, isUriBinding))
+		}
+	}
+
+	private static mergeSymbol<T extends SymbolMetadata>(symbol: Symbol, additionalMetadata: T): void {
+		for (const key of ['doc', 'fromDefaultLibrary', 'subcategory', 'visibility'] as const) {
+			if (additionalMetadata[key] !== undefined) {
+				symbol[key] = additionalMetadata[key] as any
+			}
+		}
+		for (const key of ['relations'] as const) {
+			if (additionalMetadata[key] && Object.keys(additionalMetadata[key]!).length) {
+				symbol.relations ??= {}
+				for (const relationship of Object.keys(additionalMetadata[key]!)) {
+					symbol.relations![relationship] = additionalMetadata[key]![relationship]
+				}
+			}
+		}
+		for (const key of ['visibilityRestriction'] as const) {
+			if (additionalMetadata[key]?.length) {
+				symbol[key] = (symbol[key] ?? []).concat(additionalMetadata[key]!)
+			}
+			break
+		}
 	}
 
 	private static getMetadata<T extends SymbolMetadata>(obj: T): SymbolMetadata {
-		return {
+		const ans: SymbolMetadata = {
 			category: obj.category,
 			identifier: obj.identifier,
-			doc: obj.doc,
-			fromDefaultLibrary: obj.fromDefaultLibrary,
-			members: obj.members,
-			relations: obj.relations,
-			subcategory: obj.subcategory,
-			visibility: obj.visibility,
-			...obj.visibilityRestriction ? { visibilityRestriction: obj.visibilityRestriction } : {},
 		}
+		for (const key of ['doc', 'fromDefaultLibrary', 'relations', 'subcategory', 'visibility', 'visibilityRestriction'] as const) {
+			if (obj[key] !== undefined) {
+				ans[key] = obj[key] as any
+			}
+		}
+		return ans
 	}
 
 	/**
@@ -228,8 +289,8 @@ export interface SymbolAddition extends SymbolMetadata {
 	/**
 	 * The existing form of this `Symbol`.
 	 */
-	form: SymbolForm,
-	range: RangeLike,
+	form?: SymbolForm,
+	range?: RangeLike,
 	fullRange?: RangeLike,
 }
 

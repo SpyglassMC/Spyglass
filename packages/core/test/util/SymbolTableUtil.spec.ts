@@ -18,8 +18,8 @@ describe('SymbolUtil', () => {
 			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			assert.strictEqual(symbols.openedUri, fileUri)
-			assert.deepStrictEqual(symbols.openedStack, [Object.create(null)])
-			assert.deepStrictEqual(symbols.global, Object.create(null))
+			assert.deepStrictEqual(symbols.openedStack, [{}])
+			assert.deepStrictEqual(symbols.global, {})
 		})
 		it('Should remove all URIs of the file before opening', () => {
 			const symbols = new SymbolUtil({})
@@ -35,7 +35,7 @@ describe('SymbolUtil', () => {
 			symbols.open(fileUri)
 
 			assert.strictEqual(symbols.openedUri, fileUri)
-			assert.deepStrictEqual(symbols.openedStack, [Object.create(null)])
+			assert.deepStrictEqual(symbols.openedStack, [{}])
 			snapshot(symbols.global)
 		})
 		it('Should throw error when a file is already opened', () => {
@@ -57,7 +57,7 @@ describe('SymbolUtil', () => {
 			symbols.close()
 			assert.strictEqual(symbols.openedUri, null)
 			assert.strictEqual(symbols.openedStack, null)
-			assert.deepStrictEqual(symbols.global, Object.create(null))
+			assert.deepStrictEqual(symbols.global, {})
 		})
 		it('Should throw error when no file has been opened', () => {
 			const symbols = new SymbolUtil({})
@@ -113,7 +113,7 @@ describe('SymbolUtil', () => {
 			const symbols = new SymbolUtil({})
 			symbols.open(fileUri)
 			symbols.pushBlock()
-			assert.deepStrictEqual(symbols.openedStack, [Object.create(null), Object.create(null)])
+			assert.deepStrictEqual(symbols.openedStack, [{}, {}])
 		})
 	})
 	describe('popBlock()', () => {
@@ -143,7 +143,7 @@ describe('SymbolUtil', () => {
 			symbols.open(fileUri)
 			symbols.pushBlock()
 			symbols.popBlock()
-			assert.deepStrictEqual(symbols.openedStack, [Object.create(null)])
+			assert.deepStrictEqual(symbols.openedStack, [{}])
 		})
 	})
 	describe('lookup()', () => {
