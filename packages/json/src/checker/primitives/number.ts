@@ -21,7 +21,7 @@ export function float(node: JsonAstNode, ctx: CheckerContext): node is JsonNumbe
 const range = (checker: (node: JsonAstNode, ctx: CheckerContext) => node is JsonNumberAstNode) => (min: number | null, max: number | null) => {
 	return (node: JsonAstNode, ctx: CheckerContext) => {
 		if (checker(node, ctx)) {
-			if (min !== null && max !== null && (min < node.value || max > node.value)) {
+			if (min !== null && max !== null && (node.value < min || node.value > max)) {
 				ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)
 			} else if (min !== null && node.value < min) {
 				ctx.err.report(localize('expected', [localize('number.>=', [min])]), node)
