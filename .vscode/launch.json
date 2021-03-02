@@ -18,7 +18,7 @@
 			"name": "Attach to Server",
 			"port": 6009,
 			"restart": true,
-			"timeout": 30000,
+			"timeout": 60000,
 			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"]
 		}
 	],
