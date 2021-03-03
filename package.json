@@ -11,7 +11,8 @@
 		"con": "cd contributors && all-contributors generate && cd ..",
 		"lint": "eslint packages/*/{src,test}/**/*.ts",
 		"lint:fix": "eslint --fix packages/*/{src,test}/**/*.ts",
-		"test": "nyc mocha"
+		"test": "nyc mocha",
+		"test:local": "nyc mocha --config .mocharc.local.jsonc"
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",

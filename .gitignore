@@ -4,6 +4,7 @@
 **/*.tsbuildinfo
 
 /.vscode/settings.json
+/.mocharc.local.jsonc
 
 /packages/*/lib
 /packages/*/out
