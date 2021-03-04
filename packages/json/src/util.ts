@@ -11,7 +11,6 @@ export const Categories = new Map<string, FileCategory>([
 	['tags/blocks', 'tag/block'],
 	['tags/entity_types', 'tag/entity_type'],
 	['tags/fluid', 'tag/fluid'],
-	['tags/functions', 'tag/function'],
 	['tags/game_events', 'tag/game_event'],
 	['tags/items', 'tag/item'],
 	['worldgen/biome', 'worldgen/biome'],
@@ -25,7 +24,7 @@ export const Categories = new Map<string, FileCategory>([
 ])
 
 export function dissectUri(uri: string) {
-	const match = uri.match(/^data\/([^\/]+)\/((?:tags|worldgen)?[a-z_]+)\/(.*)\.json$/)
+	const match = uri.match(/^data\/([^\/]+)\/((?:tags\/|worldgen\/)?[a-z_]+)\/(.*)\.json$/)
 	if (!match || !Categories.has(match[2])) return null
 	return {
 		category: Categories.get(match[2])!,
