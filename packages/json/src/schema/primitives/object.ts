@@ -1,27 +1,27 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { JsonAstNode, JsonObjectAstNode } from '../../node'
-import { Checker } from '../Checker'
-import { CheckerContext } from '../CheckerContext'
+import { Schema } from '../Schema'
+import { SchemaContext } from '../SchemaContext'
 import { as } from './util'
 
-type OptChecker = {
-	opt: Checker<JsonAstNode>,
+type OptSchema = {
+	opt: Schema<JsonAstNode>,
 }
 
-type CheckerProperty = Checker<JsonAstNode> | OptChecker
+type SchemaProperty = Schema<JsonAstNode> | OptSchema
 
-type CheckerRecord = Record<string, CheckerProperty>
+type SchemaRecord = Record<string, SchemaProperty>
 
-function isOpt(checker: CheckerProperty): checker is OptChecker {
-	return (checker as OptChecker).opt !== undefined
+function isOpt(schema: SchemaProperty): schema is OptSchema {
+	return (schema as OptSchema).opt !== undefined
 }
 
-export function object(): Checker<JsonAstNode>
-export function object(keys: string[], values: (key: string) => CheckerProperty): Checker<JsonAstNode>
-export function object(keys: Checker<JsonAstNode>, values: (key: string) => CheckerProperty): Checker<JsonAstNode>
-export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: string) => CheckerProperty): Checker<JsonAstNode> {
-	return (node: JsonAstNode, ctx: CheckerContext) => {
+export function object(): Schema<JsonAstNode>
+export function object(keys: string[], values: (key: string) => SchemaProperty): Schema<JsonAstNode>
+export function object(keys: Schema<JsonAstNode>, values: (key: string) => SchemaProperty): Schema<JsonAstNode>
+export function object(keys?: string[] | Schema<JsonAstNode>, values?: (key: string) => SchemaProperty): Schema<JsonAstNode> {
+	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else if (Array.isArray(keys) && values) {
@@ -51,19 +51,19 @@ export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: st
 	}
 }
 
-export function record(properties: CheckerRecord): Checker<JsonAstNode> {
+export function record(properties: SchemaRecord): Schema<JsonAstNode> {
 	return object(
 		Object.keys(properties),
 		(key) => properties[key]
 	)
 }
 
-export function opt(checker: Checker<JsonAstNode>): OptChecker {
-	return { opt: checker }
+export function opt(schema: Schema<JsonAstNode>): OptSchema {
+	return { opt: schema }
 }
 
-export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, values: (value: string) => Checker<JsonAstNode>): Checker<JsonAstNode> {
-	return (node: JsonAstNode, ctx: CheckerContext) => {
+export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values: (value: string) => Schema<JsonAstNode>): Schema<JsonAstNode> {
+	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
@@ -72,7 +72,7 @@ export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, valu
 			if (!dispatcher) {
 				ctx.err.report(localize('missing-key', [localize('punc.quote', [keyName])]), Range.create(node.range.start, node.range.start + 1))
 			} else if (dispatcher.value) {
-				keyChecker(dispatcher.value, ctx)
+				keySchema(dispatcher.value, ctx)
 				if (dispatcher.value.type === 'json:string') {
 					node.properties.splice(dispatcherIndex, 1)
 					values(dispatcher.value.value)(node, ctx)
@@ -83,7 +83,7 @@ export function dispatch(keyName: string, keyChecker: Checker<JsonAstNode>, valu
 	}
 }
 
-export function pick(value: string, cases: Record<string, CheckerRecord>): CheckerRecord {
+export function pick(value: string, cases: Record<string, SchemaRecord>): SchemaRecord {
 	const properties = cases[value.replace(/^minecraft:/, '')]
 	if (properties === undefined) {
 		return {}

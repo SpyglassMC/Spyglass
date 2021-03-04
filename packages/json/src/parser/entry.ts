@@ -1,8 +1,8 @@
 import { Failure, Parser, ParserContext, Source } from '@spyglassmc/core'
 import { getLanguageService, TextDocument } from 'vscode-json-languageservice'
-import { CheckerContext } from '../checker/CheckerContext'
-import { checkerFromUri } from '../checker/data'
 import { JsonAstNode } from '../node'
+import { schemaFromUri } from '../schema/data'
+import { SchemaContext } from '../schema/SchemaContext'
 import { transformer } from './transformer'
 
 const jsonLanguageService = getLanguageService({})
@@ -17,9 +17,9 @@ export const parser: Parser<JsonAstNode> = (src: Source, ctx: ParserContext) => 
 	const root = transformer(jsonDocument.root)
 
 	// Temporary run checker here until checker is added to core
-	const checkerCtx = CheckerContext.create({ err: ctx.err, roots: ctx.roots })
-	const checker = checkerFromUri(ctx.doc.uri, ctx)
-	checker(root, checkerCtx)
+	const schemaCtx = SchemaContext.create({ err: ctx.err, roots: ctx.roots })
+	const schema = schemaFromUri(ctx.doc.uri, ctx)
+	schema(root, schemaCtx)
 
 	return root
 }
