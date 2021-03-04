@@ -1,8 +1,8 @@
 import { localize } from '@spyglassmc/locales'
 import { JsonAstNode, JsonNumberAstNode } from '../../node'
-import { CheckerContext } from '../CheckerContext'
+import { SchemaContext } from '../SchemaContext'
 
-export function int(node: JsonAstNode, ctx: CheckerContext): node is JsonNumberAstNode {
+export function int(node: JsonAstNode, ctx: SchemaContext): node is JsonNumberAstNode {
 	if (!JsonNumberAstNode.is(node) || !node.isInteger) {
 		ctx.err.report(localize('expected', [localize('integer')]), node)
 		return false
@@ -10,7 +10,7 @@ export function int(node: JsonAstNode, ctx: CheckerContext): node is JsonNumberA
 	return true
 }
 
-export function float(node: JsonAstNode, ctx: CheckerContext): node is JsonNumberAstNode {
+export function float(node: JsonAstNode, ctx: SchemaContext): node is JsonNumberAstNode {
 	if (!JsonNumberAstNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('float')]), node)
 		return false
@@ -18,9 +18,9 @@ export function float(node: JsonAstNode, ctx: CheckerContext): node is JsonNumbe
 	return true
 }
 
-const range = (checker: (node: JsonAstNode, ctx: CheckerContext) => node is JsonNumberAstNode) => (min: number | null, max: number | null) => {
-	return (node: JsonAstNode, ctx: CheckerContext) => {
-		if (checker(node, ctx)) {
+const range = (schema: (node: JsonAstNode, ctx: SchemaContext) => node is JsonNumberAstNode) => (min: number | null, max: number | null) => {
+	return (node: JsonAstNode, ctx: SchemaContext) => {
+		if (schema(node, ctx)) {
 			if (min !== null && max !== null && (node.value < min || node.value > max)) {
 				ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)
 			} else if (min !== null && node.value < min) {
