@@ -1,7 +1,7 @@
 import { UriBinderContext } from '@spyglassmc/core'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { uriBinder } from '../lib/uriBinder'
+import { uriBinder } from '../../lib/binder/uriBinder'
 
 describe('uriBinder()', () => {
 	const suites: { uris: string[] }[] = [

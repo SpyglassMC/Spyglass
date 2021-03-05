@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
 import { MetaRegistry } from '@spyglassmc/core'
-import { colorizer } from './colorizer'
-import { entry } from './parser'
-import { uriBinder } from './uriBinder'
+import * as binder from './binder'
+import * as colorizer from './colorizer'
+import * as parser from './parser'
 
 export * from './node'
 export * from './parser'
@@ -12,9 +12,10 @@ export function initializeNbtdoc() {
 	MetaRegistry.addInitializer((registry) => {
 		registry.registerLanguage('nbtdoc', {
 			extensions: ['.nbtdoc'],
-			parser: entry,
+			parser: parser.entry,
+			binder: binder.entry,
 			colorizer: colorizer.entry,
 		})
-		registry.registerUriBinder(uriBinder)
+		registry.registerUriBinder(binder.uriBinder)
 	})
 }
