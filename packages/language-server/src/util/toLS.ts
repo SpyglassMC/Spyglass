@@ -34,7 +34,7 @@ export namespace toLS {
 	}
 
 	export function documentSelector(): ls.DocumentSelector {
-		const ans: ls.DocumentSelector = core.MetaRegistry.getInstance().getLanguages().map(id => ({ language: id }))
+		const ans: ls.DocumentSelector = core.MetaRegistry.instance.languages.map(id => ({ language: id }))
 		return ans
 	}
 

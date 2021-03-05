@@ -43,7 +43,7 @@ export class TextDocuments implements TextDocuments {
 	public static getLanguageID(uri: string): string {
 		let ext = uri
 		ext = ext.slice(ext.lastIndexOf('.'))
-		return MetaRegistry.getInstance().getLanguageID(ext) ?? ext.slice(1)
+		return MetaRegistry.instance.getLanguageID(ext) ?? ext.slice(1)
 	}
 
 	/**

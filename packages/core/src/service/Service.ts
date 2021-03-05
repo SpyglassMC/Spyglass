@@ -19,7 +19,7 @@ interface Options {
 }
 
 export class Service {
-	public readonly meta = MetaRegistry.getInstance()
+	public readonly meta = MetaRegistry.instance
 	public readonly fs: FileService
 	public readonly logger: Logger
 	/**
@@ -48,6 +48,11 @@ export class Service {
 		const result = file()(src, ctx)
 		this.textDocuments.cacheNode(doc.uri, result)
 		return result
+	}
+
+	public bind(node: FileNode<AstNode>, doc: TextDocument): void {
+		const binder = this.meta.getBinder(doc.languageId)
+		return binder(node, this.getProcessorCtx(doc))
 	}
 
 	public colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {

@@ -22,7 +22,7 @@ export namespace ContextBase {
 			err: ctx.err ?? new ErrorReporter(),
 			fs: ctx.fs ?? FileService.create(),
 			logger: ctx.logger ?? Logger.create(),
-			meta: ctx.meta ?? MetaRegistry.getInstance(),
+			meta: ctx.meta ?? MetaRegistry.instance,
 			roots: ctx.roots ?? [],
 		}
 	}
