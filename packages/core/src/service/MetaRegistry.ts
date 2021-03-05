@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
-import { Binder, FallbackBinder, UriBinder } from '../binder'
 import { AstNode } from '../node'
 import { EntryNode, EntryParser } from '../parser'
 import { Colorizer, FallbackColorizer } from '../processor'
+import { Binder, FallbackBinder, UriBinder } from '../symbol'
 
 export interface LanguageOptions {
 	/**

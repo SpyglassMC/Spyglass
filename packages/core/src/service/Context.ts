@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { SymbolUtil } from '../binder'
 import { Range } from '../source'
+import { SymbolUtil } from '../symbol'
 import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
