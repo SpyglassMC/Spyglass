@@ -9,7 +9,6 @@ import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 
 export interface ContextBase {
-	err: ErrorReporter,
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
@@ -19,7 +18,6 @@ interface ContextBaseLike extends Partial<ContextBase> { }
 export namespace ContextBase {
 	export function create(ctx: ContextBaseLike): ContextBase {
 		return {
-			err: ctx.err ?? new ErrorReporter(),
 			fs: ctx.fs ?? FileService.create(),
 			logger: ctx.logger ?? Logger.create(),
 			meta: ctx.meta ?? MetaRegistry.instance,
@@ -30,15 +28,18 @@ export namespace ContextBase {
 
 export interface ParserContext extends ContextBase {
 	doc: TextDocument,
+	err: ErrorReporter,
 }
 interface ParserContextLike extends ContextBaseLike {
 	doc: TextDocument,
+	err?: ErrorReporter,
 }
 export namespace ParserContext {
 	export function create(ctx: ParserContextLike): ParserContext {
 		return {
 			...ContextBase.create(ctx),
 			doc: ctx.doc,
+			err: ctx.err ?? new ErrorReporter(),
 		}
 	}
 }
@@ -61,19 +62,37 @@ export namespace ProcessorContext {
 	}
 }
 
+export interface BinderContext extends ProcessorContext {
+	err: ErrorReporter,
+}
+interface BinderContextLike extends ProcessorContextLike {
+	err?: ErrorReporter,
+}
+export namespace BinderContext {
+	export function create(ctx: BinderContextLike): BinderContext {
+		return {
+			...ProcessorContext.create(ctx),
+			err: ctx.err ?? new ErrorReporter(),
+		}
+	}
+}
+
 export interface ColorizerOptions {
 	range?: Range,
 }
 export interface ColorizerContext extends ProcessorContext {
+	err: ErrorReporter,
 	options: ColorizerOptions,
 }
 interface ColorizerContextLike extends ProcessorContextLike {
+	err?: ErrorReporter,
 	options: ColorizerOptions,
 }
 export namespace ColorizerContext {
 	export function create(ctx: ColorizerContextLike): ColorizerContext {
 		return {
 			...ProcessorContext.create(ctx),
+			err: ctx.err ?? new ErrorReporter(),
 			options: ctx.options,
 		}
 	}

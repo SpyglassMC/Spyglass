@@ -4,7 +4,7 @@ import { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import { ColorToken } from '../processor'
 import { Source } from '../source'
-import { ColorizerOptions, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { BinderContext, ColorizerContext, ColorizerOptions, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import { FileService } from './FileService'
 import { walk } from './fileUtil'
 import { Logger } from './Logger'
@@ -45,22 +45,22 @@ export class Service {
 	public parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = this.getParserCtx(doc)
 		const src = new Source(doc.getText())
-		const result = file()(src, ctx)
-		this.textDocuments.cacheNode(doc.uri, result)
-		return result
+		const ans = file()(src, ctx)
+		this.textDocuments.cacheNode(doc.uri, ans)
+		return ans
 	}
 
 	public bind(node: FileNode<AstNode>, doc: TextDocument): void {
 		const binder = this.meta.getBinder(doc.languageId)
-		return binder(node, this.getProcessorCtx(doc))
+		const ctx = this.getBinderCtx(doc)
+		const ans = binder(node, ctx)
+		node.binderErrors = ctx.err.dump()
+		return ans
 	}
 
 	public colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
 		const colorizer = this.meta.getColorizer(doc.languageId)
-		return colorizer(node, {
-			...this.getProcessorCtx(doc),
-			options,
-		})
+		return colorizer(node, this.getColorizerCtx(doc, options))
 	}
 
 	public async bindUris(): Promise<void> {
@@ -107,6 +107,15 @@ export class Service {
 			...this.getCtxBase(),
 			doc,
 			symbols: this.symbols,
+		})
+	}
+	private getBinderCtx(doc: TextDocument): BinderContext {
+		return BinderContext.create(this.getProcessorCtx(doc))
+	}
+	private getColorizerCtx(doc: TextDocument, options: ColorizerOptions): ColorizerContext {
+		return ColorizerContext.create({
+			...this.getProcessorCtx(doc),
+			options,
 		})
 	}
 	private getUriBinderCtx(): UriBinderContext {

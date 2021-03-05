@@ -1,6 +1,6 @@
 import { AstNode } from '../node'
-import { ProcessorContext } from '../service'
+import { BinderContext } from '../service'
 
-export type Binder<N extends AstNode> = (node: N, ctx: ProcessorContext) => void
+export type Binder<N extends AstNode> = (node: N, ctx: BinderContext) => void
 
 export const FallbackBinder = () => void 0

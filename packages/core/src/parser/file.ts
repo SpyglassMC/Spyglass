@@ -16,8 +16,6 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 			range: fullRange,
 			children: [],
 			parserErrors: [],
-			binderErrors: [],
-			checkerErrors: [],
 		}
 
 		const parser = ctx.meta.getParser<EntryNode>(ctx.doc.languageId)
