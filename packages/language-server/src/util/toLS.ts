@@ -58,7 +58,8 @@ export namespace toLS {
 		return ans
 	}
 
-	export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocument, builder: ls.SemanticTokensBuilder): ls.SemanticTokens {
+	export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocument): ls.SemanticTokens {
+		const builder = new ls.SemanticTokensBuilder()
 		for (const token of tokens) {
 			const pos = position(token.range.start, doc)
 			const length = token.range.end - token.range.start

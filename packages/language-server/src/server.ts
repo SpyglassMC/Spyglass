@@ -12,7 +12,6 @@ if (process.argv.length === 2) {
 }
 
 const connection = ls.createConnection()
-const semanticTokensBuilder = new ls.SemanticTokensBuilder()
 const workspaceFolders: ls.WorkspaceFolder[] = []
 
 const logger: core.Logger = connection.console
@@ -88,7 +87,7 @@ connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
 	const doc = textDocuments.get(uri)!
 	const node = textDocuments.getCachedNode(uri)!
 	const tokens = service.colorize(node, doc)
-	return toLS.semanticTokens(tokens, doc, semanticTokensBuilder)
+	return toLS.semanticTokens(tokens, doc)
 })
 connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) => {
 	const doc = textDocuments.get(uri)!
@@ -96,7 +95,7 @@ connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) =
 	const tokens = service.colorize(node, doc, { 
 		range: toCore.range(range, doc),
 	})
-	return toLS.semanticTokens(tokens, doc, semanticTokensBuilder)
+	return toLS.semanticTokens(tokens, doc)
 })
 
 connection.listen()
