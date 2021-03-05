@@ -2,6 +2,7 @@
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { SymbolUtil } from '../binder'
+import { Range } from '../source'
 import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
@@ -56,6 +57,24 @@ export namespace ProcessorContext {
 			...ContextBase.create(ctx),
 			doc: ctx.doc,
 			symbols: ctx.symbols ?? new SymbolUtil({}),
+		}
+	}
+}
+
+export interface ColorizerOptions {
+	range?: Range,
+}
+export interface ColorizerContext extends ProcessorContext {
+	options: ColorizerOptions,
+}
+interface ColorizerContextLike extends ProcessorContextLike {
+	options: ColorizerOptions,
+}
+export namespace ColorizerContext {
+	export function create(ctx: ColorizerContextLike): ColorizerContext {
+		return {
+			...ProcessorContext.create(ctx),
+			options: ctx.options,
 		}
 	}
 }

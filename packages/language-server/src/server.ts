@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as ls from 'vscode-languageserver/node'
-import { transformer } from './util'
+import { toCore, toLS } from './util'
 
 if (process.argv.length === 2) {
 	// When the server is launched from the cmd script, the process arguments
@@ -11,9 +11,9 @@ if (process.argv.length === 2) {
 	process.argv.push('--stdio')
 }
 
-const workspaceFolders: ls.WorkspaceFolder[] = []
-
 const connection = ls.createConnection()
+const semanticTokensBuilder = new ls.SemanticTokensBuilder()
+const workspaceFolders: ls.WorkspaceFolder[] = []
 
 const logger: core.Logger = connection.console
 const service = new core.Service({ logger })
@@ -21,13 +21,12 @@ const textDocuments = service.textDocuments
 
 nbtdoc.initializeNbtdoc()
 
-connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, initializationOptions, workspaceFolders: wsFolders }) => {
+connection.onInitialize(async ({ processId, clientInfo, locale, initializationOptions, workspaceFolders: wsFolders }) => {
 	logger.info(`[onInitialize] processId = ${JSON.stringify(processId)}`)
 	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(clientInfo)}`)
 	logger.info(`[onInitialize] locale = ${JSON.stringify(locale)}`)
 	logger.info(`[onInitialize] workspaceFolders = ${JSON.stringify(wsFolders)}`)
 	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
-	logger.info(`[onInitialize] capabilities = ${JSON.stringify(capabilities)}`)
 
 	workspaceFolders.push(...wsFolders ?? [])
 
@@ -48,10 +47,10 @@ connection.onInitialize(async ({ processId, clientInfo, locale, capabilities, in
 				},
 			},
 			semanticTokensProvider: {
-				documentSelector: [{ language: 'nbtdoc' }],
-				legend: transformer.semanticTokensLegend(),
+				documentSelector: toLS.documentSelector(),
+				legend: toLS.semanticTokensLegend(),
 				full: { delta: false },
-				range: false,
+				range: true,
 			},
 		},
 	}
@@ -63,9 +62,9 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	textDocuments.onDidOpen(uri, languageID, version, text)
 
 	const doc = textDocuments.get(uri)!
-	const { parserErrors } = service.parse(doc)
+	const node = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.diagnostics(parserErrors, doc),
+		diagnostics: toLS.diagnostics(node, doc),
 		uri,
 		version,
 	})
@@ -74,9 +73,9 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	textDocuments.onDidChange(uri, contentChanges, version)
 
 	const doc = textDocuments.get(uri)!
-	const { parserErrors } = service.parse(doc)
+	const node = service.parse(doc)
 	connection.sendDiagnostics({
-		diagnostics: transformer.diagnostics(parserErrors, doc),
+		diagnostics: toLS.diagnostics(node, doc),
 		uri,
 		version,
 	})
@@ -89,7 +88,15 @@ connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
 	const doc = textDocuments.get(uri)!
 	const node = textDocuments.getCachedNode(uri)!
 	const tokens = service.colorize(node, doc)
-	return transformer.semanticTokens(tokens, doc)
+	return toLS.semanticTokens(tokens, doc, semanticTokensBuilder)
+})
+connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) => {
+	const doc = textDocuments.get(uri)!
+	const node = textDocuments.getCachedNode(uri)!
+	const tokens = service.colorize(node, doc, { 
+		range: toCore.range(range, doc),
+	})
+	return toLS.semanticTokens(tokens, doc, semanticTokensBuilder)
 })
 
 connection.listen()

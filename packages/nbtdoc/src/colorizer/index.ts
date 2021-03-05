@@ -1,8 +1,8 @@
-import { ColorToken, ColorTokenType, traverseLeaves } from '@spyglassmc/core'
+import { ColorizerContext, ColorToken, ColorTokenType, traverseLeaves } from '@spyglassmc/core'
 import { LeafNode, MainNode } from '../node'
 
 export namespace colorizer {
-	export function entry(node: MainNode): readonly ColorToken[] {
+	export function entry(node: MainNode, ctx: ColorizerContext): readonly ColorToken[] {
 		const ans: ColorToken[] = []
 		traverseLeaves(node, leaf => {
 			let type: ColorTokenType | undefined
@@ -37,7 +37,7 @@ export namespace colorizer {
 			if (type !== undefined) {
 				ans.push(ColorToken.create(leaf, type))
 			}
-		})
+		}, ctx.options.range)
 		return Object.freeze(ans)
 	}
 }

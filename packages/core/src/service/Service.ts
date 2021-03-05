@@ -3,8 +3,12 @@ import { SymbolUtil } from '../binder'
 import { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import { ColorToken } from '../processor'
-import { ContextBase, FileService, Logger, MetaRegistry, ParserContext, ProcessorContext, UriBinderContext, walk } from '../service'
 import { Source } from '../source'
+import { ColorizerOptions, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { FileService } from './FileService'
+import { walk } from './fileUtil'
+import { Logger } from './Logger'
+import { MetaRegistry } from './MetaRegistry'
 import { TextDocuments } from './TextDocuments'
 
 interface Options {
@@ -46,9 +50,12 @@ export class Service {
 		return result
 	}
 
-	public colorize(node: FileNode<AstNode>, doc: TextDocument): readonly ColorToken[] {
+	public colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
 		const colorizer = this.meta.getColorizer(doc.languageId)
-		return colorizer(node, this.getProcessorCtx(doc))
+		return colorizer(node, {
+			...this.getProcessorCtx(doc),
+			options,
+		})
 	}
 
 	public async bindUris(): Promise<void> {

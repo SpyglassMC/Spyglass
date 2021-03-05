@@ -69,6 +69,10 @@ export namespace Range {
 		return range.start <= offset && offset < range.end
 	}
 
+	export function intersects(a: Range, b: Range): boolean {
+		return Range.contains(a, b.start) || Range.contains(b, a.start)
+	}
+
 	export function endsBefore(range: Range, offset: number): boolean {
 		return range.end <= offset
 	}

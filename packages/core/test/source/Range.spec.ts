@@ -118,6 +118,43 @@ describe('Range', () => {
 			})
 		}
 	})
+	describe('intersects()', () => {
+		const suites = [
+			{
+				baseRange: Range.create(1, 3),
+				cases: [
+					{ range: Range.create(0, 1), expected: false },
+					{ range: Range.create(1, 1), expected: true },
+					{ range: Range.create(0, 2), expected: true },
+					{ range: Range.create(1, 2), expected: true },
+					{ range: Range.create(2, 2), expected: true },
+					{ range: Range.create(1, 3), expected: true },
+					{ range: Range.create(2, 3), expected: true },
+					{ range: Range.create(3, 3), expected: false },
+					{ range: Range.create(1, 4), expected: true },
+					{ range: Range.create(2, 4), expected: true },
+					{ range: Range.create(3, 4), expected: false },
+					{ range: Range.create(4, 4), expected: false },
+				],
+			},
+			{
+				baseRange: Range.Full,
+				cases: [
+					{ range: Range.create(4, 4), expected: true },
+				],
+			},
+		] as const
+		for (const { baseRange, cases } of suites) {
+			describe(`intersects ${Range.toString(baseRange)}`, () => {
+				for (const { range, expected } of cases) {
+					it(`Should return ${expected} for ${range}`, () => {
+						const actual = Range.intersects(baseRange, range)
+						assert.strictEqual(actual, expected)
+					})
+				}
+			})
+		}
+	})
 	describe('constants', () => {
 		it('Should initialize correctly', () => {
 			snapshot(Range.Beginning)

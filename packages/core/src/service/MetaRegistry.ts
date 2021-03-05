@@ -3,7 +3,7 @@
 import { UriBinder } from '../binder'
 import { AstNode } from '../node'
 import { EntryNode, EntryParser, Parser } from '../parser'
-import { Colorizer, colorizer } from '../processor'
+import { Colorizer, FallbackColorizer } from '../processor'
 
 //#region TEMP
 type Processor = any
@@ -79,7 +79,7 @@ export class MetaRegistry {
 	 * @returns The corresponding `Colorizer` for the language ID, or a fallback colorizer that produces nothing.
 	 */
 	public getColorizer<N extends AstNode>(languageID: string): Colorizer<N> {
-		return (this.languages.get(languageID)?.colorizer ?? colorizer.fallback) as unknown as Colorizer<N>
+		return (this.languages.get(languageID)?.colorizer ?? FallbackColorizer) as unknown as Colorizer<N>
 	}
 
 	public getValidator(nodeName: CoreNodeName): Validator
@@ -114,6 +114,13 @@ export class MetaRegistry {
 			}
 		}
 		return undefined
+	}
+
+	/**
+	 * @returns An array of all registered language IDs.
+	 */
+	public getLanguages(): string[] {
+		return Array.from(this.languages.keys())
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

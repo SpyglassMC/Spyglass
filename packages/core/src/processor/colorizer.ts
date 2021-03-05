@@ -1,12 +1,12 @@
+/* istanbul ignore file */
+
 import { AstNode } from '../node'
-import { ProcessorContext } from '../service'
+import { ColorizerContext } from '../service'
 import { Range, RangeLike } from '../source'
 
-export type Colorizer<N = AstNode> = (node: N, ctx: ProcessorContext) => readonly ColorToken[]
+export type Colorizer<N = AstNode> = (node: N, ctx: ColorizerContext) => readonly ColorToken[]
 
-export namespace colorizer {
-	export const fallback: Colorizer<any> = () => []
-}
+export const FallbackColorizer: Colorizer<any> = () => []
 
 export interface ColorToken {
 	range: Range,
@@ -14,7 +14,6 @@ export interface ColorToken {
 	modifiers?: ColorTokenModifier[]
 }
 export namespace ColorToken {
-	/* istanbul ignore next */
 	export function create(range: RangeLike, type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken {
 		return {
 			range: Range.get(range),
