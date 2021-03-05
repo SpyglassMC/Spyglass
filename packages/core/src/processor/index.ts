@@ -1,2 +1,2 @@
-export * from './colorizer'
+export * from './Colorizer'
 export * from './util'
